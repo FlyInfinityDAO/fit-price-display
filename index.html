@@ -54,6 +54,33 @@
             text-transform: uppercase;
             margin-bottom: 10px;
         }
+        .contract-info {
+            background: #0a0f18;
+            border-radius: 16px;
+            padding: 12px 20px;
+            margin-top: 20px;
+            display: inline-block;
+            text-align: left;
+        }
+        .contract-info p {
+            font-family: monospace;
+            font-size: 14px;
+            color: #8aa0c0;
+            margin: 5px 0;
+        }
+        .contract-info span {
+            color: #7ee0ff;
+        }
+        .chain-badge {
+            display: inline-block;
+            background: #f3ba2f;
+            color: #1a1a2e;
+            font-weight: bold;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            margin-top: 15px;
+        }
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -72,9 +99,10 @@
             text-transform: uppercase;
         }
         .stat-value {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             color: #e0e8ff;
+            word-break: break-word;
         }
         .chart-container {
             background: rgba(20, 30, 45, 0.7);
@@ -100,6 +128,7 @@
         @media (max-width: 700px) {
             .live-price { font-size: 36px; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .contract-info p { font-size: 10px; }
         }
     </style>
 </head>
@@ -108,6 +137,15 @@
     <div class="price-card">
         <h1>Fly Infinity Token (FIT)</h1>
         <div class="subtitle">Bonding Curve • Real-time & Historical Price</div>
+        
+        <!-- Blockchain & Contract Information -->
+        <div class="chain-badge">🛡️ BNB Smart Chain (BSC) Mainnet</div>
+        
+        <div class="contract-info">
+            <p>📜 <span>Contract Address (FIT):</span><br>0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa</p>
+            <p>💰 <span>Pricing Formula:</span> Price = DAI Reserve / Total Supply</p>
+        </div>
+        
         <div class="live-label">Current Price (DAI per FIT)</div>
         <div class="live-price" id="fit-price">—</div>
         <button class="refresh-btn" id="refreshBtn">⟳ Refresh Live Price</button>
@@ -115,26 +153,28 @@
 
     <div class="chart-container">
         <canvas id="priceChart" width="800" height="400" style="max-width:100%; height:auto;"></canvas>
+        <p style="color:#5a6e8c; text-align:center; margin-top:10px; font-size:12px;">📈 Price chart updates daily. Vertical axis shows DAI price per FIT.</p>
     </div>
 
     <div class="price-card" id="statsPanel">
         <div class="stats-grid" id="statsGrid">
-            <div class="stat-card"><div class="stat-label">Price Change (24h)</div><div class="stat-value" id="stat1d">—</div></div>
-            <div class="stat-card"><div class="stat-label">Price Change (7d)</div><div class="stat-value" id="stat7d">—</div></div>
-            <div class="stat-card"><div class="stat-label">Price Change (30d)</div><div class="stat-value" id="stat30d">—</div></div>
-            <div class="stat-card"><div class="stat-label">Price Change (90d)</div><div class="stat-value" id="stat90d">—</div></div>
-            <div class="stat-card"><div class="stat-label">Price Change (180d)</div><div class="stat-value" id="stat180d">—</div></div>
-            <div class="stat-card"><div class="stat-label">Price Change (365d)</div><div class="stat-value" id="stat365d">—</div></div>
-            <div class="stat-card"><div class="stat-label">Initial Price</div><div class="stat-value" id="statInitial">—</div></div>
+            <div class="stat-card"><div class="stat-label">📆 Price Change (24h)</div><div class="stat-value" id="stat1d">—</div></div>
+            <div class="stat-card"><div class="stat-label">📆 Price Change (7d)</div><div class="stat-value" id="stat7d">—</div></div>
+            <div class="stat-card"><div class="stat-label">📆 Price Change (30d)</div><div class="stat-value" id="stat30d">—</div></div>
+            <div class="stat-card"><div class="stat-label">📆 Price Change (90d)</div><div class="stat-value" id="stat90d">—</div></div>
+            <div class="stat-card"><div class="stat-label">📆 Price Change (180d)</div><div class="stat-value" id="stat180d">—</div></div>
+            <div class="stat-card"><div class="stat-label">📆 Price Change (365d)</div><div class="stat-value" id="stat365d">—</div></div>
+            <div class="stat-card"><div class="stat-label">🔰 Initial Price</div><div class="stat-value" id="statInitial">—</div></div>
         </div>
     </div>
     <div class="footer">
-        Historical data recorded daily via GitHub Actions • Fly Infinity DAO
+        ⚡ Historical data recorded daily via GitHub Actions • Fly Infinity DAO<br>
+        🔗 BscScan: <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" style="color:#7ee0ff;">View Contract</a>
     </div>
 </div>
 
 <script>
-    // ---------- Live Price (same as before) ----------
+    // ---------- Live Price ----------
     const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
     const ABI = [{"constant":true,"inputs":[],"name":"Price","outputs":[{"name":"","type":"uint256"}],"type":"function"}];
     const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
@@ -147,14 +187,14 @@
             const price = parseFloat(ethers.utils.formatEther(rawPrice));
             priceEl.textContent = price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 });
         } catch(e) {
-            priceEl.textContent = "Error";
+            priceEl.textContent = "Error loading";
             console.error(e);
         }
     }
 
     // ---------- Historical Data & Chart ----------
     let priceChart = null;
-    let historicalData = []; // store {date, price}
+    let historicalData = [];
 
     async function loadHistory() {
         try {
@@ -165,12 +205,20 @@
             updateStats();
         } catch(e) {
             console.error("Failed to load price-history.json", e);
+            document.getElementById("statsGrid").innerHTML = '<div style="color:red; text-align:center;">Error loading historical data. Make sure price-history.json exists.</div>';
         }
     }
 
     function renderChart() {
         const ctx = document.getElementById('priceChart').getContext('2d');
         if (priceChart) priceChart.destroy();
+
+        if (historicalData.length === 0) {
+            ctx.font = "16px Arial";
+            ctx.fillStyle = "#aaa";
+            ctx.fillText("No historical data yet. Check back tomorrow.", 50, 200);
+            return;
+        }
 
         const labels = historicalData.map(r => r.date);
         const prices = historicalData.map(r => r.price);
@@ -187,7 +235,7 @@
                     borderWidth: 2,
                     fill: true,
                     tension: 0.3,
-                    pointRadius: 3,
+                    pointRadius: 4,
                     pointBackgroundColor: '#7ee0ff'
                 }]
             },
@@ -195,19 +243,28 @@
                 responsive: true,
                 maintainAspectRatio: true,
                 plugins: {
-                    tooltip: { callbacks: { label: (ctx) => `${ctx.raw.toFixed(6)} DAI` } },
+                    tooltip: { 
+                        callbacks: { 
+                            label: (ctx) => `${ctx.raw.toFixed(6)} DAI` 
+                        } 
+                    },
                     legend: { labels: { color: '#ccc' } }
                 },
                 scales: {
-                    x: { ticks: { color: '#aaa', maxRotation: 45, autoSkip: true } },
-                    y: { ticks: { color: '#aaa', callback: (val) => val.toFixed(4) + ' DAI' } }
+                    x: { 
+                        ticks: { color: '#aaa', maxRotation: 45, autoSkip: true },
+                        title: { display: true, text: 'Date', color: '#8aa0c0' }
+                    },
+                    y: { 
+                        ticks: { color: '#aaa', callback: (val) => val.toFixed(4) + ' DAI' },
+                        title: { display: true, text: 'Price (DAI per FIT)', color: '#8aa0c0' }
+                    }
                 }
             }
         });
     }
 
     function getPriceAtDate(targetDate) {
-        // targetDate is Date object, find closest record (same day or previous available)
         if (historicalData.length === 0) return null;
         let best = null;
         for (let record of historicalData) {
@@ -226,7 +283,6 @@
         const today = new Date();
         today.setHours(0,0,0,0);
         
-        // Helper to get price N days ago (approx)
         const getPriceDaysAgo = (days) => {
             const target = new Date(today);
             target.setDate(today.getDate() - days);
@@ -249,22 +305,24 @@
             return `${sign}${change.toFixed(2)}%`;
         };
         
-        document.getElementById("stat1d").innerHTML = price1d ? `${price1d.toFixed(6)} DAI<br><span style="font-size:12px;">${formatChange(price1d)}</span>` : "—";
-        document.getElementById("stat7d").innerHTML = price7d ? `${price7d.toFixed(6)} DAI<br><span style="font-size:12px;">${formatChange(price7d)}</span>` : "—";
-        document.getElementById("stat30d").innerHTML = price30d ? `${price30d.toFixed(6)} DAI<br><span style="font-size:12px;">${formatChange(price30d)}</span>` : "—";
-        document.getElementById("stat90d").innerHTML = price90d ? `${price90d.toFixed(6)} DAI<br><span style="font-size:12px;">${formatChange(price90d)}</span>` : "—";
-        document.getElementById("stat180d").innerHTML = price180d ? `${price180d.toFixed(6)} DAI<br><span style="font-size:12px;">${formatChange(price180d)}</span>` : "—";
-        document.getElementById("stat365d").innerHTML = price365d ? `${price365d.toFixed(6)} DAI<br><span style="font-size:12px;">${formatChange(price365d)}</span>` : "—";
-        document.getElementById("statInitial").innerHTML = initialPrice ? `${initialPrice.toFixed(6)} DAI<br><span style="font-size:12px;">${formatChange(initialPrice)}</span>` : "—";
+        const formatValue = (price) => {
+            if (price === null || price === undefined) return "—";
+            return `${price.toFixed(6)} DAI`;
+        };
+        
+        document.getElementById("stat1d").innerHTML = `${formatValue(price1d)}<br><span style="font-size:11px;">${formatChange(price1d)}</span>`;
+        document.getElementById("stat7d").innerHTML = `${formatValue(price7d)}<br><span style="font-size:11px;">${formatChange(price7d)}</span>`;
+        document.getElementById("stat30d").innerHTML = `${formatValue(price30d)}<br><span style="font-size:11px;">${formatChange(price30d)}</span>`;
+        document.getElementById("stat90d").innerHTML = `${formatValue(price90d)}<br><span style="font-size:11px;">${formatChange(price90d)}</span>`;
+        document.getElementById("stat180d").innerHTML = `${formatValue(price180d)}<br><span style="font-size:11px;">${formatChange(price180d)}</span>`;
+        document.getElementById("stat365d").innerHTML = `${formatValue(price365d)}<br><span style="font-size:11px;">${formatChange(price365d)}</span>`;
+        document.getElementById("statInitial").innerHTML = `${formatValue(initialPrice)}<br><span style="font-size:11px;">${formatChange(initialPrice)}</span>`;
     }
 
-    // Manual refresh for live price
     document.getElementById("refreshBtn").addEventListener("click", fetchLivePrice);
     
-    // Initial load
     fetchLivePrice();
     loadHistory();
-    // Auto-refresh live price every 30 seconds
     setInterval(fetchLivePrice, 30000);
 </script>
 </body>
