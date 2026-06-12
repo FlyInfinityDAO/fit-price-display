@@ -11,13 +11,33 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: linear-gradient(135deg, #0a0f1e 0%, #0d1525 100%);
+            /* Background image */
+            background-image: url('background.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding: 40px 20px;
+            /* Fallback color if image doesn't load */
+            background-color: #0a0f1e;
+        }
+        /* Overlay for better text readability */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 15, 30, 0.75);
+            z-index: -1;
         }
         .container {
             max-width: 1300px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
         .price-card {
             background: rgba(20, 30, 45, 0.9);
@@ -29,9 +49,25 @@
             border: 1px solid rgba(255,255,255,0.05);
             text-align: center;
         }
+        .header-with-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .token-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 0 20px rgba(126, 224, 255, 0.3);
+            border: 2px solid #7ee0ff;
+        }
         h1 {
-            font-size: 28px;
-            font-weight: 600;
+            font-size: 32px;
+            font-weight: 700;
             background: linear-gradient(135deg, #fff, #a0b5e0);
             -webkit-background-clip: text;
             background-clip: text;
@@ -81,6 +117,23 @@
             font-size: 12px;
             margin-top: 15px;
         }
+        .whitepaper-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #3e6b9e, #2a4a6e);
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 15px;
+            margin-left: 10px;
+            transition: all 0.3s;
+        }
+        .whitepaper-link:hover {
+            background: linear-gradient(135deg, #5a8abe, #3e6b9e);
+            transform: translateY(-2px);
+        }
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -106,6 +159,7 @@
         }
         .chart-container {
             background: rgba(20, 30, 45, 0.7);
+            backdrop-filter: blur(10px);
             border-radius: 32px;
             padding: 25px;
             margin-bottom: 30px;
@@ -113,6 +167,7 @@
         }
         .simulator-card {
             background: rgba(20, 30, 45, 0.8);
+            backdrop-filter: blur(10px);
             border-radius: 32px;
             padding: 25px;
             margin-bottom: 30px;
@@ -219,6 +274,8 @@
             .live-price { font-size: 36px; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .result-return { font-size: 22px; }
+            .token-logo { width: 45px; height: 45px; }
+            h1 { font-size: 24px; }
         }
     </style>
 </head>
@@ -226,7 +283,10 @@
 <div class="container">
     <!-- Main Price Card -->
     <div class="price-card">
-        <h1>Fly Infinity Token (FIT)</h1>
+        <div class="header-with-logo">
+            <img src="logo.png" alt="FIT Logo" class="token-logo" onerror="this.style.display='none'">
+            <h1>Fly Infinity Token (FIT)</h1>
+        </div>
         <div class="subtitle">Bonding Curve • Real-time & Historical Price</div>
         
         <div class="chain-badge">🛡️ BNB Smart Chain (BSC) Mainnet</div>
@@ -234,6 +294,11 @@
         <div class="contract-info">
             <p>📜 <span>Contract Address (FIT):</span><br>0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa</p>
             <p>💰 <span>Pricing Formula:</span> Price = DAI Reserve / Total Supply</p>
+        </div>
+        
+        <!-- Whitepaper Button with your actual link -->
+        <div>
+            <a href="https://github.com/FlyInfinityDAO/Fly-Infinity-Token/raw/refs/heads/main/Fly%20Infinity%20Token%20-%20White%20Paper.pdf" target="_blank" class="whitepaper-link">📄 Whitepaper</a>
         </div>
         
         <div class="live-label">Current Price (DAI per FIT)</div>
@@ -281,7 +346,7 @@
             </div>
         </div>
         <p style="color:#5a6e8c; text-align:center; font-size:11px; margin-top:15px;">
-            ⚡ This is a simulation based on PAST growth rates (daily/weekly/monthly). Not financial advice. Past performance does not guarantee future results.
+            ⚡ This is a simulation based on PAST growth rates (daily/weekly/monthly). Not financial advice.
         </p>
     </div>
 
@@ -320,7 +385,7 @@
             const rawPrice = await contract.Price();
             currentPrice = parseFloat(ethers.utils.formatEther(rawPrice));
             priceEl.textContent = currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 });
-            updateSimulator(); // Update calculator when price changes
+            updateSimulator();
         } catch(e) {
             priceEl.textContent = "Error loading";
             console.error(e);
@@ -413,7 +478,6 @@
         return best ? best.price : null;
     }
 
-    // Calculate growth rates from historical data
     function calculateGrowthRate(daysAgo) {
         if (historicalData.length < 2) return null;
         
@@ -459,7 +523,6 @@
         const weeklyGrowth = calculateGrowthRate(7);
         const monthlyGrowth = calculateGrowthRate(30);
         
-        // Calculate projected values
         let dailyProjectedValue = currentValue;
         let dailyProfit = 0;
         let dailyProfitPercent = 0;
@@ -490,7 +553,6 @@
             monthlyProfitPercent = monthlyGrowth;
         }
         
-        // Display results
         document.getElementById("dailyReturn").innerHTML = dailyProfit >= 0 ? `+${dailyProfit.toFixed(2)} DAI` : `${dailyProfit.toFixed(2)} DAI`;
         document.getElementById("dailyAmount").innerHTML = `→ Final Value: ${dailyProjectedValue.toFixed(2)} DAI (${dailyProfitPercent.toFixed(2)}%)`;
         
