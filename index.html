@@ -16,7 +16,7 @@
             padding: 40px 20px;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
         }
         .price-card {
@@ -108,7 +108,97 @@
             background: rgba(20, 30, 45, 0.7);
             border-radius: 32px;
             padding: 25px;
+            margin-bottom: 30px;
             border: 1px solid rgba(255,255,255,0.05);
+        }
+        .simulator-card {
+            background: rgba(20, 30, 45, 0.8);
+            border-radius: 32px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(126, 224, 255, 0.3);
+        }
+        .simulator-title {
+            font-size: 20px;
+            color: #7ee0ff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .simulator-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        .input-group {
+            background: #0a0f18;
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+        }
+        .input-group label {
+            display: block;
+            color: #8aa0c0;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+        .input-group input {
+            background: #1a2538;
+            border: 1px solid #2a3a55;
+            color: #7ee0ff;
+            padding: 12px 15px;
+            border-radius: 16px;
+            font-size: 18px;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #7ee0ff;
+        }
+        .simulator-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .result-box {
+            background: #0a0f18;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .result-box:hover {
+            transform: translateY(-3px);
+            border-left: 3px solid #7ee0ff;
+        }
+        .result-period {
+            font-size: 14px;
+            color: #8aa0c0;
+            letter-spacing: 2px;
+        }
+        .result-return {
+            font-size: 28px;
+            font-weight: bold;
+            color: #7ee0ff;
+            margin: 10px 0;
+        }
+        .result-amount {
+            font-size: 16px;
+            color: #e0e8ff;
+        }
+        .growth-badge {
+            display: inline-block;
+            background: #2a3a55;
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 12px;
+            margin-top: 10px;
         }
         .refresh-btn {
             background: #2a3a55;
@@ -128,17 +218,17 @@
         @media (max-width: 700px) {
             .live-price { font-size: 36px; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
-            .contract-info p { font-size: 10px; }
+            .result-return { font-size: 22px; }
         }
     </style>
 </head>
 <body>
 <div class="container">
+    <!-- Main Price Card -->
     <div class="price-card">
         <h1>Fly Infinity Token (FIT)</h1>
         <div class="subtitle">Bonding Curve • Real-time & Historical Price</div>
         
-        <!-- Blockchain & Contract Information -->
         <div class="chain-badge">🛡️ BNB Smart Chain (BSC) Mainnet</div>
         
         <div class="contract-info">
@@ -151,11 +241,51 @@
         <button class="refresh-btn" id="refreshBtn">⟳ Refresh Live Price</button>
     </div>
 
+    <!-- Chart -->
     <div class="chart-container">
         <canvas id="priceChart" width="800" height="400" style="max-width:100%; height:auto;"></canvas>
         <p style="color:#5a6e8c; text-align:center; margin-top:10px; font-size:12px;">📈 Price chart updates daily. Vertical axis shows DAI price per FIT.</p>
     </div>
 
+    <!-- Profit Simulator -->
+    <div class="simulator-card">
+        <div class="simulator-title">💰 Profit Simulator (Based on Historical Growth)</div>
+        <div class="simulator-input">
+            <div class="input-group">
+                <label>🔢 Your FIT Holdings</label>
+                <input type="number" id="fitAmount" value="1000" step="100" placeholder="Amount of FIT">
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-bottom: 15px;">
+            <span class="growth-badge" id="dailyGrowthRate">📈 Daily growth: --%</span>
+            <span class="growth-badge" id="weeklyGrowthRate" style="margin-left: 10px;">📊 Weekly growth: --%</span>
+            <span class="growth-badge" id="monthlyGrowthRate" style="margin-left: 10px;">📅 Monthly growth: --%</span>
+        </div>
+        
+        <div class="simulator-results" id="simulatorResults">
+            <div class="result-box">
+                <div class="result-period">🚀 IF GROWTH CONTINUES (24h)</div>
+                <div class="result-return" id="dailyReturn">—</div>
+                <div class="result-amount" id="dailyAmount">→ Final Value: — DAI</div>
+            </div>
+            <div class="result-box">
+                <div class="result-period">📈 IF GROWTH CONTINUES (7 days)</div>
+                <div class="result-return" id="weeklyReturn">—</div>
+                <div class="result-amount" id="weeklyAmount">→ Final Value: — DAI</div>
+            </div>
+            <div class="result-box">
+                <div class="result-period">📊 IF GROWTH CONTINUES (30 days)</div>
+                <div class="result-return" id="monthlyReturn">—</div>
+                <div class="result-amount" id="monthlyAmount">→ Final Value: — DAI</div>
+            </div>
+        </div>
+        <p style="color:#5a6e8c; text-align:center; font-size:11px; margin-top:15px;">
+            ⚡ This is a simulation based on PAST growth rates (daily/weekly/monthly). Not financial advice. Past performance does not guarantee future results.
+        </p>
+    </div>
+
+    <!-- Stats Panel -->
     <div class="price-card" id="statsPanel">
         <div class="stats-grid" id="statsGrid">
             <div class="stat-card"><div class="stat-label">📆 Price Change (24h)</div><div class="stat-value" id="stat1d">—</div></div>
@@ -167,6 +297,7 @@
             <div class="stat-card"><div class="stat-label">🔰 Initial Price</div><div class="stat-value" id="statInitial">—</div></div>
         </div>
     </div>
+    
     <div class="footer">
         ⚡ Historical data recorded daily via GitHub Actions • Fly Infinity DAO<br>
         🔗 BscScan: <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" style="color:#7ee0ff;">View Contract</a>
@@ -180,12 +311,16 @@
     const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
 
+    let currentPrice = 0;
+    let historicalData = [];
+
     async function fetchLivePrice() {
         const priceEl = document.getElementById("fit-price");
         try {
             const rawPrice = await contract.Price();
-            const price = parseFloat(ethers.utils.formatEther(rawPrice));
-            priceEl.textContent = price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 });
+            currentPrice = parseFloat(ethers.utils.formatEther(rawPrice));
+            priceEl.textContent = currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 8 });
+            updateSimulator(); // Update calculator when price changes
         } catch(e) {
             priceEl.textContent = "Error loading";
             console.error(e);
@@ -194,7 +329,6 @@
 
     // ---------- Historical Data & Chart ----------
     let priceChart = null;
-    let historicalData = [];
 
     async function loadHistory() {
         try {
@@ -203,9 +337,10 @@
             historicalData = json.records.sort((a,b) => new Date(a.date) - new Date(b.date));
             renderChart();
             updateStats();
+            updateGrowthRates();
+            updateSimulator();
         } catch(e) {
             console.error("Failed to load price-history.json", e);
-            document.getElementById("statsGrid").innerHTML = '<div style="color:red; text-align:center;">Error loading historical data. Make sure price-history.json exists.</div>';
         }
     }
 
@@ -278,6 +413,94 @@
         return best ? best.price : null;
     }
 
+    // Calculate growth rates from historical data
+    function calculateGrowthRate(daysAgo) {
+        if (historicalData.length < 2) return null;
+        
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        
+        const targetDate = new Date(today);
+        targetDate.setDate(today.getDate() - daysAgo);
+        
+        const oldPrice = getPriceAtDate(targetDate);
+        if (!oldPrice || oldPrice === 0) return null;
+        
+        const currentPriceLatest = historicalData[historicalData.length - 1].price;
+        const growth = ((currentPriceLatest - oldPrice) / oldPrice) * 100;
+        return growth;
+    }
+
+    function updateGrowthRates() {
+        const dailyGrowth = calculateGrowthRate(1);
+        const weeklyGrowth = calculateGrowthRate(7);
+        const monthlyGrowth = calculateGrowthRate(30);
+        
+        document.getElementById("dailyGrowthRate").innerHTML = dailyGrowth !== null ? `📈 Daily growth: ${dailyGrowth.toFixed(2)}%` : "📈 Daily growth: --";
+        document.getElementById("weeklyGrowthRate").innerHTML = weeklyGrowth !== null ? `📊 Weekly growth: ${weeklyGrowth.toFixed(2)}%` : "📊 Weekly growth: --";
+        document.getElementById("monthlyGrowthRate").innerHTML = monthlyGrowth !== null ? `📅 Monthly growth: ${monthlyGrowth.toFixed(2)}%` : "📅 Monthly growth: --";
+    }
+
+    function updateSimulator() {
+        const fitAmount = parseFloat(document.getElementById("fitAmount").value);
+        if (isNaN(fitAmount) || fitAmount <= 0 || currentPrice === 0) {
+            document.getElementById("dailyReturn").innerHTML = "—";
+            document.getElementById("dailyAmount").innerHTML = "→ Final Value: — DAI";
+            document.getElementById("weeklyReturn").innerHTML = "—";
+            document.getElementById("weeklyAmount").innerHTML = "→ Final Value: — DAI";
+            document.getElementById("monthlyReturn").innerHTML = "—";
+            document.getElementById("monthlyAmount").innerHTML = "→ Final Value: — DAI";
+            return;
+        }
+        
+        const currentValue = fitAmount * currentPrice;
+        
+        const dailyGrowth = calculateGrowthRate(1);
+        const weeklyGrowth = calculateGrowthRate(7);
+        const monthlyGrowth = calculateGrowthRate(30);
+        
+        // Calculate projected values
+        let dailyProjectedValue = currentValue;
+        let dailyProfit = 0;
+        let dailyProfitPercent = 0;
+        
+        if (dailyGrowth !== null && dailyGrowth !== 0) {
+            dailyProjectedValue = currentValue * (1 + dailyGrowth / 100);
+            dailyProfit = dailyProjectedValue - currentValue;
+            dailyProfitPercent = dailyGrowth;
+        }
+        
+        let weeklyProjectedValue = currentValue;
+        let weeklyProfit = 0;
+        let weeklyProfitPercent = 0;
+        
+        if (weeklyGrowth !== null && weeklyGrowth !== 0) {
+            weeklyProjectedValue = currentValue * (1 + weeklyGrowth / 100);
+            weeklyProfit = weeklyProjectedValue - currentValue;
+            weeklyProfitPercent = weeklyGrowth;
+        }
+        
+        let monthlyProjectedValue = currentValue;
+        let monthlyProfit = 0;
+        let monthlyProfitPercent = 0;
+        
+        if (monthlyGrowth !== null && monthlyGrowth !== 0) {
+            monthlyProjectedValue = currentValue * (1 + monthlyGrowth / 100);
+            monthlyProfit = monthlyProjectedValue - currentValue;
+            monthlyProfitPercent = monthlyGrowth;
+        }
+        
+        // Display results
+        document.getElementById("dailyReturn").innerHTML = dailyProfit >= 0 ? `+${dailyProfit.toFixed(2)} DAI` : `${dailyProfit.toFixed(2)} DAI`;
+        document.getElementById("dailyAmount").innerHTML = `→ Final Value: ${dailyProjectedValue.toFixed(2)} DAI (${dailyProfitPercent.toFixed(2)}%)`;
+        
+        document.getElementById("weeklyReturn").innerHTML = weeklyProfit >= 0 ? `+${weeklyProfit.toFixed(2)} DAI` : `${weeklyProfit.toFixed(2)} DAI`;
+        document.getElementById("weeklyAmount").innerHTML = `→ Final Value: ${weeklyProjectedValue.toFixed(2)} DAI (${weeklyProfitPercent.toFixed(2)}%)`;
+        
+        document.getElementById("monthlyReturn").innerHTML = monthlyProfit >= 0 ? `+${monthlyProfit.toFixed(2)} DAI` : `${monthlyProfit.toFixed(2)} DAI`;
+        document.getElementById("monthlyAmount").innerHTML = `→ Final Value: ${monthlyProjectedValue.toFixed(2)} DAI (${monthlyProfitPercent.toFixed(2)}%)`;
+    }
+
     function updateStats() {
         if (historicalData.length === 0) return;
         const today = new Date();
@@ -289,7 +512,7 @@
             return getPriceAtDate(target);
         };
         
-        const currentPrice = historicalData[historicalData.length-1].price;
+        const currentPriceLatest = historicalData[historicalData.length-1].price;
         const price1d = getPriceDaysAgo(1);
         const price7d = getPriceDaysAgo(7);
         const price30d = getPriceDaysAgo(30);
@@ -300,7 +523,7 @@
         
         const formatChange = (oldPrice) => {
             if (oldPrice === null || oldPrice === undefined) return "—";
-            const change = ((currentPrice - oldPrice) / oldPrice) * 100;
+            const change = ((currentPriceLatest - oldPrice) / oldPrice) * 100;
             const sign = change >= 0 ? "+" : "";
             return `${sign}${change.toFixed(2)}%`;
         };
@@ -319,8 +542,11 @@
         document.getElementById("statInitial").innerHTML = `${formatValue(initialPrice)}<br><span style="font-size:11px;">${formatChange(initialPrice)}</span>`;
     }
 
+    // Event listeners
     document.getElementById("refreshBtn").addEventListener("click", fetchLivePrice);
+    document.getElementById("fitAmount").addEventListener("input", updateSimulator);
     
+    // Initial load
     fetchLivePrice();
     loadHistory();
     setInterval(fetchLivePrice, 30000);
