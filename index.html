@@ -53,7 +53,6 @@
         
         .top-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
         
-        /* استایل کارت‌ها - الگو گرفته از باکس تاریخچه قیمت */
         .card {
             background: #0F0F0F;
             backdrop-filter: blur(10px);
@@ -71,12 +70,15 @@
         .live-price { font-size: 48px; font-weight: 800; color: #D4AF37; }
         .usd-price { font-size: 20px; color: #D4AF37; opacity: 0.8; }
         
-        /* استایل آمار - مشابه باکس تاریخچه قیمت */
-        .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
+        .stats-grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 12px; 
+            margin-top: 15px; 
+        }
         .stat-card { background: #1a1a1a; border-radius: 16px; padding: 12px; text-align: center; border-left: 3px solid #00C896; }
         .stat-value { font-size: 16px; font-weight: bold; color: #D4AF37; }
         
-        /* استایل باکس تاریخچه قیمت */
         .price-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 15px; }
         .price-stat-card { background: #1a1a1a; border-radius: 16px; padding: 10px; text-align: center; border-left: 3px solid #D4AF37; }
         .price-stat-label { font-size: 10px; color: #00C896; text-transform: uppercase; }
@@ -88,7 +90,6 @@
         .action-btn:hover { background: #00C896; color: #0F0F0F; transform: translateY(-2px); }
         .action-btn.sell { border-color: #D4AF37; color: #D4AF37; }
         
-        /* استایل شبیه‌ساز سود - مشابه باکس تاریخچه قیمت */
         .simulator-input { text-align: center; margin: 15px 0; }
         .input-group { background: #1a1a1a; padding: 12px; border-radius: 16px; display: inline-block; border-left: 3px solid #00C896; }
         .input-group label { display: block; color: #00C896; font-size: 11px; margin-bottom: 6px; }
@@ -117,7 +118,8 @@
         
         @media (max-width: 800px) { 
             .top-grid { grid-template-columns: 1fr; } 
-            .live-price { font-size: 36px; } 
+            .live-price { font-size: 36px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
@@ -142,6 +144,7 @@
                 <div class="stat-card"><div class="stat-value" id="totalSupply">—</div><div style="font-size:10px; color: #888;">Total Supply</div></div>
                 <div class="stat-card"><div class="stat-value" id="daiBalance">—</div><div style="font-size:10px; color: #888;">$ Reserve</div></div>
                 <div class="stat-card"><div class="stat-value" id="marketCap">—</div><div style="font-size:10px; color: #888;">Market Cap ($)</div></div>
+                <div class="stat-card"><div class="stat-value" id="holderCount">—</div><div style="font-size:10px; color: #888;">Total Holders</div></div>
             </div>
             <div style="margin-top:15px; background:#1a1a1a; border-radius:16px; padding:12px; border-left: 3px solid #00C896;">
                 <div style="color:#00C896; font-size:11px;">📜 Contract Address</div>
@@ -158,6 +161,7 @@
         <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#writeContract" target="_blank" class="action-btn sell"><i class="fas fa-chart-line"></i> Sell FIT</a>
         <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="action-btn"><i class="fas fa-file-contract"></i> BscScan</a>
         <a href="https://github.com/FlyInfinityDAO/Fly-Infinity-Token/blob/main/FIT%20-%20White%20Paper.pdf" target="_blank" class="action-btn"><i class="fas fa-file-pdf"></i> Whitepaper</a>
+        <a href="holders.html" class="action-btn"><i class="fas fa-users"></i> Holders</a>
     </div>
 
     <!-- Chart -->
@@ -224,6 +228,27 @@
     
     let currentPriceDAI = 0;
     let priceChart = null;
+    
+    // ==================== COVALENT API FOR HOLDERS ====================
+    const COVALENT_API_KEY = "cqt_rQT4yHvC37xM7MTYpRtCw63kyX8W";  // 🔴 کلید خود را اینجا وارد کنید
+    
+    async function fetchHolderCount() {
+        try {
+            const url = `https://api.covalenthq.com/v1/56/tokens/${CONTRACT_ADDRESS}/token_holders/?key=${COVALENT_API_KEY}&page-size=1`;
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data.data && data.data.pagination) {
+                const totalHolders = data.data.pagination.total_count;
+                document.getElementById("holderCount").innerHTML = totalHolders.toLocaleString();
+            } else if (data.data && data.data.items) {
+                document.getElementById("holderCount").innerHTML = data.data.items.length.toLocaleString();
+            }
+        } catch(e) {
+            console.log("Could not fetch holder count:", e);
+            document.getElementById("holderCount").innerHTML = "—";
+        }
+    }
     
     // ==================== HISTORICAL PRICES ====================
     let historicalStats = {
@@ -318,7 +343,6 @@
             let priceDAI = parseFloat(ethers.utils.formatEther(raw));
             currentPriceDAI = priceDAI;
             
-            // نمایش قیمت دقیقاً همان عدد قرارداد
             document.getElementById("fit-price").innerHTML = currentPriceDAI.toFixed(6);
             document.getElementById("usd-price").innerHTML = `≈ $${currentPriceDAI.toFixed(4)}`;
             
@@ -391,11 +415,16 @@
         fetchLive();
         updateStats();
         updateGrowthRates();
+        if (COVALENT_API_KEY !== "YOUR_API_KEY_HERE") {
+            fetchHolderCount();
+            setInterval(fetchHolderCount, 300000);
+        }
     }
     
     document.getElementById("refreshBtn").addEventListener("click", () => {
         fetchLive();
         loadFromJSON();
+        if (COVALENT_API_KEY !== "YOUR_API_KEY_HERE") fetchHolderCount();
     });
     document.getElementById("fitAmount").addEventListener("input", updateSim);
     
