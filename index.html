@@ -83,8 +83,21 @@
         .action-btn:hover { background: #00C896; color: #0F0F0F; transform: translateY(-2px); }
         .action-btn.sell { border-color: #D4AF37; color: #D4AF37; }
         .input-group { background: #1a1a1a; padding: 12px; border-radius: 16px; display: inline-block; }
+        .input-group label { display: block; color: #00C896; font-size: 11px; margin-bottom: 6px; }
         .input-group input { background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; width: 200px; text-align: center; }
-        .growth-badge { background: #1a1a1a; border: 1px solid #00C896; border-radius: 20px; padding: 4px 10px; font-size: 11px; display: inline-block; color: #00C896; margin: 5px; }
+        
+        /* کلاس نوشته‌های روز/هفته/ماه - اطمینان از رنگ سبز */
+        .growth-badge { 
+            background: #1a1a1a; 
+            border: 1px solid #00C896; 
+            border-radius: 20px; 
+            padding: 4px 10px; 
+            font-size: 11px; 
+            display: inline-block; 
+            color: #00C896 !important; 
+            margin: 5px; 
+        }
+        
         .simulator-results { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 15px; }
         .result-box { background: #1a1a1a; border-radius: 16px; padding: 12px; text-align: center; border-bottom: 2px solid #00C896; }
         .result-return { font-size: 18px; font-weight: bold; color: #D4AF37; }
@@ -106,7 +119,7 @@
             <div class="chain-badge">🛡️ BNB Smart Chain (BSC) Mainnet</div>
             <div style="margin: 20px 0 10px 0; color: #00C896;">Current Price</div>
             <div class="live-price" id="fit-price">—</div>
-            <div class="usd-price" id="usd-price">≈ $— DAI</div>
+            <div class="usd-price" id="usd-price">≈ $— </div>
             <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh Price</button>
         </div>
         <div class="card">
@@ -114,7 +127,7 @@
             <div class="stats-grid">
                 <div class="stat-card"><div class="stat-value" id="totalSupply">—</div><div style="font-size:10px;">Total Supply</div></div>
                 <div class="stat-card"><div class="stat-value" id="daiBalance">—</div><div style="font-size:10px;">$ Reserve</div></div>
-                <div class="stat-card"><div class="stat-value" id="marketCap">—</div><div style="font-size:10px;">Market Cap</div></div>
+                <div class="stat-card"><div class="stat-value" id="marketCap">—</div><div style="font-size:10px;">Market Cap ($)</div></div>
             </div>
             <div style="margin-top:15px; background:#1a1a1a; border-radius:16px; padding:12px;">
                 <div style="color:#00C896; font-size:11px;">📜 Contract Address</div>
@@ -157,9 +170,13 @@
     <div class="card">
         <div style="font-size:18px; text-align:center; color:#D4AF37;">💰 Profit Simulator</div>
         <div style="text-align:center; margin:15px 0;">
-            <div class="input-group"><label style="color:#00C896; font-size:11px; display:block;">Your FIT Holdings</label><input type="number" id="fitAmount" value="1000" step="100"></div>
+            <div class="input-group"><label>Your FIT Holdings</label><input type="number" id="fitAmount" value="1000" step="100"></div>
         </div>
-        <div style="text-align:center;"><span class="growth-badge" id="dailyGrowthRate">📈 Daily: --</span><span class="growth-badge" id="weeklyGrowthRate">📊 Weekly: --</span><span class="growth-badge" id="monthlyGrowthRate">📅 Monthly: --</span></div>
+        <div style="text-align:center;">
+            <span class="growth-badge" id="dailyGrowthRate">📈 Daily: --</span>
+            <span class="growth-badge" id="weeklyGrowthRate">📊 Weekly: --</span>
+            <span class="growth-badge" id="monthlyGrowthRate">📅 Monthly: --</span>
+        </div>
         <div class="simulator-results">
             <div class="result-box"><div class="result-period">24h Projection</div><div class="result-return" id="dailyReturn">—</div></div>
             <div class="result-box"><div class="result-period">7 Days Projection</div><div class="result-return" id="weeklyReturn">—</div></div>
@@ -185,7 +202,7 @@
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
     const daiContract = new ethers.Contract(DAI_ADDRESS, DAI_ABI, provider);
     
-    let currentPriceDAI = 0;  // تغییر نام متغیر برای شفافیت (قیمت بر حسب DAI)
+    let currentPriceDAI = 0;
     let priceChart = null;
     
     // ==================== DEFAULT HISTORICAL PRICES (FALLBACK) ====================
@@ -204,60 +221,48 @@
             
             if (data.records && data.records.length > 0) {
                 const records = data.records.sort((a,b) => new Date(a.date) - new Date(b.date));
-                
-                // پیدا کردن آخرین قیمت (امروز یا نزدیک‌ترین روز)
                 const lastRecord = records[records.length - 1];
                 historicalStats.current = lastRecord.price;
                 
-                // پیدا کردن قیمت 1 روز پیش
                 const yesterday = new Date();
                 yesterday.setUTCDate(yesterday.getUTCDate() - 1);
                 const yesterdayStr = yesterday.toISOString().split('T')[0];
                 const yesterdayRecord = records.find(r => r.date === yesterdayStr);
                 if (yesterdayRecord) historicalStats.days1 = yesterdayRecord.price;
                 
-                // پیدا کردن قیمت 7 روز پیش
                 const sevenDaysAgo = new Date();
                 sevenDaysAgo.setUTCDate(sevenDaysAgo.getUTCDate() - 7);
                 const sevenStr = sevenDaysAgo.toISOString().split('T')[0];
                 const sevenRecord = records.find(r => r.date === sevenStr);
                 if (sevenRecord) historicalStats.days7 = sevenRecord.price;
                 
-                // پیدا کردن قیمت 30 روز پیش
                 const thirtyDaysAgo = new Date();
                 thirtyDaysAgo.setUTCDate(thirtyDaysAgo.getUTCDate() - 30);
                 const thirtyStr = thirtyDaysAgo.toISOString().split('T')[0];
                 const thirtyRecord = records.find(r => r.date === thirtyStr);
                 if (thirtyRecord) historicalStats.days30 = thirtyRecord.price;
                 
-                // پیدا کردن قیمت 90 روز پیش
                 const ninetyDaysAgo = new Date();
                 ninetyDaysAgo.setUTCDate(ninetyDaysAgo.getUTCDate() - 90);
                 const ninetyStr = ninetyDaysAgo.toISOString().split('T')[0];
                 const ninetyRecord = records.find(r => r.date === ninetyStr);
                 if (ninetyRecord) historicalStats.days90 = ninetyRecord.price;
                 
-                // پیدا کردن قیمت 180 روز پیش
                 const oneEightyAgo = new Date();
                 oneEightyAgo.setUTCDate(oneEightyAgo.getUTCDate() - 180);
                 const oneEightyStr = oneEightyAgo.toISOString().split('T')[0];
                 const oneEightyRecord = records.find(r => r.date === oneEightyStr);
                 if (oneEightyRecord) historicalStats.days180 = oneEightyRecord.price;
                 
-                // پیدا کردن قیمت 365 روز پیش
                 const threeSixFiveAgo = new Date();
                 threeSixFiveAgo.setUTCDate(threeSixFiveAgo.getUTCDate() - 365);
                 const threeSixFiveStr = threeSixFiveAgo.toISOString().split('T')[0];
                 const threeSixFiveRecord = records.find(r => r.date === threeSixFiveStr);
                 if (threeSixFiveRecord) historicalStats.days365 = threeSixFiveRecord.price;
                 
-                // قیمت ابتدایی
                 if (records[0]) historicalStats.initial = records[0].price;
                 
                 console.log("✅ Successfully loaded historical data from JSON");
-                console.log("Loaded stats:", historicalStats);
-                
-                // به‌روزرسانی صفحه بعد از لود داده‌ها
                 updateStats();
                 updateGrowthRates();
                 updateSim();
@@ -314,16 +319,16 @@
         current.setUTCDate(current.getUTCDate() + 1);
     }
     
-    // ==================== LIVE PRICE (IN DAI, NOT USD) ====================
+    // ==================== LIVE PRICE (IN DAI) ====================
     async function fetchLive() {
         try {
             let raw = await contract.Price();
             let priceDAI = parseFloat(ethers.utils.formatEther(raw));
-            currentPriceDAI = priceDAI;  // ذخیره قیمت به DAI
+            currentPriceDAI = priceDAI;
             
             // نمایش قیمت به DAI با نماد $
             document.getElementById("fit-price").innerHTML = currentPriceDAI.toFixed(6);
-            document.getElementById("usd-price").innerHTML = `≈ $${currentPriceDAI.toFixed(4)} DAI`;
+            document.getElementById("usd-price").innerHTML = `≈ $${currentPriceDAI.toFixed(4)}`;
             
             let totalSup = parseFloat(ethers.utils.formatEther(await contract.totalSupply()));
             document.getElementById("totalSupply").innerHTML = totalSup.toLocaleString(undefined, {maximumFractionDigits:0});
@@ -331,7 +336,6 @@
             let reserve = parseFloat(ethers.utils.formatEther(await daiContract.balanceOf(CONTRACT_ADDRESS)));
             document.getElementById("daiBalance").innerHTML = "$" + reserve.toLocaleString(undefined, {maximumFractionDigits:2});
             
-            // مارکت کپ بر حسب DAI (همان reserve * قیمت نیست، بلکه کل عرضه * قیمت است)
             let mcap = currentPriceDAI * totalSup;
             document.getElementById("marketCap").innerHTML = "$" + mcap.toLocaleString(undefined, {maximumFractionDigits:0});
             
@@ -386,20 +390,19 @@
         let d = ((historicalStats.current - historicalStats.days1)/historicalStats.days1)*100;
         let w = ((historicalStats.current - historicalStats.days7)/historicalStats.days7)*100;
         let m = ((historicalStats.current - historicalStats.days30)/historicalStats.days30)*100;
-        document.getElementById("dailyReturn").innerHTML = `+$${(val * d / 100).toFixed(2)} DAI`;
-        document.getElementById("weeklyReturn").innerHTML = `+$${(val * w / 100).toFixed(2)} DAI`;
-        document.getElementById("monthlyReturn").innerHTML = `+$${(val * m / 100).toFixed(2)} DAI`;
+        document.getElementById("dailyReturn").innerHTML = `+$${(val * d / 100).toFixed(2)}`;
+        document.getElementById("weeklyReturn").innerHTML = `+$${(val * w / 100).toFixed(2)}`;
+        document.getElementById("monthlyReturn").innerHTML = `+$${(val * m / 100).toFixed(2)}`;
     }
     
     // ==================== INITIALIZATION ====================
     async function init() {
-        await loadFromJSON();  // تلاش برای لود از JSON
+        await loadFromJSON();
         drawChart();
         fetchLive();
         updateStats();
         updateGrowthRates();
         
-        // اگر JSON لود شد، دوباره آمار را به‌روز کن
         setTimeout(() => {
             updateStats();
             updateGrowthRates();
