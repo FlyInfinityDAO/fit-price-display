@@ -2,20 +2,58 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Fly Infinity Token - Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* پیش‌فرض: تصویر دسکتاپ */
         body {
-            background: radial-gradient(circle at 20% 30%, #0a0a0a 0%, #0F0F0F 60%, #1a1a0a 100%);
+            background-image: url('background-desktop.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding: 20px;
             min-height: 100vh;
         }
-        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* موبایل (حداکثر عرض 768px) */
+        @media (max-width: 768px) {
+            body {
+                background-image: url('background-mobile.png');
+                background-size: cover;
+                background-position: center top;
+                background-repeat: no-repeat;
+                background-attachment: scroll;
+                padding: 15px;
+            }
+        }
+        
+        /* لایه نیمه شفاف برای خوانایی بهتر متن روی تصویر */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 15, 15, 0.6);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
         .top-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
         .card {
             background: #0F0F0F;
@@ -155,78 +193,50 @@
         days1: 6.278, days7: 6.181, days30: 6.030, days90: 5.682, days180: 1.005, days365: 1.000, initial: 1.000, current: 6.324
     };
     
-       // ==================== CHART DATA (REAL GROWTH - NO SUDDEN JUMPS) ====================
-    // نقاط کلیدی با قیمت‌های واقعی (فقط تاریخ‌هایی که قیمت دقیق دارید)
-    // ترتیب: از قدیم به جدید
+    // ==================== CHART DATA (REAL GROWTH) ====================
     const realPricePoints = [
-        { date: "2025-12-18", price: 1.000 },   // شروع
-        { date: "2026-03-18", price: 1.001 },   // 180 روز پیش
-        { date: "2026-04-01", price: 2.015 },   // شروع آوریل
-        { date: "2026-05-01", price: 3.045 },   // شروع مه
-        { date: "2026-06-01", price: 4.076 },   // شروع ژوئن
-        { date: "2026-06-06", price: 6.181 },   // 7 روز پیش
-        { date: "2026-06-12", price: 6.278 },   // دیروز
-        { date: "2026-06-13", price: 6.324 }    // امروز
+        { date: "2025-12-18", price: 1.000 },
+        { date: "2026-03-18", price: 1.001 },
+        { date: "2026-04-01", price: 2.015 },
+        { date: "2026-05-01", price: 3.045 },
+        { date: "2026-06-01", price: 4.076 },
+        { date: "2026-06-06", price: 6.181 },
+        { date: "2026-06-12", price: 6.278 },
+        { date: "2026-06-13", price: 6.324 }
     ];
     
-    // تابع درون‌یابی خطی بین دو نقطه
     function interpolatePrice(startPoint, endPoint, targetDate) {
         const startDate = new Date(startPoint.date);
         const endDate = new Date(endPoint.date);
         const target = new Date(targetDate);
-        
         const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
         const elapsedDays = (target - startDate) / (1000 * 60 * 60 * 24);
         const progress = elapsedDays / totalDays;
-        
         const price = startPoint.price + (endPoint.price - startPoint.price) * progress;
         return parseFloat(price.toFixed(6));
     }
     
-    // ساخت داده برای تمام روزها
     const chartLabels = [];
     const chartPrices = [];
-    
-    const startDate = new Date(Date.UTC(2025, 11, 18));  // 18 دسامبر 2025
-    const endDate = new Date(Date.UTC(2026, 5, 14));     // 14 ژوئن 2026
-    
+    const startDate = new Date(Date.UTC(2025, 11, 18));
+    const endDate = new Date(Date.UTC(2026, 5, 14));
     let current = new Date(startDate);
     let pointIndex = 0;
     
     while (current <= endDate) {
         const currentStr = current.toISOString().split('T')[0];
         chartLabels.push(currentStr);
-        
-        // پیدا کردن بازه مناسب برای درون‌یابی
-        while (pointIndex + 1 < realPricePoints.length && 
-               new Date(realPricePoints[pointIndex + 1].date) < current) {
-            pointIndex++;
-        }
-        
+        while (pointIndex + 1 < realPricePoints.length && new Date(realPricePoints[pointIndex + 1].date) < current) pointIndex++;
         if (pointIndex + 1 < realPricePoints.length) {
             const startPoint = realPricePoints[pointIndex];
             const endPoint = realPricePoints[pointIndex + 1];
-            
-            if (currentStr === startPoint.date) {
-                chartPrices.push(startPoint.price);
-            } else if (currentStr === endPoint.date) {
-                chartPrices.push(endPoint.price);
-                pointIndex++;
-            } else {
-                const price = interpolatePrice(startPoint, endPoint, current);
-                chartPrices.push(price);
-            }
-        } else {
-            // اگر از آخرین نقطه عبور کردیم، از آخرین قیمت استفاده کن
-            chartPrices.push(realPricePoints[realPricePoints.length - 1].price);
-        }
-        
+            if (currentStr === startPoint.date) chartPrices.push(startPoint.price);
+            else if (currentStr === endPoint.date) { chartPrices.push(endPoint.price); pointIndex++; }
+            else chartPrices.push(interpolatePrice(startPoint, endPoint, current));
+        } else chartPrices.push(realPricePoints[realPricePoints.length - 1].price);
         current.setUTCDate(current.getUTCDate() + 1);
     }
     
-    console.log(`Chart generated: ${chartLabels.length} days, from ${chartLabels[0]} to ${chartLabels[chartLabels.length-1]}`);
-    
-    // ==================== LIVE PRICE ====================
     async function getDAIUSD() {
         try { const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=dai&vs_currencies=usd'); const d = await r.json(); return d.dai?.usd || 1.00; } catch(e) { return 1.00; }
     }
@@ -249,7 +259,6 @@
         } catch(e) { console.error(e); }
     }
     
-    // ==================== CHART ====================
     function drawChart() {
         const ctx = document.getElementById('priceChart').getContext('2d');
         if (priceChart) priceChart.destroy();
@@ -260,7 +269,6 @@
         });
     }
     
-    // ==================== STATS ====================
     function updateStats() {
         const fmt = (p) => p !== undefined ? `$${p.toFixed(6)}` : "—";
         const chg = (oldP) => { if (!oldP) return "—"; let ch = ((historicalStats.current - oldP)/oldP)*100; let sign = ch>=0?"+":""; let color = ch>=0?"#00C896":"#D4AF37"; return `<span style="color:${color}">${sign}${ch.toFixed(2)}%</span>`; };
