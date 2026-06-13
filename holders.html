@@ -216,6 +216,26 @@
             color: #0F0F0F;
         }
         
+        .bscscan-link-btn {
+            display: inline-block;
+            background: transparent;
+            border: 1px solid #D4AF37;
+            color: #D4AF37;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        
+        .bscscan-link-btn:hover {
+            background: #D4AF37;
+            color: #0F0F0F;
+            transform: translateY(-2px);
+        }
+        
         .footer {
             text-align: center;
             font-size: 10px;
@@ -273,29 +293,36 @@
     <!-- لیست هولدرها -->
     <div class="card">
         <div class="card-title">
-            <i class="fas fa-trophy"></i> Token Holders
+            <i class="fas fa-trophy"></i> Token Holders (Top 20)
         </div>
         <div id="holdersContainer" class="holders-table">
             <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading holders...</div>
         </div>
     </div>
 
-    <!-- تراکنش‌های اخیر -->
+    <!-- تراکنش‌های اخیر - لینک مستقیم به BscScan -->
     <div class="card">
         <div class="card-title">
             <i class="fas fa-history"></i> Recent Transactions
         </div>
-        <div id="transactionsContainer" class="holders-table">
-            <div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading transactions...</div>
+        <div style="text-align: center; padding: 20px;">
+            <p style="color: #888; margin-bottom: 20px;">
+                <i class="fas fa-info-circle"></i> برای مشاهده تمام تراکنش‌های Buy, Sell, Become Owner و Reward، روی دکمه زیر کلیک کنید.
+            </p>
+            <a href="https://bscscan.com/txs?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="bscscan-link-btn">
+                <i class="fas fa-external-link-alt"></i> View All Transactions on BscScan
+            </a>
         </div>
         <div style="text-align: center; margin-top: 15px;">
-            <button id="refreshBtn" class="refresh-btn"><i class="fas fa-sync-alt"></i> Refresh Data</button>
+            <a href="https://bscscan.com/txsInternal?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="bscscan-link-btn" style="border-color: #00C896; color: #00C896;">
+                <i class="fas fa-cogs"></i> Internal Transactions (Become Owner / Reward)
+            </a>
         </div>
     </div>
 
     <div class="footer">
         <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank">View Contract on BscScan</a><br>
-        Fly Infinity DAO | Data via Covalent API
+        Fly Infinity DAO | Holder data via Covalent API
     </div>
 </div>
 
@@ -311,7 +338,6 @@
         container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading holders...</div>';
         
         try {
-            // Covalent API for token holders [citation:3]
             const url = `https://api.covalenthq.com/v1/${BSC_CHAIN_ID}/tokens/${CONTRACT_ADDRESS}/token_holders/?key=${COVALENT_API_KEY}`;
             const response = await fetch(url);
             const data = await response.json();
@@ -323,7 +349,6 @@
             const holders = data.data.items;
             const totalHolders = data.data.pagination.total_count || holders.length;
             
-            // Update holder count stat
             document.getElementById("holderCount").innerHTML = totalHolders.toLocaleString();
             
             if (holders.length === 0) {
@@ -331,7 +356,6 @@
                 return;
             }
             
-            // نمایش 20 هولدر اول (برای جلوگیری از سنگین شدن صفحه)
             const topHolders = holders.slice(0, 20);
             
             let html = `<table>
@@ -345,11 +369,12 @@
                 </thead>
                 <tbody>`;
             
+            let totalBalance = 0;
             topHolders.forEach((holder, index) => {
                 const address = holder.address;
                 const shortAddress = address.substring(0, 6) + "..." + address.substring(38);
                 const balance = parseFloat(holder.balance);
-                // درصد تقریبی (اگر total supply در دسترس نباشد، نمایش نمی‌دهیم)
+                totalBalance += balance;
                 const percentage = "-";
                 
                 html += `<tr>
@@ -377,77 +402,9 @@
         }
     }
     
-    // ==================== FETCH TRANSACTIONS FROM COVALENT ====================
-    async function fetchTransactions() {
-        const container = document.getElementById("transactionsContainer");
-        container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading transactions...</div>';
-        
-        try {
-            // Covalent API for token transfers
-            const url = `https://api.covalenthq.com/v1/${BSC_CHAIN_ID}/address/${CONTRACT_ADDRESS}/transfers_v2/?key=${COVALENT_API_KEY}&page-size=20`;
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            if (data.error) {
-                throw new Error(data.error_message || "API Error");
-            }
-            
-            const transfers = data.data.items;
-            
-            if (!transfers || transfers.length === 0) {
-                container.innerHTML = '<div class="error">No transactions found</div>';
-                return;
-            }
-            
-            let html = `<table>
-                <thead>
-                    <tr>
-                        <th>Tx Hash</th>
-                        <th>From</th>
-                        <th>To</th>
-                        <th>Amount (FIT)</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-            
-            transfers.forEach((tx) => {
-                const txHash = tx.tx_hash;
-                const shortHash = txHash.substring(0, 8) + "..." + txHash.substring(58);
-                const fromAddr = tx.from_address;
-                const shortFrom = fromAddr.substring(0, 6) + "..." + fromAddr.substring(38);
-                const toAddr = tx.to_address;
-                const shortTo = toAddr.substring(0, 6) + "..." + toAddr.substring(38);
-                const amount = parseFloat(tx.delta);
-                const date = new Date(tx.block_signed_at).toLocaleString();
-                
-                html += `<tr>
-                    <td><a href="https://bscscan.com/tx/${txHash}" target="_blank" class="address-link">${shortHash}</a></td>
-                    <td><a href="https://bscscan.com/address/${fromAddr}" target="_blank" class="address-link">${shortFrom}</a></td>
-                    <td><a href="https://bscscan.com/address/${toAddr}" target="_blank" class="address-link">${shortTo}</a></td>
-                    <td>${amount.toLocaleString(undefined, {maximumFractionDigits: 0})}</td>
-                    <td>${date}</td>
-                </tr>`;
-            });
-            
-            html += `</tbody>
-            </table>`;
-            
-            // Update total transactions count
-            document.getElementById("totalTransactions").innerHTML = transfers.length.toLocaleString() + "+";
-            
-            container.innerHTML = html;
-            
-        } catch(e) {
-            console.error("Error fetching transactions:", e);
-            container.innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i> Error loading transactions: ${e.message}<br><small>Please check API key</small></div>`;
-        }
-    }
-    
-    // ==================== FETCH TOKEN STATS (TOTAL SUPPLY) ====================
+    // ==================== FETCH TOKEN STATS ====================
     async function fetchTokenStats() {
         try {
-            // Get token metadata including total supply
             const url = `https://api.covalenthq.com/v1/${BSC_CHAIN_ID}/tokens/${CONTRACT_ADDRESS}/token_holders/?key=${COVALENT_API_KEY}&page-size=1`;
             const response = await fetch(url);
             const data = await response.json();
@@ -458,32 +415,38 @@
                     document.getElementById("totalSupply").innerHTML = totalSupply.toLocaleString(undefined, {maximumFractionDigits: 0});
                 }
             }
+            
+            try {
+                const txUrl = `https://api.covalenthq.com/v1/${BSC_CHAIN_ID}/address/${CONTRACT_ADDRESS}/transfers_v2/?key=${COVALENT_API_KEY}&page-size=1`;
+                const txResponse = await fetch(txUrl);
+                const txData = await txResponse.json();
+                
+                if (txData.data && txData.data.pagination) {
+                    const totalCount = txData.data.pagination.total_count;
+                    if (totalCount) {
+                        document.getElementById("totalTransactions").innerHTML = totalCount.toLocaleString();
+                    }
+                }
+            } catch(e) {
+                document.getElementById("totalTransactions").innerHTML = "—";
+            }
+            
         } catch(e) {
-            console.log("Could not fetch total supply:", e);
+            console.log("Could not fetch token stats:", e);
             document.getElementById("totalSupply").innerHTML = "6,924";
         }
     }
     
-    // ==================== REFRESH ALL DATA ====================
-    async function refreshAll() {
-        await Promise.all([
-            fetchHolders(),
-            fetchTransactions(),
-            fetchTokenStats()
-        ]);
-    }
-    
     // ==================== INITIALIZATION ====================
-    document.getElementById("refreshBtn").addEventListener("click", refreshAll);
-    
-    // بررسی وجود API Key
-    if (COVALENT_API_KEY === "cqt_rQT4yHvC37xM7MTYpRtCw63kyX8W") {
+    if (COVALENT_API_KEY === "YOUR_API_KEY_HERE") {
         document.getElementById("holdersContainer").innerHTML = '<div class="error"><i class="fas fa-key"></i> Please add your Covalent API key to the code.<br><small>Get one from: https://www.covalenthq.com/</small></div>';
-        document.getElementById("transactionsContainer").innerHTML = '<div class="error">API key required</div>';
     } else {
-        refreshAll();
-        // Auto-refresh every 5 minutes
-        setInterval(refreshAll, 300000);
+        fetchHolders();
+        fetchTokenStats();
+        setInterval(() => {
+            fetchHolders();
+            fetchTokenStats();
+        }, 300000);
     }
 </script>
 </body>
