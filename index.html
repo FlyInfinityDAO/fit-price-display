@@ -11,8 +11,6 @@
         /* ==================== CUSTOM COLOR SCHEME ==================== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        /* ==================== BACKGROUND IMAGES ==================== */
-        /* پیش‌فرض: دسکتاپ */
         body {
             background-image: url('background-desktop.png');
             background-size: cover;
@@ -24,7 +22,6 @@
             min-height: 100vh;
         }
         
-        /* موبایل (حداکثر عرض 768px) */
         @media (max-width: 768px) {
             body {
                 background-image: url('background-mobile.png');
@@ -34,19 +31,6 @@
                 background-attachment: scroll;
                 padding: 15px;
             }
-        }
-        
-        /* صفحه‌های خیلی کوچک (زیر 480px) - تنظیم دقیق‌تر */
-        @media (max-width: 480px) {
-            body {
-                background-size: contain;
-                background-position: top center;
-                background-color: #0F0F0F;
-            }
-        }
-        
-        /* Overlay برای خوانایی بهتر متن - فقط در موبایل فعال است */
-        @media (max-width: 768px) {
             body::before {
                 content: "";
                 position: fixed;
@@ -67,7 +51,6 @@
             z-index: 1;
         }
         
-        /* Cards */
         .price-card, .info-card, .chart-container, .simulator-card, .stats-card, .link-section {
             background: #0F0F0F;
             backdrop-filter: blur(10px);
@@ -371,7 +354,7 @@
             <div class="price-stat-card"><div class="price-stat-label">🔰 Initial Price</div><div class="price-stat-value" id="priceInitial">—</div><div class="price-stat-change" id="changeInitial">—</div></div>
         </div>
         <p style="color:#888; text-align:center; font-size:10px; margin-top:15px;">
-            <i class="fas fa-info-circle"></i> Based on daily recorded prices. Data will appear as history builds up.
+            <i class="fas fa-info-circle"></i> Based on daily recorded prices.
         </p>
     </div>
 
@@ -414,6 +397,7 @@
 </div>
 
 <script>
+    // ==================== CONFIGURATION ====================
     const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
     const DAI_ADDRESS = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
     
@@ -428,8 +412,11 @@
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
     const daiContract = new ethers.Contract(DAI_ADDRESS, DAI_ABI, provider);
     
-    let currentPrice = 0, currentPriceUSD = 0, totalSupplyValue = 0, daiBalanceValue = 0, historicalData = [];
+    let currentPrice = 0, currentPriceUSD = 0, totalSupplyValue = 0, daiBalanceValue = 0;
+    let historicalData = [];
+    let priceChart = null;
     
+    // ==================== FETCH LIVE PRICE ====================
     async function fetchDAIPriceUSD() {
         try {
             const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=dai&vs_currencies=usd');
@@ -464,27 +451,34 @@
         } catch(e) { console.error(e); }
     }
     
+    // ==================== HISTORICAL DATA ====================
     async function loadHistory() {
         try {
-            const response = await fetch('price-history.json');
+            console.log("Loading price history...");
+            const response = await fetch('price-history.json?t=' + new Date().getTime()); // Prevent cache
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const json = await response.json();
             historicalData = json.records.sort((a,b) => new Date(a.date) - new Date(b.date));
+            console.log(`Loaded ${historicalData.length} records`);
             renderChart();
             updatePriceStats();
             updateGrowthRates();
-        } catch(e) { console.error(e); }
+        } catch(e) {
+            console.error("Failed to load price-history.json:", e);
+            document.getElementById("priceStatsGrid").innerHTML = '<div style="color:#D4AF37; text-align:center; grid-column:span 7;">⚠️ Could not load price history. Please check file exists.</div>';
+        }
     }
     
     function renderChart() {
         const ctx = document.getElementById('priceChart').getContext('2d');
-        if (window.priceChart) window.priceChart.destroy();
+        if (priceChart) priceChart.destroy();
         if (historicalData.length === 0) {
             ctx.font = "14px Arial";
             ctx.fillStyle = "#888";
             ctx.fillText("No historical data yet. Check back tomorrow.", 30, 180);
             return;
         }
-        window.priceChart = new Chart(ctx, {
+        priceChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: historicalData.map(r => r.date),
@@ -516,6 +510,7 @@
         });
     }
     
+    // Helper: Get price at a specific date (or closest previous date)
     function getPriceAtDate(targetDate) {
         if (historicalData.length === 0) return null;
         let best = null;
@@ -527,52 +522,92 @@
     }
     
     function updatePriceStats() {
-        if (historicalData.length === 0) return;
-        const today = new Date(); today.setHours(0,0,0,0);
-        const getPriceDaysAgo = (days) => {
+        if (historicalData.length === 0) {
+            console.log("No historical data to display");
+            return;
+        }
+        
+        const today = new Date();
+        today.setUTCHours(0, 0, 0, 0);  // Use UTC for consistency
+        
+        // Helper to get price N days ago (UTC)
+        function getPriceDaysAgo(days) {
             const target = new Date(today);
-            target.setDate(today.getDate() - days);
+            target.setUTCDate(today.getUTCDate() - days);
             return getPriceAtDate(target);
-        };
+        }
+        
         const currentPriceLatest = historicalData[historicalData.length - 1].price;
-        const formatValue = (price) => price ? `$${price.toFixed(6)}` : "—";
-        const formatChange = (oldPrice) => {
-            if (!oldPrice) return "—";
+        
+        const price1d = getPriceDaysAgo(1);
+        const price7d = getPriceDaysAgo(7);
+        const price30d = getPriceDaysAgo(30);
+        const price90d = getPriceDaysAgo(90);
+        const price180d = getPriceDaysAgo(180);
+        const price365d = getPriceDaysAgo(365);
+        const initialPrice = historicalData[0]?.price || null;
+        
+        function formatValue(price) {
+            return price !== null && price !== undefined ? `$${price.toFixed(6)}` : "—";
+        }
+        
+        function formatChange(oldPrice) {
+            if (oldPrice === null || oldPrice === undefined) return "—";
             const change = ((currentPriceLatest - oldPrice) / oldPrice) * 100;
             const sign = change >= 0 ? "+" : "";
             const color = change >= 0 ? "#00C896" : "#D4AF37";
             return `<span style="color:${color}">${sign}${change.toFixed(2)}%</span>`;
-        };
+        }
         
-        document.getElementById("price1d").innerHTML = formatValue(getPriceDaysAgo(1));
-        document.getElementById("change1d").innerHTML = formatChange(getPriceDaysAgo(1));
-        document.getElementById("price7d").innerHTML = formatValue(getPriceDaysAgo(7));
-        document.getElementById("change7d").innerHTML = formatChange(getPriceDaysAgo(7));
-        document.getElementById("price30d").innerHTML = formatValue(getPriceDaysAgo(30));
-        document.getElementById("change30d").innerHTML = formatChange(getPriceDaysAgo(30));
-        document.getElementById("price90d").innerHTML = formatValue(getPriceDaysAgo(90));
-        document.getElementById("change90d").innerHTML = formatChange(getPriceDaysAgo(90));
-        document.getElementById("price180d").innerHTML = formatValue(getPriceDaysAgo(180));
-        document.getElementById("change180d").innerHTML = formatChange(getPriceDaysAgo(180));
-        document.getElementById("price365d").innerHTML = formatValue(getPriceDaysAgo(365));
-        document.getElementById("change365d").innerHTML = formatChange(getPriceDaysAgo(365));
-        document.getElementById("priceInitial").innerHTML = formatValue(historicalData[0]?.price);
-        document.getElementById("changeInitial").innerHTML = formatChange(historicalData[0]?.price);
+        // Update DOM elements
+        document.getElementById("price1d").innerHTML = formatValue(price1d);
+        document.getElementById("change1d").innerHTML = formatChange(price1d);
+        document.getElementById("price7d").innerHTML = formatValue(price7d);
+        document.getElementById("change7d").innerHTML = formatChange(price7d);
+        document.getElementById("price30d").innerHTML = formatValue(price30d);
+        document.getElementById("change30d").innerHTML = formatChange(price30d);
+        document.getElementById("price90d").innerHTML = formatValue(price90d);
+        document.getElementById("change90d").innerHTML = formatChange(price90d);
+        document.getElementById("price180d").innerHTML = formatValue(price180d);
+        document.getElementById("change180d").innerHTML = formatChange(price180d);
+        document.getElementById("price365d").innerHTML = formatValue(price365d);
+        document.getElementById("change365d").innerHTML = formatChange(price365d);
+        document.getElementById("priceInitial").innerHTML = formatValue(initialPrice);
+        document.getElementById("changeInitial").innerHTML = formatChange(initialPrice);
+        
+        console.log("Price stats updated:", {
+            current: currentPriceLatest,
+            price1d, price7d, price30d, price90d, price180d, price365d, initialPrice
+        });
+    }
+    
+    // ==================== GROWTH RATES & SIMULATOR ====================
+    function getPriceAtDateSimple(targetDate) {
+        if (historicalData.length === 0) return null;
+        let best = null;
+        for (let record of historicalData) {
+            if (new Date(record.date) <= targetDate) best = record;
+            else break;
+        }
+        return best ? best.price : null;
     }
     
     function calculateGrowthRate(daysAgo) {
         if (historicalData.length < 2) return null;
-        const today = new Date(); today.setHours(0,0,0,0);
+        const today = new Date();
+        today.setUTCHours(0, 0, 0, 0);
         const targetDate = new Date(today);
-        targetDate.setDate(today.getDate() - daysAgo);
-        const oldPrice = getPriceAtDate(targetDate);
+        targetDate.setUTCDate(today.getUTCDate() - daysAgo);
+        const oldPrice = getPriceAtDateSimple(targetDate);
         if (!oldPrice || oldPrice === 0) return null;
         const currentPriceLatest = historicalData[historicalData.length - 1].price;
         return ((currentPriceLatest - oldPrice) / oldPrice) * 100;
     }
     
     function updateGrowthRates() {
-        const d = calculateGrowthRate(1), w = calculateGrowthRate(7), m = calculateGrowthRate(30);
+        const d = calculateGrowthRate(1);
+        const w = calculateGrowthRate(7);
+        const m = calculateGrowthRate(30);
         document.getElementById("dailyGrowthRate").innerHTML = d !== null ? `📈 Daily: ${d.toFixed(2)}%` : "📈 Daily: --";
         document.getElementById("weeklyGrowthRate").innerHTML = w !== null ? `📊 Weekly: ${w.toFixed(2)}%` : "📊 Weekly: --";
         document.getElementById("monthlyGrowthRate").innerHTML = m !== null ? `📅 Monthly: ${m.toFixed(2)}%` : "📅 Monthly: --";
@@ -587,7 +622,9 @@
             return;
         }
         const currentValue = fitAmount * currentPriceUSD;
-        const d = calculateGrowthRate(1), w = calculateGrowthRate(7), m = calculateGrowthRate(30);
+        const d = calculateGrowthRate(1);
+        const w = calculateGrowthRate(7);
+        const m = calculateGrowthRate(30);
         let dailyProfit = d ? currentValue * d / 100 : 0;
         let weeklyProfit = w ? currentValue * w / 100 : 0;
         let monthlyProfit = m ? currentValue * m / 100 : 0;
@@ -596,9 +633,11 @@
         document.getElementById("monthlyReturn").innerHTML = monthlyProfit >= 0 ? `+$${monthlyProfit.toFixed(2)}` : `-$${Math.abs(monthlyProfit).toFixed(2)}`;
     }
     
+    // ==================== EVENT LISTENERS ====================
     document.getElementById("refreshBtn").addEventListener("click", () => fetchLivePrice());
     document.getElementById("fitAmount").addEventListener("input", updateSimulator);
     
+    // ==================== INITIAL LOAD ====================
     fetchLivePrice();
     loadHistory();
     setInterval(fetchLivePrice, 30000);
