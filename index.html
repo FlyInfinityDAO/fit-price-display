@@ -169,51 +169,201 @@
     let currentPrice = 0, currentPriceUSD = 0, totalSupplyValue = 0, daiBalanceValue = 0;
     let priceChart = null;
     
-    // ==================== COMPLETE CHART DATA (DAILY FROM DEC 18 TO JUN 13) ====================
-    // این آرایه شامل قیمت‌های روزانه از 18 دسامبر تا 13 ژوئن است
-    // برای روزهای 18 دسامبر تا 17 مارس: قیمت 1.00
-    // برای روزهای 18 مارس تا 11 ژوئن: رشد خطی از 1.001 به 1.086
-    // برای 12 ژوئن: 6.278
-    // برای 13 ژوئن: 6.324
+    // ==================== ACCURATE HISTORICAL PRICES (BASED ON YOUR DATA) ====================
+    // این مقادیر دقیقاً بر اساس اطلاعاتی است که شما ارائه دادید
+    const historicalPrices = {
+        initial: 1.000,      // 2025-12-18
+        days365: 1.000,      // ~365 days ago
+        days180: 1.005,      // 180 days ago
+        days90: 5.682,       // 90 days ago
+        days30: 6.030,       // 30 days ago
+        days7: 6.278,        // 7 days ago
+        days1: 6.278,        // 24 hours ago
+        current: 6.324       // today
+    };
     
-    function generateDailyData() {
-        const data = [];
-        // روزهای ثابت 1.00 از 18 دسامبر تا 17 مارس (90 روز)
-        for (let i = 0; i < 90; i++) {
-            const date = new Date(Date.UTC(2025, 11, 18 + i));
-            data.push({
-                date: date.toISOString().split('T')[0],
-                price: 1.000
-            });
-        }
-        
-        // رشد خطی از 18 مارس تا 11 ژوئن (86 روز) از 1.001 به 1.086
-        const startPrice = 1.001;
-        const endPrice = 1.086;
-        const steps = 86;
-        for (let i = 0; i <= steps; i++) {
-            const date = new Date(Date.UTC(2026, 2, 17 + i));
-            const progress = i / steps;
-            const price = startPrice + (endPrice - startPrice) * progress;
-            data.push({
-                date: date.toISOString().split('T')[0],
-                price: parseFloat(price.toFixed(6))
-            });
-        }
-        
-        // 12 ژوئن 2026 - جهش به 6.278
-        data.push({ date: "2026-06-12", price: 6.278 });
-        
-        // 13 ژوئن 2026 - 6.324
-        data.push({ date: "2026-06-13", price: 6.324 });
-        
-        // 14 ژوئن 2026 - همان 6.324 (برای امروز)
-        data.push({ date: "2026-06-14", price: 6.324 });
-        
-        return data;
-    }
-    
-    const historicalData = generateDailyData();
+    // داده‌های دقیق برای نمودار (نقاط کلیدی)
+    const chartDataPoints = [
+        { date: "2025-12-18", price: 1.000, label: "Initial" },
+        { date: "2025-12-19", price: 1.000 },
+        { date: "2025-12-20", price: 1.000 },
+        { date: "2025-12-21", price: 1.000 },
+        { date: "2025-12-22", price: 1.000 },
+        { date: "2025-12-23", price: 1.000 },
+        { date: "2025-12-24", price: 1.000 },
+        { date: "2025-12-25", price: 1.000 },
+        { date: "2025-12-26", price: 1.000 },
+        { date: "2025-12-27", price: 1.000 },
+        { date: "2025-12-28", price: 1.000 },
+        { date: "2025-12-29", price: 1.000 },
+        { date: "2025-12-30", price: 1.000 },
+        { date: "2025-12-31", price: 1.000 },
+        { date: "2026-01-01", price: 1.000 },
+        { date: "2026-01-02", price: 1.000 },
+        { date: "2026-01-03", price: 1.000 },
+        { date: "2026-01-04", price: 1.000 },
+        { date: "2026-01-05", price: 1.000 },
+        { date: "2026-01-06", price: 1.000 },
+        { date: "2026-01-07", price: 1.000 },
+        { date: "2026-01-08", price: 1.000 },
+        { date: "2026-01-09", price: 1.000 },
+        { date: "2026-01-10", price: 1.000 },
+        { date: "2026-01-11", price: 1.000 },
+        { date: "2026-01-12", price: 1.000 },
+        { date: "2026-01-13", price: 1.000 },
+        { date: "2026-01-14", price: 1.000 },
+        { date: "2026-01-15", price: 1.000 },
+        { date: "2026-01-16", price: 1.000 },
+        { date: "2026-01-17", price: 1.000 },
+        { date: "2026-01-18", price: 1.000 },
+        { date: "2026-01-19", price: 1.000 },
+        { date: "2026-01-20", price: 1.000 },
+        { date: "2026-01-21", price: 1.000 },
+        { date: "2026-01-22", price: 1.000 },
+        { date: "2026-01-23", price: 1.000 },
+        { date: "2026-01-24", price: 1.000 },
+        { date: "2026-01-25", price: 1.000 },
+        { date: "2026-01-26", price: 1.000 },
+        { date: "2026-01-27", price: 1.000 },
+        { date: "2026-01-28", price: 1.000 },
+        { date: "2026-01-29", price: 1.000 },
+        { date: "2026-01-30", price: 1.000 },
+        { date: "2026-01-31", price: 1.000 },
+        { date: "2026-02-01", price: 1.000 },
+        { date: "2026-02-02", price: 1.000 },
+        { date: "2026-02-03", price: 1.000 },
+        { date: "2026-02-04", price: 1.000 },
+        { date: "2026-02-05", price: 1.000 },
+        { date: "2026-02-06", price: 1.000 },
+        { date: "2026-02-07", price: 1.000 },
+        { date: "2026-02-08", price: 1.000 },
+        { date: "2026-02-09", price: 1.000 },
+        { date: "2026-02-10", price: 1.000 },
+        { date: "2026-02-11", price: 1.000 },
+        { date: "2026-02-12", price: 1.000 },
+        { date: "2026-02-13", price: 1.000 },
+        { date: "2026-02-14", price: 1.000 },
+        { date: "2026-02-15", price: 1.000 },
+        { date: "2026-02-16", price: 1.000 },
+        { date: "2026-02-17", price: 1.000 },
+        { date: "2026-02-18", price: 1.000 },
+        { date: "2026-02-19", price: 1.000 },
+        { date: "2026-02-20", price: 1.000 },
+        { date: "2026-02-21", price: 1.000 },
+        { date: "2026-02-22", price: 1.000 },
+        { date: "2026-02-23", price: 1.000 },
+        { date: "2026-02-24", price: 1.000 },
+        { date: "2026-02-25", price: 1.000 },
+        { date: "2026-02-26", price: 1.000 },
+        { date: "2026-02-27", price: 1.000 },
+        { date: "2026-02-28", price: 1.000 },
+        { date: "2026-03-01", price: 1.000 },
+        { date: "2026-03-02", price: 1.000 },
+        { date: "2026-03-03", price: 1.000 },
+        { date: "2026-03-04", price: 1.000 },
+        { date: "2026-03-05", price: 1.000 },
+        { date: "2026-03-06", price: 1.000 },
+        { date: "2026-03-07", price: 1.000 },
+        { date: "2026-03-08", price: 1.000 },
+        { date: "2026-03-09", price: 1.000 },
+        { date: "2026-03-10", price: 1.000 },
+        { date: "2026-03-11", price: 1.000 },
+        { date: "2026-03-12", price: 1.000 },
+        { date: "2026-03-13", price: 1.000 },
+        { date: "2026-03-14", price: 1.000 },
+        { date: "2026-03-15", price: 1.000 },
+        { date: "2026-03-16", price: 1.000 },
+        { date: "2026-03-17", price: 1.000 },
+        { date: "2026-03-18", price: 1.001 },
+        { date: "2026-03-19", price: 1.002 },
+        { date: "2026-03-20", price: 1.003 },
+        { date: "2026-03-21", price: 1.004 },
+        { date: "2026-03-22", price: 1.005 },
+        { date: "2026-03-23", price: 1.006 },
+        { date: "2026-03-24", price: 1.007 },
+        { date: "2026-03-25", price: 1.008 },
+        { date: "2026-03-26", price: 1.009 },
+        { date: "2026-03-27", price: 1.010 },
+        { date: "2026-03-28", price: 1.011 },
+        { date: "2026-03-29", price: 1.012 },
+        { date: "2026-03-30", price: 1.013 },
+        { date: "2026-03-31", price: 1.014 },
+        { date: "2026-04-01", price: 1.015 },
+        { date: "2026-04-02", price: 1.016 },
+        { date: "2026-04-03", price: 1.017 },
+        { date: "2026-04-04", price: 1.018 },
+        { date: "2026-04-05", price: 1.019 },
+        { date: "2026-04-06", price: 1.020 },
+        { date: "2026-04-07", price: 1.021 },
+        { date: "2026-04-08", price: 1.022 },
+        { date: "2026-04-09", price: 1.023 },
+        { date: "2026-04-10", price: 1.024 },
+        { date: "2026-04-11", price: 1.025 },
+        { date: "2026-04-12", price: 1.026 },
+        { date: "2026-04-13", price: 1.027 },
+        { date: "2026-04-14", price: 1.028 },
+        { date: "2026-04-15", price: 1.029 },
+        { date: "2026-04-16", price: 1.030 },
+        { date: "2026-04-17", price: 1.031 },
+        { date: "2026-04-18", price: 1.032 },
+        { date: "2026-04-19", price: 1.033 },
+        { date: "2026-04-20", price: 1.034 },
+        { date: "2026-04-21", price: 1.035 },
+        { date: "2026-04-22", price: 1.036 },
+        { date: "2026-04-23", price: 1.037 },
+        { date: "2026-04-24", price: 1.038 },
+        { date: "2026-04-25", price: 1.039 },
+        { date: "2026-04-26", price: 1.040 },
+        { date: "2026-04-27", price: 1.041 },
+        { date: "2026-04-28", price: 1.042 },
+        { date: "2026-04-29", price: 1.043 },
+        { date: "2026-04-30", price: 1.044 },
+        { date: "2026-05-01", price: 1.045 },
+        { date: "2026-05-02", price: 1.046 },
+        { date: "2026-05-03", price: 1.047 },
+        { date: "2026-05-04", price: 1.048 },
+        { date: "2026-05-05", price: 1.049 },
+        { date: "2026-05-06", price: 1.050 },
+        { date: "2026-05-07", price: 1.051 },
+        { date: "2026-05-08", price: 1.052 },
+        { date: "2026-05-09", price: 1.053 },
+        { date: "2026-05-10", price: 1.054 },
+        { date: "2026-05-11", price: 1.055 },
+        { date: "2026-05-12", price: 1.056 },
+        { date: "2026-05-13", price: 1.057 },
+        { date: "2026-05-14", price: 1.058 },
+        { date: "2026-05-15", price: 1.059 },
+        { date: "2026-05-16", price: 1.060 },
+        { date: "2026-05-17", price: 1.061 },
+        { date: "2026-05-18", price: 1.062 },
+        { date: "2026-05-19", price: 1.063 },
+        { date: "2026-05-20", price: 1.064 },
+        { date: "2026-05-21", price: 1.065 },
+        { date: "2026-05-22", price: 1.066 },
+        { date: "2026-05-23", price: 1.067 },
+        { date: "2026-05-24", price: 1.068 },
+        { date: "2026-05-25", price: 1.069 },
+        { date: "2026-05-26", price: 1.070 },
+        { date: "2026-05-27", price: 1.071 },
+        { date: "2026-05-28", price: 1.072 },
+        { date: "2026-05-29", price: 1.073 },
+        { date: "2026-05-30", price: 1.074 },
+        { date: "2026-05-31", price: 1.075 },
+        { date: "2026-06-01", price: 1.076 },
+        { date: "2026-06-02", price: 1.077 },
+        { date: "2026-06-03", price: 1.078 },
+        { date: "2026-06-04", price: 1.079 },
+        { date: "2026-06-05", price: 1.080 },
+        { date: "2026-06-06", price: 1.081 },
+        { date: "2026-06-07", price: 1.082 },
+        { date: "2026-06-08", price: 1.083 },
+        { date: "2026-06-09", price: 1.084 },
+        { date: "2026-06-10", price: 1.085 },
+        { date: "2026-06-11", price: 1.086 },
+        { date: "2026-06-12", price: 6.278 },
+        { date: "2026-06-13", price: 6.324 },
+        { date: "2026-06-14", price: 6.324 }
+    ];
     
     // ==================== FETCH LIVE PRICE ====================
     async function fetchDAIPriceUSD() { 
@@ -250,9 +400,9 @@
         } catch(e) { console.error(e); } 
     }
     
-    // ==================== CHART AND HISTORICAL PRICES ====================
+    // ==================== CHART ====================
     function loadHistory() { 
-        console.log("Loading chart with", historicalData.length, "data points");
+        console.log("Loading chart with", chartDataPoints.length, "data points");
         renderChart(); 
         updatePriceStats(); 
         updateGrowthRates();
@@ -261,23 +411,17 @@
     function renderChart() { 
         const ctx = document.getElementById('priceChart').getContext('2d'); 
         if (priceChart) priceChart.destroy(); 
-        if (historicalData.length === 0) return; 
         
-        // برای خوانایی بهتر، فقط هر 7 روز یک برچسب نشان داده شود
-        const allLabels = historicalData.map(r => r.date);
-        const allPrices = historicalData.map(r => r.price);
-        
-        // فیلتر برای نمایش برچسب‌های کمتر (اختیاری)
-        const step = Math.ceil(historicalData.length / 30);
-        const filteredLabels = allLabels.filter((_, i) => i % step === 0);
+        const labels = chartDataPoints.map(r => r.date);
+        const prices = chartDataPoints.map(r => r.price);
         
         priceChart = new Chart(ctx, { 
             type: 'line', 
             data: { 
-                labels: allLabels, 
+                labels: labels, 
                 datasets: [{ 
                     label: 'FIT Price ($)', 
-                    data: allPrices, 
+                    data: prices, 
                     borderColor: '#D4AF37', 
                     backgroundColor: 'rgba(212, 175, 55, 0.1)', 
                     borderWidth: 2, 
@@ -309,75 +453,56 @@
         }); 
     }
     
-    function getPriceForDate(dateStr) { 
-        const exact = historicalData.find(r => r.date === dateStr); 
-        if (exact) return exact.price; 
-        let best = null; 
-        for (let record of historicalData) { 
-            if (record.date <= dateStr) best = record; 
-            else break; 
-        } 
-        return best ? best.price : null; 
-    }
-    
-    function updatePriceStats() { 
-        const today = new Date(); 
-        today.setUTCHours(0, 0, 0, 0);
-        const currentPriceLatest = historicalData[historicalData.length - 1].price; 
+    // ==================== HISTORICAL PRICE STATS ====================
+    function updatePriceStats() {
+        const currentPriceLatest = historicalPrices.current;
         
-        function getPriceDaysAgo(days) { 
-            const target = new Date(today); 
-            target.setUTCDate(today.getUTCDate() - days); 
-            const targetStr = target.toISOString().split('T')[0];
-            console.log(`Looking for ${days} days ago: ${targetStr}`);
-            return getPriceForDate(targetStr); 
-        } 
-        
-        const price1d = getPriceDaysAgo(1); 
-        const price7d = getPriceDaysAgo(7); 
-        const price30d = getPriceDaysAgo(30); 
-        const price90d = getPriceDaysAgo(90); 
-        const price180d = getPriceDaysAgo(180); 
-        const price365d = getPriceDaysAgo(365); 
-        const initialPrice = historicalData[0]?.price; 
+        // استفاده از مقادیر دقیقی که شما ارائه دادید
+        const price1d = historicalPrices.days1;
+        const price7d = historicalPrices.days7;
+        const price30d = historicalPrices.days30;
+        const price90d = historicalPrices.days90;
+        const price180d = historicalPrices.days180;
+        const price365d = historicalPrices.days365;
+        const initialPrice = historicalPrices.initial;
         
         console.log("Prices found:", { price1d, price7d, price30d, price90d, price180d, price365d, initialPrice });
         
-        function formatValue(p) { return (p !== null && p !== undefined) ? `$${p.toFixed(6)}` : "—"; } 
+        function formatValue(p) { 
+            return (p !== null && p !== undefined) ? `$${p.toFixed(6)}` : "—"; 
+        }
+        
         function formatChange(oldP) { 
             if (!oldP) return "—"; 
             const change = ((currentPriceLatest - oldP) / oldP) * 100; 
             const sign = change >= 0 ? "+" : ""; 
             const color = change >= 0 ? "#00C896" : "#D4AF37"; 
             return `<span style="color:${color}">${sign}${change.toFixed(2)}%</span>`; 
-        } 
+        }
         
-        document.getElementById("price1d").innerHTML = formatValue(price1d); 
-        document.getElementById("change1d").innerHTML = formatChange(price1d); 
-        document.getElementById("price7d").innerHTML = formatValue(price7d); 
-        document.getElementById("change7d").innerHTML = formatChange(price7d); 
-        document.getElementById("price30d").innerHTML = formatValue(price30d); 
-        document.getElementById("change30d").innerHTML = formatChange(price30d); 
-        document.getElementById("price90d").innerHTML = formatValue(price90d); 
-        document.getElementById("change90d").innerHTML = formatChange(price90d); 
-        document.getElementById("price180d").innerHTML = formatValue(price180d); 
-        document.getElementById("change180d").innerHTML = formatChange(price180d); 
-        document.getElementById("price365d").innerHTML = formatValue(price365d); 
-        document.getElementById("change365d").innerHTML = formatChange(price365d); 
-        document.getElementById("priceInitial").innerHTML = formatValue(initialPrice); 
-        document.getElementById("changeInitial").innerHTML = formatChange(initialPrice); 
+        document.getElementById("price1d").innerHTML = formatValue(price1d);
+        document.getElementById("change1d").innerHTML = formatChange(price1d);
+        document.getElementById("price7d").innerHTML = formatValue(price7d);
+        document.getElementById("change7d").innerHTML = formatChange(price7d);
+        document.getElementById("price30d").innerHTML = formatValue(price30d);
+        document.getElementById("change30d").innerHTML = formatChange(price30d);
+        document.getElementById("price90d").innerHTML = formatValue(price90d);
+        document.getElementById("change90d").innerHTML = formatChange(price90d);
+        document.getElementById("price180d").innerHTML = formatValue(price180d);
+        document.getElementById("change180d").innerHTML = formatChange(price180d);
+        document.getElementById("price365d").innerHTML = formatValue(price365d);
+        document.getElementById("change365d").innerHTML = formatChange(price365d);
+        document.getElementById("priceInitial").innerHTML = formatValue(initialPrice);
+        document.getElementById("changeInitial").innerHTML = formatChange(initialPrice);
     }
     
-    function calculateGrowthRate(daysAgo) { 
-        const today = new Date(); 
-        today.setUTCHours(0, 0, 0, 0);
-        const target = new Date(today); 
-        target.setUTCDate(today.getUTCDate() - daysAgo); 
-        const targetStr = target.toISOString().split('T')[0];
-        const oldPrice = getPriceForDate(targetStr); 
-        if (!oldPrice) return null; 
-        const current = historicalData[historicalData.length-1].price; 
-        return ((current - oldPrice) / oldPrice) * 100; 
+    function calculateGrowthRate(daysAgo) {
+        let oldPrice = null;
+        if (daysAgo === 1) oldPrice = historicalPrices.days1;
+        else if (daysAgo === 7) oldPrice = historicalPrices.days7;
+        else if (daysAgo === 30) oldPrice = historicalPrices.days30;
+        if (!oldPrice) return null;
+        return ((historicalPrices.current - oldPrice) / oldPrice) * 100;
     }
     
     function updateGrowthRates() { 
