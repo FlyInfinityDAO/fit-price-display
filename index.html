@@ -169,22 +169,23 @@
     let currentPrice = 0, currentPriceUSD = 0, totalSupplyValue = 0, daiBalanceValue = 0;
     let priceChart = null;
     
-    // ==================== ACCURATE HISTORICAL PRICES (BASED ON YOUR DATA) ====================
-    // این مقادیر دقیقاً بر اساس اطلاعاتی است که شما ارائه دادید
-    const historicalPrices = {
-        initial: 1.000,      // 2025-12-18
-        days365: 1.000,      // ~365 days ago
-        days180: 1.005,      // 180 days ago
-        days90: 5.682,       // 90 days ago
-        days30: 6.030,       // 30 days ago
-        days7: 6.278,        // 7 days ago
-        days1: 6.278,        // 24 hours ago
-        current: 6.324       // today
+    // ==================== EXACT HISTORICAL PRICES (WORKING VERSION) ====================
+    // این مقادیر دقیقاً همان‌هایی هستند که در تصویر شما کار می‌کردند
+    const exactHistoricalPrices = {
+        days1: 6.278,      // 24 hours ago
+        days7: 6.181,      // 7 days ago  
+        days30: 6.030,     // 30 days ago
+        days90: 5.682,     // 90 days ago
+        days180: 1.005,    // 180 days ago
+        days365: 1.000,    // 365 days ago
+        initial: 1.000,    // Initial price
+        current: 6.324     // Current price
     };
     
-    // داده‌های دقیق برای نمودار (نقاط کلیدی)
+    // ==================== COMPLETE CHART DATA (179 POINTS) ====================
+    // این داده‌ها فقط برای نمودار استفاده می‌شوند و به تاریخچه قیمت آسیبی نمی‌زنند
     const chartDataPoints = [
-        { date: "2025-12-18", price: 1.000, label: "Initial" },
+        { date: "2025-12-18", price: 1.000 },
         { date: "2025-12-19", price: 1.000 },
         { date: "2025-12-20", price: 1.000 },
         { date: "2025-12-21", price: 1.000 },
@@ -400,15 +401,15 @@
         } catch(e) { console.error(e); } 
     }
     
-    // ==================== CHART ====================
+    // ==================== CHART (COMPLETE) ====================
     function loadHistory() { 
-        console.log("Loading chart with", chartDataPoints.length, "data points");
-        renderChart(); 
+        console.log("Loading complete chart with", chartDataPoints.length, "data points");
+        renderCompleteChart(); 
         updatePriceStats(); 
         updateGrowthRates();
     }
     
-    function renderChart() { 
+    function renderCompleteChart() { 
         const ctx = document.getElementById('priceChart').getContext('2d'); 
         if (priceChart) priceChart.destroy(); 
         
@@ -427,7 +428,7 @@
                     borderWidth: 2, 
                     fill: true, 
                     tension: 0.3, 
-                    pointRadius: 0.5, 
+                    pointRadius: 0, 
                     pointBackgroundColor: '#00C896' 
                 }] 
             }, 
@@ -453,20 +454,19 @@
         }); 
     }
     
-    // ==================== HISTORICAL PRICE STATS ====================
+    // ==================== HISTORICAL PRICE STATS (WORKING VERSION) ====================
     function updatePriceStats() {
-        const currentPriceLatest = historicalPrices.current;
+        // استفاده از مقادیر دقیقی که در تصویر شما کار می‌کردند
+        const currentPriceLatest = exactHistoricalPrices.current;
+        const price1d = exactHistoricalPrices.days1;
+        const price7d = exactHistoricalPrices.days7;
+        const price30d = exactHistoricalPrices.days30;
+        const price90d = exactHistoricalPrices.days90;
+        const price180d = exactHistoricalPrices.days180;
+        const price365d = exactHistoricalPrices.days365;
+        const initialPrice = exactHistoricalPrices.initial;
         
-        // استفاده از مقادیر دقیقی که شما ارائه دادید
-        const price1d = historicalPrices.days1;
-        const price7d = historicalPrices.days7;
-        const price30d = historicalPrices.days30;
-        const price90d = historicalPrices.days90;
-        const price180d = historicalPrices.days180;
-        const price365d = historicalPrices.days365;
-        const initialPrice = historicalPrices.initial;
-        
-        console.log("Prices found:", { price1d, price7d, price30d, price90d, price180d, price365d, initialPrice });
+        console.log("Prices found (exact working values):", { price1d, price7d, price30d, price90d, price180d, price365d, initialPrice });
         
         function formatValue(p) { 
             return (p !== null && p !== undefined) ? `$${p.toFixed(6)}` : "—"; 
@@ -498,11 +498,11 @@
     
     function calculateGrowthRate(daysAgo) {
         let oldPrice = null;
-        if (daysAgo === 1) oldPrice = historicalPrices.days1;
-        else if (daysAgo === 7) oldPrice = historicalPrices.days7;
-        else if (daysAgo === 30) oldPrice = historicalPrices.days30;
+        if (daysAgo === 1) oldPrice = exactHistoricalPrices.days1;
+        else if (daysAgo === 7) oldPrice = exactHistoricalPrices.days7;
+        else if (daysAgo === 30) oldPrice = exactHistoricalPrices.days30;
         if (!oldPrice) return null;
-        return ((historicalPrices.current - oldPrice) / oldPrice) * 100;
+        return ((exactHistoricalPrices.current - oldPrice) / oldPrice) * 100;
     }
     
     function updateGrowthRates() { 
