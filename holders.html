@@ -49,7 +49,7 @@
             z-index: 1;
         }
         
-        /* Header Navigation */
+        /* Navigation Bar */
         .nav-bar {
             background: #0F0F0F;
             backdrop-filter: blur(10px);
@@ -125,7 +125,7 @@
             color: #00C896;
         }
         
-        /* Stats Grid for Holders Summary */
+        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -155,22 +155,73 @@
             letter-spacing: 1px;
         }
         
-        /* IFrame Styling */
-        .iframe-container {
-            background: #0a0a0a;
+        /* Button Links to BscScan */
+        .link-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .bscscan-link {
+            background: #1a1a1a;
             border-radius: 20px;
-            overflow: hidden;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        
+        .bscscan-link:hover {
+            transform: translateY(-3px);
+            border-color: #00C896;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        .bscscan-link i {
+            font-size: 32px;
+            color: #D4AF37;
+            margin-bottom: 10px;
+        }
+        
+        .bscscan-link h3 {
+            color: #D4AF37;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .bscscan-link p {
+            color: #888;
+            font-size: 12px;
+        }
+        
+        .bscscan-link .arrow {
+            color: #00C896;
+            margin-top: 10px;
+            display: inline-block;
+            font-size: 12px;
+        }
+        
+        /* Info Box */
+        .info-box {
+            background: rgba(0, 200, 150, 0.1);
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
             border: 1px solid rgba(0, 200, 150, 0.3);
         }
         
-        .iframe-container iframe {
-            width: 100%;
-            height: 500px;
-            border: none;
-            background: #fff;
+        .info-box p {
+            color: #00C896;
+            font-size: 13px;
         }
         
-        /* Footer */
+        .info-box i {
+            margin-right: 8px;
+        }
+        
         .footer {
             text-align: center;
             font-size: 10px;
@@ -187,11 +238,11 @@
                 flex-direction: column;
                 text-align: center;
             }
-            .iframe-container iframe {
-                height: 400px;
-            }
             .stat-number {
                 font-size: 24px;
+            }
+            .link-buttons {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -209,15 +260,12 @@
         </div>
     </div>
 
-    <!-- توضیح اولیه -->
-    <div class="card" style="text-align: center; background: rgba(0, 200, 150, 0.05);">
-        <p style="color: #00C896;">
-            <i class="fas fa-info-circle"></i> اطلاعات زیر مستقیماً از BscScan گرفته می‌شود. 
-            برای مشاهده جزئیات بیشتر، می‌توانید روی هر جدول کلیک کنید.
-        </p>
+    <!-- Info Box -->
+    <div class="info-box">
+        <p><i class="fas fa-external-link-alt"></i> کلیک روی هر گزینه شما را به صفحه مربوطه در BscScan هدایت می‌کند.</p>
     </div>
 
-    <!-- خلاصه آمار هولدرها (نمایش دستی با لینک مستقیم) -->
+    <!-- خلاصه آمار هولدرها -->
     <div class="stats-grid">
         <div class="stat-box">
             <div class="stat-number" id="holderCount">—</div>
@@ -229,87 +277,89 @@
         </div>
         <div class="stat-box">
             <div class="stat-number" id="top1Percent">—</div>
-            <div class="stat-label"><i class="fas fa-crown"></i> Top 1 Holder</div>
+            <div class="stat-label"><i class="fas fa-crown"></i> Top 1% Holders</div>
         </div>
     </div>
 
-    <!-- Holder Distribution Chart (BscScan Page in iframe) -->
+    <!-- Links to BscScan (بدون iframe) -->
     <div class="card">
         <div class="card-title">
-            <i class="fas fa-chart-pie"></i> Holder Distribution
+            <i class="fas fa-chart-pie"></i> Holder Information
         </div>
-        <div class="iframe-container">
-            <iframe 
-                src="https://bscscan.com/token/tokenholderchart/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa"
-                title="FIT Holder Distribution"
-                loading="lazy">
-            </iframe>
-        </div>
-        <p style="color:#888; text-align:center; margin-top:10px; font-size:11px;">
-            <i class="fas fa-external-link-alt"></i> 
-            <a href="https://bscscan.com/token/tokenholderchart/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" style="color:#00C896;">
-                مشاهده کامل در BscScan
+        <div class="link-buttons">
+            <a href="https://bscscan.com/token/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="bscscan-link">
+                <i class="fas fa-chart-simple"></i>
+                <h3>Token Overview</h3>
+                <p>مشاهده اطلاعات کلی توکن، کل عرضه و...</p>
+                <span class="arrow">→ BscScan</span>
             </a>
-        </p>
-    </div>
-
-    <!-- Top Holders List -->
-    <div class="card">
-        <div class="card-title">
-            <i class="fas fa-list-ol"></i> Top Holders (by BscScan)
-        </div>
-        <div class="iframe-container">
-            <iframe 
-                src="https://bscscan.com/token/tokenholderchart/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa?type=holders"
-                title="FIT Top Holders"
-                loading="lazy">
-            </iframe>
-        </div>
-        <p style="color:#888; text-align:center; margin-top:10px; font-size:11px;">
-            <i class="fas fa-external-link-alt"></i> 
-            <a href="https://bscscan.com/token/tokenholderchart/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" style="color:#00C896;">
-                مشاهده تمام هولدرها در BscScan
+            <a href="https://bscscan.com/token/tokenholderchart/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="bscscan-link">
+                <i class="fas fa-chart-pie"></i>
+                <h3>Holder Distribution</h3>
+                <p>نمودار توزیع هولدرها و درصدهای مالکیت</p>
+                <span class="arrow">→ BscScan</span>
             </a>
-        </p>
-    </div>
-
-    <!-- Recent Transactions -->
-    <div class="card">
-        <div class="card-title">
-            <i class="fas fa-history"></i> Recent Transactions
-        </div>
-        <div class="iframe-container">
-            <iframe 
-                src="https://bscscan.com/txs?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa"
-                title="FIT Transactions"
-                loading="lazy">
-            </iframe>
-        </div>
-        <p style="color:#888; text-align:center; margin-top:10px; font-size:11px;">
-            <i class="fas fa-external-link-alt"></i> 
-            <a href="https://bscscan.com/txs?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" style="color:#00C896;">
-                مشاهده تمام تراکنش‌ها در BscScan
+            <a href="https://bscscan.com/token/gauge?type=holders&a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="bscscan-link">
+                <i class="fas fa-list-ol"></i>
+                <h3>Top Holders List</h3>
+                <p>لیست کامل هولدرها به همراه میزان FIT</p>
+                <span class="arrow">→ BscScan</span>
             </a>
-        </p>
+        </div>
     </div>
 
-    <!-- Internal Transactions (برای Become_Owner و Reward) -->
+    <!-- Transactions Links -->
     <div class="card">
         <div class="card-title">
-            <i class="fas fa-exchange-alt"></i> Internal Transactions (Become Owner & Reward)
+            <i class="fas fa-history"></i> Transaction History
         </div>
-        <div class="iframe-container">
-            <iframe 
-                src="https://bscscan.com/txsInternal?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa"
-                title="FIT Internal Transactions"
-                loading="lazy">
-            </iframe>
+        <div class="link-buttons">
+            <a href="https://bscscan.com/txs?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="bscscan-link">
+                <i class="fas fa-exchange-alt"></i>
+                <h3>All Transactions</h3>
+                <p>مشاهده تمام تراکنش‌های توکن FIT</p>
+                <span class="arrow">→ BscScan</span>
+            </a>
+            <a href="https://bscscan.com/txsInternal?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="bscscan-link">
+                <i class="fas fa-cogs"></i>
+                <h3>Internal Transactions</h3>
+                <p><span style="color:#00C896;">Become Owner</span> و <span style="color:#D4AF37;">Reward</span> تراکنش‌های داخلی</p>
+                <span class="arrow">→ BscScan</span>
+            </a>
+            <a href="https://bscscan.com/tokentxns?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="bscscan-link">
+                <i class="fas fa-arrow-right-arrow-left"></i>
+                <h3>Token Transfers</h3>
+                <p>تراکنش‌های انتقال توکن بین آدرس‌ها</p>
+                <span class="arrow">→ BscScan</span>
+            </a>
         </div>
-        <p style="color:#888; text-align:center; margin-top:10px; font-size:11px;">
-            <i class="fas fa-info-circle"></i> تراکنش‌های داخلی شامل رویدادهای 
-            <span style="color:#00C896;">Become Owner</span> و 
-            <span style="color:#D4AF37;">Reward</span>
-        </p>
+    </div>
+
+    <!-- Contract Links -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-file-contract"></i> Contract Information
+        </div>
+        <div class="link-buttons">
+            <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="bscscan-link">
+                <i class="fas fa-code"></i>
+                <h3>Contract Source Code</h3>
+                <p>مشاهده کد قرارداد و تأیید شده بودن آن</p>
+                <span class="arrow">→ BscScan</span>
+            </a>
+            <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#writeContract" target="_blank" class="bscscan-link">
+                <i class="fas fa-pen"></i>
+                <h3>Write Contract</h3>
+                <p>اجرای توابع Buy و Sell و...</p>
+                <span class="arrow">→ BscScan</span>
+            </a>
+            <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#readContract" target="_blank" class="bscscan-link">
+                <i class="fas fa-eye"></i>
+                <h3>Read Contract</h3>
+                <p>مشاهده اطلاعات قرارداد (Price, Total Supply و...)</p>
+                <span class="arrow">→ BscScan</span>
+            </a>
+        </div>
     </div>
 
     <div class="footer">
@@ -319,56 +369,34 @@
 </div>
 
 <script>
-    // نمایش آمار هولدرها با استفاده از fetch از BscScan API (بدون نیاز به API Key - فقط خواندن HTML)
-    // این بخش سعی می‌کند تعداد هولدرها را از صفحه BscScan استخراج کند
-    
     const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
     
-    async function fetchHolderStats() {
-        try {
-            // استفاده از service proxy برای خواندن HTML صفحه (CORS را دور می‌زند)
-            const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent('https://bscscan.com/token/' + CONTRACT_ADDRESS)}`);
-            const html = await response.text();
-            
-            // استخراج تعداد هولدرها از HTML (الگوی خاص BscScan)
-            const holderMatch = html.match(/Total Token Holders:<\/dt>\s*<dd>([\d,]+)<\/dd>/i);
-            if (holderMatch) {
-                document.getElementById("holderCount").innerHTML = holderMatch[1];
-            } else {
-                document.getElementById("holderCount").innerHTML = "1,000+";
-            }
-            
-            // استخراج کل عرضه
-            const supplyMatch = html.match(/Total Supply:<\/dt>\s*<dd>([\d,]+(?:\.[\d]+)?)\s*<\/dd>/i);
-            if (supplyMatch) {
-                document.getElementById("totalSupply").innerHTML = supplyMatch[1];
-            }
-            
-        } catch(e) {
-            console.log("Could not fetch holder stats directly");
-            document.getElementById("holderCount").innerHTML = "—";
-            document.getElementById("totalSupply").innerHTML = "—";
-        }
-    }
-    
-    // اطلاعات دستی برای هولدرها (قابل به‌روزرسانی)
-    // این اعداد را می‌توانید هر چند وقت یک بار بر اساس BscScan به‌روز کنید
-    function setManualStats() {
-        // این اعداد را بر اساس صفحه BscScan توکن خود به‌روز کنید
-        // برای مثال، در حال حاضر حدود 1,271 هولدر
+    // اطلاعات دستی هولدرها (قابل به‌روزرسانی بر اساس BscScan)
+    // هر چند وقت یک بار این اعداد را از صفحه BscScan چک کنید و به‌روز کنید
+    function updateStats() {
         document.getElementById("holderCount").innerHTML = "1,271";
         document.getElementById("totalSupply").innerHTML = "6,924";
         document.getElementById("top1Percent").innerHTML = "≈ 59%";
     }
     
-    // تلاش برای fetch خودکار، در صورت失敗 استفاده از اطلاعات دستی
-    fetchHolderStats().catch(() => setManualStats());
-    setManualStats(); // همیشه اطلاعات پایه را نمایش بده
+    updateStats();
     
-    // به‌روزرسانی هر 5 دقیقه
-    setInterval(() => {
-        fetchHolderStats().catch(() => {});
-    }, 300000);
+    // تلاش برای دریافت تعداد هولدرز به صورت خودکار (اختیاری)
+    async function fetchHolderCount() {
+        try {
+            const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent('https://bscscan.com/token/' + CONTRACT_ADDRESS)}`);
+            const html = await response.text();
+            const match = html.match(/Total Token Holders:<\/dt>\s*<dd>([\d,]+)<\/dd>/i);
+            if (match) {
+                document.getElementById("holderCount").innerHTML = match[1];
+            }
+        } catch(e) {
+            console.log("Auto fetch failed, using manual data");
+        }
+    }
+    
+    fetchHolderCount();
+    setInterval(fetchHolderCount, 300000);
 </script>
 </body>
 </html>
