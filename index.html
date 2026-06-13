@@ -10,7 +10,6 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        /* پیش‌فرض: تصویر دسکتاپ */
         body {
             background-image: url('background-desktop.png');
             background-size: cover;
@@ -22,7 +21,6 @@
             min-height: 100vh;
         }
         
-        /* موبایل (حداکثر عرض 768px) */
         @media (max-width: 768px) {
             body {
                 background-image: url('background-mobile.png');
@@ -34,7 +32,6 @@
             }
         }
         
-        /* لایه نیمه شفاف برای خوانایی بهتر متن روی تصویر */
         body::before {
             content: "";
             position: fixed;
@@ -86,7 +83,6 @@
         .input-group label { display: block; color: #00C896; font-size: 11px; margin-bottom: 6px; }
         .input-group input { background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; width: 200px; text-align: center; }
         
-        /* کلاس نوشته‌های روز/هفته/ماه */
         .growth-badge { 
             background: #1a1a1a; 
             border: 1px solid #00C896; 
@@ -205,20 +201,17 @@
     let currentPriceDAI = 0;
     let priceChart = null;
     
-    // ==================== DEFAULT HISTORICAL PRICES (FALLBACK) ====================
+    // ==================== HISTORICAL PRICES ====================
     let historicalStats = {
         days1: 6.278, days7: 6.181, days30: 6.030, days90: 5.682, 
         days180: 1.005, days365: 1.000, initial: 1.000, current: 6.324
     };
     
-    // ==================== LOAD FROM JSON (IF AVAILABLE) ====================
     async function loadFromJSON() {
         try {
-            console.log("Trying to load price-history.json...");
             const response = await fetch('price-history.json?t=' + Date.now());
             if (!response.ok) throw new Error("JSON file not found");
             const data = await response.json();
-            
             if (data.records && data.records.length > 0) {
                 const records = data.records.sort((a,b) => new Date(a.date) - new Date(b.date));
                 const lastRecord = records[records.length - 1];
@@ -242,40 +235,17 @@
                 const thirtyRecord = records.find(r => r.date === thirtyStr);
                 if (thirtyRecord) historicalStats.days30 = thirtyRecord.price;
                 
-                const ninetyDaysAgo = new Date();
-                ninetyDaysAgo.setUTCDate(ninetyDaysAgo.getUTCDate() - 90);
-                const ninetyStr = ninetyDaysAgo.toISOString().split('T')[0];
-                const ninetyRecord = records.find(r => r.date === ninetyStr);
-                if (ninetyRecord) historicalStats.days90 = ninetyRecord.price;
-                
-                const oneEightyAgo = new Date();
-                oneEightyAgo.setUTCDate(oneEightyAgo.getUTCDate() - 180);
-                const oneEightyStr = oneEightyAgo.toISOString().split('T')[0];
-                const oneEightyRecord = records.find(r => r.date === oneEightyStr);
-                if (oneEightyRecord) historicalStats.days180 = oneEightyRecord.price;
-                
-                const threeSixFiveAgo = new Date();
-                threeSixFiveAgo.setUTCDate(threeSixFiveAgo.getUTCDate() - 365);
-                const threeSixFiveStr = threeSixFiveAgo.toISOString().split('T')[0];
-                const threeSixFiveRecord = records.find(r => r.date === threeSixFiveStr);
-                if (threeSixFiveRecord) historicalStats.days365 = threeSixFiveRecord.price;
-                
                 if (records[0]) historicalStats.initial = records[0].price;
-                
-                console.log("✅ Successfully loaded historical data from JSON");
-                updateStats();
-                updateGrowthRates();
-                updateSim();
-                return true;
             }
+            updateStats();
+            updateGrowthRates();
+            updateSim();
         } catch(e) {
-            console.log("⚠️ Could not load price-history.json, using hardcoded values");
-            return false;
+            console.log("Using hardcoded values");
         }
-        return false;
     }
     
-    // ==================== CHART DATA (REAL GROWTH) ====================
+    // ==================== CHART DATA ====================
     const realPricePoints = [
         { date: "2025-12-18", price: 1.000 },
         { date: "2026-03-18", price: 1.001 },
@@ -294,39 +264,36 @@
         const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
         const elapsedDays = (target - startDate) / (1000 * 60 * 60 * 24);
         const progress = elapsedDays / totalDays;
-        const price = startPoint.price + (endPoint.price - startPoint.price) * progress;
-        return parseFloat(price.toFixed(6));
+        return parseFloat((startPoint.price + (endPoint.price - startPoint.price) * progress).toFixed(6));
     }
     
-    const chartLabels = [];
-    const chartPrices = [];
+    const chartLabels = [], chartPrices = [];
     const startDate = new Date(Date.UTC(2025, 11, 18));
     const endDate = new Date(Date.UTC(2026, 5, 14));
-    let current = new Date(startDate);
+    let currentDate = new Date(startDate);
     let pointIndex = 0;
     
-    while (current <= endDate) {
-        const currentStr = current.toISOString().split('T')[0];
+    while (currentDate <= endDate) {
+        const currentStr = currentDate.toISOString().split('T')[0];
         chartLabels.push(currentStr);
-        while (pointIndex + 1 < realPricePoints.length && new Date(realPricePoints[pointIndex + 1].date) < current) pointIndex++;
+        while (pointIndex + 1 < realPricePoints.length && new Date(realPricePoints[pointIndex + 1].date) < currentDate) pointIndex++;
         if (pointIndex + 1 < realPricePoints.length) {
             const startPoint = realPricePoints[pointIndex];
             const endPoint = realPricePoints[pointIndex + 1];
             if (currentStr === startPoint.date) chartPrices.push(startPoint.price);
             else if (currentStr === endPoint.date) { chartPrices.push(endPoint.price); pointIndex++; }
-            else chartPrices.push(interpolatePrice(startPoint, endPoint, current));
+            else chartPrices.push(interpolatePrice(startPoint, endPoint, currentDate));
         } else chartPrices.push(realPricePoints[realPricePoints.length - 1].price);
-        current.setUTCDate(current.getUTCDate() + 1);
+        currentDate.setUTCDate(currentDate.getUTCDate() + 1);
     }
     
-    // ==================== LIVE PRICE (IN DAI) ====================
+    // ==================== LIVE PRICE ====================
     async function fetchLive() {
         try {
             let raw = await contract.Price();
             let priceDAI = parseFloat(ethers.utils.formatEther(raw));
             currentPriceDAI = priceDAI;
             
-            // نمایش قیمت به DAI با نماد $
             document.getElementById("fit-price").innerHTML = currentPriceDAI.toFixed(6);
             document.getElementById("usd-price").innerHTML = `≈ $${currentPriceDAI.toFixed(4)}`;
             
@@ -343,7 +310,6 @@
         } catch(e) { console.error(e); }
     }
     
-    // ==================== CHART ====================
     function drawChart() {
         const ctx = document.getElementById('priceChart').getContext('2d');
         if (priceChart) priceChart.destroy();
@@ -354,7 +320,6 @@
         });
     }
     
-    // ==================== STATS ====================
     function updateStats() {
         const fmt = (p) => p !== undefined ? `$${p.toFixed(6)}` : "—";
         const chg = (oldP) => { if (!oldP) return "—"; let ch = ((historicalStats.current - oldP)/oldP)*100; let sign = ch>=0?"+":""; let color = ch>=0?"#00C896":"#D4AF37"; return `<span style="color:${color}">${sign}${ch.toFixed(2)}%</span>`; };
@@ -378,10 +343,9 @@
         let d = ((historicalStats.current - historicalStats.days1)/historicalStats.days1)*100;
         let w = ((historicalStats.current - historicalStats.days7)/historicalStats.days7)*100;
         let m = ((historicalStats.current - historicalStats.days30)/historicalStats.days30)*100;
-        // استفاده از innerHTML با رنگ سبز مستقیماً
-        document.getElementById("dailyGrowthRate").innerHTML = `<span style="color: #00C896;">📈 Daily: ${d.toFixed(2)}%</span>`;
-        document.getElementById("weeklyGrowthRate").innerHTML = `<span style="color: #00C896;">📊 Weekly: ${w.toFixed(2)}%</span>`;
-        document.getElementById("monthlyGrowthRate").innerHTML = `<span style="color: #00C896;">📅 Monthly: ${m.toFixed(2)}%</span>`;
+        document.getElementById("dailyGrowthRate").innerHTML = `📈 Daily: ${d.toFixed(2)}%`;
+        document.getElementById("weeklyGrowthRate").innerHTML = `📊 Weekly: ${w.toFixed(2)}%`;
+        document.getElementById("monthlyGrowthRate").innerHTML = `📅 Monthly: ${m.toFixed(2)}%`;
     }
     
     function updateSim() {
@@ -396,36 +360,23 @@
         document.getElementById("monthlyReturn").innerHTML = `+$${(val * m / 100).toFixed(2)}`;
     }
     
-    // ==================== INITIALIZATION ====================
     async function init() {
         await loadFromJSON();
         drawChart();
         fetchLive();
         updateStats();
         updateGrowthRates();
-        
-        setTimeout(() => {
-            updateStats();
-            updateGrowthRates();
-        }, 1000);
     }
     
     document.getElementById("refreshBtn").addEventListener("click", () => {
         fetchLive();
-        loadFromJSON().then(() => {
-            updateStats();
-            updateGrowthRates();
-            updateSim();
-        });
+        loadFromJSON();
     });
     document.getElementById("fitAmount").addEventListener("input", updateSim);
     
     init();
     setInterval(fetchLive, 30000);
-    setInterval(() => loadFromJSON().then(() => {
-        updateStats();
-        updateGrowthRates();
-    }), 60000);
+    setInterval(() => loadFromJSON(), 60000);
 </script>
 </body>
 </html>
