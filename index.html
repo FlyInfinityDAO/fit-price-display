@@ -86,7 +86,7 @@
         .input-group label { display: block; color: #00C896; font-size: 11px; margin-bottom: 6px; }
         .input-group input { background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; width: 200px; text-align: center; }
         
-        /* کلاس نوشته‌های روز/هفته/ماه - اطمینان از رنگ سبز */
+        /* کلاس نوشته‌های روز/هفته/ماه */
         .growth-badge { 
             background: #1a1a1a; 
             border: 1px solid #00C896; 
@@ -378,9 +378,10 @@
         let d = ((historicalStats.current - historicalStats.days1)/historicalStats.days1)*100;
         let w = ((historicalStats.current - historicalStats.days7)/historicalStats.days7)*100;
         let m = ((historicalStats.current - historicalStats.days30)/historicalStats.days30)*100;
-        document.getElementById("dailyGrowthRate").innerHTML = `📈 Daily: ${d.toFixed(2)}%`;
-        document.getElementById("weeklyGrowthRate").innerHTML = `📊 Weekly: ${w.toFixed(2)}%`;
-        document.getElementById("monthlyGrowthRate").innerHTML = `📅 Monthly: ${m.toFixed(2)}%`;
+        // استفاده از innerHTML با رنگ سبز مستقیماً
+        document.getElementById("dailyGrowthRate").innerHTML = `<span style="color: #00C896;">📈 Daily: ${d.toFixed(2)}%</span>`;
+        document.getElementById("weeklyGrowthRate").innerHTML = `<span style="color: #00C896;">📊 Weekly: ${w.toFixed(2)}%</span>`;
+        document.getElementById("monthlyGrowthRate").innerHTML = `<span style="color: #00C896;">📅 Monthly: ${m.toFixed(2)}%</span>`;
     }
     
     function updateSim() {
