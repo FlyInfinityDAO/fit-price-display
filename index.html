@@ -188,10 +188,89 @@
     let currentPriceUSD = 0;
     let priceChart = null;
     
-    // ==================== HARDCODED HISTORICAL PRICES (ACCURATE) ====================
-    const historicalStats = {
-        days1: 6.278, days7: 6.181, days30: 6.030, days90: 5.682, days180: 1.005, days365: 1.000, initial: 1.000, current: 6.324
+    // ==================== DEFAULT HISTORICAL PRICES (FALLBACK) ====================
+    let historicalStats = {
+        days1: 6.278, days7: 6.181, days30: 6.030, days90: 5.682, 
+        days180: 1.005, days365: 1.000, initial: 1.000, current: 6.324
     };
+    
+    // ==================== LOAD FROM JSON (IF AVAILABLE) ====================
+    async function loadFromJSON() {
+        try {
+            console.log("Trying to load price-history.json...");
+            const response = await fetch('price-history.json?t=' + Date.now());
+            if (!response.ok) throw new Error("JSON file not found");
+            const data = await response.json();
+            
+            if (data.records && data.records.length > 0) {
+                const records = data.records.sort((a,b) => new Date(a.date) - new Date(b.date));
+                const today = new Date().toISOString().split('T')[0];
+                
+                // پیدا کردن آخرین قیمت (امروز یا نزدیک‌ترین روز)
+                const lastRecord = records[records.length - 1];
+                historicalStats.current = lastRecord.price;
+                
+                // پیدا کردن قیمت 1 روز پیش
+                const yesterday = new Date();
+                yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+                const yesterdayStr = yesterday.toISOString().split('T')[0];
+                const yesterdayRecord = records.find(r => r.date === yesterdayStr);
+                if (yesterdayRecord) historicalStats.days1 = yesterdayRecord.price;
+                
+                // پیدا کردن قیمت 7 روز پیش
+                const sevenDaysAgo = new Date();
+                sevenDaysAgo.setUTCDate(sevenDaysAgo.getUTCDate() - 7);
+                const sevenStr = sevenDaysAgo.toISOString().split('T')[0];
+                const sevenRecord = records.find(r => r.date === sevenStr);
+                if (sevenRecord) historicalStats.days7 = sevenRecord.price;
+                
+                // پیدا کردن قیمت 30 روز پیش
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setUTCDate(thirtyDaysAgo.getUTCDate() - 30);
+                const thirtyStr = thirtyDaysAgo.toISOString().split('T')[0];
+                const thirtyRecord = records.find(r => r.date === thirtyStr);
+                if (thirtyRecord) historicalStats.days30 = thirtyRecord.price;
+                
+                // پیدا کردن قیمت 90 روز پیش
+                const ninetyDaysAgo = new Date();
+                ninetyDaysAgo.setUTCDate(ninetyDaysAgo.getUTCDate() - 90);
+                const ninetyStr = ninetyDaysAgo.toISOString().split('T')[0];
+                const ninetyRecord = records.find(r => r.date === ninetyStr);
+                if (ninetyRecord) historicalStats.days90 = ninetyRecord.price;
+                
+                // پیدا کردن قیمت 180 روز پیش
+                const oneEightyAgo = new Date();
+                oneEightyAgo.setUTCDate(oneEightyAgo.getUTCDate() - 180);
+                const oneEightyStr = oneEightyAgo.toISOString().split('T')[0];
+                const oneEightyRecord = records.find(r => r.date === oneEightyStr);
+                if (oneEightyRecord) historicalStats.days180 = oneEightyRecord.price;
+                
+                // پیدا کردن قیمت 365 روز پیش
+                const threeSixFiveAgo = new Date();
+                threeSixFiveAgo.setUTCDate(threeSixFiveAgo.getUTCDate() - 365);
+                const threeSixFiveStr = threeSixFiveAgo.toISOString().split('T')[0];
+                const threeSixFiveRecord = records.find(r => r.date === threeSixFiveStr);
+                if (threeSixFiveRecord) historicalStats.days365 = threeSixFiveRecord.price;
+                
+                // قیمت ابتدایی
+                if (records[0]) historicalStats.initial = records[0].price;
+                
+                console.log("✅ Successfully loaded historical data from JSON");
+                console.log("Loaded stats:", historicalStats);
+                
+                // به‌روزرسانی صفحه بعد از لود داده‌ها
+                updateStats();
+                updateGrowthRates();
+                updateSim();
+                return true;
+            }
+        } catch(e) {
+            console.log("⚠️ Could not load price-history.json, using hardcoded values");
+            console.log("Error:", e.message);
+            return false;
+        }
+        return false;
+    }
     
     // ==================== CHART DATA (REAL GROWTH) ====================
     const realPricePoints = [
@@ -237,6 +316,7 @@
         current.setUTCDate(current.getUTCDate() + 1);
     }
     
+    // ==================== LIVE PRICE ====================
     async function getDAIUSD() {
         try { const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=dai&vs_currencies=usd'); const d = await r.json(); return d.dai?.usd || 1.00; } catch(e) { return 1.00; }
     }
@@ -259,6 +339,7 @@
         } catch(e) { console.error(e); }
     }
     
+    // ==================== CHART ====================
     function drawChart() {
         const ctx = document.getElementById('priceChart').getContext('2d');
         if (priceChart) priceChart.destroy();
@@ -269,6 +350,7 @@
         });
     }
     
+    // ==================== STATS ====================
     function updateStats() {
         const fmt = (p) => p !== undefined ? `$${p.toFixed(6)}` : "—";
         const chg = (oldP) => { if (!oldP) return "—"; let ch = ((historicalStats.current - oldP)/oldP)*100; let sign = ch>=0?"+":""; let color = ch>=0?"#00C896":"#D4AF37"; return `<span style="color:${color}">${sign}${ch.toFixed(2)}%</span>`; };
@@ -286,7 +368,9 @@
         document.getElementById("change365d").innerHTML = chg(historicalStats.days365);
         document.getElementById("priceInitial").innerHTML = fmt(historicalStats.initial);
         document.getElementById("changeInitial").innerHTML = chg(historicalStats.initial);
-        
+    }
+    
+    function updateGrowthRates() {
         let d = ((historicalStats.current - historicalStats.days1)/historicalStats.days1)*100;
         let w = ((historicalStats.current - historicalStats.days7)/historicalStats.days7)*100;
         let m = ((historicalStats.current - historicalStats.days30)/historicalStats.days30)*100;
@@ -307,13 +391,35 @@
         document.getElementById("monthlyReturn").innerHTML = `+$${(val * m / 100).toFixed(2)}`;
     }
     
-    document.getElementById("refreshBtn").addEventListener("click", fetchLive);
+    // ==================== INITIALIZATION ====================
+    async function init() {
+        await loadFromJSON();  // تلاش برای لود از JSON
+        drawChart();
+        fetchLive();
+        updateStats();
+        updateGrowthRates();
+        
+        // اگر JSON لود شد، دوباره آمار را به‌روز کن (چون fetchLive ممکن است بعداً بیاید)
+        setTimeout(() => {
+            updateStats();
+            updateGrowthRates();
+        }, 1000);
+    }
+    
+    document.getElementById("refreshBtn").addEventListener("click", () => {
+        fetchLive();
+        loadFromJSON().then(() => {
+            updateStats();
+            updateGrowthRates();
+            updateSim();
+        });
+    });
     document.getElementById("fitAmount").addEventListener("input", updateSim);
     
-    fetchLive();
-    drawChart();
-    updateStats();
+    init();
     setInterval(fetchLive, 30000);
+    setInterval(() => loadFromJSON().then(() => {
+        updateStats();
+        updateGrowthRates();
+    }), 60000);
 </script>
-</body>
-</html>
