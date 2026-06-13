@@ -106,7 +106,7 @@
             <div class="chain-badge">🛡️ BNB Smart Chain (BSC) Mainnet</div>
             <div style="margin: 20px 0 10px 0; color: #00C896;">Current Price</div>
             <div class="live-price" id="fit-price">—</div>
-            <div class="usd-price" id="usd-price">≈ $— USD</div>
+            <div class="usd-price" id="usd-price">≈ $— DAI</div>
             <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh Price</button>
         </div>
         <div class="card">
@@ -185,7 +185,7 @@
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
     const daiContract = new ethers.Contract(DAI_ADDRESS, DAI_ABI, provider);
     
-    let currentPriceUSD = 0;
+    let currentPriceDAI = 0;  // تغییر نام متغیر برای شفافیت (قیمت بر حسب DAI)
     let priceChart = null;
     
     // ==================== DEFAULT HISTORICAL PRICES (FALLBACK) ====================
@@ -204,7 +204,6 @@
             
             if (data.records && data.records.length > 0) {
                 const records = data.records.sort((a,b) => new Date(a.date) - new Date(b.date));
-                const today = new Date().toISOString().split('T')[0];
                 
                 // پیدا کردن آخرین قیمت (امروز یا نزدیک‌ترین روز)
                 const lastRecord = records[records.length - 1];
@@ -266,7 +265,6 @@
             }
         } catch(e) {
             console.log("⚠️ Could not load price-history.json, using hardcoded values");
-            console.log("Error:", e.message);
             return false;
         }
         return false;
@@ -316,25 +314,27 @@
         current.setUTCDate(current.getUTCDate() + 1);
     }
     
-    // ==================== LIVE PRICE ====================
-    async function getDAIUSD() {
-        try { const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=dai&vs_currencies=usd'); const d = await r.json(); return d.dai?.usd || 1.00; } catch(e) { return 1.00; }
-    }
-    
+    // ==================== LIVE PRICE (IN DAI, NOT USD) ====================
     async function fetchLive() {
         try {
             let raw = await contract.Price();
             let priceDAI = parseFloat(ethers.utils.formatEther(raw));
-            let daiUSD = await getDAIUSD();
-            currentPriceUSD = priceDAI * daiUSD;
-            document.getElementById("fit-price").innerHTML = currentPriceUSD.toFixed(6);
-            document.getElementById("usd-price").innerHTML = `≈ $${currentPriceUSD.toFixed(4)} USD`;
+            currentPriceDAI = priceDAI;  // ذخیره قیمت به DAI
+            
+            // نمایش قیمت به DAI با نماد $
+            document.getElementById("fit-price").innerHTML = currentPriceDAI.toFixed(6);
+            document.getElementById("usd-price").innerHTML = `≈ $${currentPriceDAI.toFixed(4)} DAI`;
+            
             let totalSup = parseFloat(ethers.utils.formatEther(await contract.totalSupply()));
             document.getElementById("totalSupply").innerHTML = totalSup.toLocaleString(undefined, {maximumFractionDigits:0});
+            
             let reserve = parseFloat(ethers.utils.formatEther(await daiContract.balanceOf(CONTRACT_ADDRESS)));
             document.getElementById("daiBalance").innerHTML = "$" + reserve.toLocaleString(undefined, {maximumFractionDigits:2});
-            let mcap = currentPriceUSD * totalSup;
+            
+            // مارکت کپ بر حسب DAI (همان reserve * قیمت نیست، بلکه کل عرضه * قیمت است)
+            let mcap = currentPriceDAI * totalSup;
             document.getElementById("marketCap").innerHTML = "$" + mcap.toLocaleString(undefined, {maximumFractionDigits:0});
+            
             updateSim();
         } catch(e) { console.error(e); }
     }
@@ -381,14 +381,14 @@
     
     function updateSim() {
         let amt = parseFloat(document.getElementById("fitAmount").value);
-        if (isNaN(amt) || amt <=0 || currentPriceUSD===0) return;
-        let val = amt * currentPriceUSD;
+        if (isNaN(amt) || amt <=0 || currentPriceDAI===0) return;
+        let val = amt * currentPriceDAI;
         let d = ((historicalStats.current - historicalStats.days1)/historicalStats.days1)*100;
         let w = ((historicalStats.current - historicalStats.days7)/historicalStats.days7)*100;
         let m = ((historicalStats.current - historicalStats.days30)/historicalStats.days30)*100;
-        document.getElementById("dailyReturn").innerHTML = `+$${(val * d / 100).toFixed(2)}`;
-        document.getElementById("weeklyReturn").innerHTML = `+$${(val * w / 100).toFixed(2)}`;
-        document.getElementById("monthlyReturn").innerHTML = `+$${(val * m / 100).toFixed(2)}`;
+        document.getElementById("dailyReturn").innerHTML = `+$${(val * d / 100).toFixed(2)} DAI`;
+        document.getElementById("weeklyReturn").innerHTML = `+$${(val * w / 100).toFixed(2)} DAI`;
+        document.getElementById("monthlyReturn").innerHTML = `+$${(val * m / 100).toFixed(2)} DAI`;
     }
     
     // ==================== INITIALIZATION ====================
@@ -399,7 +399,7 @@
         updateStats();
         updateGrowthRates();
         
-        // اگر JSON لود شد، دوباره آمار را به‌روز کن (چون fetchLive ممکن است بعداً بیاید)
+        // اگر JSON لود شد، دوباره آمار را به‌روز کن
         setTimeout(() => {
             updateStats();
             updateGrowthRates();
@@ -423,3 +423,5 @@
         updateGrowthRates();
     }), 60000);
 </script>
+</body>
+</html>
