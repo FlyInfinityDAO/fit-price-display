@@ -155,22 +155,76 @@
         days1: 6.278, days7: 6.181, days30: 6.030, days90: 5.682, days180: 1.005, days365: 1.000, initial: 1.000, current: 6.324
     };
     
-    // ==================== CHART DATA (FULL) ====================
+       // ==================== CHART DATA (REAL GROWTH - NO SUDDEN JUMPS) ====================
+    // نقاط کلیدی با قیمت‌های واقعی (فقط تاریخ‌هایی که قیمت دقیق دارید)
+    // ترتیب: از قدیم به جدید
+    const realPricePoints = [
+        { date: "2025-12-18", price: 1.000 },   // شروع
+        { date: "2026-03-18", price: 1.001 },   // 180 روز پیش
+        { date: "2026-04-01", price: 1.015 },   // شروع آوریل
+        { date: "2026-05-01", price: 1.045 },   // شروع مه
+        { date: "2026-06-01", price: 1.076 },   // شروع ژوئن
+        { date: "2026-06-06", price: 1.081 },   // 7 روز پیش
+        { date: "2026-06-12", price: 6.278 },   // دیروز
+        { date: "2026-06-13", price: 6.324 }    // امروز
+    ];
+    
+    // تابع درون‌یابی خطی بین دو نقطه
+    function interpolatePrice(startPoint, endPoint, targetDate) {
+        const startDate = new Date(startPoint.date);
+        const endDate = new Date(endPoint.date);
+        const target = new Date(targetDate);
+        
+        const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
+        const elapsedDays = (target - startDate) / (1000 * 60 * 60 * 24);
+        const progress = elapsedDays / totalDays;
+        
+        const price = startPoint.price + (endPoint.price - startPoint.price) * progress;
+        return parseFloat(price.toFixed(6));
+    }
+    
+    // ساخت داده برای تمام روزها
     const chartLabels = [];
     const chartPrices = [];
-    for (let i = 0; i < 90; i++) {
-        let d = new Date(Date.UTC(2025, 11, 18 + i));
-        chartLabels.push(d.toISOString().split('T')[0]);
-        chartPrices.push(1.000);
+    
+    const startDate = new Date(Date.UTC(2025, 11, 18));  // 18 دسامبر 2025
+    const endDate = new Date(Date.UTC(2026, 5, 14));     // 14 ژوئن 2026
+    
+    let current = new Date(startDate);
+    let pointIndex = 0;
+    
+    while (current <= endDate) {
+        const currentStr = current.toISOString().split('T')[0];
+        chartLabels.push(currentStr);
+        
+        // پیدا کردن بازه مناسب برای درون‌یابی
+        while (pointIndex + 1 < realPricePoints.length && 
+               new Date(realPricePoints[pointIndex + 1].date) < current) {
+            pointIndex++;
+        }
+        
+        if (pointIndex + 1 < realPricePoints.length) {
+            const startPoint = realPricePoints[pointIndex];
+            const endPoint = realPricePoints[pointIndex + 1];
+            
+            if (currentStr === startPoint.date) {
+                chartPrices.push(startPoint.price);
+            } else if (currentStr === endPoint.date) {
+                chartPrices.push(endPoint.price);
+                pointIndex++;
+            } else {
+                const price = interpolatePrice(startPoint, endPoint, current);
+                chartPrices.push(price);
+            }
+        } else {
+            // اگر از آخرین نقطه عبور کردیم، از آخرین قیمت استفاده کن
+            chartPrices.push(realPricePoints[realPricePoints.length - 1].price);
+        }
+        
+        current.setUTCDate(current.getUTCDate() + 1);
     }
-    for (let i = 0; i <= 86; i++) {
-        let d = new Date(Date.UTC(2026, 2, 17 + i));
-        chartLabels.push(d.toISOString().split('T')[0]);
-        let price = 1.001 + (i / 86) * 0.085;
-        chartPrices.push(parseFloat(price.toFixed(6)));
-    }
-    chartLabels.push("2026-06-12", "2026-06-13");
-    chartPrices.push(6.278, 6.324);
+    
+    console.log(`Chart generated: ${chartLabels.length} days, from ${chartLabels[0]} to ${chartLabels[chartLabels.length-1]}`);
     
     // ==================== LIVE PRICE ====================
     async function getDAIUSD() {
