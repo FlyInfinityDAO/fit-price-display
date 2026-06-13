@@ -15,16 +15,36 @@
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
+        /* پیش‌فرض: تصویر دسکتاپ */
         body {
-            background-image: url('background.png');
+            background-image: url('background-desktop.png');
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
-            /* حذف fixed برای موبایل */
-            background-attachment: scroll;
+            background-attachment: fixed;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding: 20px;
             min-height: 100vh;
+        }
+        
+        /* موبایل (حداکثر عرض 768px) */
+        @media (max-width: 768px) {
+            body {
+                background-image: url('background-mobile.png');
+                background-attachment: scroll;
+                background-size: cover;
+                background-position: top center;
+                padding: 15px;
+            }
+        }
+        
+        /* صفحه‌های خیلی کوچک (زیر 480px) */
+        @media (max-width: 480px) {
+            body {
+                background-size: cover;
+                background-position: center top;
+                padding: 12px;
+            }
         }
         
         /* Overlay برای خوانایی بهتر متن روی تصویر */
@@ -35,9 +55,16 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(15, 15, 15, 0.75);
+            background: rgba(15, 15, 15, 0.7);
             pointer-events: none;
             z-index: 0;
+        }
+        
+        /* در موبایل Overlay را کمی تیره‌تر می‌کنیم */
+        @media (max-width: 768px) {
+            body::before {
+                background: rgba(15, 15, 15, 0.8);
+            }
         }
         
         .container {
@@ -61,6 +88,14 @@
             box-shadow: 0 25px 45px rgba(0,0,0,0.5);
         }
         
+        /* در موبایل padding کمتر */
+        @media (max-width: 768px) {
+            .price-card, .info-card, .chart-container, .simulator-card, .stats-card, .link-section {
+                padding: 18px;
+                margin-bottom: 18px;
+            }
+        }
+        
         .header-with-logo { display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; }
         
         .token-logo { 
@@ -72,12 +107,23 @@
             box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
         }
         
+        @media (max-width: 768px) {
+            .token-logo {
+                width: 45px;
+                height: 45px;
+            }
+        }
+        
         h1 { 
             font-size: 28px; 
             background: linear-gradient(135deg, #D4AF37, #00C896);
             -webkit-background-clip: text; 
             background-clip: text; 
             color: transparent;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 22px; }
         }
         
         .chain-badge { 
@@ -118,10 +164,18 @@
             text-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
         }
         
+        @media (max-width: 768px) {
+            .live-price { font-size: 36px; }
+        }
+        
         .usd-price { 
             font-size: 20px; 
             color: #D4AF37; 
             opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .usd-price { font-size: 16px; }
         }
         
         .contract-info { 
@@ -151,6 +205,10 @@
             border-radius: 12px; 
         }
         
+        @media (max-width: 768px) {
+            .contract-value { font-size: 10px; }
+        }
+        
         .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
         
         .stat-card { 
@@ -167,29 +225,33 @@
             color: #D4AF37; 
         }
         
-        .price-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px; }
+        @media (max-width: 768px) {
+            .stat-value { font-size: 13px; }
+        }
+        
+        .price-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 15px; }
         
         .price-stat-card { 
             background: #1a1a1a; 
             border-radius: 16px; 
-            padding: 12px; 
+            padding: 10px; 
             text-align: center; 
             border-left: 3px solid #D4AF37;
         }
         
         .price-stat-label { 
-            font-size: 11px; 
+            font-size: 10px; 
             color: #00C896; 
             text-transform: uppercase; 
         }
         
         .price-stat-value { 
-            font-size: 16px; 
+            font-size: 14px; 
             font-weight: bold; 
             color: #D4AF37; 
         }
         
-        .price-stat-change { font-size: 11px; margin-top: 5px; }
+        .price-stat-change { font-size: 10px; margin-top: 3px; }
         
         /* Action Buttons - Emerald Green */
         .action-buttons { display: flex; justify-content: center; gap: 15px; margin: 20px 0; flex-wrap: wrap; }
@@ -217,13 +279,13 @@
         }
         
         .action-btn.buy { border-color: #00C896; color: #00C896; }
-        .action-btn.buy:hover { background: #00C896; color: #0F0F0F; }
-        
         .action-btn.sell { border-color: #D4AF37; color: #D4AF37; }
-        .action-btn.sell:hover { background: #D4AF37; color: #0F0F0F; border-color: #D4AF37; }
-        
         .action-btn.bsc { border-color: #00C896; color: #00C896; }
-        .action-btn.bsc:hover { background: #00C896; color: #0F0F0F; }
+        
+        @media (max-width: 768px) {
+            .action-btn { padding: 8px 16px; font-size: 12px; }
+            .action-buttons { gap: 10px; }
+        }
         
         /* Simulator */
         .simulator-card { text-align: center; }
@@ -242,7 +304,10 @@
             text-align: center; 
             font-weight: bold;
         }
-        .input-group input:focus { outline: none; border-color: #D4AF37; }
+        
+        @media (max-width: 768px) {
+            .input-group input { width: 160px; font-size: 14px; }
+        }
         
         .growth-badge { 
             background: #1a1a1a; 
@@ -255,18 +320,18 @@
             color: #00C896;
         }
         
-        .simulator-results { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .simulator-results { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 15px; }
         
         .result-box { 
             background: #1a1a1a; 
             border-radius: 16px; 
-            padding: 15px; 
+            padding: 12px; 
             text-align: center; 
             border-bottom: 2px solid #00C896;
         }
         
-        .result-period { font-size: 11px; color: #00C896; letter-spacing: 1px; }
-        .result-return { font-size: 20px; font-weight: bold; color: #D4AF37; }
+        .result-period { font-size: 10px; color: #00C896; letter-spacing: 1px; }
+        .result-return { font-size: 18px; font-weight: bold; color: #D4AF37; }
         
         .refresh-btn { 
             background: transparent; 
@@ -287,20 +352,15 @@
             margin-top: 20px; 
         }
         .footer a { color: #00C896; text-decoration: none; }
-        .footer a:hover { color: #D4AF37; }
         
-        /* Chart custom colors */
         canvas { filter: drop-shadow(0 0 5px rgba(0, 200, 150, 0.1)); }
         
-        /* Scrollbar styling */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0F0F0F; }
         ::-webkit-scrollbar-thumb { background: #00C896; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
         
         @media (max-width: 800px) { 
             .top-grid { grid-template-columns: 1fr; }
-            .live-price { font-size: 36px; }
         }
     </style>
 </head>
@@ -315,7 +375,7 @@
             </div>
             <div class="chain-badge">🛡️ BNB Smart Chain (BSC) Mainnet</div>
             
-            <!-- Whitepaper Button (added back) -->
+            <!-- Whitepaper Button -->
             <div>
                 <a href="https://github.com/FlyInfinityDAO/Fly-Infinity-Token/blob/main/FIT%20-%20White%20Paper.pdf" target="_blank" class="whitepaper-btn">
                     <i class="fas fa-file-pdf"></i> Whitepaper
@@ -344,7 +404,7 @@
         </div>
     </div>
 
-    <!-- Action Buttons: Buy/Sell + BscScan -->
+    <!-- Action Buttons -->
     <div class="action-buttons">
         <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#writeContract" target="_blank" class="action-btn buy"><i class="fas fa-shopping-cart"></i> Buy FIT</a>
         <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#writeContract" target="_blank" class="action-btn sell"><i class="fas fa-chart-line"></i> Sell FIT</a>
@@ -357,7 +417,7 @@
         <p style="color:#888; text-align:center; margin-top:10px; font-size:11px;">📈 Daily price chart ($ per FIT)</p>
     </div>
 
-    <!-- Price Changes Table (Historical) -->
+    <!-- Price Changes Table -->
     <div class="stats-card">
         <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;"><i class="fas fa-calendar-alt"></i> Historical Price Changes</div>
         <div class="price-stats-grid" id="priceStatsGrid">
@@ -398,13 +458,13 @@
         </p>
     </div>
 
-    <!-- Link to Transactions on BscScan -->
+    <!-- Link to Transactions -->
     <div class="link-section" style="text-align:center">
         <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#transactions" target="_blank" class="action-btn bsc" style="display:inline-block">
             <i class="fas fa-external-link-alt"></i> View All Transactions on BscScan
         </a>
         <p style="color:#888; font-size:11px; margin-top:12px;">
-            <i class="fas fa-info-circle"></i> Click above to see all buy, sell, become_owner, and reward transactions on BscScan
+            <i class="fas fa-info-circle"></i> Click above to see all buy, sell, become_owner, and reward transactions
         </p>
     </div>
 
@@ -415,7 +475,6 @@
 </div>
 
 <script>
-    // ==================== CONFIGURATION ====================
     const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
     const DAI_ADDRESS = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
     
@@ -430,11 +489,7 @@
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
     const daiContract = new ethers.Contract(DAI_ADDRESS, DAI_ABI, provider);
     
-    let currentPrice = 0;
-    let currentPriceUSD = 0;
-    let totalSupplyValue = 0;
-    let daiBalanceValue = 0;
-    let historicalData = [];
+    let currentPrice = 0, currentPriceUSD = 0, totalSupplyValue = 0, daiBalanceValue = 0, historicalData = [];
     
     async function fetchDAIPriceUSD() {
         try {
