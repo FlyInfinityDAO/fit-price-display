@@ -94,7 +94,7 @@
         .simulator-input { text-align: center; margin: 15px 0; }
         .input-group { background: #1a1a1a; padding: 12px; border-radius: 16px; display: inline-block; border-left: 3px solid #00C896; }
         .input-group label { display: block; color: #00C896; font-size: 11px; margin-bottom: 6px; }
-        .input-group input { background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; width: 200px; text-align: center; }
+        .input-group input { background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; width: 100%; text-align: center; }
         
         .growth-badges { text-align: center; margin: 15px 0; }
         .growth-badge { 
@@ -117,10 +117,58 @@
         .footer { text-align: center; font-size: 10px; color: #666; margin-top: 20px; }
         .footer a { color: #00C896; text-decoration: none; }
         
+        /* Fee Calculator specific styles */
+        .fee-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .fee-box {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 20px;
+        }
+        .fee-box.buy { border-left: 3px solid #00C896; }
+        .fee-box.sell { border-left: 3px solid #D4AF37; }
+        .fee-title {
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .fee-title.buy { color: #00C896; }
+        .fee-title.sell { color: #D4AF37; }
+        .fee-result {
+            background: #0F0F0F;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+        .fee-result-label {
+            color: #888;
+            font-size: 11px;
+        }
+        .fee-result-amount {
+            color: #D4AF37;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .fee-breakdown {
+            color: #888;
+            font-size: 10px;
+            margin-top: 5px;
+        }
+        .fee-price-note {
+            color: #888;
+            text-align: center;
+            font-size: 10px;
+            margin-top: 15px;
+        }
+        
         @media (max-width: 800px) { 
             .top-grid { grid-template-columns: 1fr; } 
             .live-price { font-size: 36px; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .fee-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -209,6 +257,50 @@
         <p style="color:#888; text-align:center; font-size:10px; margin-top:15px;">⚡ Based on past growth rates. Not financial advice.</p>
     </div>
 
+    <!-- Fee Calculator -->
+    <div class="card">
+        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;">
+            <i class="fas fa-calculator"></i> Fee Calculator (Buy: 3% | Sell: 6%)
+        </div>
+        
+        <div class="fee-grid">
+            <!-- بخش خرید (USD → FIT) -->
+            <div class="fee-box buy">
+                <div class="fee-title buy">
+                    <i class="fas fa-shopping-cart"></i> Buy Calculator
+                </div>
+                <div class="input-group" style="width: 100%; margin-bottom: 15px;">
+                    <label style="color: #00C896; font-size: 12px;">💰 Amount (USD)</label>
+                    <input type="number" id="buyAmountUSD" placeholder="Enter USD amount" step="10" style="width: 100%;">
+                </div>
+                <div class="fee-result">
+                    <div class="fee-result-label">You will receive</div>
+                    <div class="fee-result-amount" id="buyFITAmount">— FIT</div>
+                    <div class="fee-breakdown" id="buyFeeBreakdown">—</div>
+                </div>
+            </div>
+            
+            <!-- بخش فروش (FIT → USD) -->
+            <div class="fee-box sell">
+                <div class="fee-title sell">
+                    <i class="fas fa-chart-line"></i> Sell Calculator
+                </div>
+                <div class="input-group" style="width: 100%; margin-bottom: 15px;">
+                    <label style="color: #00C896; font-size: 12px;">🪙 Amount (FIT)</label>
+                    <input type="number" id="sellAmountFIT" placeholder="Enter FIT amount" step="100" style="width: 100%;">
+                </div>
+                <div class="fee-result">
+                    <div class="fee-result-label">You will receive</div>
+                    <div class="fee-result-amount" id="sellUSDAmount">— USD</div>
+                    <div class="fee-breakdown" id="sellFeeBreakdown">—</div>
+                </div>
+            </div>
+        </div>
+        <div class="fee-price-note">
+            <i class="fas fa-info-circle"></i> Fees: 3% for Buy | 6% for Sell | Current Price: <span id="calcPrice">—</span> USD
+        </div>
+    </div>
+
     <div class="footer">
         <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#transactions" target="_blank">View All Transactions on BscScan</a><br>
         Historical data recorded daily • Fly Infinity DAO
@@ -229,14 +321,12 @@
     let currentPriceDAI = 0;
     let priceChart = null;
     
-       // ==================== ETHERSCAN API V2 FOR HOLDERS COUNT ====================
-    // 🔴 کلید API خود را از Etherscan در اینجا وارد کنید
+    // ==================== ETHERSCAN API V2 FOR HOLDERS COUNT ====================
     const ETHERSCAN_API_KEY = "SKAHDN5X6UMW388XSIY1B8VH99WJ4KH7S4";
-    const BSC_CHAIN_ID = 56;  // BSC Mainnet chain ID for API V2
+    const BSC_CHAIN_ID = 56;
     
     async function fetchHolderCount() {
         try {
-            // استفاده از اندپوینت topholders برای دریافت تعداد کل هولدرها
             const url = `https://api.etherscan.io/v2/api?chainid=${BSC_CHAIN_ID}&module=token&action=topholders&contractaddress=${CONTRACT_ADDRESS}&page=1&offset=1&apikey=${ETHERSCAN_API_KEY}`;
             console.log("Fetching holders count from:", url);
             const response = await fetch(url);
@@ -244,15 +334,12 @@
             
             console.log("Etherscan API V2 Response:", data);
             
-            // تعداد کل هولدرها در کل پاسخ (total holder count)
             if (data.status === "1" && data.result) {
-                // API تعداد کل را در pagination برمی‌گرداند
                 const totalCount = data.result.length > 0 ? "1,200" : "—";
                 document.getElementById("holderCount").innerHTML = totalCount;
             } else if (data.message === "OK" && data.result) {
                 document.getElementById("holderCount").innerHTML = "1,200";
             } else {
-                // اگر پاسخ درست نبود، عدد ۱۲۰۰ را به صورت دستی نمایش بده
                 document.getElementById("holderCount").innerHTML = "1,200";
             }
         } catch(e) {
@@ -367,6 +454,7 @@
             document.getElementById("marketCap").innerHTML = "$" + mcap.toLocaleString(undefined, {maximumFractionDigits:0});
             
             updateSim();
+            updateCalculatorPrice();
         } catch(e) { console.error(e); }
     }
     
@@ -420,24 +508,67 @@
         document.getElementById("monthlyReturn").innerHTML = `+$${(val * m / 100).toFixed(2)}`;
     }
     
+    // ==================== FEE CALCULATOR ====================
+    const BUY_FEE = 0.03;
+    const SELL_FEE = 0.06;
+    
+    function updateBuyCalculator() {
+        const usdAmount = parseFloat(document.getElementById("buyAmountUSD").value);
+        const currentPrice = currentPriceDAI;
+        
+        if (isNaN(usdAmount) || usdAmount <= 0 || currentPrice <= 0) {
+            document.getElementById("buyFITAmount").innerHTML = "— FIT";
+            document.getElementById("buyFeeBreakdown").innerHTML = "—";
+            return;
+        }
+        
+        const amountAfterFee = usdAmount * (1 - BUY_FEE);
+        const fitAmount = amountAfterFee / currentPrice;
+        
+        document.getElementById("buyFITAmount").innerHTML = fitAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4}) + " FIT";
+        document.getElementById("buyFeeBreakdown").innerHTML = `Fee (3%): $${(usdAmount * BUY_FEE).toFixed(2)} | You get: $${amountAfterFee.toFixed(2)} worth of FIT`;
+    }
+    
+    function updateSellCalculator() {
+        const fitAmount = parseFloat(document.getElementById("sellAmountFIT").value);
+        const currentPrice = currentPriceDAI;
+        
+        if (isNaN(fitAmount) || fitAmount <= 0 || currentPrice <= 0) {
+            document.getElementById("sellUSDAmount").innerHTML = "— USD";
+            document.getElementById("sellFeeBreakdown").innerHTML = "—";
+            return;
+        }
+        
+        const totalValue = fitAmount * currentPrice;
+        const amountAfterFee = totalValue * (1 - SELL_FEE);
+        
+        document.getElementById("sellUSDAmount").innerHTML = `$${amountAfterFee.toFixed(2)} USD`;
+        document.getElementById("sellFeeBreakdown").innerHTML = `Fee (6%): $${(totalValue * SELL_FEE).toFixed(2)} | You receive: $${amountAfterFee.toFixed(2)}`;
+    }
+    
+    function updateCalculatorPrice() {
+        document.getElementById("calcPrice").innerHTML = `$${currentPriceDAI.toFixed(4)}`;
+        updateBuyCalculator();
+        updateSellCalculator();
+    }
+    
+    document.getElementById("buyAmountUSD").addEventListener("input", updateBuyCalculator);
+    document.getElementById("sellAmountFIT").addEventListener("input", updateSellCalculator);
+    
     async function init() {
         await loadFromJSON();
         drawChart();
         fetchLive();
         updateStats();
         updateGrowthRates();
-        if (ETHERSCAN_API_KEY !== "YOUR_ETHERSCAN_API_KEY_HERE") {
-            fetchHolderCount();
-            setInterval(fetchHolderCount, 300000);
-        } else {
-            console.log("Please add your Etherscan API key to fetch holder count");
-        }
+        fetchHolderCount();
+        setInterval(fetchHolderCount, 300000);
     }
     
     document.getElementById("refreshBtn").addEventListener("click", () => {
         fetchLive();
         loadFromJSON();
-        if (ETHERSCAN_API_KEY !== "YOUR_ETHERSCAN_API_KEY_HERE") fetchHolderCount();
+        fetchHolderCount();
     });
     document.getElementById("fitAmount").addEventListener("input", updateSim);
     
