@@ -18,13 +18,13 @@
         body {
             background-image: url('background.png');
             background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            background-position: center center;
             background-repeat: no-repeat;
+            /* حذف fixed برای موبایل */
+            background-attachment: scroll;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding: 20px;
             min-height: 100vh;
-            position: relative;
         }
         
         /* Overlay برای خوانایی بهتر متن روی تصویر */
@@ -35,7 +35,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(15, 15, 15, 0.7);
+            background: rgba(15, 15, 15, 0.75);
             pointer-events: none;
             z-index: 0;
         }
@@ -88,6 +88,26 @@
             font-size: 11px; 
             display: inline-block; 
             font-weight: bold;
+        }
+        
+        /* Whitepaper button */
+        .whitepaper-btn {
+            display: inline-block;
+            background: transparent;
+            border: 1px solid #D4AF37;
+            color: #D4AF37;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: bold;
+            text-decoration: none;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        .whitepaper-btn:hover {
+            background: #D4AF37;
+            color: #0F0F0F;
+            transform: translateY(-2px);
         }
         
         /* Gold for price numbers */
@@ -272,16 +292,16 @@
         /* Chart custom colors */
         canvas { filter: drop-shadow(0 0 5px rgba(0, 200, 150, 0.1)); }
         
-        @media (max-width: 800px) { 
-            .top-grid { grid-template-columns: 1fr; }
-            .live-price { font-size: 36px; }
-        }
-        
         /* Scrollbar styling */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0F0F0F; }
         ::-webkit-scrollbar-thumb { background: #00C896; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+        
+        @media (max-width: 800px) { 
+            .top-grid { grid-template-columns: 1fr; }
+            .live-price { font-size: 36px; }
+        }
     </style>
 </head>
 <body>
@@ -294,6 +314,14 @@
                 <h1>Fly Infinity Token (FIT)</h1>
             </div>
             <div class="chain-badge">🛡️ BNB Smart Chain (BSC) Mainnet</div>
+            
+            <!-- Whitepaper Button (added back) -->
+            <div>
+                <a href="https://github.com/FlyInfinityDAO/Fly-Infinity-Token/blob/main/FIT%20-%20White%20Paper.pdf" target="_blank" class="whitepaper-btn">
+                    <i class="fas fa-file-pdf"></i> Whitepaper
+                </a>
+            </div>
+            
             <div style="margin: 20px 0 10px 0; color: #00C896;">Current Price</div>
             <div class="live-price" id="fit-price">—</div>
             <div class="usd-price" id="usd-price">≈ $— USD</div>
