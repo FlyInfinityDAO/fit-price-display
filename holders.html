@@ -330,7 +330,7 @@
     // ==================== CONFIGURATION ====================
     const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
     const BSC_CHAIN_ID = 56;  // BSC Mainnet
-    const COVALENT_API_KEY = "cqt_rQT4yHvC37xM7MTYpRtCw63kyX8W";  // 🔴 کلید خود را اینجا وارد کنید
+    const COVALENT_API_KEY = "cqt_rQgVft4Chw47QYW887fB83KmW4vp";  // 🔴 کلید خود را اینجا وارد کنید
     
     // ==================== FETCH HOLDERS FROM COVALENT ====================
     async function fetchHolders() {
@@ -438,7 +438,7 @@
     }
     
     // ==================== INITIALIZATION ====================
-    if (COVALENT_API_KEY === "cqt_rQT4yHvC37xM7MTYpRtCw63kyX8W") {
+    if (COVALENT_API_KEY === "YOUR_API_KEY_HERE") {
         document.getElementById("holdersContainer").innerHTML = '<div class="error"><i class="fas fa-key"></i> Please add your Covalent API key to the code.<br><small>Get one from: https://www.covalenthq.com/</small></div>';
     } else {
         fetchHolders();
