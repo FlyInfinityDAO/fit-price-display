@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
             background-image: url('background-desktop.png');
             background-size: cover;
@@ -20,7 +19,6 @@
             padding: 20px;
             min-height: 100vh;
         }
-        
         @media (max-width: 768px) {
             body {
                 background-image: url('background-mobile.png');
@@ -42,16 +40,8 @@
                 z-index: 0;
             }
         }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-        
+        .container { max-width: 1400px; margin: 0 auto; position: relative; z-index: 1; }
         .top-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
-        
         .price-card, .info-card, .chart-container, .simulator-card, .stats-card, .link-section {
             background: #0F0F0F;
             backdrop-filter: blur(10px);
@@ -61,229 +51,49 @@
             border: 1px solid rgba(0, 200, 150, 0.2);
             box-shadow: 0 25px 45px rgba(0,0,0,0.5);
         }
-        
         .header-with-logo { display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; }
-        
-        .token-logo { 
-            width: 55px; 
-            height: 55px; 
-            border-radius: 50%; 
-            object-fit: cover; 
-            border: 2px solid #D4AF37;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
-        }
-        
-        h1 { 
-            font-size: 28px; 
-            background: linear-gradient(135deg, #D4AF37, #00C896);
-            -webkit-background-clip: text; 
-            background-clip: text; 
-            color: transparent;
-        }
-        
-        .chain-badge { 
-            background: #00C896; 
-            color: #0F0F0F; 
-            padding: 4px 12px; 
-            border-radius: 30px; 
-            font-size: 11px; 
-            display: inline-block; 
-            font-weight: bold;
-        }
-        
-        .whitepaper-btn {
-            display: inline-block;
-            background: transparent;
-            border: 1px solid #D4AF37;
-            color: #D4AF37;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-size: 13px;
-            font-weight: bold;
-            text-decoration: none;
-            margin-top: 15px;
-            transition: all 0.3s ease;
-        }
-        .whitepaper-btn:hover {
-            background: #D4AF37;
-            color: #0F0F0F;
-            transform: translateY(-2px);
-        }
-        
-        .live-price { 
-            font-size: 48px; 
-            font-weight: 800; 
-            color: #D4AF37; 
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
-        }
-        
-        .usd-price { 
-            font-size: 20px; 
-            color: #D4AF37; 
-            opacity: 0.8;
-        }
-        
-        .contract-info { 
-            background: #1a1a1a; 
-            border-radius: 20px; 
-            padding: 15px; 
-            margin-top: 15px; 
-            text-align: left; 
-            border-left: 3px solid #00C896;
-        }
-        
-        .contract-label { 
-            font-size: 11px; 
-            color: #00C896; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            margin-bottom: 5px; 
-        }
-        
-        .contract-value { 
-            font-family: monospace; 
-            font-size: 13px; 
-            color: #D4AF37; 
-            word-break: break-all; 
-            background: rgba(0,0,0,0.5); 
-            padding: 8px; 
-            border-radius: 12px; 
-        }
-        
+        .token-logo { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid #D4AF37; box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+        h1 { font-size: 28px; background: linear-gradient(135deg, #D4AF37, #00C896); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .chain-badge { background: #00C896; color: #0F0F0F; padding: 4px 12px; border-radius: 30px; font-size: 11px; display: inline-block; font-weight: bold; }
+        .whitepaper-btn { display: inline-block; background: transparent; border: 1px solid #D4AF37; color: #D4AF37; padding: 8px 20px; border-radius: 40px; font-size: 13px; font-weight: bold; text-decoration: none; margin-top: 15px; transition: all 0.3s ease; }
+        .whitepaper-btn:hover { background: #D4AF37; color: #0F0F0F; transform: translateY(-2px); }
+        .live-price { font-size: 48px; font-weight: 800; color: #D4AF37; text-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+        .usd-price { font-size: 20px; color: #D4AF37; opacity: 0.8; }
+        .contract-info { background: #1a1a1a; border-radius: 20px; padding: 15px; margin-top: 15px; text-align: left; border-left: 3px solid #00C896; }
+        .contract-label { font-size: 11px; color: #00C896; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .contract-value { font-family: monospace; font-size: 13px; color: #D4AF37; word-break: break-all; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 12px; }
         .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px; }
-        
-        .stat-card { 
-            background: #1a1a1a; 
-            border-radius: 16px; 
-            padding: 12px; 
-            text-align: center; 
-            border-left: 3px solid #00C896;
-        }
-        
-        .stat-value { 
-            font-size: 16px; 
-            font-weight: bold; 
-            color: #D4AF37; 
-        }
-        
+        .stat-card { background: #1a1a1a; border-radius: 16px; padding: 12px; text-align: center; border-left: 3px solid #00C896; }
+        .stat-value { font-size: 16px; font-weight: bold; color: #D4AF37; }
         .price-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 15px; }
-        
-        .price-stat-card { 
-            background: #1a1a1a; 
-            border-radius: 16px; 
-            padding: 10px; 
-            text-align: center; 
-            border-left: 3px solid #D4AF37;
-        }
-        
-        .price-stat-label { 
-            font-size: 10px; 
-            color: #00C896; 
-            text-transform: uppercase; 
-        }
-        
-        .price-stat-value { 
-            font-size: 14px; 
-            font-weight: bold; 
-            color: #D4AF37; 
-        }
-        
+        .price-stat-card { background: #1a1a1a; border-radius: 16px; padding: 10px; text-align: center; border-left: 3px solid #D4AF37; }
+        .price-stat-label { font-size: 10px; color: #00C896; text-transform: uppercase; }
+        .price-stat-value { font-size: 14px; font-weight: bold; color: #D4AF37; }
         .price-stat-change { font-size: 10px; margin-top: 3px; }
-        
         .action-buttons { display: flex; justify-content: center; gap: 15px; margin: 20px 0; flex-wrap: wrap; }
-        
-        .action-btn { 
-            background: transparent; 
-            border: 1px solid #00C896; 
-            color: #00C896; 
-            padding: 10px 24px; 
-            border-radius: 40px; 
-            font-size: 14px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            text-decoration: none; 
-            display: inline-block; 
-            transition: all 0.3s ease;
-        }
-        
-        .action-btn:hover { 
-            background: #00C896; 
-            color: #0F0F0F; 
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 200, 150, 0.3);
-        }
-        
+        .action-btn { background: transparent; border: 1px solid #00C896; color: #00C896; padding: 10px 24px; border-radius: 40px; font-size: 14px; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-block; transition: all 0.3s ease; }
+        .action-btn:hover { background: #00C896; color: #0F0F0F; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 200, 150, 0.3); }
         .action-btn.buy { border-color: #00C896; color: #00C896; }
         .action-btn.sell { border-color: #D4AF37; color: #D4AF37; }
         .action-btn.bsc { border-color: #00C896; color: #00C896; }
-        
         .simulator-card { text-align: center; }
         .simulator-title { font-size: 18px; color: #D4AF37; margin-bottom: 15px; }
-        
         .input-group { background: #1a1a1a; padding: 12px; border-radius: 16px; display: inline-block; }
         .input-group label { display: block; color: #00C896; font-size: 11px; margin-bottom: 6px; }
-        .input-group input { 
-            background: #0F0F0F; 
-            border: 1px solid #00C896; 
-            color: #D4AF37; 
-            padding: 10px; 
-            border-radius: 12px; 
-            font-size: 16px; 
-            width: 200px; 
-            text-align: center; 
-            font-weight: bold;
-        }
-        
-        .growth-badge { 
-            background: #1a1a1a; 
-            border: 1px solid #00C896;
-            border-radius: 20px; 
-            padding: 4px 10px; 
-            font-size: 11px; 
-            margin: 5px; 
-            display: inline-block; 
-            color: #00C896;
-        }
-        
+        .input-group input { background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; font-size: 16px; width: 200px; text-align: center; font-weight: bold; }
+        .growth-badge { background: #1a1a1a; border: 1px solid #00C896; border-radius: 20px; padding: 4px 10px; font-size: 11px; margin: 5px; display: inline-block; color: #00C896; }
         .simulator-results { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 15px; }
-        
-        .result-box { 
-            background: #1a1a1a; 
-            border-radius: 16px; 
-            padding: 12px; 
-            text-align: center; 
-            border-bottom: 2px solid #00C896;
-        }
-        
+        .result-box { background: #1a1a1a; border-radius: 16px; padding: 12px; text-align: center; border-bottom: 2px solid #00C896; }
         .result-period { font-size: 10px; color: #00C896; letter-spacing: 1px; }
         .result-return { font-size: 18px; font-weight: bold; color: #D4AF37; }
-        
-        .refresh-btn { 
-            background: transparent; 
-            border: 1px solid #00C896; 
-            color: #00C896; 
-            padding: 6px 16px; 
-            border-radius: 30px; 
-            cursor: pointer; 
-            margin-top: 10px;
-            transition: all 0.3s ease;
-        }
+        .refresh-btn { background: transparent; border: 1px solid #00C896; color: #00C896; padding: 6px 16px; border-radius: 30px; cursor: pointer; margin-top: 10px; transition: all 0.3s ease; }
         .refresh-btn:hover { background: #00C896; color: #0F0F0F; }
-        
-        .footer { 
-            text-align: center; 
-            font-size: 10px; 
-            color: #666; 
-            margin-top: 20px; 
-        }
+        .footer { text-align: center; font-size: 10px; color: #666; margin-top: 20px; }
         .footer a { color: #00C896; text-decoration: none; }
-        
         canvas { filter: drop-shadow(0 0 5px rgba(0, 200, 150, 0.1)); }
-        
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0F0F0F; }
         ::-webkit-scrollbar-thumb { background: #00C896; border-radius: 4px; }
-        
         @media (max-width: 800px) { 
             .top-grid { grid-template-columns: 1fr; }
             .live-price { font-size: 36px; }
@@ -295,7 +105,6 @@
 </head>
 <body>
 <div class="container">
-    <!-- Top Grid -->
     <div class="top-grid">
         <div class="price-card" style="text-align:center">
             <div class="header-with-logo">
@@ -303,13 +112,11 @@
                 <h1>Fly Infinity Token (FIT)</h1>
             </div>
             <div class="chain-badge">🛡️ BNB Smart Chain (BSC) Mainnet</div>
-            
             <div>
                 <a href="https://github.com/FlyInfinityDAO/Fly-Infinity-Token/blob/main/FIT%20-%20White%20Paper.pdf" target="_blank" class="whitepaper-btn">
                     <i class="fas fa-file-pdf"></i> Whitepaper
                 </a>
             </div>
-            
             <div style="margin: 20px 0 10px 0; color: #00C896;">Current Price</div>
             <div class="live-price" id="fit-price">—</div>
             <div class="usd-price" id="usd-price">≈ $— USD</div>
@@ -456,19 +263,32 @@
     async function loadHistory() {
         try {
             console.log("Loading price history...");
-            const response = await fetch('price-history.json?t=' + new Date().getTime());
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            // استفاده از آدرس مطلق برای اطمینان
+            const jsonUrl = 'https://FlyInfinityDAO.github.io/fit-price-display/price-history.json?t=' + new Date().getTime();
+            console.log("Fetching from:", jsonUrl);
+            const response = await fetch(jsonUrl);
+            if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             const json = await response.json();
+            console.log("Received JSON:", json);
+            
+            if (!json.records || !Array.isArray(json.records)) {
+                throw new Error("Invalid JSON format: missing records array");
+            }
+            
             historicalData = json.records.sort((a,b) => a.date.localeCompare(b.date));
             console.log(`Loaded ${historicalData.length} records`);
             console.log("First record:", historicalData[0]);
             console.log("Last record:", historicalData[historicalData.length-1]);
+            
             renderChart();
             updatePriceStats();
             updateGrowthRates();
         } catch(e) {
-            console.error("Failed to load price-history.json:", e);
-            document.getElementById("priceStatsGrid").innerHTML = '<div style="color:#D4AF37; text-align:center; grid-column:span 7;">⚠️ Could not load price history.</div>';
+            console.error("Failed to load price history:", e);
+            const grid = document.getElementById("priceStatsGrid");
+            if (grid) {
+                grid.innerHTML = '<div style="color:#D4AF37; text-align:center; grid-column:span 7;">⚠️ Could not load price history. Error: ' + e.message + '</div>';
+            }
         }
     }
     
@@ -478,7 +298,7 @@
         if (historicalData.length === 0) {
             ctx.font = "14px Arial";
             ctx.fillStyle = "#888";
-            ctx.fillText("No historical data yet. Check back tomorrow.", 30, 180);
+            ctx.fillText("No historical data yet.", 30, 180);
             return;
         }
         priceChart = new Chart(ctx, {
@@ -513,13 +333,10 @@
         });
     }
     
-    // Helper: Get price at a specific date (YYYY-MM-DD)
     function getPriceForDate(dateStr) {
         if (historicalData.length === 0) return null;
-        // Exact match first
         const exact = historicalData.find(r => r.date === dateStr);
         if (exact) return exact.price;
-        // If not found, find closest previous date
         let best = null;
         for (let record of historicalData) {
             if (record.date <= dateStr) best = record;
@@ -530,20 +347,17 @@
     
     function updatePriceStats() {
         if (historicalData.length === 0) {
-            console.log("No historical data");
+            console.log("No historical data to display");
             return;
         }
         
-        // Get today's date in YYYY-MM-DD format (UTC)
         const today = new Date();
         const todayStr = today.toISOString().split('T')[0];
         console.log("Today (UTC):", todayStr);
         
-        // Get the most recent price from historical data
         const currentPriceLatest = historicalData[historicalData.length - 1].price;
         console.log("Current price (from history):", currentPriceLatest);
         
-        // Helper to get price N days ago
         function getPriceDaysAgo(days) {
             const targetDate = new Date(today);
             targetDate.setUTCDate(today.getUTCDate() - days);
@@ -590,7 +404,6 @@
         document.getElementById("changeInitial").innerHTML = formatChange(initialPrice);
     }
     
-    // ==================== GROWTH RATES & SIMULATOR ====================
     function getPriceForDateSimple(dateStr) {
         if (historicalData.length === 0) return null;
         const exact = historicalData.find(r => r.date === dateStr);
@@ -644,11 +457,9 @@
         document.getElementById("monthlyReturn").innerHTML = monthlyProfit >= 0 ? `+$${monthlyProfit.toFixed(2)}` : `-$${Math.abs(monthlyProfit).toFixed(2)}`;
     }
     
-    // ==================== EVENT LISTENERS ====================
     document.getElementById("refreshBtn").addEventListener("click", () => fetchLivePrice());
     document.getElementById("fitAmount").addEventListener("input", updateSimulator);
     
-    // ==================== INITIAL LOAD ====================
     fetchLivePrice();
     loadHistory();
     setInterval(fetchLivePrice, 30000);
