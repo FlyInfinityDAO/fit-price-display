@@ -221,8 +221,101 @@
     const daiContract = new ethers.Contract(DAI_ADDRESS, DAI_ABI, provider);
     
     let currentPrice = 0, currentPriceUSD = 0, totalSupplyValue = 0, daiBalanceValue = 0;
-    let historicalData = [];
     let priceChart = null;
+    
+    // ==================== HARDCODED HISTORICAL DATA ====================
+    // This data is directly embedded in the code - no external JSON file needed
+    const historicalData = [
+        { date: "2025-12-18", price: 1.000 },
+        { date: "2026-03-18", price: 1.001 },
+        { date: "2026-03-19", price: 1.002 },
+        { date: "2026-03-20", price: 1.003 },
+        { date: "2026-03-21", price: 1.004 },
+        { date: "2026-03-22", price: 1.005 },
+        { date: "2026-03-23", price: 1.006 },
+        { date: "2026-03-24", price: 1.007 },
+        { date: "2026-03-25", price: 1.008 },
+        { date: "2026-03-26", price: 1.009 },
+        { date: "2026-03-27", price: 1.010 },
+        { date: "2026-03-28", price: 1.011 },
+        { date: "2026-03-29", price: 1.012 },
+        { date: "2026-03-30", price: 1.013 },
+        { date: "2026-03-31", price: 1.014 },
+        { date: "2026-04-01", price: 1.015 },
+        { date: "2026-04-02", price: 1.016 },
+        { date: "2026-04-03", price: 1.017 },
+        { date: "2026-04-04", price: 1.018 },
+        { date: "2026-04-05", price: 1.019 },
+        { date: "2026-04-06", price: 1.020 },
+        { date: "2026-04-07", price: 1.021 },
+        { date: "2026-04-08", price: 1.022 },
+        { date: "2026-04-09", price: 1.023 },
+        { date: "2026-04-10", price: 1.024 },
+        { date: "2026-04-11", price: 1.025 },
+        { date: "2026-04-12", price: 1.026 },
+        { date: "2026-04-13", price: 1.027 },
+        { date: "2026-04-14", price: 1.028 },
+        { date: "2026-04-15", price: 1.029 },
+        { date: "2026-04-16", price: 1.030 },
+        { date: "2026-04-17", price: 1.031 },
+        { date: "2026-04-18", price: 1.032 },
+        { date: "2026-04-19", price: 1.033 },
+        { date: "2026-04-20", price: 1.034 },
+        { date: "2026-04-21", price: 1.035 },
+        { date: "2026-04-22", price: 1.036 },
+        { date: "2026-04-23", price: 1.037 },
+        { date: "2026-04-24", price: 1.038 },
+        { date: "2026-04-25", price: 1.039 },
+        { date: "2026-04-26", price: 1.040 },
+        { date: "2026-04-27", price: 1.041 },
+        { date: "2026-04-28", price: 1.042 },
+        { date: "2026-04-29", price: 1.043 },
+        { date: "2026-04-30", price: 1.044 },
+        { date: "2026-05-01", price: 1.045 },
+        { date: "2026-05-02", price: 1.046 },
+        { date: "2026-05-03", price: 1.047 },
+        { date: "2026-05-04", price: 1.048 },
+        { date: "2026-05-05", price: 1.049 },
+        { date: "2026-05-06", price: 1.050 },
+        { date: "2026-05-07", price: 1.051 },
+        { date: "2026-05-08", price: 1.052 },
+        { date: "2026-05-09", price: 1.053 },
+        { date: "2026-05-10", price: 1.054 },
+        { date: "2026-05-11", price: 1.055 },
+        { date: "2026-05-12", price: 1.056 },
+        { date: "2026-05-13", price: 1.057 },
+        { date: "2026-05-14", price: 1.058 },
+        { date: "2026-05-15", price: 1.059 },
+        { date: "2026-05-16", price: 1.060 },
+        { date: "2026-05-17", price: 1.061 },
+        { date: "2026-05-18", price: 1.062 },
+        { date: "2026-05-19", price: 1.063 },
+        { date: "2026-05-20", price: 1.064 },
+        { date: "2026-05-21", price: 1.065 },
+        { date: "2026-05-22", price: 1.066 },
+        { date: "2026-05-23", price: 1.067 },
+        { date: "2026-05-24", price: 1.068 },
+        { date: "2026-05-25", price: 1.069 },
+        { date: "2026-05-26", price: 1.070 },
+        { date: "2026-05-27", price: 1.071 },
+        { date: "2026-05-28", price: 1.072 },
+        { date: "2026-05-29", price: 1.073 },
+        { date: "2026-05-30", price: 1.074 },
+        { date: "2026-05-31", price: 1.075 },
+        { date: "2026-06-01", price: 1.076 },
+        { date: "2026-06-02", price: 1.077 },
+        { date: "2026-06-03", price: 1.078 },
+        { date: "2026-06-04", price: 1.079 },
+        { date: "2026-06-05", price: 1.080 },
+        { date: "2026-06-06", price: 1.081 },
+        { date: "2026-06-07", price: 1.082 },
+        { date: "2026-06-08", price: 1.083 },
+        { date: "2026-06-09", price: 1.084 },
+        { date: "2026-06-10", price: 1.085 },
+        { date: "2026-06-11", price: 1.086 },
+        { date: "2026-06-12", price: 1.087 },
+        { date: "2026-06-13", price: 6.324 }
+    ];
     
     // ==================== FETCH LIVE PRICE ====================
     async function fetchDAIPriceUSD() {
@@ -259,37 +352,15 @@
         } catch(e) { console.error(e); }
     }
     
-    // ==================== HISTORICAL DATA ====================
-    async function loadHistory() {
-        try {
-            console.log("Loading price history...");
-            // استفاده از آدرس مطلق برای اطمینان
-            const jsonUrl = 'https://FlyInfinityDAO.github.io/fit-price-display/price-history.json?t=' + new Date().getTime();
-            console.log("Fetching from:", jsonUrl);
-            const response = await fetch(jsonUrl);
-            if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            const json = await response.json();
-            console.log("Received JSON:", json);
-            
-            if (!json.records || !Array.isArray(json.records)) {
-                throw new Error("Invalid JSON format: missing records array");
-            }
-            
-            historicalData = json.records.sort((a,b) => a.date.localeCompare(b.date));
-            console.log(`Loaded ${historicalData.length} records`);
-            console.log("First record:", historicalData[0]);
-            console.log("Last record:", historicalData[historicalData.length-1]);
-            
-            renderChart();
-            updatePriceStats();
-            updateGrowthRates();
-        } catch(e) {
-            console.error("Failed to load price history:", e);
-            const grid = document.getElementById("priceStatsGrid");
-            if (grid) {
-                grid.innerHTML = '<div style="color:#D4AF37; text-align:center; grid-column:span 7;">⚠️ Could not load price history. Error: ' + e.message + '</div>';
-            }
-        }
+    // ==================== HISTORICAL DATA FUNCTIONS ====================
+    function loadHistory() {
+        console.log("Loading hardcoded historical data...");
+        console.log(`Loaded ${historicalData.length} records`);
+        console.log("First record:", historicalData[0]);
+        console.log("Last record:", historicalData[historicalData.length-1]);
+        renderChart();
+        updatePriceStats();
+        updateGrowthRates();
     }
     
     function renderChart() {
@@ -334,7 +405,6 @@
     }
     
     function getPriceForDate(dateStr) {
-        if (historicalData.length === 0) return null;
         const exact = historicalData.find(r => r.date === dateStr);
         if (exact) return exact.price;
         let best = null;
@@ -346,11 +416,6 @@
     }
     
     function updatePriceStats() {
-        if (historicalData.length === 0) {
-            console.log("No historical data to display");
-            return;
-        }
-        
         const today = new Date();
         const todayStr = today.toISOString().split('T')[0];
         console.log("Today (UTC):", todayStr);
@@ -405,7 +470,6 @@
     }
     
     function getPriceForDateSimple(dateStr) {
-        if (historicalData.length === 0) return null;
         const exact = historicalData.find(r => r.date === dateStr);
         if (exact) return exact.price;
         let best = null;
