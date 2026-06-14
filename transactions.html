@@ -252,20 +252,20 @@
         </div>
     </div>
 
-    <!-- Quick Stats (Live from Contract + Covalent) -->
+    <!-- Quick Stats -->
     <div class="card">
         <div class="card-title">
             <i class="fas fa-chart-line"></i> Live Statistics
         </div>
         <div class="stats-grid">
-            <div class="info-row"><span class="info-label">💰 Current Price</span><span class="info-value" id="currentPrice">Loading...</span></div>
-            <div class="info-row"><span class="info-label">🪙 Total Supply</span><span class="info-value" id="totalSupply">Loading...</span></div>
-            <div class="info-row"><span class="info-label">🏦 DAI Reserve</span><span class="info-value" id="daiReserve">Loading...</span></div>
-            <div class="info-row"><span class="info-label">👥 Total Holders</span><span class="info-value" id="holderCount">Loading...</span></div>
+            <div class="info-row"><span class="info-label">💰 Current Price</span><span class="info-value" id="currentPrice">—</span></div>
+            <div class="info-row"><span class="info-label">🪙 Total Supply</span><span class="info-value" id="totalSupply">—</span></div>
+            <div class="info-row"><span class="info-label">🏦 DAI Reserve</span><span class="info-value" id="daiReserve">—</span></div>
+            <div class="info-row"><span class="info-label">👥 Total Holders</span><span class="info-value" id="holderCount">—</span></div>
         </div>
     </div>
 
-    <!-- Transaction Links Section -->
+    <!-- Transaction Links Section (Same as before) -->
     <div class="card">
         <div class="card-title">
             <i class="fas fa-exchange-alt"></i> Transactions Explorer
@@ -404,53 +404,129 @@
     const COVALENT_API_KEY = "cqt_rQT4yHvC37xM7MTYpRtCw63kyX8W";
     const CHAIN_ID = 56;
     
-    // Contract ABI for Price and Total Supply
+    // Multiple RPC providers for redundancy
+    const RPC_URLS = [
+        "https://bsc-dataseed.binance.org/",
+        "https://bsc-dataseed1.binance.org/",
+        "https://bsc-dataseed2.binance.org/",
+        "https://bsc-dataseed3.binance.org/",
+        "https://bsc-dataseed4.binance.org/",
+        "https://bsc-dataseed5.binance.org/"
+    ];
+    
+    let currentRpcIndex = 0;
+    
+    function getProvider() {
+        try {
+            return new ethers.providers.JsonRpcProvider(RPC_URLS[currentRpcIndex % RPC_URLS.length]);
+        } catch(e) {
+            return null;
+        }
+    }
+    
+    function rotateRpc() {
+        currentRpcIndex++;
+        console.log("Switching to RPC:", RPC_URLS[currentRpcIndex % RPC_URLS.length]);
+    }
+    
+    // Contract ABI
     const CONTRACT_ABI = [
         {"constant":true,"inputs":[],"name":"Price","outputs":[{"name":"","type":"uint256"}],"type":"function"},
         {"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"type":"function"}
     ];
     const DAI_ABI = [{"constant":true,"inputs":[{"name":"account","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"type":"function"}];
     
-    const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
-    const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
-    const daiContract = new ethers.Contract(DAI_ADDRESS, DAI_ABI, provider);
+    // ==================== FETCH FROM CONTRACT WITH RETRY ====================
+    async function fetchWithRetry(fn, fallbackValue = "Error") {
+        let lastError = null;
+        for (let attempt = 0; attempt < RPC_URLS.length; attempt++) {
+            try {
+                const provider = getProvider();
+                if (!provider) continue;
+                
+                const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+                const result = await fn(contract, provider);
+                if (result !== null && result !== undefined) {
+                    return result;
+                }
+            } catch(e) {
+                console.warn(`RPC attempt ${attempt + 1} failed:`, e.message);
+                lastError = e;
+                rotateRpc();
+                // Wait a bit before next attempt
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+        }
+        console.error("All RPC attempts failed:", lastError);
+        return fallbackValue;
+    }
     
-    // ==================== FETCH FROM CONTRACT DIRECTLY ====================
     async function fetchCurrentPrice() {
         try {
-            const priceRaw = await contract.Price();
-            const priceDAI = parseFloat(ethers.utils.formatEther(priceRaw));
-            document.getElementById("currentPrice").innerHTML = priceDAI.toFixed(6) + " DAI";
-            return priceDAI;
+            // Try multiple RPCs
+            for (let i = 0; i < RPC_URLS.length; i++) {
+                try {
+                    const provider = new ethers.providers.JsonRpcProvider(RPC_URLS[i]);
+                    const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+                    const priceRaw = await contract.Price();
+                    const priceDAI = parseFloat(ethers.utils.formatEther(priceRaw));
+                    document.getElementById("currentPrice").innerHTML = priceDAI.toFixed(6) + " DAI";
+                    return priceDAI;
+                } catch(e) {
+                    console.warn(`RPC ${i + 1} failed for price:`, e.message);
+                }
+            }
+            document.getElementById("currentPrice").innerHTML = "—";
+            return null;
         } catch(e) {
             console.error("Error fetching price:", e);
-            document.getElementById("currentPrice").innerHTML = "Error";
+            document.getElementById("currentPrice").innerHTML = "—";
             return null;
         }
     }
     
     async function fetchTotalSupply() {
         try {
-            const supplyRaw = await contract.totalSupply();
-            const supply = parseFloat(ethers.utils.formatEther(supplyRaw));
-            document.getElementById("totalSupply").innerHTML = supply.toLocaleString(undefined, {maximumFractionDigits: 0}) + " FIT";
-            return supply;
+            for (let i = 0; i < RPC_URLS.length; i++) {
+                try {
+                    const provider = new ethers.providers.JsonRpcProvider(RPC_URLS[i]);
+                    const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+                    const supplyRaw = await contract.totalSupply();
+                    const supply = parseFloat(ethers.utils.formatEther(supplyRaw));
+                    document.getElementById("totalSupply").innerHTML = supply.toLocaleString(undefined, {maximumFractionDigits: 0}) + " FIT";
+                    return supply;
+                } catch(e) {
+                    console.warn(`RPC ${i + 1} failed for supply:`, e.message);
+                }
+            }
+            document.getElementById("totalSupply").innerHTML = "—";
+            return null;
         } catch(e) {
             console.error("Error fetching total supply:", e);
-            document.getElementById("totalSupply").innerHTML = "Error";
+            document.getElementById("totalSupply").innerHTML = "—";
             return null;
         }
     }
     
     async function fetchDAIReserve() {
         try {
-            const reserveRaw = await daiContract.balanceOf(CONTRACT_ADDRESS);
-            const reserve = parseFloat(ethers.utils.formatEther(reserveRaw));
-            document.getElementById("daiReserve").innerHTML = reserve.toLocaleString(undefined, {maximumFractionDigits: 2}) + " DAI";
-            return reserve;
+            for (let i = 0; i < RPC_URLS.length; i++) {
+                try {
+                    const provider = new ethers.providers.JsonRpcProvider(RPC_URLS[i]);
+                    const daiContract = new ethers.Contract(DAI_ADDRESS, DAI_ABI, provider);
+                    const reserveRaw = await daiContract.balanceOf(CONTRACT_ADDRESS);
+                    const reserve = parseFloat(ethers.utils.formatEther(reserveRaw));
+                    document.getElementById("daiReserve").innerHTML = reserve.toLocaleString(undefined, {maximumFractionDigits: 2}) + " DAI";
+                    return reserve;
+                } catch(e) {
+                    console.warn(`RPC ${i + 1} failed for DAI reserve:`, e.message);
+                }
+            }
+            document.getElementById("daiReserve").innerHTML = "—";
+            return null;
         } catch(e) {
             console.error("Error fetching DAI reserve:", e);
-            document.getElementById("daiReserve").innerHTML = "Error";
+            document.getElementById("daiReserve").innerHTML = "—";
             return null;
         }
     }
@@ -475,16 +551,33 @@
     }
     
     // ==================== REFRESH ALL STATS ====================
+    let refreshInProgress = false;
+    
     async function refreshAllStats() {
-        await Promise.all([
-            fetchCurrentPrice(),
-            fetchTotalSupply(),
-            fetchDAIReserve(),
-            fetchHoldersCount()
-        ]);
+        if (refreshInProgress) return;
+        refreshInProgress = true;
+        
+        try {
+            await Promise.allSettled([
+                fetchCurrentPrice(),
+                fetchTotalSupply(),
+                fetchDAIReserve(),
+                fetchHoldersCount()
+            ]);
+        } catch(e) {
+            console.error("Refresh error:", e);
+        } finally {
+            refreshInProgress = false;
+        }
     }
     
     // ==================== INIT ====================
+    // Show initial loading indicator, then fetch
+    document.getElementById("currentPrice").innerHTML = "Loading...";
+    document.getElementById("totalSupply").innerHTML = "Loading...";
+    document.getElementById("daiReserve").innerHTML = "Loading...";
+    document.getElementById("holderCount").innerHTML = "Loading...";
+    
     refreshAllStats();
     setInterval(refreshAllStats, 30000);
 </script>
