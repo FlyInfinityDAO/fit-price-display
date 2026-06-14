@@ -117,7 +117,6 @@
         .footer { text-align: center; font-size: 10px; color: #666; margin-top: 20px; }
         .footer a { color: #00C896; text-decoration: none; }
         
-        /* Fee Calculator specific styles */
         .fee-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -264,7 +263,6 @@
         </div>
         
         <div class="fee-grid">
-            <!-- بخش خرید (USD → FIT) -->
             <div class="fee-box buy">
                 <div class="fee-title buy">
                     <i class="fas fa-shopping-cart"></i> Buy Calculator
@@ -280,7 +278,6 @@
                 </div>
             </div>
             
-            <!-- بخش فروش (FIT → USD) -->
             <div class="fee-box sell">
                 <div class="fee-title sell">
                     <i class="fas fa-chart-line"></i> Sell Calculator
@@ -328,16 +325,10 @@
     async function fetchHolderCount() {
         try {
             const url = `https://api.etherscan.io/v2/api?chainid=${BSC_CHAIN_ID}&module=token&action=topholders&contractaddress=${CONTRACT_ADDRESS}&page=1&offset=1&apikey=${ETHERSCAN_API_KEY}`;
-            console.log("Fetching holders count from:", url);
             const response = await fetch(url);
             const data = await response.json();
             
-            console.log("Etherscan API V2 Response:", data);
-            
             if (data.status === "1" && data.result) {
-                const totalCount = data.result.length > 0 ? "1,200" : "—";
-                document.getElementById("holderCount").innerHTML = totalCount;
-            } else if (data.message === "OK" && data.result) {
                 document.getElementById("holderCount").innerHTML = "1,200";
             } else {
                 document.getElementById("holderCount").innerHTML = "1,200";
@@ -348,11 +339,13 @@
         }
     }
     
-    // ==================== HISTORICAL PRICES ====================
+    // ==================== HISTORICAL PRICES (FULLY FROM JSON) ====================
     let historicalStats = {
-        days1: 6.278, days7: 6.181, days30: 6.030, days90: 5.682, 
-        days180: 1.005, days365: 1.000, initial: 1.000, current: 6.324
+        days1: null, days7: null, days30: null, days90: null, 
+        days180: null, days365: null, initial: null, current: null
     };
+    
+    let allRecords = []; // ذخیره همه رکوردها برای نمودار
     
     async function loadFromJSON() {
         try {
@@ -361,77 +354,134 @@
             const data = await response.json();
             if (data.records && data.records.length > 0) {
                 const records = data.records.sort((a,b) => new Date(a.date) - new Date(b.date));
+                allRecords = records;
+                
+                // آخرین رکورد (قیمت امروز)
                 const lastRecord = records[records.length - 1];
                 historicalStats.current = lastRecord.price;
                 
-                const yesterday = new Date();
-                yesterday.setUTCDate(yesterday.getUTCDate() - 1);
+                // تابع کمکی برای پیدا کردن قیمت در یک تاریخ خاص
+                function getPriceForDate(targetDate) {
+                    for (let i = records.length - 1; i >= 0; i--) {
+                        if (records[i].date <= targetDate) {
+                            return records[i].price;
+                        }
+                    }
+                    return null;
+                }
+                
+                const today = new Date();
+                today.setUTCHours(0, 0, 0, 0);
+                
+                // قیمت 1 روز پیش
+                const yesterday = new Date(today);
+                yesterday.setUTCDate(today.getUTCDate() - 1);
                 const yesterdayStr = yesterday.toISOString().split('T')[0];
-                const yesterdayRecord = records.find(r => r.date === yesterdayStr);
-                if (yesterdayRecord) historicalStats.days1 = yesterdayRecord.price;
+                historicalStats.days1 = getPriceForDate(yesterdayStr);
                 
-                const sevenDaysAgo = new Date();
-                sevenDaysAgo.setUTCDate(sevenDaysAgo.getUTCDate() - 7);
+                // قیمت 7 روز پیش
+                const sevenDaysAgo = new Date(today);
+                sevenDaysAgo.setUTCDate(today.getUTCDate() - 7);
                 const sevenStr = sevenDaysAgo.toISOString().split('T')[0];
-                const sevenRecord = records.find(r => r.date === sevenStr);
-                if (sevenRecord) historicalStats.days7 = sevenRecord.price;
+                historicalStats.days7 = getPriceForDate(sevenStr);
                 
-                const thirtyDaysAgo = new Date();
-                thirtyDaysAgo.setUTCDate(thirtyDaysAgo.getUTCDate() - 30);
+                // قیمت 30 روز پیش
+                const thirtyDaysAgo = new Date(today);
+                thirtyDaysAgo.setUTCDate(today.getUTCDate() - 30);
                 const thirtyStr = thirtyDaysAgo.toISOString().split('T')[0];
-                const thirtyRecord = records.find(r => r.date === thirtyStr);
-                if (thirtyRecord) historicalStats.days30 = thirtyRecord.price;
+                historicalStats.days30 = getPriceForDate(thirtyStr);
                 
-                if (records[0]) historicalStats.initial = records[0].price;
+                // قیمت 90 روز پیش
+                const ninetyDaysAgo = new Date(today);
+                ninetyDaysAgo.setUTCDate(today.getUTCDate() - 90);
+                const ninetyStr = ninetyDaysAgo.toISOString().split('T')[0];
+                historicalStats.days90 = getPriceForDate(ninetyStr);
+                
+                // قیمت 180 روز پیش
+                const oneEightyAgo = new Date(today);
+                oneEightyAgo.setUTCDate(today.getUTCDate() - 180);
+                const oneEightyStr = oneEightyAgo.toISOString().split('T')[0];
+                historicalStats.days180 = getPriceForDate(oneEightyStr);
+                
+                // قیمت 365 روز پیش
+                const threeSixFiveAgo = new Date(today);
+                threeSixFiveAgo.setUTCDate(today.getUTCDate() - 365);
+                const threeSixFiveStr = threeSixFiveAgo.toISOString().split('T')[0];
+                historicalStats.days365 = getPriceForDate(threeSixFiveStr);
+                
+                // قیمت ابتدایی
+                historicalStats.initial = records[0]?.price || null;
+                
+                console.log("✅ Historical data loaded from JSON");
+                console.log("Stats:", historicalStats);
             }
             updateStats();
             updateGrowthRates();
             updateSim();
         } catch(e) {
-            console.log("Using hardcoded values");
+            console.log("⚠️ Could not load price-history.json, using fallback values");
+            useFallbackStats();
         }
     }
     
-    // ==================== CHART DATA ====================
-    const realPricePoints = [
-        { date: "2025-12-18", price: 1.000 },
-        { date: "2026-03-18", price: 1.001 },
-        { date: "2026-04-01", price: 2.015 },
-        { date: "2026-05-01", price: 3.045 },
-        { date: "2026-06-01", price: 4.076 },
-        { date: "2026-06-06", price: 6.181 },
-        { date: "2026-06-12", price: 6.278 },
-        { date: "2026-06-13", price: 6.324 }
-    ];
-    
-    function interpolatePrice(startPoint, endPoint, targetDate) {
-        const startDate = new Date(startPoint.date);
-        const endDate = new Date(endPoint.date);
-        const target = new Date(targetDate);
-        const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
-        const elapsedDays = (target - startDate) / (1000 * 60 * 60 * 24);
-        const progress = elapsedDays / totalDays;
-        return parseFloat((startPoint.price + (endPoint.price - startPoint.price) * progress).toFixed(6));
+    function useFallbackStats() {
+        historicalStats = {
+            days1: 6.278, days7: 6.181, days30: 6.030, days90: 5.682, 
+            days180: 1.005, days365: 1.000, initial: 1.000, current: 6.324
+        };
+        updateStats();
+        updateGrowthRates();
+        updateSim();
     }
     
-    const chartLabels = [], chartPrices = [];
-    const startDate = new Date(Date.UTC(2025, 11, 18));
-    const endDate = new Date(Date.UTC(2026, 5, 14));
-    let currentDate = new Date(startDate);
-    let pointIndex = 0;
+    // ==================== CHART DATA (FROM JSON) ====================
+    let chartLabels = [];
+    let chartPrices = [];
     
-    while (currentDate <= endDate) {
-        const currentStr = currentDate.toISOString().split('T')[0];
-        chartLabels.push(currentStr);
-        while (pointIndex + 1 < realPricePoints.length && new Date(realPricePoints[pointIndex + 1].date) < currentDate) pointIndex++;
-        if (pointIndex + 1 < realPricePoints.length) {
-            const startPoint = realPricePoints[pointIndex];
-            const endPoint = realPricePoints[pointIndex + 1];
-            if (currentStr === startPoint.date) chartPrices.push(startPoint.price);
-            else if (currentStr === endPoint.date) { chartPrices.push(endPoint.price); pointIndex++; }
-            else chartPrices.push(interpolatePrice(startPoint, endPoint, currentDate));
-        } else chartPrices.push(realPricePoints[realPricePoints.length - 1].price);
-        currentDate.setUTCDate(currentDate.getUTCDate() + 1);
+    async function loadChartFromJSON() {
+        try {
+            const response = await fetch('price-history.json?t=' + Date.now());
+            if (!response.ok) throw new Error("JSON file not found");
+            const data = await response.json();
+            if (data.records && data.records.length > 0) {
+                const records = data.records.sort((a,b) => new Date(a.date) - new Date(b.date));
+                chartLabels = records.map(r => r.date);
+                chartPrices = records.map(r => r.price);
+                console.log(`✅ Chart loaded from JSON: ${chartLabels.length} records`);
+                drawChart();
+                return;
+            }
+        } catch(e) {
+            console.log("⚠️ Could not load chart from JSON");
+        }
+        useFallbackChartData();
+    }
+    
+    function useFallbackChartData() {
+        const points = [
+            { date: "2025-12-18", price: 1.000 },
+            { date: "2026-03-18", price: 1.001 },
+            { date: "2026-04-01", price: 2.015 },
+            { date: "2026-05-01", price: 3.045 },
+            { date: "2026-06-01", price: 4.076 },
+            { date: "2026-06-06", price: 6.181 },
+            { date: "2026-06-12", price: 6.278 },
+            { date: "2026-06-13", price: 6.324 }
+        ];
+        chartLabels = points.map(p => p.date);
+        chartPrices = points.map(p => p.price);
+        drawChart();
+    }
+    
+    function drawChart() {
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        if (priceChart) priceChart.destroy();
+        if (chartLabels.length === 0) return;
+        priceChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels: chartLabels, datasets: [{ label: 'FIT Price ($)', data: chartPrices, borderColor: '#D4AF37', backgroundColor: 'rgba(212,175,55,0.1)', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 0 }] },
+            options: { responsive: true, maintainAspectRatio: true, plugins: { tooltip: { callbacks: { label: (ctx) => `$${ctx.raw.toFixed(6)}` } }, legend: { labels: { color: '#00C896' } } }, scales: { x: { ticks: { color: '#888', maxRotation: 45, autoSkip: true, maxTicksLimit: 10 } }, y: { ticks: { color: '#888', callback: (val) => '$' + val.toFixed(2) } } } }
+        });
     }
     
     // ==================== LIVE PRICE ====================
@@ -458,19 +508,16 @@
         } catch(e) { console.error(e); }
     }
     
-    function drawChart() {
-        const ctx = document.getElementById('priceChart').getContext('2d');
-        if (priceChart) priceChart.destroy();
-        priceChart = new Chart(ctx, {
-            type: 'line',
-            data: { labels: chartLabels, datasets: [{ label: 'FIT Price ($)', data: chartPrices, borderColor: '#D4AF37', backgroundColor: 'rgba(212,175,55,0.1)', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 0 }] },
-            options: { responsive: true, maintainAspectRatio: true, plugins: { tooltip: { callbacks: { label: (ctx) => `$${ctx.raw.toFixed(6)}` } }, legend: { labels: { color: '#00C896' } } }, scales: { x: { ticks: { color: '#888', maxRotation: 45, autoSkip: true, maxTicksLimit: 10 } }, y: { ticks: { color: '#888', callback: (val) => '$' + val.toFixed(2) } } } }
-        });
-    }
-    
+    // ==================== STATS ====================
     function updateStats() {
-        const fmt = (p) => p !== undefined ? `$${p.toFixed(6)}` : "—";
-        const chg = (oldP) => { if (!oldP) return "—"; let ch = ((historicalStats.current - oldP)/oldP)*100; let sign = ch>=0?"+":""; let color = ch>=0?"#00C896":"#D4AF37"; return `<span style="color:${color}">${sign}${ch.toFixed(2)}%</span>`; };
+        const fmt = (p) => (p !== null && p !== undefined) ? `$${p.toFixed(6)}` : "—";
+        const chg = (oldP) => { 
+            if (!oldP) return "—"; 
+            let ch = ((historicalStats.current - oldP)/oldP)*100; 
+            let sign = ch>=0?"+":""; 
+            let color = ch>=0?"#00C896":"#D4AF37"; 
+            return `<span style="color:${color}">${sign}${ch.toFixed(2)}%</span>`; 
+        };
         document.getElementById("price1d").innerHTML = fmt(historicalStats.days1);
         document.getElementById("change1d").innerHTML = chg(historicalStats.days1);
         document.getElementById("price7d").innerHTML = fmt(historicalStats.days7);
@@ -556,7 +603,7 @@
     document.getElementById("sellAmountFIT").addEventListener("input", updateSellCalculator);
     
     async function init() {
-        await loadFromJSON();
+        await Promise.all([loadFromJSON(), loadChartFromJSON()]);
         drawChart();
         fetchLive();
         updateStats();
@@ -567,14 +614,14 @@
     
     document.getElementById("refreshBtn").addEventListener("click", () => {
         fetchLive();
-        loadFromJSON();
+        Promise.all([loadFromJSON(), loadChartFromJSON()]);
         fetchHolderCount();
     });
     document.getElementById("fitAmount").addEventListener("input", updateSim);
     
     init();
     setInterval(fetchLive, 30000);
-    setInterval(() => loadFromJSON(), 60000);
+    setInterval(() => Promise.all([loadFromJSON(), loadChartFromJSON()]), 60000);
 </script>
 </body>
 </html>
