@@ -146,7 +146,7 @@
         
         .action-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
             gap: 25px;
             margin-bottom: 25px;
         }
@@ -183,7 +183,7 @@
         }
         
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
         .input-group label {
@@ -200,7 +200,7 @@
             color: #D4AF37;
             padding: 12px 15px;
             border-radius: 16px;
-            font-size: 16px;
+            font-size: 14px;
         }
         
         .input-group input:focus {
@@ -219,7 +219,7 @@
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 10px;
+            margin-top: 5px;
         }
         
         .action-btn:hover {
@@ -244,7 +244,7 @@
         }
         
         .status-text {
-            margin-top: 15px;
+            margin-top: 10px;
             font-size: 12px;
             color: #888;
             text-align: center;
@@ -336,8 +336,8 @@
     <!-- Price & Info -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
         <div class="info-row"><span class="info-label">Current FIT Price</span><span class="info-value" id="currentPrice">— DAI</span></div>
-        <div class="info-row"><span class="info-label">DAI Allowance (for Network)</span><span class="info-value" id="networkAllowanceStatus">—</span></div>
-        <div class="info-row"><span class="info-label">DAI Allowance (for Token)</span><span class="info-value" id="tokenAllowanceStatus">—</span></div>
+        <div class="info-row"><span class="info-label">DAI Allowance (Network)</span><span class="info-value" id="networkAllowanceStatus">—</span></div>
+        <div class="info-row"><span class="info-label">DAI Allowance (Token)</span><span class="info-value" id="tokenAllowanceStatus">—</span></div>
     </div>
 
     <!-- ==================== SECTION 1: REGISTER IN NETWORK ==================== -->
@@ -345,7 +345,7 @@
         <div class="action-title"><i class="fas fa-user-plus"></i> 📝 Register in Fly Infinity Network</div>
         <p style="color:#888; font-size:12px; margin-bottom:15px; text-align:center;">Follow these 3 steps to become a network owner</p>
         
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
             <!-- Step 1: Approve DAI for Network -->
             <div style="background: #1a1a1a; border-radius: 20px; padding: 20px; border-left: 3px solid #00C896;">
                 <div style="color:#00C896; font-size:14px; margin-bottom:10px;"><span class="step-badge">1</span> Approve DAI (100 DAI)</div>
@@ -362,10 +362,13 @@
                 <div id="agreementStatus" class="status-text">Pending</div>
             </div>
             
-            <!-- Step 3: Become Owner -->
+            <!-- Step 3: Become Owner (with referrer address) -->
             <div style="background: #1a1a1a; border-radius: 20px; padding: 20px; border-left: 3px solid #00C896;">
                 <div style="color:#00C896; font-size:14px; margin-bottom:10px;"><span class="step-badge">3</span> Become Owner</div>
-                <p style="color:#888; font-size:11px; margin-bottom:15px;">Register your wallet in the network</p>
+                <div class="input-group" style="margin-bottom:15px;">
+                    <label>👤 Referrer Address (Applicant)</label>
+                    <input type="text" id="referrerAddress" placeholder="0x..." value="">
+                </div>
                 <button id="becomeOwnerBtn" class="action-btn">Become Owner</button>
                 <div id="ownerStatus" class="status-text">Not registered</div>
             </div>
@@ -380,15 +383,20 @@
             <p style="color:#888; font-size:11px; margin-bottom:15px;">First approve DAI (1000 DAI), then buy</p>
             
             <div class="input-group">
-                <label>Approve DAI for Token Contract</label>
-                <button id="approveTokenBtn" class="action-btn" style="margin-top:0;">Approve 1000 DAI</button>
+                <button id="approveTokenBtn" class="action-btn" style="margin-top:0;">Approve 1000 DAI for Token</button>
                 <div id="tokenApproveStatus" class="status-text">Not approved</div>
             </div>
             
             <div class="input-group">
-                <label>Amount (DAI) to Buy</label>
+                <label>👤 Buyer Wallet Address</label>
+                <input type="text" id="buyerAddress" placeholder="0x... (your wallet address)">
+            </div>
+            
+            <div class="input-group">
+                <label>💰 Amount (DAI) to Buy</label>
                 <input type="number" id="buyAmount" placeholder="Enter DAI amount" step="10">
             </div>
+            
             <div class="info-row"><span class="info-label">You will receive</span><span class="info-value" id="buyEstimate">— FIT</span></div>
             <button id="buyBtn" class="action-btn"><i class="fas fa-arrow-down"></i> Buy FIT</button>
             <div id="buyStatus" class="status-text">—</div>
@@ -397,10 +405,12 @@
         <!-- Sell FIT -->
         <div class="action-card">
             <div class="action-title"><i class="fas fa-chart-line"></i> 🔴 Sell FIT</div>
+            
             <div class="input-group">
-                <label>Amount (FIT) to Sell</label>
+                <label>🪙 Amount (FIT) to Sell</label>
                 <input type="number" id="sellAmount" placeholder="Enter FIT amount" step="100">
             </div>
+            
             <div class="info-row"><span class="info-label">You will receive</span><span class="info-value" id="sellEstimate">— DAI</span></div>
             <button id="sellBtn" class="action-btn danger"><i class="fas fa-arrow-up"></i> Sell FIT</button>
             <div id="sellStatus" class="status-text">—</div>
@@ -416,7 +426,7 @@
 
     <div class="footer">
         <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank">Token Contract</a> | 
-        <a href="https://bscscan.com/address/0xa8547e16" target="_blank">Network Contract</a><br>
+        <a href="https://bscscan.com/address/0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B" target="_blank">Network Contract</a><br>
         Fly Infinity DAO
     </div>
 </div>
@@ -428,7 +438,6 @@
     const DAI_TOKEN_ADDRESS = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
     
     // ==================== ABI ====================
-    // FIT Token ABI
     const FIT_TOKEN_ABI = [
         {"constant":true,"inputs":[],"name":"Price","outputs":[{"name":"","type":"uint256"}],"type":"function"},
         {"constant":true,"inputs":[{"name":"account","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"type":"function"},
@@ -436,14 +445,12 @@
         {"constant":false,"inputs":[{"name":"_amount","type":"uint256"}],"name":"Sell","outputs":[{"name":"","type":"uint256"}],"type":"function"}
     ];
     
-    // FIT Network ABI
     const FIT_NETWORK_ABI = [
         {"constant":false,"inputs":[],"name":"Agreement_Road_Map","outputs":[],"type":"function"},
-        {"constant":false,"inputs":[{"name":"_wallet","type":"address"}],"name":"BeCome_Owner","outputs":[],"type":"function"},
+        {"constant":false,"inputs":[{"name":"_applicant","type":"address"}],"name":"BeCome_Owner","outputs":[],"type":"function"},
         {"constant":false,"inputs":[],"name":"Reward","outputs":[],"type":"function"}
     ];
     
-    // DAI Token ABI
     const DAI_ABI = [
         {"constant":true,"inputs":[{"name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"type":"function"},
         {"constant":false,"inputs":[{"name":"spender","type":"address"},{"name":"amount","type":"uint256"}],"name":"approve","outputs":[{"name":"","type":"bool"}],"type":"function"},
@@ -465,6 +472,10 @@
         fitNetworkContract = new ethers.Contract(FIT_NETWORK_ADDRESS, FIT_NETWORK_ABI, signer);
         daiContract = new ethers.Contract(DAI_TOKEN_ADDRESS, DAI_ABI, signer);
         userAddress = await signer.getAddress();
+        
+        // Set default addresses in input fields
+        document.getElementById("buyerAddress").value = userAddress;
+        document.getElementById("referrerAddress").value = userAddress;
         
         // Update UI
         document.getElementById("walletAddress").innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
@@ -502,22 +513,20 @@
     
     async function checkAllAllowances() {
         try {
-            // Network allowance
             let networkAllowance = await daiContract.allowance(userAddress, FIT_NETWORK_ADDRESS);
             let networkAllowanceNum = parseFloat(ethers.utils.formatEther(networkAllowance));
             if (networkAllowanceNum >= 100) {
-                document.getElementById("networkAllowanceStatus").innerHTML = `✅ Approved (${networkAllowanceNum.toFixed(2)} DAI)`;
+                document.getElementById("networkAllowanceStatus").innerHTML = `✅ ${networkAllowanceNum.toFixed(2)} DAI`;
                 document.getElementById("networkApproveStatus").innerHTML = "✅ Approved";
             } else {
                 document.getElementById("networkAllowanceStatus").innerHTML = "❌ Not approved";
                 document.getElementById("networkApproveStatus").innerHTML = "⚠️ Need approval";
             }
             
-            // Token allowance
             let tokenAllowance = await daiContract.allowance(userAddress, FIT_TOKEN_ADDRESS);
             let tokenAllowanceNum = parseFloat(ethers.utils.formatEther(tokenAllowance));
             if (tokenAllowanceNum >= 1000) {
-                document.getElementById("tokenAllowanceStatus").innerHTML = `✅ Approved (${tokenAllowanceNum.toFixed(2)} DAI)`;
+                document.getElementById("tokenAllowanceStatus").innerHTML = `✅ ${tokenAllowanceNum.toFixed(2)} DAI`;
                 document.getElementById("tokenApproveStatus").innerHTML = "✅ Approved";
             } else {
                 document.getElementById("tokenAllowanceStatus").innerHTML = "❌ Not approved";
@@ -556,7 +565,6 @@
     
     // ==================== REGISTER FUNCTIONS ====================
     
-    // Step 1: Approve DAI for Network (100 DAI)
     async function approveNetworkDAI() {
         try {
             setStatus("networkApproveStatus", "Approving...", "");
@@ -571,7 +579,6 @@
         }
     }
     
-    // Step 2: Agreement Road Map
     async function agreementRoadMap() {
         try {
             setStatus("agreementStatus", "Signing agreement...", "");
@@ -584,11 +591,16 @@
         }
     }
     
-    // Step 3: Become Owner
     async function becomeOwner() {
+        let referrer = document.getElementById("referrerAddress").value;
+        if (!referrer || !ethers.utils.isAddress(referrer)) {
+            setStatus("ownerStatus", "Please enter a valid referrer address", "error");
+            return;
+        }
+        
         try {
             setStatus("ownerStatus", "Registering...", "");
-            let tx = await fitNetworkContract.BeCome_Owner(userAddress);
+            let tx = await fitNetworkContract.BeCome_Owner(referrer);
             setStatus("ownerStatus", "Waiting for confirmation...", "");
             await tx.wait();
             setStatus("ownerStatus", "✅ Successfully registered as Owner!", "success");
@@ -599,7 +611,6 @@
     
     // ==================== BUY/SELL FUNCTIONS ====================
     
-    // Approve DAI for Token Contract (1000 DAI)
     async function approveTokenDAI() {
         try {
             setStatus("tokenApproveStatus", "Approving...", "");
@@ -614,18 +625,24 @@
         }
     }
     
-    // Buy FIT
     async function buyFIT() {
+        let buyer = document.getElementById("buyerAddress").value;
         let amount = parseFloat(document.getElementById("buyAmount").value);
+        
+        if (!buyer || !ethers.utils.isAddress(buyer)) {
+            setStatus("buyStatus", "Please enter a valid buyer address", "error");
+            return;
+        }
         if (isNaN(amount) || amount <= 0) {
             setStatus("buyStatus", "Please enter a valid amount", "error");
             return;
         }
+        
         let amountWei = ethers.utils.parseEther(amount.toString());
         
         try {
             setStatus("buyStatus", "Buying...", "");
-            let tx = await fitTokenContract.Buy(userAddress, amountWei);
+            let tx = await fitTokenContract.Buy(buyer, amountWei);
             setStatus("buyStatus", "Waiting for confirmation...", "");
             await tx.wait();
             setStatus("buyStatus", "✅ Purchase successful!", "success");
@@ -638,7 +655,6 @@
         }
     }
     
-    // Sell FIT
     async function sellFIT() {
         let amount = parseFloat(document.getElementById("sellAmount").value);
         if (isNaN(amount) || amount <= 0) {
@@ -662,7 +678,6 @@
         }
     }
     
-    // Claim Reward
     async function claimReward() {
         try {
             setStatus("rewardStatus", "Claiming reward...", "");
@@ -689,6 +704,8 @@
                     } else {
                         userAddress = accounts[0];
                         document.getElementById("walletAddress").innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
+                        document.getElementById("buyerAddress").value = userAddress;
+                        document.getElementById("referrerAddress").value = userAddress;
                         await loadBalances();
                         await checkAllAllowances();
                     }
@@ -725,12 +742,10 @@
     document.getElementById("connectBtn").addEventListener("click", connectWallet);
     document.getElementById("disconnectBtn").addEventListener("click", disconnectWallet);
     
-    // Register buttons
     document.getElementById("approveNetworkBtn").addEventListener("click", approveNetworkDAI);
     document.getElementById("agreementBtn").addEventListener("click", agreementRoadMap);
     document.getElementById("becomeOwnerBtn").addEventListener("click", becomeOwner);
     
-    // Buy/Sell buttons
     document.getElementById("approveTokenBtn").addEventListener("click", approveTokenDAI);
     document.getElementById("buyBtn").addEventListener("click", buyFIT);
     document.getElementById("sellBtn").addEventListener("click", sellFIT);
