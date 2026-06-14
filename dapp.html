@@ -417,13 +417,6 @@
         </div>
     </div>
 
-    <!-- Reward Section -->
-    <div class="action-card" style="margin-bottom:25px;">
-        <div class="action-title"><i class="fas fa-gift"></i> 🎁 Claim Reward</div>
-        <button id="rewardBtn" class="action-btn"><i class="fas fa-star"></i> Claim Reward</button>
-        <div id="rewardStatus" class="status-text">—</div>
-    </div>
-
     <div class="footer">
         <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank">Token Contract</a> | 
         <a href="https://bscscan.com/address/0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B" target="_blank">Network Contract</a><br>
@@ -447,8 +440,7 @@
     
     const FIT_NETWORK_ABI = [
         {"constant":false,"inputs":[],"name":"Agreement_Road_Map","outputs":[],"type":"function"},
-        {"constant":false,"inputs":[{"name":"_applicant","type":"address"}],"name":"BeCome_Owner","outputs":[],"type":"function"},
-        {"constant":false,"inputs":[],"name":"Reward","outputs":[],"type":"function"}
+        {"constant":false,"inputs":[{"name":"_applicant","type":"address"}],"name":"BeCome_Owner","outputs":[],"type":"function"}
     ];
     
     const DAI_ABI = [
@@ -678,19 +670,6 @@
         }
     }
     
-    async function claimReward() {
-        try {
-            setStatus("rewardStatus", "Claiming reward...", "");
-            let tx = await fitNetworkContract.Reward();
-            setStatus("rewardStatus", "Waiting for confirmation...", "");
-            await tx.wait();
-            setStatus("rewardStatus", "✅ Reward claimed!", "success");
-            await loadBalances();
-        } catch(e) {
-            setStatus("rewardStatus", "❌ Error: " + e.message, "error");
-        }
-    }
-    
     // ==================== WALLET CONNECT ====================
     async function connectWallet() {
         if (typeof window.ethereum !== 'undefined') {
@@ -749,7 +728,6 @@
     document.getElementById("approveTokenBtn").addEventListener("click", approveTokenDAI);
     document.getElementById("buyBtn").addEventListener("click", buyFIT);
     document.getElementById("sellBtn").addEventListener("click", sellFIT);
-    document.getElementById("rewardBtn").addEventListener("click", claimReward);
     
     checkNetwork();
 </script>
