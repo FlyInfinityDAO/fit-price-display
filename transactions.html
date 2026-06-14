@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Fly Infinity Token - Transactions</title>
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <title>Fly Infinity Token - Token Transfers</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -123,10 +122,6 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        .filter-btn:hover {
-            border-color: #00C896;
-            color: #00C896;
-        }
         .filter-btn.active {
             background: #00C896;
             border-color: #00C896;
@@ -194,16 +189,9 @@
         .tx-link:hover {
             color: #00C896;
         }
-        .loading {
-            text-align: center;
-            padding: 50px;
-            color: #00C896;
-        }
-        .error {
-            text-align: center;
-            padding: 50px;
-            color: #D4AF37;
-        }
+        .loading, .error { text-align: center; padding: 50px; }
+        .loading { color: #00C896; }
+        .error { color: #D4AF37; }
         .pagination {
             display: flex;
             justify-content: center;
@@ -220,14 +208,8 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        .page-btn:hover {
-            background: #00C896;
-            color: #0F0F0F;
-        }
-        .page-btn.disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
+        .page-btn:hover:not(.disabled) { background: #00C896; color: #0F0F0F; }
+        .page-btn.disabled { opacity: 0.4; cursor: not-allowed; }
         .page-info {
             color: #8aa0c0;
             font-size: 13px;
@@ -252,26 +234,16 @@
             text-decoration: none;
         }
         @media (max-width: 768px) {
-            .nav-bar {
-                flex-direction: column;
-                text-align: center;
-            }
-            .tx-table th, .tx-table td {
-                font-size: 10px;
-                padding: 8px 6px;
-            }
-            .stat-number {
-                font-size: 22px;
-            }
+            .nav-bar { flex-direction: column; text-align: center; }
+            .tx-table th, .tx-table td { font-size: 10px; padding: 8px 6px; }
+            .stat-number { font-size: 22px; }
         }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="nav-bar">
-        <div class="page-title">
-            <i class="fas fa-chart-line"></i> Fly Infinity Token (FIT)
-        </div>
+        <div class="page-title"><i class="fas fa-chart-line"></i> Fly Infinity Token (FIT)</div>
         <div class="nav-links">
             <a href="index.html" class="nav-btn"><i class="fas fa-chart-simple"></i> Price Chart</a>
             <a href="transactions.html" class="nav-btn active"><i class="fas fa-history"></i> Transactions</a>
@@ -305,16 +277,16 @@
         </div>
     </div>
     <div class="footer">
-        Powered by <a href="https://etherscan.io/" target="_blank">Etherscan API V2</a> • Fly Infinity DAO
+        Powered by <a href="https://goldrush.dev/" target="_blank">GoldRush (Covalent)</a> • Fly Infinity DAO
     </div>
 </div>
 
 <script>
     // ==================== CONFIGURATION ====================
     const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
-    // 🔴 کلید API خود را از Etherscan در اینجا وارد کنید
-    const ETHERSCAN_API_KEY = "87BYS5S7YZMPBPFST4W9R6TZM1KBKPHJXD";
-    const BSC_CHAIN_ID = 56; // شناسه زنجیره برای BSC
+    // 🔴 کلید API خود را از GoldRush (Covalent) در اینجا وارد کنید 🔴
+    const COVALENT_API_KEY = "cqt_rQT4yHvC37xM7MTYpRtCw63kyX8W";
+    const CHAIN_ID = 56; // BSC Mainnet
     
     let allTransactions = [];
     let filteredTransactions = [];
@@ -322,39 +294,56 @@
     let currentFilter = "all";
     const ITEMS_PER_PAGE = 15;
     
-    // ==================== دریافت تراکنش‌ها از Etherscan API V2 برای BSC ====================
+    // ==================== دریافت تراکنش‌ها با Covalent API ====================
     async function fetchTransactions() {
         const container = document.getElementById("txTableContainer");
-        container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Fetching transactions from Etherscan API V2...</div>';
+        container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Fetching transactions...</div>';
         
         try {
-            // استفاده از نسخه V2 با شناسه زنجیره BSC
-            const url = `https://api.etherscan.io/v2/api?chainid=${BSC_CHAIN_ID}&module=account&action=tokentx&address=${CONTRACT_ADDRESS}&page=1&offset=100&sort=desc&apikey=${ETHERSCAN_API_KEY}`;
+            // دریافت تراکنش‌های توکن (Token Transfers)
+            const url = `https://api.covalenthq.com/v1/${CHAIN_ID}/tokens/${CONTRACT_ADDRESS}/transfers_v2/?key=${COVALENT_API_KEY}&page-size=100`;
             
+            console.log("Fetching from:", url);
             const response = await fetch(url);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
             const data = await response.json();
             
-            if (data.status !== "1") throw new Error(data.message || "Failed to fetch transactions");
-            if (!data.result || data.result.length === 0) {
-                container.innerHTML = '<div class="error">No transactions found</div>';
+            if (data.error) {
+                throw new Error(data.error_message || "Covalent API error");
+            }
+            
+            if (!data.data || !data.data.items || data.data.items.length === 0) {
+                container.innerHTML = '<div class="error">✅ No transactions found for this contract.</div>';
                 return [];
             }
             
-            return data.result.map(tx => processTransaction(tx));
+            return data.data.items.map(tx => processTransaction(tx));
         } catch(e) {
-            console.error(e);
-            container.innerHTML = `<div class="error">Error: ${e.message}<br><small>Please check your Etherscan API key</small></div>`;
+            console.error("Fetch Error:", e);
+            let errorMsg = e.message;
+            if (errorMsg.includes("Invalid API key")) errorMsg = "Invalid API Key. Please check your GoldRush API key.";
+            
+            container.innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i> Error: ${errorMsg}<br><br>
+            <strong>How to fix:</strong><br>
+            1️⃣ Get a <strong>free</strong> API key from <a href="https://goldrush.dev/" target="_blank" style="color:#00C896;">goldrush.dev</a><br>
+            2️⃣ Replace <strong>YOUR_GOLDRUSH_API_KEY_HERE</strong> with your new key in the code.<br>
+            `;
             return [];
         }
     }
     
     // پردازش هر تراکنش برای نمایش در جدول
     function processTransaction(tx) {
-        const hash = tx.hash;
-        const from = tx.from;
-        const to = tx.to;
-        const value = parseFloat(tx.value) / 1e18;
-        const date = new Date(tx.timeStamp * 1000).toLocaleString();
+        const hash = tx.tx_hash;
+        const from = tx.from_address;
+        const to = tx.to_address;
+        // مقدار انتقال (delta) قبلاً بر اساس decimals توکن تنظیم شده است
+        const value = parseFloat(tx.delta);
+        const date = new Date(tx.block_signed_at).toLocaleString();
         
         let type = "Transfer";
         let typeIcon = "🔄";
@@ -367,10 +356,16 @@
         }
         
         return {
-            hash, hashShort: hash.substring(0, 10) + "..." + hash.substring(58),
-            from, fromShort: from.substring(0, 8) + "..." + from.substring(38),
-            to, toShort: to.substring(0, 8) + "..." + to.substring(38),
-            amount: value, date, type, typeIcon
+            hash,
+            hashShort: hash.substring(0, 10) + "..." + hash.substring(58),
+            from,
+            fromShort: from.substring(0, 8) + "..." + from.substring(38),
+            to,
+            toShort: to.substring(0, 8) + "..." + to.substring(38),
+            amount: value,
+            date,
+            type,
+            typeIcon
         };
     }
     
@@ -408,10 +403,11 @@
             return;
         }
         
-        let html = `<div class="tx-table"><table><thead><tr><th>Type</th><th>Tx Hash</th><th>From</th><th>To</th><th>Amount (FIT)</th><th>Date</th></tr></thead><tbody>`;
+        let html = `<div class="tx-table"><table><thead><tr><th>Type</th><th>Tx Hash</th><th>From</th><th>To</th><th>Amount (FIT)</th><th>Date</th><tr></thead><tbody>`;
         pageItems.forEach(tx => {
+            const typeClass = tx.type === 'Buy' ? 'buy' : (tx.type === 'Sell' ? 'sell' : 'transfer');
             html += `<tr>
-                <td><span class="tx-type ${tx.type === 'Buy' ? 'buy' : (tx.type === 'Sell' ? 'sell' : 'transfer')}">${tx.typeIcon} ${tx.type}</span></td>
+                <td><span class="tx-type ${typeClass}">${tx.typeIcon} ${tx.type}</span></td>
                 <td><a href="https://bscscan.com/tx/${tx.hash}" target="_blank" class="tx-link">${tx.hashShort}</a></td>
                 <td><a href="https://bscscan.com/address/${tx.from}" target="_blank" class="tx-link">${tx.fromShort}</a></td>
                 <td><a href="https://bscscan.com/address/${tx.to}" target="_blank" class="tx-link">${tx.toShort}</a></td>
@@ -451,8 +447,9 @@
     document.getElementById("nextPage").addEventListener("click", () => { const totalPages = Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE); if (currentPage < totalPages) { currentPage++; renderTable(); } });
     document.getElementById("refreshBtn").addEventListener("click", refreshData);
     
-    if (ETHERSCAN_API_KEY === "YOUR_API_KEY_HERE") {
-        document.getElementById("txTableContainer").innerHTML = '<div class="error"><i class="fas fa-key"></i> Please add your Etherscan API key.<br><small>Get a free key from: <a href="https://etherscan.io/myapikey" target="_blank" style="color:#00C896;">etherscan.io/myapikey</a></small></div>';
+    // بررسی وجود API Key
+    if (COVALENT_API_KEY === "YOUR_GOLDRUSH_API_KEY_HERE") {
+        document.getElementById("txTableContainer").innerHTML = '<div class="error"><i class="fas fa-key"></i> Please add your <strong>GoldRush (Covalent)</strong> API key to the code.<br><small>Get a free key from: <a href="https://goldrush.dev/" target="_blank" style="color:#00C896;">goldrush.dev</a></small></div>';
     } else {
         refreshData();
         setInterval(refreshData, 60000);
