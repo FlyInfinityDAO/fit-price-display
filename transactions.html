@@ -197,25 +197,6 @@
         .link-card.genesis { border-left: 3px solid #D4AF37; }
         .link-card.genesis i, .link-card.genesis h3 { color: #D4AF37; }
         
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            background: #0F0F0F;
-            border-radius: 16px;
-            padding: 12px;
-            margin-bottom: 10px;
-        }
-        
-        .info-label {
-            color: #888;
-            font-size: 12px;
-        }
-        
-        .info-value {
-            color: #D4AF37;
-            font-weight: bold;
-        }
-        
         .footer {
             text-align: center;
             font-size: 10px;
@@ -249,19 +230,6 @@
         <div class="nav-links">
             <a href="index.html" class="nav-btn"><i class="fas fa-chart-simple"></i> Dashboard</a>
             <a href="transactions.html" class="nav-btn active"><i class="fas fa-history"></i> Transactions</a>
-        </div>
-    </div>
-
-    <!-- Quick Stats -->
-    <div class="card">
-        <div class="card-title">
-            <i class="fas fa-chart-line"></i> Live Statistics
-        </div>
-        <div class="stats-grid">
-            <div class="info-row"><span class="info-label">💰 Current Price</span><span class="info-value" id="currentPrice">—</span></div>
-            <div class="info-row"><span class="info-label">🪙 Total Supply</span><span class="info-value" id="totalSupply">—</span></div>
-            <div class="info-row"><span class="info-label">🏦 DAI Reserve</span><span class="info-value" id="daiReserve">—</span></div>
-            <div class="info-row"><span class="info-label">👥 Total Holders</span><span class="info-value" id="holderCount">—</span></div>
         </div>
     </div>
 
@@ -396,81 +364,5 @@
         Fly Infinity DAO
     </div>
 </div>
-
-<script>
-    // ==================== CONFIGURATION ====================
-    const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
-    const DAI_ADDRESS = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
-    const COVALENT_API_KEY = "cqt_rQT4yHvC37xM7MTYpRtCw63kyX8W";
-    const CHAIN_ID = 56;
-    
-    // ==================== FETCH TOKEN HOLDERS FROM COVALENT ====================
-    async function fetchHoldersAndSupply() {
-        try {
-            const url = `https://api.covalenthq.com/v1/${CHAIN_ID}/tokens/${CONTRACT_ADDRESS}/token_holders/?key=${COVALENT_API_KEY}&page-size=1`;
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            if (data.data && data.data.pagination) {
-                // Total Holders
-                const totalHolders = data.data.pagination.total_count;
-                if (totalHolders) {
-                    document.getElementById("holderCount").innerHTML = totalHolders.toLocaleString();
-                }
-            }
-            
-            if (data.data && data.data.items && data.data.items[0]) {
-                // Total Supply - بدون اعشار
-                const totalSupply = parseFloat(data.data.items[0].total_supply);
-                if (!isNaN(totalSupply)) {
-                    document.getElementById("totalSupply").innerHTML = totalSupply.toLocaleString(undefined, {maximumFractionDigits: 0});
-                }
-            }
-        } catch(e) {
-            console.error("Error fetching holders/supply:", e);
-            document.getElementById("holderCount").innerHTML = "1,200+";
-            document.getElementById("totalSupply").innerHTML = "6,924";
-        }
-    }
-    
-    // ==================== FETCH DAI RESERVE FROM COVALENT ====================
-    async function fetchDAIReserve() {
-        try {
-            const url = `https://api.covalenthq.com/v1/${CHAIN_ID}/address/${CONTRACT_ADDRESS}/balances_v2/?key=${COVALENT_API_KEY}`;
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            if (data.data && data.data.items) {
-                const daiItem = data.data.items.find(item => item.contract_address.toLowerCase() === DAI_ADDRESS.toLowerCase());
-                if (daiItem && daiItem.balance) {
-                    const balance = parseFloat(daiItem.balance) / 1e18;
-                    document.getElementById("daiReserve").innerHTML = "$" + balance.toLocaleString(undefined, {maximumFractionDigits: 2});
-                }
-            }
-        } catch(e) {
-            console.error("Error fetching DAI reserve:", e);
-            document.getElementById("daiReserve").innerHTML = "—";
-        }
-    }
-    
-    // ==================== FETCH PRICE FROM INDEX PAGE (SIMPLE) ====================
-    // Instead of complex API calls, we'll display a link to view price on dashboard
-    function displayPriceInfo() {
-        document.getElementById("currentPrice").innerHTML = '<a href="index.html" style="color:#D4AF37;">View on Dashboard →</a>';
-    }
-    
-    // ==================== REFRESH ALL STATS ====================
-    async function refreshAllStats() {
-        await Promise.allSettled([
-            fetchHoldersAndSupply(),
-            fetchDAIReserve()
-        ]);
-        displayPriceInfo();
-    }
-    
-    // ==================== INIT ====================
-    refreshAllStats();
-    setInterval(refreshAllStats, 60000);
-</script>
 </body>
 </html>
