@@ -339,13 +339,32 @@
         }
     }
     
-    // ==================== HISTORICAL PRICES (FULLY FROM JSON) ====================
+        // ==================== HISTORICAL PRICES (FULLY FROM JSON) ====================
     let historicalStats = {
         days1: null, days7: null, days30: null, days90: null, 
         days180: null, days365: null, initial: null, current: null
     };
     
-    let allRecords = []; // ذخیره همه رکوردها برای نمودار
+    let allRecords = [];
+    
+    // تابع کمکی برای پیدا کردن قیمت در یک تاریخ مشخص (یا نزدیک‌ترین تاریخ قبل)
+    function getPriceForDate(records, targetDateStr) {
+        if (!records || records.length === 0) return null;
+        
+        // اگر تاریخ دقیق وجود دارد
+        const exact = records.find(r => r.date === targetDateStr);
+        if (exact) return exact.price;
+        
+        // پیدا کردن نزدیک‌ترین تاریخ قبل
+        let best = null;
+        for (let i = records.length - 1; i >= 0; i--) {
+            if (records[i].date <= targetDateStr) {
+                best = records[i];
+                break;
+            }
+        }
+        return best ? best.price : null;
+    }
     
     async function loadFromJSON() {
         try {
@@ -353,67 +372,46 @@
             if (!response.ok) throw new Error("JSON file not found");
             const data = await response.json();
             if (data.records && data.records.length > 0) {
-                const records = data.records.sort((a,b) => new Date(a.date) - new Date(b.date));
+                const records = data.records.sort((a,b) => a.date.localeCompare(b.date));
                 allRecords = records;
                 
+                console.log("📊 Records loaded:", records.length);
+                console.log("First record:", records[0]);
+                console.log("Last record:", records[records.length-1]);
+                
                 // آخرین رکورد (قیمت امروز)
-                const lastRecord = records[records.length - 1];
-                historicalStats.current = lastRecord.price;
+                historicalStats.current = records[records.length - 1].price;
                 
-                // تابع کمکی برای پیدا کردن قیمت در یک تاریخ خاص
-                function getPriceForDate(targetDate) {
-                    for (let i = records.length - 1; i >= 0; i--) {
-                        if (records[i].date <= targetDate) {
-                            return records[i].price;
-                        }
-                    }
-                    return null;
-                }
-                
+                // تاریخ امروز UTC
                 const today = new Date();
                 today.setUTCHours(0, 0, 0, 0);
                 
-                // قیمت 1 روز پیش
-                const yesterday = new Date(today);
-                yesterday.setUTCDate(today.getUTCDate() - 1);
-                const yesterdayStr = yesterday.toISOString().split('T')[0];
-                historicalStats.days1 = getPriceForDate(yesterdayStr);
+                // تابع برای ساخت تاریخ هدف
+                function getTargetDate(daysAgo) {
+                    const target = new Date(today);
+                    target.setUTCDate(today.getUTCDate() - daysAgo);
+                    return target.toISOString().split('T')[0];
+                }
                 
-                // قیمت 7 روز پیش
-                const sevenDaysAgo = new Date(today);
-                sevenDaysAgo.setUTCDate(today.getUTCDate() - 7);
-                const sevenStr = sevenDaysAgo.toISOString().split('T')[0];
-                historicalStats.days7 = getPriceForDate(sevenStr);
-                
-                // قیمت 30 روز پیش
-                const thirtyDaysAgo = new Date(today);
-                thirtyDaysAgo.setUTCDate(today.getUTCDate() - 30);
-                const thirtyStr = thirtyDaysAgo.toISOString().split('T')[0];
-                historicalStats.days30 = getPriceForDate(thirtyStr);
-                
-                // قیمت 90 روز پیش
-                const ninetyDaysAgo = new Date(today);
-                ninetyDaysAgo.setUTCDate(today.getUTCDate() - 90);
-                const ninetyStr = ninetyDaysAgo.toISOString().split('T')[0];
-                historicalStats.days90 = getPriceForDate(ninetyStr);
-                
-                // قیمت 180 روز پیش
-                const oneEightyAgo = new Date(today);
-                oneEightyAgo.setUTCDate(today.getUTCDate() - 180);
-                const oneEightyStr = oneEightyAgo.toISOString().split('T')[0];
-                historicalStats.days180 = getPriceForDate(oneEightyStr);
-                
-                // قیمت 365 روز پیش
-                const threeSixFiveAgo = new Date(today);
-                threeSixFiveAgo.setUTCDate(today.getUTCDate() - 365);
-                const threeSixFiveStr = threeSixFiveAgo.toISOString().split('T')[0];
-                historicalStats.days365 = getPriceForDate(threeSixFiveStr);
-                
-                // قیمت ابتدایی
+                // دریافت قیمت‌ها
+                historicalStats.days1 = getPriceForDate(records, getTargetDate(1));
+                historicalStats.days7 = getPriceForDate(records, getTargetDate(7));
+                historicalStats.days30 = getPriceForDate(records, getTargetDate(30));
+                historicalStats.days90 = getPriceForDate(records, getTargetDate(90));
+                historicalStats.days180 = getPriceForDate(records, getTargetDate(180));
+                historicalStats.days365 = getPriceForDate(records, getTargetDate(365));
                 historicalStats.initial = records[0]?.price || null;
                 
-                console.log("✅ Historical data loaded from JSON");
-                console.log("Stats:", historicalStats);
+                console.log("✅ Stats loaded:", {
+                    days1: historicalStats.days1,
+                    days7: historicalStats.days7,
+                    days30: historicalStats.days30,
+                    days90: historicalStats.days90,
+                    days180: historicalStats.days180,
+                    days365: historicalStats.days365,
+                    initial: historicalStats.initial,
+                    current: historicalStats.current
+                });
             }
             updateStats();
             updateGrowthRates();
