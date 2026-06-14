@@ -125,7 +125,7 @@
         
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             margin-bottom: 25px;
         }
@@ -166,6 +166,7 @@
         .link-card .arrow {
             font-size: 11px;
             display: inline-block;
+            color: #00C896;
         }
         
         /* Color variants */
@@ -192,6 +193,9 @@
         
         .link-card.liquidity { border-left: 3px solid #3e6b9e; }
         .link-card.liquidity i, .link-card.liquidity h3 { color: #3e6b9e; }
+        
+        .link-card.genesis { border-left: 3px solid #D4AF37; }
+        .link-card.genesis i, .link-card.genesis h3 { color: #D4AF37; }
         
         .info-row {
             display: flex;
@@ -273,56 +277,64 @@
                 <i class="fas fa-list"></i>
                 <h3>📋 All Transactions</h3>
                 <p>مشاهده تمام تراکنش‌های مربوط به قرارداد</p>
-                <span class="arrow">→ BscScan →</span>
+                <span class="arrow">→ Open in BscScan →</span>
             </a>
             
-            <!-- Only Buy Transactions -->
-            <a href="https://bscscan.com/txs?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&method=0x3c7c5c8a" target="_blank" class="link-card buy">
+            <!-- Buy Transactions -->
+            <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0xe3d4187f%7eBuy" target="_blank" class="link-card buy">
                 <i class="fas fa-arrow-down"></i>
                 <h3>🟢 Buy Transactions</h3>
-                <p>فقط تراکنش‌های خرید FIT</p>
-                <span class="arrow">→ BscScan →</span>
+                <p>فقط تراکنش‌های خرید FIT (تابع Buy)</p>
+                <span class="arrow">→ Open in BscScan →</span>
             </a>
             
-            <!-- Only Sell Transactions -->
-            <a href="https://bscscan.com/txs?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&method=0x4a4f3c6a" target="_blank" class="link-card sell">
+            <!-- Sell Transactions -->
+            <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0x52288195%7eSell" target="_blank" class="link-card sell">
                 <i class="fas fa-arrow-up"></i>
                 <h3>🔴 Sell Transactions</h3>
-                <p>فقط تراکنش‌های فروش FIT</p>
-                <span class="arrow">→ BscScan →</span>
+                <p>فقط تراکنش‌های فروش FIT (تابع Sell)</p>
+                <span class="arrow">→ Open in BscScan →</span>
             </a>
             
             <!-- Token Transfers -->
             <a href="https://bscscan.com/tokentxns?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card all">
                 <i class="fas fa-arrow-right-arrow-left"></i>
                 <h3>🔄 Token Transfers</h3>
-                <p>تراکنش‌های انتقال توکن بین آدرس‌ها</p>
-                <span class="arrow">→ BscScan →</span>
+                <p>تراکنش‌های انتقال توکن FIT بین آدرس‌ها</p>
+                <span class="arrow">→ Open in BscScan →</span>
             </a>
         </div>
     </div>
 
-    <!-- Special Events Section -->
+    <!-- Network Events Section -->
     <div class="card">
         <div class="card-title">
             <i class="fas fa-star"></i> Network Events
         </div>
         <div class="stats-grid">
             
-            <!-- Only Reward Transactions -->
-            <a href="https://bscscan.com/txsInternal?a=0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B" target="_blank" class="link-card reward">
-                <i class="fas fa-gift"></i>
-                <h3>🎁 Reward Events</h3>
-                <p>تراکنش‌های پاداش شبکه</p>
-                <span class="arrow">→ BscScan →</span>
+            <!-- Become Owner Transactions -->
+            <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0x949ded00%7eBe+Come_Owner" target="_blank" class="link-card owner">
+                <i class="fas fa-user-plus"></i>
+                <h3>👑 Become Owner Events</h3>
+                <p>ثبت‌نام‌های جدید در شبکه (تابع BeCome_Owner)</p>
+                <span class="arrow">→ Open in BscScan →</span>
             </a>
             
-            <!-- Only Become Owner Transactions -->
-            <a href="https://bscscan.com/txsInternal?a=0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B" target="_blank" class="link-card owner">
-                <i class="fas fa-user-plus"></i>
-                <h3>👑 Become Owner</h3>
-                <p>ثبت‌نام‌های جدید در شبکه</p>
-                <span class="arrow">→ BscScan →</span>
+            <!-- Reward Transactions -->
+            <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0xe2e15f2e%7eReward" target="_blank" class="link-card reward">
+                <i class="fas fa-gift"></i>
+                <h3>🎁 Reward Events</h3>
+                <p>تراکنش‌های پاداش شبکه (تابع Reward)</p>
+                <span class="arrow">→ Open in BscScan →</span>
+            </a>
+            
+            <!-- Genesis Liquidity -->
+            <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0x05068727%7eGenesis_Liquidity" target="_blank" class="link-card genesis">
+                <i class="fas fa-droplet"></i>
+                <h3>💧 Genesis Liquidity</h3>
+                <p>تراکنش ایجاد نقدینگی اولیه</p>
+                <span class="arrow">→ Open in BscScan →</span>
             </a>
         </div>
     </div>
@@ -339,7 +351,7 @@
                 <i class="fas fa-chart-pie"></i>
                 <h3>📊 Holder Distribution</h3>
                 <p>نمودار توزیع هولدرها و درصدهای مالکیت</p>
-                <span class="arrow">→ BscScan →</span>
+                <span class="arrow">→ Open in BscScan →</span>
             </a>
             
             <!-- Top Holders List -->
@@ -347,7 +359,7 @@
                 <i class="fas fa-list-ol"></i>
                 <h3>👥 Top Holders List</h3>
                 <p>لیست کامل هولدرها به همراه میزان FIT</p>
-                <span class="arrow">→ BscScan →</span>
+                <span class="arrow">→ Open in BscScan →</span>
             </a>
         </div>
     </div>
@@ -364,15 +376,15 @@
                 <i class="fas fa-coins"></i>
                 <h3>🪙 Total Supply</h3>
                 <p>مشاهده کل عرضه و اطلاعات توکن</p>
-                <span class="arrow">→ BscScan →</span>
+                <span class="arrow">→ Open in BscScan →</span>
             </a>
             
-            <!-- DAI Liquidity / Reserve -->
+            <!-- DAI Reserve -->
             <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#tokentxns" target="_blank" class="link-card liquidity">
                 <i class="fas fa-database"></i>
                 <h3>💵 DAI Reserve</h3>
-                <p>مشاهده موجودی DAI در قرارداد</p>
-                <span class="arrow">→ BscScan →</span>
+                <p>مشاهده موجودی DAI در قرارداد (Token Transfers)</p>
+                <span class="arrow">→ Open in BscScan →</span>
             </a>
         </div>
     </div>
@@ -382,7 +394,7 @@
         <div class="card-title">
             <i class="fas fa-file-contract"></i> Contract Information
         </div>
-        <div class="contract-info" style="background:#1a1a1a; border-radius:20px; padding:15px; text-align:center;">
+        <div style="background:#1a1a1a; border-radius:20px; padding:15px; text-align:center;">
             <div style="color:#00C896; font-size:11px; margin-bottom:5px;">📜 FIT Token Contract</div>
             <div style="font-family:monospace; font-size:13px; color:#D4AF37; word-break:break-all;">0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa</div>
             <div style="color:#00C896; font-size:11px; margin-top:10px; margin-bottom:5px;">🌐 Network Contract</div>
