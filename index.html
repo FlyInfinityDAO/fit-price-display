@@ -89,7 +89,42 @@
         .action-buttons { display: flex; justify-content: center; gap: 15px; margin: 20px 0; flex-wrap: wrap; }
         .action-btn { background: transparent; border: 1px solid #00C896; color: #00C896; padding: 10px 24px; border-radius: 40px; font-size: 14px; font-weight: bold; text-decoration: none; display: inline-block; transition: all 0.3s ease; }
         .action-btn:hover { background: #00C896; color: #0F0F0F; transform: translateY(-2px); }
-        .action-btn.sell { border-color: #D4AF37; color: #D4AF37; }
+        
+        /* دکمه ویژه DApp - بزرگتر و برجسته */
+        .dapp-btn {
+            background: linear-gradient(135deg, #00C896, #008a6a);
+            border: none;
+            color: white;
+            padding: 12px 28px;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(0, 200, 150, 0.3);
+        }
+        .dapp-btn:hover {
+            background: linear-gradient(135deg, #00e0a8, #00a070);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* دکمه Transactions در فوتر */
+        .transaction-link {
+            display: inline-block;
+            background: transparent;
+            border: 2px solid #00C896;
+            color: #00C896;
+            padding: 12px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin: 10px 0;
+        }
+        .transaction-link:hover {
+            background: #00C896;
+            color: #0F0F0F;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 200, 150, 0.3);
+        }
         
         .simulator-input { text-align: center; margin: 15px 0; }
         .input-group { background: #1a1a1a; padding: 12px; border-radius: 16px; display: inline-block; border-left: 3px solid #00C896; }
@@ -203,12 +238,11 @@
         </div>
     </div>
 
-    <!-- Action Buttons -->
+    <!-- Action Buttons - حذف دکمه‌های Buy/Sell FIT و اضافه شدن دکمه DApp -->
     <div class="action-buttons">
-        <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#writeContract" target="_blank" class="action-btn"><i class="fas fa-shopping-cart"></i> Buy FIT</a>
-        <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#writeContract" target="_blank" class="action-btn sell"><i class="fas fa-chart-line"></i> Sell FIT</a>
         <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="action-btn"><i class="fas fa-file-contract"></i> BscScan</a>
         <a href="https://github.com/FlyInfinityDAO/Fly-Infinity-Token/blob/main/FIT%20-%20White%20Paper.pdf" target="_blank" class="action-btn"><i class="fas fa-file-pdf"></i> Whitepaper</a>
+        <a href="dapp.html" class="action-btn dapp-btn"><i class="fas fa-rocket"></i> Buy Ownership Shares &amp; FIT</a>
     </div>
 
     <!-- Chart -->
@@ -299,7 +333,9 @@
     </div>
 
     <div class="footer">
-        <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#transactions" target="_blank">View All Transactions on BscScan</a><br>
+        <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#transactions" target="_blank" class="transaction-link">
+            <i class="fas fa-external-link-alt"></i> View All Transactions on BscScan
+        </a><br>
         Historical data recorded daily • Fly Infinity DAO
     </div>
 </div>
@@ -350,12 +386,10 @@
             if (data.records && data.records.length > 0) {
                 const records = data.records.sort((a,b) => a.date.localeCompare(b.date));
                 
-                // ========== 1. داده‌های نمودار ==========
                 chartLabels = records.map(r => r.date);
                 chartPrices = records.map(r => r.price);
                 console.log(`✅ Chart: ${chartLabels.length} records loaded from JSON`);
                 
-                // ========== 2. داده‌های باکس تاریخچه ==========
                 historicalStats.current = records[records.length - 1].price;
                 
                 const today = new Date();
