@@ -300,8 +300,9 @@
         container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Fetching transactions...</div>';
         
         try {
-            // دریافت تراکنش‌های توکن (Token Transfers)
-            const url = `https://api.covalenthq.com/v1/${CHAIN_ID}/tokens/${CONTRACT_ADDRESS}/transfers_v2/?key=${COVALENT_API_KEY}&page-size=100`;
+            // اندپوینت جدید و تست شده Covalent V1
+            // دریافت تراکنش‌های یک آدرس (قرارداد توکن هم فرستنده و هم گیرنده است)
+            const url = `https://api.covalenthq.com/v1/${CHAIN_ID}/address/${CONTRACT_ADDRESS}/transfers_v2/?key=${COVALENT_API_KEY}&page-size=100`;
             
             console.log("Fetching from:", url);
             const response = await fetch(url);
@@ -312,6 +313,8 @@
             
             const data = await response.json();
             
+            console.log("API Response:", data);
+            
             if (data.error) {
                 throw new Error(data.error_message || "Covalent API error");
             }
@@ -321,16 +324,26 @@
                 return [];
             }
             
-            return data.data.items.map(tx => processTransaction(tx));
+            // فیلتر کردن تراکنش‌هایی که مربوط به توکن ما هستند
+            const tokenTransfers = data.data.items.filter(item => 
+                item.contract_address && item.contract_address.toLowerCase() === CONTRACT_ADDRESS.toLowerCase()
+            );
+            
+            if (tokenTransfers.length === 0) {
+                container.innerHTML = '<div class="error">✅ No token transfers found.</div>';
+                return [];
+            }
+            
+            return tokenTransfers.map(tx => processTransaction(tx));
         } catch(e) {
             console.error("Fetch Error:", e);
             let errorMsg = e.message;
-            if (errorMsg.includes("Invalid API key")) errorMsg = "Invalid API Key. Please check your GoldRush API key.";
             
             container.innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i> Error: ${errorMsg}<br><br>
-            <strong>How to fix:</strong><br>
-            1️⃣ Get a <strong>free</strong> API key from <a href="https://goldrush.dev/" target="_blank" style="color:#00C896;">goldrush.dev</a><br>
-            2️⃣ Replace <strong>YOUR_GOLDRUSH_API_KEY_HERE</strong> with your new key in the code.<br>
+            <strong>Troubleshooting:</strong><br>
+            1️⃣ Verify your Covalent API key is active at <a href="https://goldrush.dev/" target="_blank" style="color:#00C896;">goldrush.dev</a><br>
+            2️⃣ Your API key: ${COVALENT_API_KEY.substring(0, 10)}...<br>
+            3️⃣ The endpoint is now: <code style="font-size:11px;">/v1/56/address/CONTRACT_ADDRESS/transfers_v2/</code><br>
             `;
             return [];
         }
@@ -403,7 +416,7 @@
             return;
         }
         
-        let html = `<div class="tx-table"><table><thead><tr><th>Type</th><th>Tx Hash</th><th>From</th><th>To</th><th>Amount (FIT)</th><th>Date</th><tr></thead><tbody>`;
+        let html = `<div class="tx-table"><tr><thead><tr><th>Type</th><th>Tx Hash</th><th>From</th><th>To</th><th>Amount (FIT)</th><th>Date</th></tr></thead><tbody>`;
         pageItems.forEach(tx => {
             const typeClass = tx.type === 'Buy' ? 'buy' : (tx.type === 'Sell' ? 'sell' : 'transfer');
             html += `<tr>
@@ -447,13 +460,9 @@
     document.getElementById("nextPage").addEventListener("click", () => { const totalPages = Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE); if (currentPage < totalPages) { currentPage++; renderTable(); } });
     document.getElementById("refreshBtn").addEventListener("click", refreshData);
     
-    // بررسی وجود API Key
-    if (COVALENT_API_KEY === "cqt_rQT4yHvC37xM7MTYpRtCw63kyX8W") {
-        document.getElementById("txTableContainer").innerHTML = '<div class="error"><i class="fas fa-key"></i> Please add your <strong>GoldRush (Covalent)</strong> API key to the code.<br><small>Get a free key from: <a href="https://goldrush.dev/" target="_blank" style="color:#00C896;">goldrush.dev</a></small></div>';
-    } else {
-        refreshData();
-        setInterval(refreshData, 60000);
-    }
+    // شروع به کار
+    refreshData();
+    setInterval(refreshData, 60000);
 </script>
 </body>
 </html>
