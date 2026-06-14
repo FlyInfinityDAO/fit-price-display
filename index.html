@@ -336,28 +336,16 @@
         }
     }
     
-    // ==================== HISTORICAL PRICES (خواندن از JSON) ====================
+      // ==================== HISTORICAL PRICES ====================
     let historicalStats = {
         days1: null, days7: null, days30: null, days90: null, 
         days180: null, days365: null, initial: null, current: null
     };
     
-    // تابع برای پیدا کردن قیمت در تاریخ مشخص (یا نزدیک‌ترین تاریخ قبل)
-    function getPriceForDate(records, targetDateStr) {
-        if (!records || records.length === 0) return null;
-        // بررسی تطابق دقیق
-        const exact = records.find(r => r.date === targetDateStr);
-        if (exact) return exact.price;
-        // پیدا کردن نزدیک‌ترین تاریخ قبل
-        for (let i = records.length - 1; i >= 0; i--) {
-            if (records[i].date <= targetDateStr) {
-                return records[i].price;
-            }
-        }
-        return null;
-    }
+    let chartLabels = [];
+    let chartPrices = [];
     
-    async function loadFromJSON() {
+    async function loadAllFromJSON() {
         try {
             const response = await fetch('price-history.json?t=' + Date.now());
             if (!response.ok) throw new Error("JSON file not found");
@@ -365,47 +353,73 @@
             if (data.records && data.records.length > 0) {
                 const records = data.records.sort((a,b) => a.date.localeCompare(b.date));
                 
-                // آخرین رکورد (قیمت امروز)
+                // ========== 1. ذخیره داده‌های نمودار ==========
+                chartLabels = records.map(r => r.date);
+                chartPrices = records.map(r => r.price);
+                console.log(`✅ Chart: ${chartLabels.length} records`);
+                
+                // ========== 2. محاسبه قیمت‌های تاریخی ==========
                 historicalStats.current = records[records.length - 1].price;
                 
-                // تاریخ امروز UTC
                 const today = new Date();
                 today.setUTCHours(0, 0, 0, 0);
                 
-                function getTargetDate(daysAgo) {
+                function getPriceAtDate(daysAgo) {
                     const target = new Date(today);
                     target.setUTCDate(today.getUTCDate() - daysAgo);
-                    return target.toISOString().split('T')[0];
+                    const targetStr = target.toISOString().split('T')[0];
+                    
+                    // پیدا کردن نزدیک‌ترین تاریخ قبل یا همان روز
+                    for (let i = records.length - 1; i >= 0; i--) {
+                        if (records[i].date <= targetStr) {
+                            return records[i].price;
+                        }
+                    }
+                    return null;
                 }
                 
-                // دریافت قیمت‌ها از JSON
-                historicalStats.days1 = getPriceForDate(records, getTargetDate(1));
-                historicalStats.days7 = getPriceForDate(records, getTargetDate(7));
-                historicalStats.days30 = getPriceForDate(records, getTargetDate(30));
-                historicalStats.days90 = getPriceForDate(records, getTargetDate(90));
-                historicalStats.days180 = getPriceForDate(records, getTargetDate(180));
-                historicalStats.days365 = getPriceForDate(records, getTargetDate(365));
+                historicalStats.days1 = getPriceAtDate(1);
+                historicalStats.days7 = getPriceAtDate(7);
+                historicalStats.days30 = getPriceAtDate(30);
+                historicalStats.days90 = getPriceAtDate(90);
+                historicalStats.days180 = getPriceAtDate(180);
+                historicalStats.days365 = getPriceAtDate(365);
                 historicalStats.initial = records[0]?.price || null;
                 
-                console.log("✅ Historical data loaded from JSON:", historicalStats);
+                console.log("✅ Stats from JSON:", historicalStats);
             }
             updateStats();
             updateGrowthRates();
             updateSim();
+            drawChart();
         } catch(e) {
-            console.log("⚠️ Could not load price-history.json, using fallback values");
-            useFallbackStats();
+            console.log("⚠️ Using fallback data");
+            useFallbackData();
         }
     }
     
-    function useFallbackStats() {
+    function useFallbackData() {
         historicalStats = {
             days1: 6.278, days7: 6.181, days30: 6.030, days90: 5.682, 
             days180: 1.005, days365: 1.000, initial: 1.000, current: 6.324
         };
+        chartLabels = ["2025-12-18", "2026-06-12", "2026-06-13", "2026-06-14"];
+        chartPrices = [1.000, 6.278, 6.324, 6.324];
         updateStats();
         updateGrowthRates();
         updateSim();
+        drawChart();
+    }
+    
+    function drawChart() {
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        if (priceChart) priceChart.destroy();
+        if (chartLabels.length === 0) return;
+        priceChart = new Chart(ctx, {
+            type: 'line',
+            data: { labels: chartLabels, datasets: [{ label: 'FIT Price ($)', data: chartPrices, borderColor: '#D4AF37', backgroundColor: 'rgba(212,175,55,0.1)', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 0 }] },
+            options: { responsive: true, maintainAspectRatio: true, plugins: { tooltip: { callbacks: { label: (ctx) => `$${ctx.raw.toFixed(6)}` } }, legend: { labels: { color: '#00C896' } } }, scales: { x: { ticks: { color: '#888', maxRotation: 45, autoSkip: true, maxTicksLimit: 10 } }, y: { ticks: { color: '#888', callback: (val) => '$' + val.toFixed(2) } } } }
+        });
     }
     
     // ==================== CHART DATA (خواندن از JSON) ====================
