@@ -252,51 +252,43 @@
         </div>
     </div>
 
-    <!-- Quick Stats (Live from Contract) -->
+    <!-- Quick Stats (Live from Covalent API) -->
     <div class="card">
         <div class="card-title">
             <i class="fas fa-chart-line"></i> Live Statistics
         </div>
         <div class="stats-grid">
-            <div class="info-row"><span class="info-label">💰 Current Price</span><span class="info-value" id="currentPrice">— DAI</span></div>
-            <div class="info-row"><span class="info-label">🪙 Total Supply</span><span class="info-value" id="totalSupply">— FIT</span></div>
-            <div class="info-row"><span class="info-label">🏦 DAI Reserve</span><span class="info-value" id="daiReserve">— DAI</span></div>
-            <div class="info-row"><span class="info-label">👥 Total Holders</span><span class="info-value" id="holderCount">—</span></div>
+            <div class="info-row"><span class="info-label">💰 Current Price</span><span class="info-value" id="currentPrice">Loading...</span></div>
+            <div class="info-row"><span class="info-label">🪙 Total Supply</span><span class="info-value" id="totalSupply">Loading...</span></div>
+            <div class="info-row"><span class="info-label">🏦 DAI Reserve</span><span class="info-value" id="daiReserve">Loading...</span></div>
+            <div class="info-row"><span class="info-label">👥 Total Holders</span><span class="info-value" id="holderCount">Loading...</span></div>
         </div>
     </div>
 
-    <!-- Transaction Links Section -->
+    <!-- Transaction Links Section (Same as before) -->
     <div class="card">
         <div class="card-title">
             <i class="fas fa-exchange-alt"></i> Transactions Explorer
         </div>
         <div class="stats-grid">
-            
-            <!-- All Transactions -->
             <a href="https://bscscan.com/txs?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card all">
                 <i class="fas fa-list"></i>
                 <h3>📋 All Transactions</h3>
                 <p>View all contract transactions</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
-            
-            <!-- Buy Transactions -->
             <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0xe3d4187f%7eBuy" target="_blank" class="link-card buy">
                 <i class="fas fa-arrow-down"></i>
                 <h3>🟢 Buy Transactions</h3>
                 <p>Only Buy transactions (Buy function)</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
-            
-            <!-- Sell Transactions -->
             <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0x52288195%7eSell" target="_blank" class="link-card sell">
                 <i class="fas fa-arrow-up"></i>
                 <h3>🔴 Sell Transactions</h3>
                 <p>Only Sell transactions (Sell function)</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
-            
-            <!-- Token Transfers -->
             <a href="https://bscscan.com/tokentxns?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card all">
                 <i class="fas fa-arrow-right-arrow-left"></i>
                 <h3>🔄 Token Transfers</h3>
@@ -312,24 +304,18 @@
             <i class="fas fa-star"></i> Network Events
         </div>
         <div class="stats-grid">
-            
-            <!-- Become Owner Transactions -->
             <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0x949ded00%7eBe+Come_Owner" target="_blank" class="link-card owner">
                 <i class="fas fa-user-plus"></i>
                 <h3>👑 Become Owner Events</h3>
                 <p>New network registrations (BeCome_Owner function)</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
-            
-            <!-- Reward Transactions -->
             <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0xe2e15f2e%7eReward" target="_blank" class="link-card reward">
                 <i class="fas fa-gift"></i>
                 <h3>🎁 Reward Events</h3>
                 <p>Network reward transactions (Reward function)</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
-            
-            <!-- Genesis Liquidity -->
             <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0x05068727%7eGenesis_Liquidity" target="_blank" class="link-card genesis">
                 <i class="fas fa-droplet"></i>
                 <h3>💧 Genesis Liquidity</h3>
@@ -345,16 +331,12 @@
             <i class="fas fa-users"></i> Holder Information
         </div>
         <div class="stats-grid">
-            
-            <!-- Holder Distribution Chart -->
             <a href="https://bscscan.com/token/tokenholderchart/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card holders">
                 <i class="fas fa-chart-pie"></i>
                 <h3>📊 Holder Distribution</h3>
                 <p>Chart of holder distribution and ownership percentages</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
-            
-            <!-- Top Holders List -->
             <a href="https://bscscan.com/token/gauge?type=holders&a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card holders">
                 <i class="fas fa-list-ol"></i>
                 <h3>👥 Top Holders List</h3>
@@ -370,16 +352,12 @@
             <i class="fas fa-chart-simple"></i> Contract Statistics
         </div>
         <div class="stats-grid">
-            
-            <!-- Total Supply -->
             <a href="https://bscscan.com/token/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card supply">
                 <i class="fas fa-coins"></i>
                 <h3>🪙 Total Supply</h3>
                 <p>View total supply and token information</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
-            
-            <!-- DAI Reserve -->
             <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#tokentxns" target="_blank" class="link-card liquidity">
                 <i class="fas fa-database"></i>
                 <h3>💵 DAI Reserve</h3>
@@ -420,34 +398,87 @@
 </div>
 
 <script>
-    // Live data from contract
+    // ==================== COVALENT API CONFIG ====================
     const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
-    const DAI_ADDRESS = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
-    const ABI = [{"constant":true,"inputs":[],"name":"Price","outputs":[{"name":"","type":"uint256"}],"type":"function"},{"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"type":"function"}];
-    const DAI_ABI = [{"constant":true,"inputs":[{"name":"account","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"type":"function"}];
+    // 🔴 Your Covalent API Key (same as before)
+    const COVALENT_API_KEY = "cqt_rQT4yHvC37xM7MTYpRtCw63kyX8W";
+    const CHAIN_ID = 56;
     
-    const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
-    const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
-    const daiContract = new ethers.Contract(DAI_ADDRESS, DAI_ABI, provider);
-    
-    async function fetchStats() {
+    // ==================== FETCH TOKEN STATS FROM COVALENT ====================
+    async function fetchTokenStats() {
         try {
-            let priceRaw = await contract.Price();
-            let priceDAI = parseFloat(ethers.utils.formatEther(priceRaw));
-            document.getElementById("currentPrice").innerHTML = priceDAI.toFixed(6) + " DAI";
+            // Get token holder info (includes total supply)
+            const holderUrl = `https://api.covalenthq.com/v1/${CHAIN_ID}/tokens/${CONTRACT_ADDRESS}/token_holders/?key=${COVALENT_API_KEY}&page-size=1`;
+            const holderResponse = await fetch(holderUrl);
+            const holderData = await holderResponse.json();
             
-            let totalSup = parseFloat(ethers.utils.formatEther(await contract.totalSupply()));
-            document.getElementById("totalSupply").innerHTML = totalSup.toLocaleString(undefined, {maximumFractionDigits:0}) + " FIT";
+            if (holderData.data && holderData.data.items && holderData.data.items[0]) {
+                const totalSupply = parseFloat(holderData.data.items[0].total_supply);
+                if (!isNaN(totalSupply)) {
+                    document.getElementById("totalSupply").innerHTML = totalSupply.toLocaleString(undefined, {maximumFractionDigits: 0}) + " FIT";
+                }
+                
+                const totalHolders = holderData.data.pagination.total_count;
+                if (totalHolders) {
+                    document.getElementById("holderCount").innerHTML = totalHolders.toLocaleString();
+                } else {
+                    document.getElementById("holderCount").innerHTML = "1,200+";
+                }
+            }
             
-            let reserve = parseFloat(ethers.utils.formatEther(await daiContract.balanceOf(CONTRACT_ADDRESS)));
-            document.getElementById("daiReserve").innerHTML = reserve.toLocaleString(undefined, {maximumFractionDigits:2}) + " DAI";
-        } catch(e) { console.error(e); }
+            // Get token price from Covalent
+            const priceUrl = `https://api.covalenthq.com/v1/pricing/historical_by_addresses_v2/${CHAIN_ID}/USD/${CONTRACT_ADDRESS}/?key=${COVALENT_API_KEY}&from=2026-06-14&to=2026-06-15`;
+            const priceResponse = await fetch(priceUrl);
+            const priceData = await priceResponse.json();
+            
+            if (priceData.data && priceData.data[0] && priceData.data[0].prices && priceData.data[0].prices[0]) {
+                const price = priceData.data[0].prices[0].price;
+                document.getElementById("currentPrice").innerHTML = "$" + price.toFixed(6);
+            } else {
+                // Fallback: try to get from contract directly
+                await fetchPriceFromContract();
+            }
+            
+            // Get DAI balance in contract (using Covalent)
+            const daiAddress = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
+            const balanceUrl = `https://api.covalenthq.com/v1/${CHAIN_ID}/address/${CONTRACT_ADDRESS}/balances_v2/?key=${COVALENT_API_KEY}`;
+            const balanceResponse = await fetch(balanceUrl);
+            const balanceData = await balanceResponse.json();
+            
+            if (balanceData.data && balanceData.data.items) {
+                const daiItem = balanceData.data.items.find(item => item.contract_address.toLowerCase() === daiAddress.toLowerCase());
+                if (daiItem && daiItem.balance) {
+                    const balance = parseFloat(daiItem.balance) / 1e18;
+                    document.getElementById("daiReserve").innerHTML = balance.toLocaleString(undefined, {maximumFractionDigits: 2}) + " DAI";
+                }
+            }
+            
+        } catch(e) {
+            console.error("Error fetching from Covalent:", e);
+            document.getElementById("currentPrice").innerHTML = "Error loading";
+            document.getElementById("totalSupply").innerHTML = "Error loading";
+            document.getElementById("daiReserve").innerHTML = "Error loading";
+            document.getElementById("holderCount").innerHTML = "Error loading";
+        }
     }
     
-    document.getElementById("holderCount").innerHTML = "1,200+";
+    // Fallback: Get price directly from contract
+    async function fetchPriceFromContract() {
+        try {
+            const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
+            const contract = new ethers.Contract(CONTRACT_ADDRESS, [{"constant":true,"inputs":[],"name":"Price","outputs":[{"name":"","type":"uint256"}],"type":"function"}], provider);
+            const priceRaw = await contract.Price();
+            const priceDAI = parseFloat(ethers.utils.formatEther(priceRaw));
+            document.getElementById("currentPrice").innerHTML = priceDAI.toFixed(6) + " DAI";
+        } catch(e) {
+            console.error("Fallback price fetch failed:", e);
+            document.getElementById("currentPrice").innerHTML = "—";
+        }
+    }
     
-    fetchStats();
-    setInterval(fetchStats, 30000);
+    // ==================== INIT ====================
+    fetchTokenStats();
+    setInterval(fetchTokenStats, 60000);
 </script>
 </body>
 </html>
