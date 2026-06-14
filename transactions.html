@@ -285,7 +285,7 @@
     // ==================== CONFIGURATION ====================
     const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
     // 🔴 کلید API خود را از GoldRush (Covalent) در اینجا وارد کنید 🔴
-    const COVALENT_API_KEY = "cqt_rQT4yHvC37xM7MTYpRtCw63kyX8W";
+    const COVALENT_API_KEY = "cqt_rQgVft4Chw47QYW887fB83KmW4vp";
     const CHAIN_ID = 56; // BSC Mainnet
     
     let allTransactions = [];
@@ -300,8 +300,8 @@
         container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Fetching transactions...</div>';
         
         try {
-            // اندپوینت جدید و تست شده Covalent V1
-            // دریافت تراکنش‌های یک آدرس (قرارداد توکن هم فرستنده و هم گیرنده است)
+            // ✅ اندپوینت صحیح و تست شده Covalent
+            // منبع: https://api.covalenthq.com/v1/56/address/{address}/transfers_v2/
             const url = `https://api.covalenthq.com/v1/${CHAIN_ID}/address/${CONTRACT_ADDRESS}/transfers_v2/?key=${COVALENT_API_KEY}&page-size=100`;
             
             console.log("Fetching from:", url);
@@ -324,17 +324,7 @@
                 return [];
             }
             
-            // فیلتر کردن تراکنش‌هایی که مربوط به توکن ما هستند
-            const tokenTransfers = data.data.items.filter(item => 
-                item.contract_address && item.contract_address.toLowerCase() === CONTRACT_ADDRESS.toLowerCase()
-            );
-            
-            if (tokenTransfers.length === 0) {
-                container.innerHTML = '<div class="error">✅ No token transfers found.</div>';
-                return [];
-            }
-            
-            return tokenTransfers.map(tx => processTransaction(tx));
+            return data.data.items.map(tx => processTransaction(tx));
         } catch(e) {
             console.error("Fetch Error:", e);
             let errorMsg = e.message;
@@ -342,8 +332,8 @@
             container.innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i> Error: ${errorMsg}<br><br>
             <strong>Troubleshooting:</strong><br>
             1️⃣ Verify your Covalent API key is active at <a href="https://goldrush.dev/" target="_blank" style="color:#00C896;">goldrush.dev</a><br>
-            2️⃣ Your API key: ${COVALENT_API_KEY.substring(0, 10)}...<br>
-            3️⃣ The endpoint is now: <code style="font-size:11px;">/v1/56/address/CONTRACT_ADDRESS/transfers_v2/</code><br>
+            2️⃣ Make sure your API key is copied correctly (starts with "cqt_" or "ckey_")<br>
+            3️⃣ Check the browser console (F12) for more details<br>
             `;
             return [];
         }
@@ -416,7 +406,7 @@
             return;
         }
         
-        let html = `<div class="tx-table"><tr><thead><tr><th>Type</th><th>Tx Hash</th><th>From</th><th>To</th><th>Amount (FIT)</th><th>Date</th></tr></thead><tbody>`;
+        let html = `<div class="tx-table"><table><thead><tr><th>Type</th><th>Tx Hash</th><th>From</th><th>To</th><th>Amount (FIT)</th><th>Date</th></tr></thead><tbody>`;
         pageItems.forEach(tx => {
             const typeClass = tx.type === 'Buy' ? 'buy' : (tx.type === 'Sell' ? 'sell' : 'transfer');
             html += `<tr>
