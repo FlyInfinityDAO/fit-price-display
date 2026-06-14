@@ -7,6 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* استایل‌های قبلی کاملاً سالم هستند و بدون تغییر می‌مانند */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
@@ -381,20 +382,22 @@
     let currentFilter = "all";
     const ITEMS_PER_PAGE = 15;
     
-    // ==================== Fetch Transactions from Covalent API (Fixed Endpoint) ====================
+    // ==================== Fetch Transactions from Covalent API (CORRECT ENDPOINT) ====================
     async function fetchTransactions() {
         const container = document.getElementById("txTableContainer");
         container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Fetching transactions from Covalent API...</div>';
         
         try {
-            // اندپوینت صحیح برای دریافت تراکنش‌های توکن
-            // بر اساس مستندات Covalent: /v1/{chainId}/tokens/{contractAddress}/transfers_v2/
-            const url = `https://api.covalenthq.com/v1/${CHAIN_ID}/tokens/${CONTRACT_ADDRESS}/transfers_v2/?key=${COVALENT_API_KEY}&page-size=100`;
+            // ✅ URL تصحیح شده: درخواست تراکنش‌های مربوط به آدرس قرارداد توکن
+            const url = `https://api.covalenthq.com/v1/${CHAIN_ID}/address/${CONTRACT_ADDRESS}/transfers_v2/?key=${COVALENT_API_KEY}&page-size=100`;
             
             console.log("Fetching from:", url);
             const response = await fetch(url);
             
             if (!response.ok) {
+                if (response.status === 404) {
+                    throw new Error("API endpoint not found. Please check the URL.");
+                }
                 if (response.status === 401 || response.status === 403) {
                     throw new Error("Invalid API key or unauthorized access.");
                 }
@@ -426,7 +429,7 @@
         } catch(e) {
             console.error("Error fetching transactions:", e);
             container.innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i> Error: ${e.message}<br><br>
-            <strong>Check your Covalent API key.</strong><br>
+            <strong>Please check your Covalent API key.</strong><br>
             <small>Get a free key from: <a href="https://goldrush.dev/" target="_blank" style="color:#00C896;">goldrush.dev</a></small>
             </div>`;
             return [];
@@ -508,7 +511,7 @@
         }
         
         let html = `<div class="tx-table">
-            </table>
+            <table>
                 <thead>
                     <tr>
                         <th>Type</th>
