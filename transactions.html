@@ -252,7 +252,7 @@
         </div>
     </div>
 
-    <!-- Quick Stats (Live from Covalent API) -->
+    <!-- Quick Stats (Live from Contract + Covalent) -->
     <div class="card">
         <div class="card-title">
             <i class="fas fa-chart-line"></i> Live Statistics
@@ -265,7 +265,7 @@
         </div>
     </div>
 
-    <!-- Transaction Links Section (Same as before) -->
+    <!-- Transaction Links Section -->
     <div class="card">
         <div class="card-title">
             <i class="fas fa-exchange-alt"></i> Transactions Explorer
@@ -398,87 +398,95 @@
 </div>
 
 <script>
-    // ==================== COVALENT API CONFIG ====================
+    // ==================== CONFIGURATION ====================
     const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
-    // 🔴 Your Covalent API Key (same as before)
+    const DAI_ADDRESS = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
     const COVALENT_API_KEY = "cqt_rQT4yHvC37xM7MTYpRtCw63kyX8W";
     const CHAIN_ID = 56;
     
-    // ==================== FETCH TOKEN STATS FROM COVALENT ====================
-    async function fetchTokenStats() {
-        try {
-            // Get token holder info (includes total supply)
-            const holderUrl = `https://api.covalenthq.com/v1/${CHAIN_ID}/tokens/${CONTRACT_ADDRESS}/token_holders/?key=${COVALENT_API_KEY}&page-size=1`;
-            const holderResponse = await fetch(holderUrl);
-            const holderData = await holderResponse.json();
-            
-            if (holderData.data && holderData.data.items && holderData.data.items[0]) {
-                const totalSupply = parseFloat(holderData.data.items[0].total_supply);
-                if (!isNaN(totalSupply)) {
-                    document.getElementById("totalSupply").innerHTML = totalSupply.toLocaleString(undefined, {maximumFractionDigits: 0}) + " FIT";
-                }
-                
-                const totalHolders = holderData.data.pagination.total_count;
-                if (totalHolders) {
-                    document.getElementById("holderCount").innerHTML = totalHolders.toLocaleString();
-                } else {
-                    document.getElementById("holderCount").innerHTML = "1,200+";
-                }
-            }
-            
-            // Get token price from Covalent
-            const priceUrl = `https://api.covalenthq.com/v1/pricing/historical_by_addresses_v2/${CHAIN_ID}/USD/${CONTRACT_ADDRESS}/?key=${COVALENT_API_KEY}&from=2026-06-14&to=2026-06-15`;
-            const priceResponse = await fetch(priceUrl);
-            const priceData = await priceResponse.json();
-            
-            if (priceData.data && priceData.data[0] && priceData.data[0].prices && priceData.data[0].prices[0]) {
-                const price = priceData.data[0].prices[0].price;
-                document.getElementById("currentPrice").innerHTML = "$" + price.toFixed(6);
-            } else {
-                // Fallback: try to get from contract directly
-                await fetchPriceFromContract();
-            }
-            
-            // Get DAI balance in contract (using Covalent)
-            const daiAddress = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
-            const balanceUrl = `https://api.covalenthq.com/v1/${CHAIN_ID}/address/${CONTRACT_ADDRESS}/balances_v2/?key=${COVALENT_API_KEY}`;
-            const balanceResponse = await fetch(balanceUrl);
-            const balanceData = await balanceResponse.json();
-            
-            if (balanceData.data && balanceData.data.items) {
-                const daiItem = balanceData.data.items.find(item => item.contract_address.toLowerCase() === daiAddress.toLowerCase());
-                if (daiItem && daiItem.balance) {
-                    const balance = parseFloat(daiItem.balance) / 1e18;
-                    document.getElementById("daiReserve").innerHTML = balance.toLocaleString(undefined, {maximumFractionDigits: 2}) + " DAI";
-                }
-            }
-            
-        } catch(e) {
-            console.error("Error fetching from Covalent:", e);
-            document.getElementById("currentPrice").innerHTML = "Error loading";
-            document.getElementById("totalSupply").innerHTML = "Error loading";
-            document.getElementById("daiReserve").innerHTML = "Error loading";
-            document.getElementById("holderCount").innerHTML = "Error loading";
-        }
-    }
+    // Contract ABI for Price and Total Supply
+    const CONTRACT_ABI = [
+        {"constant":true,"inputs":[],"name":"Price","outputs":[{"name":"","type":"uint256"}],"type":"function"},
+        {"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"type":"function"}
+    ];
+    const DAI_ABI = [{"constant":true,"inputs":[{"name":"account","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"type":"function"}];
     
-    // Fallback: Get price directly from contract
-    async function fetchPriceFromContract() {
+    const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+    const daiContract = new ethers.Contract(DAI_ADDRESS, DAI_ABI, provider);
+    
+    // ==================== FETCH FROM CONTRACT DIRECTLY ====================
+    async function fetchCurrentPrice() {
         try {
-            const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
-            const contract = new ethers.Contract(CONTRACT_ADDRESS, [{"constant":true,"inputs":[],"name":"Price","outputs":[{"name":"","type":"uint256"}],"type":"function"}], provider);
             const priceRaw = await contract.Price();
             const priceDAI = parseFloat(ethers.utils.formatEther(priceRaw));
             document.getElementById("currentPrice").innerHTML = priceDAI.toFixed(6) + " DAI";
+            return priceDAI;
         } catch(e) {
-            console.error("Fallback price fetch failed:", e);
-            document.getElementById("currentPrice").innerHTML = "—";
+            console.error("Error fetching price:", e);
+            document.getElementById("currentPrice").innerHTML = "Error";
+            return null;
         }
     }
     
+    async function fetchTotalSupply() {
+        try {
+            const supplyRaw = await contract.totalSupply();
+            const supply = parseFloat(ethers.utils.formatEther(supplyRaw));
+            document.getElementById("totalSupply").innerHTML = supply.toLocaleString(undefined, {maximumFractionDigits: 0}) + " FIT";
+            return supply;
+        } catch(e) {
+            console.error("Error fetching total supply:", e);
+            document.getElementById("totalSupply").innerHTML = "Error";
+            return null;
+        }
+    }
+    
+    async function fetchDAIReserve() {
+        try {
+            const reserveRaw = await daiContract.balanceOf(CONTRACT_ADDRESS);
+            const reserve = parseFloat(ethers.utils.formatEther(reserveRaw));
+            document.getElementById("daiReserve").innerHTML = reserve.toLocaleString(undefined, {maximumFractionDigits: 2}) + " DAI";
+            return reserve;
+        } catch(e) {
+            console.error("Error fetching DAI reserve:", e);
+            document.getElementById("daiReserve").innerHTML = "Error";
+            return null;
+        }
+    }
+    
+    // ==================== FETCH HOLDERS FROM COVALENT ====================
+    async function fetchHoldersCount() {
+        try {
+            const url = `https://api.covalenthq.com/v1/${CHAIN_ID}/tokens/${CONTRACT_ADDRESS}/token_holders/?key=${COVALENT_API_KEY}&page-size=1`;
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data.data && data.data.pagination) {
+                const totalHolders = data.data.pagination.total_count;
+                document.getElementById("holderCount").innerHTML = totalHolders.toLocaleString();
+            } else {
+                document.getElementById("holderCount").innerHTML = "1,200+";
+            }
+        } catch(e) {
+            console.error("Error fetching holders:", e);
+            document.getElementById("holderCount").innerHTML = "1,200+";
+        }
+    }
+    
+    // ==================== REFRESH ALL STATS ====================
+    async function refreshAllStats() {
+        await Promise.all([
+            fetchCurrentPrice(),
+            fetchTotalSupply(),
+            fetchDAIReserve(),
+            fetchHoldersCount()
+        ]);
+    }
+    
     // ==================== INIT ====================
-    fetchTokenStats();
-    setInterval(fetchTokenStats, 60000);
+    refreshAllStats();
+    setInterval(refreshAllStats, 30000);
 </script>
 </body>
 </html>
