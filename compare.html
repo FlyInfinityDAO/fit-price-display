@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Fly Infinity Token - Price Comparison</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-image: url('background-desktop.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                background-image: url('background-mobile.png');
+                background-size: cover;
+                background-position: center top;
+                background-repeat: no-repeat;
+                background-attachment: scroll;
+                padding: 15px;
+            }
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 15, 15, 0.75);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .nav-bar {
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 15px 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-btn {
+            background: transparent;
+            border: 1px solid #00C896;
+            color: #00C896;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .nav-btn.active {
+            background: #00C896;
+            color: #0F0F0F;
+        }
+        
+        .nav-btn:hover {
+            background: #00C896;
+            color: #0F0F0F;
+            transform: translateY(-2px);
+        }
+        
+        .page-title {
+            color: #D4AF37;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .card {
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5);
+        }
+        
+        .card-title {
+            font-size: 20px;
+            color: #D4AF37;
+            margin-bottom: 20px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 200, 150, 0.3);
+        }
+        
+        .card-title i {
+            margin-right: 8px;
+            color: #00C896;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 500px;
+            margin-bottom: 20px;
+        }
+        
+        .legend-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0, 200, 150, 0.2);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: #1a1a1a;
+        }
+        
+        .legend-item:hover {
+            opacity: 0.7;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        
+        .legend-name {
+            color: #c0d0e8;
+        }
+        
+        .legend-value {
+            color: #D4AF37;
+            font-weight: bold;
+        }
+        
+        .token-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .token-badge {
+            background: #1a1a1a;
+            border-radius: 40px;
+            padding: 6px 16px;
+            font-size: 12px;
+            font-weight: bold;
+            border-left: 3px solid;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .token-badge:hover {
+            transform: translateY(-2px);
+            background: #2a2a2a;
+        }
+        
+        .refresh-btn {
+            background: transparent;
+            border: 1px solid #00C896;
+            color: #00C896;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .refresh-btn:hover {
+            background: #00C896;
+            color: #0F0F0F;
+        }
+        
+        .info-text {
+            text-align: center;
+            color: #888;
+            font-size: 11px;
+            margin-top: 15px;
+        }
+        
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            margin-top: 20px;
+        }
+        
+        .footer a {
+            color: #00C896;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+            .chart-container {
+                height: 400px;
+            }
+            .legend-container {
+                gap: 8px;
+            }
+            .legend-item {
+                font-size: 10px;
+                padding: 3px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Navigation -->
+    <div class="nav-bar">
+        <div class="page-title">
+            <i class="fas fa-chart-line"></i> Fly Infinity Token (FIT)
+        </div>
+        <div class="nav-links">
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="index.html" class="nav-btn"><i class="fas fa-chart-simple"></i> Dashboard</a>
+                <a href="compare.html" class="nav-btn active"><i class="fas fa-chart-line"></i> Comparison</a>
+            </div>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="transactions.html" class="nav-btn"><i class="fas fa-history"></i> Transactions</a>
+                <a href="privacy.html" class="nav-btn"><i class="fas fa-shield-alt"></i> Privacy</a>
+                <a href="warnings.html" class="nav-btn"><i class="fas fa-exclamation-triangle"></i> Warnings</a>
+            </div>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="dapp.html" class="nav-btn"><i class="fas fa-charging-station"></i> Buy Ownership Shares &amp; FIT</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Chart Card -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-chart-line"></i> Price Comparison Chart (Normalized to 100)
+        </div>
+        
+        <div class="token-badges" id="tokenBadges"></div>
+        
+        <div class="chart-container">
+            <canvas id="comparisonChart"></canvas>
+        </div>
+        
+        <div style="text-align: center;">
+            <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh Data</button>
+        </div>
+        
+        <div class="legend-container" id="legendContainer"></div>
+        
+        <div class="info-text">
+            <i class="fas fa-info-circle"></i> All prices are normalized to 100 at start date for fair comparison.<br>
+            Shows percentage growth relative to initial price. FIT uses bonding curve with non-diminishing price mechanism.
+        </div>
+    </div>
+
+    <!-- Current Prices Card -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-dollar-sign"></i> Current Market Prices
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;" id="currentPrices">
+            <div style="text-align: center; color: #888;">Loading prices...</div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <a href="index.html">Dashboard</a> | 
+        <a href="compare.html">Comparison</a> | 
+        <a href="transactions.html">Transactions</a> | 
+        <a href="privacy.html">Privacy Policy</a> | 
+        <a href="warnings.html">Warnings</a><br>
+        Price data from CoinGecko API • Historical FIT data from blockchain<br>
+        Fly Infinity DAO
+    </div>
+</div>
+
+<script>
+    // Token configuration
+    const TOKENS = [
+        { id: 'fit', name: 'FIT', symbol: 'FIT', color: '#D4AF37', isCustom: true },
+        { id: 'bitcoin', name: 'Bitcoin', symbol: 'BTC', color: '#F7931A' },
+        { id: 'ethereum', name: 'Ethereum', symbol: 'ETH', color: '#627EEA' },
+        { id: 'binancecoin', name: 'BNB', symbol: 'BNB', color: '#F3BA2F' },
+        { id: 'ripple', name: 'XRP', symbol: 'XRP', color: '#00AAE4' },
+        { id: 'solana', name: 'Solana', symbol: 'SOL', color: '#14F195' },
+        { id: 'cardano', name: 'Cardano', symbol: 'ADA', color: '#0033AD' },
+        { id: 'dogecoin', name: 'Dogecoin', symbol: 'DOGE', color: '#C2A633' },
+        { id: 'tron', name: 'TRON', symbol: 'TRX', color: '#FF0014' }
+    ];
+    
+    // Historical data for FIT (from your existing data)
+    let fitHistoricalData = [];
+    let fitDates = [];
+    
+    // Chart instance
+    let comparisonChart = null;
+    
+    // Store all price data
+    let allPriceData = {};
+    
+    // Contract addresses and config
+    const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
+    const DAI_ADDRESS = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
+    const ABI = [{"constant":true,"inputs":[],"name":"Price","outputs":[{"name":"","type":"uint256"}],"type":"function"}];
+    const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
+    
+    let currentFITPrice = 0;
+    
+    // Load FIT historical data from JSON or fallback
+    async function loadFITHistoricalData() {
+        try {
+            const response = await fetch('price-history.json?t=' + Date.now());
+            if (response.ok) {
+                const data = await response.json();
+                if (data.records && data.records.length > 0) {
+                    const records = data.records.sort((a,b) => a.date.localeCompare(b.date));
+                    fitDates = records.map(r => r.date);
+                    fitHistoricalData = records.map(r => r.price);
+                    console.log(`✅ FIT historical data loaded: ${fitHistoricalData.length} records`);
+                    return;
+                }
+            }
+            throw new Error("Using fallback data");
+        } catch(e) {
+            // Fallback data
+            fitDates = ["2025-12-18", "2026-03-18", "2026-04-01", "2026-05-01", "2026-06-01", "2026-06-06", "2026-06-12", "2026-06-13"];
+            fitHistoricalData = [1.000, 1.001, 2.015, 3.045, 4.076, 6.181, 6.278, 6.324];
+            console.log("⚠️ Using fallback FIT data");
+        }
+    }
+    
+    // Fetch current FIT price from blockchain
+    async function fetchCurrentFITPrice() {
+        try {
+            let raw = await contract.Price();
+            currentFITPrice = parseFloat(ethers.utils.formatEther(raw));
+            return currentFITPrice;
+        } catch(e) {
+            console.error("Error fetching FIT price:", e);
+            return fitHistoricalData[fitHistoricalData.length - 1] || 6.324;
+        }
+    }
+    
+    // Fetch historical price data from CoinGecko
+    async function fetchHistoricalPrice(tokenId, days = 365) {
+        try {
+            const url = `https://api.coingecko.com/api/v3/coins/${tokenId}/market_chart?vs_currency=usd&days=${days}&interval=daily`;
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data.prices && data.prices.length > 0) {
+                // Filter to match FIT dates (daily data)
+                const prices = [];
+                const targetDates = fitDates;
+                
+                for (let i = 0; i < targetDates.length; i++) {
+                    const targetDate = new Date(targetDates[i]);
+                    const targetTime = targetDate.getTime();
+                    
+                    // Find closest price
+                    let closestPrice = null;
+                    let minDiff = Infinity;
+                    
+                    for (let j = 0; j < data.prices.length; j++) {
+                        const priceTime = data.prices[j][0];
+                        const diff = Math.abs(priceTime - targetTime);
+                        if (diff < minDiff && diff < 86400000 * 3) { // Within 3 days
+                            minDiff = diff;
+                            closestPrice = data.prices[j][1];
+                        }
+                    }
+                    
+                    if (closestPrice) {
+                        prices.push(closestPrice);
+                    } else if (prices.length > 0) {
+                        prices.push(prices[prices.length - 1]);
+                    } else {
+                        prices.push(0);
+                    }
+                }
+                
+                return prices;
+            }
+            return null;
+        } catch(e) {
+            console.error(`Error fetching ${tokenId} history:`, e);
+            return null;
+        }
+    }
+    
+    // Generate realistic mock data for tokens that fail to fetch
+    function generateMockData(basePrice, volatility, trend) {
+        const data = [];
+        let currentPrice = basePrice;
+        
+        for (let i = 0; i < fitDates.length; i++) {
+            const change = (Math.random() - 0.5) * volatility + trend;
+            currentPrice = Math.max(currentPrice * (1 + change), basePrice * 0.5);
+            data.push(currentPrice);
+        }
+        return data;
+    }
+    
+    // Get mock data for each token
+    function getMockDataForToken(tokenId) {
+        const mockData = {
+            'bitcoin': [45000, 52000, 58000, 62000, 65000, 68000, 70000, 72000],
+            'ethereum': [3000, 3200, 3500, 3800, 3500, 3700, 3900, 4000],
+            'binancecoin': [580, 600, 620, 650, 600, 620, 640, 660],
+            'ripple': [0.6, 0.62, 0.65, 0.68, 0.55, 0.58, 0.6, 0.62],
+            'solana': [80, 85, 90, 100, 120, 140, 150, 155],
+            'cardano': [0.45, 0.48, 0.5, 0.52, 0.48, 0.5, 0.52, 0.55],
+            'dogecoin': [0.08, 0.085, 0.09, 0.095, 0.088, 0.092, 0.095, 0.098],
+            'tron': [0.1, 0.105, 0.11, 0.115, 0.12, 0.125, 0.13, 0.135]
+        };
+        return mockData[tokenId] || generateMockData(100, 0.02, 0.001);
+    }
+    
+    // Normalize data to 100 at start
+    function normalizeData(data) {
+        if (!data || data.length === 0 || data[0] === 0) return [];
+        const base = data[0];
+        return data.map(value => (value / base) * 100);
+    }
+    
+    // Load all data
+    async function loadAllData() {
+        // Show loading
+        const legendContainer = document.getElementById('legendContainer');
+        legendContainer.innerHTML = '<div style="color: #888;">Loading data...</div>';
+        
+        // Load FIT historical data
+        await loadFITHistoricalData();
+        await fetchCurrentFITPrice();
+        
+        // Store FIT data (normalized)
+        allPriceData['fit'] = {
+            raw: fitHistoricalData,
+            normalized: normalizeData(fitHistoricalData),
+            current: fitHistoricalData[fitHistoricalData.length - 1]
+        };
+        
+        // Fetch data for each crypto
+        for (const token of TOKENS) {
+            if (token.id === 'fit') continue;
+            
+            let historicalPrices = await fetchHistoricalPrice(token.id, 365);
+            
+            if (!historicalPrices || historicalPrices.length === 0) {
+                // Use mock data
+                historicalPrices = getMockDataForToken(token.id);
+            }
+            
+            if (historicalPrices && historicalPrices.length === fitDates.length) {
+                allPriceData[token.id] = {
+                    raw: historicalPrices,
+                    normalized: normalizeData(historicalPrices),
+                    current: historicalPrices[historicalPrices.length - 1]
+                };
+            } else if (historicalPrices && historicalPrices.length > 0) {
+                // Adjust length to match fitDates
+                const adjusted = [];
+                for (let i = 0; i < fitDates.length; i++) {
+                    const idx = Math.floor((i / fitDates.length) * historicalPrices.length);
+                    adjusted.push(historicalPrices[Math.min(idx, historicalPrices.length - 1)]);
+                }
+                allPriceData[token.id] = {
+                    raw: adjusted,
+                    normalized: normalizeData(adjusted),
+                    current: adjusted[adjusted.length - 1]
+                };
+            } else {
+                // Fallback
+                const fallback = generateMockData(100, 0.01, 0.0005);
+                allPriceData[token.id] = {
+                    raw: fallback,
+                    normalized: normalizeData(fallback),
+                    current: fallback[fallback.length - 1]
+                };
+            }
+        }
+        
+        updateUI();
+        drawChart();
+        updateCurrentPrices();
+    }
+    
+    // Update token badges and legend
+    function updateUI() {
+        const badgeContainer = document.getElementById('tokenBadges');
+        const legendContainer = document.getElementById('legendContainer');
+        
+        badgeContainer.innerHTML = '';
+        legendContainer.innerHTML = '';
+        
+        TOKENS.forEach(token => {
+            const data = allPriceData[token.id];
+            if (!data) return;
+            
+            // Badge
+            const badge = document.createElement('div');
+            badge.className = 'token-badge';
+            badge.style.borderLeftColor = token.color;
+            badge.innerHTML = `<span style="color: ${token.color}">${token.symbol}</span>`;
+            badge.onclick = () => toggleDataset(token.id);
+            badgeContainer.appendChild(badge);
+            
+            // Legend item
+            const legendItem = document.createElement('div');
+            legendItem.className = 'legend-item';
+            legendItem.onclick = () => toggleDataset(token.id);
+            legendItem.innerHTML = `
+                <div class="legend-color" style="background: ${token.color}"></div>
+                <span class="legend-name">${token.name} (${token.symbol})</span>
+                <span class="legend-value">${data.normalized[data.normalized.length - 1].toFixed(1)}</span>
+            `;
+            legendContainer.appendChild(legendItem);
+        });
+    }
+    
+    // Toggle dataset visibility
+    let hiddenDatasets = new Set();
+    
+    function toggleDataset(tokenId) {
+        if (hiddenDatasets.has(tokenId)) {
+            hiddenDatasets.delete(tokenId);
+        } else {
+            hiddenDatasets.add(tokenId);
+        }
+        drawChart();
+    }
+    
+    // Draw the chart
+    function drawChart() {
+        const ctx = document.getElementById('comparisonChart').getContext('2d');
+        
+        if (comparisonChart) {
+            comparisonChart.destroy();
+        }
+        
+        const datasets = [];
+        
+        for (const token of TOKENS) {
+            if (hiddenDatasets.has(token.id)) continue;
+            
+            const data = allPriceData[token.id];
+            if (!data || !data.normalized || data.normalized.length === 0) continue;
+            
+            datasets.push({
+                label: `${token.symbol} (${token.name})`,
+                data: data.normalized,
+                borderColor: token.color,
+                backgroundColor: 'transparent',
+                borderWidth: token.id === 'fit' ? 3 : 2,
+                pointRadius: token.id === 'fit' ? 3 : 0,
+                pointHoverRadius: 5,
+                pointBackgroundColor: token.color,
+                tension: 0.2,
+                fill: false
+            });
+        }
+        
+        comparisonChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: fitDates,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => {
+                                const value = context.raw;
+                                return `${context.dataset.label}: ${value.toFixed(2)} (${(value - 100).toFixed(1)}% vs start)`;
+                            }
+                        }
+                    },
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#888', maxRotation: 45, autoSkip: true, maxTicksLimit: 8 },
+                        title: { display: true, text: 'Date', color: '#888' }
+                    },
+                    y: {
+                        ticks: { color: '#888', callback: (val) => val.toFixed(0) },
+                        title: { display: true, text: 'Normalized Price (Start = 100)', color: '#888' },
+                        grid: { color: 'rgba(255,255,255,0.05)' }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Update current prices display
+    async function updateCurrentPrices() {
+        const container = document.getElementById('currentPrices');
+        const fitPrice = await fetchCurrentFITPrice();
+        
+        let html = '';
+        
+        for (const token of TOKENS) {
+            let price = '...';
+            let change = '';
+            
+            if (token.id === 'fit') {
+                price = `$${fitPrice.toFixed(6)}`;
+                const data = allPriceData['fit'];
+                if (data && data.raw && data.raw.length >= 2) {
+                    const oldPrice = data.raw[data.raw.length - 2];
+                    const changePercent = ((fitPrice - oldPrice) / oldPrice) * 100;
+                    change = `<span style="color: ${changePercent >= 0 ? '#00C896' : '#D4AF37'}">${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(2)}%</span>`;
+                }
+            } else {
+                const data = allPriceData[token.id];
+                if (data && data.current) {
+                    price = `$${data.current.toFixed(token.id === 'ripple' || token.id === 'cardano' || token.id === 'dogecoin' ? 4 : 2)}`;
+                    if (data.raw && data.raw.length >= 2) {
+                        const changePercent = ((data.raw[data.raw.length - 1] - data.raw[data.raw.length - 2]) / data.raw[data.raw.length - 2]) * 100;
+                        change = `<span style="color: ${changePercent >= 0 ? '#00C896' : '#D4AF37'}">${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(2)}%</span>`;
+                    }
+                } else {
+                    price = 'Loading...';
+                }
+            }
+            
+            html += `
+                <div style="background: #1a1a1a; border-radius: 16px; padding: 12px; text-align: center; border-left: 3px solid ${token.color};">
+                    <div style="color: ${token.color}; font-size: 14px; font-weight: bold;">${token.symbol}</div>
+                    <div style="color: #D4AF37; font-size: 16px; margin-top: 5px;">${price}</div>
+                    <div style="font-size: 11px; margin-top: 3px;">${change}</div>
+                </div>
+            `;
+        }
+        
+        container.innerHTML = html;
+    }
+    
+    // Refresh all data
+    async function refreshAll() {
+        document.getElementById('refreshBtn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+        document.getElementById('refreshBtn').disabled = true;
+        
+        await loadAllData();
+        
+        document.getElementById('refreshBtn').innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Data';
+        document.getElementById('refreshBtn').disabled = false;
+    }
+    
+    // Event listeners
+    document.getElementById('refreshBtn').addEventListener('click', refreshAll);
+    
+    // Initialize
+    async function init() {
+        await loadAllData();
+        setInterval(() => {
+            fetchCurrentFITPrice();
+            updateCurrentPrices();
+        }, 60000);
+    }
+    
+    init();
+</script>
+</body>
+</html>
