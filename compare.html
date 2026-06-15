@@ -126,15 +126,15 @@
             background: transparent;
             border: 1px solid rgba(0, 200, 150, 0.3);
             color: #c0d0e8;
-            padding: 10px 20px;
+            padding: 8px 14px;
             border-radius: 40px;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         
         .token-btn:hover {
@@ -155,7 +155,7 @@
         }
         
         .token-name {
-            font-size: 11px;
+            font-size: 10px;
             opacity: 0.7;
         }
         
@@ -289,6 +289,10 @@
             .price-current {
                 font-size: 24px;
             }
+            .token-btn {
+                padding: 6px 10px;
+                font-size: 10px;
+            }
         }
     </style>
 </head>
@@ -357,7 +361,7 @@
 </div>
 
 <script>
-    // Token configuration with accurate historical data points
+    // ==================== TOKEN CONFIGURATION ====================
     const TOKENS = [
         { id: 'fit', symbol: 'FIT', name: 'Fly Infinity', color: '#D4AF37', launchDate: '2025-12-18', launchPrice: 1.00, isCustom: true },
         { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin', color: '#F7931A', launchDate: '2013-04-28', launchPrice: 135.00 },
@@ -367,10 +371,18 @@
         { id: 'solana', symbol: 'SOL', name: 'Solana', color: '#14F195', launchDate: '2020-04-10', launchPrice: 0.95 },
         { id: 'cardano', symbol: 'ADA', name: 'Cardano', color: '#0033AD', launchDate: '2017-10-01', launchPrice: 0.02 },
         { id: 'dogecoin', symbol: 'DOGE', name: 'Dogecoin', color: '#C2A633', launchDate: '2013-12-06', launchPrice: 0.0002 },
-        { id: 'tron', symbol: 'TRX', name: 'TRON', color: '#FF0014', launchDate: '2017-09-01', launchPrice: 0.0015 }
+        { id: 'tron', symbol: 'TRX', name: 'TRON', color: '#FF0014', launchDate: '2017-09-01', launchPrice: 0.0015 },
+        { id: 'zcash', symbol: 'ZEC', name: 'Zcash', color: '#F4B728', launchDate: '2016-10-28', launchPrice: 4.00 },
+        { id: 'stellar', symbol: 'XLM', name: 'Stellar', color: '#08B5E5', launchDate: '2014-08-01', launchPrice: 0.002 },
+        { id: 'trump', symbol: 'TRUMP', name: 'Trump Token', color: '#E53935', launchDate: '2024-01-15', launchPrice: 0.50 },
+        { id: 'pump', symbol: 'PUMP', name: 'Pump Token', color: '#FF6D00', launchDate: '2025-03-10', launchPrice: 0.10 },
+        { id: 'aster', symbol: 'ASTER', name: 'Aster', color: '#9C27B0', launchDate: '2025-01-20', launchPrice: 0.25 },
+        { id: 'pancakeswap', symbol: 'CAKE', name: 'PancakeSwap', color: '#D1884F', launchDate: '2020-09-20', launchPrice: 0.40 },
+        { id: 'toncoin', symbol: 'TON', name: 'Toncoin', color: '#0088CC', launchDate: '2021-05-12', launchPrice: 0.50 },
+        { id: 'shibainu', symbol: 'SHIB', name: 'Shiba Inu', color: '#E88D2A', launchDate: '2020-08-01', launchPrice: 0.000000001 }
     ];
     
-    // Accurate historical price data for each token (monthly snapshots)
+    // ==================== HISTORICAL PRICE DATA ====================
     const HISTORICAL_DATA = {
         bitcoin: {
             dates: ["2013-04-28", "2013-12-01", "2014-12-01", "2015-12-01", "2016-12-01", "2017-12-01", "2018-12-01", "2019-12-01", "2020-12-01", "2021-12-01", "2022-12-01", "2023-12-01", "2024-12-01", "2025-12-01", "2026-06-01"],
@@ -403,6 +415,38 @@
         tron: {
             dates: ["2017-09-01", "2017-12-01", "2018-12-01", "2019-12-01", "2020-12-01", "2021-12-01", "2022-12-01", "2023-12-01", "2024-12-01", "2025-12-01", "2026-06-01"],
             prices: [0.0015, 0.003, 0.015, 0.014, 0.025, 0.06, 0.055, 0.10, 0.20, 0.24, 0.22]
+        },
+        zcash: {
+            dates: ["2016-10-28", "2017-12-01", "2018-12-01", "2019-12-01", "2020-12-01", "2021-12-01", "2022-12-01", "2023-12-01", "2024-12-01", "2025-12-01", "2026-06-01"],
+            prices: [4.00, 320, 55, 30, 62, 130, 38, 28, 32, 35, 28]
+        },
+        stellar: {
+            dates: ["2014-08-01", "2015-12-01", "2016-12-01", "2017-12-01", "2018-12-01", "2019-12-01", "2020-12-01", "2021-12-01", "2022-12-01", "2023-12-01", "2024-12-01", "2025-12-01", "2026-06-01"],
+            prices: [0.002, 0.0015, 0.002, 0.25, 0.12, 0.05, 0.08, 0.28, 0.08, 0.11, 0.10, 0.12, 0.11]
+        },
+        trump: {
+            dates: ["2024-01-15", "2024-03-01", "2024-06-01", "2024-09-01", "2024-12-01", "2025-03-01", "2025-06-01", "2025-09-01", "2025-12-01", "2026-03-01", "2026-06-01"],
+            prices: [0.50, 0.65, 0.45, 0.35, 0.28, 0.18, 0.22, 0.15, 0.12, 0.10, 0.08]
+        },
+        pump: {
+            dates: ["2025-03-10", "2025-04-01", "2025-05-01", "2025-06-01", "2025-07-01", "2025-08-01", "2025-09-01", "2025-10-01", "2025-11-01", "2025-12-01", "2026-01-01", "2026-02-01", "2026-03-01", "2026-04-01", "2026-05-01", "2026-06-01"],
+            prices: [0.10, 0.15, 0.25, 0.18, 0.30, 0.22, 0.15, 0.20, 0.12, 0.08, 0.05, 0.06, 0.04, 0.03, 0.025, 0.02]
+        },
+        aster: {
+            dates: ["2025-01-20", "2025-02-01", "2025-03-01", "2025-04-01", "2025-05-01", "2025-06-01", "2025-07-01", "2025-08-01", "2025-09-01", "2025-10-01", "2025-11-01", "2025-12-01", "2026-01-01", "2026-02-01", "2026-03-01", "2026-04-01", "2026-05-01", "2026-06-01"],
+            prices: [0.25, 0.30, 0.45, 0.60, 0.55, 0.70, 0.90, 0.85, 1.10, 1.30, 1.50, 1.80, 2.00, 2.20, 2.50, 2.30, 2.80, 3.00]
+        },
+        pancakeswap: {
+            dates: ["2020-09-20", "2020-12-01", "2021-12-01", "2022-12-01", "2023-12-01", "2024-12-01", "2025-12-01", "2026-06-01"],
+            prices: [0.40, 0.45, 18.50, 4.50, 2.20, 4.80, 3.20, 2.80]
+        },
+        toncoin: {
+            dates: ["2021-05-12", "2021-12-01", "2022-12-01", "2023-12-01", "2024-12-01", "2025-12-01", "2026-06-01"],
+            prices: [0.50, 3.50, 1.80, 2.50, 5.80, 6.50, 7.20]
+        },
+        shibainu: {
+            dates: ["2020-08-01", "2020-12-01", "2021-12-01", "2022-12-01", "2023-12-01", "2024-12-01", "2025-12-01", "2026-06-01"],
+            prices: [0.000000001, 0.000000008, 0.000035, 0.000008, 0.000011, 0.000023, 0.000018, 0.000015]
         }
     };
     
@@ -429,7 +473,6 @@
                     fitDates = records.map(r => r.date);
                     fitPrices = records.map(r => r.price);
                     
-                    // Update latest price from blockchain
                     try {
                         const raw = await contract.Price();
                         const currentPrice = parseFloat(ethers.utils.formatEther(raw));
@@ -447,7 +490,7 @@
     
     function getTokenData(tokenId) {
         if (tokenId === 'fit') {
-            return { dates: fitDates, prices: fitPrices };
+            return { dates: [...fitDates], prices: [...fitPrices] };
         }
         
         const data = HISTORICAL_DATA[tokenId];
@@ -486,6 +529,18 @@
         return { dates: filteredDates, prices: filteredPrices };
     }
     
+    function formatPrice(price) {
+        if (price >= 1) {
+            return `$${price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        } else if (price >= 0.01) {
+            return `$${price.toFixed(4)}`;
+        } else if (price >= 0.000001) {
+            return `$${price.toFixed(8)}`;
+        } else {
+            return `$${price.toFixed(10)}`;
+        }
+    }
+    
     function updatePriceInfo(tokenId, filtered) {
         const token = TOKENS.find(t => t.id === tokenId);
         const prices = filtered.prices;
@@ -498,44 +553,24 @@
         const high = Math.max(...prices);
         const low = Math.min(...prices);
         
-        let priceDisplay;
-        if (currentPrice >= 1) {
-            priceDisplay = `$${currentPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-        } else if (currentPrice >= 0.01) {
-            priceDisplay = `$${currentPrice.toFixed(4)}`;
-        } else {
-            priceDisplay = `$${currentPrice.toFixed(6)}`;
-        }
-        
-        document.getElementById('currentPrice').innerHTML = priceDisplay;
+        document.getElementById('currentPrice').innerHTML = formatPrice(currentPrice);
         
         const changeElement = document.getElementById('priceChange');
         changeElement.innerHTML = `${change >= 0 ? '▲' : '▼'} ${Math.abs(change).toFixed(2)}% (All time)`;
         changeElement.className = `price-change ${change >= 0 ? 'positive' : 'negative'}`;
         
-        let highDisplay, lowDisplay, firstDisplay;
-        if (high >= 1) {
-            highDisplay = `$${high.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-            lowDisplay = `$${low.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}`;
-            firstDisplay = `$${firstPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}`;
-        } else {
-            highDisplay = `$${high.toFixed(6)}`;
-            lowDisplay = `$${low.toFixed(6)}`;
-            firstDisplay = `$${firstPrice.toFixed(6)}`;
-        }
-        
         document.getElementById('priceStats').innerHTML = `
             <div class="price-stat">
                 <span class="price-stat-label">Launch Price</span>
-                <span class="price-stat-value">${firstDisplay}</span>
+                <span class="price-stat-value">${formatPrice(firstPrice)}</span>
             </div>
             <div class="price-stat">
                 <span class="price-stat-label">All Time High</span>
-                <span class="price-stat-value">${highDisplay}</span>
+                <span class="price-stat-value">${formatPrice(high)}</span>
             </div>
             <div class="price-stat">
                 <span class="price-stat-label">All Time Low</span>
-                <span class="price-stat-value">${lowDisplay}</span>
+                <span class="price-stat-value">${formatPrice(low)}</span>
             </div>
         `;
         
@@ -572,10 +607,7 @@
                     tooltip: {
                         callbacks: {
                             label: (context) => {
-                                let val = context.raw;
-                                if (val >= 1) return `$${val.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-                                if (val >= 0.01) return `$${val.toFixed(4)}`;
-                                return `$${val.toFixed(6)}`;
+                                return formatPrice(context.raw);
                             }
                         }
                     },
@@ -590,7 +622,8 @@
                                 if (val >= 1000) return '$' + (val / 1000).toFixed(0) + 'K';
                                 if (val >= 1) return '$' + val.toFixed(0);
                                 if (val >= 0.01) return '$' + val.toFixed(3);
-                                return '$' + val.toFixed(5);
+                                if (val >= 0.000001) return '$' + val.toFixed(6);
+                                return '$' + val.toExponential(2);
                             }
                         },
                         grid: { color: 'rgba(255,255,255,0.05)' }
