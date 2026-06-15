@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>FIT Price Calculator - Historical Price Tool</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: radial-gradient(circle at 20% 30%, #0a0a0a 0%, #0F0F0F 60%, #1a1a0a 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 15% 25%, rgba(212, 175, 55, 0.08) 1px, transparent 1px), radial-gradient(circle at 85% 75%, rgba(0, 200, 150, 0.06) 1px, transparent 1px);
+            background-size: 60px 60px, 90px 90px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .nav-bar {
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 15px 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            background: transparent;
+            border: 1px solid #00C896;
+            color: #00C896;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .nav-btn.active {
+            background: #00C896;
+            color: #0F0F0F;
+        }
+        
+        .nav-btn:hover {
+            background: #00C896;
+            color: #0F0F0F;
+            transform: translateY(-2px);
+        }
+        
+        .page-title {
+            color: #D4AF37;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .card {
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 30px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5);
+        }
+        
+        .card-title {
+            font-size: 22px;
+            color: #D4AF37;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 200, 150, 0.3);
+            padding-bottom: 12px;
+        }
+        
+        .card-subtitle {
+            font-size: 14px;
+            color: #888;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            color: #00C896;
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        
+        input {
+            width: 100%;
+            background: #1a1a1a;
+            border: 1px solid #2a3a55;
+            color: #D4AF37;
+            padding: 14px 18px;
+            border-radius: 16px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #00C896;
+            box-shadow: 0 0 10px rgba(0, 200, 150, 0.2);
+        }
+        
+        .input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .calc-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #00C896, #008a6a);
+            border: none;
+            color: white;
+            padding: 14px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        .calc-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 200, 150, 0.3);
+        }
+        
+        .result-box {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 25px;
+            text-align: center;
+            border-left: 4px solid #00C896;
+        }
+        
+        .result-label {
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        
+        .result-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #D4AF37;
+        }
+        
+        .result-value small {
+            font-size: 14px;
+            color: #00C896;
+        }
+        
+        .fee-info {
+            background: rgba(0, 200, 150, 0.1);
+            border-radius: 16px;
+            padding: 12px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+        }
+        
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            margin-top: 20px;
+        }
+        
+        .footer a {
+            color: #00C896;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+            .input-group {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .result-value {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Navigation -->
+    <div class="nav-bar">
+        <div class="page-title">
+            <i class="fas fa-calculator"></i> FIT Historical Price Tool
+        </div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-btn"><i class="fas fa-chart-simple"></i> Dashboard</a>
+            <a href="price-calculator.html" class="nav-btn active"><i class="fas fa-calculator"></i> Calculator</a>
+        </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-chart-line"></i> FIT Price Calculator
+        </div>
+        <div class="card-subtitle">
+            Calculate the exact price of FIT based on buy transactions with 3% fee
+        </div>
+
+        <!-- Option 1: From DAI Paid -->
+        <div style="margin-bottom: 30px;">
+            <div style="color: #D4AF37; font-size: 16px; margin-bottom: 15px; border-left: 3px solid #00C896; padding-left: 12px;">
+                <i class="fas fa-dollar-sign"></i> Method 1: Calculate from DAI Paid
+            </div>
+            <div class="input-group">
+                <div>
+                    <label>💰 DAI Paid</label>
+                    <input type="number" id="daiPaid" placeholder="Enter DAI amount paid" step="1" value="100">
+                </div>
+                <div>
+                    <label>🪙 FIT Received</label>
+                    <input type="number" id="fitReceived" placeholder="Enter FIT amount received" step="10" value="15">
+                </div>
+            </div>
+            <button class="calc-btn" id="calcFromDAI">
+                <i class="fas fa-calculator"></i> Calculate Price
+            </button>
+            <div id="resultFromDAI" class="result-box" style="display: none;">
+                <div class="result-label">Price per FIT (after 3% fee deduction)</div>
+                <div class="result-value"><span id="fitPriceResult">—</span> <small>DAI</small></div>
+                <div class="fee-info" id="feeBreakdownDAI"></div>
+            </div>
+        </div>
+
+        <!-- Option 2: From FIT Received -->
+        <div style="margin-bottom: 30px;">
+            <div style="color: #D4AF37; font-size: 16px; margin-bottom: 15px; border-left: 3px solid #00C896; padding-left: 12px;">
+                <i class="fas fa-chart-simple"></i> Method 2: Calculate from FIT Received
+            </div>
+            <div class="input-group">
+                <div>
+                    <label>🪙 FIT Received</label>
+                    <input type="number" id="fitReceived2" placeholder="Enter FIT amount received" step="10" value="15">
+                </div>
+                <div>
+                    <label>💰 DAI Paid</label>
+                    <input type="number" id="daiPaid2" placeholder="Enter DAI amount paid" step="1" value="100">
+                </div>
+            </div>
+            <button class="calc-btn" id="calcFromFIT">
+                <i class="fas fa-calculator"></i> Calculate Price
+            </button>
+            <div id="resultFromFIT" class="result-box" style="display: none;">
+                <div class="result-label">Price per FIT (after 3% fee deduction)</div>
+                <div class="result-value"><span id="fitPriceResult2">—</span> <small>DAI</small></div>
+                <div class="fee-info" id="feeBreakdownFIT"></div>
+            </div>
+        </div>
+
+        <!-- Formula Explanation -->
+        <div class="fee-info" style="margin-top: 20px;">
+            <i class="fas fa-info-circle"></i> <strong>Formula:</strong><br>
+            Since the buy fee is 3%, the amount of DAI that actually buys FIT is:<br>
+            <strong>DAI After Fee = DAI Paid × (1 - 0.03) = DAI Paid × 0.97</strong><br>
+            Then, <strong>Price per FIT = DAI After Fee ÷ FIT Received</strong><br>
+            <strong>Example:</strong> Pay 100 DAI, receive 15 FIT → DAI After Fee = 97 DAI → Price = 97 ÷ 15 = 6.466 DAI/FIT
+        </div>
+    </div>
+
+    <!-- History Log -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-history"></i> Calculation History
+        </div>
+        <div id="historyLog" style="max-height: 300px; overflow-y: auto;">
+            <div style="color: #888; text-align: center; padding: 20px;">
+                No calculations yet. Use the calculator above.
+            </div>
+        </div>
+        <button id="clearHistoryBtn" class="calc-btn" style="background: transparent; border: 1px solid #D4AF37; color: #D4AF37; margin-top: 15px;">
+            <i class="fas fa-trash-alt"></i> Clear History
+        </button>
+    </div>
+
+    <div class="footer">
+        <a href="index.html">Dashboard</a> | 
+        <a href="dapp.html">DApp</a> |
+        <a href="price-calculator.html">Price Calculator</a><br>
+        Fly Infinity DAO | 3% Buy Fee Included
+    </div>
+</div>
+
+<script>
+    // Load history from localStorage
+    let calculationHistory = [];
+    
+    function loadHistory() {
+        const saved = localStorage.getItem('fitPriceCalculatorHistory');
+        if (saved) {
+            try {
+                calculationHistory = JSON.parse(saved);
+                renderHistory();
+            } catch(e) {}
+        }
+    }
+    
+    function saveToHistory(daiPaid, fitReceived, price, method) {
+        const now = new Date();
+        const timestamp = now.toLocaleString();
+        calculationHistory.unshift({
+            timestamp,
+            daiPaid,
+            fitReceived,
+            price: price.toFixed(6),
+            method
+        });
+        // Keep only last 20 items
+        if (calculationHistory.length > 20) calculationHistory.pop();
+        localStorage.setItem('fitPriceCalculatorHistory', JSON.stringify(calculationHistory));
+        renderHistory();
+    }
+    
+    function renderHistory() {
+        const container = document.getElementById('historyLog');
+        if (calculationHistory.length === 0) {
+            container.innerHTML = '<div style="color: #888; text-align: center; padding: 20px;">No calculations yet. Use the calculator above.</div>';
+            return;
+        }
+        
+        let html = '';
+        calculationHistory.forEach(item => {
+            html += `
+                <div style="background: #1a1a1a; border-radius: 16px; padding: 12px; margin-bottom: 10px; border-left: 3px solid #00C896;">
+                    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+                        <span style="color: #888; font-size: 11px;">${item.timestamp}</span>
+                        <span style="color: #D4AF37; font-weight: bold;">$${item.price} DAI/FIT</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 5px;">
+                        <span style="color: #00C896;">💰 ${item.daiPaid} DAI</span>
+                        <span style="color: #D4AF37;">🪙 ${item.fitReceived} FIT</span>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+    
+    function clearHistory() {
+        calculationHistory = [];
+        localStorage.removeItem('fitPriceCalculatorHistory');
+        renderHistory();
+    }
+    
+    function calculatePriceFromDAI(daiPaid, fitReceived) {
+        if (daiPaid <= 0 || fitReceived <= 0) {
+            return null;
+        }
+        const daiAfterFee = daiPaid * 0.97;  // 3% fee deduction
+        const price = daiAfterFee / fitReceived;
+        return { price, daiAfterFee };
+    }
+    
+    function calculatePriceFromFIT(fitReceived, daiPaid) {
+        if (fitReceived <= 0 || daiPaid <= 0) {
+            return null;
+        }
+        const daiAfterFee = daiPaid * 0.97;
+        const price = daiAfterFee / fitReceived;
+        return { price, daiAfterFee };
+    }
+    
+    function formatNumber(num) {
+        return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 6 });
+    }
+    
+    document.getElementById('calcFromDAI').addEventListener('click', () => {
+        const daiPaid = parseFloat(document.getElementById('daiPaid').value);
+        const fitReceived = parseFloat(document.getElementById('fitReceived').value);
+        
+        if (isNaN(daiPaid) || isNaN(fitReceived) || daiPaid <= 0 || fitReceived <= 0) {
+            alert('Please enter valid positive numbers for both DAI Paid and FIT Received');
+            return;
+        }
+        
+        const result = calculatePriceFromDAI(daiPaid, fitReceived);
+        if (result) {
+            document.getElementById('fitPriceResult').innerHTML = result.price.toFixed(6);
+            document.getElementById('feeBreakdownDAI').innerHTML = `
+                📊 Calculation breakdown:<br>
+                DAI Paid: ${daiPaid} DAI<br>
+                3% Fee: ${(daiPaid * 0.03).toFixed(4)} DAI<br>
+                DAI After Fee: ${result.daiAfterFee.toFixed(4)} DAI<br>
+                FIT Received: ${fitReceived} FIT<br>
+                <strong>Price = ${result.daiAfterFee.toFixed(4)} ÷ ${fitReceived} = ${result.price.toFixed(6)} DAI/FIT</strong>
+            `;
+            document.getElementById('resultFromDAI').style.display = 'block';
+            saveToHistory(daiPaid, fitReceived, result.price, 'Method 1');
+        }
+    });
+    
+    document.getElementById('calcFromFIT').addEventListener('click', () => {
+        const fitReceived = parseFloat(document.getElementById('fitReceived2').value);
+        const daiPaid = parseFloat(document.getElementById('daiPaid2').value);
+        
+        if (isNaN(fitReceived) || isNaN(daiPaid) || fitReceived <= 0 || daiPaid <= 0) {
+            alert('Please enter valid positive numbers for both FIT Received and DAI Paid');
+            return;
+        }
+        
+        const result = calculatePriceFromFIT(fitReceived, daiPaid);
+        if (result) {
+            document.getElementById('fitPriceResult2').innerHTML = result.price.toFixed(6);
+            document.getElementById('feeBreakdownFIT').innerHTML = `
+                📊 Calculation breakdown:<br>
+                DAI Paid: ${daiPaid} DAI<br>
+                3% Fee: ${(daiPaid * 0.03).toFixed(4)} DAI<br>
+                DAI After Fee: ${result.daiAfterFee.toFixed(4)} DAI<br>
+                FIT Received: ${fitReceived} FIT<br>
+                <strong>Price = ${result.daiAfterFee.toFixed(4)} ÷ ${fitReceived} = ${result.price.toFixed(6)} DAI/FIT</strong>
+            `;
+            document.getElementById('resultFromFIT').style.display = 'block';
+            saveToHistory(daiPaid, fitReceived, result.price, 'Method 2');
+        }
+    });
+    
+    document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+        if (confirm('Are you sure you want to clear all calculation history?')) {
+            clearHistory();
+        }
+    });
+    
+    // Live preview update
+    document.getElementById('daiPaid').addEventListener('input', () => {
+        const daiPaid = parseFloat(document.getElementById('daiPaid').value);
+        const fitReceived = parseFloat(document.getElementById('fitReceived').value);
+        if (!isNaN(daiPaid) && !isNaN(fitReceived) && daiPaid > 0 && fitReceived > 0) {
+            const result = calculatePriceFromDAI(daiPaid, fitReceived);
+            if (result) {
+                document.getElementById('fitPriceResult').innerHTML = result.price.toFixed(6);
+                document.getElementById('feeBreakdownDAI').innerHTML = `
+                    📊 DAI After Fee: ${result.daiAfterFee.toFixed(4)} DAI | Price: ${result.price.toFixed(6)} DAI/FIT
+                `;
+                document.getElementById('resultFromDAI').style.display = 'block';
+            }
+        }
+    });
+    
+    document.getElementById('fitReceived').addEventListener('input', () => {
+        const daiPaid = parseFloat(document.getElementById('daiPaid').value);
+        const fitReceived = parseFloat(document.getElementById('fitReceived').value);
+        if (!isNaN(daiPaid) && !isNaN(fitReceived) && daiPaid > 0 && fitReceived > 0) {
+            const result = calculatePriceFromDAI(daiPaid, fitReceived);
+            if (result) {
+                document.getElementById('fitPriceResult').innerHTML = result.price.toFixed(6);
+                document.getElementById('feeBreakdownDAI').innerHTML = `
+                    📊 DAI After Fee: ${result.daiAfterFee.toFixed(4)} DAI | Price: ${result.price.toFixed(6)} DAI/FIT
+                `;
+                document.getElementById('resultFromDAI').style.display = 'block';
+            }
+        }
+    });
+    
+    loadHistory();
+</script>
+</body>
+</html>
