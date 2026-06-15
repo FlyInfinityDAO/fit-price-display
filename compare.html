@@ -285,16 +285,11 @@
             z-index: 10;
         }
         
-        .loading-spinner {
-            color: #00C896;
-            font-size: 24px;
-        }
-        
-        .error-message {
+        .cache-info {
             text-align: center;
-            color: #ff4444;
-            padding: 20px;
-            font-size: 14px;
+            font-size: 10px;
+            color: #00C896;
+            margin-top: 10px;
         }
         
         @media (max-width: 768px) {
@@ -368,11 +363,12 @@
             <canvas id="priceChart"></canvas>
         </div>
         
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-            <div style="color: #888; font-size: 11px;">
-                <i class="fas fa-info-circle"></i> Live prices from CoinGecko API | Updates every 3 minutes | Cached for performance
-            </div>
-            <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
+        <div class="cache-info" id="cacheInfo">
+            <i class="fas fa-database"></i> Loading cache data...
+        </div>
+        
+        <div style="display: flex; justify-content: center; margin-top: 15px;">
+            <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh Data</button>
         </div>
     </div>
 
@@ -382,7 +378,7 @@
         <a href="transactions.html">Transactions</a> | 
         <a href="privacy.html">Privacy Policy</a> | 
         <a href="warnings.html">Warnings</a><br>
-        Live prices from CoinGecko API • FIT price from blockchain • Updates every 3 minutes<br>
+        Data updates every 6 hours via GitHub Actions • FIT price from blockchain<br>
         Fly Infinity DAO
     </div>
 </div>
@@ -390,36 +386,27 @@
 <script>
     // ==================== TOKEN CONFIGURATION ====================
     const TOKENS = [
-        { id: 'fit', symbol: 'FIT', name: 'Fly Infinity', color: '#D4AF37', coinGeckoId: null, isCustom: true },
-        { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin', color: '#F7931A', coinGeckoId: 'bitcoin' },
-        { id: 'ethereum', symbol: 'ETH', name: 'Ethereum', color: '#627EEA', coinGeckoId: 'ethereum' },
-        { id: 'binancecoin', symbol: 'BNB', name: 'BNB', color: '#F3BA2F', coinGeckoId: 'binancecoin' },
-        { id: 'ripple', symbol: 'XRP', name: 'XRP', color: '#00AAE4', coinGeckoId: 'ripple' },
-        { id: 'solana', symbol: 'SOL', name: 'Solana', color: '#14F195', coinGeckoId: 'solana' },
-        { id: 'cardano', symbol: 'ADA', name: 'Cardano', color: '#0033AD', coinGeckoId: 'cardano' },
-        { id: 'dogecoin', symbol: 'DOGE', name: 'Dogecoin', color: '#C2A633', coinGeckoId: 'dogecoin' },
-        { id: 'tron', symbol: 'TRX', name: 'TRON', color: '#FF0014', coinGeckoId: 'tron' },
-        { id: 'zcash', symbol: 'ZEC', name: 'Zcash', color: '#F4B728', coinGeckoId: 'zcash' },
-        { id: 'stellar', symbol: 'XLM', name: 'Stellar', color: '#08B5E5', coinGeckoId: 'stellar' },
-        { id: 'pancakeswap', symbol: 'CAKE', name: 'PancakeSwap', color: '#D1884F', coinGeckoId: 'pancakeswap-token' },
-        { id: 'toncoin', symbol: 'TON', name: 'Toncoin', color: '#0088CC', coinGeckoId: 'the-open-network' },
-        { id: 'shibainu', symbol: 'SHIB', name: 'Shiba Inu', color: '#E88D2A', coinGeckoId: 'shiba-inu' },
-        { id: 'trump', symbol: 'TRUMP', name: 'Trump Token', color: '#E53935', coinGeckoId: 'official-donald-trump' },
-        { id: 'pump', symbol: 'PUMP', name: 'Pump Token', color: '#FF6D00', coinGeckoId: 'pump-2' },
-        { id: 'aster', symbol: 'ASTER', name: 'Aster', color: '#9C27B0', coinGeckoId: 'aster' }
+        { id: 'fit', symbol: 'FIT', name: 'Fly Infinity', color: '#D4AF37', isCustom: true },
+        { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin', color: '#F7931A' },
+        { id: 'ethereum', symbol: 'ETH', name: 'Ethereum', color: '#627EEA' },
+        { id: 'binancecoin', symbol: 'BNB', name: 'BNB', color: '#F3BA2F' },
+        { id: 'ripple', symbol: 'XRP', name: 'XRP', color: '#00AAE4' },
+        { id: 'solana', symbol: 'SOL', name: 'Solana', color: '#14F195' },
+        { id: 'cardano', symbol: 'ADA', name: 'Cardano', color: '#0033AD' },
+        { id: 'dogecoin', symbol: 'DOGE', name: 'Dogecoin', color: '#C2A633' },
+        { id: 'tron', symbol: 'TRX', name: 'TRON', color: '#FF0014' },
+        { id: 'zcash', symbol: 'ZEC', name: 'Zcash', color: '#F4B728' },
+        { id: 'stellar', symbol: 'XLM', name: 'Stellar', color: '#08B5E5' },
+        { id: 'pancakeswap', symbol: 'CAKE', name: 'PancakeSwap', color: '#D1884F' },
+        { id: 'toncoin', symbol: 'TON', name: 'Toncoin', color: '#0088CC' },
+        { id: 'shibainu', symbol: 'SHIB', name: 'Shiba Inu', color: '#E88D2A' },
+        { id: 'trump', symbol: 'TRUMP', name: 'Trump Token', color: '#E53935' }
     ];
     
-    let allHistoricalData = {};
+    let cacheData = null;
     let currentToken = 'fit';
     let currentDays = 'max';
     let priceChart = null;
-    let currentPrices = {};
-    
-    // Cache for API responses
-    let cachedPrices = {};
-    let historicalCache = {};
-    let lastPriceFetchTime = 0;
-    const PRICE_FETCH_INTERVAL = 30000; // 30 seconds minimum between price fetches
     
     // FIT Contract
     const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
@@ -427,202 +414,94 @@
     const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
     
-    // ==================== FETCH WITH RETRY AND DELAY ====================
-    async function fetchWithRetry(url, retries = 3, delay = 2000) {
-        for (let i = 0; i < retries; i++) {
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 10000);
-                const response = await fetch(url, { signal: controller.signal });
-                clearTimeout(timeoutId);
-                
-                if (response.ok) return await response.json();
-                if (response.status === 429) {
-                    console.log(`Rate limited, waiting ${delay}ms...`);
-                    await new Promise(r => setTimeout(r, delay));
-                    continue;
-                }
-                if (response.status >= 500) {
-                    console.log(`Server error ${response.status}, retrying...`);
-                    await new Promise(r => setTimeout(r, delay));
-                    continue;
-                }
-                return null;
-            } catch(e) {
-                console.log(`Attempt ${i + 1} failed:`, e.message);
-                if (i < retries - 1) await new Promise(r => setTimeout(r, delay));
-            }
-        }
-        return null;
-    }
+    let fitDates = [];
+    let fitPrices = [];
     
-    // ==================== FETCH CURRENT PRICES ====================
-    async function fetchAllCurrentPrices(force = false) {
-        const now = Date.now();
-        if (!force && (now - lastPriceFetchTime < PRICE_FETCH_INTERVAL)) {
-            console.log("Using cached prices (30s cooldown)");
-            if (Object.keys(cachedPrices).length > 0) {
-                currentPrices = { ...cachedPrices };
-                return true;
-            }
-        }
-        
-        const ids = TOKENS.filter(t => t.coinGeckoId).map(t => t.coinGeckoId).join(',');
-        if (!ids) return false;
-        
+    // ==================== LOAD CACHE ====================
+    async function loadCache() {
         try {
-            const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`;
-            const data = await fetchWithRetry(url, 2, 3000);
-            
-            if (data) {
-                for (const token of TOKENS) {
-                    if (token.coinGeckoId && data[token.coinGeckoId]) {
-                        currentPrices[token.id] = {
-                            price: data[token.coinGeckoId].usd,
-                            change24h: data[token.coinGeckoId].usd_24h_change || 0
-                        };
-                    }
-                }
-                cachedPrices = { ...currentPrices };
-                lastPriceFetchTime = now;
+            const response = await fetch('crypto-cache.json?t=' + Date.now());
+            if (response.ok) {
+                cacheData = await response.json();
+                const lastUpdated = new Date(cacheData.lastUpdated).toLocaleString();
+                document.getElementById('cacheInfo').innerHTML = `<i class="fas fa-check-circle"></i> Data cached: ${lastUpdated} | Updates every 6 hours automatically`;
+                console.log('✅ Cache loaded successfully');
                 return true;
             }
-            
-            // Use cached prices if available
-            if (Object.keys(cachedPrices).length > 0) {
-                console.log("Using cached prices due to API issue");
-                currentPrices = { ...cachedPrices };
-                return true;
-            }
-            
-            return false;
         } catch(e) {
-            console.error("Error fetching prices:", e);
-            if (Object.keys(cachedPrices).length > 0) {
-                currentPrices = { ...cachedPrices };
-                return true;
-            }
-            return false;
+            console.log('Cache not found, using fallback');
         }
+        document.getElementById('cacheInfo').innerHTML = `<i class="fas fa-exclamation-triangle"></i> Using fallback data | Cache will update automatically`;
+        return false;
     }
     
-    // ==================== FETCH HISTORICAL DATA ====================
-    async function fetchHistoricalData(tokenId, days = 365) {
-        const token = TOKENS.find(t => t.id === tokenId);
-        if (!token || !token.coinGeckoId) return null;
-        
-        const cacheKey = `${tokenId}_${days}`;
-        if (historicalCache[cacheKey]) {
-            console.log(`Using cached historical data for ${tokenId}`);
-            return historicalCache[cacheKey];
-        }
-        
-        try {
-            const url = `https://api.coingecko.com/api/v3/coins/${token.coinGeckoId}/market_chart?vs_currency=usd&days=${days}&interval=daily`;
-            const data = await fetchWithRetry(url, 2, 3000);
-            
-            if (data && data.prices && data.prices.length > 0) {
-                const dates = [];
-                const prices = [];
-                
-                for (let i = 0; i < data.prices.length; i++) {
-                    const date = new Date(data.prices[i][0]);
-                    const dateStr = date.toISOString().split('T')[0];
-                    const price = data.prices[i][1];
-                    
-                    if (price > 0 && !isNaN(price)) {
-                        dates.push(dateStr);
-                        prices.push(price);
-                    }
-                }
-                
-                const result = { dates, prices };
-                historicalCache[cacheKey] = result;
-                return result;
-            }
-            return null;
-        } catch(e) {
-            console.error(`Error fetching ${tokenId} history:`, e);
-            return null;
-        }
-    }
-    
-    // ==================== FETCH FIT HISTORICAL DATA ====================
-    async function fetchFITHistoricalData() {
+    // ==================== LOAD FIT DATA ====================
+    async function loadFITData() {
         try {
             const response = await fetch('price-history.json?t=' + Date.now());
             if (response.ok) {
                 const data = await response.json();
                 if (data.records && data.records.length > 0) {
                     const records = data.records.sort((a,b) => a.date.localeCompare(b.date));
-                    return {
-                        dates: records.map(r => r.date),
-                        prices: records.map(r => r.price)
-                    };
+                    fitDates = records.map(r => r.date);
+                    fitPrices = records.map(r => r.price);
+                    
+                    try {
+                        const raw = await contract.Price();
+                        const currentPrice = parseFloat(ethers.utils.formatEther(raw));
+                        fitPrices[fitPrices.length - 1] = currentPrice;
+                    } catch(e) {}
+                    return;
                 }
             }
-            // Fallback data
-            return {
-                dates: ["2025-12-18", "2026-01-01", "2026-02-01", "2026-03-01", "2026-04-01", "2026-05-01", "2026-06-01", "2026-06-15"],
-                prices: [1.00, 1.02, 1.15, 2.05, 3.08, 4.18, 5.28, 6.35]
-            };
+            throw new Error("Using fallback");
         } catch(e) {
-            return {
-                dates: ["2025-12-18", "2026-06-15"],
-                prices: [1.00, 6.35]
-            };
+            fitDates = ["2025-12-18", "2026-01-01", "2026-02-01", "2026-03-01", "2026-04-01", "2026-05-01", "2026-06-01", "2026-06-15"];
+            fitPrices = [1.00, 1.02, 1.15, 2.05, 3.08, 4.18, 5.28, 6.35];
         }
     }
     
-    // ==================== LOAD DATA FOR CURRENT TOKEN ====================
-    async function loadTokenData(tokenId) {
-        const chartContainer = document.getElementById('chartContainer');
-        const existingOverlay = chartContainer.querySelector('.loading-overlay');
-        if (existingOverlay) existingOverlay.remove();
-        
-        const loadingDiv = document.createElement('div');
-        loadingDiv.className = 'loading-overlay';
-        loadingDiv.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading data...</div>';
-        chartContainer.appendChild(loadingDiv);
-        
-        try {
-            let data;
-            
-            if (tokenId === 'fit') {
-                data = await fetchFITHistoricalData();
-                if (currentPrices['fit']) {
-                    data.prices[data.prices.length - 1] = currentPrices['fit'].price;
-                }
-            } else {
-                let days = 365;
-                if (currentDays !== 'max') {
-                    days = parseInt(currentDays);
-                }
-                data = await fetchHistoricalData(tokenId, Math.min(days, 365));
-                
-                if (!data || data.prices.length === 0) {
-                    throw new Error("No data available from API");
-                }
-            }
-            
-            if (data && data.prices.length > 0) {
-                allHistoricalData[tokenId] = data;
-                const filtered = filterByTimeframe(data.dates, data.prices, currentDays);
-                updatePriceInfo(tokenId, filtered);
-                drawChart(tokenId, filtered);
-            } else {
-                drawChart(tokenId, { dates: [], prices: [] });
-                document.getElementById('priceStats').innerHTML = '<div class="error-message">⚠️ No historical data available. Please try again later.</div>';
-            }
-        } catch(e) {
-            console.error("Error loading data:", e);
-            drawChart(tokenId, { dates: [], prices: [] });
-            document.getElementById('priceStats').innerHTML = '<div class="error-message">⚠️ Error loading data. Please refresh or try again later.</div>';
-        } finally {
-            loadingDiv.remove();
+    // ==================== GET TOKEN DATA FROM CACHE ====================
+    function getTokenData(tokenId) {
+        if (tokenId === 'fit') {
+            return { dates: [...fitDates], prices: [...fitPrices] };
         }
+        
+        if (cacheData && cacheData.historicalData && cacheData.historicalData[tokenId]) {
+            return cacheData.historicalData[tokenId];
+        }
+        
+        // Fallback mock data
+        return generateMockData(tokenId);
     }
     
+    function generateMockData(tokenId) {
+        const mockData = {
+            bitcoin: { dates: ["2025-12-18", "2026-06-15"], prices: [95000, 102000] },
+            ethereum: { dates: ["2025-12-18", "2026-06-15"], prices: [3200, 3500] },
+            binancecoin: { dates: ["2025-12-18", "2026-06-15"], prices: [600, 660] }
+        };
+        return mockData[tokenId] || { dates: fitDates, prices: fitPrices.map(p => p * 0.5) };
+    }
+    
+    function getCurrentPriceFromCache(tokenId) {
+        if (tokenId === 'fit') {
+            return fitPrices[fitPrices.length - 1];
+        }
+        if (cacheData && cacheData.currentPrices && cacheData.currentPrices[tokenId]) {
+            return cacheData.currentPrices[tokenId].price;
+        }
+        return null;
+    }
+    
+    function get24hChange(tokenId) {
+        if (cacheData && cacheData.currentPrices && cacheData.currentPrices[tokenId]) {
+            return cacheData.currentPrices[tokenId].change24h;
+        }
+        return 0;
+    }
+    
+    // ==================== UI FUNCTIONS ====================
     function filterByTimeframe(dates, prices, days) {
         if (days === 'max' || dates.length === 0 || days === 365) {
             return { dates, prices };
@@ -667,8 +546,7 @@
         const high = Math.max(...prices);
         const low = Math.min(...prices);
         
-        const liveData = currentPrices[tokenId];
-        const change24h = liveData ? liveData.change24h : 0;
+        const change24h = get24hChange(tokenId);
         
         document.getElementById('currentPrice').innerHTML = formatPrice(currentPrice);
         
@@ -703,22 +581,8 @@
         if (!data.prices || data.prices.length === 0) {
             priceChart = new Chart(ctx, {
                 type: 'line',
-                data: {
-                    labels: ['No Data'],
-                    datasets: [{
-                        label: `${token.symbol} Price (USD)`,
-                        data: [0],
-                        borderColor: token.color,
-                        borderWidth: 2,
-                        pointRadius: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { ticks: { callback: () => 'No data' } } }
-                }
+                data: { labels: ['No Data'], datasets: [{ label: `${token.symbol} Price`, data: [0], borderColor: token.color, borderWidth: 2 }] },
+                options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { display: false } } }
             });
             return;
         }
@@ -735,7 +599,6 @@
                     borderWidth: 2.5,
                     pointRadius: 0,
                     pointHoverRadius: 5,
-                    pointHoverBackgroundColor: token.color,
                     fill: true,
                     tension: 0.1
                 }]
@@ -744,24 +607,10 @@
                 responsive: true,
                 maintainAspectRatio: true,
                 interaction: { mode: 'index', intersect: false },
-                plugins: {
-                    tooltip: { callbacks: { label: (context) => formatPrice(context.raw) } },
-                    legend: { display: false }
-                },
+                plugins: { tooltip: { callbacks: { label: (context) => formatPrice(context.raw) } }, legend: { display: false } },
                 scales: {
                     x: { ticks: { color: '#888', maxRotation: 45, autoSkip: true, maxTicksLimit: 8 }, grid: { display: false } },
-                    y: { 
-                        ticks: { 
-                            color: '#888',
-                            callback: (val) => {
-                                if (val >= 1000) return '$' + (val / 1000).toFixed(0) + 'K';
-                                if (val >= 1) return '$' + val.toFixed(0);
-                                if (val >= 0.01) return '$' + val.toFixed(3);
-                                return '$' + val.toExponential(2);
-                            }
-                        },
-                        grid: { color: 'rgba(255,255,255,0.05)' }
-                    }
+                    y: { ticks: { color: '#888', callback: (val) => { if (val >= 1000) return '$' + (val/1000).toFixed(0) + 'K'; if (val >= 1) return '$' + val.toFixed(0); return '$' + val.toExponential(2); } }, grid: { color: 'rgba(255,255,255,0.05)' } }
                 }
             }
         });
@@ -779,10 +628,7 @@
         TOKENS.forEach(token => {
             const btn = document.createElement('button');
             btn.className = `token-btn ${currentToken === token.id ? 'active' : ''}`;
-            btn.innerHTML = `
-                <span class="token-symbol" style="color: ${token.color}">${token.symbol}</span>
-                <span class="token-name">${token.name}</span>
-            `;
+            btn.innerHTML = `<span class="token-symbol" style="color: ${token.color}">${token.symbol}</span><span class="token-name">${token.name}</span>`;
             btn.onclick = () => switchToken(token.id);
             container.appendChild(btn);
         });
@@ -791,7 +637,12 @@
     async function switchToken(tokenId) {
         currentToken = tokenId;
         buildTokenSelector();
-        await loadTokenData(tokenId);
+        
+        const fullData = getTokenData(tokenId);
+        const filtered = filterByTimeframe(fullData.dates, fullData.prices, currentDays);
+        
+        updatePriceInfo(tokenId, filtered);
+        drawChart(tokenId, filtered);
     }
     
     async function switchTimeframe(days) {
@@ -805,17 +656,11 @@
             }
         });
         
-        if (allHistoricalData[currentToken]) {
-            const filtered = filterByTimeframe(
-                allHistoricalData[currentToken].dates,
-                allHistoricalData[currentToken].prices,
-                currentDays
-            );
-            updatePriceInfo(currentToken, filtered);
-            drawChart(currentToken, filtered);
-        } else {
-            await loadTokenData(currentToken);
-        }
+        const fullData = getTokenData(currentToken);
+        const filtered = filterByTimeframe(fullData.dates, fullData.prices, currentDays);
+        
+        updatePriceInfo(currentToken, filtered);
+        drawChart(currentToken, filtered);
     }
     
     async function refreshAll() {
@@ -824,30 +669,24 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
         btn.disabled = true;
         
-        // Clear cache for current token to force refresh
-        if (currentToken !== 'fit') {
-            const cacheKey = `${currentToken}_365`;
-            delete historicalCache[cacheKey];
-        }
-        
-        await fetchAllCurrentPrices(true);
-        await loadTokenData(currentToken);
+        await loadCache();
+        await loadFITData();
+        await switchToken(currentToken);
         
         btn.innerHTML = originalHtml;
         btn.disabled = false;
     }
     
     async function init() {
-        buildTokenSelector();
-        
-        const chartContainer = document.getElementById('chartContainer');
         const loadingDiv = document.createElement('div');
         loadingDiv.className = 'loading-overlay';
-        loadingDiv.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading market data...</div>';
-        chartContainer.appendChild(loadingDiv);
+        loadingDiv.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> Loading cached data...</div>';
+        document.getElementById('chartContainer').appendChild(loadingDiv);
         
-        await fetchAllCurrentPrices(true);
-        await loadTokenData('fit');
+        await loadCache();
+        await loadFITData();
+        buildTokenSelector();
+        await switchToken('fit');
         
         loadingDiv.remove();
         
@@ -857,31 +696,19 @@
         
         document.getElementById('refreshBtn').addEventListener('click', refreshAll);
         
-        // Auto refresh every 3 minutes (reduced frequency to avoid rate limits)
+        // Refresh FIT price every 30 seconds
         setInterval(async () => {
             try {
-                await fetchAllCurrentPrices(false);
+                const raw = await contract.Price();
+                const currentPrice = parseFloat(ethers.utils.formatEther(raw));
+                fitPrices[fitPrices.length - 1] = currentPrice;
                 if (currentToken === 'fit') {
-                    await loadTokenData('fit');
-                } else {
-                    const liveData = currentPrices[currentToken];
-                    if (liveData && allHistoricalData[currentToken]) {
-                        const prices = [...allHistoricalData[currentToken].prices];
-                        prices[prices.length - 1] = liveData.price;
-                        allHistoricalData[currentToken].prices = prices;
-                        const filtered = filterByTimeframe(
-                            allHistoricalData[currentToken].dates,
-                            prices,
-                            currentDays
-                        );
-                        updatePriceInfo(currentToken, filtered);
-                        drawChart(currentToken, filtered);
-                    }
+                    const filtered = filterByTimeframe(fitDates, fitPrices, currentDays);
+                    updatePriceInfo('fit', filtered);
+                    drawChart('fit', filtered);
                 }
-            } catch(e) {
-                console.log("Auto-refresh skipped:", e.message);
-            }
-        }, 180000); // 3 minutes
+            } catch(e) {}
+        }, 30000);
     }
     
     init();
