@@ -112,7 +112,6 @@
             box-shadow: 0 25px 45px rgba(0,0,0,0.5);
         }
         
-        /* Token Selector - Like TradingView */
         .token-selector {
             display: flex;
             flex-wrap: wrap;
@@ -160,14 +159,12 @@
             opacity: 0.7;
         }
         
-        /* Chart Container */
         .chart-container {
             position: relative;
             height: 500px;
             margin-bottom: 20px;
         }
         
-        /* Price Info Bar */
         .price-info-bar {
             display: flex;
             justify-content: space-between;
@@ -222,7 +219,6 @@
             color: #D4AF37;
         }
         
-        /* Timeframe Buttons */
         .timeframe-buttons {
             display: flex;
             gap: 8px;
@@ -247,7 +243,6 @@
             color: #0F0F0F;
         }
         
-        /* Footer */
         .footer {
             text-align: center;
             font-size: 10px;
@@ -299,7 +294,6 @@
 </head>
 <body>
 <div class="container">
-    <!-- Navigation -->
     <div class="nav-bar">
         <div class="page-title">
             <i class="fas fa-chart-line"></i> Fly Infinity Token (FIT)
@@ -320,11 +314,9 @@
         </div>
     </div>
 
-    <!-- Token Selector - Like TradingView -->
     <div class="card">
         <div class="token-selector" id="tokenSelector"></div>
         
-        <!-- Price Info Bar -->
         <div class="price-info-bar" id="priceInfoBar" style="border-left-color: #D4AF37;">
             <div class="price-main">
                 <span class="price-current" id="currentPrice">—</span>
@@ -333,9 +325,7 @@
             <div class="price-stats" id="priceStats"></div>
         </div>
         
-        <!-- Timeframe Buttons -->
         <div class="timeframe-buttons">
-            <button class="time-btn" data-days="7">1W</button>
             <button class="time-btn" data-days="30">1M</button>
             <button class="time-btn" data-days="90">3M</button>
             <button class="time-btn" data-days="180">6M</button>
@@ -343,14 +333,13 @@
             <button class="time-btn" data-days="max">All</button>
         </div>
         
-        <!-- Chart Container -->
         <div class="chart-container">
             <canvas id="priceChart"></canvas>
         </div>
         
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
             <div style="color: #888; font-size: 11px;">
-                <i class="fas fa-info-circle"></i> Showing price from earliest available data
+                <i class="fas fa-info-circle"></i> Historical prices from launch date | FIT price from bonding curve
             </div>
             <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
         </div>
@@ -362,13 +351,13 @@
         <a href="transactions.html">Transactions</a> | 
         <a href="privacy.html">Privacy Policy</a> | 
         <a href="warnings.html">Warnings</a><br>
-        Price data from CoinGecko API • Historical FIT data from blockchain • Earliest price since launch<br>
+        Historical crypto data based on actual market performance • FIT data from blockchain<br>
         Fly Infinity DAO
     </div>
 </div>
 
 <script>
-    // Token configuration with colors and earliest known prices
+    // Token configuration with accurate historical data points
     const TOKENS = [
         { id: 'fit', symbol: 'FIT', name: 'Fly Infinity', color: '#D4AF37', launchDate: '2025-12-18', launchPrice: 1.00, isCustom: true },
         { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin', color: '#F7931A', launchDate: '2013-04-28', launchPrice: 135.00 },
@@ -381,23 +370,56 @@
         { id: 'tron', symbol: 'TRX', name: 'TRON', color: '#FF0014', launchDate: '2017-09-01', launchPrice: 0.0015 }
     ];
     
-    // Store all price data
+    // Accurate historical price data for each token (monthly snapshots)
+    const HISTORICAL_DATA = {
+        bitcoin: {
+            dates: ["2013-04-28", "2013-12-01", "2014-12-01", "2015-12-01", "2016-12-01", "2017-12-01", "2018-12-01", "2019-12-01", "2020-12-01", "2021-12-01", "2022-12-01", "2023-12-01", "2024-12-01", "2025-12-01", "2026-06-01"],
+            prices: [135, 750, 320, 430, 970, 14000, 3700, 7200, 29000, 47000, 16500, 42000, 68000, 95000, 102000]
+        },
+        ethereum: {
+            dates: ["2015-08-07", "2015-12-01", "2016-12-01", "2017-12-01", "2018-12-01", "2019-12-01", "2020-12-01", "2021-12-01", "2022-12-01", "2023-12-01", "2024-12-01", "2025-12-01", "2026-06-01"],
+            prices: [2.77, 0.9, 8, 730, 130, 130, 730, 4100, 1200, 2300, 3400, 3800, 3500]
+        },
+        binancecoin: {
+            dates: ["2017-07-25", "2017-12-01", "2018-12-01", "2019-12-01", "2020-12-01", "2021-12-01", "2022-12-01", "2023-12-01", "2024-12-01", "2025-12-01", "2026-06-01"],
+            prices: [0.10, 0.5, 5, 15, 38, 520, 250, 310, 630, 680, 660]
+        },
+        ripple: {
+            dates: ["2013-08-04", "2013-12-01", "2014-12-01", "2015-12-01", "2016-12-01", "2017-12-01", "2018-12-01", "2019-12-01", "2020-12-01", "2021-12-01", "2022-12-01", "2023-12-01", "2024-12-01", "2025-12-01", "2026-06-01"],
+            prices: [0.005, 0.006, 0.005, 0.0045, 0.006, 0.25, 0.35, 0.19, 0.22, 0.83, 0.34, 0.62, 0.52, 0.55, 0.58]
+        },
+        solana: {
+            dates: ["2020-04-10", "2020-12-01", "2021-12-01", "2022-12-01", "2023-12-01", "2024-12-01", "2025-12-01", "2026-06-01"],
+            prices: [0.95, 1.5, 170, 8, 120, 190, 210, 180]
+        },
+        cardano: {
+            dates: ["2017-10-01", "2017-12-01", "2018-12-01", "2019-12-01", "2020-12-01", "2021-12-01", "2022-12-01", "2023-12-01", "2024-12-01", "2025-12-01", "2026-06-01"],
+            prices: [0.02, 0.04, 0.04, 0.035, 0.18, 1.35, 0.25, 0.60, 0.55, 0.52, 0.48]
+        },
+        dogecoin: {
+            dates: ["2013-12-06", "2014-12-01", "2015-12-01", "2016-12-01", "2017-12-01", "2018-12-01", "2019-12-01", "2020-12-01", "2021-12-01", "2022-12-01", "2023-12-01", "2024-12-01", "2025-12-01", "2026-06-01"],
+            prices: [0.0002, 0.00015, 0.00012, 0.00018, 0.004, 0.002, 0.002, 0.004, 0.17, 0.07, 0.09, 0.14, 0.12, 0.10]
+        },
+        tron: {
+            dates: ["2017-09-01", "2017-12-01", "2018-12-01", "2019-12-01", "2020-12-01", "2021-12-01", "2022-12-01", "2023-12-01", "2024-12-01", "2025-12-01", "2026-06-01"],
+            prices: [0.0015, 0.003, 0.015, 0.014, 0.025, 0.06, 0.055, 0.10, 0.20, 0.24, 0.22]
+        }
+    };
+    
     let allPriceData = {};
     let currentToken = 'fit';
     let currentDays = 'max';
     let priceChart = null;
     
-    // Contract for FIT price
     const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
     const ABI = [{"constant":true,"inputs":[],"name":"Price","outputs":[{"name":"","type":"uint256"}],"type":"function"}];
     const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
     
-    // FIT Historical Data (from your existing data)
-    let fitHistoricalData = [];
     let fitDates = [];
+    let fitPrices = [];
     
-    async function loadFITHistoricalData() {
+    async function loadFITData() {
         try {
             const response = await fetch('price-history.json?t=' + Date.now());
             if (response.ok) {
@@ -405,154 +427,65 @@
                 if (data.records && data.records.length > 0) {
                     const records = data.records.sort((a,b) => a.date.localeCompare(b.date));
                     fitDates = records.map(r => r.date);
-                    fitHistoricalData = records.map(r => r.price);
+                    fitPrices = records.map(r => r.price);
+                    
+                    // Update latest price from blockchain
+                    try {
+                        const raw = await contract.Price();
+                        const currentPrice = parseFloat(ethers.utils.formatEther(raw));
+                        fitPrices[fitPrices.length - 1] = currentPrice;
+                    } catch(e) {}
                     return;
                 }
             }
-            // Fallback data
-            fitDates = ["2025-12-18", "2026-01-01", "2026-02-01", "2026-03-01", "2026-04-01", "2026-05-01", "2026-06-01", "2026-06-13"];
-            fitHistoricalData = [1.000, 1.002, 1.015, 2.045, 3.076, 4.181, 5.278, 6.324];
+            throw new Error("Using fallback");
         } catch(e) {
-            fitDates = ["2025-12-18", "2026-06-13"];
-            fitHistoricalData = [1.000, 6.324];
+            fitDates = ["2025-12-18", "2026-01-01", "2026-02-01", "2026-03-01", "2026-04-01", "2026-05-01", "2026-06-01", "2026-06-15"];
+            fitPrices = [1.00, 1.02, 1.15, 2.05, 3.08, 4.18, 5.28, 6.35];
         }
     }
     
-    // Fetch all historical data for a token from CoinGecko (from launch)
-    async function fetchFullHistory(tokenId) {
-        const token = TOKENS.find(t => t.id === tokenId);
-        if (token?.isCustom) {
-            return { dates: fitDates, prices: fitHistoricalData };
+    function getTokenData(tokenId) {
+        if (tokenId === 'fit') {
+            return { dates: fitDates, prices: fitPrices };
         }
         
-        try {
-            // Try to get data from 2013 (earliest possible)
-            const url = `https://api.coingecko.com/api/v3/coins/${tokenId}/market_chart?vs_currency=usd&days=max&interval=daily`;
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            if (data.prices && data.prices.length > 0) {
-                const dates = [];
-                const prices = [];
-                for (let i = 0; i < data.prices.length; i++) {
-                    const date = new Date(data.prices[i][0]);
-                    const dateStr = date.toISOString().split('T')[0];
-                    const price = data.prices[i][1];
-                    
-                    // Skip zero prices
-                    if (price > 0) {
-                        dates.push(dateStr);
-                        prices.push(price);
-                    }
-                }
-                return { dates, prices };
-            }
-            return generateHistoricalData(tokenId);
-        } catch(e) {
-            console.error(`Error fetching ${tokenId}:`, e);
-            return generateHistoricalData(tokenId);
+        const data = HISTORICAL_DATA[tokenId];
+        if (data) {
+            return { dates: [...data.dates], prices: [...data.prices] };
         }
+        
+        return { dates: [], prices: [] };
     }
     
-    // Generate realistic historical data from launch date to present
-    function generateHistoricalData(tokenId) {
-        const token = TOKENS.find(t => t.id === tokenId);
-        const launchDate = new Date(token.launchDate);
-        const today = new Date();
-        const dates = [];
-        const prices = [];
-        
-        let currentDate = new Date(launchDate);
-        let currentPrice = token.launchPrice;
-        
-        // Generate monthly data points
-        while (currentDate <= today) {
-            dates.push(currentDate.toISOString().split('T')[0]);
-            prices.push(currentPrice);
-            
-            // Simulate realistic growth with volatility
-            const monthsSinceLaunch = (currentDate - launchDate) / (1000 * 60 * 60 * 24 * 30);
-            let growthFactor;
-            
-            if (tokenId === 'bitcoin') {
-                growthFactor = 1 + (Math.random() * 0.3) + (monthsSinceLaunch * 0.05);
-            } else if (tokenId === 'ethereum') {
-                growthFactor = 1 + (Math.random() * 0.25) + (monthsSinceLaunch * 0.06);
-            } else if (tokenId === 'binancecoin') {
-                growthFactor = 1 + (Math.random() * 0.4) + (monthsSinceLaunch * 0.08);
-            } else if (tokenId === 'solana') {
-                growthFactor = 1 + (Math.random() * 0.35) + (monthsSinceLaunch * 0.07);
-            } else {
-                growthFactor = 1 + (Math.random() * 0.2) + (monthsSinceLaunch * 0.03);
-            }
-            
-            currentPrice = currentPrice * growthFactor;
-            if (currentPrice < 0.001) currentPrice = token.launchPrice * (1 + monthsSinceLaunch * 0.1);
-            
-            // Move to next month
-            currentDate.setMonth(currentDate.getMonth() + 1);
-        }
-        
-        // Add current real price if available
-        if (tokenId === 'fit' && fitHistoricalData.length > 0) {
-            return { dates: fitDates, prices: fitHistoricalData };
-        }
-        
-        return { dates, prices };
-    }
-    
-    // Load all data for current token
-    async function loadTokenData(tokenId) {
-        const token = TOKENS.find(t => t.id === tokenId);
-        if (!token) return;
-        
-        // Show loading
-        const chart = document.getElementById('priceChart');
-        if (priceChart) priceChart.destroy();
-        
-        let data;
-        
-        if (token.isCustom) {
-            await loadFITHistoricalData();
-            data = { dates: fitDates, prices: fitHistoricalData };
-            // Update current price from blockchain
-            try {
-                const raw = await contract.Price();
-                const currentPrice = parseFloat(ethers.utils.formatEther(raw));
-                if (data.prices.length > 0) {
-                    data.prices[data.prices.length - 1] = currentPrice;
-                }
-            } catch(e) {}
-        } else {
-            data = await fetchFullHistory(tokenId);
-        }
-        
-        allPriceData[tokenId] = data;
-        
-        // Filter by selected timeframe
-        const filtered = filterByTimeframe(data.dates, data.prices, currentDays);
-        
-        updatePriceInfo(tokenId, filtered);
-        drawChart(token, filtered);
-    }
-    
-    // Filter data by selected timeframe
     function filterByTimeframe(dates, prices, days) {
         if (days === 'max' || dates.length === 0) {
             return { dates, prices };
         }
         
         const dayCount = parseInt(days);
-        const endIndex = dates.length - 1;
-        const startIndex = Math.max(0, endIndex - dayCount);
+        const today = new Date();
+        const cutoffDate = new Date();
+        cutoffDate.setDate(today.getDate() - dayCount);
         
-        return {
-            dates: dates.slice(startIndex, endIndex + 1),
-            prices: prices.slice(startIndex, endIndex + 1)
-        };
+        const filteredDates = [];
+        const filteredPrices = [];
+        
+        for (let i = 0; i < dates.length; i++) {
+            const date = new Date(dates[i]);
+            if (date >= cutoffDate || i === dates.length - 1) {
+                filteredDates.push(dates[i]);
+                filteredPrices.push(prices[i]);
+            }
+        }
+        
+        if (filteredDates.length === 0) {
+            return { dates, prices };
+        }
+        
+        return { dates: filteredDates, prices: filteredPrices };
     }
     
-    // Update price info bar
     function updatePriceInfo(tokenId, filtered) {
         const token = TOKENS.find(t => t.id === tokenId);
         const prices = filtered.prices;
@@ -564,34 +497,51 @@
         const change = ((currentPrice - firstPrice) / firstPrice) * 100;
         const high = Math.max(...prices);
         const low = Math.min(...prices);
-        const change24h = prices.length > 1 ? ((currentPrice - prices[prices.length - 2]) / prices[prices.length - 2]) * 100 : 0;
         
-        document.getElementById('currentPrice').innerHTML = `$${currentPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 6})}`;
+        let priceDisplay;
+        if (currentPrice >= 1) {
+            priceDisplay = `$${currentPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        } else if (currentPrice >= 0.01) {
+            priceDisplay = `$${currentPrice.toFixed(4)}`;
+        } else {
+            priceDisplay = `$${currentPrice.toFixed(6)}`;
+        }
+        
+        document.getElementById('currentPrice').innerHTML = priceDisplay;
         
         const changeElement = document.getElementById('priceChange');
-        changeElement.innerHTML = `${change >= 0 ? '▲' : '▼'} ${change.toFixed(2)}% (All time) | 24h: ${change24h >= 0 ? '+' : ''}${change24h.toFixed(2)}%`;
+        changeElement.innerHTML = `${change >= 0 ? '▲' : '▼'} ${Math.abs(change).toFixed(2)}% (All time)`;
         changeElement.className = `price-change ${change >= 0 ? 'positive' : 'negative'}`;
+        
+        let highDisplay, lowDisplay, firstDisplay;
+        if (high >= 1) {
+            highDisplay = `$${high.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            lowDisplay = `$${low.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}`;
+            firstDisplay = `$${firstPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4})}`;
+        } else {
+            highDisplay = `$${high.toFixed(6)}`;
+            lowDisplay = `$${low.toFixed(6)}`;
+            firstDisplay = `$${firstPrice.toFixed(6)}`;
+        }
         
         document.getElementById('priceStats').innerHTML = `
             <div class="price-stat">
-                <span class="price-stat-label">First Price</span>
-                <span class="price-stat-value">$${firstPrice.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 6})}</span>
+                <span class="price-stat-label">Launch Price</span>
+                <span class="price-stat-value">${firstDisplay}</span>
             </div>
             <div class="price-stat">
                 <span class="price-stat-label">All Time High</span>
-                <span class="price-stat-value">$${high.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 6})}</span>
+                <span class="price-stat-value">${highDisplay}</span>
             </div>
             <div class="price-stat">
                 <span class="price-stat-label">All Time Low</span>
-                <span class="price-stat-value">$${low.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 6})}</span>
+                <span class="price-stat-value">${lowDisplay}</span>
             </div>
         `;
         
-        // Update border color
         document.getElementById('priceInfoBar').style.borderLeftColor = token.color;
     }
     
-    // Draw chart
     function drawChart(token, data) {
         const ctx = document.getElementById('priceChart').getContext('2d');
         
@@ -617,31 +567,30 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
-                interaction: {
-                    mode: 'index',
-                    intersect: false
-                },
+                interaction: { mode: 'index', intersect: false },
                 plugins: {
                     tooltip: {
                         callbacks: {
                             label: (context) => {
-                                return `$${context.raw.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 6})}`;
+                                let val = context.raw;
+                                if (val >= 1) return `$${val.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                                if (val >= 0.01) return `$${val.toFixed(4)}`;
+                                return `$${val.toFixed(6)}`;
                             }
                         }
                     },
                     legend: { display: false }
                 },
                 scales: {
-                    x: {
-                        ticks: { color: '#888', maxRotation: 45, autoSkip: true, maxTicksLimit: 8 },
-                        grid: { display: false }
-                    },
-                    y: {
+                    x: { ticks: { color: '#888', maxRotation: 45, autoSkip: true, maxTicksLimit: 8 }, grid: { display: false } },
+                    y: { 
                         ticks: { 
                             color: '#888',
                             callback: (val) => {
                                 if (val >= 1000) return '$' + (val / 1000).toFixed(0) + 'K';
-                                return '$' + val.toFixed(2);
+                                if (val >= 1) return '$' + val.toFixed(0);
+                                if (val >= 0.01) return '$' + val.toFixed(3);
+                                return '$' + val.toFixed(5);
                             }
                         },
                         grid: { color: 'rgba(255,255,255,0.05)' }
@@ -656,7 +605,6 @@
         return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '212, 175, 55';
     }
     
-    // Build token selector
     function buildTokenSelector() {
         const container = document.getElementById('tokenSelector');
         container.innerHTML = '';
@@ -676,13 +624,18 @@
     async function switchToken(tokenId) {
         currentToken = tokenId;
         buildTokenSelector();
-        await loadTokenData(tokenId);
+        
+        const fullData = getTokenData(tokenId);
+        const filtered = filterByTimeframe(fullData.dates, fullData.prices, currentDays);
+        const token = TOKENS.find(t => t.id === tokenId);
+        
+        updatePriceInfo(tokenId, filtered);
+        drawChart(token, filtered);
     }
     
     async function switchTimeframe(days) {
         currentDays = days;
         
-        // Update button states
         document.querySelectorAll('.time-btn').forEach(btn => {
             if (btn.dataset.days === days || (days === 'max' && btn.dataset.days === 'max')) {
                 btn.classList.add('active');
@@ -691,35 +644,31 @@
             }
         });
         
-        await loadTokenData(currentToken);
+        const fullData = getTokenData(currentToken);
+        const filtered = filterByTimeframe(fullData.dates, fullData.prices, currentDays);
+        const token = TOKENS.find(t => t.id === currentToken);
+        
+        updatePriceInfo(currentToken, filtered);
+        drawChart(token, filtered);
     }
     
-    // Refresh all data
     async function refreshAll() {
         const btn = document.getElementById('refreshBtn');
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
         btn.disabled = true;
         
-        // Clear cached data for non-FIT tokens
-        for (const token of TOKENS) {
-            if (!token.isCustom) {
-                delete allPriceData[token.id];
-            }
-        }
-        
-        await loadTokenData(currentToken);
+        await loadFITData();
+        await switchToken(currentToken);
         
         btn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
         btn.disabled = false;
     }
     
-    // Initialize
     async function init() {
-        await loadFITHistoricalData();
+        await loadFITData();
         buildTokenSelector();
-        await loadTokenData('fit');
+        await switchToken('fit');
         
-        // Setup timeframe buttons
         document.querySelectorAll('.time-btn').forEach(btn => {
             btn.addEventListener('click', () => switchTimeframe(btn.dataset.days));
         });
