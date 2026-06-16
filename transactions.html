@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Fly Infinity Token - Transactions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-image: url('background-desktop.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        @media (max-width: 768px) {
+    body {
+        background-image: url('background-mobile.png');
+        background-size: contain;
+        background-position: center top;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-color: #0F0F0F;
+        padding: 15px;
+    }
+}
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 15, 15, 0.75);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .nav-bar {
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 15px 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            background: transparent;
+            border: 1px solid #00C896;
+            color: #00C896;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .nav-btn.active {
+            background: #00C896;
+            color: #0F0F0F;
+        }
+        
+        .nav-btn:hover {
+            background: #00C896;
+            color: #0F0F0F;
+            transform: translateY(-2px);
+        }
+        
+        .page-title {
+            color: #D4AF37;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .card {
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            color: #D4AF37;
+            margin-bottom: 20px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 200, 150, 0.3);
+        }
+        
+        .card-title i {
+            margin-right: 8px;
+            color: #00C896;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .link-card {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 20px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            display: block;
+            cursor: pointer;
+        }
+        
+        .link-card:hover {
+            transform: translateY(-3px);
+            border-color: #00C896;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        .link-card i {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .link-card h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .link-card p {
+            font-size: 12px;
+            margin-bottom: 10px;
+            color: #888;
+        }
+        
+        .link-card .arrow {
+            font-size: 11px;
+            display: inline-block;
+            color: #00C896;
+        }
+        
+        /* Color variants */
+        .link-card.all { border-left: 3px solid #00C896; }
+        .link-card.all i, .link-card.all h3 { color: #00C896; }
+        
+        .link-card.buy { border-left: 3px solid #2e7d64; }
+        .link-card.buy i, .link-card.buy h3 { color: #2e7d64; }
+        
+        .link-card.sell { border-left: 3px solid #9e3e3e; }
+        .link-card.sell i, .link-card.sell h3 { color: #9e3e3e; }
+        
+        .link-card.reward { border-left: 3px solid #f3ba2f; }
+        .link-card.reward i, .link-card.reward h3 { color: #f3ba2f; }
+        
+        .link-card.owner { border-left: 3px solid #7a5a9e; }
+        .link-card.owner i, .link-card.owner h3 { color: #7a5a9e; }
+        
+        .link-card.holders { border-left: 3px solid #00C896; }
+        .link-card.holders i, .link-card.holders h3 { color: #00C896; }
+        
+        .link-card.supply { border-left: 3px solid #D4AF37; }
+        .link-card.supply i, .link-card.supply h3 { color: #D4AF37; }
+        
+        .link-card.liquidity { border-left: 3px solid #3e6b9e; }
+        .link-card.liquidity i, .link-card.liquidity h3 { color: #3e6b9e; }
+        
+        .link-card.genesis { border-left: 3px solid #D4AF37; }
+        .link-card.genesis i, .link-card.genesis h3 { color: #D4AF37; }
+        
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            margin-top: 20px;
+        }
+        
+        .footer a {
+            color: #00C896;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+       <!-- Navigation -->
+    <div class="nav-bar">
+        <div class="page-title">
+            <i class="fas fa-chart-line"></i> Fly Infinity Token (FIT)
+        </div>
+        <div class="nav-links" style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="index.html" class="nav-btn"><i class="fas fa-chart-simple"></i> Dashboard</a>
+                <a href="transactions.html" class="nav-btn active"><i class="fas fa-history"></i> Transactions</a>
+            </div>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="privacy.html" class="nav-btn"><i class="fas fa-shield-alt"></i> Privacy</a>
+                <a href="warnings.html" class="nav-btn"><i class="fas fa-exclamation-triangle"></i> Warnings</a>
+            </div>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="dapp.html" class="nav-btn"><i class="fas fa-charging-station"></i> Buy Ownership Shares &amp; FIT</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Links Section -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-exchange-alt"></i> Transactions Explorer
+        </div>
+        <div class="stats-grid">
+            <a href="https://bscscan.com/txs?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card all">
+                <i class="fas fa-list"></i>
+                <h3>📋 All Transactions</h3>
+                <p>View all contract transactions</p>
+                <span class="arrow">→ Open in BscScan →</span>
+            </a>
+            <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0xe3d4187f%7eBuy" target="_blank" class="link-card buy">
+                <i class="fas fa-arrow-down"></i>
+                <h3>🟢 Buy Transactions</h3>
+                <p>Only Buy transactions (Buy function)</p>
+                <span class="arrow">→ Open in BscScan →</span>
+            </a>
+            <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0x52288195%7eSell" target="_blank" class="link-card sell">
+                <i class="fas fa-arrow-up"></i>
+                <h3>🔴 Sell Transactions</h3>
+                <p>Only Sell transactions (Sell function)</p>
+                <span class="arrow">→ Open in BscScan →</span>
+            </a>
+            <a href="https://bscscan.com/tokentxns?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card all">
+                <i class="fas fa-arrow-right-arrow-left"></i>
+                <h3>🔄 Token Transfers</h3>
+                <p>FIT token transfers between addresses</p>
+                <span class="arrow">→ Open in BscScan →</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Network Events Section -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-star"></i> Network Events
+        </div>
+        <div class="stats-grid">
+            <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0x949ded00%7eBe+Come_Owner" target="_blank" class="link-card owner">
+                <i class="fas fa-user-plus"></i>
+                <h3>👑 Become Owner Events</h3>
+                <p>Registration of new Fly Infinity ownership shares (BeCome_Owner function)</p>
+                <span class="arrow">→ Open in BscScan →</span>
+            </a>
+            <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0xe2e15f2e%7eReward" target="_blank" class="link-card reward">
+                <i class="fas fa-gift"></i>
+                <h3>🎁 Reward Events</h3>
+                <p>Network reward transactions (Reward function)</p>
+                <span class="arrow">→ Open in BscScan →</span>
+            </a>
+            <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0x05068727%7eGenesis_Liquidity" target="_blank" class="link-card genesis">
+                <i class="fas fa-droplet"></i>
+                <h3>💧 Genesis Liquidity</h3>
+                <p>Creation of the initial base price</p>
+                <span class="arrow">→ Open in BscScan →</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Holder Information Section -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-users"></i> Holder Information
+        </div>
+        <div class="stats-grid">
+            <a href="https://bscscan.com/token/tokenholderchart/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card holders">
+                <i class="fas fa-chart-pie"></i>
+                <h3>📊 Holder Distribution</h3>
+                <p>Chart of holder distribution and ownership percentages</p>
+                <span class="arrow">→ Open in BscScan →</span>
+            </a>
+            <a href="https://bscscan.com/token/gauge?type=holders&a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card holders">
+                <i class="fas fa-list-ol"></i>
+                <h3>👥 Top Holders List</h3>
+                <p>Complete list of holders with FIT balances</p>
+                <span class="arrow">→ Open in BscScan →</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Contract Stats Section -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-chart-simple"></i> Contract Statistics
+        </div>
+        <div class="stats-grid">
+            <a href="https://bscscan.com/token/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card supply">
+                <i class="fas fa-coins"></i>
+                <h3>🪙 Total Supply</h3>
+                <p>View total supply and token information</p>
+                <span class="arrow">→ Open in BscScan →</span>
+            </a>
+            <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#tokentxns" target="_blank" class="link-card liquidity">
+                <i class="fas fa-database"></i>
+                <h3>💵 DAI Reserve</h3>
+                <p>View DAI balance in the contract (Token Transfers)</p>
+                <span class="arrow">→ Open in BscScan →</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Contract Address -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-file-contract"></i> Contract Information
+        </div>
+        <div style="background:#1a1a1a; border-radius:20px; padding:15px; text-align:center;">
+            <div style="color:#00C896; font-size:11px; margin-bottom:5px;">📜 FIT Token Contract</div>
+            <div style="font-family:monospace; font-size:13px; color:#D4AF37; word-break:break-all;">0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa</div>
+            <div style="color:#00C896; font-size:11px; margin-top:10px; margin-bottom:5px;">🌐 Network Contract</div>
+            <div style="font-family:monospace; font-size:13px; color:#D4AF37; word-break:break-all;">0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B</div>
+        </div>
+        
+        <!-- Modified: Solid black-green buttons -->
+        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
+            <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#code" target="_blank" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 10px 20px; border-radius: 40px; font-size: 14px; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
+                <i class="fas fa-code"></i> View Source
+            </a>
+            <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#writeContract" target="_blank" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 10px 20px; border-radius: 40px; font-size: 14px; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
+                <i class="fas fa-pen"></i> Write Contract
+            </a>
+            <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#readContract" target="_blank" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 10px 20px; border-radius: 40px; font-size: 14px; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
+                <i class="fas fa-eye"></i> Read Contract
+            </a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank">View Contract on BscScan</a><br>
+        Fly Infinity DAO
+    </div>
+</div>
+</body>
+</html>

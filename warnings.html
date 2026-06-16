@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Fly Infinity Token - Important Warnings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-image: url('background-desktop.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        @media (max-width: 768px) {
+    body {
+        background-image: url('background-mobile.png');
+        background-size: contain;
+        background-position: center top;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-color: #0F0F0F;
+        padding: 15px;
+    }
+}
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 15, 15, 0.85);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .nav-bar {
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 15px 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .nav-btn {
+            background: transparent;
+            border: 1px solid #00C896;
+            color: #00C896;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        
+        .nav-btn.active {
+            background: #00C896;
+            color: #0F0F0F;
+        }
+        
+        .nav-btn:hover {
+            background: #00C896;
+            color: #0F0F0F;
+            transform: translateY(-2px);
+        }
+        
+        .page-title {
+            color: #D4AF37;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .warnings-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .warning-card {
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 30px;
+            border: 1px solid #ff4444;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .warning-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 25px 45px rgba(255, 68, 68, 0.15);
+        }
+        
+        .warning-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 68, 68, 0.3);
+            padding-bottom: 15px;
+        }
+        
+        .warning-icon {
+            font-size: 32px;
+            color: #ff4444;
+        }
+        
+        .warning-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #00C896;
+        }
+        
+        .warning-content {
+            color: #ffffff;
+            line-height: 1.8;
+            font-size: 15px;
+        }
+        
+        .warning-content p {
+            margin-bottom: 15px;
+        }
+        
+        .warning-content ul {
+            margin-left: 25px;
+            margin-top: 10px;
+        }
+        
+        .warning-content li {
+            margin-bottom: 8px;
+        }
+        
+        .warning-solution {
+            background: rgba(0, 200, 150, 0.1);
+            border-left: 3px solid #00C896;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 12px;
+        }
+        
+        .warning-solution strong {
+            color: #00C896;
+        }
+        
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            margin-top: 30px;
+        }
+        
+        .footer a {
+            color: #00C896;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+            .warning-card {
+                padding: 20px;
+            }
+            .warning-title {
+                font-size: 18px;
+            }
+            .warning-icon {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+       <!-- Navigation -->
+    <div class="nav-bar">
+        <div class="page-title">
+            <i class="fas fa-exclamation-triangle"></i> Fly Infinity Token (FIT)
+        </div>
+        <div class="nav-links" style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="index.html" class="nav-btn"><i class="fas fa-chart-simple"></i> Dashboard</a>
+                <a href="transactions.html" class="nav-btn"><i class="fas fa-history"></i> Transactions</a>
+            </div>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="privacy.html" class="nav-btn"><i class="fas fa-shield-alt"></i> Privacy</a>
+                <a href="warnings.html" class="nav-btn active"><i class="fas fa-exclamation-triangle"></i> Warnings</a>
+            </div>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="dapp.html" class="nav-btn"><i class="fas fa-charging-station"></i> Buy Ownership Shares &amp; FIT</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warnings Container -->
+    <div class="warnings-container">
+        
+        <!-- Warning 1: Wallet Change -->
+        <div class="warning-card">
+            <div class="warning-header">
+                <i class="fas fa-exchange-alt warning-icon"></i>
+                <div class="warning-title">⚠️ Before Changing or Deleting Your Wallet</div>
+            </div>
+            <div class="warning-content">
+                <p>If you intend to perform a wallet change operation, you must sell your tokens first. Otherwise, your tokens will lose their transferability and you will not be able to sell them afterward.</p>
+                <div class="warning-solution">
+                    <strong>🔧 Solution:</strong><br>
+                    First, sell all your FIT tokens → Then change your wallet → Finally, buy FIT again in your new wallet.
+                </div>
+            </div>
+        </div>
+
+        <!-- Warning 2: Recovery Phrase -->
+        <div class="warning-card">
+            <div class="warning-header">
+                <i class="fas fa-key warning-icon"></i>
+                <div class="warning-title">⚠️ Never Share Your Recovery Phrase</div>
+            </div>
+            <div class="warning-content">
+                <p>Recovery phrases (seed phrases) cannot be changed or reset. Keep them safe!</p>
+                <ul>
+                    <li>✅ Write them down physically on paper</li>
+                    <li>✅ Store multiple copies in secure, separate locations</li>
+                    <li>✅ Never store them digitally (screenshots, cloud, email)</li>
+                    <li>❌ Never share them with anyone, including "support" teams</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Warning 3: Blockchain Irreversibility -->
+        <div class="warning-card">
+            <div class="warning-header">
+                <i class="fas fa-ban warning-icon"></i>
+                <div class="warning-title">⚠️ Blockchain Transactions Are Irreversible</div>
+            </div>
+            <div class="warning-content">
+                <p>Blockchain is a decentralized system with no central authority. Once a transaction is confirmed, it is permanently recorded on the blockchain and <strong>cannot be reversed, modified, or deleted</strong> by anyone.</p>
+                <ul>
+                    <li>🔒 Always double-check wallet addresses before sending</li>
+                    <li>🔒 Verify transaction amounts carefully</li>
+                    <li>🔒 Be cautious of scams and phishing attempts</li>
+                    <li>🔒 No one can "reverse" or "cancel" your transaction</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <a href="index.html">Dashboard</a> | 
+        <a href="transactions.html">Transactions</a> | 
+        <a href="privacy.html">Privacy Policy</a> | 
+        <a href="warnings.html">Important Warnings</a><br>
+        Fly Infinity DAO
+    </div>
+</div>
+</body>
+</html>
