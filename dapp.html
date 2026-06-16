@@ -956,7 +956,7 @@
         }
     }
     
-    // ==================== GIFT CONTRACT FUNCTIONS ====================
+        // ==================== GIFT CONTRACT FUNCTIONS ====================
     const GIFT_CONTRACT_ADDRESS = "0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8";
     
     const GIFT_ABI = [
@@ -969,33 +969,23 @@
     async function initGiftContract() {
         if (!signer) {
             alert("Please connect your wallet first!");
-            return;
+            return false;
         }
         giftContract = new ethers.Contract(GIFT_CONTRACT_ADDRESS, GIFT_ABI, signer);
+        return true;
     }
     
     async function joinGiftContract() {
-        const walletAddress = document.getElementById("joinGiftAddress").value.trim();
-        
         if (!userAddress) {
             setStatus("joinGiftStatus", "⚠️ Connect wallet first", "error");
             return;
         }
         
-        if (!walletAddress || !ethers.utils.isAddress(walletAddress)) {
-            setStatus("joinGiftStatus", "⚠️ Please enter a valid wallet address", "error");
-            return;
-        }
-        
-        // Check if entered address matches connected wallet
-        if (walletAddress.toLowerCase() !== userAddress.toLowerCase()) {
-            setStatus("joinGiftStatus", "⚠️ Entered address does not match connected wallet", "error");
-            return;
-        }
-        
         try {
-            await initGiftContract();
-            setStatus("joinGiftStatus", "⏳ Joining contract...", "");
+            const initialized = await initGiftContract();
+            if (!initialized) return;
+            
+            setStatus("joinGiftStatus", "⏳ Joining contract with wallet: " + userAddress.substring(0,8)+"...", "");
             
             const tx = await giftContract.Join_Fly_Infinity_Gift();
             setStatus("joinGiftStatus", "⏳ Waiting for confirmation...", "");
@@ -1004,22 +994,40 @@
             setStatus("joinGiftStatus", "✅ Successfully joined the gift contract!", "success");
         } catch(e) {
             console.error("Join Gift Error:", e);
-            setStatus("joinGiftStatus", "❌ Error: " + e.message, "error");
+            if (e.message.includes("execution reverted")) {
+                setStatus("joinGiftStatus", "❌ You may have already joined or transaction failed. Check BscScan.", "error");
+            } else {
+                setStatus("joinGiftStatus", "❌ Error: " + e.message, "error");
+            }
         }
     }
     
     async function freeGift() {
-        const walletAddress = document.getElementById("freeGiftAddress").value.trim();
-        
         if (!userAddress) {
             setStatus("freeGiftStatus", "⚠️ Connect wallet first", "error");
             return;
         }
         
-        if (!walletAddress || !ethers.utils.isAddress(walletAddress)) {
-            setStatus("freeGiftStatus", "⚠️ Please enter a valid wallet address", "error");
-            return;
+        try {
+            const initialized = await initGiftContract();
+            if (!initialized) return;
+            
+            setStatus("freeGiftStatus", "⏳ Participating in lottery with wallet: " + userAddress.substring(0,8)+"...", "");
+            
+            const tx = await giftContract.Free_Fly_Infinity_Gift();
+            setStatus("freeGiftStatus", "⏳ Waiting for confirmation...", "");
+            
+            await tx.wait();
+            setStatus("freeGiftStatus", "✅ Successfully participated in the $5 gift lottery!", "success");
+        } catch(e) {
+            console.error("Free Gift Error:", e);
+            if (e.message.includes("execution reverted")) {
+                setStatus("freeGiftStatus", "❌ You must join the contract first or already participated. Check BscScan.", "error");
+            } else {
+                setStatus("freeGiftStatus", "❌ Error: " + e.message, "error");
+            }
         }
+    }
         
         // Check if entered address matches connected wallet
         if (walletAddress.toLowerCase() !== userAddress.toLowerCase()) {
