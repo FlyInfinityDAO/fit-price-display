@@ -227,7 +227,6 @@
             text-decoration: none;
         }
         
-        /* ===== FAQ PAGE ===== */
         .page-title {
             font-size: 32px;
             color: #D4AF37;
@@ -298,7 +297,7 @@
         }
         
         .faq-answer.open {
-            max-height: 400px;
+            max-height: 800px;
             padding: 0 24px 20px 24px;
         }
         
@@ -320,6 +319,30 @@
             font-weight: bold;
         }
         
+        .faq-answer .warning-box {
+            background: rgba(255, 68, 68, 0.08);
+            border-left: 3px solid #ff4444;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 10px 0;
+        }
+        
+        .faq-answer .info-box {
+            background: rgba(0, 200, 150, 0.06);
+            border-left: 3px solid #00C896;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 10px 0;
+        }
+        
+        .faq-answer .step-box {
+            background: rgba(212, 175, 55, 0.06);
+            border-left: 3px solid #D4AF37;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin: 10px 0;
+        }
+        
         .footer {
             text-align: center;
             font-size: 10px;
@@ -337,22 +360,18 @@
                 width: 85vw;
                 right: -85vw;
             }
-            
+            .top-bar .logo {
+                font-size: 15px;
+            }
             .page-title {
                 font-size: 24px;
             }
-            
             .faq-question {
                 font-size: 14px;
                 padding: 14px 18px;
             }
-            
             .faq-answer {
                 font-size: 13px;
-            }
-            
-            .top-bar .logo {
-                font-size: 15px;
             }
         }
     </style>
@@ -383,7 +402,7 @@
         
         <div class="sidebar-menu">
             <a href="index.html">
-                <i class="fas fa-home"></i> Dashboard
+                <i class="fas fa-chart-simple"></i> Dashboard
             </a>
             <a href="compare.html">
                 <i class="fas fa-chart-line"></i> Comparison
@@ -416,124 +435,166 @@
     
     <div class="faq-container">
         
-        <!-- FAQ 1 -->
+        <!-- FAQ 1: How to buy ownership shares? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 چگونه خرید کنم؟</span>
+                <span>🔹 How do I buy ownership shares?</span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
-                <p>برای خرید FIT مراحل زیر را دنبال کنید:</p>
-                <ol style="margin-left: 20px; margin-bottom: 10px;">
-                    <li>وارد صفحه <span class="highlight">DApp</span> شوید.</li>
-                    <li>کیف پول خود را (MetaMask، TrustWallet، یا TokenPocket) متصل کنید.</li>
-                    <li>ابتدا <span class="highlight">۱۰۰۰ DAI</span> را برای قرارداد توکن تأیید کنید (Approve).</li>
-                    <li>مقدار DAI مورد نظر را وارد کرده و روی دکمه <span class="highlight">Buy FIT</span> کلیک کنید.</li>
-                    <li>تراکنش را در کیف پول خود تأیید کنید.</li>
-                </ol>
-                <p style="font-size: 12px; color: #888;">کارمزد خرید: <span class="highlight">۳٪</span></p>
-            </div>
-        </div>
-        
-        <!-- FAQ 2 -->
-        <div class="faq-item">
-            <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 چگونه بفروشم؟</span>
-                <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
-            </button>
-            <div class="faq-answer">
-                <p>برای فروش FIT مراحل زیر را دنبال کنید:</p>
-                <ol style="margin-left: 20px; margin-bottom: 10px;">
-                    <li>وارد صفحه <span class="highlight">DApp</span> شوید.</li>
-                    <li>کیف پول خود را متصل کنید.</li>
-                    <li>مقدار FIT مورد نظر برای فروش را وارد کنید.</li>
-                    <li>روی دکمه <span class="highlight">Sell FIT</span> کلیک کنید.</li>
-                    <li>تراکنش را در کیف پول خود تأیید کنید.</li>
-                </ol>
-                <p style="font-size: 12px; color: #888;">کارمزد فروش: <span class="highlight">۶٪</span></p>
-                <p style="font-size: 12px; color: #888;">⚠️ توجه: پس از فروش، DAI معادل به کیف پول شما واریز می‌شود.</p>
-            </div>
-        </div>
-        
-        <!-- FAQ 3 -->
-        <div class="faq-item">
-            <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 آیا امکان انتقال توکن وجود دارد؟</span>
-                <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
-            </button>
-            <div class="faq-answer">
-                <p><span class="highlight">خیر</span> — در پروژه Fly Infinity Token، توکن‌ها <strong>قابل انتقال (Transferable)</strong> نیستند.</p>
-                <p>این محدودیت به دلیل ماهیت <span class="highlight">Non-Diminishing</span> و ساختار منحنی پیوند (Bonding Curve) طراحی شده است تا:</p>
-                <ul>
-                    <li>✅ از دستکاری قیمت جلوگیری شود.</li>
-                    <li>✅ شفافیت کامل در خرید و فروش حفظ شود.</li>
-                    <li>✅ قیمت پایه توکن همیشه صعودی باقی بماند.</li>
-                </ul>
-                <p>تنها راه تغییر مالکیت، <strong>فروش از طریق قرارداد</strong> و سپس خرید توسط شخص دیگر است.</p>
-            </div>
-        </div>
-        
-        <!-- FAQ 4 -->
-        <div class="faq-item">
-            <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 کارمزد چقدر است؟</span>
-                <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
-            </button>
-            <div class="faq-answer">
-                <p>کارمزد تراکنش‌ها در Fly Infinity Token به صورت زیر است:</p>
-                <ul>
-                    <li><span class="highlight">خرید FIT:</span> <strong>۳٪</strong> از مبلغ ورودی</li>
-                    <li><span class="highlight">فروش FIT:</span> <strong>۶٪</strong> از مبلغ خروجی</li>
-                </ul>
-                <p>این کارمزدها به طور خودکار به <span class="highlight">ذخیره DAI</span> قرارداد اضافه می‌شوند و باعث افزایش پایه قیمتی توکن می‌شوند.</p>
-                <p style="font-size: 12px; color: #888;">💡 هرچه حجم تراکنش‌ها بیشتر باشد، قیمت پایه FIT سریع‌تر رشد می‌کند.</p>
-            </div>
-        </div>
-        
-        <!-- FAQ 5 -->
-        <div class="faq-item">
-            <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 آیا می‌توانم ولتم را تغییر دهم؟</span>
-                <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
-            </button>
-            <div class="faq-answer">
-                <p>بله، اما با یک <span class="highlight">شرط مهم</span>:</p>
-                <div style="background: rgba(255, 68, 68, 0.1); border-left: 3px solid #ff4444; padding: 12px 16px; border-radius: 12px; margin: 10px 0;">
-                    <p style="color: #ff4444; font-weight: bold;">⚠️ قبل از تغییر کیف پول، حتماً تمام FIT خود را بفروشید!</p>
+                <p>To purchase <span class="highlight">Fly Infinity</span> ownership shares, follow these steps:</p>
+                <div class="step-box">
+                    <p><strong>Step 1:</strong> Go to the <span class="highlight">DApp</span> page.</p>
+                    <p><strong>Step 2:</strong> Connect your wallet (MetaMask, TrustWallet, or TokenPocket).</p>
+                    <p><strong>Step 3:</strong> First, <span class="highlight">approve 100 DAI</span> for the network contract.</p>
+                    <p><strong>Step 4:</strong> Sign the <span class="highlight">Agreement Road Map</span>.</p>
+                    <p><strong>Step 5:</strong> Enter your referrer address and complete registration as a <span class="highlight">network owner</span>.</p>
                 </div>
-                <p>اگر بدون فروش، کیف پول خود را تغییر دهید، توکن‌های شما <strong>غیرقابل دسترس</strong> شده و امکان فروش آنها را از دست خواهید داد.</p>
-                <p><span class="highlight">✅ راهکار درست:</span></p>
-                <ol style="margin-left: 20px;">
-                    <li>ابتدا تمام FIT خود را بفروشید.</li>
-                    <li>کیف پول خود را تغییر دهید.</li>
-                    <li>در کیف پول جدید، دوباره FIT خریداری کنید.</li>
-                </ol>
+                <p>After registration, you will be recognized as an official <span class="highlight">owner</span> of the Fly Infinity network and can enjoy all its benefits.</p>
+                <div class="info-box">
+                    <p>💡 <strong>Note:</strong> You must have at least <span class="highlight">100 DAI</span> in your wallet to purchase ownership shares.</p>
+                </div>
             </div>
         </div>
         
-        <!-- FAQ 6 -->
+        <!-- FAQ 2: How to buy FIT? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 اگر عبارت بازیابی را گم کنم چه می‌شود؟</span>
+                <span>🔹 How do I buy FIT tokens?</span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
-                <p><span class="highlight">متأسفانه</span> اگر عبارت بازیابی (Seed Phrase / Recovery Phrase) خود را گم کنید، <strong>هیچ راهی برای بازیابی کیف پول شما وجود ندارد</strong>.</p>
-                <p>عبارت بازیابی تنها راه دسترسی به کیف پول شماست و:</p>
+                <p>To purchase <span class="highlight">FIT</span> tokens, <strong>you must first buy Fly Infinity ownership shares</strong>, then follow these steps:</p>
+                <div class="step-box">
+                    <p><strong>Step 1:</strong> After registering as an owner, return to the <span class="highlight">DApp</span> page.</p>
+                    <p><strong>Step 2:</strong> <span class="highlight">Approve 1000 DAI</span> for the token contract.</p>
+                    <p><strong>Step 3:</strong> Enter the amount of DAI you want to spend.</p>
+                    <p><strong>Step 4:</strong> Click the <span class="highlight">Buy FIT</span> button and confirm the transaction in your wallet.</p>
+                </div>
+                <p>After confirmation, the equivalent FIT will be sent to your wallet.</p>
+                <div class="info-box">
+                    <p>💡 <strong>Important:</strong> You can only buy <span class="highlight">FIT</span> after purchasing ownership shares.</p>
+                </div>
+                <p style="font-size: 12px; color: #888;">Buy fee: <span class="highlight">3%</span></p>
+            </div>
+        </div>
+        
+        <!-- FAQ 3: How to sell FIT? -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFAQ(this)">
+                <span>🔹 How do I sell FIT tokens?</span>
+                <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+            </button>
+            <div class="faq-answer">
+                <p>To sell <span class="highlight">FIT</span> tokens, follow these steps:</p>
+                <div class="step-box">
+                    <p><strong>Step 1:</strong> Go to the <span class="highlight">DApp</span> page.</p>
+                    <p><strong>Step 2:</strong> Connect your wallet.</p>
+                    <p><strong>Step 3:</strong> Enter the amount of FIT you want to sell.</p>
+                    <p><strong>Step 4:</strong> Click the <span class="highlight">Sell FIT</span> button.</p>
+                    <p><strong>Step 5:</strong> Confirm the transaction in your wallet.</p>
+                </div>
+                <p>After confirmation, the <span class="highlight">equivalent DAI</span> will be sent to your wallet.</p>
+                <div class="info-box">
+                    <p>💡 <strong>Note:</strong> Every FIT sale adds a portion of the fee to the <span class="highlight">DAI reserve</span>, increasing the base token price.</p>
+                </div>
+                <p style="font-size: 12px; color: #888;">Sell fee: <span class="highlight">6%</span></p>
+            </div>
+        </div>
+        
+        <!-- FAQ 4: Can I transfer tokens between wallets? -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFAQ(this)">
+                <span>🔹 Can I transfer tokens between wallets?</span>
+                <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+            </button>
+            <div class="faq-answer">
+                <p><span class="highlight">No</span> — <span class="highlight">FIT</span> tokens <strong>cannot</strong> be transferred between wallets.</p>
+                <p>This restriction is designed for the following reasons:</p>
                 <ul>
-                    <li>❌ قابل تغییر نیست</li>
-                    <li>❌ قابل بازنشانی نیست</li>
-                    <li>❌ هیچ تیم پشتیبانی نمی‌تواند آن را بازیابی کند</li>
-                    <li>❌ هیچکس جز شما به آن دسترسی ندارد</li>
+                    <li>✅ <strong>Maintain the constantly rising (non-diminishing) price algorithm</strong> — Token transfers could create price volatility and a black market.</li>
+                    <li>✅ <strong>Prevent black market creation</strong> — All FIT trades must go through the <span class="highlight">smart contract</span> to ensure transparency and security.</li>
+                    <li>✅ <strong>Full transparency</strong> — All transactions are visible and auditable on the blockchain.</li>
                 </ul>
-                <div style="background: rgba(0, 200, 150, 0.08); border-left: 3px solid #00C896; padding: 12px 16px; border-radius: 12px; margin: 10px 0;">
-                    <p style="color: #00C896; font-weight: bold;">✅ توصیه‌های امنیتی:</p>
+                <div class="info-box">
+                    <p>💡 <strong>Conclusion:</strong> You can only trade FIT through the <span class="highlight">smart contract</span>. FIT is non-transferable between wallets.</p>
+                </div>
+                <p>The only way to change ownership is to <strong>sell through the contract</strong> and have someone else buy.</p>
+            </div>
+        </div>
+        
+        <!-- FAQ 5: What are the fees? -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFAQ(this)">
+                <span>🔹 What are the buy and sell fees?</span>
+                <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+            </button>
+            <div class="faq-answer">
+                <p>Transaction fees in <span class="highlight">Fly Infinity Token</span> are as follows:</p>
+                <ul>
+                    <li><span class="highlight">Buying FIT:</span> <strong>3%</strong> of the input amount</li>
+                    <li><span class="highlight">Selling FIT:</span> <strong>6%</strong> of the output amount</li>
+                </ul>
+                <p>These fees are automatically added to the <span class="highlight">DAI reserve</span>, which increases the base token price.</p>
+                <div class="info-box">
+                    <p>💡 <strong>Key Point:</strong> The more transactions occur, the <span class="highlight">faster</span> the FIT base price grows. This means every buy and sell increases the value of your tokens.</p>
+                </div>
+                <p style="font-size: 12px; color: #888;">📊 All fees are transparent and viewable on the smart contract.</p>
+            </div>
+        </div>
+        
+        <!-- FAQ 6: Can I change my wallet? -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFAQ(this)">
+                <span>🔹 Can I change my wallet?</span>
+                <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+            </button>
+            <div class="faq-answer">
+                <p>Yes, but with one <span class="highlight">important condition</span>:</p>
+                <div class="warning-box">
+                    <p style="color: #ff4444; font-weight: bold;">⚠️ You must sell all your FIT before changing your wallet!</p>
+                </div>
+                <p>If you change your wallet without selling first, your tokens will become <strong>inaccessible</strong> and you will lose the ability to sell them.</p>
+                <div class="step-box">
+                    <p><strong>✅ Correct approach:</strong></p>
+                    <ol style="margin-left: 20px;">
+                        <li>First, <span class="highlight">sell</span> all your FIT tokens.</li>
+                        <li>Change your wallet.</li>
+                        <li><span class="highlight">Buy FIT</span> again in your new wallet.</li>
+                    </ol>
+                </div>
+                <div class="info-box">
+                    <p>💡 <strong>Reason:</strong> FIT is non-transferable between wallets, so selling and repurchasing is the only way to change ownership.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- FAQ 7: What if I lose my recovery phrase? -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFAQ(this)">
+                <span>🔹 What if I lose my recovery phrase?</span>
+                <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+            </button>
+            <div class="faq-answer">
+                <p><span class="highlight">Unfortunately</span>, if you lose your recovery phrase (Seed Phrase / Recovery Phrase), <strong>there is no way to recover your wallet</strong>.</p>
+                <p>The recovery phrase is the only way to access your wallet, and:</p>
+                <ul>
+                    <li>❌ Cannot be changed</li>
+                    <li>❌ Cannot be reset</li>
+                    <li>❌ No support team can recover it</li>
+                    <li>❌ No one else has access to it</li>
+                </ul>
+                <div class="info-box">
+                    <p style="color: #00C896; font-weight: bold;">✅ Security recommendations:</p>
                     <ul>
-                        <li>عبارت بازیابی را روی <strong>کاغذ</strong> بنویسید و در جای امن نگهداری کنید.</li>
-                        <li>چندین نسخه در مکان‌های جداگانه و امن ذخیره کنید.</li>
-                        <li>هرگز آن را به صورت دیجیتال (اسکرین‌شات، ابری، ایمیل) ذخیره نکنید.</li>
-                        <li>هرگز آن را با کسی به اشتراک نگذارید.</li>
+                        <li>Write your recovery phrase on <strong>paper</strong> and store it in a safe place.</li>
+                        <li>Keep multiple copies in separate secure locations.</li>
+                        <li>Never store it digitally (screenshots, cloud, email).</li>
+                        <li>Never share it with anyone.</li>
                     </ul>
+                </div>
+                <div class="warning-box">
+                    <p style="color: #ff4444;">⚠️ <strong>Warning:</strong> No support team, including the Fly Infinity team, will ever ask for your recovery phrase. Beware of scammers!</p>
                 </div>
             </div>
         </div>
@@ -551,9 +612,8 @@
     </div>
 </div>
 
-<!-- ==================== SIDEBAR SCRIPT ==================== -->
+<!-- ===== SIDEBAR SCRIPT ===== -->
 <script>
-    // ===== SIDEBAR TOGGLE =====
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const closeSidebarBtn = document.getElementById('closeSidebarBtn');
     const sidebar = document.getElementById('sidebar');
@@ -575,7 +635,6 @@
     closeSidebarBtn.addEventListener('click', closeSidebar);
     overlay.addEventListener('click', closeSidebar);
 
-    // Close sidebar with Escape key
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeSidebar();
@@ -588,7 +647,6 @@
         const icon = btn.querySelector('.faq-icon');
         const isOpen = answer.classList.contains('open');
         
-        // Close all other FAQs
         document.querySelectorAll('.faq-answer').forEach(el => {
             if (el !== answer && el.classList.contains('open')) {
                 el.classList.remove('open');
@@ -602,7 +660,6 @@
         }
     }
 
-    // Open first FAQ by default
     document.addEventListener('DOMContentLoaded', function() {
         const firstFAQ = document.querySelector('.faq-answer');
         if (firstFAQ) {
