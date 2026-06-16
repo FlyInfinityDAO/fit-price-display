@@ -10,11 +10,27 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            background: radial-gradient(circle at 20% 30%, #0a0a0a 0%, #0F0F0F 60%, #1a1a0a 100%);
+            background-image: url('background-desktop.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding: 20px;
             min-height: 100vh;
         }
+        
+        @media (max-width: 768px) {
+    body {
+        background-image: url('background-mobile.png');
+        background-size: contain;
+        background-position: center top;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-color: #0F0F0F;
+        padding: 15px;
+    }
+}
         
         body::before {
             content: "";
