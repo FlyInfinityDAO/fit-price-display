@@ -597,7 +597,7 @@
         </div>
     </div>
 
-        <!-- ==================== SECTION 3: GIFT CONTRACT ==================== -->
+            <!-- ==================== SECTION 3: GIFT CONTRACT ==================== -->
     <div class="action-card" style="margin-bottom: 25px;">
         <div class="action-title"><i class="fas fa-gift"></i> 🎁 Join Fly Infinity Gift Smart Contract & Participate in $5 Prize Lottery</div>
         <p style="color:#888; font-size:12px; margin-bottom:15px; text-align:center;">
@@ -621,8 +621,6 @@
                 <p style="color:#888; font-size:10px; margin-bottom:10px;">
                     <span class="highlight" style="color: #D4AF37;">Function:</span> Join_Fly_Infinity_Gift (0x2852174f)<br>
                     <span style="color: #888; font-size: 9px;">⚠️ One-time process, forever.</span>
-                    <br>
-                    <span style="color: #888; font-size: 9px;">✅ Enter any Fly Infinity Network owner address</span>
                 </p>
                 <button id="joinGiftBtn" class="action-btn" style="border-color: #D4AF37; color: #D4AF37; padding: 10px; font-size: 14px;">
                     <i class="fas fa-handshake"></i> Join Contract
@@ -643,8 +641,6 @@
                 <p style="color:#888; font-size:10px; margin-bottom:10px;">
                     <span class="highlight" style="color: #00C896;">Function:</span> Free_Fly_Infinity_Gift (0xb4aecd59)<br>
                     <span style="color: #888; font-size: 9px;">🎁 Win a $5 gift</span>
-                    <br>
-                    <span style="color: #888; font-size: 9px;">✅ Enter any Fly Infinity Network owner address</span>
                 </p>
                 <button id="freeGiftBtn" class="action-btn" style="padding: 10px; font-size: 14px;">
                     <i class="fas fa-ticket-alt"></i> Participate in Lottery
@@ -1019,7 +1015,7 @@
         }
     }
     
-        // ==================== GIFT CONTRACT FUNCTIONS ====================
+            // ==================== GIFT CONTRACT FUNCTIONS ====================
     const GIFT_CONTRACT_ADDRESS = "0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8";
     
     const GIFT_ABI = [
@@ -1057,7 +1053,6 @@
             
             setStatus("joinGiftStatus", "⏳ Joining contract for address: " + walletAddress.substring(0,8)+"...", "");
             
-            // Function: Join_Fly_Infinity_Gift(address Owner_10_0)
             const tx = await giftContract.Join_Fly_Infinity_Gift(walletAddress);
             setStatus("joinGiftStatus", "⏳ Waiting for confirmation...", "");
             
@@ -1069,6 +1064,42 @@
                 setStatus("joinGiftStatus", "❌ Address may already be joined or conditions not met.", "error");
             } else {
                 setStatus("joinGiftStatus", "❌ Error: " + e.message, "error");
+            }
+        }
+    }
+    
+    async function freeGift() {
+        // IMPORTANT: Get the address from the input field, NOT userAddress!
+        const walletAddress = document.getElementById("freeGiftAddress").value.trim();
+        
+        if (!userAddress) {
+            setStatus("freeGiftStatus", "⚠️ Connect wallet first", "error");
+            return;
+        }
+        
+        if (!walletAddress || !ethers.utils.isAddress(walletAddress)) {
+            setStatus("freeGiftStatus", "⚠️ Please enter a valid owner address", "error");
+            return;
+        }
+        
+        try {
+            const initialized = await initGiftContract();
+            if (!initialized) return;
+            
+            setStatus("freeGiftStatus", "⏳ Participating in lottery for address: " + walletAddress.substring(0,8)+"...", "");
+            
+            // Use the address from input field, NOT userAddress!
+            const tx = await giftContract.Free_Fly_Infinity_Gift(walletAddress);
+            setStatus("freeGiftStatus", "⏳ Waiting for confirmation...", "");
+            
+            await tx.wait();
+            setStatus("freeGiftStatus", "✅ Successfully participated in lottery for " + walletAddress.substring(0,8)+"...!", "success");
+        } catch(e) {
+            console.error("Free Gift Error:", e);
+            if (e.message.includes("execution reverted")) {
+                setStatus("freeGiftStatus", "❌ Address must join first or already participated.", "error");
+            } else {
+                setStatus("freeGiftStatus", "❌ Error: " + e.message, "error");
             }
         }
     }
