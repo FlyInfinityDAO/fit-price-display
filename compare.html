@@ -22,16 +22,16 @@
         }
         
         @media (max-width: 768px) {
-    body {
-        background-image: url('background-mobile.png');
-        background-size: contain;
-        background-position: center top;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        background-color: #0F0F0F;
-        padding: 15px;
-    }
-}
+            body {
+                background-image: url('background-mobile.png');
+                background-size: contain;
+                background-position: center top;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-color: #0F0F0F;
+                padding: 15px;
+            }
+        }
         
         body::before {
             content: "";
@@ -52,55 +52,181 @@
             z-index: 1;
         }
         
-        .nav-bar {
+        /* ===== TOP NAV BAR ===== */
+        .top-bar {
             background: #0F0F0F;
             backdrop-filter: blur(10px);
             border-radius: 28px;
-            padding: 15px 25px;
+            padding: 12px 25px;
             margin-bottom: 25px;
             border: 1px solid rgba(0, 200, 150, 0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
+            position: relative;
+            z-index: 100;
         }
         
-        .nav-links {
+        .top-bar .logo {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            color: #D4AF37;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
         }
         
-        .nav-btn {
+        .top-bar .logo i {
+            font-size: 22px;
+        }
+        
+        .hamburger {
             background: transparent;
             border: 1px solid #00C896;
             color: #00C896;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-size: 14px;
-            font-weight: bold;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            display: inline-block;
-        }
-        
-        .nav-btn.active {
-            background: #00C896;
-            color: #0F0F0F;
-        }
-        
-        .nav-btn:hover {
-            background: #00C896;
-            color: #0F0F0F;
-            transform: translateY(-2px);
-        }
-        
-        .page-title {
-            color: #D4AF37;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
             font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .hamburger:hover {
+            background: #00C896;
+            color: #0F0F0F;
+            transform: rotate(90deg);
+        }
+        
+        /* ===== SIDEBAR OVERLAY ===== */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+        
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            max-width: 85vw;
+            height: 100%;
+            background: #0F0F0F;
+            border-left: 2px solid rgba(0, 200, 150, 0.3);
+            z-index: 1000;
+            padding: 30px 25px;
+            transition: right 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar.open {
+            right: 0;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 200, 150, 0.2);
+            margin-bottom: 25px;
+        }
+        
+        .sidebar-header .logo-text {
+            color: #D4AF37;
+            font-size: 18px;
             font-weight: bold;
+        }
+        
+        .sidebar-header .close-btn {
+            background: transparent;
+            border: none;
+            color: #ff4444;
+            font-size: 28px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-header .close-btn:hover {
+            transform: rotate(90deg);
+        }
+        
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 20px;
+            border-radius: 16px;
+            color: #c0d0e8;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .sidebar-menu a i {
+            width: 24px;
+            font-size: 18px;
+            color: #00C896;
+        }
+        
+        .sidebar-menu a:hover {
+            background: rgba(0, 200, 150, 0.08);
+            border-color: rgba(0, 200, 150, 0.3);
+            transform: translateX(-5px);
+        }
+        
+        .sidebar-menu a.active {
+            background: rgba(0, 200, 150, 0.15);
+            border-color: #00C896;
+            color: #D4AF37;
+        }
+        
+        .sidebar-menu a.active i {
+            color: #D4AF37;
+        }
+        
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 200, 150, 0.2);
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+        }
+        
+        .sidebar-footer a {
+            color: #00C896;
+            text-decoration: none;
         }
         
         .card {
@@ -294,10 +420,6 @@
         }
         
         @media (max-width: 768px) {
-            .nav-bar {
-                flex-direction: column;
-                text-align: center;
-            }
             .chart-container {
                 height: 400px;
             }
@@ -315,20 +437,67 @@
                 padding: 6px 10px;
                 font-size: 10px;
             }
+            .sidebar {
+                width: 85vw;
+                right: -85vw;
+            }
+            .top-bar .logo {
+                font-size: 15px;
+            }
         }
     </style>
 </head>
 <body>
 <div class="container">
-            <div class="nav-bar">
-        <div class="page-title">
-            <i class="fas fa-chart-line"></i> Fly Infinity Token (FIT)
+    
+    <!-- ===== TOP NAV BAR ===== -->
+    <div class="top-bar">
+        <a href="index.html" class="logo">
+            <i class="fas fa-rocket"></i>
+            <span>Fly Infinity</span>
+        </a>
+        <button class="hamburger" id="hamburgerBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <!-- ===== SIDEBAR OVERLAY ===== -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ===== SIDEBAR ===== -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="logo-text"><i class="fas fa-rocket" style="color: #00C896; margin-right: 8px;"></i>Fly Infinity</span>
+            <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
         </div>
-        <div class="nav-links">
-            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                <a href="index.html" class="nav-btn"><i class="fas fa-chart-simple"></i> Dashboard</a>
-                <a href="compare.html" class="nav-btn active"><i class="fas fa-chart-line"></i> Comparison</a>
-            </div>
+        
+        <div class="sidebar-menu">
+            <a href="index.html">
+                <i class="fas fa-chart-simple"></i> Dashboard
+            </a>
+            <a href="compare.html" class="active">
+                <i class="fas fa-chart-line"></i> Comparison
+            </a>
+            <a href="dapp.html">
+                <i class="fas fa-charging-station"></i> DApp
+            </a>
+            <a href="transactions.html">
+                <i class="fas fa-history"></i> Transactions
+            </a>
+            <a href="privacy.html">
+                <i class="fas fa-shield-alt"></i> Privacy
+            </a>
+            <a href="warnings.html">
+                <i class="fas fa-exclamation-triangle"></i> Warnings
+            </a>
+            <a href="faq.html">
+                <i class="fas fa-question-circle"></i> FAQ
+            </a>
+        </div>
+        
+        <div class="sidebar-footer">
+            <a href="https://flyinfinitydao.github.io/fit-price-display" target="_blank">flyinfinitydao.github.io</a><br>
+            Fly Infinity DAO
         </div>
     </div>
 
@@ -381,7 +550,8 @@
         <a href="compare.html">Comparison</a> | 
         <a href="transactions.html">Transactions</a> | 
         <a href="privacy.html">Privacy Policy</a> | 
-        <a href="warnings.html">Warnings</a><br>
+        <a href="warnings.html">Warnings</a> | 
+        <a href="faq.html">FAQ</a><br>
         Data updates every 6 hours via GitHub Actions • FIT price from blockchain<br>
         Fly Infinity DAO
     </div>
@@ -412,7 +582,6 @@
     let currentDays = 'max';
     let priceChart = null;
     
-    // FIT Contract
     const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
     const ABI = [{"constant":true,"inputs":[],"name":"Price","outputs":[{"name":"","type":"uint256"}],"type":"function"}];
     const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
@@ -421,7 +590,6 @@
     let fitDates = [];
     let fitPrices = [];
     
-    // ==================== LOAD CACHE ====================
     async function loadCache() {
         try {
             const response = await fetch('crypto-cache.json?t=' + Date.now());
@@ -439,7 +607,6 @@
         return false;
     }
     
-    // ==================== LOAD FIT DATA ====================
     async function loadFITData() {
         try {
             const response = await fetch('price-history.json?t=' + Date.now());
@@ -465,7 +632,6 @@
         }
     }
     
-    // ==================== GET TOKEN DATA FROM CACHE ====================
     function getTokenData(tokenId) {
         if (tokenId === 'fit') {
             return { dates: [...fitDates], prices: [...fitPrices] };
@@ -475,7 +641,6 @@
             return cacheData.historicalData[tokenId];
         }
         
-        // Fallback mock data
         return generateMockData(tokenId);
     }
     
@@ -488,16 +653,6 @@
         return mockData[tokenId] || { dates: fitDates, prices: fitPrices.map(p => p * 0.5) };
     }
     
-    function getCurrentPriceFromCache(tokenId) {
-        if (tokenId === 'fit') {
-            return fitPrices[fitPrices.length - 1];
-        }
-        if (cacheData && cacheData.currentPrices && cacheData.currentPrices[tokenId]) {
-            return cacheData.currentPrices[tokenId].price;
-        }
-        return null;
-    }
-    
     function get24hChange(tokenId) {
         if (cacheData && cacheData.currentPrices && cacheData.currentPrices[tokenId]) {
             return cacheData.currentPrices[tokenId].change24h;
@@ -505,7 +660,6 @@
         return 0;
     }
     
-    // ==================== UI FUNCTIONS ====================
     function filterByTimeframe(dates, prices, days) {
         if (days === 'max' || dates.length === 0 || days === 365) {
             return { dates, prices };
@@ -700,7 +854,6 @@
         
         document.getElementById('refreshBtn').addEventListener('click', refreshAll);
         
-        // Refresh FIT price every 30 seconds
         setInterval(async () => {
             try {
                 const raw = await contract.Price();
@@ -717,5 +870,36 @@
     
     init();
 </script>
+
+<!-- ===== SIDEBAR SCRIPT ===== -->
+<script>
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    function openSidebar() {
+        sidebar.classList.add('open');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    hamburgerBtn.addEventListener('click', openSidebar);
+    closeSidebarBtn.addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeSidebar();
+        }
+    });
+</script>
+
 </body>
 </html>
