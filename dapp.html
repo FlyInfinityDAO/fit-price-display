@@ -597,7 +597,7 @@
         </div>
     </div>
 
-    <!-- ==================== SECTION 3: GIFT CONTRACT ==================== -->
+        <!-- ==================== SECTION 3: GIFT CONTRACT ==================== -->
     <div class="action-card" style="margin-bottom: 25px;">
         <div class="action-title"><i class="fas fa-gift"></i> 🎁 Join Fly Infinity Gift Smart Contract & Participate in $5 Prize Lottery</div>
         <p style="color:#888; font-size:12px; margin-bottom:15px; text-align:center;">
@@ -614,11 +614,15 @@
                     <span class="step-badge" style="background: #D4AF37; color: #0F0F0F; font-size: 10px; padding: 1px 8px;">1</span> 
                     Join Contract (One-time)
                 </div>
+                <div class="input-group" style="margin-bottom:10px;">
+                    <label style="color: #D4AF37; font-size: 11px;">👤 Owner Address to Join</label>
+                    <input type="text" id="joinGiftAddress" placeholder="0x... (address to join)" value="" style="padding: 8px 12px; font-size: 13px;">
+                </div>
                 <p style="color:#888; font-size:10px; margin-bottom:10px;">
                     <span class="highlight" style="color: #D4AF37;">Function:</span> Join_Fly_Infinity_Gift (0x2852174f)<br>
                     <span style="color: #888; font-size: 9px;">⚠️ One-time process, forever.</span>
                     <br>
-                    <span style="color: #888; font-size: 9px;">✅ Uses your connected wallet address automatically</span>
+                    <span style="color: #888; font-size: 9px;">✅ Enter any Fly Infinity Network owner address</span>
                 </p>
                 <button id="joinGiftBtn" class="action-btn" style="border-color: #D4AF37; color: #D4AF37; padding: 10px; font-size: 14px;">
                     <i class="fas fa-handshake"></i> Join Contract
@@ -632,11 +636,15 @@
                     <span class="step-badge" style="font-size: 10px; padding: 1px 8px;">2</span> 
                     $5 Gift Lottery
                 </div>
+                <div class="input-group" style="margin-bottom:10px;">
+                    <label style="color: #00C896; font-size: 11px;">👤 Owner Address to Participate</label>
+                    <input type="text" id="freeGiftAddress" placeholder="0x... (address to participate)" value="" style="padding: 8px 12px; font-size: 13px;">
+                </div>
                 <p style="color:#888; font-size:10px; margin-bottom:10px;">
                     <span class="highlight" style="color: #00C896;">Function:</span> Free_Fly_Infinity_Gift (0xb4aecd59)<br>
                     <span style="color: #888; font-size: 9px;">🎁 Win a $5 gift</span>
                     <br>
-                    <span style="color: #888; font-size: 9px;">✅ Uses your connected wallet address automatically</span>
+                    <span style="color: #888; font-size: 9px;">✅ Enter any Fly Infinity Network owner address</span>
                 </p>
                 <button id="freeGiftBtn" class="action-btn" style="padding: 10px; font-size: 14px;">
                     <i class="fas fa-ticket-alt"></i> Participate in Lottery
@@ -652,7 +660,7 @@
             <div style="font-family:monospace; font-size:11px; color:#D4AF37; word-break:break-all;">0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8</div>
             <div style="color:#888; font-size:9px; margin-top:5px;">
                 <i class="fas fa-info-circle"></i> 
-                <span style="color: #c0d0e8;">Step 1:</span> Join → 
+                <span style="color: #c0d0e8;">Step 1:</span> Join (one-time) → 
                 <span style="color: #c0d0e8;">Step 2:</span> Participate in lottery
             </div>
         </div>
@@ -1011,7 +1019,7 @@
         }
     }
     
-    // ==================== GIFT CONTRACT FUNCTIONS ====================
+        // ==================== GIFT CONTRACT FUNCTIONS ====================
     const GIFT_CONTRACT_ADDRESS = "0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8";
     
     const GIFT_ABI = [
@@ -1031,8 +1039,15 @@
     }
     
     async function joinGiftContract() {
+        const walletAddress = document.getElementById("joinGiftAddress").value.trim();
+        
         if (!userAddress) {
             setStatus("joinGiftStatus", "⚠️ Connect wallet first", "error");
+            return;
+        }
+        
+        if (!walletAddress || !ethers.utils.isAddress(walletAddress)) {
+            setStatus("joinGiftStatus", "⚠️ Please enter a valid owner address", "error");
             return;
         }
         
@@ -1040,20 +1055,55 @@
             const initialized = await initGiftContract();
             if (!initialized) return;
             
-            setStatus("joinGiftStatus", "⏳ Joining contract with wallet: " + userAddress.substring(0,8)+"...", "");
+            setStatus("joinGiftStatus", "⏳ Joining contract for address: " + walletAddress.substring(0,8)+"...", "");
             
             // Function: Join_Fly_Infinity_Gift(address Owner_10_0)
-            const tx = await giftContract.Join_Fly_Infinity_Gift(userAddress);
+            const tx = await giftContract.Join_Fly_Infinity_Gift(walletAddress);
             setStatus("joinGiftStatus", "⏳ Waiting for confirmation...", "");
             
             await tx.wait();
-            setStatus("joinGiftStatus", "✅ Successfully joined the gift contract!", "success");
+            setStatus("joinGiftStatus", "✅ Successfully joined the gift contract for " + walletAddress.substring(0,8)+"...!", "success");
         } catch(e) {
             console.error("Join Gift Error:", e);
             if (e.message.includes("execution reverted")) {
-                setStatus("joinGiftStatus", "❌ You may have already joined or conditions not met. Check console.", "error");
+                setStatus("joinGiftStatus", "❌ Address may already be joined or conditions not met.", "error");
             } else {
                 setStatus("joinGiftStatus", "❌ Error: " + e.message, "error");
+            }
+        }
+    }
+    
+    async function freeGift() {
+        const walletAddress = document.getElementById("freeGiftAddress").value.trim();
+        
+        if (!userAddress) {
+            setStatus("freeGiftStatus", "⚠️ Connect wallet first", "error");
+            return;
+        }
+        
+        if (!walletAddress || !ethers.utils.isAddress(walletAddress)) {
+            setStatus("freeGiftStatus", "⚠️ Please enter a valid owner address", "error");
+            return;
+        }
+        
+        try {
+            const initialized = await initGiftContract();
+            if (!initialized) return;
+            
+            setStatus("freeGiftStatus", "⏳ Participating in lottery for address: " + walletAddress.substring(0,8)+"...", "");
+            
+            // Function: Free_Fly_Infinity_Gift(address Owner_10_0)
+            const tx = await giftContract.Free_Fly_Infinity_Gift(walletAddress);
+            setStatus("freeGiftStatus", "⏳ Waiting for confirmation...", "");
+            
+            await tx.wait();
+            setStatus("freeGiftStatus", "✅ Successfully participated in lottery for " + walletAddress.substring(0,8)+"...!", "success");
+        } catch(e) {
+            console.error("Free Gift Error:", e);
+            if (e.message.includes("execution reverted")) {
+                setStatus("freeGiftStatus", "❌ Address must join first or already participated.", "error");
+            } else {
+                setStatus("freeGiftStatus", "❌ Error: " + e.message, "error");
             }
         }
     }
