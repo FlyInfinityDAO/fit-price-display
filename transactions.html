@@ -20,16 +20,16 @@
         }
         
         @media (max-width: 768px) {
-    body {
-        background-image: url('background-mobile.png');
-        background-size: contain;
-        background-position: center top;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        background-color: #0F0F0F;
-        padding: 15px;
-    }
-}
+            body {
+                background-image: url('background-mobile.png');
+                background-size: contain;
+                background-position: center top;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-color: #0F0F0F;
+                padding: 15px;
+            }
+        }
         
         body::before {
             content: "";
@@ -66,8 +66,9 @@
         
         .nav-links {
             display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
         
         .nav-btn {
@@ -170,7 +171,6 @@
             color: #00C896;
         }
         
-        /* Color variants */
         .link-card.all { border-left: 3px solid #00C896; }
         .link-card.all i, .link-card.all h3 { color: #00C896; }
         
@@ -223,53 +223,64 @@
 </head>
 <body>
 <div class="container">
-       <!-- Navigation -->
+    <!-- Navigation -->
     <div class="nav-bar">
         <div class="page-title">
-            <i class="fas fa-chart-line"></i> Fly Infinity Token (FIT)
+            <i class="fas fa-chart-line"></i> <span data-i18n="site_title">Fly Infinity Token (FIT)</span>
         </div>
         <div class="nav-links" style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                <a href="index.html" class="nav-btn"><i class="fas fa-chart-simple"></i> Dashboard</a>
-                <a href="transactions.html" class="nav-btn active"><i class="fas fa-history"></i> Transactions</a>
+                <a href="index.html" class="nav-btn" data-i18n="nav_dashboard"><i class="fas fa-chart-simple"></i> Dashboard</a>
+                <a href="transactions.html" class="nav-btn active" data-i18n="nav_transactions"><i class="fas fa-history"></i> Transactions</a>
             </div>
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                <a href="privacy.html" class="nav-btn"><i class="fas fa-shield-alt"></i> Privacy</a>
-                <a href="warnings.html" class="nav-btn"><i class="fas fa-exclamation-triangle"></i> Warnings</a>
+                <a href="privacy.html" class="nav-btn" data-i18n="nav_privacy"><i class="fas fa-shield-alt"></i> Privacy</a>
+                <a href="warnings.html" class="nav-btn" data-i18n="nav_warnings"><i class="fas fa-exclamation-triangle"></i> Warnings</a>
             </div>
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                <a href="dapp.html" class="nav-btn"><i class="fas fa-charging-station"></i> Buy Ownership Shares &amp; FIT</a>
+                <a href="dapp.html" class="nav-btn" data-i18n="nav_dapp"><i class="fas fa-charging-station"></i> Buy Ownership Shares &amp; FIT</a>
+                <a href="compare.html" class="nav-btn" data-i18n="nav_comparison"><i class="fas fa-chart-line"></i> Comparison</a>
+            </div>
+            <!-- Language Buttons -->
+            <div style="display: flex; gap: 4px; align-items: center; flex-wrap: wrap; margin-top: 5px; border-top: 1px solid rgba(0, 200, 150, 0.2); padding-top: 10px;">
+                <button onclick="switchLanguage('en')" class="lang-btn" data-lang="en" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇬🇧 EN</button>
+                <button onclick="switchLanguage('de')" class="lang-btn" data-lang="de" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇩🇪 DE</button>
+                <button onclick="switchLanguage('fr')" class="lang-btn" data-lang="fr" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇫🇷 FR</button>
+                <button onclick="switchLanguage('zh')" class="lang-btn" data-lang="zh" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇨🇳 中文</button>
+                <button onclick="switchLanguage('hi')" class="lang-btn" data-lang="hi" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇮🇳 HI</button>
+                <button onclick="switchLanguage('ar')" class="lang-btn" data-lang="ar" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇸🇦 AR</button>
+                <button onclick="switchLanguage('tr')" class="lang-btn" data-lang="tr" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇹🇷 TR</button>
+                <button onclick="switchLanguage('fa')" class="lang-btn" data-lang="fa" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇮🇷 FA</button>
+                <button onclick="switchLanguage('ru')" class="lang-btn" data-lang="ru" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇷🇺 RU</button>
             </div>
         </div>
     </div>
 
     <!-- Transaction Links Section -->
     <div class="card">
-        <div class="card-title">
-            <i class="fas fa-exchange-alt"></i> Transactions Explorer
-        </div>
+        <div class="card-title" data-i18n="transactions_explorer"><i class="fas fa-exchange-alt"></i> Transactions Explorer</div>
         <div class="stats-grid">
             <a href="https://bscscan.com/txs?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card all">
                 <i class="fas fa-list"></i>
-                <h3>📋 All Transactions</h3>
+                <h3 data-i18n="all_transactions">📋 All Transactions</h3>
                 <p>View all contract transactions</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
             <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0xe3d4187f%7eBuy" target="_blank" class="link-card buy">
                 <i class="fas fa-arrow-down"></i>
-                <h3>🟢 Buy Transactions</h3>
+                <h3 data-i18n="buy_transactions">🟢 Buy Transactions</h3>
                 <p>Only Buy transactions (Buy function)</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
             <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0x52288195%7eSell" target="_blank" class="link-card sell">
                 <i class="fas fa-arrow-up"></i>
-                <h3>🔴 Sell Transactions</h3>
+                <h3 data-i18n="sell_transactions">🔴 Sell Transactions</h3>
                 <p>Only Sell transactions (Sell function)</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
             <a href="https://bscscan.com/tokentxns?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card all">
                 <i class="fas fa-arrow-right-arrow-left"></i>
-                <h3>🔄 Token Transfers</h3>
+                <h3 data-i18n="token_transfers">🔄 Token Transfers</h3>
                 <p>FIT token transfers between addresses</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
@@ -278,25 +289,23 @@
 
     <!-- Network Events Section -->
     <div class="card">
-        <div class="card-title">
-            <i class="fas fa-star"></i> Network Events
-        </div>
+        <div class="card-title" data-i18n="network_events"><i class="fas fa-star"></i> Network Events</div>
         <div class="stats-grid">
             <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0x949ded00%7eBe+Come_Owner" target="_blank" class="link-card owner">
                 <i class="fas fa-user-plus"></i>
-                <h3>👑 Become Owner Events</h3>
+                <h3 data-i18n="become_owner_events">👑 Become Owner Events</h3>
                 <p>Registration of new Fly Infinity ownership shares (BeCome_Owner function)</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
             <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0xe2e15f2e%7eReward" target="_blank" class="link-card reward">
                 <i class="fas fa-gift"></i>
-                <h3>🎁 Reward Events</h3>
+                <h3 data-i18n="reward_events">🎁 Reward Events</h3>
                 <p>Network reward transactions (Reward function)</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
             <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0x05068727%7eGenesis_Liquidity" target="_blank" class="link-card genesis">
                 <i class="fas fa-droplet"></i>
-                <h3>💧 Genesis Liquidity</h3>
+                <h3 data-i18n="genesis_liquidity">💧 Genesis Liquidity</h3>
                 <p>Creation of the initial base price</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
@@ -305,19 +314,17 @@
 
     <!-- Holder Information Section -->
     <div class="card">
-        <div class="card-title">
-            <i class="fas fa-users"></i> Holder Information
-        </div>
+        <div class="card-title" data-i18n="holder_information"><i class="fas fa-users"></i> Holder Information</div>
         <div class="stats-grid">
             <a href="https://bscscan.com/token/tokenholderchart/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card holders">
                 <i class="fas fa-chart-pie"></i>
-                <h3>📊 Holder Distribution</h3>
+                <h3 data-i18n="holder_distribution">📊 Holder Distribution</h3>
                 <p>Chart of holder distribution and ownership percentages</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
             <a href="https://bscscan.com/token/gauge?type=holders&a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card holders">
                 <i class="fas fa-list-ol"></i>
-                <h3>👥 Top Holders List</h3>
+                <h3 data-i18n="top_holders">👥 Top Holders List</h3>
                 <p>Complete list of holders with FIT balances</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
@@ -326,19 +333,17 @@
 
     <!-- Contract Stats Section -->
     <div class="card">
-        <div class="card-title">
-            <i class="fas fa-chart-simple"></i> Contract Statistics
-        </div>
+        <div class="card-title" data-i18n="contract_information"><i class="fas fa-chart-simple"></i> Contract Statistics</div>
         <div class="stats-grid">
             <a href="https://bscscan.com/token/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card supply">
                 <i class="fas fa-coins"></i>
-                <h3>🪙 Total Supply</h3>
+                <h3 data-i18n="total_supply">🪙 Total Supply</h3>
                 <p>View total supply and token information</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
             <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#tokentxns" target="_blank" class="link-card liquidity">
                 <i class="fas fa-database"></i>
-                <h3>💵 DAI Reserve</h3>
+                <h3 data-i18n="reserve">💵 DAI Reserve</h3>
                 <p>View DAI balance in the contract (Token Transfers)</p>
                 <span class="arrow">→ Open in BscScan →</span>
             </a>
@@ -347,34 +352,107 @@
 
     <!-- Contract Address -->
     <div class="card">
-        <div class="card-title">
-            <i class="fas fa-file-contract"></i> Contract Information
-        </div>
+        <div class="card-title" data-i18n="contract_information"><i class="fas fa-file-contract"></i> Contract Information</div>
         <div style="background:#1a1a1a; border-radius:20px; padding:15px; text-align:center;">
-            <div style="color:#00C896; font-size:11px; margin-bottom:5px;">📜 FIT Token Contract</div>
+            <div style="color:#00C896; font-size:11px; margin-bottom:5px;" data-i18n="fit_token_contract">📜 FIT Token Contract</div>
             <div style="font-family:monospace; font-size:13px; color:#D4AF37; word-break:break-all;">0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa</div>
-            <div style="color:#00C896; font-size:11px; margin-top:10px; margin-bottom:5px;">🌐 Network Contract</div>
+            <div style="color:#00C896; font-size:11px; margin-top:10px; margin-bottom:5px;" data-i18n="network_contract">🌐 Network Contract</div>
             <div style="font-family:monospace; font-size:13px; color:#D4AF37; word-break:break-all;">0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B</div>
         </div>
         
-        <!-- Modified: Solid black-green buttons -->
         <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
             <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#code" target="_blank" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 10px 20px; border-radius: 40px; font-size: 14px; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
-                <i class="fas fa-code"></i> View Source
+                <i class="fas fa-code"></i> <span data-i18n="view_source">View Source</span>
             </a>
             <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#writeContract" target="_blank" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 10px 20px; border-radius: 40px; font-size: 14px; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
-                <i class="fas fa-pen"></i> Write Contract
+                <i class="fas fa-pen"></i> <span data-i18n="write_contract">Write Contract</span>
             </a>
             <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#readContract" target="_blank" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 10px 20px; border-radius: 40px; font-size: 14px; font-weight: bold; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease;">
-                <i class="fas fa-eye"></i> Read Contract
+                <i class="fas fa-eye"></i> <span data-i18n="read_contract">Read Contract</span>
             </a>
         </div>
     </div>
 
     <div class="footer">
-        <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank">View Contract on BscScan</a><br>
+        <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" data-i18n="view_contract">View Contract on BscScan</a><br>
         Fly Infinity DAO
     </div>
 </div>
+
+<!-- ==================== MULTI LANGUAGE SYSTEM ==================== -->
+<script>
+    let translations = {};
+    let currentLang = localStorage.getItem('site_lang') || 'en';
+
+    async function loadLanguage(lang) {
+        try {
+            const response = await fetch(`languages/${lang}.json?t=${Date.now()}`);
+            if (!response.ok) throw new Error('Language file not found');
+            translations = await response.json();
+            currentLang = lang;
+            localStorage.setItem('site_lang', lang);
+            applyTranslations();
+            highlightActiveLang();
+            if (lang === 'ar' || lang === 'fa') {
+                document.documentElement.dir = 'rtl';
+            } else {
+                document.documentElement.dir = 'ltr';
+            }
+        } catch(e) {
+            console.error('Language load error:', e);
+            if (lang !== 'en') {
+                loadLanguage('en');
+            }
+        }
+    }
+
+    function applyTranslations() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[key] !== undefined && translations[key] !== null) {
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+                    if (el.hasAttribute('placeholder')) {
+                        el.placeholder = translations[key];
+                    } else {
+                        el.textContent = translations[key];
+                    }
+                } else {
+                    el.textContent = translations[key];
+                }
+            }
+        });
+        
+        if (translations.site_title) {
+            document.title = translations.site_title;
+        }
+    }
+
+    function highlightActiveLang() {
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            const lang = btn.getAttribute('data-lang');
+            if (lang === currentLang) {
+                btn.style.background = '#00C896';
+                btn.style.color = '#0F0F0F';
+                btn.style.borderColor = '#00C896';
+                btn.style.boxShadow = '0 0 15px rgba(0, 200, 150, 0.3)';
+            } else {
+                btn.style.background = 'transparent';
+                btn.style.color = '#00C896';
+                btn.style.borderColor = '#00C896';
+                btn.style.boxShadow = 'none';
+            }
+        });
+    }
+
+    function switchLanguage(lang) {
+        if (lang === currentLang) return;
+        loadLanguage(lang);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadLanguage(currentLang);
+    });
+</script>
+
 </body>
 </html>
