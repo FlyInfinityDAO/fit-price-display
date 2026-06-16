@@ -401,8 +401,8 @@
         </div>
         
         <div class="sidebar-menu">
-            <a href="index.html" class="active">
-                <i class="fas fa-home"></i> Dashboard
+            <a href="index.html">
+                <i class="fas fa-chart-simple"></i> Dashboard
             </a>
             <a href="compare.html">
                 <i class="fas fa-chart-line"></i> Comparison
@@ -419,7 +419,7 @@
             <a href="warnings.html">
                 <i class="fas fa-exclamation-triangle"></i> Warnings
             </a>
-            <a href="faq.html">
+            <a href="faq.html" class="active">
                 <i class="fas fa-question-circle"></i> FAQ
             </a>
         </div>
@@ -435,7 +435,26 @@
     
     <div class="faq-container">
         
-        <!-- FAQ 1: How to buy ownership shares? -->
+        <!-- FAQ 1: Cost of ownership shares -->
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFAQ(this)">
+                <span>🔹 How much does it cost to buy Fly Infinity ownership shares?</span>
+                <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
+            </button>
+            <div class="faq-answer">
+                <p>To purchase <span class="highlight">Fly Infinity</span> ownership shares, you need to have the following in your wallet:</p>
+                <ul>
+                    <li><span class="highlight">100 DAI</span> — for the ownership share purchase</li>
+                    <li><span class="highlight">Approximately $1 worth of BNB</span> — for network gas fees</li>
+                </ul>
+                <div class="info-box">
+                    <p>💡 <strong>Important:</strong> Make sure you have enough BNB in your wallet to cover transaction fees on the BNB Smart Chain network.</p>
+                </div>
+                <p>Once you have these amounts, follow the steps in the DApp to complete your ownership share purchase.</p>
+            </div>
+        </div>
+        
+        <!-- FAQ 2: How to buy ownership shares? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
                 <span>🔹 How do I buy ownership shares?</span>
@@ -457,7 +476,7 @@
             </div>
         </div>
         
-        <!-- FAQ 2: How to buy FIT? -->
+        <!-- FAQ 3: How to buy FIT? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
                 <span>🔹 How do I buy FIT tokens?</span>
@@ -479,7 +498,7 @@
             </div>
         </div>
         
-        <!-- FAQ 3: How to sell FIT? -->
+        <!-- FAQ 4: How to sell FIT? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
                 <span>🔹 How do I sell FIT tokens?</span>
@@ -502,7 +521,7 @@
             </div>
         </div>
         
-        <!-- FAQ 4: Can I transfer tokens between wallets? -->
+        <!-- FAQ 5: Can I transfer tokens between wallets? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
                 <span>🔹 Can I transfer tokens between wallets?</span>
@@ -523,7 +542,7 @@
             </div>
         </div>
         
-        <!-- FAQ 5: What are the fees? -->
+        <!-- FAQ 6: What are the fees? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
                 <span>🔹 What are the buy and sell fees?</span>
@@ -543,7 +562,7 @@
             </div>
         </div>
         
-        <!-- FAQ 6: Can I change my wallet? -->
+        <!-- FAQ 7: Can I change my wallet? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
                 <span>🔹 Can I change my wallet?</span>
@@ -569,7 +588,7 @@
             </div>
         </div>
         
-        <!-- FAQ 7: What if I lose my recovery phrase? -->
+        <!-- FAQ 8: What if I lose my recovery phrase? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
                 <span>🔹 What if I lose my recovery phrase?</span>
