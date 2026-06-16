@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Fly Infinity Token - White Paper</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-image: url('background-desktop.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                background-image: url('background-mobile.png');
+                background-size: contain;
+                background-position: center top;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-color: #0F0F0F;
+                padding: 15px;
+            }
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 15, 15, 0.85);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* ===== TOP NAV BAR ===== */
+        .top-bar {
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 12px 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 100;
+        }
+        
+        .top-bar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #D4AF37;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .top-bar .logo i {
+            font-size: 22px;
+        }
+        
+        .hamburger {
+            background: transparent;
+            border: 1px solid #00C896;
+            color: #00C896;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .hamburger:hover {
+            background: #00C896;
+            color: #0F0F0F;
+            transform: rotate(90deg);
+        }
+        
+        /* ===== SIDEBAR OVERLAY ===== */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+        
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            max-width: 85vw;
+            height: 100%;
+            background: #0F0F0F;
+            border-left: 2px solid rgba(0, 200, 150, 0.3);
+            z-index: 1000;
+            padding: 30px 25px;
+            transition: right 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar.open {
+            right: 0;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 200, 150, 0.2);
+            margin-bottom: 25px;
+        }
+        
+        .sidebar-header .logo-text {
+            color: #D4AF37;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .sidebar-header .close-btn {
+            background: transparent;
+            border: none;
+            color: #ff4444;
+            font-size: 28px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-header .close-btn:hover {
+            transform: rotate(90deg);
+        }
+        
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 20px;
+            border-radius: 16px;
+            color: #c0d0e8;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .sidebar-menu a i {
+            width: 24px;
+            font-size: 18px;
+            color: #00C896;
+        }
+        
+        .sidebar-menu a:hover {
+            background: rgba(0, 200, 150, 0.08);
+            border-color: rgba(0, 200, 150, 0.3);
+            transform: translateX(-5px);
+        }
+        
+        .sidebar-menu a.active {
+            background: rgba(0, 200, 150, 0.15);
+            border-color: #00C896;
+            color: #D4AF37;
+        }
+        
+        .sidebar-menu a.active i {
+            color: #D4AF37;
+        }
+        
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 200, 150, 0.2);
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+        }
+        
+        .sidebar-footer a {
+            color: #00C896;
+            text-decoration: none;
+        }
+        
+        .page-title {
+            font-size: 32px;
+            color: #D4AF37;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(0, 200, 150, 0.3);
+            padding-bottom: 15px;
+        }
+        
+        .wp-content {
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 40px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5);
+        }
+        
+        .wp-content h2 {
+            color: #D4AF37;
+            font-size: 24px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-left: 3px solid #00C896;
+            padding-left: 15px;
+        }
+        
+        .wp-content h3 {
+            color: #00C896;
+            font-size: 18px;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        
+        .wp-content p {
+            color: #c0d0e8;
+            line-height: 1.8;
+            font-size: 15px;
+            text-align: justify;
+            margin-bottom: 15px;
+        }
+        
+        .wp-content ul {
+            color: #c0d0e8;
+            line-height: 1.8;
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        .wp-content ul li {
+            margin-bottom: 5px;
+        }
+        
+        .wp-content .highlight {
+            color: #00C896;
+            font-weight: bold;
+        }
+        
+        .wp-content .gold {
+            color: #D4AF37;
+            font-weight: bold;
+        }
+        
+        .wp-content .formula-box {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+            border-left: 3px solid #D4AF37;
+            font-size: 18px;
+            color: #D4AF37;
+        }
+        
+        .wp-content .step-box {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 15px 20px;
+            margin: 10px 0;
+            border-left: 3px solid #00C896;
+        }
+        
+        .wp-content .step-box p {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .wp-content .step-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .wp-content .step-grid .step-item {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 12px 16px;
+            border-left: 3px solid #D4AF37;
+        }
+        
+        .wp-content .step-grid .step-item .step-num {
+            color: #D4AF37;
+            font-weight: bold;
+        }
+        
+        .wp-content .step-grid .step-item .step-desc {
+            color: #c0d0e8;
+            font-size: 13px;
+        }
+        
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            margin-top: 20px;
+        }
+        
+        .footer a {
+            color: #00C896;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 85vw;
+                right: -85vw;
+            }
+            .top-bar .logo {
+                font-size: 15px;
+            }
+            .page-title {
+                font-size: 24px;
+            }
+            .wp-content {
+                padding: 20px;
+            }
+            .wp-content h2 {
+                font-size: 20px;
+            }
+            .wp-content p {
+                font-size: 14px;
+            }
+            .wp-content .formula-box {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    
+    <!-- ===== TOP NAV BAR ===== -->
+    <div class="top-bar">
+        <a href="index.html" class="logo">
+            <i class="fas fa-rocket"></i>
+            <span>Fly Infinity</span>
+        </a>
+        <button class="hamburger" id="hamburgerBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <!-- ===== SIDEBAR OVERLAY ===== -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ===== SIDEBAR ===== -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="logo-text"><i class="fas fa-rocket" style="color: #00C896; margin-right: 8px;"></i>Fly Infinity</span>
+            <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="index.html">
+                <i class="fas fa-chart-simple"></i> Dashboard
+            </a>
+            <a href="compare.html">
+                <i class="fas fa-chart-line"></i> Comparison
+            </a>
+            <a href="dapp.html">
+                <i class="fas fa-charging-station"></i> DApp
+            </a>
+            <a href="transactions.html">
+                <i class="fas fa-history"></i> Transactions
+            </a>
+            <a href="privacy.html">
+                <i class="fas fa-shield-alt"></i> Privacy
+            </a>
+            <a href="warnings.html">
+                <i class="fas fa-exclamation-triangle"></i> Warnings
+            </a>
+            <a href="faq.html">
+                <i class="fas fa-question-circle"></i> FAQ
+            </a>
+            <a href="whitepaper.html" class="active">
+                <i class="fas fa-file-pdf"></i> White Paper
+            </a>
+        </div>
+        
+        <div class="sidebar-footer">
+            <a href="https://flyinfinitydao.github.io/fit-price-display" target="_blank">flyinfinitydao.github.io</a><br>
+            Fly Infinity DAO
+        </div>
+    </div>
+
+    <!-- ===== WHITE PAPER CONTENT ===== -->
+    <h1 class="page-title"><i class="fas fa-file-pdf" style="color: #D4AF37; margin-right: 12px;"></i>White Paper</h1>
+    
+    <div class="wp-content">
+        
+        <h2>Fly Infinity Platform</h2>
+        <p>Fly Infinity Platform is a next-generation decentralized financial platform designed with one clear objective: to create a transparent digital asset with real backing and zero risk of price reversal.</p>
+        <p>Unlike most crypto projects whose prices are driven by hype, speculation, whale manipulation, and pump-and-dump cycles, Fly Infinity is built on a strictly engineered economic logic that does not allow the token price to move backward under any circumstances, even in extreme market conditions.</p>
+        <p>The economic core of the platform consists of two fully complementary components:</p>
+        <ul>
+            <li><span class="highlight">Fly Infinity Network</span> as the capital-injecting and backing network</li>
+            <li><span class="highlight">Fly Infinity Token (FIT)</span> as the primary digital asset with <span class="gold">100% real backing</span></li>
+        </ul>
+        <p>Together, they form a closed, intelligent, and crash-resistant financial system.</p>
+
+        <h2>What Is Fly Infinity Token (FIT) and Why Is It Unique?</h2>
+        <p>FIT is a truly asset-backed token, not a token driven by promises, marketing, or market hype. The price of FIT is never determined by exchanges, traders, or external markets. It is calculated exclusively inside the smart contract based on real liquidity.</p>
+        
+        <div class="formula-box">
+            <strong>FIT Price Formula:</strong><br>
+            FIT Price = Amount of DAI inside the contract ÷ Total existing FIT
+        </div>
+        
+        <p><span class="gold">A key and unique characteristic:</span> The founding team holds no special allocation, percentage, or privileged profit. All fees and profits belong entirely to the token community.</p>
+        
+        <h3>The Core Feature of Fly Infinity:</h3>
+        <p><span class="gold">A Token That Never Goes Down in Price</span></p>
+        <p>This is the defining principle of Fly Infinity, and it is fully backed by system logic:</p>
+        <ul>
+            <li>FIT can only be bought and sold through its smart contract</li>
+            <li>Every buy = real DAI entering the contract</li>
+            <li>Every sell = FIT tokens being burned</li>
+            <li>Price is calculated internally, not by the market</li>
+            <li>No external exchange can manipulate the price</li>
+        </ul>
+        <p><span class="gold">As a result:</span> Even large sell-offs do not necessarily reduce the price — in many cases, they increase it.</p>
+        <p><span class="highlight">In other words:</span> FIT is structurally anti-dump, anti-crash, and anti-manipulation by design.</p>
+
+        <h2>FIT Price Growth Roadmap (Future Outlook)</h2>
+        <p>The price growth of FIT is not speculative; it follows a logical, step-based system:</p>
+        
+        <h3>Phase 1 | Stabilization &amp; Accumulation</h3>
+        <ul>
+            <li>Controlled user entry through step-based participation</li>
+            <li>Gradual liquidity growth</li>
+            <li>Smooth and non-volatile price increase</li>
+        </ul>
+        
+        <h3>Phase 2 | Accelerated Growth</h3>
+        <ul>
+            <li>Continuous DAI injection by Fly Infinity Network</li>
+            <li>Exponential liquidity growth without minting new tokens</li>
+            <li>Strong upward price momentum</li>
+        </ul>
+        
+        <h3>Phase 3 | System Maturity</h3>
+        <ul>
+            <li>Entry of large capital without dump risk</li>
+            <li>Sustainable and logical price appreciation</li>
+            <li>FIT evolving into a reserve-grade digital asset within the ecosystem</li>
+        </ul>
+        
+        <p><span class="gold">Key point:</span> FIT has no theoretical price ceiling, because its price grows strictly in proportion to real capital inflow.</p>
+
+        <h2>Why Fly Infinity Cannot Form a Bubble or Collapse</h2>
+        <ul>
+            <li>Every FIT is backed by real DAI</li>
+            <li>Growth without real money is impossible</li>
+            <li>Selling does not drain the system's liquidity</li>
+            <li>A portion of selling fees always reinforces liquidity</li>
+        </ul>
+        <p><span class="gold">Therefore:</span> A classic speculative bubble cannot exist in Fly Infinity.</p>
+
+        <h2>Security of Fly Infinity Token (FIT)</h2>
+        <p>From a security standpoint, Fly Infinity is built at the highest standard:</p>
+        <ul>
+            <li>No hidden admin privileges or centralized control</li>
+            <li>No ability for the team to arbitrarily change contract parameters</li>
+            <li>Fully controlled buy and sell mechanisms</li>
+            <li>No dependency on exchanges</li>
+            <li>No pump-and-dump exposure</li>
+            <li>Fully transparent pricing logic</li>
+        </ul>
+        <p><span class="gold">Simply put:</span> In Fly Infinity, users' capital is never sacrificed to others' behavior.</p>
+
+        <h2>Final Summary</h2>
+        <p>Fly Infinity is not a typical crypto project. It is a financial system engineered from first principles.</p>
+        <ul>
+            <li>Real asset backing</li>
+            <li>Fully transparent pricing</li>
+            <li>Logical and sustainable growth</li>
+            <li>No price reversals</li>
+            <li>No dumps</li>
+            <li>No whale games</li>
+        </ul>
+        <p>Fly Infinity does not promise unrealistic profits, but it also does not allow capital destruction.</p>
+
+        <h2>Detailed Plan — 13 Key Points</h2>
+        
+        <h3>1 — What is Fly Infinity Platform?</h3>
+        <p>Fly Infinity Platform is a decentralized financial platform whose goal is to create a healthy and income-generating network with a stable, transparent digital asset that is resistant to sudden market crashes.</p>
+        <p>The economic core of this platform is its decentralized network, namely: <span class="highlight">Fly Infinity Network</span> and its very special token, namely: <span class="highlight">Fly Infinity Token (FIT)</span> which complement each other.</p>
+
+        <h3>2 — What is Fly Infinity Token (FIT)?</h3>
+        <p>FIT is a token with real backing, whose price is calculated based on the real assets inside the smart contract, not based on market hype. It is also the only token in the world in which the founder team has no specific percentage or profit, and all fees and profits belong to the entire token community.</p>
+        <div class="formula-box">
+            <strong>FIT Price Formula:</strong><br>
+            FIT Price = Amount of DAI inside the contract ÷ Total existing FIT
+        </div>
+
+        <h3>3 — Difference between FIT and regular tokens</h3>
+        <p><span class="gold">In most projects:</span></p>
+        <ul>
+            <li>Prices are determined on exchanges</li>
+            <li>Whales can dump</li>
+            <li>Real backing is not clear</li>
+        </ul>
+        <p><span class="highlight">In Fly Infinity Token:</span></p>
+        <ul>
+            <li>Buying and selling only through the FIT contract</li>
+            <li>Each purchase = entry of real DAI</li>
+            <li>Each sale = burning FIT</li>
+        </ul>
+
+        <h3>4 — Buying Fly Infinity Token (FIT)</h3>
+        <p><span class="gold">FIT purchase process:</span></p>
+        <ul>
+            <li>The user pays DAI</li>
+            <li>A 3% purchase fee is deducted</li>
+            <li>The full amount enters the FIT contract liquidity</li>
+            <li>New FIT tokens are minted with the net amount</li>
+        </ul>
+        <p><span class="highlight">Result:</span> Liquidity increases, FIT price increases, Tokens are minted only equal to real money.</p>
+
+        <h3>5 — Selling Fly Infinity Token (FIT)</h3>
+        <p><span class="gold">FIT selling process:</span></p>
+        <ul>
+            <li>The user sells FIT to the contract</li>
+            <li>Tokens are burned</li>
+            <li>Token value is calculated at the current price</li>
+            <li>A 6% selling fee is deducted</li>
+            <li>The fee is returned to liquidity</li>
+        </ul>
+        <p><span class="highlight">Result:</span> Supply decreases, Part of the liquidity remains in the system, Selling does not destroy the system.</p>
+
+        <h3>6 — Why does FIT price not easily crash?</h3>
+        <p>Because in Fly Infinity Token:</p>
+        <ul>
+            <li>Selling = token burning</li>
+            <li>Selling fee = liquidity reinforcement</li>
+            <li>Buying fee = liquidity reinforcement</li>
+            <li>Price is calculated inside the contract</li>
+        </ul>
+        <p><span class="gold">Even large sell-offs:</span> Do not necessarily reduce the FIT price. In many cases, they increase the price.</p>
+
+        <h3>7 — The role of Fly Infinity Network</h3>
+        <p>Fly Infinity Network is a project that continuously injects real DAI into the FIT contract without minting new tokens, and this DAI injection increases exponentially.</p>
+        <p><span class="highlight">Example:</span> Injection is done hourly throughout all 24 hours using DAI tokens, which monthly increases to tens, hundreds, and millions of dollars.</p>
+        <p><span class="gold">This means:</span> Growth of FIT price without dilution of users' assets.</p>
+
+        <h3>8 — Step-based purchase model in Fly Infinity Token</h3>
+        <p>Buying FIT is fully controlled. Only people can buy who:</p>
+        <ul>
+            <li>Are members of Fly Infinity Network</li>
+            <li>Have completed the step-based requirements</li>
+        </ul>
+        <p><span class="gold">Each step:</span></p>
+        <ul>
+            <li>Has a specific purchase cap</li>
+            <li>Can only be purchased once up to the specified limit</li>
+        </ul>
+        <p><span class="highlight">Result:</span> Prevention of sudden whale entry, Healthy and step-by-step price growth.</p>
+
+        <h3>Purchase Step Details:</h3>
+        <div class="step-grid">
+            <div class="step-item"><span class="step-num">Step 1:</span> <span class="step-desc">Only registered users can buy once up to 100 DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 2:</span> <span class="step-desc">With 1 networking point earned, can buy once again up to 100 DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 3:</span> <span class="step-desc">With 10 networking points earned, can buy once again up to 100 DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 4:</span> <span class="step-desc">With 30 networking points earned, can buy once again up to 100 DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 5:</span> <span class="step-desc">With 100 networking points earned, can buy once again up to 1,000 DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 6:</span> <span class="step-desc">With 300 networking points earned, can buy once again up to 1,000 DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 7:</span> <span class="step-desc">With 1,000 networking points earned, can buy once again up to 10,000 DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 8:</span> <span class="step-desc">With 3,000 networking points earned, can buy once again up to 10,000 DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 9:</span> <span class="step-desc">With 10,000 networking points earned, can buy once again up to 100,000 DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 10:</span> <span class="step-desc">With 30,000 networking points earned, can buy once again up to 100,000 DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 11:</span> <span class="step-desc">With 100,000 networking points earned, can buy once again up to 1 million DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 12:</span> <span class="step-desc">With 300,000 networking points earned, can buy once again up to 1 million DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 13:</span> <span class="step-desc">With 1 million networking points earned, can buy once again up to 10 million DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 14:</span> <span class="step-desc">With 3 million networking points earned, can buy once again up to 10 million DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 15:</span> <span class="step-desc">With 10 million networking points earned, can buy once again up to 100 million DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 16:</span> <span class="step-desc">With 30 million networking points earned, can buy once again up to 100 million DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 17:</span> <span class="step-desc">With 100 million networking points earned, can buy once again up to 1 billion DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 18:</span> <span class="step-desc">With 300 million networking points earned, can buy once again up to 1 billion DAI</span></div>
+            <div class="step-item"><span class="step-num">Step 19:</span> <span class="step-desc">With 1 billion networking points earned, can buy once again up to 10 billion DAI</span></div>
+        </div>
+
+        <h3>9 — Selling limitations for system stability</h3>
+        <p>In Fly Infinity Token, if a user sells their FIT at a specific step, they are not allowed to buy again until reaching the next step.</p>
+        <p><span class="highlight">Result:</span> Elimination of short-term trading, Encouragement of holding, Reduction of selling pressure.</p>
+
+        <h3>10 — Does Fly Infinity Token (FIT) have a bubble?</h3>
+        <p><span class="gold">No classic bubble.</span> Because:</p>
+        <ul>
+            <li>Each FIT has real DAI backing</li>
+            <li>Price is calculated solely based on liquidity</li>
+            <li>Growth without real money is impossible</li>
+            <li>Volatility may exist, but there is no unsupported bubble</li>
+        </ul>
+
+        <h3>11 — Who is Fly Infinity Token suitable for?</h3>
+        <ul>
+            <li>✓ Those with a mid-term and long-term vision</li>
+            <li>✓ Those looking for an anti-dump system</li>
+            <li>✓ Those who want real and gradual growth</li>
+            <li>✓ Those who prefer economic logic over short-term trading</li>
+            <li>✗ Not suitable for short-term traders</li>
+        </ul>
+
+        <h3>12 — Final summary</h3>
+        <p><span class="gold">Fly Infinity Token:</span> A transparent financial system with real DAI backing.</p>
+        <ul>
+            <li>Price = Liquidity ÷ Supply</li>
+            <li>Purchase fee: 3%</li>
+            <li>Selling fee: 6%</li>
+            <li>Buy = Mint (creation)</li>
+            <li>Sell = Burn (destruction)</li>
+            <li>Fly Infinity Network: Continuous injection of real money without minting new tokens</li>
+        </ul>
+
+        <h3>13 — Final message</h3>
+        <p><span class="gold">Fly Infinity Platform:</span></p>
+        <ul>
+            <li>Does not promise unrealistic profits</li>
+            <li>But also does not allow capital destruction</li>
+            <li>Its growth depends on real money and logical user behavior</li>
+            <li>Fly Infinity is a financial platform, not a pump-and-dump project</li>
+        </ul>
+        <p style="text-align: center; font-size: 18px; color: #D4AF37; margin-top: 20px;">Experience infinite financial growth with Fly Infinity.</p>
+
+    </div>
+
+    <div class="footer">
+        <a href="index.html">Dashboard</a> | 
+        <a href="compare.html">Comparison</a> | 
+        <a href="transactions.html">Transactions</a> | 
+        <a href="privacy.html">Privacy Policy</a> | 
+        <a href="warnings.html">Warnings</a> | 
+        <a href="faq.html">FAQ</a> | 
+        <a href="whitepaper.html">White Paper</a><br>
+        Fly Infinity DAO
+    </div>
+</div>
+
+<!-- ===== SIDEBAR SCRIPT ===== -->
+<script>
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    function openSidebar() {
+        sidebar.classList.add('open');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    hamburgerBtn.addEventListener('click', openSidebar);
+    closeSidebarBtn.addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeSidebar();
+        }
+    });
+</script>
+
+</body>
+</html>
