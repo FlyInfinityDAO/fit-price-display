@@ -614,13 +614,11 @@
                     <span class="step-badge" style="background: #D4AF37; color: #0F0F0F; font-size: 10px; padding: 1px 8px;">1</span> 
                     Join Contract (One-time)
                 </div>
-                <div class="input-group" style="margin-bottom:10px;">
-                    <label style="color: #D4AF37; font-size: 11px;">👤 Wallet Address</label>
-                    <input type="text" id="joinGiftAddress" placeholder="0x... (your wallet address)" value="" style="padding: 8px 12px; font-size: 13px;">
-                </div>
                 <p style="color:#888; font-size:10px; margin-bottom:10px;">
                     <span class="highlight" style="color: #D4AF37;">Function:</span> Join_Fly_Infinity_Gift (0x2852174f)<br>
                     <span style="color: #888; font-size: 9px;">⚠️ One-time process, forever.</span>
+                    <br>
+                    <span style="color: #888; font-size: 9px;">✅ Uses your connected wallet address automatically</span>
                 </p>
                 <button id="joinGiftBtn" class="action-btn" style="border-color: #D4AF37; color: #D4AF37; padding: 10px; font-size: 14px;">
                     <i class="fas fa-handshake"></i> Join Contract
@@ -634,13 +632,11 @@
                     <span class="step-badge" style="font-size: 10px; padding: 1px 8px;">2</span> 
                     $5 Gift Lottery
                 </div>
-                <div class="input-group" style="margin-bottom:10px;">
-                    <label style="color: #00C896; font-size: 11px;">👤 Wallet Address</label>
-                    <input type="text" id="freeGiftAddress" placeholder="0x... (your wallet address)" value="" style="padding: 8px 12px; font-size: 13px;">
-                </div>
                 <p style="color:#888; font-size:10px; margin-bottom:10px;">
                     <span class="highlight" style="color: #00C896;">Function:</span> Free_Fly_Infinity_Gift (0xb4aecd59)<br>
                     <span style="color: #888; font-size: 9px;">🎁 Win a $5 gift</span>
+                    <br>
+                    <span style="color: #888; font-size: 9px;">✅ Uses your connected wallet address automatically</span>
                 </p>
                 <button id="freeGiftBtn" class="action-btn" style="padding: 10px; font-size: 14px;">
                     <i class="fas fa-ticket-alt"></i> Participate in Lottery
@@ -709,10 +705,6 @@
         
         document.getElementById("buyerAddress").value = userAddress;
         document.getElementById("referrerAddress").value = userAddress;
-        
-        // Set default wallet addresses for gift contract fields
-        document.getElementById("joinGiftAddress").value = userAddress;
-        document.getElementById("freeGiftAddress").value = userAddress;
         
         document.getElementById("walletAddress").innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
         document.getElementById("walletStatus").style.display = "none";
@@ -797,83 +789,136 @@
         if (type === "error") el.classList.add("error");
     }
     
+    // ==================== APPROVE FUNCTIONS ====================
+    
     async function approveNetworkDAI() {
+        if (!userAddress) {
+            setStatus("networkApproveStatus", "⚠️ Connect wallet first", "error");
+            return;
+        }
+        
         try {
-            setStatus("networkApproveStatus", "Approving...", "");
+            setStatus("networkApproveStatus", "⏳ Approving...", "");
             let amount = ethers.utils.parseEther("100");
-            let tx = await daiContract.approve(FIT_NETWORK_ADDRESS, amount);
-            setStatus("networkApproveStatus", "Waiting for confirmation...", "");
+            // Approve DAI for Network Contract
+            const tx = await daiContract.approve(FIT_NETWORK_ADDRESS, amount);
+            setStatus("networkApproveStatus", "⏳ Waiting for confirmation...", "");
             await tx.wait();
-            setStatus("networkApproveStatus", "✅ Approved 100 DAI!", "success");
+            setStatus("networkApproveStatus", "✅ Approved 100 DAI for Network!", "success");
             await checkAllAllowances();
         } catch(e) {
+            console.error("Approve Network Error:", e);
             setStatus("networkApproveStatus", "❌ Error: " + e.message, "error");
         }
     }
     
-    async function agreementRoadMap() {
+    async function approveTokenDAI() {
+        if (!userAddress) {
+            setStatus("tokenApproveStatus", "⚠️ Connect wallet first", "error");
+            return;
+        }
+        
         try {
-            setStatus("agreementStatus", "Signing agreement...", "");
-            let tx = await fitNetworkContract.Agreement_Road_Map();
-            setStatus("agreementStatus", "Waiting for confirmation...", "");
+            setStatus("tokenApproveStatus", "⏳ Approving...", "");
+            let amount = ethers.utils.parseEther("1000");
+            // Approve DAI for Token Contract
+            const tx = await daiContract.approve(FIT_TOKEN_ADDRESS, amount);
+            setStatus("tokenApproveStatus", "⏳ Waiting for confirmation...", "");
+            await tx.wait();
+            setStatus("tokenApproveStatus", "✅ Approved 1000 DAI for Token!", "success");
+            await checkAllAllowances();
+        } catch(e) {
+            console.error("Approve Token Error:", e);
+            setStatus("tokenApproveStatus", "❌ Error: " + e.message, "error");
+        }
+    }
+    
+    // ==================== REGISTER FUNCTIONS ====================
+    
+    async function agreementRoadMap() {
+        if (!userAddress) {
+            setStatus("agreementStatus", "⚠️ Connect wallet first", "error");
+            return;
+        }
+        
+        try {
+            setStatus("agreementStatus", "⏳ Signing agreement...", "");
+            const tx = await fitNetworkContract.Agreement_Road_Map();
+            setStatus("agreementStatus", "⏳ Waiting for confirmation...", "");
             await tx.wait();
             setStatus("agreementStatus", "✅ Agreement signed!", "success");
         } catch(e) {
+            console.error("Agreement Error:", e);
             setStatus("agreementStatus", "❌ Error: " + e.message, "error");
         }
     }
     
     async function becomeOwner() {
-        let referrer = document.getElementById("referrerAddress").value;
+        let referrer = document.getElementById("referrerAddress").value.trim();
+        
+        if (!userAddress) {
+            setStatus("ownerStatus", "⚠️ Connect wallet first", "error");
+            return;
+        }
+        
         if (!referrer || !ethers.utils.isAddress(referrer)) {
-            setStatus("ownerStatus", "Please enter a valid referrer address", "error");
+            setStatus("ownerStatus", "⚠️ Please enter a valid referrer address", "error");
+            return;
+        }
+        
+        // Check if referrer is not the same as user
+        if (referrer.toLowerCase() === userAddress.toLowerCase()) {
+            setStatus("ownerStatus", "⚠️ Referrer cannot be yourself", "error");
             return;
         }
         
         try {
-            setStatus("ownerStatus", "Registering...", "");
-            let tx = await fitNetworkContract.BeCome_Owner(referrer);
-            setStatus("ownerStatus", "Waiting for confirmation...", "");
+            setStatus("ownerStatus", "⏳ Registering...", "");
+            // Function: BeCome_Owner(address Up)
+            const tx = await fitNetworkContract.BeCome_Owner(referrer);
+            setStatus("ownerStatus", "⏳ Waiting for confirmation...", "");
             await tx.wait();
             setStatus("ownerStatus", "✅ Successfully registered as Owner!", "success");
         } catch(e) {
+            console.error("Become Owner Error:", e);
             setStatus("ownerStatus", "❌ Error: " + e.message, "error");
         }
     }
     
-    async function approveTokenDAI() {
-        try {
-            setStatus("tokenApproveStatus", "Approving...", "");
-            let amount = ethers.utils.parseEther("1000");
-            let tx = await daiContract.approve(FIT_TOKEN_ADDRESS, amount);
-            setStatus("tokenApproveStatus", "Waiting for confirmation...", "");
-            await tx.wait();
-            setStatus("tokenApproveStatus", "✅ Approved 1000 DAI!", "success");
-            await checkAllAllowances();
-        } catch(e) {
-            setStatus("tokenApproveStatus", "❌ Error: " + e.message, "error");
-        }
-    }
+    // ==================== BUY/SELL FUNCTIONS ====================
     
     async function buyFIT() {
-        let buyer = document.getElementById("buyerAddress").value;
+        let buyer = document.getElementById("buyerAddress").value.trim();
         let amount = parseFloat(document.getElementById("buyAmount").value);
         
-        if (!buyer || !ethers.utils.isAddress(buyer)) {
-            setStatus("buyStatus", "Please enter a valid buyer address", "error");
+        if (!userAddress) {
+            setStatus("buyStatus", "⚠️ Connect wallet first", "error");
             return;
         }
+        
+        if (!buyer || !ethers.utils.isAddress(buyer)) {
+            setStatus("buyStatus", "⚠️ Please enter a valid buyer address", "error");
+            return;
+        }
+        
         if (isNaN(amount) || amount <= 0) {
-            setStatus("buyStatus", "Please enter a valid amount", "error");
+            setStatus("buyStatus", "⚠️ Please enter a valid amount", "error");
+            return;
+        }
+        
+        // Check if buyer matches connected wallet
+        if (buyer.toLowerCase() !== userAddress.toLowerCase()) {
+            setStatus("buyStatus", "⚠️ Buyer address does not match connected wallet", "error");
             return;
         }
         
         let amountWei = ethers.utils.parseEther(amount.toString());
         
         try {
-            setStatus("buyStatus", "Buying...", "");
-            let tx = await fitTokenContract.Buy(buyer, amountWei);
-            setStatus("buyStatus", "Waiting for confirmation...", "");
+            setStatus("buyStatus", "⏳ Buying...", "");
+            // Function: Buy(address _wallet, uint256 _amount)
+            const tx = await fitTokenContract.Buy(buyer, amountWei);
+            setStatus("buyStatus", "⏳ Waiting for confirmation...", "");
             await tx.wait();
             setStatus("buyStatus", "✅ Purchase successful!", "success");
             await loadBalances();
@@ -881,22 +926,31 @@
             document.getElementById("buyAmount").value = "";
             updateBuyEstimate();
         } catch(e) {
+            console.error("Buy Error:", e);
             setStatus("buyStatus", "❌ Error: " + e.message, "error");
         }
     }
     
     async function sellFIT() {
         let amount = parseFloat(document.getElementById("sellAmount").value);
-        if (isNaN(amount) || amount <= 0) {
-            setStatus("sellStatus", "Please enter a valid amount", "error");
+        
+        if (!userAddress) {
+            setStatus("sellStatus", "⚠️ Connect wallet first", "error");
             return;
         }
+        
+        if (isNaN(amount) || amount <= 0) {
+            setStatus("sellStatus", "⚠️ Please enter a valid amount", "error");
+            return;
+        }
+        
         let amountWei = ethers.utils.parseEther(amount.toString());
         
         try {
-            setStatus("sellStatus", "Selling...", "");
-            let tx = await fitTokenContract.Sell(amountWei);
-            setStatus("sellStatus", "Waiting for confirmation...", "");
+            setStatus("sellStatus", "⏳ Selling...", "");
+            // Function: Sell(uint256 _amount)
+            const tx = await fitTokenContract.Sell(amountWei);
+            setStatus("sellStatus", "⏳ Waiting for confirmation...", "");
             await tx.wait();
             setStatus("sellStatus", "✅ Sale successful!", "success");
             await loadBalances();
@@ -904,9 +958,12 @@
             document.getElementById("sellAmount").value = "";
             updateSellEstimate();
         } catch(e) {
+            console.error("Sell Error:", e);
             setStatus("sellStatus", "❌ Error: " + e.message, "error");
         }
     }
+    
+    // ==================== WALLET CONNECT ====================
     
     async function connectWallet() {
         if (typeof window.ethereum !== 'undefined') {
@@ -922,8 +979,6 @@
                         document.getElementById("walletAddress").innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
                         document.getElementById("buyerAddress").value = userAddress;
                         document.getElementById("referrerAddress").value = userAddress;
-                        document.getElementById("joinGiftAddress").value = userAddress;
-                        document.getElementById("freeGiftAddress").value = userAddress;
                         await loadBalances();
                         await checkAllAllowances();
                     }
@@ -956,12 +1011,12 @@
         }
     }
     
-        // ==================== GIFT CONTRACT FUNCTIONS ====================
+    // ==================== GIFT CONTRACT FUNCTIONS ====================
     const GIFT_CONTRACT_ADDRESS = "0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8";
     
     const GIFT_ABI = [
-        {"constant":false,"inputs":[],"name":"Join_Fly_Infinity_Gift","outputs":[],"type":"function"},
-        {"constant":false,"inputs":[],"name":"Free_Fly_Infinity_Gift","outputs":[],"type":"function"}
+        {"constant":false,"inputs":[{"name":"Owner_10_0","type":"address"}],"name":"Join_Fly_Infinity_Gift","outputs":[],"type":"function"},
+        {"constant":false,"inputs":[{"name":"Owner_10_0","type":"address"}],"name":"Free_Fly_Infinity_Gift","outputs":[],"type":"function"}
     ];
     
     let giftContract = null;
@@ -987,7 +1042,8 @@
             
             setStatus("joinGiftStatus", "⏳ Joining contract with wallet: " + userAddress.substring(0,8)+"...", "");
             
-            const tx = await giftContract.Join_Fly_Infinity_Gift();
+            // Function: Join_Fly_Infinity_Gift(address Owner_10_0)
+            const tx = await giftContract.Join_Fly_Infinity_Gift(userAddress);
             setStatus("joinGiftStatus", "⏳ Waiting for confirmation...", "");
             
             await tx.wait();
@@ -995,7 +1051,7 @@
         } catch(e) {
             console.error("Join Gift Error:", e);
             if (e.message.includes("execution reverted")) {
-                setStatus("joinGiftStatus", "❌ You may have already joined or transaction failed. Check BscScan.", "error");
+                setStatus("joinGiftStatus", "❌ You may have already joined or conditions not met. Check console.", "error");
             } else {
                 setStatus("joinGiftStatus", "❌ Error: " + e.message, "error");
             }
@@ -1014,7 +1070,8 @@
             
             setStatus("freeGiftStatus", "⏳ Participating in lottery with wallet: " + userAddress.substring(0,8)+"...", "");
             
-            const tx = await giftContract.Free_Fly_Infinity_Gift();
+            // Function: Free_Fly_Infinity_Gift(address Owner_10_0)
+            const tx = await giftContract.Free_Fly_Infinity_Gift(userAddress);
             setStatus("freeGiftStatus", "⏳ Waiting for confirmation...", "");
             
             await tx.wait();
@@ -1022,31 +1079,10 @@
         } catch(e) {
             console.error("Free Gift Error:", e);
             if (e.message.includes("execution reverted")) {
-                setStatus("freeGiftStatus", "❌ You must join the contract first or already participated. Check BscScan.", "error");
+                setStatus("freeGiftStatus", "❌ You must join the contract first or already participated. Check console.", "error");
             } else {
                 setStatus("freeGiftStatus", "❌ Error: " + e.message, "error");
             }
-        }
-    }
-        
-        // Check if entered address matches connected wallet
-        if (walletAddress.toLowerCase() !== userAddress.toLowerCase()) {
-            setStatus("freeGiftStatus", "⚠️ Entered address does not match connected wallet", "error");
-            return;
-        }
-        
-        try {
-            await initGiftContract();
-            setStatus("freeGiftStatus", "⏳ Participating in lottery...", "");
-            
-            const tx = await giftContract.Free_Fly_Infinity_Gift();
-            setStatus("freeGiftStatus", "⏳ Waiting for confirmation...", "");
-            
-            await tx.wait();
-            setStatus("freeGiftStatus", "✅ Successfully participated in the $5 gift lottery!", "success");
-        } catch(e) {
-            console.error("Free Gift Error:", e);
-            setStatus("freeGiftStatus", "❌ Error: " + e.message, "error");
         }
     }
     
