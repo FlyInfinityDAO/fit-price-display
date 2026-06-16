@@ -639,6 +639,56 @@
                 </button>
                 <div id="freeGiftStatus" class="status-text">Not participated</div>
             </div>
+    <!-- ==================== SECTION 3: GIFT CONTRACT ==================== -->
+    <div class="action-card" style="margin-bottom: 25px;">
+        <div class="action-title"><i class="fas fa-gift"></i> 🎁 Join Fly Infinity Gift Smart Contract & Participate in $5 Prize Lottery</div>
+        <p style="color:#888; font-size:12px; margin-bottom:15px; text-align:center;">
+            <a href="https://bscscan.com/address/0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8#writeContract" target="_blank" style="color: #00C896; text-decoration: none;">
+                <i class="fas fa-external-link-alt"></i> View Contract on BscScan
+            </a>
+        </p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            
+            <!-- Join Gift Contract -->
+            <div style="background: #1a1a1a; border-radius: 20px; padding: 20px; border-left: 3px solid #D4AF37;">
+                <div style="color:#D4AF37; font-size:14px; margin-bottom:10px;">
+                    <span class="step-badge" style="background: #D4AF37; color: #0F0F0F;">1</span> 
+                    Join Contract (One-time process)
+                </div>
+                <div class="input-group" style="margin-bottom:15px;">
+                    <label style="color: #D4AF37;">👤 Wallet Address</label>
+                    <input type="text" id="joinGiftAddress" placeholder="0x... (your wallet address)" value="">
+                </div>
+                <p style="color:#888; font-size:11px; margin-bottom:15px;">
+                    <span class="highlight" style="color: #D4AF37;">Function:</span> Join_Fly_Infinity_Gift (0x2852174f)<br>
+                    <span style="color: #888; font-size: 10px;">⚠️ This process only needs to be done once, forever.</span>
+                </p>
+                <button id="joinGiftBtn" class="action-btn" style="border-color: #D4AF37; color: #D4AF37;">
+                    <i class="fas fa-handshake"></i> Join Contract (One-time process)
+                </button>
+                <div id="joinGiftStatus" class="status-text">Not joined</div>
+            </div>
+            
+            <!-- Free Gift Lottery -->
+            <div style="background: #1a1a1a; border-radius: 20px; padding: 20px; border-left: 3px solid #00C896;">
+                <div style="color:#00C896; font-size:14px; margin-bottom:10px;">
+                    <span class="step-badge">2</span> 
+                    Participate in $5 Gift Lottery
+                </div>
+                <div class="input-group" style="margin-bottom:15px;">
+                    <label style="color: #00C896;">👤 Wallet Address</label>
+                    <input type="text" id="freeGiftAddress" placeholder="0x... (your wallet address)" value="">
+                </div>
+                <p style="color:#888; font-size:11px; margin-bottom:15px;">
+                    <span class="highlight" style="color: #00C896;">Function:</span> Free_Fly_Infinity_Gift (0xb4aecd59)<br>
+                    <span style="color: #888; font-size: 10px;">🎁 Participate in the lottery to win a $5 gift</span>
+                </p>
+                <button id="freeGiftBtn" class="action-btn">
+                    <i class="fas fa-ticket-alt"></i> Participate in $5 Gift Lottery
+                </button>
+                <div id="freeGiftStatus" class="status-text">Not participated</div>
+            </div>
             
         </div>
         
