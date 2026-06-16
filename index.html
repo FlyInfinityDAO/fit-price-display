@@ -11,27 +11,27 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-    background-image: url('background-desktop.png');
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    padding: 20px;
-    min-height: 100vh;
-}
+            background-image: url('background-desktop.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+        }
 
-@media (max-width: 768px) {
-    body {
-        background-image: url('background-mobile.png');
-        background-size: contain;
-        background-position: center top;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        background-color: #0F0F0F;
-        padding: 15px;
-    }
-}
+        @media (max-width: 768px) {
+            body {
+                background-image: url('background-mobile.png');
+                background-size: contain;
+                background-position: center top;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-color: #0F0F0F;
+                padding: 15px;
+            }
+        }
         
         body::before {
             content: "";
@@ -91,7 +91,6 @@
         .action-btn { background: transparent; border: 1px solid #00C896; color: #00C896; padding: 10px 24px; border-radius: 40px; font-size: 14px; font-weight: bold; text-decoration: none; display: inline-block; transition: all 0.3s ease; }
         .action-btn:hover { background: #00C896; color: #0F0F0F; transform: translateY(-2px); }
         
-        /* Special button DApp - Bigger and more prominent */
         .dapp-btn {
             background: linear-gradient(135deg, #00C896, #008a6a);
             border: none;
@@ -106,7 +105,6 @@
             transform: translateY(-2px);
         }
         
-        /* Button Transactions In the footer */
         .transaction-link {
             display: inline-block;
             background: transparent;
@@ -209,41 +207,74 @@
 </head>
 <body>
 <div class="container">
+    <!-- Navigation -->
+    <div class="nav-bar">
+        <div class="page-title">
+            <i class="fas fa-chart-line"></i> <span data-i18n="site_title">Fly Infinity Token (FIT)</span>
+        </div>
+        <div class="nav-links" style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="index.html" class="nav-btn active" data-i18n="nav_dashboard"><i class="fas fa-chart-simple"></i> Dashboard</a>
+                <a href="compare.html" class="nav-btn" data-i18n="nav_comparison"><i class="fas fa-chart-line"></i> Comparison</a>
+            </div>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="transactions.html" class="nav-btn" data-i18n="nav_transactions"><i class="fas fa-history"></i> Transactions</a>
+                <a href="privacy.html" class="nav-btn" data-i18n="nav_privacy"><i class="fas fa-shield-alt"></i> Privacy</a>
+                <a href="warnings.html" class="nav-btn" data-i18n="nav_warnings"><i class="fas fa-exclamation-triangle"></i> Warnings</a>
+            </div>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="dapp.html" class="nav-btn" data-i18n="nav_dapp"><i class="fas fa-charging-station"></i> Buy Ownership Shares &amp; FIT</a>
+            </div>
+            <!-- Language Buttons -->
+            <div style="display: flex; gap: 4px; align-items: center; flex-wrap: wrap; margin-top: 5px; border-top: 1px solid rgba(0, 200, 150, 0.2); padding-top: 10px;">
+                <button onclick="switchLanguage('en')" class="lang-btn" data-lang="en" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇬🇧 EN</button>
+                <button onclick="switchLanguage('de')" class="lang-btn" data-lang="de" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇩🇪 DE</button>
+                <button onclick="switchLanguage('fr')" class="lang-btn" data-lang="fr" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇫🇷 FR</button>
+                <button onclick="switchLanguage('zh')" class="lang-btn" data-lang="zh" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇨🇳 中文</button>
+                <button onclick="switchLanguage('hi')" class="lang-btn" data-lang="hi" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇮🇳 HI</button>
+                <button onclick="switchLanguage('ar')" class="lang-btn" data-lang="ar" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇸🇦 AR</button>
+                <button onclick="switchLanguage('tr')" class="lang-btn" data-lang="tr" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇹🇷 TR</button>
+                <button onclick="switchLanguage('fa')" class="lang-btn" data-lang="fa" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇮🇷 FA</button>
+                <button onclick="switchLanguage('ru')" class="lang-btn" data-lang="ru" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇷🇺 RU</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Top Grid -->
     <div class="top-grid">
         <div class="card" style="text-align:center">
             <div class="header-with-logo">
                 <img src="logo.png" alt="FIT Logo" class="token-logo" onerror="this.style.display='none'">
-                <h1>Fly Infinity Token (FIT)</h1>
+                <h1 data-i18n="site_title">Fly Infinity Token (FIT)</h1>
             </div>
             <div style="background: #D4AF37; color: #0F0F0F; padding: 4px 12px; border-radius: 30px; font-size: 11px; display: inline-block;">🛡️ BNB Smart Chain (BSC) Mainnet</div>
-            <div style="margin: 20px 0 10px 0; color: #00C896;">Current Price</div>
+            <div style="margin: 20px 0 10px 0; color: #00C896;" data-i18n="current_price">Current Price</div>
             <div class="live-price" id="fit-price">—</div>
             <div class="usd-price" id="usd-price">≈ $— </div>
-            <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh Price</button>
+            <button class="refresh-btn" id="refreshBtn" data-i18n="refresh_price"><i class="fas fa-sync-alt"></i> Refresh Price</button>
         </div>
         <div class="card">
-            <div style="font-size:18px; margin-bottom:15px; text-align:center; color: #D4AF37;"><i class="fas fa-chart-line"></i> Token Statistics</div>
+            <div style="font-size:18px; margin-bottom:15px; text-align:center; color: #D4AF37;" data-i18n="token_statistics"><i class="fas fa-chart-line"></i> Token Statistics</div>
             <div class="stats-grid">
-                <div class="stat-card"><div class="stat-value" id="totalSupply">—</div><div class="stat-label">Total Supply</div></div>
-                <div class="stat-card"><div class="stat-value" id="daiBalance">—</div><div class="stat-label">$ Reserve</div></div>
-                <div class="stat-card"><div class="stat-value" id="marketCap">—</div><div class="stat-label">Market Cap ($)</div></div>
-                <div class="stat-card"><div class="stat-value" id="holderCount">—</div><div class="stat-label">Total Holders</div></div>
+                <div class="stat-card"><div class="stat-value" id="totalSupply">—</div><div class="stat-label" data-i18n="total_supply">Total Supply</div></div>
+                <div class="stat-card"><div class="stat-value" id="daiBalance">—</div><div class="stat-label" data-i18n="reserve">$ Reserve</div></div>
+                <div class="stat-card"><div class="stat-value" id="marketCap">—</div><div class="stat-label" data-i18n="market_cap">Market Cap ($)</div></div>
+                <div class="stat-card"><div class="stat-value" id="holderCount">—</div><div class="stat-label" data-i18n="holders">Total Holders</div></div>
             </div>
             <div style="margin-top:15px; background:#1a1a1a; border-radius:16px; padding:12px; border-left: 3px solid #00C896;">
-                <div style="color:#00C896; font-size:11px;">📜 Contract Address</div>
+                <div style="color:#00C896; font-size:11px;" data-i18n="contract_address">📜 Contract Address</div>
                 <div style="font-family:monospace; font-size:12px; color:#D4AF37; word-break:break-all;">0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa</div>
-                <div style="color:#00C896; font-size:11px; margin-top:8px;">💰 Pricing Formula</div>
-                <div style="font-size:12px; color:#D4AF37;">Price = Reserve / Total Supply</div>
+                <div style="color:#00C896; font-size:11px; margin-top:8px;" data-i18n="pricing_formula">💰 Pricing Formula</div>
+                <div style="font-size:12px; color:#D4AF37;" data-i18n="price_reserve_supply">Price = Reserve / Total Supply</div>
             </div>
         </div>
     </div>
 
-    <!-- Action Buttons - Remove buttons Buy/Sell FIT And adding a button DApp -->
+    <!-- Action Buttons -->
     <div class="action-buttons">
         <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="action-btn"><i class="fas fa-file-contract"></i> BscScan</a>
         <a href="https://github.com/FlyInfinityDAO/Fly-Infinity-Token/blob/main/FIT%20-%20White%20Paper.pdf" target="_blank" class="action-btn"><i class="fas fa-file-pdf"></i> Whitepaper</a>
-        <a href="dapp.html" class="action-btn dapp-btn"><i class="fas fa-rocket"></i> Buy Ownership Shares &amp; FIT</a>
+        <a href="dapp.html" class="action-btn dapp-btn" data-i18n="nav_dapp"><i class="fas fa-rocket"></i> Buy Ownership Shares &amp; FIT</a>
     </div>
 
     <!-- Chart -->
@@ -254,22 +285,22 @@
 
     <!-- Historical Price Changes -->
     <div class="card">
-        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;"><i class="fas fa-calendar-alt"></i> Historical Price Changes</div>
+        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="historical_changes"><i class="fas fa-calendar-alt"></i> Historical Price Changes</div>
         <div class="price-stats-grid" id="priceStatsGrid">
-            <div class="price-stat-card"><div class="price-stat-label">24h Ago</div><div class="price-stat-value" id="price1d">—</div><div class="price-stat-change" id="change1d">—</div></div>
-            <div class="price-stat-card"><div class="price-stat-label">7 Days Ago</div><div class="price-stat-value" id="price7d">—</div><div class="price-stat-change" id="change7d">—</div></div>
-            <div class="price-stat-card"><div class="price-stat-label">30 Days Ago</div><div class="price-stat-value" id="price30d">—</div><div class="price-stat-change" id="change30d">—</div></div>
-            <div class="price-stat-card"><div class="price-stat-label">90 Days Ago</div><div class="price-stat-value" id="price90d">—</div><div class="price-stat-change" id="change90d">—</div></div>
-            <div class="price-stat-card"><div class="price-stat-label">180 Days Ago</div><div class="price-stat-value" id="price180d">—</div><div class="price-stat-change" id="change180d">—</div></div>
-            <div class="price-stat-card"><div class="price-stat-label">365 Days Ago</div><div class="price-stat-value" id="price365d">—</div><div class="price-stat-change" id="change365d">—</div></div>
-            <div class="price-stat-card"><div class="price-stat-label">Initial Price</div><div class="price-stat-value" id="priceInitial">—</div><div class="price-stat-change" id="changeInitial">—</div></div>
+            <div class="price-stat-card"><div class="price-stat-label" data-i18n="24h_ago">24h Ago</div><div class="price-stat-value" id="price1d">—</div><div class="price-stat-change" id="change1d">—</div></div>
+            <div class="price-stat-card"><div class="price-stat-label" data-i18n="7d_ago">7 Days Ago</div><div class="price-stat-value" id="price7d">—</div><div class="price-stat-change" id="change7d">—</div></div>
+            <div class="price-stat-card"><div class="price-stat-label" data-i18n="30d_ago">30 Days Ago</div><div class="price-stat-value" id="price30d">—</div><div class="price-stat-change" id="change30d">—</div></div>
+            <div class="price-stat-card"><div class="price-stat-label" data-i18n="90d_ago">90 Days Ago</div><div class="price-stat-value" id="price90d">—</div><div class="price-stat-change" id="change90d">—</div></div>
+            <div class="price-stat-card"><div class="price-stat-label" data-i18n="180d_ago">180 Days Ago</div><div class="price-stat-value" id="price180d">—</div><div class="price-stat-change" id="change180d">—</div></div>
+            <div class="price-stat-card"><div class="price-stat-label" data-i18n="365d_ago">365 Days Ago</div><div class="price-stat-value" id="price365d">—</div><div class="price-stat-change" id="change365d">—</div></div>
+            <div class="price-stat-card"><div class="price-stat-label" data-i18n="initial_price">Initial Price</div><div class="price-stat-value" id="priceInitial">—</div><div class="price-stat-change" id="changeInitial">—</div></div>
         </div>
     </div>
 
     <!-- Comparison Button -->
     <div class="card" style="text-align: center;">
         <a href="compare.html" class="comparison-btn" style="display: inline-flex; align-items: center; gap: 12px; background: transparent; border: 1px solid #00C896; color: #00C896; padding: 14px 32px; border-radius: 50px; font-size: 16px; font-weight: bold; text-decoration: none; transition: all 0.3s ease;">
-            <i class="fas fa-chart-line"></i> Comparison With Other Crypto
+            <i class="fas fa-chart-line"></i> <span data-i18n="nav_comparison">Comparison With Other Crypto</span>
             <i class="fas fa-arrow-right"></i>
         </a>
         <p style="color: #888; font-size: 11px; margin-top: 12px;">
@@ -279,78 +310,74 @@
     
     <!-- Profit Simulator -->
     <div class="card">
-        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;">💰 Profit Simulator</div>
+        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="profit_simulator">💰 Profit Simulator</div>
         
         <div class="simulator-input">
             <div class="input-group">
-                <label>Your FIT Holdings</label>
+                <label data-i18n="your_holdings">Your FIT Holdings</label>
                 <input type="number" id="fitAmount" value="1000" step="100">
             </div>
         </div>
         
         <div class="growth-badges">
-            <span class="growth-badge" id="dailyGrowthRate">📈 Daily: --</span>
-            <span class="growth-badge" id="weeklyGrowthRate">📊 Weekly: --</span>
-            <span class="growth-badge" id="monthlyGrowthRate">📅 Monthly: --</span>
+            <span class="growth-badge" id="dailyGrowthRate">📈 <span data-i18n="daily">Daily</span>: --</span>
+            <span class="growth-badge" id="weeklyGrowthRate">📊 <span data-i18n="weekly">Weekly</span>: --</span>
+            <span class="growth-badge" id="monthlyGrowthRate">📅 <span data-i18n="monthly">Monthly</span>: --</span>
         </div>
         
         <div class="simulator-results">
-            <div class="result-box"><div class="result-period">24h Projection</div><div class="result-return" id="dailyReturn">—</div></div>
-            <div class="result-box"><div class="result-period">7 Days Projection</div><div class="result-return" id="weeklyReturn">—</div></div>
-            <div class="result-box"><div class="result-period">30 Days Projection</div><div class="result-return" id="monthlyReturn">—</div></div>
+            <div class="result-box"><div class="result-period" data-i18n="24h_projection">24h Projection</div><div class="result-return" id="dailyReturn">—</div></div>
+            <div class="result-box"><div class="result-period" data-i18n="7d_projection">7 Days Projection</div><div class="result-return" id="weeklyReturn">—</div></div>
+            <div class="result-box"><div class="result-period" data-i18n="30d_projection">30 Days Projection</div><div class="result-return" id="monthlyReturn">—</div></div>
         </div>
-        <p style="color:#888; text-align:center; font-size:10px; margin-top:15px;">⚡ Based on past growth rates. Not financial advice.</p>
+        <p style="color:#888; text-align:center; font-size:10px; margin-top:15px;" data-i18n="based_on_growth">⚡ Based on past growth rates. Not financial advice.</p>
     </div>
 
     <!-- Fee Calculator -->
     <div class="card">
         <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;">
-            <i class="fas fa-calculator"></i> Fee Calculator (Buy: 3% | Sell: 6%)
+            <i class="fas fa-calculator"></i> <span data-i18n="fee_calculator">Fee Calculator</span> (<span data-i18n="buy_fee">Buy: 3%</span> | <span data-i18n="sell_fee">Sell: 6%</span>)
         </div>
         
         <div class="fee-grid">
             <div class="fee-box buy">
-                <div class="fee-title buy">
-                    <i class="fas fa-shopping-cart"></i> Buy Calculator
-                </div>
+                <div class="fee-title buy" data-i18n="buy_calculator"><i class="fas fa-shopping-cart"></i> Buy Calculator</div>
                 <div class="input-group" style="width: 100%; margin-bottom: 15px;">
-                    <label style="color: #00C896; font-size: 12px;">💰 Amount (USD)</label>
+                    <label style="color: #00C896; font-size: 12px;" data-i18n="amount_usd">💰 Amount (USD)</label>
                     <input type="number" id="buyAmountUSD" placeholder="Enter USD amount" step="10" style="width: 100%;">
                 </div>
                 <div class="fee-result">
-                    <div class="fee-result-label">You will receive</div>
+                    <div class="fee-result-label" data-i18n="you_will_receive">You will receive</div>
                     <div class="fee-result-amount" id="buyFITAmount">— FIT</div>
                     <div class="fee-breakdown" id="buyFeeBreakdown">—</div>
                 </div>
             </div>
             
             <div class="fee-box sell">
-                <div class="fee-title sell">
-                    <i class="fas fa-chart-line"></i> Sell Calculator
-                </div>
+                <div class="fee-title sell" data-i18n="sell_calculator"><i class="fas fa-chart-line"></i> Sell Calculator</div>
                 <div class="input-group" style="width: 100%; margin-bottom: 15px;">
-                    <label style="color: #00C896; font-size: 12px;">🪙 Amount (FIT)</label>
+                    <label style="color: #00C896; font-size: 12px;" data-i18n="amount_fit">🪙 Amount (FIT)</label>
                     <input type="number" id="sellAmountFIT" placeholder="Enter FIT amount" step="100" style="width: 100%;">
                 </div>
                 <div class="fee-result">
-                    <div class="fee-result-label">You will receive</div>
+                    <div class="fee-result-label" data-i18n="you_will_receive">You will receive</div>
                     <div class="fee-result-amount" id="sellUSDAmount">— USD</div>
                     <div class="fee-breakdown" id="sellFeeBreakdown">—</div>
                 </div>
             </div>
         </div>
         <div class="fee-price-note">
-            <i class="fas fa-info-circle"></i> Fees: 3% for Buy | 6% for Sell | Current Price: <span id="calcPrice">—</span> USD
+            <i class="fas fa-info-circle"></i> <span data-i18n="fee_info">Fees: 3% for Buy | 6% for Sell</span> | <span data-i18n="current_price">Current Price</span>: <span id="calcPrice">—</span> USD
         </div>
     </div>
 
     <div class="footer">
         <div style="display: flex; justify-content: center; gap: 15px; margin-top: 10px; flex-wrap: wrap;">
-            <a href="transactions.html" class="action-btn" style="border-color: #00C896; color: #00C896;"><i class="fas fa-external-link-alt"></i> View All Transactions</a>
-            <a href="privacy.html" class="action-btn" style="border-color: #00C896; color: #00C896;"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
-            <a href="warnings.html" class="action-btn" style="border-color: #00C896; color: #00C896;"><i class="fas fa-exclamation-triangle"></i> Important Warnings</a>
+            <a href="transactions.html" class="action-btn" style="border-color: #00C896; color: #00C896;" data-i18n="nav_transactions"><i class="fas fa-external-link-alt"></i> View All Transactions</a>
+            <a href="privacy.html" class="action-btn" style="border-color: #00C896; color: #00C896;" data-i18n="nav_privacy"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+            <a href="warnings.html" class="action-btn" style="border-color: #00C896; color: #00C896;" data-i18n="nav_warnings"><i class="fas fa-exclamation-triangle"></i> Important Warnings</a>
         </div>
-        Historical data recorded daily • Fly Infinity DAO
+        <span data-i18n="historical_data_daily">Historical data recorded daily</span> • Fly Infinity DAO
     </div>
 
 <script>
@@ -367,7 +394,6 @@
     let currentPriceDAI = 0;
     let priceChart = null;
     
-    // ==================== ETHERSCAN API V2 FOR HOLDERS COUNT ====================
     const ETHERSCAN_API_KEY = "SKAHDN5X6UMW388XSIY1B8VH99WJ4KH7S4";
     const BSC_CHAIN_ID = 56;
     
@@ -382,7 +408,6 @@
         }
     }
     
-    // ==================== LOAD ALL DATA FROM JSON (HISTORY + CHART) ====================
     let historicalStats = {
         days1: null, days7: null, days30: null, days90: null, 
         days180: null, days365: null, initial: null, current: null
@@ -465,7 +490,6 @@
         });
     }
     
-    // ==================== LIVE PRICE ====================
     async function fetchLive() {
         try {
             let raw = await contract.Price();
@@ -489,7 +513,6 @@
         } catch(e) { console.error(e); }
     }
     
-    // ==================== STATS ====================
     function updateStats() {
         const fmt = (p) => (p !== null && p !== undefined) ? `$${p.toFixed(6)}` : "—";
         const chg = (oldP) => { 
@@ -536,7 +559,6 @@
         document.getElementById("monthlyReturn").innerHTML = `+$${(val * m / 100).toFixed(2)}`;
     }
     
-    // ==================== FEE CALCULATOR ====================
     const BUY_FEE = 0.03;
     const SELL_FEE = 0.06;
     
@@ -601,5 +623,81 @@
     setInterval(fetchLive, 30000);
     setInterval(loadAllFromJSON, 60000);
 </script>
+
+<!-- ==================== MULTI LANGUAGE SYSTEM ==================== -->
+<script>
+    let translations = {};
+    let currentLang = localStorage.getItem('site_lang') || 'en';
+
+    async function loadLanguage(lang) {
+        try {
+            const response = await fetch(`languages/${lang}.json?t=${Date.now()}`);
+            if (!response.ok) throw new Error('Language file not found');
+            translations = await response.json();
+            currentLang = lang;
+            localStorage.setItem('site_lang', lang);
+            applyTranslations();
+            highlightActiveLang();
+            if (lang === 'ar' || lang === 'fa') {
+                document.documentElement.dir = 'rtl';
+            } else {
+                document.documentElement.dir = 'ltr';
+            }
+        } catch(e) {
+            console.error('Language load error:', e);
+            if (lang !== 'en') {
+                loadLanguage('en');
+            }
+        }
+    }
+
+    function applyTranslations() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[key] !== undefined && translations[key] !== null) {
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+                    if (el.hasAttribute('placeholder')) {
+                        el.placeholder = translations[key];
+                    } else {
+                        el.textContent = translations[key];
+                    }
+                } else {
+                    el.textContent = translations[key];
+                }
+            }
+        });
+        
+        if (translations.site_title) {
+            document.title = translations.site_title;
+        }
+    }
+
+    function highlightActiveLang() {
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            const lang = btn.getAttribute('data-lang');
+            if (lang === currentLang) {
+                btn.style.background = '#00C896';
+                btn.style.color = '#0F0F0F';
+                btn.style.borderColor = '#00C896';
+                btn.style.boxShadow = '0 0 15px rgba(0, 200, 150, 0.3)';
+            } else {
+                btn.style.background = 'transparent';
+                btn.style.color = '#00C896';
+                btn.style.borderColor = '#00C896';
+                btn.style.boxShadow = 'none';
+            }
+        });
+    }
+
+    function switchLanguage(lang) {
+        if (lang === currentLang) return;
+        loadLanguage(lang);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadLanguage(currentLang);
+    });
+</script>
+
 </body>
 </html>
