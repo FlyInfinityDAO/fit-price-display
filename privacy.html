@@ -20,16 +20,16 @@
         }
         
         @media (max-width: 768px) {
-    body {
-        background-image: url('background-mobile.png');
-        background-size: contain;
-        background-position: center top;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        background-color: #0F0F0F;
-        padding: 15px;
-    }
-}
+            body {
+                background-image: url('background-mobile.png');
+                background-size: contain;
+                background-position: center top;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-color: #0F0F0F;
+                padding: 15px;
+            }
+        }
         
         body::before {
             content: "";
@@ -66,8 +66,9 @@
         
         .nav-links {
             display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
         
         .nav-btn {
@@ -199,26 +200,41 @@
 </head>
 <body>
 <div class="container">
-             <!-- Navigation -->
+    <!-- Navigation -->
     <div class="nav-bar">
         <div class="page-title">
-            <i class="fas fa-shield-alt"></i> Fly Infinity Token (FIT)
+            <i class="fas fa-shield-alt"></i> <span data-i18n="site_title">Fly Infinity Token (FIT)</span>
         </div>
         <div class="nav-links">
             <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-                <a href="index.html" class="nav-btn"><i class="fas fa-chart-simple"></i> Dashboard</a>
-                <a href="transactions.html" class="nav-btn"><i class="fas fa-history"></i> Transactions</a>
+                <a href="index.html" class="nav-btn" data-i18n="nav_dashboard"><i class="fas fa-chart-simple"></i> Dashboard</a>
+                <a href="transactions.html" class="nav-btn" data-i18n="nav_transactions"><i class="fas fa-history"></i> Transactions</a>
             </div>
-            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-top: 5px;">
-                <a href="warnings.html" class="nav-btn nav-btn-warning"><i class="fas fa-exclamation-triangle"></i> Important Warnings</a>
-                <a href="dapp.html" class="nav-btn"><i class="fas fa-charging-station"></i> Buy Ownership Shares & FIT</a>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="warnings.html" class="nav-btn" data-i18n="nav_warnings"><i class="fas fa-exclamation-triangle"></i> Important Warnings</a>
+                <a href="dapp.html" class="nav-btn" data-i18n="nav_dapp"><i class="fas fa-charging-station"></i> Buy Ownership Shares &amp; FIT</a>
+            </div>
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="compare.html" class="nav-btn" data-i18n="nav_comparison"><i class="fas fa-chart-line"></i> Comparison</a>
+            </div>
+            <!-- Language Buttons -->
+            <div style="display: flex; gap: 4px; align-items: center; flex-wrap: wrap; margin-top: 5px; border-top: 1px solid rgba(0, 200, 150, 0.2); padding-top: 10px;">
+                <button onclick="switchLanguage('en')" class="lang-btn" data-lang="en" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇬🇧 EN</button>
+                <button onclick="switchLanguage('de')" class="lang-btn" data-lang="de" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇩🇪 DE</button>
+                <button onclick="switchLanguage('fr')" class="lang-btn" data-lang="fr" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇫🇷 FR</button>
+                <button onclick="switchLanguage('zh')" class="lang-btn" data-lang="zh" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇨🇳 中文</button>
+                <button onclick="switchLanguage('hi')" class="lang-btn" data-lang="hi" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇮🇳 HI</button>
+                <button onclick="switchLanguage('ar')" class="lang-btn" data-lang="ar" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇸🇦 AR</button>
+                <button onclick="switchLanguage('tr')" class="lang-btn" data-lang="tr" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇹🇷 TR</button>
+                <button onclick="switchLanguage('fa')" class="lang-btn" data-lang="fa" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇮🇷 FA</button>
+                <button onclick="switchLanguage('ru')" class="lang-btn" data-lang="ru" style="background: transparent; border: 1px solid #00C896; color: #00C896; padding: 3px 8px; border-radius: 14px; font-size: 10px; cursor: pointer; transition: all 0.3s ease; font-weight: bold;">🇷🇺 RU</button>
             </div>
         </div>
     </div>
 
     <!-- Privacy Content -->
     <div class="privacy-card">
-        <h1 class="privacy-title">Privacy Policy & Decentralized Structure</h1>
+        <h1 class="privacy-title" data-i18n="privacy_title">Privacy Policy & Decentralized Structure</h1>
         
         <div class="badge-container">
             <span class="badge"><i class="fas fa-chart-line"></i> Non-Diminishing</span>
@@ -296,11 +312,87 @@
     </div>
 
     <div class="footer">
-        <a href="index.html">Dashboard</a> | 
-        <a href="transactions.html">Transactions</a> | 
-        <a href="privacy.html">Privacy Policy</a><br>
+        <a href="index.html" data-i18n="nav_dashboard">Dashboard</a> | 
+        <a href="transactions.html" data-i18n="nav_transactions">Transactions</a> | 
+        <a href="privacy.html" data-i18n="nav_privacy">Privacy Policy</a><br>
         Fly Infinity DAO
     </div>
 </div>
+
+<!-- ==================== MULTI LANGUAGE SYSTEM ==================== -->
+<script>
+    let translations = {};
+    let currentLang = localStorage.getItem('site_lang') || 'en';
+
+    async function loadLanguage(lang) {
+        try {
+            const response = await fetch(`languages/${lang}.json?t=${Date.now()}`);
+            if (!response.ok) throw new Error('Language file not found');
+            translations = await response.json();
+            currentLang = lang;
+            localStorage.setItem('site_lang', lang);
+            applyTranslations();
+            highlightActiveLang();
+            if (lang === 'ar' || lang === 'fa') {
+                document.documentElement.dir = 'rtl';
+            } else {
+                document.documentElement.dir = 'ltr';
+            }
+        } catch(e) {
+            console.error('Language load error:', e);
+            if (lang !== 'en') {
+                loadLanguage('en');
+            }
+        }
+    }
+
+    function applyTranslations() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[key] !== undefined && translations[key] !== null) {
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+                    if (el.hasAttribute('placeholder')) {
+                        el.placeholder = translations[key];
+                    } else {
+                        el.textContent = translations[key];
+                    }
+                } else {
+                    el.textContent = translations[key];
+                }
+            }
+        });
+        
+        if (translations.site_title) {
+            document.title = translations.site_title;
+        }
+    }
+
+    function highlightActiveLang() {
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            const lang = btn.getAttribute('data-lang');
+            if (lang === currentLang) {
+                btn.style.background = '#00C896';
+                btn.style.color = '#0F0F0F';
+                btn.style.borderColor = '#00C896';
+                btn.style.boxShadow = '0 0 15px rgba(0, 200, 150, 0.3)';
+            } else {
+                btn.style.background = 'transparent';
+                btn.style.color = '#00C896';
+                btn.style.borderColor = '#00C896';
+                btn.style.boxShadow = 'none';
+            }
+        });
+    }
+
+    function switchLanguage(lang) {
+        if (lang === currentLang) return;
+        loadLanguage(lang);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadLanguage(currentLang);
+    });
+</script>
+
 </body>
 </html>
