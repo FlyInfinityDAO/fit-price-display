@@ -683,9 +683,9 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
             <!-- Step 1 -->
             <div style="background: #1a1a1a; border-radius: 20px; padding: 20px; border-left: 3px solid #00C896;">
-                <div style="color:#00C896; font-size:14px; margin-bottom:10px;"><span class="step-badge">1</span> Approve DAI (100 DAI)</div>
-                <p style="color:#888; font-size:11px; margin-bottom:15px;">Allow Network contract to spend 100 DAI</p>
-                <button id="approveNetworkBtn" class="action-btn" style="margin-top:0;">Approve 100 DAI</button>
+                <div style="color:#00C896; font-size:14px; margin-bottom:10px;"><span class="step-badge">1</span> Approve DAI</div>
+                <p style="color:#888; font-size:11px; margin-bottom:15px;">Allow Fly Infinity Network contract to spend DAI</p>
+                <button id="approveNetworkBtn" class="action-btn" style="margin-top:0;">Approve DAI</button>
                 <div id="networkApproveStatus" class="status-text">Not approved</div>
             </div>
             
@@ -717,10 +717,10 @@
         <!-- Buy FIT -->
         <div class="action-card">
             <div class="action-title"><i class="fas fa-shopping-cart"></i> 🟢 Buy FIT</div>
-            <p style="color:#888; font-size:11px; margin-bottom:15px;">First approve DAI (1000 DAI), then buy</p>
+            <p style="color:#888; font-size:11px; margin-bottom:15px;">Allow Fly Infinity Token contract to spend DAI, then buy</p>
             
             <div class="input-group">
-                <button id="approveTokenBtn" class="action-btn" style="margin-top:0;">Approve 1000 DAI for Token</button>
+                <button id="approveTokenBtn" class="action-btn" style="margin-top:0;">Approve DAI</button>
                 <div id="tokenApproveStatus" class="status-text">Not approved</div>
             </div>
             
@@ -1023,7 +1023,7 @@
             const tx = await daiContract.approve(FIT_NETWORK_ADDRESS, amount);
             setStatus("networkApproveStatus", "⏳ Waiting for confirmation...", "");
             await tx.wait();
-            setStatus("networkApproveStatus", "✅ Approved 100 DAI for Network!", "success");
+            setStatus("networkApproveStatus", "✅ Approved DAI for Network!", "success");
             await checkAllAllowances();
         } catch(e) {
             console.error("Approve Network Error:", e);
@@ -1043,7 +1043,7 @@
             const tx = await daiContract.approve(FIT_TOKEN_ADDRESS, amount);
             setStatus("tokenApproveStatus", "⏳ Waiting for confirmation...", "");
             await tx.wait();
-            setStatus("tokenApproveStatus", "✅ Approved 1000 DAI for Token!", "success");
+            setStatus("tokenApproveStatus", "✅ Approved DAI for Token!", "success");
             await checkAllAllowances();
         } catch(e) {
             console.error("Approve Token Error:", e);
@@ -1074,7 +1074,6 @@
         try {
             setStatus("ownerStatus", "⏳ Registering...", "");
             
-            // Try to estimate gas first
             let gasEstimate;
             try {
                 gasEstimate = await fitNetworkContract.estimateGas.BeCome_Owner(referrer);
@@ -1357,21 +1356,34 @@
                 gasEstimate = 200000;
             }
             
-            const tx = await fitNetworkContract.Agreement_Road_Map({
-                gasLimit: gasEstimate
-            });
-            
-            setStatus("agreementStatus", "⏳ Waiting for confirmation...", "");
-            await tx.wait();
-            setStatus("agreementStatus", "✅ Agreement signed successfully!", "success");
+            try {
+                const tx = await fitNetworkContract.Agreement_Road_Map({
+                    gasLimit: gasEstimate
+                });
+                
+                setStatus("agreementStatus", "⏳ Waiting for confirmation...", "");
+                await tx.wait();
+                setStatus("agreementStatus", "✅ Agreement signed successfully!", "success");
+            } catch(txError) {
+                const errorMsg = txError.message || "";
+                if (errorMsg.includes("You Did Before") || errorMsg.includes("already signed")) {
+                    setStatus("agreementStatus", "✅ You have already signed the agreement!", "success");
+                } else {
+                    throw txError;
+                }
+            }
         } catch(e) {
             console.error("Agreement Error:", e);
-            if (e.message.includes("Just Wallet")) {
+            const errorMsg = e.message || "";
+            
+            if (errorMsg.includes("Just Wallet")) {
                 setStatus("agreementStatus", "❌ This function can only be called from a standard wallet (EOA). Please use MetaMask, Trust Wallet, or TokenPocket.", "error");
-            } else if (e.message.includes("execution reverted")) {
-                setStatus("agreementStatus", "❌ You may have already signed the agreement.", "error");
+            } else if (errorMsg.includes("execution reverted")) {
+                setStatus("agreementStatus", "❌ Transaction failed. You may have already signed the agreement or conditions not met.", "error");
+            } else if (errorMsg.includes("already signed")) {
+                setStatus("agreementStatus", "✅ You have already signed the agreement!", "success");
             } else {
-                setStatus("agreementStatus", "❌ Error: " + e.message, "error");
+                setStatus("agreementStatus", "❌ Error: " + errorMsg, "error");
             }
         }
     }
