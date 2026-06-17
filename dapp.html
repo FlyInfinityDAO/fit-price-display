@@ -520,10 +520,6 @@
             color: #00C896;
         }
         
-        .agreement-body .red {
-            color: #ff4444;
-        }
-        
         .agreement-body .box-gold {
             background: rgba(212, 175, 55, 0.06);
             border-left: 3px solid #D4AF37;
@@ -535,14 +531,6 @@
         .agreement-body .box-green {
             background: rgba(0, 200, 150, 0.06);
             border-left: 3px solid #00C896;
-            padding: 14px 18px;
-            border-radius: 12px;
-            margin-bottom: 18px;
-        }
-        
-        .agreement-body .box-red {
-            background: rgba(255, 68, 68, 0.08);
-            border-left: 3px solid #ff4444;
             padding: 14px 18px;
             border-radius: 12px;
             margin-bottom: 18px;
@@ -695,9 +683,9 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
             <!-- Step 1 -->
             <div style="background: #1a1a1a; border-radius: 20px; padding: 20px; border-left: 3px solid #00C896;">
-                <div style="color:#00C896; font-size:14px; margin-bottom:10px;"><span class="step-badge">1</span> Approve DAI</div>
-                <p style="color:#888; font-size:11px; margin-bottom:15px;">Allow Network contract to spend DAI</p>
-                <button id="approveNetworkBtn" class="action-btn" style="margin-top:0;">Approve DAI</button>
+                <div style="color:#00C896; font-size:14px; margin-bottom:10px;"><span class="step-badge">1</span> Approve DAI (100 DAI)</div>
+                <p style="color:#888; font-size:11px; margin-bottom:15px;">Allow Network contract to spend 100 DAI</p>
+                <button id="approveNetworkBtn" class="action-btn" style="margin-top:0;">Approve 100 DAI</button>
                 <div id="networkApproveStatus" class="status-text">Not approved</div>
             </div>
             
@@ -729,10 +717,10 @@
         <!-- Buy FIT -->
         <div class="action-card">
             <div class="action-title"><i class="fas fa-shopping-cart"></i> 🟢 Buy FIT</div>
-            <p style="color:#888; font-size:11px; margin-bottom:15px;">First approve DAI, then buy</p>
+            <p style="color:#888; font-size:11px; margin-bottom:15px;">First approve DAI (1000 DAI), then buy</p>
             
             <div class="input-group">
-                <button id="approveTokenBtn" class="action-btn" style="margin-top:0;">Approve DAI</button>
+                <button id="approveTokenBtn" class="action-btn" style="margin-top:0;">Approve 1000 DAI for Token</button>
                 <div id="tokenApproveStatus" class="status-text">Not approved</div>
             </div>
             
@@ -1035,7 +1023,7 @@
             const tx = await daiContract.approve(FIT_NETWORK_ADDRESS, amount);
             setStatus("networkApproveStatus", "⏳ Waiting for confirmation...", "");
             await tx.wait();
-            setStatus("networkApproveStatus", "✅ Approved DAI for Network!", "success");
+            setStatus("networkApproveStatus", "✅ Approved 100 DAI for Network!", "success");
             await checkAllAllowances();
         } catch(e) {
             console.error("Approve Network Error:", e);
@@ -1055,7 +1043,7 @@
             const tx = await daiContract.approve(FIT_TOKEN_ADDRESS, amount);
             setStatus("tokenApproveStatus", "⏳ Waiting for confirmation...", "");
             await tx.wait();
-            setStatus("tokenApproveStatus", "✅ Approved DAI for Token!", "success");
+            setStatus("tokenApproveStatus", "✅ Approved 1000 DAI for Token!", "success");
             await checkAllAllowances();
         } catch(e) {
             console.error("Approve Token Error:", e);
@@ -1085,13 +1073,33 @@
         
         try {
             setStatus("ownerStatus", "⏳ Registering...", "");
-            const tx = await fitNetworkContract.BeCome_Owner(referrer);
+            
+            // Try to estimate gas first
+            let gasEstimate;
+            try {
+                gasEstimate = await fitNetworkContract.estimateGas.BeCome_Owner(referrer);
+                gasEstimate = gasEstimate.mul(120).div(100);
+            } catch(estimateError) {
+                console.log("Gas estimation failed, using manual gas limit");
+                gasEstimate = 500000;
+            }
+            
+            const tx = await fitNetworkContract.BeCome_Owner(referrer, {
+                gasLimit: gasEstimate
+            });
+            
             setStatus("ownerStatus", "⏳ Waiting for confirmation...", "");
             await tx.wait();
             setStatus("ownerStatus", "✅ Successfully registered as Owner!", "success");
         } catch(e) {
             console.error("Become Owner Error:", e);
-            setStatus("ownerStatus", "❌ Error: " + e.message, "error");
+            if (e.message.includes("Just Wallet")) {
+                setStatus("ownerStatus", "❌ This function can only be called from a standard wallet (EOA). Please use MetaMask, Trust Wallet, or TokenPocket.", "error");
+            } else if (e.message.includes("execution reverted")) {
+                setStatus("ownerStatus", "❌ Transaction reverted. Please check requirements: Referrer must exist, you must have signed agreement, etc.", "error");
+            } else {
+                setStatus("ownerStatus", "❌ Error: " + e.message, "error");
+            }
         }
     }
     
@@ -1320,7 +1328,6 @@
     function closeAgreementModalFn() {
         agreementModal.classList.remove('active');
         document.body.style.overflow = '';
-        // After closing the modal, if user has viewed the agreement, sign it
         if (agreementViewed) {
             signAgreement();
         }
@@ -1341,15 +1348,13 @@
         try {
             setStatus("agreementStatus", "⏳ Signing agreement...", "");
             
-            // Try to estimate gas first
             let gasEstimate;
             try {
                 gasEstimate = await fitNetworkContract.estimateGas.Agreement_Road_Map();
-                // Add 20% buffer
                 gasEstimate = gasEstimate.mul(120).div(100);
             } catch(estimateError) {
                 console.log("Gas estimation failed, using manual gas limit");
-                gasEstimate = 200000; // Manual gas limit
+                gasEstimate = 200000;
             }
             
             const tx = await fitNetworkContract.Agreement_Road_Map({
@@ -1361,19 +1366,17 @@
             setStatus("agreementStatus", "✅ Agreement signed successfully!", "success");
         } catch(e) {
             console.error("Agreement Error:", e);
-            
-            // Check for specific error messages
             if (e.message.includes("Just Wallet")) {
                 setStatus("agreementStatus", "❌ This function can only be called from a standard wallet (EOA). Please use MetaMask, Trust Wallet, or TokenPocket.", "error");
             } else if (e.message.includes("execution reverted")) {
-                setStatus("agreementStatus", "❌ Transaction reverted. You may have already signed the agreement.", "error");
+                setStatus("agreementStatus", "❌ You may have already signed the agreement.", "error");
             } else {
                 setStatus("agreementStatus", "❌ Error: " + e.message, "error");
             }
         }
     }
     
-    // Event listener for Agreement button - opens modal
+    // Event listener for Agreement button
     document.getElementById('agreementBtn').addEventListener('click', function(e) {
         e.preventDefault();
         if (!userAddress) {
@@ -1383,18 +1386,15 @@
         openAgreementModal();
     });
     
-    // Close modal events - after closing, sign the agreement
     closeAgreementModalBtn.addEventListener('click', confirmAgreementViewed);
     closeAgreementBtn.addEventListener('click', confirmAgreementViewed);
     
-    // Close on background click
     agreementModal.addEventListener('click', function(e) {
         if (e.target === agreementModal) {
             confirmAgreementViewed();
         }
     });
     
-    // Close with Escape key
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && agreementModal.classList.contains('active')) {
             confirmAgreementViewed();
@@ -1412,7 +1412,6 @@
     document.getElementById("buyBtn").addEventListener("click", buyFIT);
     document.getElementById("sellBtn").addEventListener("click", sellFIT);
     
-    // Gift Contract Event Listeners
     document.getElementById("joinGiftBtn").addEventListener("click", joinGiftContract);
     document.getElementById("freeGiftBtn").addEventListener("click", freeGift);
     
