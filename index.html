@@ -20,7 +20,7 @@
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
-            background-attachment: scroll;
+            background-attachment: fixed;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding: 20px;
             min-height: 100vh;
@@ -29,14 +29,12 @@
         @media (max-width: 768px) {
             body {
                 background-image: url('background-mobile.png');
-                background-size: cover;
+                background-size: contain;
                 background-position: center top;
                 background-repeat: no-repeat;
-                background-attachment: scroll;
+                background-attachment: fixed;
                 background-color: #0F0F0F;
                 padding: 15px;
-                min-height: 100vh;
-                min-height: -webkit-fill-available;
             }
         }
         
