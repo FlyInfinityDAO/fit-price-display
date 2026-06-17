@@ -1340,14 +1340,36 @@
         
         try {
             setStatus("agreementStatus", "⏳ Signing agreement...", "");
-            // Function: Agreement_Road_Map() - 0x443e9954
-            const tx = await fitNetworkContract.Agreement_Road_Map();
+            
+            // Try to estimate gas first
+            let gasEstimate;
+            try {
+                gasEstimate = await fitNetworkContract.estimateGas.Agreement_Road_Map();
+                // Add 20% buffer
+                gasEstimate = gasEstimate.mul(120).div(100);
+            } catch(estimateError) {
+                console.log("Gas estimation failed, using manual gas limit");
+                gasEstimate = 200000; // Manual gas limit
+            }
+            
+            const tx = await fitNetworkContract.Agreement_Road_Map({
+                gasLimit: gasEstimate
+            });
+            
             setStatus("agreementStatus", "⏳ Waiting for confirmation...", "");
             await tx.wait();
             setStatus("agreementStatus", "✅ Agreement signed successfully!", "success");
         } catch(e) {
             console.error("Agreement Error:", e);
-            setStatus("agreementStatus", "❌ Error: " + e.message, "error");
+            
+            // Check for specific error messages
+            if (e.message.includes("Just Wallet")) {
+                setStatus("agreementStatus", "❌ This function can only be called from a standard wallet (EOA). Please use MetaMask, Trust Wallet, or TokenPocket.", "error");
+            } else if (e.message.includes("execution reverted")) {
+                setStatus("agreementStatus", "❌ Transaction reverted. You may have already signed the agreement.", "error");
+            } else {
+                setStatus("agreementStatus", "❌ Error: " + e.message, "error");
+            }
         }
     }
     
