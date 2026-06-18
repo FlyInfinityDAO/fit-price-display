@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Fly Infinity Token - Price Comparison</title>
 
-        <!-- ===== FAVICON ===== -->
+    <!-- ===== FAVICON ===== -->
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     
@@ -429,33 +429,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             flex-wrap: wrap;
             margin-top: 15px;
-        }
-        
-        .history-controls select {
-            background: #1a1a1a;
-            border: 1px solid #00C896;
-            color: #D4AF37;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 13px;
-            cursor: pointer;
-        }
-        
-        .history-controls select:focus {
-            outline: none;
-            border-color: #D4AF37;
         }
         
         .history-controls button {
             background: transparent;
             border: 1px solid #00C896;
             color: #00C896;
-            padding: 6px 18px;
+            padding: 5px 14px;
             border-radius: 30px;
-            font-size: 13px;
+            font-size: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -468,6 +453,21 @@
         .history-controls button.active {
             background: #00C896;
             color: #0F0F0F;
+        }
+        
+        .history-controls select {
+            background: #1a1a1a;
+            border: 1px solid #00C896;
+            color: #D4AF37;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .history-controls select:focus {
+            outline: none;
+            border-color: #D4AF37;
         }
         
         .history-date-display {
@@ -530,7 +530,7 @@
             <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
         </div>
         
-                <div class="sidebar-menu">
+        <div class="sidebar-menu">
             <a href="index.html">
                 <i class="fas fa-home"></i> Dashboard
             </a>
@@ -595,6 +595,7 @@
             <button id="historyTodayBtn" class="active">Today</button>
             <button id="historyYesterdayBtn">Yesterday</button>
             <button id="history7daysBtn">7 Days Ago</button>
+            <button id="history14daysBtn">14 Days Ago</button>
             <button id="history30daysBtn">30 Days Ago</button>
             <select id="historyDateSelect">
                 <option value="">Select a date...</option>
@@ -704,6 +705,348 @@
     let fitDates = [];
     let fitPrices = [];
     
+    // ===== TABLE HISTORY =====
+    const TABLE_TOKENS = [
+        { id: 'fit', symbol: 'FIT', name: 'Fly Infinity', color: '#D4AF37' },
+        { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin', color: '#F7931A' },
+        { id: 'ethereum', symbol: 'ETH', name: 'Ethereum', color: '#627EEA' },
+        { id: 'binancecoin', symbol: 'BNB', name: 'BNB', color: '#F3BA2F' },
+        { id: 'ripple', symbol: 'XRP', name: 'XRP', color: '#00AAE4' },
+        { id: 'solana', symbol: 'SOL', name: 'Solana', color: '#14F195' },
+        { id: 'cardano', symbol: 'ADA', name: 'Cardano', color: '#0033AD' },
+        { id: 'dogecoin', symbol: 'DOGE', name: 'Dogecoin', color: '#C2A633' },
+        { id: 'tron', symbol: 'TRX', name: 'TRON', color: '#FF0014' },
+        { id: 'zcash', symbol: 'ZEC', name: 'Zcash', color: '#F4B728' },
+        { id: 'stellar', symbol: 'XLM', name: 'Stellar', color: '#08B5E5' },
+        { id: 'pancakeswap', symbol: 'CAKE', name: 'PancakeSwap', color: '#D1884F' },
+        { id: 'toncoin', symbol: 'TON', name: 'Toncoin', color: '#0088CC' },
+        { id: 'shibainu', symbol: 'SHIB', name: 'Shiba Inu', color: '#E88D2A' },
+        { id: 'trump', symbol: 'TRUMP', name: 'Trump Token', color: '#E53935' }
+    ];
+
+    let tablePrices = {};
+    let historyData = { records: [] };
+    let currentHistoryDate = 'today';
+
+    // ===== LOAD HISTORY FROM GITHUB JSON =====
+    async function loadTableHistory() {
+        try {
+            const response = await fetch('price-history-table.json?t=' + Date.now());
+            if (response.ok) {
+                const data = await response.json();
+                if (data && data.records) {
+                    historyData = data;
+                    updateHistoryDateSelect();
+                    console.log('✅ Table history loaded:', historyData.records.length, 'records');
+                    return true;
+                }
+            }
+        } catch(e) {
+            console.log('⚠️ Table history not found, using empty');
+        }
+        return false;
+    }
+
+    // ===== SAVE TODAY'S PRICES TO HISTORY =====
+    function saveTodayToHistory() {
+        const today = new Date().toISOString().split('T')[0];
+        
+        // Check if today already exists
+        const existingIndex = historyData.records.findIndex(r => r.date === today);
+        if (existingIndex !== -1) {
+            // Update existing
+            historyData.records[existingIndex].prices = {};
+            for (const token of TABLE_TOKENS) {
+                if (tablePrices[token.id]) {
+                    historyData.records[existingIndex].prices[token.id] = {
+                        price: tablePrices[token.id].current,
+                        yesterday: tablePrices[token.id].yesterday,
+                        change: tablePrices[token.id].change
+                    };
+                }
+            }
+        } else {
+            // Add new record
+            const record = { date: today, prices: {} };
+            for (const token of TABLE_TOKENS) {
+                if (tablePrices[token.id]) {
+                    record.prices[token.id] = {
+                        price: tablePrices[token.id].current,
+                        yesterday: tablePrices[token.id].yesterday,
+                        change: tablePrices[token.id].change
+                    };
+                }
+            }
+            historyData.records.push(record);
+            // Keep only last 90 days
+            if (historyData.records.length > 90) {
+                historyData.records = historyData.records.slice(-90);
+            }
+        }
+        
+        // Sort records by date
+        historyData.records.sort((a, b) => a.date.localeCompare(b.date));
+    }
+
+    // ===== GET PRICES FOR A DATE =====
+    function getPricesForDate(date) {
+        const record = historyData.records.find(r => r.date === date);
+        return record ? record.prices : null;
+    }
+
+    // ===== GET ALL DATES =====
+    function getHistoryDates() {
+        return historyData.records.map(r => r.date);
+    }
+
+    // ===== UPDATE DATE SELECT DROPDOWN =====
+    function updateHistoryDateSelect() {
+        const dates = getHistoryDates();
+        const select = document.getElementById('historyDateSelect');
+        const currentValue = select.value;
+        select.innerHTML = '<option value="">Select a date...</option>';
+        dates.forEach(date => {
+            const option = document.createElement('option');
+            option.value = date;
+            option.textContent = date;
+            select.appendChild(option);
+        });
+        if (currentValue && dates.includes(currentValue)) {
+            select.value = currentValue;
+        }
+    }
+
+    // ===== UPDATE TABLE WITH SPECIFIC DATE =====
+    function updateTableWithHistory(date) {
+        const tbody = document.getElementById('priceTableBody');
+        tbody.innerHTML = '';
+        
+        const isToday = date === 'today' || date === null;
+        const dateDisplay = isToday ? 'Today (Live Data)' : date;
+        document.getElementById('historyDateDisplay').innerHTML = `Showing: ${dateDisplay}`;
+        
+        let priceData;
+        if (isToday) {
+            priceData = tablePrices;
+        } else {
+            priceData = getPricesForDate(date);
+            if (!priceData) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 30px; color: #888;">No data available for this date</td></tr>`;
+                return;
+            }
+        }
+        
+        let hasData = false;
+        for (const token of TABLE_TOKENS) {
+            const data = priceData[token.id];
+            if (!data) continue;
+            hasData = true;
+            
+            const change = data.change || 0;
+            const currentPrice = data.price || 0;
+            const yesterdayPrice = data.yesterday || data.price || 0;
+            
+            const changeColor = change > 0 ? '#00C896' : (change < 0 ? '#ff4444' : '#888');
+            const changeIcon = change > 0 ? '▲' : (change < 0 ? '▼' : '—');
+            const changeBg = change > 0 ? 'rgba(0, 200, 150, 0.08)' : (change < 0 ? 'rgba(255, 68, 68, 0.08)' : 'transparent');
+            
+            const tr = document.createElement('tr');
+            tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+            tr.style.transition = 'background 0.2s ease';
+            tr.onmouseover = () => tr.style.background = 'rgba(255,255,255,0.03)';
+            tr.onmouseout = () => tr.style.background = 'transparent';
+            
+            tr.innerHTML = `
+                <td style="padding: 10px 15px; color: ${token.color}; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ${token.color};"></span>
+                    ${token.symbol} (${token.name})
+                </td>
+                <td style="padding: 10px 15px; text-align: right; color: #c0d0e8;">${formatPriceValue(yesterdayPrice)}</td>
+                <td style="padding: 10px 15px; text-align: right; color: #D4AF37; font-weight: bold;">${formatPriceValue(currentPrice)}</td>
+                <td style="padding: 10px 15px; text-align: right; color: ${changeColor}; background: ${changeBg}; border-radius: 8px; font-weight: bold;">
+                    ${changeIcon} ${Math.abs(change).toFixed(2)}%
+                </td>
+            `;
+            
+            tbody.appendChild(tr);
+        }
+        
+        if (!hasData) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 30px; color: #888;">No data available for this date</td></tr>`;
+        }
+    }
+
+    // ===== FETCH LIVE PRICES =====
+    async function fetchTablePrices() {
+        const ids = TABLE_TOKENS.filter(t => t.id !== 'fit').map(t => t.id).join(',');
+        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`;
+        
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            let hasPriceData = false;
+            
+            for (const token of TABLE_TOKENS) {
+                if (token.id !== 'fit' && data[token.id]) {
+                    const currentPrice = data[token.id].usd;
+                    const change24h = data[token.id].usd_24h_change || 0;
+                    const yesterdayPrice = currentPrice / (1 + change24h / 100);
+                    tablePrices[token.id] = { current: currentPrice, yesterday: yesterdayPrice, change: change24h };
+                    hasPriceData = true;
+                }
+            }
+            
+            // Get FIT price from contract
+            try {
+                const raw = await contract.Price();
+                const currentPrice = parseFloat(ethers.utils.formatEther(raw));
+                let yesterdayPrice = currentPrice;
+                if (fitPrices.length >= 2) {
+                    yesterdayPrice = fitPrices[fitPrices.length - 2] || currentPrice;
+                }
+                const change24h = ((currentPrice - yesterdayPrice) / yesterdayPrice) * 100;
+                tablePrices['fit'] = { current: currentPrice, yesterday: yesterdayPrice, change: change24h };
+                hasPriceData = true;
+            } catch(e) {
+                console.error("Error fetching FIT price:", e);
+            }
+            
+            // Save today's data to history
+            if (hasPriceData) {
+                saveTodayToHistory();
+            }
+            
+            updateHistoryDateSelect();
+            currentHistoryDate = 'today';
+            updateTableWithHistory('today');
+            document.getElementById('tableLastUpdate').innerHTML = new Date().toLocaleString();
+        } catch(e) {
+            console.error("Error fetching table prices:", e);
+            useFallbackTableData();
+        }
+    }
+
+    // ===== FALLBACK DATA =====
+    function useFallbackTableData() {
+        const fallbackData = {
+            bitcoin: { current: 64175.20, yesterday: 62893.16, change: 2.04 },
+            fit: { current: 6.3345, yesterday: 6.3052, change: 0.46 },
+            ethereum: { current: 1679.84, yesterday: 1648.35, change: 1.91 },
+            binancecoin: { current: 607.92, yesterday: 599.58, change: 1.39 },
+            ripple: { current: 1.145, yesterday: 1.113, change: 2.87 },
+            solana: { current: 68.23, yesterday: 65.50, change: 4.17 },
+            cardano: { current: 0.1727, yesterday: 0.1657, change: 4.22 },
+            dogecoin: { current: 0.08771, yesterday: 0.08496, change: 3.24 },
+            tron: { current: 0.3172, yesterday: 0.3209, change: -1.15 },
+            zcash: { current: 28.50, yesterday: 29.10, change: -2.06 },
+            stellar: { current: 0.105, yesterday: 0.103, change: 1.94 },
+            pancakeswap: { current: 2.80, yesterday: 2.75, change: 1.82 },
+            toncoin: { current: 1.746, yesterday: 1.625, change: 7.45 },
+            shibainu: { current: 0.000015, yesterday: 0.0000145, change: 3.45 },
+            trump: { current: 0.08, yesterday: 0.085, change: -5.88 }
+        };
+        
+        let hasData = false;
+        for (const token of TABLE_TOKENS) {
+            if (fallbackData[token.id]) {
+                tablePrices[token.id] = fallbackData[token.id];
+                hasData = true;
+            }
+        }
+        
+        if (hasData) {
+            saveTodayToHistory();
+        }
+        
+        updateHistoryDateSelect();
+        currentHistoryDate = 'today';
+        updateTableWithHistory('today');
+        document.getElementById('tableLastUpdate').innerHTML = new Date().toLocaleString() + ' (fallback)';
+    }
+
+    function formatPriceValue(price) {
+        if (price === undefined || price === null || isNaN(price)) return '—';
+        if (price >= 1000) return '$' + price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        if (price >= 1) return '$' + price.toFixed(4);
+        if (price >= 0.01) return '$' + price.toFixed(4);
+        if (price >= 0.000001) return '$' + price.toFixed(8);
+        return '$' + price.toFixed(10);
+    }
+
+    // ===== HISTORY CONTROLS =====
+    document.getElementById('historyTodayBtn').addEventListener('click', function() {
+        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentHistoryDate = 'today';
+        updateTableWithHistory('today');
+    });
+
+    document.getElementById('historyYesterdayBtn').addEventListener('click', function() {
+        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const dates = getHistoryDates();
+        if (dates.length > 0) {
+            const yesterday = dates[dates.length - 1];
+            currentHistoryDate = yesterday;
+            updateTableWithHistory(yesterday);
+        }
+    });
+
+    document.getElementById('history7daysBtn').addEventListener('click', function() {
+        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const dates = getHistoryDates();
+        if (dates.length > 7) {
+            const date = dates[dates.length - 7];
+            currentHistoryDate = date;
+            updateTableWithHistory(date);
+        }
+    });
+
+    document.getElementById('history14daysBtn').addEventListener('click', function() {
+        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const dates = getHistoryDates();
+        if (dates.length > 14) {
+            const date = dates[dates.length - 14];
+            currentHistoryDate = date;
+            updateTableWithHistory(date);
+        }
+    });
+
+    document.getElementById('history30daysBtn').addEventListener('click', function() {
+        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const dates = getHistoryDates();
+        if (dates.length > 30) {
+            const date = dates[dates.length - 30];
+            currentHistoryDate = date;
+            updateTableWithHistory(date);
+        }
+    });
+
+    document.getElementById('historyGoBtn').addEventListener('click', function() {
+        const select = document.getElementById('historyDateSelect');
+        const date = select.value;
+        if (date) {
+            document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+            currentHistoryDate = date;
+            updateTableWithHistory(date);
+        }
+    });
+
+    // ===== REFRESH TABLE =====
+    document.getElementById('refreshTableBtn').addEventListener('click', function() {
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+        this.disabled = true;
+        fetchTablePrices().finally(() => {
+            this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Table';
+            this.disabled = false;
+        });
+    });
+
+    // ===== LOAD CACHE =====
     async function loadCache() {
         try {
             const response = await fetch('crypto-cache.json?t=' + Date.now());
@@ -721,6 +1064,7 @@
         return false;
     }
     
+    // ===== LOAD FIT DATA =====
     async function loadFITData() {
         try {
             const response = await fetch('price-history.json?t=' + Date.now());
@@ -746,6 +1090,7 @@
         }
     }
     
+    // ===== GET TOKEN DATA =====
     function getTokenData(tokenId) {
         if (tokenId === 'fit') {
             return { dates: [...fitDates], prices: [...fitPrices] };
@@ -957,6 +1302,7 @@
         
         await loadCache();
         await loadFITData();
+        await loadTableHistory();
         buildTokenSelector();
         await switchToken('fit');
         
@@ -980,291 +1326,13 @@
                 }
             } catch(e) {}
         }, 30000);
+        
+        // Load table data
+        setTimeout(() => {
+            fetchTablePrices();
+            setInterval(fetchTablePrices, 60000);
+        }, 1000);
     }
-    
-    // ==================== PRICE TABLE WITH HISTORY ====================
-    const TABLE_TOKENS = [
-        { id: 'fit', symbol: 'FIT', name: 'Fly Infinity', color: '#D4AF37' },
-        { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin', color: '#F7931A' },
-        { id: 'ethereum', symbol: 'ETH', name: 'Ethereum', color: '#627EEA' },
-        { id: 'binancecoin', symbol: 'BNB', name: 'BNB', color: '#F3BA2F' },
-        { id: 'ripple', symbol: 'XRP', name: 'XRP', color: '#00AAE4' },
-        { id: 'solana', symbol: 'SOL', name: 'Solana', color: '#14F195' },
-        { id: 'cardano', symbol: 'ADA', name: 'Cardano', color: '#0033AD' },
-        { id: 'dogecoin', symbol: 'DOGE', name: 'Dogecoin', color: '#C2A633' },
-        { id: 'tron', symbol: 'TRX', name: 'TRON', color: '#FF0014' },
-        { id: 'zcash', symbol: 'ZEC', name: 'Zcash', color: '#F4B728' },
-        { id: 'stellar', symbol: 'XLM', name: 'Stellar', color: '#08B5E5' },
-        { id: 'pancakeswap', symbol: 'CAKE', name: 'PancakeSwap', color: '#D1884F' },
-        { id: 'toncoin', symbol: 'TON', name: 'Toncoin', color: '#0088CC' },
-        { id: 'shibainu', symbol: 'SHIB', name: 'Shiba Inu', color: '#E88D2A' },
-        { id: 'trump', symbol: 'TRUMP', name: 'Trump Token', color: '#E53935' }
-    ];
-
-    let tablePrices = {};
-    let historyDates = [];
-    let historicalTableData = {};
-    let currentHistoryDate = null;
-
-    // Load historical data from cache
-    function loadHistoricalTableData() {
-        if (!cacheData || !cacheData.historicalData) return;
-        
-        // Build list of dates from all tokens
-        const dateSet = new Set();
-        for (const token of TABLE_TOKENS) {
-            if (cacheData.historicalData[token.id]) {
-                const dates = cacheData.historicalData[token.id].dates || [];
-                dates.forEach(d => dateSet.add(d));
-            }
-        }
-        historyDates = Array.from(dateSet).sort();
-        
-        // Populate select dropdown
-        const select = document.getElementById('historyDateSelect');
-        select.innerHTML = '<option value="">Select a date...</option>';
-        historyDates.forEach(date => {
-            const option = document.createElement('option');
-            option.value = date;
-            option.textContent = date;
-            select.appendChild(option);
-        });
-        
-        // Store historical prices for each token by date
-        for (const token of TABLE_TOKENS) {
-            if (cacheData.historicalData[token.id]) {
-                const data = cacheData.historicalData[token.id];
-                const priceMap = {};
-                for (let i = 0; i < data.dates.length; i++) {
-                    priceMap[data.dates[i]] = data.prices[i];
-                }
-                historicalTableData[token.id] = priceMap;
-            }
-        }
-    }
-
-    function getHistoricalPrice(tokenId, date) {
-        if (historicalTableData[tokenId] && historicalTableData[tokenId][date]) {
-            return historicalTableData[tokenId][date];
-        }
-        return null;
-    }
-
-    function updateTableWithHistory(date) {
-        const tbody = document.getElementById('priceTableBody');
-        tbody.innerHTML = '';
-        
-        const isToday = date === 'today' || date === null;
-        const dateDisplay = isToday ? 'Today (Live Data)' : date;
-        document.getElementById('historyDateDisplay').innerHTML = `Showing: ${dateDisplay}`;
-        
-        for (const token of TABLE_TOKENS) {
-            let currentPrice, yesterdayPrice, change;
-            
-            if (isToday) {
-                // Use live data
-                const data = tablePrices[token.id];
-                if (!data) continue;
-                currentPrice = data.current;
-                yesterdayPrice = data.yesterday;
-                change = data.change;
-            } else {
-                // Use historical data
-                const price = getHistoricalPrice(token.id, date);
-                if (!price) continue;
-                
-                // Find previous day's price
-                const dateIndex = historyDates.indexOf(date);
-                let prevPrice = null;
-                if (dateIndex > 0) {
-                    for (let i = dateIndex - 1; i >= 0; i--) {
-                        const prev = getHistoricalPrice(token.id, historyDates[i]);
-                        if (prev !== null) {
-                            prevPrice = prev;
-                            break;
-                        }
-                    }
-                }
-                
-                currentPrice = price;
-                yesterdayPrice = prevPrice || price;
-                change = prevPrice ? ((price - prevPrice) / prevPrice) * 100 : 0;
-            }
-            
-            const changeColor = change > 0 ? '#00C896' : (change < 0 ? '#ff4444' : '#888');
-            const changeIcon = change > 0 ? '▲' : (change < 0 ? '▼' : '—');
-            const changeBg = change > 0 ? 'rgba(0, 200, 150, 0.08)' : (change < 0 ? 'rgba(255, 68, 68, 0.08)' : 'transparent');
-            
-            const tr = document.createElement('tr');
-            tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
-            tr.style.transition = 'background 0.2s ease';
-            tr.onmouseover = () => tr.style.background = 'rgba(255,255,255,0.03)';
-            tr.onmouseout = () => tr.style.background = 'transparent';
-            
-            tr.innerHTML = `
-                <td style="padding: 10px 15px; color: ${token.color}; font-weight: bold; display: flex; align-items: center; gap: 8px;">
-                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ${token.color};"></span>
-                    ${token.symbol} (${token.name})
-                </td>
-                <td style="padding: 10px 15px; text-align: right; color: #c0d0e8;">${formatPriceValue(yesterdayPrice)}</td>
-                <td style="padding: 10px 15px; text-align: right; color: #D4AF37; font-weight: bold;">${formatPriceValue(currentPrice)}</td>
-                <td style="padding: 10px 15px; text-align: right; color: ${changeColor}; background: ${changeBg}; border-radius: 8px; font-weight: bold;">
-                    ${changeIcon} ${Math.abs(change).toFixed(2)}%
-                </td>
-            `;
-            
-            tbody.appendChild(tr);
-        }
-    }
-
-    async function fetchTablePrices() {
-        const ids = TABLE_TOKENS.filter(t => t.id !== 'fit').map(t => t.id).join(',');
-        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`;
-        
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            for (const token of TABLE_TOKENS) {
-                if (token.id !== 'fit' && data[token.id]) {
-                    const currentPrice = data[token.id].usd;
-                    const change24h = data[token.id].usd_24h_change || 0;
-                    const yesterdayPrice = currentPrice / (1 + change24h / 100);
-                    tablePrices[token.id] = { current: currentPrice, yesterday: yesterdayPrice, change: change24h };
-                }
-            }
-            
-            // Get FIT price from contract
-            try {
-                const raw = await contract.Price();
-                const currentPrice = parseFloat(ethers.utils.formatEther(raw));
-                let yesterdayPrice = currentPrice;
-                if (fitPrices.length >= 2) {
-                    yesterdayPrice = fitPrices[fitPrices.length - 2] || currentPrice;
-                }
-                const change24h = ((currentPrice - yesterdayPrice) / yesterdayPrice) * 100;
-                tablePrices['fit'] = { current: currentPrice, yesterday: yesterdayPrice, change: change24h };
-            } catch(e) {
-                console.error("Error fetching FIT price:", e);
-            }
-            
-            // Load historical data from cache
-            loadHistoricalTableData();
-            
-            // Update table with today's data
-            currentHistoryDate = 'today';
-            updateTableWithHistory('today');
-            document.getElementById('tableLastUpdate').innerHTML = new Date().toLocaleString();
-        } catch(e) {
-            console.error("Error fetching table prices:", e);
-            useFallbackTableData();
-        }
-    }
-
-    function useFallbackTableData() {
-        const fallbackData = {
-            bitcoin: { current: 64175.20, yesterday: 62893.16, change: 2.04 },
-            fit: { current: 6.3345, yesterday: 6.3052, change: 0.46 },
-            ethereum: { current: 1679.84, yesterday: 1648.35, change: 1.91 },
-            binancecoin: { current: 607.92, yesterday: 599.58, change: 1.39 },
-            ripple: { current: 1.145, yesterday: 1.113, change: 2.87 },
-            solana: { current: 68.23, yesterday: 65.50, change: 4.17 },
-            cardano: { current: 0.1727, yesterday: 0.1657, change: 4.22 },
-            dogecoin: { current: 0.08771, yesterday: 0.08496, change: 3.24 },
-            tron: { current: 0.3172, yesterday: 0.3209, change: -1.15 },
-            zcash: { current: 28.50, yesterday: 29.10, change: -2.06 },
-            stellar: { current: 0.105, yesterday: 0.103, change: 1.94 },
-            pancakeswap: { current: 2.80, yesterday: 2.75, change: 1.82 },
-            toncoin: { current: 1.746, yesterday: 1.625, change: 7.45 },
-            shibainu: { current: 0.000015, yesterday: 0.0000145, change: 3.45 },
-            trump: { current: 0.08, yesterday: 0.085, change: -5.88 }
-        };
-        
-        for (const token of TABLE_TOKENS) {
-            if (fallbackData[token.id]) {
-                tablePrices[token.id] = fallbackData[token.id];
-            }
-        }
-        
-        // Load historical data from cache even in fallback
-        loadHistoricalTableData();
-        currentHistoryDate = 'today';
-        updateTableWithHistory('today');
-        document.getElementById('tableLastUpdate').innerHTML = new Date().toLocaleString() + ' (fallback)';
-    }
-
-    function formatPriceValue(price) {
-        if (price === undefined || price === null || isNaN(price)) return '—';
-        if (price >= 1000) return '$' + price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        if (price >= 1) return '$' + price.toFixed(4);
-        if (price >= 0.01) return '$' + price.toFixed(4);
-        if (price >= 0.000001) return '$' + price.toFixed(8);
-        return '$' + price.toFixed(10);
-    }
-
-    // History Controls
-    document.getElementById('historyTodayBtn').addEventListener('click', function() {
-        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        currentHistoryDate = 'today';
-        updateTableWithHistory('today');
-    });
-
-    document.getElementById('historyYesterdayBtn').addEventListener('click', function() {
-        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        if (historyDates.length > 0) {
-            const yesterday = historyDates[historyDates.length - 1];
-            currentHistoryDate = yesterday;
-            updateTableWithHistory(yesterday);
-        }
-    });
-
-    document.getElementById('history7daysBtn').addEventListener('click', function() {
-        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        if (historyDates.length > 7) {
-            const date = historyDates[historyDates.length - 7];
-            currentHistoryDate = date;
-            updateTableWithHistory(date);
-        }
-    });
-
-    document.getElementById('history30daysBtn').addEventListener('click', function() {
-        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        if (historyDates.length > 30) {
-            const date = historyDates[historyDates.length - 30];
-            currentHistoryDate = date;
-            updateTableWithHistory(date);
-        }
-    });
-
-    document.getElementById('historyGoBtn').addEventListener('click', function() {
-        const select = document.getElementById('historyDateSelect');
-        const date = select.value;
-        if (date) {
-            document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
-            currentHistoryDate = date;
-            updateTableWithHistory(date);
-        }
-    });
-
-    // Refresh table
-    document.getElementById('refreshTableBtn').addEventListener('click', function() {
-        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-        this.disabled = true;
-        fetchTablePrices().finally(() => {
-            this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Table';
-            this.disabled = false;
-        });
-    });
-
-    // Load table data on page load
-    setTimeout(() => {
-        fetchTablePrices();
-        setInterval(fetchTablePrices, 60000); // Update every minute
-    }, 1000);
     
     init();
 </script>
