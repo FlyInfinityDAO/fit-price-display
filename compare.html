@@ -827,15 +827,15 @@
         
         let priceData;
         if (isToday) {
-            // Check if tablePrices has data
-            let hasData = false;
+            // Check if tablePrices has valid data (price > 0)
+            let hasValidData = false;
             for (const token of TABLE_TOKENS) {
-                if (tablePrices[token.id]) {
-                    hasData = true;
+                if (tablePrices[token.id] && tablePrices[token.id].current > 0) {
+                    hasValidData = true;
                     break;
                 }
             }
-            if (!hasData) {
+            if (!hasValidData) {
                 tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 30px; color: #888;">Loading today's data... Please wait or click Refresh</td></tr>`;
                 return;
             }
@@ -855,7 +855,7 @@
             hasData = true;
             
             const change = data.change || 0;
-            const currentPrice = data.price || 0;
+            const currentPrice = data.price || data.current || 0;
             const yesterdayPrice = data.yesterday || data.price || 0;
             
             const changeColor = change > 0 ? '#00C896' : (change < 0 ? '#ff4444' : '#888');
@@ -904,7 +904,12 @@
                     const currentPrice = data[token.id].usd;
                     const change24h = data[token.id].usd_24h_change || 0;
                     const yesterdayPrice = currentPrice / (1 + change24h / 100);
-                    tablePrices[token.id] = { current: currentPrice, yesterday: yesterdayPrice, change: change24h };
+                    tablePrices[token.id] = { 
+                        current: currentPrice, 
+                        price: currentPrice,
+                        yesterday: yesterdayPrice, 
+                        change: change24h 
+                    };
                     hasPriceData = true;
                 }
             }
@@ -918,7 +923,12 @@
                     yesterdayPrice = fitPrices[fitPrices.length - 2] || currentPrice;
                 }
                 const change24h = ((currentPrice - yesterdayPrice) / yesterdayPrice) * 100;
-                tablePrices['fit'] = { current: currentPrice, yesterday: yesterdayPrice, change: change24h };
+                tablePrices['fit'] = { 
+                    current: currentPrice, 
+                    price: currentPrice,
+                    yesterday: yesterdayPrice, 
+                    change: change24h 
+                };
                 hasPriceData = true;
             } catch(e) {
                 console.error("Error fetching FIT price:", e);
@@ -967,7 +977,13 @@
         let hasData = false;
         for (const token of TABLE_TOKENS) {
             if (fallbackData[token.id]) {
-                tablePrices[token.id] = fallbackData[token.id];
+                const data = fallbackData[token.id];
+                tablePrices[token.id] = { 
+                    current: data.current, 
+                    price: data.current,
+                    yesterday: data.yesterday, 
+                    change: data.change 
+                };
                 hasData = true;
             }
         }
