@@ -527,6 +527,59 @@
         <p style="color:#888; text-align:center; font-size:10px; margin-top:15px;">⚡ Based on past growth rates. Not financial advice.</p>
     </div>
 
+        <!-- Manual Profit Simulator -->
+    <div class="card">
+        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;">
+            <i class="fas fa-calculator"></i> Manual Profit Simulator
+        </div>
+        <p style="color:#888; text-align:center; font-size:12px; margin-bottom:20px;">
+            Calculate your potential profit based on daily price increase
+        </p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <!-- Input: FIT Holdings -->
+            <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #00C896;">
+                <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;">🪙 Your FIT Holdings</label>
+                <input type="number" id="manualFitAmount" value="100" step="10" style="width: 100%; background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
+            </div>
+            
+            <!-- Input: Daily Price Increase -->
+            <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #D4AF37;">
+                <label style="color: #D4AF37; font-size: 12px; display: block; margin-bottom: 8px;">📈 Daily Price Increase ($)</label>
+                <input type="number" id="dailyPriceIncrease" value="1.00" step="0.10" min="0.01" style="width: 100%; background: #0F0F0F; border: 1px solid #D4AF37; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
+            </div>
+        </div>
+        
+        <!-- Results -->
+        <div class="simulator-results" style="margin-top: 20px;">
+            <div class="result-box">
+                <div class="result-period">📅 Daily Profit</div>
+                <div class="result-return" id="manualDailyReturn">—</div>
+                <div style="color: #888; font-size: 10px; margin-top: 5px;" id="manualDailyDetails">—</div>
+            </div>
+            <div class="result-box">
+                <div class="result-period">📊 Weekly Profit (7 Days)</div>
+                <div class="result-return" id="manualWeeklyReturn">—</div>
+                <div style="color: #888; font-size: 10px; margin-top: 5px;" id="manualWeeklyDetails">—</div>
+            </div>
+            <div class="result-box">
+                <div class="result-period">📅 Monthly Profit (30 Days)</div>
+                <div class="result-return" id="manualMonthlyReturn">—</div>
+                <div style="color: #888; font-size: 10px; margin-top: 5px;" id="manualMonthlyDetails">—</div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 15px;">
+            <button id="manualSimBtn" class="action-btn" style="width: auto; padding: 10px 40px; border-color: #D4AF37; color: #D4AF37;">
+                <i class="fas fa-play"></i> Calculate
+            </button>
+        </div>
+        
+        <p style="color:#888; text-align:center; font-size:10px; margin-top:15px;">
+            ⚡ Based on your input values. Not financial advice.
+        </p>
+    </div>
+    
     <!-- Fee Calculator -->
     <div class="card">
         <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;">
@@ -820,6 +873,57 @@
     init();
     setInterval(fetchLive, 30000);
     setInterval(loadAllFromJSON, 60000);
+
+        // ==================== MANUAL PROFIT SIMULATOR ====================
+    function calculateManualProfit() {
+        const fitAmount = parseFloat(document.getElementById("manualFitAmount").value) || 0;
+        const dailyIncrease = parseFloat(document.getElementById("dailyPriceIncrease").value) || 0;
+        
+        if (fitAmount <= 0 || dailyIncrease <= 0) {
+            document.getElementById("manualDailyReturn").innerHTML = "—";
+            document.getElementById("manualDailyDetails").innerHTML = "Enter valid values";
+            document.getElementById("manualWeeklyReturn").innerHTML = "—";
+            document.getElementById("manualWeeklyDetails").innerHTML = "—";
+            document.getElementById("manualMonthlyReturn").innerHTML = "—";
+            document.getElementById("manualMonthlyDetails").innerHTML = "—";
+            return;
+        }
+        
+        // Calculate profits
+        const dailyProfit = fitAmount * dailyIncrease;
+        const weeklyProfit = dailyProfit * 7;
+        const monthlyProfit = dailyProfit * 30;
+        
+        // Format currency
+        const formatCurrency = (value) => {
+            return '$' + value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        };
+        
+        // Update Daily
+        document.getElementById("manualDailyReturn").innerHTML = formatCurrency(dailyProfit);
+        document.getElementById("manualDailyDetails").innerHTML = `${fitAmount} FIT × $${dailyIncrease.toFixed(2)} = ${formatCurrency(dailyProfit)}`;
+        
+        // Update Weekly
+        document.getElementById("manualWeeklyReturn").innerHTML = formatCurrency(weeklyProfit);
+        document.getElementById("manualWeeklyDetails").innerHTML = `${formatCurrency(dailyProfit)} × 7 days = ${formatCurrency(weeklyProfit)}`;
+        
+        // Update Monthly
+        document.getElementById("manualMonthlyReturn").innerHTML = formatCurrency(monthlyProfit);
+        document.getElementById("manualMonthlyDetails").innerHTML = `${formatCurrency(dailyProfit)} × 30 days = ${formatCurrency(monthlyProfit)}`;
+    }
+    
+    // Event listeners for manual simulator
+    document.getElementById("manualSimBtn").addEventListener("click", calculateManualProfit);
+    
+    // Auto-calculate on input change
+    document.getElementById("manualFitAmount").addEventListener("input", calculateManualProfit);
+    document.getElementById("dailyPriceIncrease").addEventListener("input", calculateManualProfit);
+    
+    // Calculate on load
+    document.addEventListener("DOMContentLoaded", function() {
+        calculateManualProfit();
+    });
+    
 </script>
 
 <!-- ===== SIDEBAR SCRIPT ===== -->
