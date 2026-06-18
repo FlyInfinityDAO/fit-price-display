@@ -424,6 +424,60 @@
             margin-top: 10px;
         }
         
+        /* ===== TABLE HISTORY STYLES ===== */
+        .history-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .history-controls select {
+            background: #1a1a1a;
+            border: 1px solid #00C896;
+            color: #D4AF37;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        
+        .history-controls select:focus {
+            outline: none;
+            border-color: #D4AF37;
+        }
+        
+        .history-controls button {
+            background: transparent;
+            border: 1px solid #00C896;
+            color: #00C896;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .history-controls button:hover {
+            background: #00C896;
+            color: #0F0F0F;
+        }
+        
+        .history-controls button.active {
+            background: #00C896;
+            color: #0F0F0F;
+        }
+        
+        .history-date-display {
+            color: #D4AF37;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+        }
+        
         @media (max-width: 768px) {
             .chart-container {
                 height: 400px;
@@ -509,7 +563,7 @@
         </div>
     </div>
 
-    <!-- ===== PRICE TABLE ===== -->
+    <!-- ===== PRICE TABLE WITH HISTORY ===== -->
     <div class="card">
         <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;">
             <i class="fas fa-table"></i> Live Price Comparison Table
@@ -535,6 +589,20 @@
                 </tbody>
             </table>
         </div>
+        
+        <!-- ===== HISTORY CONTROLS ===== -->
+        <div class="history-controls">
+            <button id="historyTodayBtn" class="active">Today</button>
+            <button id="historyYesterdayBtn">Yesterday</button>
+            <button id="history7daysBtn">7 Days Ago</button>
+            <button id="history30daysBtn">30 Days Ago</button>
+            <select id="historyDateSelect">
+                <option value="">Select a date...</option>
+            </select>
+            <button id="historyGoBtn">Go</button>
+        </div>
+        
+        <div class="history-date-display" id="historyDateDisplay">Showing: Today (Live Data)</div>
         
         <div style="text-align: center; margin-top: 15px;">
             <button id="refreshTableBtn" class="refresh-btn" style="padding: 6px 20px;">
@@ -914,8 +982,8 @@
         }, 30000);
     }
     
-    // ==================== PRICE TABLE ====================
-            const TABLE_TOKENS = [
+    // ==================== PRICE TABLE WITH HISTORY ====================
+    const TABLE_TOKENS = [
         { id: 'fit', symbol: 'FIT', name: 'Fly Infinity', color: '#D4AF37' },
         { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin', color: '#F7931A' },
         { id: 'ethereum', symbol: 'ETH', name: 'Ethereum', color: '#627EEA' },
@@ -934,6 +1002,120 @@
     ];
 
     let tablePrices = {};
+    let historyDates = [];
+    let historicalTableData = {};
+    let currentHistoryDate = null;
+
+    // Load historical data from cache
+    function loadHistoricalTableData() {
+        if (!cacheData || !cacheData.historicalData) return;
+        
+        // Build list of dates from all tokens
+        const dateSet = new Set();
+        for (const token of TABLE_TOKENS) {
+            if (cacheData.historicalData[token.id]) {
+                const dates = cacheData.historicalData[token.id].dates || [];
+                dates.forEach(d => dateSet.add(d));
+            }
+        }
+        historyDates = Array.from(dateSet).sort();
+        
+        // Populate select dropdown
+        const select = document.getElementById('historyDateSelect');
+        select.innerHTML = '<option value="">Select a date...</option>';
+        historyDates.forEach(date => {
+            const option = document.createElement('option');
+            option.value = date;
+            option.textContent = date;
+            select.appendChild(option);
+        });
+        
+        // Store historical prices for each token by date
+        for (const token of TABLE_TOKENS) {
+            if (cacheData.historicalData[token.id]) {
+                const data = cacheData.historicalData[token.id];
+                const priceMap = {};
+                for (let i = 0; i < data.dates.length; i++) {
+                    priceMap[data.dates[i]] = data.prices[i];
+                }
+                historicalTableData[token.id] = priceMap;
+            }
+        }
+    }
+
+    function getHistoricalPrice(tokenId, date) {
+        if (historicalTableData[tokenId] && historicalTableData[tokenId][date]) {
+            return historicalTableData[tokenId][date];
+        }
+        return null;
+    }
+
+    function updateTableWithHistory(date) {
+        const tbody = document.getElementById('priceTableBody');
+        tbody.innerHTML = '';
+        
+        const isToday = date === 'today' || date === null;
+        const dateDisplay = isToday ? 'Today (Live Data)' : date;
+        document.getElementById('historyDateDisplay').innerHTML = `Showing: ${dateDisplay}`;
+        
+        for (const token of TABLE_TOKENS) {
+            let currentPrice, yesterdayPrice, change;
+            
+            if (isToday) {
+                // Use live data
+                const data = tablePrices[token.id];
+                if (!data) continue;
+                currentPrice = data.current;
+                yesterdayPrice = data.yesterday;
+                change = data.change;
+            } else {
+                // Use historical data
+                const price = getHistoricalPrice(token.id, date);
+                if (!price) continue;
+                
+                // Find previous day's price
+                const dateIndex = historyDates.indexOf(date);
+                let prevPrice = null;
+                if (dateIndex > 0) {
+                    for (let i = dateIndex - 1; i >= 0; i--) {
+                        const prev = getHistoricalPrice(token.id, historyDates[i]);
+                        if (prev !== null) {
+                            prevPrice = prev;
+                            break;
+                        }
+                    }
+                }
+                
+                currentPrice = price;
+                yesterdayPrice = prevPrice || price;
+                change = prevPrice ? ((price - prevPrice) / prevPrice) * 100 : 0;
+            }
+            
+            const changeColor = change > 0 ? '#00C896' : (change < 0 ? '#ff4444' : '#888');
+            const changeIcon = change > 0 ? '▲' : (change < 0 ? '▼' : '—');
+            const changeBg = change > 0 ? 'rgba(0, 200, 150, 0.08)' : (change < 0 ? 'rgba(255, 68, 68, 0.08)' : 'transparent');
+            
+            const tr = document.createElement('tr');
+            tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+            tr.style.transition = 'background 0.2s ease';
+            tr.onmouseover = () => tr.style.background = 'rgba(255,255,255,0.03)';
+            tr.onmouseout = () => tr.style.background = 'transparent';
+            
+            tr.innerHTML = `
+                <td style="padding: 10px 15px; color: ${token.color}; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ${token.color};"></span>
+                    ${token.symbol} (${token.name})
+                </td>
+                <td style="padding: 10px 15px; text-align: right; color: #c0d0e8;">${formatPriceValue(yesterdayPrice)}</td>
+                <td style="padding: 10px 15px; text-align: right; color: #D4AF37; font-weight: bold;">${formatPriceValue(currentPrice)}</td>
+                <td style="padding: 10px 15px; text-align: right; color: ${changeColor}; background: ${changeBg}; border-radius: 8px; font-weight: bold;">
+                    ${changeIcon} ${Math.abs(change).toFixed(2)}%
+                </td>
+            `;
+            
+            tbody.appendChild(tr);
+        }
+    }
 
     async function fetchTablePrices() {
         const ids = TABLE_TOKENS.filter(t => t.id !== 'fit').map(t => t.id).join(',');
@@ -966,7 +1148,12 @@
                 console.error("Error fetching FIT price:", e);
             }
             
-            updateTable();
+            // Load historical data from cache
+            loadHistoricalTableData();
+            
+            // Update table with today's data
+            currentHistoryDate = 'today';
+            updateTableWithHistory('today');
             document.getElementById('tableLastUpdate').innerHTML = new Date().toLocaleString();
         } catch(e) {
             console.error("Error fetching table prices:", e);
@@ -974,7 +1161,7 @@
         }
     }
 
-        function useFallbackTableData() {
+    function useFallbackTableData() {
         const fallbackData = {
             bitcoin: { current: 64175.20, yesterday: 62893.16, change: 2.04 },
             fit: { current: 6.3345, yesterday: 6.3052, change: 0.46 },
@@ -998,7 +1185,11 @@
                 tablePrices[token.id] = fallbackData[token.id];
             }
         }
-        updateTable();
+        
+        // Load historical data from cache even in fallback
+        loadHistoricalTableData();
+        currentHistoryDate = 'today';
+        updateTableWithHistory('today');
         document.getElementById('tableLastUpdate').innerHTML = new Date().toLocaleString() + ' (fallback)';
     }
 
@@ -1011,40 +1202,53 @@
         return '$' + price.toFixed(10);
     }
 
-    function updateTable() {
-        const tbody = document.getElementById('priceTableBody');
-        tbody.innerHTML = '';
-        
-        for (const token of TABLE_TOKENS) {
-            const data = tablePrices[token.id];
-            if (!data) continue;
-            
-            const change = data.change || 0;
-            const changeColor = change > 0 ? '#00C896' : (change < 0 ? '#ff4444' : '#888');
-            const changeIcon = change > 0 ? '▲' : (change < 0 ? '▼' : '—');
-            const changeBg = change > 0 ? 'rgba(0, 200, 150, 0.08)' : (change < 0 ? 'rgba(255, 68, 68, 0.08)' : 'transparent');
-            
-            const tr = document.createElement('tr');
-            tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
-            tr.style.transition = 'background 0.2s ease';
-            tr.onmouseover = () => tr.style.background = 'rgba(255,255,255,0.03)';
-            tr.onmouseout = () => tr.style.background = 'transparent';
-            
-            tr.innerHTML = `
-                <td style="padding: 10px 15px; color: ${token.color}; font-weight: bold; display: flex; align-items: center; gap: 8px;">
-                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ${token.color};"></span>
-                    ${token.symbol} (${token.name})
-                </td>
-                <td style="padding: 10px 15px; text-align: right; color: #c0d0e8;">${formatPriceValue(data.yesterday)}</td>
-                <td style="padding: 10px 15px; text-align: right; color: #D4AF37; font-weight: bold;">${formatPriceValue(data.current)}</td>
-                <td style="padding: 10px 15px; text-align: right; color: ${changeColor}; background: ${changeBg}; border-radius: 8px; font-weight: bold;">
-                    ${changeIcon} ${Math.abs(change).toFixed(2)}%
-                </td>
-            `;
-            
-            tbody.appendChild(tr);
+    // History Controls
+    document.getElementById('historyTodayBtn').addEventListener('click', function() {
+        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentHistoryDate = 'today';
+        updateTableWithHistory('today');
+    });
+
+    document.getElementById('historyYesterdayBtn').addEventListener('click', function() {
+        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        if (historyDates.length > 0) {
+            const yesterday = historyDates[historyDates.length - 1];
+            currentHistoryDate = yesterday;
+            updateTableWithHistory(yesterday);
         }
-    }
+    });
+
+    document.getElementById('history7daysBtn').addEventListener('click', function() {
+        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        if (historyDates.length > 7) {
+            const date = historyDates[historyDates.length - 7];
+            currentHistoryDate = date;
+            updateTableWithHistory(date);
+        }
+    });
+
+    document.getElementById('history30daysBtn').addEventListener('click', function() {
+        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        if (historyDates.length > 30) {
+            const date = historyDates[historyDates.length - 30];
+            currentHistoryDate = date;
+            updateTableWithHistory(date);
+        }
+    });
+
+    document.getElementById('historyGoBtn').addEventListener('click', function() {
+        const select = document.getElementById('historyDateSelect');
+        const date = select.value;
+        if (date) {
+            document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+            currentHistoryDate = date;
+            updateTableWithHistory(date);
+        }
+    });
 
     // Refresh table
     document.getElementById('refreshTableBtn').addEventListener('click', function() {
