@@ -1,0 +1,49 @@
+name: Save Table Price History
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # هر 6 ساعت
+  workflow_dispatch:  # اجرای دستی
+
+jobs:
+  save-history:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Save price history
+        run: |
+          node -e "
+            const fs = require('fs');
+            const historyFile = 'price-history-table.json';
+            let history = { records: [] };
+            if (fs.existsSync(historyFile)) {
+              history = JSON.parse(fs.readFileSync(historyFile, 'utf8'));
+            }
+            const today = new Date().toISOString().split('T')[0];
+            // Check if today already exists
+            const existing = history.records.findIndex(r => r.date === today);
+            if (existing === -1) {
+              // Create empty record for today (will be filled by users)
+              history.records.push({ date: today, prices: {} });
+              history.records.sort((a, b) => a.date.localeCompare(b.date));
+              fs.writeFileSync(historyFile, JSON.stringify(history, null, 2));
+              console.log('✅ Created empty record for', today);
+            } else {
+              console.log('ℹ️ Record for', today, 'already exists');
+            }
+          "
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.github.com"
+          git add price-history-table.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "🤖 Auto-create price history record [skip ci]"
+          git push
