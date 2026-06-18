@@ -509,6 +509,44 @@
         </div>
     </div>
 
+    <!-- ===== PRICE TABLE ===== -->
+    <div class="card">
+        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;">
+            <i class="fas fa-table"></i> Live Price Comparison Table
+        </div>
+        <p style="color:#888; text-align:center; font-size:11px; margin-bottom:20px;">
+            Real-time price changes over the last 24 hours
+        </p>
+        
+        <div style="overflow-x: auto;">
+            <table id="priceTable" style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                <thead>
+                    <tr style="background: #1a1a1a; border-bottom: 2px solid rgba(0, 200, 150, 0.3);">
+                        <th style="padding: 12px 15px; text-align: left; color: #D4AF37; font-weight: bold;">Coin</th>
+                        <th style="padding: 12px 15px; text-align: right; color: #888; font-weight: bold;">Price (24h Ago)</th>
+                        <th style="padding: 12px 15px; text-align: right; color: #888; font-weight: bold;">Current Price</th>
+                        <th style="padding: 12px 15px; text-align: right; color: #888; font-weight: bold;">24h Change</th>
+                    </tr>
+                </thead>
+                <tbody id="priceTableBody">
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 30px; color: #888;">Loading data...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div style="text-align: center; margin-top: 15px;">
+            <button id="refreshTableBtn" class="refresh-btn" style="padding: 6px 20px;">
+                <i class="fas fa-sync-alt"></i> Refresh Table
+            </button>
+        </div>
+        
+        <div style="color: #888; font-size: 9px; text-align: center; margin-top: 10px;">
+            Last updated: <span id="tableLastUpdate">—</span>
+        </div>
+    </div>
+
     <!-- Description Card -->
     <div class="card" style="text-align: center; padding: 20px; margin-bottom: 25px;">
         <p style="color: #D4AF37; font-size: 14px; line-height: 1.6; max-width: 800px; margin: 0 auto;">
@@ -875,6 +913,154 @@
             } catch(e) {}
         }, 30000);
     }
+    
+    // ==================== PRICE TABLE ====================
+    const TABLE_TOKENS = [
+        { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin', color: '#F7931A' },
+        { id: 'fit', symbol: 'FIT', name: 'Fly Infinity', color: '#D4AF37' },
+        { id: 'ethereum', symbol: 'ETH', name: 'Ethereum', color: '#627EEA' },
+        { id: 'binancecoin', symbol: 'BNB', name: 'BNB', color: '#F3BA2F' },
+        { id: 'ripple', symbol: 'XRP', name: 'XRP', color: '#00AAE4' },
+        { id: 'solana', symbol: 'SOL', name: 'Solana', color: '#14F195' },
+        { id: 'cardano', symbol: 'ADA', name: 'Cardano', color: '#0033AD' },
+        { id: 'dogecoin', symbol: 'DOGE', name: 'Dogecoin', color: '#C2A633' },
+        { id: 'tron', symbol: 'TRX', name: 'TRON', color: '#FF0014' },
+        { id: 'zcash', symbol: 'ZEC', name: 'Zcash', color: '#F4B728' },
+        { id: 'stellar', symbol: 'XLM', name: 'Stellar', color: '#08B5E5' },
+        { id: 'pancakeswap', symbol: 'CAKE', name: 'PancakeSwap', color: '#D1884F' },
+        { id: 'toncoin', symbol: 'TON', name: 'Toncoin', color: '#0088CC' },
+        { id: 'shibainu', symbol: 'SHIB', name: 'Shiba Inu', color: '#E88D2A' },
+        { id: 'trump', symbol: 'TRUMP', name: 'Trump Token', color: '#E53935' }
+    ];
+
+    let tablePrices = {};
+
+    async function fetchTablePrices() {
+        const ids = TABLE_TOKENS.filter(t => t.id !== 'fit').map(t => t.id).join(',');
+        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`;
+        
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            for (const token of TABLE_TOKENS) {
+                if (token.id !== 'fit' && data[token.id]) {
+                    const currentPrice = data[token.id].usd;
+                    const change24h = data[token.id].usd_24h_change || 0;
+                    const yesterdayPrice = currentPrice / (1 + change24h / 100);
+                    tablePrices[token.id] = { current: currentPrice, yesterday: yesterdayPrice, change: change24h };
+                }
+            }
+            
+            // Get FIT price from contract
+            try {
+                const raw = await contract.Price();
+                const currentPrice = parseFloat(ethers.utils.formatEther(raw));
+                let yesterdayPrice = currentPrice;
+                if (fitPrices.length >= 2) {
+                    yesterdayPrice = fitPrices[fitPrices.length - 2] || currentPrice;
+                }
+                const change24h = ((currentPrice - yesterdayPrice) / yesterdayPrice) * 100;
+                tablePrices['fit'] = { current: currentPrice, yesterday: yesterdayPrice, change: change24h };
+            } catch(e) {
+                console.error("Error fetching FIT price:", e);
+            }
+            
+            updateTable();
+            document.getElementById('tableLastUpdate').innerHTML = new Date().toLocaleString();
+        } catch(e) {
+            console.error("Error fetching table prices:", e);
+            useFallbackTableData();
+        }
+    }
+
+    function useFallbackTableData() {
+        const fallbackData = {
+            bitcoin: { current: 64175.20, yesterday: 62893.16, change: 2.04 },
+            fit: { current: 6.3345, yesterday: 6.3052, change: 0.46 },
+            ethereum: { current: 1679.84, yesterday: 1648.35, change: 1.91 },
+            binancecoin: { current: 607.92, yesterday: 599.58, change: 1.39 },
+            ripple: { current: 1.145, yesterday: 1.113, change: 2.87 },
+            solana: { current: 68.23, yesterday: 65.50, change: 4.17 },
+            cardano: { current: 0.1727, yesterday: 0.1657, change: 4.22 },
+            dogecoin: { current: 0.08771, yesterday: 0.08496, change: 3.24 },
+            tron: { current: 0.3172, yesterday: 0.3209, change: -1.15 },
+            zcash: { current: 28.50, yesterday: 29.10, change: -2.06 },
+            stellar: { current: 0.105, yesterday: 0.103, change: 1.94 },
+            pancakeswap: { current: 2.80, yesterday: 2.75, change: 1.82 },
+            toncoin: { current: 1.746, yesterday: 1.625, change: 7.45 },
+            shibainu: { current: 0.000015, yesterday: 0.0000145, change: 3.45 },
+            trump: { current: 0.08, yesterday: 0.085, change: -5.88 }
+        };
+        
+        for (const token of TABLE_TOKENS) {
+            if (fallbackData[token.id]) {
+                tablePrices[token.id] = fallbackData[token.id];
+            }
+        }
+        updateTable();
+        document.getElementById('tableLastUpdate').innerHTML = new Date().toLocaleString() + ' (fallback)';
+    }
+
+    function formatPriceValue(price) {
+        if (price === undefined || price === null || isNaN(price)) return '—';
+        if (price >= 1000) return '$' + price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        if (price >= 1) return '$' + price.toFixed(4);
+        if (price >= 0.01) return '$' + price.toFixed(4);
+        if (price >= 0.000001) return '$' + price.toFixed(8);
+        return '$' + price.toFixed(10);
+    }
+
+    function updateTable() {
+        const tbody = document.getElementById('priceTableBody');
+        tbody.innerHTML = '';
+        
+        for (const token of TABLE_TOKENS) {
+            const data = tablePrices[token.id];
+            if (!data) continue;
+            
+            const change = data.change || 0;
+            const changeColor = change > 0 ? '#00C896' : (change < 0 ? '#ff4444' : '#888');
+            const changeIcon = change > 0 ? '▲' : (change < 0 ? '▼' : '—');
+            const changeBg = change > 0 ? 'rgba(0, 200, 150, 0.08)' : (change < 0 ? 'rgba(255, 68, 68, 0.08)' : 'transparent');
+            
+            const tr = document.createElement('tr');
+            tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+            tr.style.transition = 'background 0.2s ease';
+            tr.onmouseover = () => tr.style.background = 'rgba(255,255,255,0.03)';
+            tr.onmouseout = () => tr.style.background = 'transparent';
+            
+            tr.innerHTML = `
+                <td style="padding: 10px 15px; color: ${token.color}; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: ${token.color};"></span>
+                    ${token.symbol} (${token.name})
+                </td>
+                <td style="padding: 10px 15px; text-align: right; color: #c0d0e8;">${formatPriceValue(data.yesterday)}</td>
+                <td style="padding: 10px 15px; text-align: right; color: #D4AF37; font-weight: bold;">${formatPriceValue(data.current)}</td>
+                <td style="padding: 10px 15px; text-align: right; color: ${changeColor}; background: ${changeBg}; border-radius: 8px; font-weight: bold;">
+                    ${changeIcon} ${Math.abs(change).toFixed(2)}%
+                </td>
+            `;
+            
+            tbody.appendChild(tr);
+        }
+    }
+
+    // Refresh table
+    document.getElementById('refreshTableBtn').addEventListener('click', function() {
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+        this.disabled = true;
+        fetchTablePrices().finally(() => {
+            this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Table';
+            this.disabled = false;
+        });
+    });
+
+    // Load table data on page load
+    setTimeout(() => {
+        fetchTablePrices();
+        setInterval(fetchTablePrices, 60000); // Update every minute
+    }, 1000);
     
     init();
 </script>
