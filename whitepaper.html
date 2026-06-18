@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Fly Infinity Token - White Paper</title>
     
-        <!-- ===== FAVICON ===== -->
+    <!-- ===== FAVICON ===== -->
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     
@@ -267,6 +267,13 @@
             margin-bottom: 10px;
         }
         
+        .wp-content h4 {
+            color: #D4AF37;
+            font-size: 16px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
         .wp-content p {
             color: #c0d0e8;
             line-height: 1.8;
@@ -307,41 +314,78 @@
             color: #D4AF37;
         }
         
-        .wp-content .step-box {
-            background: #1a1a1a;
-            border-radius: 16px;
-            padding: 15px 20px;
-            margin: 10px 0;
-            border-left: 3px solid #00C896;
-        }
-        
-        .wp-content .step-box p {
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
-        
-        .wp-content .step-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 10px;
+        .wp-content .table-wrap {
+            overflow-x: auto;
             margin: 15px 0;
         }
         
-        .wp-content .step-grid .step-item {
+        .wp-content table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .wp-content table th {
             background: #1a1a1a;
-            border-radius: 12px;
-            padding: 12px 16px;
+            color: #D4AF37;
+            padding: 10px 12px;
+            text-align: center;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+        }
+        
+        .wp-content table td {
+            color: #c0d0e8;
+            padding: 8px 12px;
+            text-align: center;
+            border: 1px solid rgba(0, 200, 150, 0.1);
+        }
+        
+        .wp-content table tr:hover td {
+            background: rgba(0, 200, 150, 0.03);
+        }
+        
+        .wp-content .contract-box {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 15px 0;
             border-left: 3px solid #D4AF37;
         }
         
-        .wp-content .step-grid .step-item .step-num {
-            color: #D4AF37;
+        .wp-content .contract-box .contract-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 13px;
+        }
+        
+        .wp-content .contract-box .contract-row:last-child {
+            border-bottom: none;
+        }
+        
+        .wp-content .contract-box .contract-label {
+            color: #888;
             font-weight: bold;
         }
         
-        .wp-content .step-grid .step-item .step-desc {
-            color: #c0d0e8;
-            font-size: 13px;
+        .wp-content .contract-box .contract-address {
+            color: #D4AF37;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+        }
+        
+        .wp-content .quote-box {
+            background: rgba(212, 175, 55, 0.06);
+            border-left: 3px solid #D4AF37;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 18px;
+            color: #D4AF37;
+            font-style: italic;
         }
         
         .footer {
@@ -379,6 +423,13 @@
             .wp-content .formula-box {
                 font-size: 15px;
             }
+            .wp-content table {
+                font-size: 11px;
+            }
+            .wp-content .contract-box .contract-row {
+                flex-direction: column;
+                gap: 4px;
+            }
         }
     </style>
 </head>
@@ -408,7 +459,7 @@
         
         <div class="sidebar-menu">
             <a href="index.html">
-                <i class="fas fa-home"></i> Dashboard
+                <i class="fas fa-chart-simple"></i> Dashboard
             </a>
             <a href="compare.html">
                 <i class="fas fa-chart-line"></i> Comparison
@@ -444,239 +495,292 @@
     
     <div class="wp-content">
         
-        <h2>Fly Infinity Platform</h2>
-        <p>Fly Infinity Platform is a next-generation decentralized financial platform designed with one clear objective: to create a transparent digital asset with real backing and zero risk of price reversal.</p>
-        <p>Unlike most crypto projects whose prices are driven by hype, speculation, whale manipulation, and pump-and-dump cycles, Fly Infinity is built on a strictly engineered economic logic that does not allow the token price to move backward under any circumstances, even in extreme market conditions.</p>
-        <p>The economic core of the platform consists of two fully complementary components:</p>
-        <ul>
-            <li><span class="highlight">Fly Infinity Network</span> as the capital-injecting and backing network</li>
-            <li><span class="highlight">Fly Infinity Token (FIT)</span> as the primary digital asset with <span class="gold">100% real backing</span></li>
-        </ul>
-        <p>Together, they form a closed, intelligent, and crash-resistant financial system.</p>
+        <p style="text-align: center; color: #888; font-size: 13px; margin-bottom: 25px;">
+            <strong>Version 1.0</strong> | <strong>Release Date:</strong> June 2026
+        </p>
 
-        <h2>What Is Fly Infinity Token (FIT) and Why Is It Unique?</h2>
-        <p>FIT is a truly asset-backed token, not a token driven by promises, marketing, or market hype. The price of FIT is never determined by exchanges, traders, or external markets. It is calculated exclusively inside the smart contract based on real liquidity.</p>
-        
+        <!-- ===== 1. PREFACE ===== -->
+        <h2>1. Preface</h2>
+        <p>
+            Despite its remarkable growth, the cryptocurrency market continues to face fundamental structural challenges. The lack of transparency in asset backing, price manipulation by market whales, reliance on centralized order books, and the risks associated with speculative bubbles have left investors exposed to extreme and unpredictable volatility.
+        </p>
+        <p>
+            <strong class="gold">Fly Infinity Platform</strong> has been designed in response to these challenges. It is a decentralized platform with the goal of creating a transparent digital asset with real backing, built on a structure that reduces the risk of price reversal to zero.
+        </p>
+
+        <!-- ===== 2. INTRODUCTION ===== -->
+        <h2>2. Introduction to Fly Infinity Platform</h2>
+        <p>
+            Fly Infinity is a next-generation decentralized financial platform built upon two fully complementary economic components:
+        </p>
+        <h3>2.1 Fly Infinity Network</h3>
+        <p>
+            An intelligent and autonomous network responsible for injecting real capital into the token contract. This network continuously increases liquidity without the need to mint new tokens.
+        </p>
+        <h3>2.2 Fly Infinity Token (FIT)</h3>
+        <p>
+            The platform's primary digital asset, whose price is calculated not based on market hype, but solely on the ratio of <strong class="highlight">DAI Reserve to Total Supply</strong>.
+        </p>
+
+        <!-- ===== 3. PRICING FORMULA ===== -->
+        <h2>3. Pricing Formula (Bonding Curve)</h2>
+        <p>
+            The price of the FIT token is calculated transparently and immutably within the smart contract:
+        </p>
         <div class="formula-box">
-            <strong>FIT Price Formula:</strong><br>
-            FIT Price = Amount of DAI inside the contract ÷ Total existing FIT
+            <strong>FIT Price = DAI Reserve ÷ Total Supply</strong>
         </div>
-        
-        <p><span class="gold">A key and unique characteristic:</span> The founding team holds no special allocation, percentage, or privileged profit. All fees and profits belong entirely to the token community.</p>
-        
-        <h3>The Core Feature of Fly Infinity:</h3>
-        <p><span class="gold">A Token That Never Goes Down in Price</span></p>
-        <p>This is the defining principle of Fly Infinity, and it is fully backed by system logic:</p>
+        <h3>Key Features of This Model:</h3>
         <ul>
-            <li>FIT can only be bought and sold through its smart contract</li>
-            <li>Every buy = real DAI entering the contract</li>
-            <li>Every sell = FIT tokens being burned</li>
-            <li>Price is calculated internally, not by the market</li>
-            <li>No external exchange can manipulate the price</li>
+            <li><span class="highlight">Immutable:</span> The price cannot be altered by any external entity.</li>
+            <li><span class="highlight">Transparent:</span> Calculable and verifiable at any moment.</li>
+            <li><span class="highlight">Continuously Rising:</span> Each purchase increases liquidity and raises the base price.</li>
         </ul>
-        <p><span class="gold">As a result:</span> Even large sell-offs do not necessarily reduce the price — in many cases, they increase it.</p>
-        <p><span class="highlight">In other words:</span> FIT is structurally anti-dump, anti-crash, and anti-manipulation by design.</p>
 
-        <h2>FIT Price Growth Roadmap (Future Outlook)</h2>
-        <p>The price growth of FIT is not speculative; it follows a logical, step-based system:</p>
-        
-        <h3>Phase 1 | Stabilization &amp; Accumulation</h3>
+        <!-- ===== 4. NON-DIMINISHING PRICE ===== -->
+        <h2>4. Unique Feature: Non-Diminishing Price</h2>
+        <p>
+            Fly Infinity is the only project where the base token price never decreases. This is achieved through the following logic:
+        </p>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Effect</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="highlight">Buy FIT</span></td>
+                        <td>Real DAI enters the contract → Liquidity increases → Price increases</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Sell FIT</span></td>
+                        <td>Tokens are burned → Supply decreases → Price increases</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Buy Fee (3%)</span></td>
+                        <td>Returns to liquidity → Price reinforcement</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Sell Fee (6%)</span></td>
+                        <td>Returns to liquidity → Price reinforcement</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p>
+            <strong class="gold">Result:</strong> Even large sell-offs do not necessarily reduce the price — in many cases, they increase it.
+        </p>
+
+        <!-- ===== 5. DECENTRALIZED STRUCTURE ===== -->
+        <h2>5. Decentralized Structure &amp; DAO Governance</h2>
+        <h3>5.1 Complete Decentralization</h3>
         <ul>
-            <li>Controlled user entry through step-based participation</li>
-            <li>Gradual liquidity growth</li>
-            <li>Smooth and non-volatile price increase</li>
+            <li>No central team has access to administrative keys.</li>
+            <li>All rules are embedded in public, immutable smart contracts.</li>
+            <li>No entity can stop, alter, or censor transactions.</li>
         </ul>
-        
-        <h3>Phase 2 | Accelerated Growth</h3>
+        <h3>5.2 DAO Governance</h3>
+        <p>
+            All key project decisions, including:
+        </p>
+        <ul>
+            <li>Potential upgrades</li>
+            <li>Resource allocation</li>
+            <li>Future developments</li>
+        </ul>
+        <p>
+            are made through decentralized voting, proportional to each holder's stake in the network.
+        </p>
+
+        <!-- ===== 6. STEP-BASED PURCHASE ===== -->
+        <h2>6. Step-Based Purchase Model</h2>
+        <p>
+            To prevent sudden whale entry and maintain healthy price growth, FIT purchases are structured in a step-based system:
+        </p>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Step</th>
+                        <th>Network Points Required</th>
+                        <th>Purchase Cap (DAI)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>0</td><td>100</td></tr>
+                    <tr><td>2</td><td>1</td><td>100+</td></tr>
+                    <tr><td>3</td><td>10</td><td>100+</td></tr>
+                    <tr><td>4</td><td>30</td><td>100+</td></tr>
+                    <tr><td>5</td><td>100</td><td>1,000+</td></tr>
+                    <tr><td>6</td><td>300</td><td>1,000+</td></tr>
+                    <tr><td>7</td><td>1,000</td><td>10,000+</td></tr>
+                    <tr><td>8</td><td>3,000</td><td>10,000+</td></tr>
+                    <tr><td>9</td><td>10,000</td><td>100,000+</td></tr>
+                    <tr><td>10</td><td>30,000</td><td>100,000+</td></tr>
+                    <tr><td>11</td><td>100,000</td><td>1,000,000+</td></tr>
+                    <tr><td>...</td><td>...</td><td>...</td></tr>
+                    <tr><td>19</td><td>1,000,000,000</td><td>10,000,000,000+</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p>
+            <strong class="highlight">How It Works:</strong> Each user can purchase only once per step, up to the specified cap. After earning the required network points, the next step becomes available. The total purchase cap increases cumulatively as users progress through the steps.
+        </p>
+
+        <!-- ===== 7. SECURITY ===== -->
+        <h2>7. Security &amp; Transparency</h2>
+        <h3>7.1 Contract Security</h3>
+        <ul>
+            <li>Smart contracts are implemented to the highest standards.</li>
+            <li>No hidden functions or administrative keys exist.</li>
+            <li>All transactions are recorded and visible on the BSC blockchain.</li>
+        </ul>
+        <h3>7.2 Economic Transparency</h3>
+        <p>
+            The following information is available to the public in real-time:
+        </p>
+        <ul>
+            <li>Live FIT price</li>
+            <li>Total supply</li>
+            <li>DAI reserve</li>
+            <li>Daily price history</li>
+            <li>Holder distribution</li>
+            <li>Trading volume</li>
+        </ul>
+
+        <!-- ===== 8. COMPETITIVE ADVANTAGES ===== -->
+        <h2>8. Competitive Advantages</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Fly Infinity</th>
+                        <th>Traditional Projects</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Real Asset Backing</td>
+                        <td><span class="highlight">✅ DAI</span></td>
+                        <td>❌ Marketing Promises</td>
+                    </tr>
+                    <tr>
+                        <td>Non-Diminishing Price</td>
+                        <td><span class="highlight">✅</span></td>
+                        <td>❌</td>
+                    </tr>
+                    <tr>
+                        <td>Full Transparency</td>
+                        <td><span class="highlight">✅</span></td>
+                        <td>❌</td>
+                    </tr>
+                    <tr>
+                        <td>Anti-Whale Manipulation</td>
+                        <td><span class="highlight">✅</span></td>
+                        <td>❌</td>
+                    </tr>
+                    <tr>
+                        <td>DAO Governance</td>
+                        <td><span class="highlight">✅</span></td>
+                        <td>❌</td>
+                    </tr>
+                    <tr>
+                        <td>Transparent Fees</td>
+                        <td><span class="highlight">✅ (3% / 6%)</span></td>
+                        <td>Unclear</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ===== 9. ROADMAP ===== -->
+        <h2>9. Development Roadmap</h2>
+        <h3>Phase 1: Stabilization &amp; Accumulation</h3>
+        <ul>
+            <li>Controlled user entry through the step-based model</li>
+            <li>Gradual liquidity growth</li>
+            <li>Low-volatility price increase</li>
+        </ul>
+        <h3>Phase 2: Accelerated Growth</h3>
         <ul>
             <li>Continuous DAI injection by Fly Infinity Network</li>
             <li>Exponential liquidity growth without minting new tokens</li>
             <li>Strong upward price momentum</li>
         </ul>
-        
-        <h3>Phase 3 | System Maturity</h3>
+        <h3>Phase 3: System Maturity</h3>
         <ul>
             <li>Entry of large capital without dump risk</li>
+            <li>FIT evolving into a reserve-grade digital asset</li>
             <li>Sustainable and logical price appreciation</li>
-            <li>FIT evolving into a reserve-grade digital asset within the ecosystem</li>
         </ul>
-        
-        <p><span class="gold">Key point:</span> FIT has no theoretical price ceiling, because its price grows strictly in proportion to real capital inflow.</p>
 
-        <h2>Why Fly Infinity Cannot Form a Bubble or Collapse</h2>
+        <!-- ===== 10. SUMMARY ===== -->
+        <h2>10. Summary</h2>
+        <p>
+            Fly Infinity is not a typical crypto project. It is a financial system engineered from first principles to:
+        </p>
         <ul>
-            <li>Every FIT is backed by real DAI</li>
-            <li>Growth without real money is impossible</li>
-            <li>Selling does not drain the system's liquidity</li>
-            <li>A portion of selling fees always reinforces liquidity</li>
+            <li>Have real asset backing</li>
+            <li>Ensure transparent and immutable pricing</li>
+            <li>Guarantee logical and sustainable growth</li>
+            <li>Reduce price reversal risk to zero</li>
+            <li>Never form a speculative bubble</li>
         </ul>
-        <p><span class="gold">Therefore:</span> A classic speculative bubble cannot exist in Fly Infinity.</p>
-
-        <h2>Security of Fly Infinity Token (FIT)</h2>
-        <p>From a security standpoint, Fly Infinity is built at the highest standard:</p>
-        <ul>
-            <li>No hidden admin privileges or centralized control</li>
-            <li>No ability for the team to arbitrarily change contract parameters</li>
-            <li>Fully controlled buy and sell mechanisms</li>
-            <li>No dependency on exchanges</li>
-            <li>No pump-and-dump exposure</li>
-            <li>Fully transparent pricing logic</li>
-        </ul>
-        <p><span class="gold">Simply put:</span> In Fly Infinity, users' capital is never sacrificed to others' behavior.</p>
-
-        <h2>Final Summary</h2>
-        <p>Fly Infinity is not a typical crypto project. It is a financial system engineered from first principles.</p>
-        <ul>
-            <li>Real asset backing</li>
-            <li>Fully transparent pricing</li>
-            <li>Logical and sustainable growth</li>
-            <li>No price reversals</li>
-            <li>No dumps</li>
-            <li>No whale games</li>
-        </ul>
-        <p>Fly Infinity does not promise unrealistic profits, but it also does not allow capital destruction.</p>
-
-        <h2>Detailed Plan — 13 Key Points</h2>
-        
-        <h3>1 — What is Fly Infinity Platform?</h3>
-        <p>Fly Infinity Platform is a decentralized financial platform whose goal is to create a healthy and income-generating network with a stable, transparent digital asset that is resistant to sudden market crashes.</p>
-        <p>The economic core of this platform is its decentralized network, namely: <span class="highlight">Fly Infinity Network</span> and its very special token, namely: <span class="highlight">Fly Infinity Token (FIT)</span> which complement each other.</p>
-
-        <h3>2 — What is Fly Infinity Token (FIT)?</h3>
-        <p>FIT is a token with real backing, whose price is calculated based on the real assets inside the smart contract, not based on market hype. It is also the only token in the world in which the founder team has no specific percentage or profit, and all fees and profits belong to the entire token community.</p>
-        <div class="formula-box">
-            <strong>FIT Price Formula:</strong><br>
-            FIT Price = Amount of DAI inside the contract ÷ Total existing FIT
+        <div class="quote-box">
+            "Fly Infinity does not promise unrealistic profits, but it also does not allow capital destruction."
         </div>
 
-        <h3>3 — Difference between FIT and regular tokens</h3>
-        <p><span class="gold">In most projects:</span></p>
-        <ul>
-            <li>Prices are determined on exchanges</li>
-            <li>Whales can dump</li>
-            <li>Real backing is not clear</li>
-        </ul>
-        <p><span class="highlight">In Fly Infinity Token:</span></p>
-        <ul>
-            <li>Buying and selling only through the FIT contract</li>
-            <li>Each purchase = entry of real DAI</li>
-            <li>Each sale = burning FIT</li>
-        </ul>
-
-        <h3>4 — Buying Fly Infinity Token (FIT)</h3>
-        <p><span class="gold">FIT purchase process:</span></p>
-        <ul>
-            <li>The user pays DAI</li>
-            <li>A 3% purchase fee is deducted</li>
-            <li>The full amount enters the FIT contract liquidity</li>
-            <li>New FIT tokens are minted with the net amount</li>
-        </ul>
-        <p><span class="highlight">Result:</span> Liquidity increases, FIT price increases, Tokens are minted only equal to real money.</p>
-
-        <h3>5 — Selling Fly Infinity Token (FIT)</h3>
-        <p><span class="gold">FIT selling process:</span></p>
-        <ul>
-            <li>The user sells FIT to the contract</li>
-            <li>Tokens are burned</li>
-            <li>Token value is calculated at the current price</li>
-            <li>A 6% selling fee is deducted</li>
-            <li>The fee is returned to liquidity</li>
-        </ul>
-        <p><span class="highlight">Result:</span> Supply decreases, Part of the liquidity remains in the system, Selling does not destroy the system.</p>
-
-        <h3>6 — Why does FIT price not easily crash?</h3>
-        <p>Because in Fly Infinity Token:</p>
-        <ul>
-            <li>Selling = token burning</li>
-            <li>Selling fee = liquidity reinforcement</li>
-            <li>Buying fee = liquidity reinforcement</li>
-            <li>Price is calculated inside the contract</li>
-        </ul>
-        <p><span class="gold">Even large sell-offs:</span> Do not necessarily reduce the FIT price. In many cases, they increase the price.</p>
-
-        <h3>7 — The role of Fly Infinity Network</h3>
-        <p>Fly Infinity Network is a project that continuously injects real DAI into the FIT contract without minting new tokens, and this DAI injection increases exponentially.</p>
-        <p><span class="highlight">Example:</span> Injection is done hourly throughout all 24 hours using DAI tokens, which monthly increases to tens, hundreds, and millions of dollars.</p>
-        <p><span class="gold">This means:</span> Growth of FIT price without dilution of users' assets.</p>
-
-        <h3>8 — Step-based purchase model in Fly Infinity Token</h3>
-        <p>Buying FIT is fully controlled. Only people can buy who:</p>
-        <ul>
-            <li>Are members of Fly Infinity Network</li>
-            <li>Have completed the step-based requirements</li>
-        </ul>
-        <p><span class="gold">Each step:</span></p>
-        <ul>
-            <li>Has a specific purchase cap</li>
-            <li>Can only be purchased once up to the specified limit</li>
-        </ul>
-        <p><span class="highlight">Result:</span> Prevention of sudden whale entry, Healthy and step-by-step price growth.</p>
-
-        <h3>Purchase Step Details:</h3>
-        <div class="step-grid">
-            <div class="step-item"><span class="step-num">Step 1:</span> <span class="step-desc">Only registered users can buy once up to 100 DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 2:</span> <span class="step-desc">With 1 networking point earned, can buy once again up to 100 DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 3:</span> <span class="step-desc">With 10 networking points earned, can buy once again up to 100 DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 4:</span> <span class="step-desc">With 30 networking points earned, can buy once again up to 100 DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 5:</span> <span class="step-desc">With 100 networking points earned, can buy once again up to 1,000 DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 6:</span> <span class="step-desc">With 300 networking points earned, can buy once again up to 1,000 DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 7:</span> <span class="step-desc">With 1,000 networking points earned, can buy once again up to 10,000 DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 8:</span> <span class="step-desc">With 3,000 networking points earned, can buy once again up to 10,000 DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 9:</span> <span class="step-desc">With 10,000 networking points earned, can buy once again up to 100,000 DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 10:</span> <span class="step-desc">With 30,000 networking points earned, can buy once again up to 100,000 DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 11:</span> <span class="step-desc">With 100,000 networking points earned, can buy once again up to 1 million DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 12:</span> <span class="step-desc">With 300,000 networking points earned, can buy once again up to 1 million DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 13:</span> <span class="step-desc">With 1 million networking points earned, can buy once again up to 10 million DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 14:</span> <span class="step-desc">With 3 million networking points earned, can buy once again up to 10 million DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 15:</span> <span class="step-desc">With 10 million networking points earned, can buy once again up to 100 million DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 16:</span> <span class="step-desc">With 30 million networking points earned, can buy once again up to 100 million DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 17:</span> <span class="step-desc">With 100 million networking points earned, can buy once again up to 1 billion DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 18:</span> <span class="step-desc">With 300 million networking points earned, can buy once again up to 1 billion DAI</span></div>
-            <div class="step-item"><span class="step-num">Step 19:</span> <span class="step-desc">With 1 billion networking points earned, can buy once again up to 10 billion DAI</span></div>
+        <!-- ===== 11. CONTRACTS ===== -->
+        <h2>11. Contract Addresses</h2>
+        <div class="contract-box">
+            <div class="contract-row">
+                <span class="contract-label">🌐 Website</span>
+                <span class="contract-address"><a href="https://flyinfinitydao.github.io/fit-price-display" target="_blank" style="color: #00C896; text-decoration: none;">flyinfinitydao.github.io/fit-price-display</a></span>
+            </div>
+            <div class="contract-row">
+                <span class="contract-label">🪙 FIT Token Contract</span>
+                <span class="contract-address">0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa</span>
+            </div>
+            <div class="contract-row">
+                <span class="contract-label">🌐 Network Contract</span>
+                <span class="contract-address">0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B</span>
+            </div>
+            <div class="contract-row">
+                <span class="contract-label">🎁 Gift Contract</span>
+                <span class="contract-address">0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8</span>
+            </div>
+            <div class="contract-row">
+                <span class="contract-label">🏛️ DAO Contract</span>
+                <span class="contract-address">0xB56c380287b7Fdc9940501f13Fc185A787a6F5D9</span>
+            </div>
         </div>
 
-        <h3>9 — Selling limitations for system stability</h3>
-        <p>In Fly Infinity Token, if a user sells their FIT at a specific step, they are not allowed to buy again until reaching the next step.</p>
-        <p><span class="highlight">Result:</span> Elimination of short-term trading, Encouragement of holding, Reduction of selling pressure.</p>
+        <!-- ===== 12. DISCLAIMER ===== -->
+        <h2>12. Disclaimer</h2>
+        <p>
+            <strong class="gold">No Financial Advice:</strong> Nothing in this document constitutes financial advice. Users should conduct their own research (DYOR) and consult with qualified financial advisors before making any investment decisions.
+        </p>
+        <p>
+            <strong class="gold">Risk Warning:</strong> Cryptocurrency investments carry inherent risks, including but not limited to market volatility, smart contract vulnerabilities, regulatory changes, and loss of private keys.
+        </p>
+        <p>
+            <strong class="gold">Open Source:</strong> This project is open source and provided "AS IS" without warranty of any kind.
+        </p>
 
-        <h3>10 — Does Fly Infinity Token (FIT) have a bubble?</h3>
-        <p><span class="gold">No classic bubble.</span> Because:</p>
-        <ul>
-            <li>Each FIT has real DAI backing</li>
-            <li>Price is calculated solely based on liquidity</li>
-            <li>Growth without real money is impossible</li>
-            <li>Volatility may exist, but there is no unsupported bubble</li>
-        </ul>
-
-        <h3>11 — Who is Fly Infinity Token suitable for?</h3>
-        <ul>
-            <li>✓ Those with a mid-term and long-term vision</li>
-            <li>✓ Those looking for an anti-dump system</li>
-            <li>✓ Those who want real and gradual growth</li>
-            <li>✓ Those who prefer economic logic over short-term trading</li>
-            <li>✗ Not suitable for short-term traders</li>
-        </ul>
-
-        <h3>12 — Final summary</h3>
-        <p><span class="gold">Fly Infinity Token:</span> A transparent financial system with real DAI backing.</p>
-        <ul>
-            <li>Price = Liquidity ÷ Supply</li>
-            <li>Purchase fee: 3%</li>
-            <li>Selling fee: 6%</li>
-            <li>Buy = Mint (creation)</li>
-            <li>Sell = Burn (destruction)</li>
-            <li>Fly Infinity Network: Continuous injection of real money without minting new tokens</li>
-        </ul>
-
-        <h3>13 — Final message</h3>
-        <p><span class="gold">Fly Infinity Platform:</span></p>
-        <ul>
-            <li>Does not promise unrealistic profits</li>
-            <li>But also does not allow capital destruction</li>
-            <li>Its growth depends on real money and logical user behavior</li>
-            <li>Fly Infinity is a financial platform, not a pump-and-dump project</li>
-        </ul>
-        <p style="text-align: center; font-size: 18px; color: #D4AF37; margin-top: 20px;">Experience infinite financial growth with Fly Infinity.</p>
+        <!-- ===== 13. CLOSING ===== -->
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(0, 200, 150, 0.2);">
+            <p style="color: #D4AF37; font-size: 20px; font-weight: bold; text-align: center;">
+                <i class="fas fa-infinity" style="color: #00C896; margin-right: 10px;"></i>
+                Experience infinite financial growth with Fly Infinity.
+            </p>
+            <p style="color: #888; font-size: 12px; text-align: center; margin-top: 10px;">
+                Fly Infinity DAO — Decentralized. Transparent. Forever Rising.
+            </p>
+        </div>
 
     </div>
 
