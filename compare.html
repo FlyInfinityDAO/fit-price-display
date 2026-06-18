@@ -747,7 +747,7 @@
         return false;
     }
 
-    // ===== SAVE TODAY'S PRICES TO HISTORY =====
+    // ===== SAVE TODAY'S PRICES TO HISTORY (Local) =====
     function saveTodayToHistory() {
         const today = new Date().toISOString().split('T')[0];
         
@@ -827,6 +827,18 @@
         
         let priceData;
         if (isToday) {
+            // Check if tablePrices has data
+            let hasData = false;
+            for (const token of TABLE_TOKENS) {
+                if (tablePrices[token.id]) {
+                    hasData = true;
+                    break;
+                }
+            }
+            if (!hasData) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 30px; color: #888;">Loading today's data... Please wait or click Refresh</td></tr>`;
+                return;
+            }
             priceData = tablePrices;
         } else {
             priceData = getPricesForDate(date);
@@ -912,14 +924,19 @@
                 console.error("Error fetching FIT price:", e);
             }
             
-            // Save today's data to history
+            // Save today's data to history (local)
             if (hasPriceData) {
                 saveTodayToHistory();
             }
             
             updateHistoryDateSelect();
-            currentHistoryDate = 'today';
-            updateTableWithHistory('today');
+            
+            // Update table with today's data if today is selected
+            if (currentHistoryDate === 'today' || !currentHistoryDate) {
+                currentHistoryDate = 'today';
+                updateTableWithHistory('today');
+            }
+            
             document.getElementById('tableLastUpdate').innerHTML = new Date().toLocaleString();
         } catch(e) {
             console.error("Error fetching table prices:", e);
@@ -973,78 +990,6 @@
         if (price >= 0.000001) return '$' + price.toFixed(8);
         return '$' + price.toFixed(10);
     }
-
-    // ===== HISTORY CONTROLS =====
-    document.getElementById('historyTodayBtn').addEventListener('click', function() {
-        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        currentHistoryDate = 'today';
-        updateTableWithHistory('today');
-    });
-
-    document.getElementById('historyYesterdayBtn').addEventListener('click', function() {
-        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        const dates = getHistoryDates();
-        if (dates.length > 0) {
-            const yesterday = dates[dates.length - 1];
-            currentHistoryDate = yesterday;
-            updateTableWithHistory(yesterday);
-        }
-    });
-
-    document.getElementById('history7daysBtn').addEventListener('click', function() {
-        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        const dates = getHistoryDates();
-        if (dates.length > 7) {
-            const date = dates[dates.length - 7];
-            currentHistoryDate = date;
-            updateTableWithHistory(date);
-        }
-    });
-
-    document.getElementById('history14daysBtn').addEventListener('click', function() {
-        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        const dates = getHistoryDates();
-        if (dates.length > 14) {
-            const date = dates[dates.length - 14];
-            currentHistoryDate = date;
-            updateTableWithHistory(date);
-        }
-    });
-
-    document.getElementById('history30daysBtn').addEventListener('click', function() {
-        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        const dates = getHistoryDates();
-        if (dates.length > 30) {
-            const date = dates[dates.length - 30];
-            currentHistoryDate = date;
-            updateTableWithHistory(date);
-        }
-    });
-
-    document.getElementById('historyGoBtn').addEventListener('click', function() {
-        const select = document.getElementById('historyDateSelect');
-        const date = select.value;
-        if (date) {
-            document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
-            currentHistoryDate = date;
-            updateTableWithHistory(date);
-        }
-    });
-
-    // ===== REFRESH TABLE =====
-    document.getElementById('refreshTableBtn').addEventListener('click', function() {
-        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-        this.disabled = true;
-        fetchTablePrices().finally(() => {
-            this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Table';
-            this.disabled = false;
-        });
-    });
 
     // ===== LOAD CACHE =====
     async function loadCache() {
@@ -1293,7 +1238,80 @@
         btn.innerHTML = originalHtml;
         btn.disabled = false;
     }
-    
+
+    // ===== HISTORY CONTROLS =====
+    document.getElementById('historyTodayBtn').addEventListener('click', function() {
+        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentHistoryDate = 'today';
+        updateTableWithHistory('today');
+    });
+
+    document.getElementById('historyYesterdayBtn').addEventListener('click', function() {
+        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const dates = getHistoryDates();
+        if (dates.length > 0) {
+            const yesterday = dates[dates.length - 1];
+            currentHistoryDate = yesterday;
+            updateTableWithHistory(yesterday);
+        }
+    });
+
+    document.getElementById('history7daysBtn').addEventListener('click', function() {
+        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const dates = getHistoryDates();
+        if (dates.length > 7) {
+            const date = dates[dates.length - 7];
+            currentHistoryDate = date;
+            updateTableWithHistory(date);
+        }
+    });
+
+    document.getElementById('history14daysBtn').addEventListener('click', function() {
+        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const dates = getHistoryDates();
+        if (dates.length > 14) {
+            const date = dates[dates.length - 14];
+            currentHistoryDate = date;
+            updateTableWithHistory(date);
+        }
+    });
+
+    document.getElementById('history30daysBtn').addEventListener('click', function() {
+        document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        const dates = getHistoryDates();
+        if (dates.length > 30) {
+            const date = dates[dates.length - 30];
+            currentHistoryDate = date;
+            updateTableWithHistory(date);
+        }
+    });
+
+    document.getElementById('historyGoBtn').addEventListener('click', function() {
+        const select = document.getElementById('historyDateSelect');
+        const date = select.value;
+        if (date) {
+            document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+            currentHistoryDate = date;
+            updateTableWithHistory(date);
+        }
+    });
+
+    // ===== REFRESH TABLE =====
+    document.getElementById('refreshTableBtn').addEventListener('click', function() {
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+        this.disabled = true;
+        fetchTablePrices().finally(() => {
+            this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Table';
+            this.disabled = false;
+        });
+    });
+
+    // ===== INIT =====
     async function init() {
         const loadingDiv = document.createElement('div');
         loadingDiv.className = 'loading-overlay';
@@ -1327,9 +1345,23 @@
             } catch(e) {}
         }, 30000);
         
-        // Load table data
-        setTimeout(() => {
-            fetchTablePrices();
+        // ===== LOAD TABLE DATA =====
+        setTimeout(async () => {
+            // First load history from JSON
+            await loadTableHistory();
+            
+            // Then fetch live data
+            await fetchTablePrices();
+            
+            // Set today as active
+            currentHistoryDate = 'today';
+            document.querySelectorAll('.history-controls button').forEach(b => b.classList.remove('active'));
+            document.getElementById('historyTodayBtn').classList.add('active');
+            
+            // Update table with today's data
+            updateTableWithHistory('today');
+            
+            // Auto-refresh every minute
             setInterval(fetchTablePrices, 60000);
         }, 1000);
     }
