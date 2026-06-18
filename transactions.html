@@ -530,7 +530,7 @@
             <span id="eventsCount" style="font-size: 12px; color: #888; margin-left: 10px;"></span>
         </div>
         <p style="color:#888; font-size:11px; margin-bottom:15px;">
-            <i class="fas fa-info-circle"></i> Real-time events from the FIT Token Contract via BscScan API
+            <i class="fas fa-info-circle"></i> Real-time events from the FIT Token Contract via BscScan API V2
         </p>
         
         <div class="events-controls">
@@ -684,10 +684,13 @@
 <!-- ===== EVENTS SCRIPT ===== -->
 <script>
     // ==================== CONFIGURATION ====================
-    // 🔑 کلید API خود را در اینجا قرار دهید
-    const BSCSCAN_API_KEY = "87BYS5S7YZMPBPFST4W9R6TZM1KBKPHJXD";
+    // 🔑 کلید API خود را در اینجا قرار دهید (از Etherscan.io دریافت شده)
+    const ETHERSCAN_API_KEY = "87BYS5S7YZMPBPFST4W9R6TZM1KBKPHJXD";
     const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
-    const API_BASE_URL = "https://api.bscscan.com/api";
+    
+    // ===== API V2 =====
+    const API_BASE_URL = "https://api.etherscan.io/v2/api";
+    const CHAIN_ID = 56; // BNB Smart Chain
 
     // سیگنچر رویدادها
     const EVENT_SIGNATURES = {
@@ -700,23 +703,30 @@
     let currentFilter = 'all';
     let currentLimit = 50;
 
-    // ==================== GET CONTRACT EVENTS ====================
+    // ==================== GET CONTRACT EVENTS (V2) ====================
     async function getContractEvents(topic0 = null, fromBlock = 0, toBlock = 'latest') {
         const url = new URL(API_BASE_URL);
+        
+        // ===== پارامترهای V2 =====
+        url.searchParams.append('chainid', CHAIN_ID.toString());
         url.searchParams.append('module', 'logs');
         url.searchParams.append('action', 'getLogs');
         url.searchParams.append('address', CONTRACT_ADDRESS);
         url.searchParams.append('fromBlock', fromBlock.toString());
         url.searchParams.append('toBlock', toBlock.toString());
-        url.searchParams.append('apikey', BSCSCAN_API_KEY);
+        url.searchParams.append('apikey', ETHERSCAN_API_KEY);
         
         if (topic0) {
             url.searchParams.append('topic0', topic0);
         }
         
+        console.log('📤 Sending V2 request:', url.toString());
+        
         try {
             const response = await fetch(url.toString());
             const data = await response.json();
+            
+            console.log('📥 API Response:', data);
             
             if (data.status === '1') {
                 return data.result || [];
@@ -737,39 +747,44 @@
         
         if (loadingDiv) loadingDiv.style.display = 'block';
         if (tableBody) {
-            tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 20px; color: #888;"><i class="fas fa-spinner fa-spin"></i> Loading events...</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 20px; color: #888;">
+                <i class="fas fa-spinner fa-spin"></i> Loading events...
+            </td></tr>`;
         }
         
         try {
-            // دریافت همه رویدادها
-            allEvents = await getContractEvents(null, 0, 'latest');
+            // دریافت از بلوک‌های اخیر (عملکرد بهتر)
+            const fromBlock = 30000000;
+            allEvents = await getContractEvents(null, fromBlock, 'latest');
+            
+            console.log(`✅ ${allEvents.length} events received`);
             
             if (!allEvents || allEvents.length === 0) {
                 if (tableBody) {
-                    tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 30px; color: #888;">
-                        <i class="fas fa-info-circle"></i> No events found. Try refreshing or check the contract.
+                    tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 30px; color: #ffaa00;">
+                        <i class="fas fa-exclamation-triangle"></i> No events found. 
+                        <br><small style="color:#888;">Check console for details. Make sure your API key is valid.</small>
                     </td></tr>`;
                 }
                 return;
             }
             
-            // به‌روزرسانی تعداد
+            allEvents = allEvents.sort((a, b) => parseInt(b.blockNumber) - parseInt(a.blockNumber));
+            
             const countDiv = document.getElementById('eventsCount');
             if (countDiv) {
                 countDiv.innerHTML = `📊 ${allEvents.length} events`;
             }
             
-            // اعمال فیلتر و نمایش
             applyFilterAndDisplay();
-            
-            // به‌روزرسانی زمان
             document.getElementById('tableLastUpdate').innerHTML = new Date().toLocaleString();
             
         } catch (error) {
             console.error('Error loading events:', error);
             if (tableBody) {
                 tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 20px; color: #ff4444;">
-                    <i class="fas fa-exclamation-triangle"></i> Error loading events. Please check your API key.
+                    <i class="fas fa-exclamation-triangle"></i> Error: ${error.message || 'Unknown error'}
+                    <br><small style="color:#888;">Check console for details.</small>
                 </td></tr>`;
             }
         } finally {
@@ -781,15 +796,13 @@
     function applyFilterAndDisplay() {
         let filteredEvents = [...allEvents];
         
-        // اعمال فیلتر
         if (currentFilter === 'transfer') {
             filteredEvents = filteredEvents.filter(e => (e.topics || [])[0] === EVENT_SIGNATURES.TRANSFER);
         } else if (currentFilter === 'approval') {
             filteredEvents = filteredEvents.filter(e => (e.topics || [])[0] === EVENT_SIGNATURES.APPROVAL);
         }
         
-        // محدودیت تعداد
-        filteredEvents = filteredEvents.slice(-currentLimit).reverse();
+        filteredEvents = filteredEvents.slice(0, currentLimit);
         
         displayEvents(filteredEvents);
     }
@@ -847,11 +860,6 @@
         } else if (topic0 === EVENT_SIGNATURES.APPROVAL) {
             return '✅ Approval';
         } else {
-            // تلاش برای تشخیص رویدادهای سفارشی
-            const data = event.data || '';
-            if (data && data.length > 10) {
-                return '📝 Custom Event';
-            }
             return '📝 Event';
         }
     }
@@ -878,10 +886,8 @@
 
     // ==================== EVENT LISTENERS ====================
     document.addEventListener('DOMContentLoaded', function() {
-        // بارگذاری اولیه
         loadEvents();
         
-        // دکمه‌های فیلتر
         document.getElementById('eventsAllBtn').addEventListener('click', function() {
             document.querySelectorAll('.events-controls button').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
@@ -903,13 +909,11 @@
             applyFilterAndDisplay();
         });
         
-        // تغییر محدودیت
         document.getElementById('eventsLimitSelect').addEventListener('change', function() {
             currentLimit = parseInt(this.value);
             applyFilterAndDisplay();
         });
         
-        // دکمه رفرش
         document.getElementById('refreshEventsBtn').addEventListener('click', function() {
             this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             this.disabled = true;
@@ -919,7 +923,6 @@
             });
         });
         
-        // بروزرسانی خودکار هر ۶۰ ثانیه
         setInterval(loadEvents, 60000);
     });
 </script>
