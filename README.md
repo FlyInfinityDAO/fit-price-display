@@ -1,4 +1,3 @@
-# fit-price-display
 # Fly Infinity Token (FIT)
 
 ## 🚀 About the Project
