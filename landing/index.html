@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Fly Infinity DAO</title>
+    
+    <link rel="icon" type="image/png" href="fit-price-display/logo.png">
+    <link rel="apple-touch-icon" href="fit-price-display/logo.png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-image: url('fit-price-display/background-desktop.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                background-image: url('fit-price-display/background-mobile.png');
+                background-size: contain;
+                background-position: center top;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-color: #0F0F0F;
+                padding: 15px;
+            }
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 15, 15, 0.75);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+        
+        .landing-card {
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 40px;
+            padding: 50px 40px 45px;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.7);
+        }
+        
+        .logo-container {
+            margin-bottom: 20px;
+        }
+        
+        .logo-container img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid #D4AF37;
+            object-fit: cover;
+        }
+        
+        .title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #D4AF37, #00C896);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle span {
+            color: #00C896;
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 40px;
+        }
+        
+        .btn-main {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            width: 100%;
+            max-width: 480px;
+            padding: 18px 32px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-main i {
+            font-size: 20px;
+        }
+        
+        .btn-dashboard {
+            background: transparent;
+            border-color: #D4AF37;
+            color: #D4AF37;
+        }
+        
+        .btn-dashboard:hover {
+            background: #D4AF37;
+            color: #0F0F0F;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+        }
+        
+        .btn-whitepaper {
+            background: transparent;
+            border-color: #00C896;
+            color: #00C896;
+        }
+        
+        .btn-whitepaper:hover {
+            background: #00C896;
+            color: #0F0F0F;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 200, 150, 0.3);
+        }
+        
+        .btn-dapp {
+            background: linear-gradient(135deg, #00C896, #008a6a);
+            border: none;
+            color: white;
+            box-shadow: 0 4px 20px rgba(0, 200, 150, 0.25);
+        }
+        
+        .btn-dapp:hover {
+            background: linear-gradient(135deg, #00e0a8, #00a070);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 200, 150, 0.4);
+        }
+        
+        .slogan {
+            color: #D4AF37;
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1.7;
+            max-width: 700px;
+            margin: 0 auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 200, 150, 0.15);
+        }
+        
+        .slogan span {
+            color: #00C896;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 11px;
+            color: #555;
+        }
+        
+        .footer a {
+            color: #00C896;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 600px) {
+            .landing-card {
+                padding: 35px 20px 30px;
+                border-radius: 28px;
+            }
+            
+            .logo-container img {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .title {
+                font-size: 24px;
+            }
+            
+            .btn-main {
+                font-size: 15px;
+                padding: 15px 24px;
+                max-width: 100%;
+            }
+            
+            .slogan {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    
+    <div class="landing-card">
+        
+        <!-- ===== LOGO ===== -->
+        <div class="logo-container">
+            <img src="fit-price-display/logo.png" alt="Fly Infinity DAO Logo">
+        </div>
+        
+        <!-- ===== TITLE ===== -->
+        <div class="title">Fly Infinity DAO</div>
+        <div class="subtitle">Decentralized · Transparent · <span>Forever Rising</span></div>
+        
+        <!-- ===== BUTTONS ===== -->
+        <div class="btn-group">
+            <a href="fit-price-display/index.html" class="btn-main btn-dashboard">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="fit-price-display/whitepaper.html" class="btn-main btn-whitepaper">
+                <i class="fas fa-file-pdf"></i> White Paper
+            </a>
+            <a href="fit-price-display/dapp.html" class="btn-main btn-dapp">
+                <i class="fas fa-rocket"></i> Buy Ownership Shares &amp; FIT
+            </a>
+        </div>
+        
+        <!-- ===== SLOGAN ===== -->
+        <div class="slogan">
+            Fly Infinity DAO — The world's decentralized cryptocurrency with a non-manipulable price and the first fully decentralized investment bank.
+        </div>
+        
+    </div>
+    
+    <div class="footer">
+        <a href="https://github.com/FlyInfinityDAO" target="_blank">GitHub</a> · 
+        <a href="fit-price-display/privacy.html">Privacy Policy</a> · 
+        <a href="fit-price-display/warnings.html">Warnings</a>
+    </div>
+    
+</div>
+</body>
+</html>
