@@ -625,6 +625,92 @@
         </div>
     </div>
 
+    <!-- ===== PURCHASE CALCULATOR ===== -->
+<div class="card">
+    <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;">
+        <i class="fas fa-calculator"></i> FIT Purchase Calculator
+    </div>
+    <p style="color:#888; text-align:center; font-size:12px; margin-bottom:20px;">
+        Calculate required ownership shares based on binary network plan
+    </p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+        <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #00C896;">
+            <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;">🪙 FIT Amount to Buy</label>
+            <input type="number" id="calcFitAmount" value="1000" step="10" min="1" style="width: 100%; background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
+        </div>
+        
+        <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #D4AF37;">
+            <label style="color: #D4AF37; font-size: 12px; display: block; margin-bottom: 8px;">💰 Current FIT Price (DAI)</label>
+            <input type="number" id="calcFitPrice" value="6.00" step="0.01" min="0.01" style="width: 100%; background: #0F0F0F; border: 1px solid #D4AF37; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
+            <button id="calcFetchPrice" style="margin-top: 8px; background: transparent; border: 1px solid #00C896; color: #00C896; padding: 4px 12px; border-radius: 20px; font-size: 11px; cursor: pointer;">Fetch Live Price</button>
+        </div>
+        
+        <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #00C896;">
+            <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;">💎 Ownership Share Cost (DAI)</label>
+            <input type="number" id="calcShareCost" value="100" step="1" min="1" style="width: 100%; background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
+        </div>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+        <div style="background: #1a1a1a; border-radius: 20px; padding: 20px; border-left: 3px solid #00C896;">
+            <div style="color: #00C896; font-size: 14px; font-weight: bold; margin-bottom: 10px; text-align: center;">✅ With Binary Network Plan</div>
+            <div style="text-align: center; padding: 10px 0;">
+                <div style="color: #888; font-size: 11px;">Required Shares</div>
+                <div style="color: #D4AF37; font-size: 28px; font-weight: bold;" id="calcSharesWithPlan">—</div>
+            </div>
+            <div style="text-align: center; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.05);">
+                <div style="color: #888; font-size: 11px;">Total Cost (DAI)</div>
+                <div style="color: #D4AF37; font-size: 24px; font-weight: bold;" id="calcCostWithPlan">—</div>
+            </div>
+            <div style="text-align: center; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.05);">
+                <div style="color: #888; font-size: 11px;">FIT Received (after 3% fee)</div>
+                <div style="color: #00C896; font-size: 20px; font-weight: bold;" id="calcFitReceivedWithPlan">—</div>
+            </div>
+            <div style="text-align: center; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.05);">
+                <div style="color: #888; font-size: 10px;">Max Purchase Cap: <span id="calcCapWithPlan" style="color: #D4AF37;">—</span> DAI</div>
+            </div>
+        </div>
+        
+        <div style="background: #1a1a1a; border-radius: 20px; padding: 20px; border-left: 3px solid #D4AF37;">
+            <div style="color: #D4AF37; font-size: 14px; font-weight: bold; margin-bottom: 10px; text-align: center;">❌ Without Binary Plan (Direct)</div>
+            <div style="text-align: center; padding: 10px 0;">
+                <div style="color: #888; font-size: 11px;">Required Shares</div>
+                <div style="color: #D4AF37; font-size: 28px; font-weight: bold;" id="calcSharesWithoutPlan">—</div>
+            </div>
+            <div style="text-align: center; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.05);">
+                <div style="color: #888; font-size: 11px;">Total Cost (DAI)</div>
+                <div style="color: #D4AF37; font-size: 24px; font-weight: bold;" id="calcCostWithoutPlan">—</div>
+            </div>
+            <div style="text-align: center; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.05);">
+                <div style="color: #888; font-size: 11px;">FIT Received (after 3% fee)</div>
+                <div style="color: #00C896; font-size: 20px; font-weight: bold;" id="calcFitReceivedWithoutPlan">—</div>
+            </div>
+            <div style="text-align: center; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.05);">
+                <div style="color: #888; font-size: 10px;">Max Purchase Cap: <span id="calcCapWithoutPlan" style="color: #D4AF37;">—</span> DAI</div>
+            </div>
+        </div>
+    </div>
+    
+    <div style="margin-top: 20px; background: #1a1a1a; border-radius: 16px; padding: 15px; border-left: 3px solid #D4AF37;">
+        <div style="color: #888; font-size: 11px; line-height: 1.8;">
+            <strong style="color: #D4AF37;">📖 How Binary Network Plan Works:</strong><br>
+            <span style="color: #c0d0e8;">
+            • Each ownership share costs <span id="explainShareCost">100</span> DAI and adds to your network<br>
+            • With Binary Plan: shares placed in a binary tree (1 upline + 2 downline) unlock higher purchase caps<br>
+            • Each upline share earns <span style="color: #00C896;">1 network point</span>, each downline share earns <span style="color: #00C896;">0.5 network point</span><br>
+            • <span style="color: #D4AF37;">Network points increase your purchase limit</span>
+            </span>
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 15px;">
+        <button id="calcBtn" class="action-btn" style="width: auto; padding: 10px 40px; border-color: #D4AF37; color: #D4AF37;">
+            <i class="fas fa-play"></i> Calculate
+        </button>
+    </div>
+</div>
+
         <div class="footer">
         <div style="display: flex; justify-content: center; gap: 12px; margin-top: 10px; flex-wrap: wrap; font-size: 12px;">
             <a href="index.html" class="action-btn" style="border-color: #00C896; color: #00C896; padding: 6px 14px; font-size: 11px; border-radius: 30px;"><i class="fas fa-home"></i> Dashboard</a>
@@ -935,6 +1021,103 @@
     });
     
 </script>
+
+    // ==================== PURCHASE CALCULATOR ====================
+const BUY_FEE = 0.03;
+
+function calculatePurchase() {
+    const fitAmount = parseFloat(document.getElementById('calcFitAmount').value) || 0;
+    const fitPrice = parseFloat(document.getElementById('calcFitPrice').value) || 0;
+    const shareCost = parseFloat(document.getElementById('calcShareCost').value) || 100;
+    
+    if (fitAmount <= 0 || fitPrice <= 0 || shareCost <= 0) {
+        document.getElementById('calcSharesWithPlan').innerHTML = '—';
+        document.getElementById('calcCostWithPlan').innerHTML = '—';
+        document.getElementById('calcFitReceivedWithPlan').innerHTML = '—';
+        document.getElementById('calcCapWithPlan').innerHTML = '—';
+        document.getElementById('calcSharesWithoutPlan').innerHTML = '—';
+        document.getElementById('calcCostWithoutPlan').innerHTML = '—';
+        document.getElementById('calcFitReceivedWithoutPlan').innerHTML = '—';
+        document.getElementById('calcCapWithoutPlan').innerHTML = '—';
+        return;
+    }
+    
+    // ===== WITHOUT BINARY PLAN =====
+    const capPerShareDirect = 100;
+    const sharesNeededDirect = Math.ceil((fitAmount * fitPrice) / capPerShareDirect);
+    const totalCostDirect = sharesNeededDirect * shareCost;
+    const fitReceivedDirect = (fitAmount * fitPrice) * (1 - BUY_FEE) / fitPrice;
+    const totalCapDirect = sharesNeededDirect * capPerShareDirect;
+    
+    // ===== WITH BINARY PLAN =====
+    let sharesWithPlan = 0;
+    let totalCapWithPlan = 0;
+    
+    for (let shares = 3; shares <= 200; shares++) {
+        const uplineShares = Math.ceil(shares / 3);
+        const downlineShares = shares - uplineShares;
+        const points = (uplineShares * 1) + (downlineShares * 0.5);
+        const capPerShare = 100 + (points * 100);
+        totalCapWithPlan = shares * capPerShare;
+        
+        if (totalCapWithPlan >= fitAmount * fitPrice) {
+            sharesWithPlan = shares;
+            break;
+        }
+    }
+    
+    if (sharesWithPlan === 0) {
+        sharesWithPlan = Math.ceil((fitAmount * fitPrice) / 150);
+        totalCapWithPlan = sharesWithPlan * 150;
+    }
+    
+    const totalCostWithPlan = sharesWithPlan * shareCost;
+    const fitReceivedWithPlan = (fitAmount * fitPrice) * (1 - BUY_FEE) / fitPrice;
+    
+    document.getElementById('calcSharesWithPlan').innerHTML = sharesWithPlan;
+    document.getElementById('calcCostWithPlan').innerHTML = `$${totalCostWithPlan.toFixed(2)}`;
+    document.getElementById('calcFitReceivedWithPlan').innerHTML = `${fitReceivedWithPlan.toFixed(2)} FIT`;
+    document.getElementById('calcCapWithPlan').innerHTML = `$${totalCapWithPlan.toFixed(2)}`;
+    
+    document.getElementById('calcSharesWithoutPlan').innerHTML = sharesNeededDirect;
+    document.getElementById('calcCostWithoutPlan').innerHTML = `$${totalCostDirect.toFixed(2)}`;
+    document.getElementById('calcFitReceivedWithoutPlan').innerHTML = `${fitReceivedDirect.toFixed(2)} FIT`;
+    document.getElementById('calcCapWithoutPlan').innerHTML = `$${totalCapDirect.toFixed(2)}`;
+    
+    document.getElementById('explainShareCost').innerHTML = shareCost;
+}
+
+document.getElementById('calcBtn').addEventListener('click', calculatePurchase);
+document.getElementById('calcFitAmount').addEventListener('input', calculatePurchase);
+document.getElementById('calcFitPrice').addEventListener('input', calculatePurchase);
+document.getElementById('calcShareCost').addEventListener('input', calculatePurchase);
+
+document.getElementById('calcFetchPrice').addEventListener('click', async function() {
+    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    this.disabled = true;
+    
+    try {
+        const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
+        const ABI = [{"constant":true,"inputs":[],"name":"Price","outputs":[{"name":"","type":"uint256"}],"type":"function"}];
+        const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
+        const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
+        
+        const raw = await contract.Price();
+        const price = parseFloat(ethers.utils.formatEther(raw));
+        document.getElementById('calcFitPrice').value = price.toFixed(6);
+        calculatePurchase();
+    } catch(e) {
+        console.error('Error fetching price:', e);
+        alert('Could not fetch live price. Please enter manually.');
+    } finally {
+        this.innerHTML = 'Fetch Live Price';
+        this.disabled = false;
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    calculatePurchase();
+});
 
 <!-- ===== SIDEBAR SCRIPT ===== -->
 <script>
