@@ -1,4 +1,29 @@
-# Fly Infinity Token (FIT)
+<p align="center">
+  <img src="fit-price-display/logo.png" alt="Fly Infinity DAO Logo" width="150" style="border-radius: 50%; border: 3px solid #D4AF37;">
+</p>
+
+<h1 align="center" style="color: #D4AF37;">Fly Infinity DAO</h1>
+<p align="center" style="color: #00C896;">Decentralized · Transparent · Forever Rising</p>
+
+<br>
+
+<div align="center">
+  <a href="fit-price-display/index.html">
+    <img src="https://img.shields.io/badge/📊-Dashboard-gold?style=for-the-badge&color=D4AF37" alt="Dashboard">
+  </a>
+  <a href="fit-price-display/whitepaper.html">
+    <img src="https://img.shields.io/badge/📄-White%20Paper-teal?style=for-the-badge&color=00C896" alt="White Paper">
+  </a>
+  <a href="fit-price-display/dapp.html">
+    <img src="https://img.shields.io/badge/🚀-Buy%20Ownership%20Shares%20%26%20FIT-brightgreen?style=for-the-badge&color=00C896" alt="DApp">
+  </a>
+</div>
+
+<br>
+
+> **Fly Infinity DAO** — The world's decentralized cryptocurrency with a non-manipulable price and the first fully decentralized investment bank.
+
+---
 
 ## 🚀 About the Project
 
@@ -30,3 +55,9 @@ This is a decentralized project. Users are responsible for their own actions and
 
 - [Website](https://flyinfinitydao.github.io/fit-price-display)
 - [White Paper](https://github.com/FlyInfinityDAO/Fly-Infinity-Token/blob/main/FIT%20-%20White%20Paper.pdf)
+
+---
+
+<div align="center">
+  <sub>© 2026 Fly Infinity DAO</sub>
+</div>
