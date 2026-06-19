@@ -9,13 +9,19 @@
 
 <div align="center">
   <a href="fit-price-display/index.html">
-    <img src="https://img.shields.io/badge/📊-Dashboard-gold?style=for-the-badge&color=D4AF37" alt="Dashboard">
+    <button style="background: transparent; border: 2px solid #D4AF37; color: #D4AF37; padding: 14px 32px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; margin: 8px; transition: all 0.3s ease;">
+      📊 Dashboard
+    </button>
   </a>
   <a href="fit-price-display/whitepaper.html">
-    <img src="https://img.shields.io/badge/📄-White%20Paper-teal?style=for-the-badge&color=00C896" alt="White Paper">
+    <button style="background: transparent; border: 2px solid #00C896; color: #00C896; padding: 14px 32px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; margin: 8px; transition: all 0.3s ease;">
+      📄 White Paper
+    </button>
   </a>
   <a href="fit-price-display/dapp.html">
-    <img src="https://img.shields.io/badge/🚀-Buy%20Ownership%20Shares%20%26%20FIT-brightgreen?style=for-the-badge&color=00C896" alt="DApp">
+    <button style="background: linear-gradient(135deg, #00C896, #008a6a); border: none; color: white; padding: 14px 32px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; margin: 8px; transition: all 0.3s ease;">
+      🚀 Buy Ownership Shares &amp; FIT
+    </button>
   </a>
 </div>
 
