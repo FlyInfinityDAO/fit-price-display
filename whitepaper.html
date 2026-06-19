@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Fly Infinity Token - White Paper</title>
+    
+    <!-- ===== FAVICON ===== -->
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-image: url('background-desktop.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                background-image: url('background-mobile.png');
+                background-size: contain;
+                background-position: center top;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-color: #0F0F0F;
+                padding: 15px;
+            }
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 15, 15, 0.85);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* ===== TOP NAV BAR ===== */
+        .top-bar {
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 12px 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 100;
+        }
+        
+        .top-bar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #D4AF37;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .top-bar .logo i {
+            font-size: 22px;
+        }
+        
+        .hamburger {
+            background: transparent;
+            border: 1px solid #00C896;
+            color: #00C896;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .hamburger:hover {
+            background: #00C896;
+            color: #0F0F0F;
+            transform: rotate(90deg);
+        }
+        
+        /* ===== SIDEBAR OVERLAY ===== */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+        
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            max-width: 85vw;
+            height: 100%;
+            background: #0F0F0F;
+            border-left: 2px solid rgba(0, 200, 150, 0.3);
+            z-index: 1000;
+            padding: 30px 25px;
+            transition: right 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar.open {
+            right: 0;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 200, 150, 0.2);
+            margin-bottom: 25px;
+        }
+        
+        .sidebar-header .logo-text {
+            color: #D4AF37;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .sidebar-header .close-btn {
+            background: transparent;
+            border: none;
+            color: #ff4444;
+            font-size: 28px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-header .close-btn:hover {
+            transform: rotate(90deg);
+        }
+        
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 20px;
+            border-radius: 16px;
+            color: #c0d0e8;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .sidebar-menu a i {
+            width: 24px;
+            font-size: 18px;
+            color: #00C896;
+        }
+        
+        .sidebar-menu a:hover {
+            background: rgba(0, 200, 150, 0.08);
+            border-color: rgba(0, 200, 150, 0.3);
+            transform: translateX(-5px);
+        }
+        
+        .sidebar-menu a.active {
+            background: rgba(0, 200, 150, 0.15);
+            border-color: #00C896;
+            color: #D4AF37;
+        }
+        
+        .sidebar-menu a.active i {
+            color: #D4AF37;
+        }
+        
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 200, 150, 0.2);
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+        }
+        
+        .sidebar-footer a {
+            color: #00C896;
+            text-decoration: none;
+        }
+        
+        .page-title {
+            font-size: 32px;
+            color: #D4AF37;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(0, 200, 150, 0.3);
+            padding-bottom: 15px;
+        }
+        
+        .wp-content {
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 40px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5);
+        }
+        
+        .wp-content h2 {
+            color: #D4AF37;
+            font-size: 24px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-left: 3px solid #00C896;
+            padding-left: 15px;
+        }
+        
+        .wp-content h3 {
+            color: #00C896;
+            font-size: 18px;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        
+        .wp-content h4 {
+            color: #D4AF37;
+            font-size: 16px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .wp-content p {
+            color: #c0d0e8;
+            line-height: 1.8;
+            font-size: 15px;
+            text-align: justify;
+            margin-bottom: 15px;
+        }
+        
+        .wp-content ul {
+            color: #c0d0e8;
+            line-height: 1.8;
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        .wp-content ul li {
+            margin-bottom: 5px;
+        }
+        
+        .wp-content .highlight {
+            color: #00C896;
+            font-weight: bold;
+        }
+        
+        .wp-content .gold {
+            color: #D4AF37;
+            font-weight: bold;
+        }
+        
+        .wp-content .formula-box {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+            border-left: 3px solid #D4AF37;
+            font-size: 18px;
+            color: #D4AF37;
+        }
+        
+        .wp-content .table-wrap {
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .wp-content table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .wp-content table th {
+            background: #1a1a1a;
+            color: #D4AF37;
+            padding: 10px 12px;
+            text-align: center;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+        }
+        
+        .wp-content table td {
+            color: #c0d0e8;
+            padding: 8px 12px;
+            text-align: center;
+            border: 1px solid rgba(0, 200, 150, 0.1);
+        }
+        
+        .wp-content table tr:hover td {
+            background: rgba(0, 200, 150, 0.03);
+        }
+        
+        .wp-content .contract-box {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 3px solid #D4AF37;
+        }
+        
+        .wp-content .contract-box .contract-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 13px;
+        }
+        
+        .wp-content .contract-box .contract-row:last-child {
+            border-bottom: none;
+        }
+        
+        .wp-content .contract-box .contract-label {
+            color: #888;
+            font-weight: bold;
+        }
+        
+        .wp-content .contract-box .contract-address {
+            color: #D4AF37;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+        }
+        
+        .wp-content .quote-box {
+            background: rgba(212, 175, 55, 0.06);
+            border-left: 3px solid #D4AF37;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 18px;
+            color: #D4AF37;
+            font-style: italic;
+        }
+
+        .wp-content .info-box {
+            background: rgba(0, 200, 150, 0.05);
+            border-left: 4px solid #00C896;
+            padding: 25px 30px;
+            border-radius: 16px;
+            margin: 25px 0;
+        }
+
+        .wp-content .info-box h4 {
+            color: #00C896;
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+
+        .wp-content .info-box p {
+            margin-bottom: 8px;
+            font-size: 14px;
+            text-align: justify;
+        }
+
+        .wp-content .info-box ul {
+            margin-bottom: 5px;
+        }
+
+        .wp-content .info-box ul li {
+            font-size: 14px;
+        }
+        
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            margin-top: 20px;
+        }
+        
+        .footer a {
+            color: #00C896;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 85vw;
+                right: -85vw;
+            }
+            .top-bar .logo {
+                font-size: 15px;
+            }
+            .page-title {
+                font-size: 24px;
+            }
+            .wp-content {
+                padding: 20px;
+            }
+            .wp-content h2 {
+                font-size: 20px;
+            }
+            .wp-content p {
+                font-size: 14px;
+            }
+            .wp-content .formula-box {
+                font-size: 15px;
+            }
+            .wp-content table {
+                font-size: 11px;
+            }
+            .wp-content .contract-box .contract-row {
+                flex-direction: column;
+                gap: 4px;
+            }
+            .wp-content .info-box {
+                padding: 18px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    
+    <!-- ===== TOP NAV BAR ===== -->
+    <div class="top-bar">
+        <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+    <img src="logo.png" alt="Fly Infinity DAO" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37;">
+    <span style="color: #D4AF37; font-size: 18px; font-weight: bold;">Fly Infinity DAO</span>
+</a>
+        <button class="hamburger" id="hamburgerBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+
+    <!-- ===== SIDEBAR OVERLAY ===== -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ===== SIDEBAR ===== -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="logo-text" style="display: flex; align-items: center; gap: 10px;">
+    <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
+    <span style="color: #D4AF37; font-size: 18px; font-weight: bold;">Fly Infinity DAO</span>
+</span>
+            <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="index.html">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="compare.html">
+                <i class="fas fa-chart-line"></i> Comparison
+            </a>
+            <a href="dapp.html">
+                <i class="fas fa-charging-station"></i> DApp
+            </a>
+            <a href="transactions.html">
+                <i class="fas fa-history"></i> Transactions
+            </a>
+            <a href="privacy.html">
+                <i class="fas fa-shield-alt"></i> Privacy
+            </a>
+            <a href="warnings.html">
+                <i class="fas fa-exclamation-triangle"></i> Warnings
+            </a>
+            <a href="faq.html">
+                <i class="fas fa-question-circle"></i> FAQ
+            </a>
+            <a href="whitepaper.html" class="active">
+                <i class="fas fa-file-pdf"></i> White Paper
+            </a>
+        </div>
+        
+        <div class="sidebar-footer">
+            <a href="https://flyinfinitydao.github.io/fit-price-display" target="_blank">flyinfinitydao.github.io</a><br>
+            Fly Infinity DAO
+        </div>
+    </div>
+
+    <!-- ===== WHITE PAPER CONTENT ===== -->
+    <h1 class="page-title"><i class="fas fa-file-pdf" style="color: #D4AF37; margin-right: 12px;"></i>White Paper</h1>
+    
+    <div class="wp-content">
+        
+        <p style="text-align: center; color: #888; font-size: 13px; margin-bottom: 25px;">
+            <strong>Version 1.0</strong> | <strong>Release Date:</strong> June 2026
+        </p>
+
+        <!-- ===== 1. PREFACE ===== -->
+        <h2>1. Preface</h2>
+        <p>
+            Despite its remarkable growth, the cryptocurrency market continues to face fundamental structural challenges. The lack of transparency in asset backing, price manipulation by market whales, reliance on centralized order books, and the risks associated with speculative bubbles have left investors exposed to extreme and unpredictable volatility.
+        </p>
+        <p>
+            <strong class="gold">Fly Infinity Platform</strong> has been designed in response to these challenges. It is a decentralized platform with the goal of creating a transparent digital asset with real backing, built on a structure that reduces the risk of price reversal to zero.
+        </p>
+
+        <!-- ===== 2. INTRODUCTION ===== -->
+        <h2>2. Introduction to Fly Infinity Platform</h2>
+        <p>
+            Fly Infinity is a next-generation decentralized financial platform built upon two fully complementary economic components:
+        </p>
+        <h3>2.1 Fly Infinity Network</h3>
+        <p>
+            An intelligent and autonomous network responsible for injecting real capital into the token contract. This network continuously increases liquidity without the need to mint new tokens.
+        </p>
+        <h3>2.2 Fly Infinity Token (FIT)</h3>
+        <p>
+            The platform's primary digital asset, whose price is calculated not based on market hype, but solely on the ratio of <strong class="highlight">DAI Reserve to Total Supply</strong>.
+        </p>
+
+        <!-- ===== 3. PRICING FORMULA ===== -->
+        <h2>3. Pricing Formula (Bonding Curve)</h2>
+        <p>
+            The price of the FIT token is calculated transparently and immutably within the smart contract:
+        </p>
+        <div class="formula-box">
+            <strong>FIT Price = DAI Reserve ÷ Total Supply</strong>
+        </div>
+        <h3>Key Features of This Model:</h3>
+        <ul>
+            <li><span class="highlight">Immutable:</span> The price cannot be altered by any external entity.</li>
+            <li><span class="highlight">Transparent:</span> Calculable and verifiable at any moment.</li>
+            <li><span class="highlight">Continuously Rising:</span> Each purchase increases liquidity and raises the base price.</li>
+        </ul>
+
+        <!-- ===== 4. NON-DIMINISHING PRICE ===== -->
+        <h2>4. Unique Feature: Non-Diminishing Price</h2>
+        <p>
+            Fly Infinity is the only project where the base token price never decreases. This is achieved through the following logic:
+        </p>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Effect</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="highlight">Buy FIT</span></td>
+                        <td>Real DAI enters the contract → Liquidity increases → Price increases</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Sell FIT</span></td>
+                        <td>Tokens are burned → Supply decreases → Price increases</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Buy Fee (3%)</span></td>
+                        <td>Returns to liquidity → Price reinforcement</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight">Sell Fee (6%)</span></td>
+                        <td>Returns to liquidity → Price reinforcement</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p>
+            <strong class="gold">Result:</strong> Even large sell-offs do not necessarily reduce the price — in many cases, they increase it.
+        </p>
+
+        <!-- ===== 5. DECENTRALIZED STRUCTURE ===== -->
+        <h2>5. Decentralized Structure &amp; DAO Governance</h2>
+        <h3>5.1 Complete Decentralization</h3>
+        <ul>
+            <li>No central team has access to administrative keys.</li>
+            <li>All rules are embedded in public, immutable smart contracts.</li>
+            <li>No entity can stop, alter, or censor transactions.</li>
+        </ul>
+        <h3>5.2 DAO Governance</h3>
+        <p>
+            All key project decisions, including:
+        </p>
+        <ul>
+            <li>Potential upgrades</li>
+            <li>Resource allocation</li>
+            <li>Future developments</li>
+        </ul>
+        <p>
+            are made through decentralized voting, proportional to each holder's stake in the network.
+        </p>
+
+        <!-- ===== 6. STEP-BASED PURCHASE ===== -->
+        <h2>6. Step-Based Purchase Model</h2>
+        <p>
+            To prevent sudden whale entry and maintain healthy price growth, FIT purchases are structured in a step-based system:
+        </p>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Step</th>
+                        <th>Network Points Required</th>
+                        <th>Purchase Cap (DAI)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td>0</td><td>100</td></tr>
+                    <tr><td>2</td><td>1</td><td>100+</td></tr>
+                    <tr><td>3</td><td>10</td><td>100+</td></tr>
+                    <tr><td>4</td><td>30</td><td>100+</td></tr>
+                    <tr><td>5</td><td>100</td><td>1,000+</td></tr>
+                    <tr><td>6</td><td>300</td><td>1,000+</td></tr>
+                    <tr><td>7</td><td>1,000</td><td>10,000+</td></tr>
+                    <tr><td>8</td><td>3,000</td><td>10,000+</td></tr>
+                    <tr><td>9</td><td>10,000</td><td>100,000+</td></tr>
+                    <tr><td>10</td><td>30,000</td><td>100,000+</td></tr>
+                    <tr><td>11</td><td>100,000</td><td>1,000,000+</td></tr>
+                    <tr><td>...</td><td>...</td><td>...</td></tr>
+                    <tr><td>19</td><td>1,000,000,000</td><td>10,000,000,000+</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p>
+            <strong class="highlight">How It Works:</strong> Each user can purchase only once per step, up to the specified cap. After earning the required network points, the next step becomes available. The total purchase cap increases cumulatively as users progress through the steps.
+        </p>
+
+        <!-- ===== DOUBLE INFINITY NETWORK ADVANTAGE ===== -->
+        <div class="info-box">
+            <h4><i class="fas fa-infinity" style="color: #00C896; margin-right: 8px;"></i> Double Infinity Network Advantage</h4>
+            <p>
+                <strong class="gold">Unlock Superior Purchase Power Through Network Structure</strong>
+            </p>
+            <p>
+                The <strong class="highlight">Double Infinity Network</strong> introduces a revolutionary mechanism that empowers users to purchase significantly larger amounts of FIT with substantially fewer ownership shares. This is achieved through the intelligent binary tree structure of the network, where each share placed in the network generates <strong class="highlight">network points</strong> that directly increase the user's purchase capacity.
+            </p>
+            <p>
+                <strong class="gold">How the Binary Tree Multiplier Works:</strong>
+            </p>
+            <ul>
+                <li><strong class="highlight">Traditional Model:</strong> Each ownership share provides a fixed purchase cap of 100 DAI. To purchase 6,000 DAI worth of FIT, a user would need 60 shares, costing an additional 6,000 DAI — total investment of 12,000 DAI.</li>
+                <li><strong class="highlight">Double Infinity Model:</strong> By strategically placing shares in a balanced binary tree (1 upline + 2 downline per node), the same 6,000 DAI purchase can be achieved with only <strong class="gold">40 shares</strong> — a <strong class="highlight">33% reduction</strong> in required shares.</li>
+                <li><strong class="gold">Accumulated Advantage:</strong> As the purchase amount increases, the efficiency gap widens. For larger purchases, the Double Infinity Network can reduce required shares by up to <strong class="highlight">50% or more</strong>, dramatically lowering the total capital needed to acquire FIT.</li>
+            </ul>
+            <p>
+                <strong class="gold">Mathematical Proof:</strong> In a balanced binary tree with 40 shares, the network generates 57 reward points (as verified through our reward calculation model). Each point represents unlocked purchase capacity, allowing users to achieve higher purchase caps with fewer shares. This is not a promotional claim — it is a <strong class="highlight">mathematically verifiable property</strong> of the Double Infinity Network architecture.
+            </p>
+            <p>
+                <strong class="highlight">Key Takeaway:</strong> The Double Infinity Network is not merely a referral system — it is a <strong class="gold">financial engineering innovation</strong> that mathematically optimizes capital efficiency. Users who understand and leverage this structure can acquire FIT with significantly lower capital outlay compared to traditional direct purchase methods.
+            </p>
+            <p style="color: #888; font-size: 12px; margin-top: 10px;">
+                <i class="fas fa-calculator" style="color: #00C896;"></i> 
+                <strong>Example:</strong> 6,000 DAI FIT Purchase — Traditional: 60 shares, 12,000 DAI total cost | Double Infinity: 40 shares, 10,000 DAI total cost | <strong class="gold">Savings: 2,000 DAI (17% reduction)</strong>
+            </p>
+        </div>
+
+        <!-- ===== 7. SECURITY ===== -->
+        <h2>7. Security &amp; Transparency</h2>
+        <h3>7.1 Contract Security</h3>
+        <ul>
+            <li>Smart contracts are implemented to the highest standards.</li>
+            <li>No hidden functions or administrative keys exist.</li>
+            <li>All transactions are recorded and visible on the BSC blockchain.</li>
+        </ul>
+        <h3>7.2 Economic Transparency</h3>
+        <p>
+            The following information is available to the public in real-time:
+        </p>
+        <ul>
+            <li>Live FIT price</li>
+            <li>Total supply</li>
+            <li>DAI reserve</li>
+            <li>Daily price history</li>
+            <li>Holder distribution</li>
+            <li>Trading volume</li>
+        </ul>
+
+        <!-- ===== 8. COMPETITIVE ADVANTAGES ===== -->
+        <h2>8. Competitive Advantages</h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Fly Infinity</th>
+                        <th>Traditional Projects</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Real Asset Backing</td>
+                        <td><span class="highlight">✅ DAI</span></td>
+                        <td>❌ Marketing Promises</td>
+                    </tr>
+                    <tr>
+                        <td>Non-Diminishing Price</td>
+                        <td><span class="highlight">✅</span></td>
+                        <td>❌</td>
+                    </tr>
+                    <tr>
+                        <td>Full Transparency</td>
+                        <td><span class="highlight">✅</span></td>
+                        <td>❌</td>
+                    </tr>
+                    <tr>
+                        <td>Anti-Whale Manipulation</td>
+                        <td><span class="highlight">✅</span></td>
+                        <td>❌</td>
+                    </tr>
+                    <tr>
+                        <td>DAO Governance</td>
+                        <td><span class="highlight">✅</span></td>
+                        <td>❌</td>
+                    </tr>
+                    <tr>
+                        <td>Transparent Fees</td>
+                        <td><span class="highlight">✅ (3% / 6%)</span></td>
+                        <td>Unclear</td>
+                    </tr>
+                    <tr>
+                        <td>Binary Network Efficiency</td>
+                        <td><span class="highlight">✅ Up to 50% Share Reduction</span></td>
+                        <td>❌</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ===== 9. ROADMAP ===== -->
+        <h2>9. Development Roadmap</h2>
+        <h3>Phase 1: Stabilization &amp; Accumulation</h3>
+        <ul>
+            <li>Controlled user entry through the step-based model</li>
+            <li>Gradual liquidity growth</li>
+            <li>Low-volatility price increase</li>
+        </ul>
+        <h3>Phase 2: Accelerated Growth</h3>
+        <ul>
+            <li>Continuous DAI injection by Fly Infinity Network</li>
+            <li>Exponential liquidity growth without minting new tokens</li>
+            <li>Strong upward price momentum</li>
+        </ul>
+        <h3>Phase 3: System Maturity</h3>
+        <ul>
+            <li>Entry of large capital without dump risk</li>
+            <li>FIT evolving into a reserve-grade digital asset</li>
+            <li>Sustainable and logical price appreciation</li>
+        </ul>
+
+        <!-- ===== 10. SUMMARY ===== -->
+        <h2>10. Summary</h2>
+        <p>
+            Fly Infinity is not a typical crypto project. It is a financial system engineered from first principles to:
+        </p>
+        <ul>
+            <li>Have real asset backing</li>
+            <li>Ensure transparent and immutable pricing</li>
+            <li>Guarantee logical and sustainable growth</li>
+            <li>Reduce price reversal risk to zero</li>
+            <li>Never form a speculative bubble</li>
+        </ul>
+        <div class="quote-box">
+            "Fly Infinity does not promise unrealistic profits, but it also does not allow capital destruction."
+        </div>
+
+        <!-- ===== 11. CONTRACTS ===== -->
+        <h2>11. Contract Addresses</h2>
+        <div class="contract-box">
+            <div class="contract-row">
+                <span class="contract-label">🌐 Website</span>
+                <span class="contract-address"><a href="https://flyinfinitydao.github.io/fit-price-display" target="_blank" style="color: #00C896; text-decoration: none;">flyinfinitydao.github.io/fit-price-display</a></span>
+            </div>
+            <div class="contract-row">
+                <span class="contract-label">🪙 FIT Token Contract</span>
+                <span class="contract-address">0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa</span>
+            </div>
+            <div class="contract-row">
+                <span class="contract-label">🌐 Network Contract</span>
+                <span class="contract-address">0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B</span>
+            </div>
+            <div class="contract-row">
+                <span class="contract-label">🎁 Gift Contract</span>
+                <span class="contract-address">0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8</span>
+            </div>
+            <div class="contract-row">
+                <span class="contract-label">🏛️ DAO Contract</span>
+                <span class="contract-address">0xB56c380287b7Fdc9940501f13Fc185A787a6F5D9</span>
+            </div>
+        </div>
+
+        <!-- ===== 12. DISCLAIMER ===== -->
+        <h2>12. Disclaimer</h2>
+        <p>
+            <strong class="gold">No Financial Advice:</strong> Nothing in this document constitutes financial advice. Users should conduct their own research (DYOR) and consult with qualified financial advisors before making any investment decisions.
+        </p>
+        <p>
+            <strong class="gold">Risk Warning:</strong> Cryptocurrency investments carry inherent risks, including but not limited to market volatility, smart contract vulnerabilities, regulatory changes, and loss of private keys.
+        </p>
+        <p>
+            <strong class="gold">Open Source:</strong> This project is open source and provided "AS IS" without warranty of any kind.
+        </p>
+
+        <!-- ===== 13. CLOSING ===== -->
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(0, 200, 150, 0.2);">
+            <p style="color: #D4AF37; font-size: 20px; font-weight: bold; text-align: center;">
+                <i class="fas fa-infinity" style="color: #00C896; margin-right: 10px;"></i>
+                Experience infinite financial growth with Fly Infinity.
+            </p>
+            <p style="color: #888; font-size: 12px; text-align: center; margin-top: 10px;">
+                Fly Infinity DAO — Decentralized. Transparent. Forever Rising.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        <a href="index.html">Dashboard</a> | 
+        <a href="compare.html">Comparison</a> | 
+        <a href="transactions.html">Transactions</a> | 
+        <a href="privacy.html">Privacy Policy</a> | 
+        <a href="warnings.html">Warnings</a> | 
+        <a href="faq.html">FAQ</a> | 
+        <a href="whitepaper.html">White Paper</a><br>
+        Fly Infinity DAO
+    </div>
+</div>
+
+<!-- ===== SIDEBAR SCRIPT ===== -->
+<script>
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    function openSidebar() {
+        sidebar.classList.add('open');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    hamburgerBtn.addEventListener('click', openSidebar);
+    closeSidebarBtn.addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeSidebar();
+        }
+    });
+</script>
+
+</body>
+</html>
