@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "title": "Fly Infinity - Avisos Importantes",
+    "description": "Avisos importantes para usuários do Fly Infinity Token"
+  },
+  "header": {
+    "title": "Fly Infinity DAO"
+  },
+  "nav": {
+    "dashboard": "Painel",
+    "comparison": "Comparação",
+    "dapp": "DApp",
+    "transactions": "Transações",
+    "privacy": "Privacidade",
+    "warnings": "Avisos",
+    "faq": "Perguntas Frequentes",
+    "whitepaper": "White Paper"
+  },
+  "warnings": {
+    "wallet": {
+      "title": "⚠️ Antes de Alterar ou Excluir sua Carteira",
+      "text": "Se você pretende realizar uma operação de alteração de carteira, deve vender seus tokens primeiro. Caso contrário, seus tokens perderão sua transferibilidade e você não poderá vendê-los depois.",
+      "solutionTitle": "🔧 Solução:",
+      "solutionText": "Primeiro, venda todos os seus tokens FIT → Depois altere sua carteira → Finalmente, compre FIT novamente em sua nova carteira."
+    },
+    "recovery": {
+      "title": "⚠️ Nunca Compartilhe sua Frase de Recuperação",
+      "text": "As frases de recuperação (frases semente) não podem ser alteradas ou redefinidas. Mantenha-as seguras!",
+      "li1": "✅ Escreva-as fisicamente no papel",
+      "li2": "✅ Guarde múltiplas cópias em locais seguros e separados",
+      "li3": "✅ Nunca as armazene digitalmente (capturas de tela, nuvem, e-mail)",
+      "li4": "❌ Nunca as compartilhe com ninguém, incluindo equipes de \"suporte\""
+    },
+    "blockchain": {
+      "title": "⚠️ Transações na Blockchain são Irreversíveis",
+      "text": "A blockchain é um sistema descentralizado sem autoridade central. Uma vez que uma transação é confirmada, ela é registrada permanentemente na blockchain e não pode ser revertida, modificada ou excluída por ninguém.",
+      "li1": "🔒 Sempre verifique duas vezes os endereços das carteiras antes de enviar",
+      "li2": "🔒 Verifique cuidadosamente os valores das transações",
+      "li3": "🔒 Tenha cuidado com golpes e tentativas de phishing",
+      "li4": "🔒 Ninguém pode \"reverter\" ou \"cancelar\" sua transação"
+    }
+  },
+  "footer": {
+    "tagline": "Fly Infinity — Descentralizado. Transparente. Sempre Subindo."
+  }
+}
