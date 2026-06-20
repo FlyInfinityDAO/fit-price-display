@@ -12,6 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="lang.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -57,6 +58,7 @@
             z-index: 1;
         }
         
+        /* ===== TOP NAV BAR ===== */
         .top-bar {
             background: #0F0F0F;
             backdrop-filter: blur(10px);
@@ -74,15 +76,36 @@
         .top-bar .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             color: #D4AF37;
             font-size: 18px;
             font-weight: bold;
             text-decoration: none;
         }
         
-        .top-bar .logo i {
-            font-size: 22px;
+        .top-bar .logo img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #D4AF37;
+        }
+        
+        .top-bar .logo span {
+            color: #D4AF37;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .top-bar-center {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         
         .hamburger {
@@ -106,6 +129,118 @@
             transform: rotate(90deg);
         }
         
+        /* ===== LANGUAGE BUTTON ===== */
+        .lang-btn {
+            background: transparent;
+            border: 1px solid rgba(0, 200, 150, 0.3);
+            color: #D4AF37;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .lang-btn:hover {
+            border-color: #00C896;
+            background: rgba(0, 200, 150, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .lang-dropdown {
+            position: fixed;
+            top: 75px;
+            right: 20px;
+            background: #0F0F0F;
+            border: 1px solid rgba(0, 200, 150, 0.3);
+            border-radius: 16px;
+            padding: 8px;
+            min-width: 160px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .lang-dropdown.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .lang-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            color: #c0d0e8;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .lang-item:hover {
+            background: rgba(0, 200, 150, 0.08);
+            color: #D4AF37;
+        }
+        
+        .lang-item.active {
+            background: rgba(0, 200, 150, 0.15);
+            color: #D4AF37;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+        }
+        
+        .lang-item .flag {
+            font-size: 18px;
+        }
+        
+        .lang-item .lang-name {
+            font-size: 13px;
+        }
+        
+        @media (max-width: 768px) {
+            .lang-dropdown {
+                top: 65px;
+                right: 10px;
+                min-width: 140px;
+            }
+            .lang-item {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            .lang-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+            .top-bar .logo span {
+                font-size: 15px;
+            }
+            .top-bar .logo img {
+                width: 28px;
+                height: 28px;
+            }
+            .hamburger {
+                width: 38px;
+                height: 38px;
+                font-size: 17px;
+            }
+        }
+        
+        /* ===== SIDEBAR ===== */
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -156,9 +291,19 @@
         }
         
         .sidebar-header .logo-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             color: #D4AF37;
             font-size: 18px;
             font-weight: bold;
+        }
+        
+        .sidebar-header .logo-text img {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid #D4AF37;
         }
         
         .sidebar-header .close-btn {
@@ -307,8 +452,6 @@
         .result-return { font-size: 18px; font-weight: bold; color: #D4AF37; }
         
         .refresh-btn { background: transparent; border: 1px solid #00C896; color: #00C896; padding: 6px 16px; border-radius: 30px; cursor: pointer; margin-top: 10px; }
-        .footer { text-align: center; font-size: 10px; color: #666; margin-top: 20px; }
-        .footer a { color: #00C896; text-decoration: none; }
         
         .fee-grid {
             display: grid;
@@ -460,6 +603,45 @@
             }
         }
         
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            margin-top: 30px;
+            border-top: 1px solid rgba(0, 200, 150, 0.15);
+            padding-top: 20px;
+        }
+        
+        .footer a {
+            color: #00C896;
+            text-decoration: none;
+        }
+        
+        .footer .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .footer .footer-links span {
+            color: #444;
+        }
+        
+        .footer .footer-tagline {
+            color: #888;
+            font-size: 11px;
+            margin: 0;
+            text-align: center;
+        }
+        
+        .footer .footer-tagline .gold {
+            color: #D4AF37;
+        }
+        
         @media (max-width: 800px) { 
             .top-grid { grid-template-columns: 1fr; } 
             .live-price { font-size: 36px; }
@@ -473,9 +655,6 @@
                 width: 85vw;
                 right: -85vw;
             }
-            .top-bar .logo {
-                font-size: 15px;
-            }
         }
     </style>
 </head>
@@ -484,13 +663,17 @@
     
     <!-- ===== TOP NAV BAR ===== -->
     <div class="top-bar">
-        <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-            <img src="logo.png" alt="Fly Infinity DAO" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37;">
-            <span style="color: #D4AF37; font-size: 18px; font-weight: bold;">Fly Infinity DAO</span>
-        </a>
-        <button class="hamburger" id="hamburgerBtn">
-            <i class="fas fa-bars"></i>
-        </button>
+        <div class="top-bar-center">
+            <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+                <img src="logo.png" alt="Fly Infinity DAO" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37;">
+                <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
+            </a>
+        </div>
+        <div class="top-bar-right">
+            <button class="hamburger" id="hamburgerBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
     </div>
 
     <!-- ===== SIDEBAR OVERLAY ===== -->
@@ -501,40 +684,40 @@
         <div class="sidebar-header">
             <span class="logo-text" style="display: flex; align-items: center; gap: 10px;">
                 <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
-                <span style="color: #D4AF37; font-size: 18px; font-weight: bold;">Fly Infinity DAO</span>
+                <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
             </span>
             <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
         </div>
         
         <div class="sidebar-menu">
-            <a href="index.html" class="active">
+            <a href="index.html" class="active" data-i18n="nav.dashboard">
                 <i class="fas fa-home"></i> Dashboard
             </a>
-            <a href="compare.html">
+            <a href="compare.html" data-i18n="nav.comparison">
                 <i class="fas fa-chart-line"></i> Comparison
             </a>
-            <a href="dapp.html">
+            <a href="dapp.html" data-i18n="nav.dapp">
                 <i class="fas fa-charging-station"></i> DApp
             </a>
-            <a href="transactions.html">
+            <a href="transactions.html" data-i18n="nav.transactions">
                 <i class="fas fa-history"></i> Transactions
             </a>
-            <a href="privacy.html">
+            <a href="privacy.html" data-i18n="nav.privacy">
                 <i class="fas fa-shield-alt"></i> Privacy
             </a>
-            <a href="warnings.html">
+            <a href="warnings.html" data-i18n="nav.warnings">
                 <i class="fas fa-exclamation-triangle"></i> Warnings
             </a>
-            <a href="faq.html">
+            <a href="faq.html" data-i18n="nav.faq">
                 <i class="fas fa-question-circle"></i> FAQ
             </a>
-            <a href="whitepaper.html">
+            <a href="whitepaper.html" data-i18n="nav.whitepaper">
                 <i class="fas fa-file-pdf"></i> White Paper
             </a>
         </div>
         
         <div class="sidebar-footer">
-            <a href="https://flyinfinitydao.github.io/fit-price-display" target="_blank">flyinfinitydao.github.io</a><br>
+            <a href="https://flyinfinitydao.github.io" target="_blank">flyinfinitydao.github.io</a><br>
             Fly Infinity DAO
         </div>
     </div>
@@ -544,27 +727,27 @@
         <div class="card" style="text-align:center">
             <div class="header-with-logo">
                 <img src="logo.png" alt="FIT Logo" class="token-logo" onerror="this.style.display='none'">
-                <h1>Fly Infinity Token (FIT)</h1>
+                <h1 data-i18n="dashboard.title">Fly Infinity Token (FIT)</h1>
             </div>
-            <div style="background: #D4AF37; color: #0F0F0F; padding: 4px 12px; border-radius: 30px; font-size: 11px; display: inline-block;">🛡️ BNB Smart Chain (BSC) Mainnet</div>
-            <div style="margin: 20px 0 10px 0; color: #00C896;">Current Price</div>
+            <div style="background: #D4AF37; color: #0F0F0F; padding: 4px 12px; border-radius: 30px; font-size: 11px; display: inline-block;" data-i18n="dashboard.chain">🛡️ BNB Smart Chain (BSC) Mainnet</div>
+            <div style="margin: 20px 0 10px 0; color: #00C896;" data-i18n="dashboard.currentPrice">Current Price</div>
             <div class="live-price" id="fit-price">—</div>
             <div class="usd-price" id="usd-price">≈ $— </div>
-            <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh Price</button>
+            <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> <span data-i18n="btn.refresh">Refresh Price</span></button>
         </div>
         <div class="card">
-            <div style="font-size:18px; margin-bottom:15px; text-align:center; color: #D4AF37;"><i class="fas fa-chart-line"></i> Token Statistics</div>
+            <div style="font-size:18px; margin-bottom:15px; text-align:center; color: #D4AF37;" data-i18n="dashboard.statistics"><i class="fas fa-chart-line"></i> Token Statistics</div>
             <div class="stats-grid">
-                <div class="stat-card"><div class="stat-value" id="totalSupply">—</div><div class="stat-label">Total Supply</div></div>
-                <div class="stat-card"><div class="stat-value" id="daiBalance">—</div><div class="stat-label">$ Reserve</div></div>
-                <div class="stat-card"><div class="stat-value" id="marketCap">—</div><div class="stat-label">Market Cap ($)</div></div>
-                <div class="stat-card"><div class="stat-value" id="holderCount">—</div><div class="stat-label">Total Holders</div></div>
+                <div class="stat-card"><div class="stat-value" id="totalSupply">—</div><div class="stat-label" data-i18n="dashboard.totalSupply">Total Supply</div></div>
+                <div class="stat-card"><div class="stat-value" id="daiBalance">—</div><div class="stat-label" data-i18n="dashboard.reserve">$ Reserve</div></div>
+                <div class="stat-card"><div class="stat-value" id="marketCap">—</div><div class="stat-label" data-i18n="dashboard.marketCap">Market Cap ($)</div></div>
+                <div class="stat-card"><div class="stat-value" id="holderCount">—</div><div class="stat-label" data-i18n="dashboard.holders">Total Holders</div></div>
             </div>
             <div style="margin-top:15px; background:#1a1a1a; border-radius:16px; padding:12px; border-left: 3px solid #00C896;">
-                <div style="color:#00C896; font-size:11px;">📜 Contract Address</div>
+                <div style="color:#00C896; font-size:11px;" data-i18n="dashboard.contract">📜 Contract Address</div>
                 <div style="font-family:monospace; font-size:12px; color:#D4AF37; word-break:break-all;">0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa</div>
-                <div style="color:#00C896; font-size:11px; margin-top:8px;">💰 Pricing Formula</div>
-                <div style="font-size:12px; color:#D4AF37;">Price = Reserve / Total Supply</div>
+                <div style="color:#00C896; font-size:11px; margin-top:8px;" data-i18n="dashboard.formula">💰 Pricing Formula</div>
+                <div style="font-size:12px; color:#D4AF37;" data-i18n="dashboard.formulaText">Price = Reserve / Total Supply</div>
             </div>
         </div>
     </div>
@@ -573,99 +756,99 @@
     <div class="action-buttons">
         <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="action-btn"><i class="fas fa-file-contract"></i> BscScan</a>
         <a href="https://github.com/FlyInfinityDAO/Fly-Infinity-Token/blob/main/FIT%20-%20White%20Paper.pdf" target="_blank" class="action-btn"><i class="fas fa-file-pdf"></i> Whitepaper</a>
-        <a href="dapp.html" class="action-btn dapp-btn"><i class="fas fa-rocket"></i> Buy Ownership Shares &amp; FIT</a>
+        <a href="dapp.html" class="action-btn dapp-btn"><i class="fas fa-rocket"></i> <span data-i18n="nav.dapp">Buy Ownership Shares &amp; FIT</span></a>
     </div>
 
     <!-- ===== CHART ===== -->
     <div class="card chart-card">
         <canvas id="priceChart"></canvas>
-        <p style="color:#888; text-align:center; margin-top:8px; font-size:11px;">📈 Daily price chart ($ per FIT)</p>
+        <p style="color:#888; text-align:center; margin-top:8px; font-size:11px;" data-i18n="dashboard.chartTitle">📈 Daily price chart ($ per FIT)</p>
     </div>
 
     <!-- Historical Price Changes -->
     <div class="card">
-        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;"><i class="fas fa-calendar-alt"></i> Historical Price Changes</div>
+        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="dashboard.historicalTitle"><i class="fas fa-calendar-alt"></i> Historical Price Changes</div>
         <div class="price-stats-grid" id="priceStatsGrid">
-            <div class="price-stat-card"><div class="price-stat-label">24h Ago</div><div class="price-stat-value" id="price1d">—</div><div class="price-stat-change" id="change1d">—</div></div>
-            <div class="price-stat-card"><div class="price-stat-label">7 Days Ago</div><div class="price-stat-value" id="price7d">—</div><div class="price-stat-change" id="change7d">—</div></div>
-            <div class="price-stat-card"><div class="price-stat-label">30 Days Ago</div><div class="price-stat-value" id="price30d">—</div><div class="price-stat-change" id="change30d">—</div></div>
-            <div class="price-stat-card"><div class="price-stat-label">90 Days Ago</div><div class="price-stat-value" id="price90d">—</div><div class="price-stat-change" id="change90d">—</div></div>
-            <div class="price-stat-card"><div class="price-stat-label">180 Days Ago</div><div class="price-stat-value" id="price180d">—</div><div class="price-stat-change" id="change180d">—</div></div>
-            <div class="price-stat-card"><div class="price-stat-label">365 Days Ago</div><div class="price-stat-value" id="price365d">—</div><div class="price-stat-change" id="change365d">—</div></div>
-            <div class="price-stat-card"><div class="price-stat-label">Initial Price</div><div class="price-stat-value" id="priceInitial">—</div><div class="price-stat-change" id="changeInitial">—</div></div>
+            <div class="price-stat-card"><div class="price-stat-label" data-i18n="dashboard.price24h">24h Ago</div><div class="price-stat-value" id="price1d">—</div><div class="price-stat-change" id="change1d">—</div></div>
+            <div class="price-stat-card"><div class="price-stat-label" data-i18n="dashboard.price7d">7 Days Ago</div><div class="price-stat-value" id="price7d">—</div><div class="price-stat-change" id="change7d">—</div></div>
+            <div class="price-stat-card"><div class="price-stat-label" data-i18n="dashboard.price30d">30 Days Ago</div><div class="price-stat-value" id="price30d">—</div><div class="price-stat-change" id="change30d">—</div></div>
+            <div class="price-stat-card"><div class="price-stat-label" data-i18n="dashboard.price90d">90 Days Ago</div><div class="price-stat-value" id="price90d">—</div><div class="price-stat-change" id="change90d">—</div></div>
+            <div class="price-stat-card"><div class="price-stat-label" data-i18n="dashboard.price180d">180 Days Ago</div><div class="price-stat-value" id="price180d">—</div><div class="price-stat-change" id="change180d">—</div></div>
+            <div class="price-stat-card"><div class="price-stat-label" data-i18n="dashboard.price365d">365 Days Ago</div><div class="price-stat-value" id="price365d">—</div><div class="price-stat-change" id="change365d">—</div></div>
+            <div class="price-stat-card"><div class="price-stat-label" data-i18n="dashboard.priceInitial">Initial Price</div><div class="price-stat-value" id="priceInitial">—</div><div class="price-stat-change" id="changeInitial">—</div></div>
         </div>
     </div>
 
     <!-- Comparison Button -->
     <div class="card" style="text-align: center;">
         <a href="compare.html" class="comparison-btn" style="display: inline-flex; align-items: center; gap: 12px; background: transparent; border: 1px solid #00C896; color: #00C896; padding: 14px 32px; border-radius: 50px; font-size: 16px; font-weight: bold; text-decoration: none; transition: all 0.3s ease;">
-            <i class="fas fa-chart-line"></i> Comparison With Other Crypto
+            <i class="fas fa-chart-line"></i> <span data-i18n="dashboard.comparisonBtn">Comparison With Other Crypto</span>
             <i class="fas fa-arrow-right"></i>
         </a>
-        <p style="color: #888; font-size: 11px; margin-top: 12px;">
+        <p style="color: #888; font-size: 11px; margin-top: 12px;" data-i18n="dashboard.comparisonDesc">
             <i class="fas fa-chart-simple"></i> Compare FIT price with Bitcoin, Ethereum, BNB and other cryptocurrencies
         </p>
     </div>
     
     <!-- Profit Simulator -->
     <div class="card">
-        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;">💰 Profit Simulator</div>
+        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="dashboard.profitSimulator">💰 Profit Simulator</div>
         
         <div class="simulator-input">
             <div class="input-group">
-                <label>Your FIT Holdings</label>
+                <label data-i18n="dashboard.profitHoldings">Your FIT Holdings</label>
                 <input type="number" id="fitAmount" value="1000" step="100">
             </div>
         </div>
         
         <div class="growth-badges">
-            <span class="growth-badge" id="dailyGrowthRate">📈 Daily: --</span>
-            <span class="growth-badge" id="weeklyGrowthRate">📊 Weekly: --</span>
-            <span class="growth-badge" id="monthlyGrowthRate">📅 Monthly: --</span>
+            <span class="growth-badge" id="dailyGrowthRate" data-i18n="dashboard.profitDaily">📈 Daily: --</span>
+            <span class="growth-badge" id="weeklyGrowthRate" data-i18n="dashboard.profitWeekly">📊 Weekly: --</span>
+            <span class="growth-badge" id="monthlyGrowthRate" data-i18n="dashboard.profitMonthly">📅 Monthly: --</span>
         </div>
         
         <div class="simulator-results">
-            <div class="result-box"><div class="result-period">24h Projection</div><div class="result-return" id="dailyReturn">—</div></div>
-            <div class="result-box"><div class="result-period">7 Days Projection</div><div class="result-return" id="weeklyReturn">—</div></div>
-            <div class="result-box"><div class="result-period">30 Days Projection</div><div class="result-return" id="monthlyReturn">—</div></div>
+            <div class="result-box"><div class="result-period" data-i18n="dashboard.profit24h">24h Projection</div><div class="result-return" id="dailyReturn">—</div></div>
+            <div class="result-box"><div class="result-period" data-i18n="dashboard.profit7d">7 Days Projection</div><div class="result-return" id="weeklyReturn">—</div></div>
+            <div class="result-box"><div class="result-period" data-i18n="dashboard.profit30d">30 Days Projection</div><div class="result-return" id="monthlyReturn">—</div></div>
         </div>
-        <p style="color:#888; text-align:center; font-size:10px; margin-top:15px;">⚡ Based on past growth rates. Not financial advice.</p>
+        <p style="color:#888; text-align:center; font-size:10px; margin-top:15px;" data-i18n="dashboard.profitNote">⚡ Based on past growth rates. Not financial advice.</p>
     </div>
 
     <!-- Manual Profit Simulator -->
     <div class="card">
-        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;">
+        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="dashboard.manualProfit">
             <i class="fas fa-calculator"></i> Manual Profit Simulator
         </div>
-        <p style="color:#888; text-align:center; font-size:12px; margin-bottom:20px;">
+        <p style="color:#888; text-align:center; font-size:12px; margin-bottom:20px;" data-i18n="dashboard.manualDesc">
             Calculate your potential profit based on daily price increase
         </p>
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
             <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #00C896;">
-                <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;">🪙 Your FIT Holdings</label>
+                <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.manualHoldings">🪙 Your FIT Holdings</label>
                 <input type="number" id="manualFitAmount" value="100" step="10" style="width: 100%; background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
             </div>
             
             <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #D4AF37;">
-                <label style="color: #D4AF37; font-size: 12px; display: block; margin-bottom: 8px;">📈 Daily Price Increase ($)</label>
+                <label style="color: #D4AF37; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.manualIncrease">📈 Daily Price Increase ($)</label>
                 <input type="number" id="dailyPriceIncrease" value="1.00" step="0.10" min="0.01" style="width: 100%; background: #0F0F0F; border: 1px solid #D4AF37; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
             </div>
         </div>
         
         <div class="simulator-results" style="margin-top: 20px;">
             <div class="result-box">
-                <div class="result-period">📅 Daily Profit</div>
+                <div class="result-period" data-i18n="dashboard.manualDaily">📅 Daily Profit</div>
                 <div class="result-return" id="manualDailyReturn">—</div>
                 <div style="color: #888; font-size: 10px; margin-top: 5px;" id="manualDailyDetails">—</div>
             </div>
             <div class="result-box">
-                <div class="result-period">📊 Weekly Profit (7 Days)</div>
+                <div class="result-period" data-i18n="dashboard.manualWeekly">📊 Weekly Profit (7 Days)</div>
                 <div class="result-return" id="manualWeeklyReturn">—</div>
                 <div style="color: #888; font-size: 10px; margin-top: 5px;" id="manualWeeklyDetails">—</div>
             </div>
             <div class="result-box">
-                <div class="result-period">📅 Monthly Profit (30 Days)</div>
+                <div class="result-period" data-i18n="dashboard.manualMonthly">📅 Monthly Profit (30 Days)</div>
                 <div class="result-return" id="manualMonthlyReturn">—</div>
                 <div style="color: #888; font-size: 10px; margin-top: 5px;" id="manualMonthlyDetails">—</div>
             </div>
@@ -673,86 +856,86 @@
         
         <div style="text-align: center; margin-top: 15px;">
             <button id="manualSimBtn" class="action-btn" style="width: auto; padding: 10px 40px; border-color: #D4AF37; color: #D4AF37;">
-                <i class="fas fa-play"></i> Calculate
+                <i class="fas fa-play"></i> <span data-i18n="btn.calculate">Calculate</span>
             </button>
         </div>
         
-        <p style="color:#888; text-align:center; font-size:10px; margin-top:15px;">
+        <p style="color:#888; text-align:center; font-size:10px; margin-top:15px;" data-i18n="dashboard.manualNote">
             ⚡ Based on your input values. Not financial advice.
         </p>
     </div>
     
     <!-- Fee Calculator -->
     <div class="card">
-        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;">
+        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="dashboard.feeCalculator">
             <i class="fas fa-calculator"></i> Fee Calculator (Buy: 3% | Sell: 6%)
         </div>
         
         <div class="fee-grid">
             <div class="fee-box buy">
-                <div class="fee-title buy">
+                <div class="fee-title buy" data-i18n="dashboard.feeBuy">
                     <i class="fas fa-shopping-cart"></i> Buy Calculator
                 </div>
                 <div class="input-group" style="width: 100%; margin-bottom: 15px;">
-                    <label style="color: #00C896; font-size: 12px;">💰 Amount (USD)</label>
+                    <label style="color: #00C896; font-size: 12px;" data-i18n="dashboard.feeAmount">💰 Amount (USD)</label>
                     <input type="number" id="buyAmountUSD" placeholder="Enter USD amount" step="10" style="width: 100%;">
                 </div>
                 <div class="fee-result">
-                    <div class="fee-result-label">You will receive</div>
+                    <div class="fee-result-label" data-i18n="dashboard.feeYouReceive">You will receive</div>
                     <div class="fee-result-amount" id="buyFITAmount">— FIT</div>
                     <div class="fee-breakdown" id="buyFeeBreakdown">—</div>
                 </div>
             </div>
             
             <div class="fee-box sell">
-                <div class="fee-title sell">
+                <div class="fee-title sell" data-i18n="dashboard.feeSell">
                     <i class="fas fa-chart-line"></i> Sell Calculator
                 </div>
                 <div class="input-group" style="width: 100%; margin-bottom: 15px;">
-                    <label style="color: #00C896; font-size: 12px;">🪙 Amount (FIT)</label>
+                    <label style="color: #00C896; font-size: 12px;" data-i18n="dashboard.feeFitAmount">🪙 Amount (FIT)</label>
                     <input type="number" id="sellAmountFIT" placeholder="Enter FIT amount" step="100" style="width: 100%;">
                 </div>
                 <div class="fee-result">
-                    <div class="fee-result-label">You will receive</div>
+                    <div class="fee-result-label" data-i18n="dashboard.feeYouReceive">You will receive</div>
                     <div class="fee-result-amount" id="sellUSDAmount">— USD</div>
                     <div class="fee-breakdown" id="sellFeeBreakdown">—</div>
                 </div>
             </div>
         </div>
         <div class="fee-price-note">
-            <i class="fas fa-info-circle"></i> Fees: 3% for Buy | 6% for Sell | Current Price: <span id="calcPrice">—</span> USD
+            <i class="fas fa-info-circle"></i> <span data-i18n="dashboard.feeNote">Fees: 3% for Buy | 6% for Sell</span> | Current Price: <span id="calcPrice">—</span> USD
         </div>
     </div>
 
     <!-- ===== PURCHASE CALCULATOR WITH REWARD ===== -->
     <div class="card">
-        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;">
+        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="dashboard.purchaseCalculator">
             <i class="fas fa-calculator"></i> FIT Purchase Calculator
         </div>
-        <p style="color:#888; text-align:center; font-size:12px; margin-bottom:20px;">
+        <p style="color:#888; text-align:center; font-size:12px; margin-bottom:20px;" data-i18n="dashboard.purchaseDesc">
             Calculate required ownership shares based on Double Infinity network plan + Estimated Rewards for ALL shares
         </p>
         
         <!-- Inputs -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
             <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #00C896;">
-                <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;">🪙 FIT Amount to Buy</label>
+                <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.purchaseFitAmount">🪙 FIT Amount to Buy</label>
                 <input type="number" id="calcFitAmount" value="1000" step="10" min="1" style="width: 100%; background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
             </div>
             
             <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #D4AF37;">
-                <label style="color: #D4AF37; font-size: 12px; display: block; margin-bottom: 8px;">💰 Current FIT Price (DAI)</label>
+                <label style="color: #D4AF37; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.purchasePrice">💰 Current FIT Price (DAI)</label>
                 <input type="number" id="calcFitPrice" value="6.00" step="0.01" min="0.01" style="width: 100%; background: #0F0F0F; border: 1px solid #D4AF37; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
-                <button id="calcFetchPrice" style="margin-top: 8px; background: transparent; border: 1px solid #00C896; color: #00C896; padding: 4px 12px; border-radius: 20px; font-size: 11px; cursor: pointer;">Fetch Live Price</button>
+                <button id="calcFetchPrice" style="margin-top: 8px; background: transparent; border: 1px solid #00C896; color: #00C896; padding: 4px 12px; border-radius: 20px; font-size: 11px; cursor: pointer;" data-i18n="dashboard.purchaseFetch">Fetch Live Price</button>
             </div>
             
             <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #00C896;">
-                <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;">💎 Ownership Share Cost (DAI)</label>
+                <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.purchaseShareCost">💎 Ownership Share Cost (DAI)</label>
                 <input type="number" id="calcShareCost" value="100" step="1" min="1" style="width: 100%; background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
             </div>
             
             <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #FFD700;">
-                <label style="color: #FFD700; font-size: 12px; display: block; margin-bottom: 8px;">💰 Reward Value Per Point ($)</label>
+                <label style="color: #FFD700; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.purchaseRewardPerPoint">💰 Reward Value Per Point ($)</label>
                 <input type="number" id="rewardPerPoint" value="20" step="1" min="1" style="width: 100%; background: #0F0F0F; border: 1px solid #FFD700; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
             </div>
         </div>
@@ -761,49 +944,49 @@
         <div class="purchase-grid">
             <!-- With Double Infinity Plan -->
             <div class="purchase-box with-plan">
-                <div class="purchase-title with-plan">
+                <div class="purchase-title with-plan" data-i18n="dashboard.purchaseWithPlan">
                     <i class="fas fa-network-wired"></i> ✅ With Double Infinity Network Plan
                 </div>
                 <div class="purchase-row">
-                    <span class="purchase-label">Required Shares</span>
+                    <span class="purchase-label" data-i18n="dashboard.purchaseShares">Required Shares</span>
                     <span class="purchase-value" id="calcSharesWithPlan">—</span>
                 </div>
                 <div class="purchase-row">
-                    <span class="purchase-label">Total Cost for Shares (DAI)</span>
+                    <span class="purchase-label" data-i18n="dashboard.purchaseShareCostTotal">Total Cost for Shares (DAI)</span>
                     <span class="purchase-value" id="calcShareCostWithPlan">—</span>
                 </div>
                 <div class="purchase-row">
-                    <span class="purchase-label">FIT Received (after 3% fee)</span>
+                    <span class="purchase-label" data-i18n="dashboard.purchaseFitReceived">FIT Received (after 3% fee)</span>
                     <span class="purchase-value green" id="calcFitReceivedWithPlan">—</span>
                 </div>
                 <div class="purchase-row">
-                    <span class="purchase-label">Max Purchase Cap (DAI)</span>
+                    <span class="purchase-label" data-i18n="dashboard.purchaseMaxCap">Max Purchase Cap (DAI)</span>
                     <span class="purchase-value" id="calcCapWithPlan">—</span>
                 </div>
                 <div class="purchase-row">
-                    <span class="purchase-label">Min Side (members)</span>
+                    <span class="purchase-label" data-i18n="dashboard.purchaseMinSide">Min Side (members)</span>
                     <span class="purchase-value" id="calcMinSideWithPlan">—</span>
                 </div>
                 <div class="purchase-row">
-                    <span class="purchase-label">Total Cost (Shares + FIT)</span>
+                    <span class="purchase-label" data-i18n="dashboard.purchaseTotalCost">Total Cost (Shares + FIT)</span>
                     <span class="purchase-value" style="color: #00C896;" id="calcTotalCostWithPlan">—</span>
                 </div>
                 
-                <!-- REWARD SECTION - ALL SHARES -->
+                <!-- REWARD SECTION -->
                 <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid rgba(255, 215, 0, 0.3);">
-                    <div style="color: #FFD700; font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 10px;">
+                    <div style="color: #FFD700; font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 10px;" data-i18n="dashboard.purchaseRewards">
                         <i class="fas fa-gift"></i> Estimated Rewards (All Shares)
                     </div>
                     <div class="purchase-row">
-                        <span class="purchase-label">Total Reward Points</span>
+                        <span class="purchase-label" data-i18n="dashboard.purchaseRewardPoints">Total Reward Points</span>
                         <span class="purchase-value reward" id="calcRewardPointsWithPlan">—</span>
                     </div>
                     <div class="purchase-row">
-                        <span class="purchase-label">Reward Per Point ($)</span>
+                        <span class="purchase-label" data-i18n="dashboard.purchaseRewardPerPointLabel">Reward Per Point ($)</span>
                         <span class="purchase-value reward" id="calcRewardPerPointWithPlan">—</span>
                     </div>
                     <div class="purchase-row" style="border-bottom: none;">
-                        <span class="purchase-label">Total Estimated Reward ($)</span>
+                        <span class="purchase-label" data-i18n="dashboard.purchaseTotalReward">Total Estimated Reward ($)</span>
                         <span class="purchase-value reward" style="font-size: 18px; color: #FFD700;" id="calcTotalRewardWithPlan">—</span>
                     </div>
                     <div class="reward-detail" id="rewardBreakdownWithPlan">—</div>
@@ -812,49 +995,49 @@
             
             <!-- Without Double Infinity Plan -->
             <div class="purchase-box without-plan">
-                <div class="purchase-title without-plan">
+                <div class="purchase-title without-plan" data-i18n="dashboard.purchaseWithoutPlan">
                     <i class="fas fa-user"></i> ❌ Without Double Infinity Plan (Direct)
                 </div>
                 <div class="purchase-row">
-                    <span class="purchase-label">Required Shares</span>
+                    <span class="purchase-label" data-i18n="dashboard.purchaseShares">Required Shares</span>
                     <span class="purchase-value" id="calcSharesWithoutPlan">—</span>
                 </div>
                 <div class="purchase-row">
-                    <span class="purchase-label">Total Cost for Shares (DAI)</span>
+                    <span class="purchase-label" data-i18n="dashboard.purchaseShareCostTotal">Total Cost for Shares (DAI)</span>
                     <span class="purchase-value" id="calcShareCostWithoutPlan">—</span>
                 </div>
                 <div class="purchase-row">
-                    <span class="purchase-label">FIT Received (after 3% fee)</span>
+                    <span class="purchase-label" data-i18n="dashboard.purchaseFitReceived">FIT Received (after 3% fee)</span>
                     <span class="purchase-value green" id="calcFitReceivedWithoutPlan">—</span>
                 </div>
                 <div class="purchase-row">
-                    <span class="purchase-label">Max Purchase Cap (DAI)</span>
+                    <span class="purchase-label" data-i18n="dashboard.purchaseMaxCap">Max Purchase Cap (DAI)</span>
                     <span class="purchase-value" id="calcCapWithoutPlan">—</span>
                 </div>
                 <div class="purchase-row">
-                    <span class="purchase-label">Min Side (members)</span>
+                    <span class="purchase-label" data-i18n="dashboard.purchaseMinSide">Min Side (members)</span>
                     <span class="purchase-value" id="calcMinSideWithoutPlan">—</span>
                 </div>
                 <div class="purchase-row">
-                    <span class="purchase-label">Total Cost (Shares + FIT)</span>
+                    <span class="purchase-label" data-i18n="dashboard.purchaseTotalCost">Total Cost (Shares + FIT)</span>
                     <span class="purchase-value" style="color: #D4AF37;" id="calcTotalCostWithoutPlan">—</span>
                 </div>
                 
                 <!-- REWARD SECTION - ZERO -->
                 <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid rgba(255, 215, 0, 0.15);">
-                    <div style="color: #FFD700; font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 10px; opacity: 0.5;">
+                    <div style="color: #FFD700; font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 10px; opacity: 0.5;" data-i18n="dashboard.purchaseRewards">
                         <i class="fas fa-gift"></i> Estimated Rewards
                     </div>
                     <div class="purchase-row">
-                        <span class="purchase-label">Total Reward Points</span>
+                        <span class="purchase-label" data-i18n="dashboard.purchaseRewardPoints">Total Reward Points</span>
                         <span class="purchase-value reward" style="opacity: 0.5;" id="calcRewardPointsWithoutPlan">—</span>
                     </div>
                     <div class="purchase-row">
-                        <span class="purchase-label">Reward Per Point ($)</span>
+                        <span class="purchase-label" data-i18n="dashboard.purchaseRewardPerPointLabel">Reward Per Point ($)</span>
                         <span class="purchase-value reward" style="opacity: 0.5;" id="calcRewardPerPointWithoutPlan">—</span>
                     </div>
                     <div class="purchase-row" style="border-bottom: none;">
-                        <span class="purchase-label">Total Estimated Reward ($)</span>
+                        <span class="purchase-label" data-i18n="dashboard.purchaseTotalReward">Total Estimated Reward ($)</span>
                         <span class="purchase-value reward" style="font-size: 18px; opacity: 0.5;" id="calcTotalRewardWithoutPlan">—</span>
                     </div>
                 </div>
@@ -865,43 +1048,43 @@
         <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-top: 20px; gap: 15px;">
             <div>
                 <div id="savingsContainer" style="display: none;">
-                    <span class="savings-badge">
+                    <span class="savings-badge" id="savingsBadge">
                         💰 Save <span id="savingsAmount">—</span> DAI with Double Infinity Plan!
                     </span>
                 </div>
                 <div id="rewardContainer" style="display: none; margin-top: 10px;">
-                    <span class="reward-badge">
+                    <span class="reward-badge" id="rewardBadge">
                         🎁 Earn <span id="rewardAmount">—</span> $ in Rewards with Double Infinity Plan!
                     </span>
                 </div>
             </div>
             <button id="calcBtn" class="action-btn" style="width: auto; padding: 10px 40px; border-color: #D4AF37; color: #D4AF37;">
-                <i class="fas fa-play"></i> Calculate
+                <i class="fas fa-play"></i> <span data-i18n="btn.calculate">Calculate</span>
             </button>
         </div>
         
     </div>
 
-    <div class="footer" style="text-align: center; font-size: 10px; color: #666; margin-top: 30px; border-top: 1px solid rgba(0, 200, 150, 0.15); padding-top: 20px;">
-        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; font-size: 12px; margin-bottom: 12px;">
-            <a href="index.html" style="color: #00C896; text-decoration: none;">Dashboard</a>
-            <span style="color: #444;">|</span>
-            <a href="compare.html" style="color: #00C896; text-decoration: none;">Comparison</a>
-            <span style="color: #444;">|</span>
-            <a href="dapp.html" style="color: #00C896; text-decoration: none;">DApp</a>
-            <span style="color: #444;">|</span>
-            <a href="transactions.html" style="color: #00C896; text-decoration: none;">Transactions</a>
-            <span style="color: #444;">|</span>
-            <a href="privacy.html" style="color: #00C896; text-decoration: none;">Privacy</a>
-            <span style="color: #444;">|</span>
-            <a href="warnings.html" style="color: #00C896; text-decoration: none;">Warnings</a>
-            <span style="color: #444;">|</span>
-            <a href="faq.html" style="color: #00C896; text-decoration: none;">FAQ</a>
-            <span style="color: #444;">|</span>
-            <a href="whitepaper.html" style="color: #00C896; text-decoration: none;">White Paper</a>
+    <div class="footer">
+        <div class="footer-links">
+            <a href="index.html" data-i18n="nav.dashboard">Dashboard</a>
+            <span>|</span>
+            <a href="compare.html" data-i18n="nav.comparison">Comparison</a>
+            <span>|</span>
+            <a href="dapp.html" data-i18n="nav.dapp">DApp</a>
+            <span>|</span>
+            <a href="transactions.html" data-i18n="nav.transactions">Transactions</a>
+            <span>|</span>
+            <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+            <span>|</span>
+            <a href="warnings.html" data-i18n="nav.warnings">Warnings</a>
+            <span>|</span>
+            <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+            <span>|</span>
+            <a href="whitepaper.html" data-i18n="nav.whitepaper">White Paper</a>
         </div>
-        <p style="color: #888; font-size: 11px; margin: 0; text-align: center;">
-            Fly Infinity — <span style="color: #D4AF37;">Decentralized. Transparent. Forever Rising.</span>
+        <p class="footer-tagline" data-i18n="footer.tagline">
+            Fly Infinity — <span class="gold">Decentralized. Transparent. Forever Rising.</span>
         </p>
     </div>
 
@@ -1009,7 +1192,6 @@
         if (priceChart) priceChart.destroy();
         if (chartLabels.length === 0) return;
         
-        // تنظیم font برای خوانایی بهتر
         Chart.defaults.font.size = 11;
         Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
         
@@ -1395,7 +1577,7 @@
         const shareCostWithPlan = sharesWithPlan * shareCost;
         const totalCostWithPlan = shareCostWithPlan + totalDAINeeded;
         
-        // ===== REWARD CALCULATION FOR ALL SHARES (Double Infinity TREE) =====
+        // ===== REWARD CALCULATION FOR ALL SHARES =====
         const totalRewardPoints = calculateTotalRewardPoints(sharesWithPlan);
         const rewardWithPlan = totalRewardPoints * rewardPerPoint;
         
@@ -1403,7 +1585,6 @@
         document.getElementById('rewardBreakdownWithPlan').innerHTML = breakdown;
 
         // ===== DISPLAY RESULTS =====
-        // With Plan
         document.getElementById('calcSharesWithPlan').innerHTML = sharesWithPlan.toLocaleString();
         document.getElementById('calcShareCostWithPlan').innerHTML = `$${shareCostWithPlan.toFixed(2)}`;
         document.getElementById('calcFitReceivedWithPlan').innerHTML = `${fitReceived.toFixed(2)} FIT`;
@@ -1411,12 +1592,10 @@
         document.getElementById('calcMinSideWithPlan').innerHTML = minSideWithPlan.toLocaleString();
         document.getElementById('calcTotalCostWithPlan').innerHTML = `$${totalCostWithPlan.toFixed(2)}`;
         
-        // Rewards - With Plan
         document.getElementById('calcRewardPointsWithPlan').innerHTML = totalRewardPoints.toLocaleString();
         document.getElementById('calcRewardPerPointWithPlan').innerHTML = `$${rewardPerPoint.toFixed(2)}`;
         document.getElementById('calcTotalRewardWithPlan').innerHTML = `$${rewardWithPlan.toFixed(2)}`;
         
-        // Without Plan
         document.getElementById('calcSharesWithoutPlan').innerHTML = sharesNeededDirect.toLocaleString();
         document.getElementById('calcShareCostWithoutPlan').innerHTML = `$${shareCostDirect.toFixed(2)}`;
         document.getElementById('calcFitReceivedWithoutPlan').innerHTML = `${fitReceived.toFixed(2)} FIT`;
@@ -1424,12 +1603,10 @@
         document.getElementById('calcMinSideWithoutPlan').innerHTML = '0';
         document.getElementById('calcTotalCostWithoutPlan').innerHTML = `$${totalCostDirect.toFixed(2)}`;
         
-        // Rewards - Without Plan
         document.getElementById('calcRewardPointsWithoutPlan').innerHTML = '0';
         document.getElementById('calcRewardPerPointWithoutPlan').innerHTML = `$${rewardPerPoint.toFixed(2)}`;
         document.getElementById('calcTotalRewardWithoutPlan').innerHTML = `$0.00`;
         
-        // Show savings
         const savings = totalCostDirect - totalCostWithPlan;
         if (savings > 0) {
             document.getElementById('savingsContainer').style.display = 'block';
@@ -1438,7 +1615,6 @@
             document.getElementById('savingsContainer').style.display = 'none';
         }
         
-        // Show rewards
         if (rewardWithPlan > 0) {
             document.getElementById('rewardContainer').style.display = 'block';
             document.getElementById('rewardAmount').innerHTML = rewardWithPlan.toFixed(2);
@@ -1447,7 +1623,6 @@
         }
     }
 
-    // Event listeners
     document.getElementById('calcBtn').addEventListener('click', calculatePurchase);
     document.getElementById('calcFitAmount').addEventListener('input', calculatePurchase);
     document.getElementById('calcFitPrice').addEventListener('input', function() {
@@ -1457,7 +1632,6 @@
     document.getElementById('calcShareCost').addEventListener('input', calculatePurchase);
     document.getElementById('rewardPerPoint').addEventListener('input', calculatePurchase);
 
-    // Fetch live price
     document.getElementById('calcFetchPrice').addEventListener('click', async function() {
         this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
         this.disabled = true;
@@ -1483,7 +1657,6 @@
         }
     });
 
-    // Auto-calculate on load
     document.addEventListener('DOMContentLoaded', function() {
         calculatePurchase();
     });
