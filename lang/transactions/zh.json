@@ -1,4 +1,20 @@
 {
+  "header": {
+    "title": "Fly Infinity DAO"
+  },
+  "nav": {
+    "dashboard": "仪表板",
+    "comparison": "比较",
+    "dapp": "去中心化应用",
+    "transactions": "交易",
+    "privacy": "隐私",
+    "warnings": "警告",
+    "faq": "常见问题",
+    "whitepaper": "白皮书"
+  },
+  "footer": {
+    "tagline": "Fly Infinity — 去中心化。透明。永远上升。"
+  },
   "transactions": {
     "title": "交易浏览器",
     "all": "📋 所有交易",
