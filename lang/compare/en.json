@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "title": "Fly Infinity Token - Price Comparison",
+    "description": "Compare FIT price with other cryptocurrencies"
+  },
+  "header": {
+    "title": "Fly Infinity DAO"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "comparison": "Comparison",
+    "dapp": "DApp",
+    "transactions": "Transactions",
+    "privacy": "Privacy",
+    "warnings": "Warnings",
+    "faq": "FAQ",
+    "whitepaper": "White Paper"
+  },
+  "compare": {
+    "title": "Live Price Comparison Table",
+    "subtitle": "Real-time price changes over the last 24 hours",
+    "coin": "Coin",
+    "price24h": "Price (24h Ago)",
+    "current": "Current Price",
+    "change": "24h Change",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "days7": "7 Days Ago",
+    "days14": "14 Days Ago",
+    "days30": "30 Days Ago",
+    "selectDate": "Select a date...",
+    "go": "Go",
+    "showingToday": "Showing: Today (Live Data)",
+    "lastUpdated": "Last updated:",
+    "loading": "Loading data...",
+    "loadingToday": "Loading today's data... Please wait or click Refresh",
+    "noData": "No data available for this date",
+    "loadingCache": "Loading cache data...",
+    "all": "All",
+    "description": "In this page, you can see the constantly rising (non-diminishing) chart of FIT alongside the volatile charts of top cryptocurrencies. FIT — the world's first non-diminishing, always rising digital asset."
+  },
+  "btn": {
+    "refresh": "Refresh"
+  },
+  "footer": {
+    "tagline": "Fly Infinity — Decentralized. Transparent. Forever Rising."
+  }
+}
