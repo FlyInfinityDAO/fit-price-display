@@ -54,7 +54,14 @@ jobs:
             }
             
             // ===== MAPPING: CoinGecko ID → Our ID =====
-            const mapping = {
+            const coinGeckoIds = [
+              'bitcoin', 'ethereum', 'binancecoin', 'ripple', 'solana',
+              'cardano', 'dogecoin', 'tron', 'zcash', 'stellar',
+              'pancakeswap-token', 'the-open-network', 'shiba-inu',
+              'official-donald-trump'
+            ];
+            
+            const idMapping = {
               'bitcoin': 'bitcoin',
               'ethereum': 'ethereum',
               'binancecoin': 'binancecoin',
@@ -71,8 +78,6 @@ jobs:
               'official-donald-trump': 'trump'
             };
             
-            const coinGeckoIds = Object.keys(mapping);
-            
             async function getPrices() {
               const url = 'https://api.coingecko.com/api/v3/simple/price?ids=' + coinGeckoIds.join(',') + '&vs_currencies=usd&include_24hr_change=true';
               
@@ -80,12 +85,14 @@ jobs:
                 console.log('📡 Fetching prices from CoinGecko...');
                 const data = await fetchJSON(url);
                 const prices = {};
+                let hasData = false;
                 
-                for (const [cgId, ourId] of Object.entries(mapping)) {
+                // ===== GET ALL CRYPTO PRICES =====
+                for (const cgId of coinGeckoIds) {
+                  const ourId = idMapping[cgId];
                   if (data[cgId]) {
                     const currentPrice = data[cgId].usd;
                     const change24h = data[cgId].usd_24h_change || 0;
-                    // Calculate yesterday price: current / (1 + change/100)
                     const yesterdayPrice = currentPrice / (1 + change24h / 100);
                     
                     prices[ourId] = {
@@ -94,29 +101,24 @@ jobs:
                       change: change24h
                     };
                     console.log(`  ✅ ${ourId}: $${currentPrice.toFixed(4)} (${change24h.toFixed(2)}%)`);
+                    hasData = true;
                   } else {
                     console.log(`  ⚠️ ${ourId}: No data from API`);
                   }
                 }
                 
                 // ===== GET FIT PRICE =====
-                // For FIT, we need to get from blockchain or use previous value
-                // Since we can't call BSC from GitHub Actions easily, we'll use:
-                // 1. Check if we have a previous record with FIT price
-                // 2. If not, use a reasonable default
+                // Try to get from previous records
                 let fitPrice = 6.39;
-                let fitChange = 1.0;
                 let fitYesterday = 6.3261;
+                let fitChange = 1.0;
                 
-                // Try to get FIT price from previous records
                 if (history.records.length > 0) {
-                  // Find the most recent record with FIT data
                   for (let i = history.records.length - 1; i >= 0; i--) {
                     const rec = history.records[i];
                     if (rec.prices && rec.prices.fit && rec.prices.fit.price) {
                       const prevPrice = rec.prices.fit.price;
-                      // Estimate current price (slight increase)
-                      fitPrice = prevPrice * 1.001; // 0.1% daily increase
+                      fitPrice = prevPrice * 1.001;
                       fitYesterday = prevPrice;
                       fitChange = ((fitPrice - fitYesterday) / fitYesterday) * 100;
                       console.log(`  📊 FIT estimated from previous: $${fitPrice.toFixed(4)}`);
@@ -132,7 +134,7 @@ jobs:
                 };
                 console.log(`  ✅ fit: $${fitPrice.toFixed(4)} (${fitChange.toFixed(2)}%)`);
                 
-                return prices;
+                return hasData ? prices : null;
                 
               } catch(e) {
                 console.error('❌ Error fetching prices:', e.message);
@@ -151,10 +153,15 @@ jobs:
               // ===== UPDATE HISTORY =====
               const existingIndex = history.records.findIndex(r => r.date === today);
               
-              // Create a clean prices object with all tokens
-              const cleanPrices = {};
-              const allTokenIds = ['fit', 'bitcoin', 'ethereum', 'binancecoin', 'ripple', 'solana', 'cardano', 'dogecoin', 'tron', 'zcash', 'stellar', 'pancakeswap', 'toncoin', 'shibainu', 'trump'];
+              // All token IDs we want to save
+              const allTokenIds = [
+                'fit', 'bitcoin', 'ethereum', 'binancecoin', 'ripple',
+                'solana', 'cardano', 'dogecoin', 'tron', 'zcash',
+                'stellar', 'pancakeswap', 'toncoin', 'shibainu', 'trump'
+              ];
               
+              // Build clean prices object
+              const cleanPrices = {};
               for (const id of allTokenIds) {
                 if (prices[id]) {
                   cleanPrices[id] = {
@@ -183,11 +190,11 @@ jobs:
               console.log('💾 Saved to', historyFile);
               console.log('📊 Total records:', history.records.length);
               
-              // Show sample of saved data
+              // Show what was saved
               if (history.records.length > 0) {
                 const last = history.records[history.records.length - 1];
                 console.log('📋 Last record:', last.date);
-                console.log('   Tokens:', Object.keys(last.prices).join(', '));
+                console.log('   Tokens saved:', Object.keys(last.prices).join(', '));
               }
             })();
           "
