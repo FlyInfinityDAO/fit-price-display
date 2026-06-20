@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Fly Infinity Token - FAQ</title>
     
-        <!-- ===== FAVICON ===== -->
+    <!-- ===== FAVICON ===== -->
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="lang.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -73,15 +74,30 @@
         .top-bar .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             color: #D4AF37;
             font-size: 18px;
             font-weight: bold;
             text-decoration: none;
         }
         
-        .top-bar .logo i {
-            font-size: 22px;
+        .top-bar .logo img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #D4AF37;
+        }
+        
+        .top-bar .logo span {
+            color: #D4AF37;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         
         .hamburger {
@@ -105,7 +121,118 @@
             transform: rotate(90deg);
         }
         
-        /* ===== SIDEBAR OVERLAY ===== */
+        /* ===== LANGUAGE BUTTON ===== */
+        .lang-btn {
+            background: transparent;
+            border: 1px solid rgba(0, 200, 150, 0.3);
+            color: #D4AF37;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .lang-btn:hover {
+            border-color: #00C896;
+            background: rgba(0, 200, 150, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .lang-dropdown {
+            position: fixed;
+            top: 75px;
+            right: 20px;
+            background: #0F0F0F;
+            border: 1px solid rgba(0, 200, 150, 0.3);
+            border-radius: 16px;
+            padding: 8px;
+            min-width: 160px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .lang-dropdown.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .lang-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            color: #c0d0e8;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .lang-item:hover {
+            background: rgba(0, 200, 150, 0.08);
+            color: #D4AF37;
+        }
+        
+        .lang-item.active {
+            background: rgba(0, 200, 150, 0.15);
+            color: #D4AF37;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+        }
+        
+        .lang-item .flag {
+            font-size: 18px;
+        }
+        
+        .lang-item .lang-name {
+            font-size: 13px;
+        }
+        
+        @media (max-width: 768px) {
+            .lang-dropdown {
+                top: 65px;
+                right: 10px;
+                min-width: 140px;
+            }
+            .lang-item {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            .lang-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+            .top-bar .logo span {
+                font-size: 15px;
+            }
+            .top-bar .logo img {
+                width: 28px;
+                height: 28px;
+            }
+            .hamburger {
+                width: 38px;
+                height: 38px;
+                font-size: 17px;
+            }
+        }
+        
+        /* ===== SIDEBAR ===== */
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -125,7 +252,6 @@
             visibility: visible;
         }
         
-        /* ===== SIDEBAR ===== */
         .sidebar {
             position: fixed;
             top: 0;
@@ -157,9 +283,19 @@
         }
         
         .sidebar-header .logo-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             color: #D4AF37;
             font-size: 18px;
             font-weight: bold;
+        }
+        
+        .sidebar-header .logo-text img {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid #D4AF37;
         }
         
         .sidebar-header .close-btn {
@@ -348,11 +484,14 @@
             margin: 10px 0;
         }
         
+        /* ===== FOOTER ===== */
         .footer {
             text-align: center;
             font-size: 10px;
             color: #666;
             margin-top: 30px;
+            border-top: 1px solid rgba(0, 200, 150, 0.15);
+            padding-top: 20px;
         }
         
         .footer a {
@@ -360,13 +499,41 @@
             text-decoration: none;
         }
         
+        .footer .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .footer .footer-links span {
+            color: #444;
+        }
+        
+        .footer .footer-tagline {
+            color: #888;
+            font-size: 11px;
+            margin: 0;
+            text-align: center;
+        }
+        
+        .footer .footer-tagline .gold {
+            color: #D4AF37;
+        }
+        
         @media (max-width: 768px) {
             .sidebar {
                 width: 85vw;
                 right: -85vw;
             }
-            .top-bar .logo {
+            .top-bar .logo span {
                 font-size: 15px;
+            }
+            .top-bar .logo img {
+                width: 28px;
+                height: 28px;
             }
             .page-title {
                 font-size: 24px;
@@ -387,12 +554,14 @@
     <!-- ===== TOP NAV BAR ===== -->
     <div class="top-bar">
         <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-    <img src="logo.png" alt="Fly Infinity DAO" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37;">
-    <span style="color: #D4AF37; font-size: 18px; font-weight: bold;">Fly Infinity DAO</span>
-</a>
-        <button class="hamburger" id="hamburgerBtn">
-            <i class="fas fa-bars"></i>
-        </button>
+            <img src="logo.png" alt="Fly Infinity DAO" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37;">
+            <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
+        </a>
+        <div class="top-bar-right">
+            <button class="hamburger" id="hamburgerBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
     </div>
 
     <!-- ===== SIDEBAR OVERLAY ===== -->
@@ -402,87 +571,87 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <span class="logo-text" style="display: flex; align-items: center; gap: 10px;">
-    <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
-    <span style="color: #D4AF37; font-size: 18px; font-weight: bold;">Fly Infinity DAO</span>
-</span>
+                <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
+                <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
+            </span>
             <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
         </div>
         
         <div class="sidebar-menu">
-            <a href="index.html">
+            <a href="index.html" data-i18n="nav.dashboard">
                 <i class="fas fa-home"></i> Dashboard
             </a>
-            <a href="compare.html">
+            <a href="compare.html" data-i18n="nav.comparison">
                 <i class="fas fa-chart-line"></i> Comparison
             </a>
-            <a href="dapp.html">
+            <a href="dapp.html" data-i18n="nav.dapp">
                 <i class="fas fa-charging-station"></i> DApp
             </a>
-            <a href="transactions.html">
+            <a href="transactions.html" data-i18n="nav.transactions">
                 <i class="fas fa-history"></i> Transactions
             </a>
-            <a href="privacy.html">
+            <a href="privacy.html" data-i18n="nav.privacy">
                 <i class="fas fa-shield-alt"></i> Privacy
             </a>
-            <a href="warnings.html">
+            <a href="warnings.html" data-i18n="nav.warnings">
                 <i class="fas fa-exclamation-triangle"></i> Warnings
             </a>
-            <a href="faq.html" class="active">
+            <a href="faq.html" class="active" data-i18n="nav.faq">
                 <i class="fas fa-question-circle"></i> FAQ
             </a>
-            <a href="whitepaper.html">
+            <a href="whitepaper.html" data-i18n="nav.whitepaper">
                 <i class="fas fa-file-pdf"></i> White Paper
             </a>
         </div>
         
         <div class="sidebar-footer">
-            <a href="https://flyinfinitydao.github.io/fit-price-display" target="_blank">flyinfinitydao.github.io</a><br>
+            <a href="https://flyinfinitydao.github.io" target="_blank">flyinfinitydao.github.io</a><br>
             Fly Infinity DAO
         </div>
     </div>
 
     <!-- ===== FAQ PAGE CONTENT ===== -->
-    <h1 class="page-title"><i class="fas fa-question-circle" style="color: #00C896; margin-right: 12px;"></i>Frequently Asked Questions</h1>
+    <h1 class="page-title" data-i18n="faq.title"><i class="fas fa-question-circle" style="color: #00C896; margin-right: 12px;"></i>Frequently Asked Questions</h1>
     
     <div class="faq-container">
         
         <!-- FAQ 1: Cost of ownership shares -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 How much does it cost to buy Fly Infinity ownership shares?</span>
+                <span>🔹 <span data-i18n="faq.q1">How much does it cost to buy Fly Infinity ownership shares?</span></span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
-                <p>To purchase <span class="highlight">Fly Infinity</span> ownership shares, you need to have the following in your wallet:</p>
+                <p data-i18n="faq.a1p1">To purchase <span class="highlight">Fly Infinity</span> ownership shares, you need to have the following in your wallet:</p>
                 <ul>
-                    <li><span class="highlight">100 DAI</span> — for the ownership share purchase</li>
-                    <li><span class="highlight">Approximately $1 worth of BNB</span> — for network gas fees</li>
+                    <li data-i18n="faq.a1li1"><span class="highlight">100 DAI</span> — for the ownership share purchase</li>
+                    <li data-i18n="faq.a1li2"><span class="highlight">Approximately $1 worth of BNB</span> — for network gas fees</li>
                 </ul>
                 <div class="info-box">
-                    <p>💡 <strong>Important:</strong> Make sure you have enough BNB in your wallet to cover transaction fees on the BNB Smart Chain network.</p>
+                    <p data-i18n="faq.a1info">💡 <strong>Important:</strong> Make sure you have enough BNB in your wallet to cover transaction fees on the BNB Smart Chain network.</p>
                 </div>
-                <p>Once you have these amounts, follow the steps in the DApp to complete your ownership share purchase.</p>
+                <p data-i18n="faq.a1p2">Once you have these amounts, follow the steps in the DApp to complete your ownership share purchase.</p>
             </div>
         </div>
         
         <!-- FAQ 2: How to buy ownership shares? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 How do I buy ownership shares?</span>
+                <span>🔹 <span data-i18n="faq.q2">How do I buy ownership shares?</span></span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
-                <p>To purchase <span class="highlight">Fly Infinity</span> ownership shares, follow these steps:</p>
+                <p data-i18n="faq.a2p1">To purchase <span class="highlight">Fly Infinity</span> ownership shares, follow these steps:</p>
                 <div class="step-box">
-                    <p><strong>Step 1:</strong> Go to the <span class="highlight">DApp</span> page.</p>
-                    <p><strong>Step 2:</strong> Connect your wallet (MetaMask, TrustWallet, or TokenPocket).</p>
-                    <p><strong>Step 3:</strong> First, <span class="highlight">approve 100 DAI</span> for the network contract.</p>
-                    <p><strong>Step 4:</strong> Sign the <span class="highlight">Agreement Road Map</span>.</p>
-                    <p><strong>Step 5:</strong> Enter your referrer address and complete registration as a <span class="highlight">network owner</span>.</p>
+                    <p><strong data-i18n="faq.a2step1">Step 1:</strong> <span data-i18n="faq.a2step1text">Go to the <span class="highlight">DApp</span> page.</span></p>
+                    <p><strong data-i18n="faq.a2step2">Step 2:</strong> <span data-i18n="faq.a2step2text">Connect your wallet (MetaMask, TrustWallet, or TokenPocket).</span></p>
+                    <p><strong data-i18n="faq.a2step3">Step 3:</strong> <span data-i18n="faq.a2step3text">First, <span class="highlight">approve 100 DAI</span> for the network contract.</span></p>
+                    <p><strong data-i18n="faq.a2step4">Step 4:</strong> <span data-i18n="faq.a2step4text">Sign the <span class="highlight">Agreement Road Map</span>.</span></p>
+                    <p><strong data-i18n="faq.a2step5">Step 5:</strong> <span data-i18n="faq.a2step5text">Enter your referrer address and complete registration as a <span class="highlight">network owner</span>.</span></p>
                 </div>
-                <p>After registration, you will be recognized as an official <span class="highlight">owner</span> of the Fly Infinity network and can enjoy all its benefits.</p>
+                <p data-i18n="faq.a2p2">After registration, you will be recognized as an official <span class="highlight">owner</span> of the Fly Infinity network and can enjoy all its benefits.</p>
                 <div class="info-box">
-                    <p>💡 <strong>Note:</strong> You must have at least <span class="highlight">100 DAI</span> in your wallet to purchase ownership shares.</p>
+                    <p data-i18n="faq.a2info">💡 <strong>Note:</strong> You must have at least <span class="highlight">100 DAI</span> in your wallet to purchase ownership shares.</p>
                 </div>
             </div>
         </div>
@@ -490,111 +659,111 @@
         <!-- FAQ 3: How to buy FIT? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 How do I buy FIT tokens?</span>
+                <span>🔹 <span data-i18n="faq.q3">How do I buy FIT tokens?</span></span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
-                <p>To purchase <span class="highlight">FIT</span> tokens, <strong>you must first buy Fly Infinity ownership shares</strong>, then follow these steps:</p>
+                <p data-i18n="faq.a3p1">To purchase <span class="highlight">FIT</span> tokens, <strong>you must first buy Fly Infinity ownership shares</strong>, then follow these steps:</p>
                 <div class="step-box">
-                    <p><strong>Step 1:</strong> After registering as an owner, return to the <span class="highlight">DApp</span> page.</p>
-                    <p><strong>Step 2:</strong> <span class="highlight">Approve 1000 DAI</span> for the token contract.</p>
-                    <p><strong>Step 3:</strong> Enter the amount of DAI you want to spend.</p>
-                    <p><strong>Step 4:</strong> Click the <span class="highlight">Buy FIT</span> button and confirm the transaction in your wallet.</p>
+                    <p><strong data-i18n="faq.a3step1">Step 1:</strong> <span data-i18n="faq.a3step1text">After registering as an owner, return to the <span class="highlight">DApp</span> page.</span></p>
+                    <p><strong data-i18n="faq.a3step2">Step 2:</strong> <span data-i18n="faq.a3step2text"><span class="highlight">Approve 1000 DAI</span> for the token contract.</span></p>
+                    <p><strong data-i18n="faq.a3step3">Step 3:</strong> <span data-i18n="faq.a3step3text">Enter the amount of DAI you want to spend.</span></p>
+                    <p><strong data-i18n="faq.a3step4">Step 4:</strong> <span data-i18n="faq.a3step4text">Click the <span class="highlight">Buy FIT</span> button and confirm the transaction in your wallet.</span></p>
                 </div>
-                <p>After confirmation, the equivalent FIT will be sent to your wallet.</p>
+                <p data-i18n="faq.a3p2">After confirmation, the equivalent FIT will be sent to your wallet.</p>
                 <div class="info-box">
-                    <p>💡 <strong>Important:</strong> You can only buy <span class="highlight">FIT</span> after purchasing ownership shares.</p>
+                    <p data-i18n="faq.a3info">💡 <strong>Important:</strong> You can only buy <span class="highlight">FIT</span> after purchasing ownership shares.</p>
                 </div>
-                <p style="font-size: 12px; color: #888;">Buy fee: <span class="highlight">3%</span></p>
+                <p style="font-size: 12px; color: #888;" data-i18n="faq.a3fee">Buy fee: <span class="highlight">3%</span></p>
             </div>
         </div>
         
         <!-- FAQ 4: How to sell FIT? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 How do I sell FIT tokens?</span>
+                <span>🔹 <span data-i18n="faq.q4">How do I sell FIT tokens?</span></span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
-                <p>To sell <span class="highlight">FIT</span> tokens, follow these steps:</p>
+                <p data-i18n="faq.a4p1">To sell <span class="highlight">FIT</span> tokens, follow these steps:</p>
                 <div class="step-box">
-                    <p><strong>Step 1:</strong> Go to the <span class="highlight">DApp</span> page.</p>
-                    <p><strong>Step 2:</strong> Connect your wallet.</p>
-                    <p><strong>Step 3:</strong> Enter the amount of FIT you want to sell.</p>
-                    <p><strong>Step 4:</strong> Click the <span class="highlight">Sell FIT</span> button.</p>
-                    <p><strong>Step 5:</strong> Confirm the transaction in your wallet.</p>
+                    <p><strong data-i18n="faq.a4step1">Step 1:</strong> <span data-i18n="faq.a4step1text">Go to the <span class="highlight">DApp</span> page.</span></p>
+                    <p><strong data-i18n="faq.a4step2">Step 2:</strong> <span data-i18n="faq.a4step2text">Connect your wallet.</span></p>
+                    <p><strong data-i18n="faq.a4step3">Step 3:</strong> <span data-i18n="faq.a4step3text">Enter the amount of FIT you want to sell.</span></p>
+                    <p><strong data-i18n="faq.a4step4">Step 4:</strong> <span data-i18n="faq.a4step4text">Click the <span class="highlight">Sell FIT</span> button.</span></p>
+                    <p><strong data-i18n="faq.a4step5">Step 5:</strong> <span data-i18n="faq.a4step5text">Confirm the transaction in your wallet.</span></p>
                 </div>
-                <p>After confirmation, the <span class="highlight">equivalent DAI</span> will be sent to your wallet.</p>
+                <p data-i18n="faq.a4p2">After confirmation, the <span class="highlight">equivalent DAI</span> will be sent to your wallet.</p>
                 <div class="info-box">
-                    <p>💡 <strong>Note:</strong> Every FIT sale adds a portion of the fee to the <span class="highlight">DAI reserve</span>, increasing the base token price.</p>
+                    <p data-i18n="faq.a4info">💡 <strong>Note:</strong> Every FIT sale adds a portion of the fee to the <span class="highlight">DAI reserve</span>, increasing the base token price.</p>
                 </div>
-                <p style="font-size: 12px; color: #888;">Sell fee: <span class="highlight">6%</span></p>
+                <p style="font-size: 12px; color: #888;" data-i18n="faq.a4fee">Sell fee: <span class="highlight">6%</span></p>
             </div>
         </div>
         
         <!-- FAQ 5: Can I transfer tokens between wallets? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 Can I transfer tokens between wallets?</span>
+                <span>🔹 <span data-i18n="faq.q5">Can I transfer tokens between wallets?</span></span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
-                <p><span class="highlight">No</span> — <span class="highlight">FIT</span> tokens <strong>cannot</strong> be transferred between wallets.</p>
-                <p>This restriction is designed for the following reasons:</p>
+                <p data-i18n="faq.a5p1"><span class="highlight">No</span> — <span class="highlight">FIT</span> tokens <strong>cannot</strong> be transferred between wallets.</p>
+                <p data-i18n="faq.a5p2">This restriction is designed for the following reasons:</p>
                 <ul>
-                    <li>✅ <strong>Maintain the constantly rising (non-diminishing) price algorithm</strong> — Token transfers could create price volatility and a black market.</li>
-                    <li>✅ <strong>Prevent black market creation</strong> — All FIT trades must go through the <span class="highlight">smart contract</span> to ensure transparency and security.</li>
-                    <li>✅ <strong>Full transparency</strong> — All transactions are visible and auditable on the blockchain.</li>
+                    <li data-i18n="faq.a5li1">✅ <strong>Maintain the constantly rising (non-diminishing) price algorithm</strong> — Token transfers could create price volatility and a black market.</li>
+                    <li data-i18n="faq.a5li2">✅ <strong>Prevent black market creation</strong> — All FIT trades must go through the <span class="highlight">smart contract</span> to ensure transparency and security.</li>
+                    <li data-i18n="faq.a5li3">✅ <strong>Full transparency</strong> — All transactions are visible and auditable on the blockchain.</li>
                 </ul>
                 <div class="info-box">
-                    <p>💡 <strong>Conclusion:</strong> You can only trade FIT through the <span class="highlight">smart contract</span>. FIT is non-transferable between wallets.</p>
+                    <p data-i18n="faq.a5info">💡 <strong>Conclusion:</strong> You can only trade FIT through the <span class="highlight">smart contract</span>. FIT is non-transferable between wallets.</p>
                 </div>
-                <p>The only way to change ownership is to <strong>sell through the contract</strong> and have someone else buy.</p>
+                <p data-i18n="faq.a5p3">The only way to change ownership is to <strong>sell through the contract</strong> and have someone else buy.</p>
             </div>
         </div>
         
         <!-- FAQ 6: What are the fees? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 What are the buy and sell fees?</span>
+                <span>🔹 <span data-i18n="faq.q6">What are the buy and sell fees?</span></span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
-                <p>Transaction fees in <span class="highlight">Fly Infinity Token</span> are as follows:</p>
+                <p data-i18n="faq.a6p1">Transaction fees in <span class="highlight">Fly Infinity Token</span> are as follows:</p>
                 <ul>
-                    <li><span class="highlight">Buying FIT:</span> <strong>3%</strong> of the input amount</li>
-                    <li><span class="highlight">Selling FIT:</span> <strong>6%</strong> of the output amount</li>
+                    <li data-i18n="faq.a6li1"><span class="highlight">Buying FIT:</span> <strong>3%</strong> of the input amount</li>
+                    <li data-i18n="faq.a6li2"><span class="highlight">Selling FIT:</span> <strong>6%</strong> of the output amount</li>
                 </ul>
-                <p>These fees are automatically added to the <span class="highlight">DAI reserve</span>, which increases the base token price.</p>
+                <p data-i18n="faq.a6p2">These fees are automatically added to the <span class="highlight">DAI reserve</span>, which increases the base token price.</p>
                 <div class="info-box">
-                    <p>💡 <strong>Key Point:</strong> The more transactions occur, the <span class="highlight">faster</span> the FIT base price grows. This means every buy and sell increases the value of your tokens.</p>
+                    <p data-i18n="faq.a6info">💡 <strong>Key Point:</strong> The more transactions occur, the <span class="highlight">faster</span> the FIT base price grows. This means every buy and sell increases the value of your tokens.</p>
                 </div>
-                <p style="font-size: 12px; color: #888;">📊 All fees are transparent and viewable on the smart contract.</p>
+                <p style="font-size: 12px; color: #888;" data-i18n="faq.a6note">📊 All fees are transparent and viewable on the smart contract.</p>
             </div>
         </div>
         
         <!-- FAQ 7: Can I change my wallet? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 Can I change my wallet?</span>
+                <span>🔹 <span data-i18n="faq.q7">Can I change my wallet?</span></span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
-                <p>Yes, but with one <span class="highlight">important condition</span>:</p>
+                <p data-i18n="faq.a7p1">Yes, but with one <span class="highlight">important condition</span>:</p>
                 <div class="warning-box">
-                    <p style="color: #ff4444; font-weight: bold;">⚠️ You must sell all your FIT before changing your wallet!</p>
+                    <p style="color: #ff4444; font-weight: bold;" data-i18n="faq.a7warning">⚠️ You must sell all your FIT before changing your wallet!</p>
                 </div>
-                <p>If you change your wallet without selling first, your tokens will become <strong>inaccessible</strong> and you will lose the ability to sell them.</p>
+                <p data-i18n="faq.a7p2">If you change your wallet without selling first, your tokens will become <strong>inaccessible</strong> and you will lose the ability to sell them.</p>
                 <div class="step-box">
-                    <p><strong>✅ Correct approach:</strong></p>
+                    <p><strong data-i18n="faq.a7correct">✅ Correct approach:</strong></p>
                     <ol style="margin-left: 20px;">
-                        <li>First, <span class="highlight">sell</span> all your FIT tokens.</li>
-                        <li>Change your wallet.</li>
-                        <li><span class="highlight">Buy FIT</span> again in your new wallet.</li>
+                        <li data-i18n="faq.a7step1">First, <span class="highlight">sell</span> all your FIT tokens.</li>
+                        <li data-i18n="faq.a7step2">Change your wallet.</li>
+                        <li data-i18n="faq.a7step3"><span class="highlight">Buy FIT</span> again in your new wallet.</li>
                     </ol>
                 </div>
                 <div class="info-box">
-                    <p>💡 <strong>Reason:</strong> FIT is non-transferable between wallets, so selling and repurchasing is the only way to change ownership.</p>
+                    <p data-i18n="faq.a7info">💡 <strong>Reason:</strong> FIT is non-transferable between wallets, so selling and repurchasing is the only way to change ownership.</p>
                 </div>
             </div>
         </div>
@@ -602,29 +771,29 @@
         <!-- FAQ 8: What if I lose my recovery phrase? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 What if I lose my recovery phrase?</span>
+                <span>🔹 <span data-i18n="faq.q8">What if I lose my recovery phrase?</span></span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
-                <p><span class="highlight">Unfortunately</span>, if you lose your recovery phrase (Seed Phrase / Recovery Phrase), <strong>there is no way to recover your wallet</strong>.</p>
-                <p>The recovery phrase is the only way to access your wallet, and:</p>
+                <p data-i18n="faq.a8p1"><span class="highlight">Unfortunately</span>, if you lose your recovery phrase (Seed Phrase / Recovery Phrase), <strong>there is no way to recover your wallet</strong>.</p>
+                <p data-i18n="faq.a8p2">The recovery phrase is the only way to access your wallet, and:</p>
                 <ul>
-                    <li>❌ Cannot be changed</li>
-                    <li>❌ Cannot be reset</li>
-                    <li>❌ No support team can recover it</li>
-                    <li>❌ No one else has access to it</li>
+                    <li data-i18n="faq.a8li1">❌ Cannot be changed</li>
+                    <li data-i18n="faq.a8li2">❌ Cannot be reset</li>
+                    <li data-i18n="faq.a8li3">❌ No support team can recover it</li>
+                    <li data-i18n="faq.a8li4">❌ No one else has access to it</li>
                 </ul>
                 <div class="info-box">
-                    <p style="color: #00C896; font-weight: bold;">✅ Security recommendations:</p>
+                    <p style="color: #00C896; font-weight: bold;" data-i18n="faq.a8security">✅ Security recommendations:</p>
                     <ul>
-                        <li>Write your recovery phrase on <strong>paper</strong> and store it in a safe place.</li>
-                        <li>Keep multiple copies in separate secure locations.</li>
-                        <li>Never store it digitally (screenshots, cloud, email).</li>
-                        <li>Never share it with anyone.</li>
+                        <li data-i18n="faq.a8sec1">Write your recovery phrase on <strong>paper</strong> and store it in a safe place.</li>
+                        <li data-i18n="faq.a8sec2">Keep multiple copies in separate secure locations.</li>
+                        <li data-i18n="faq.a8sec3">Never store it digitally (screenshots, cloud, email).</li>
+                        <li data-i18n="faq.a8sec4">Never share it with anyone.</li>
                     </ul>
                 </div>
                 <div class="warning-box">
-                    <p style="color: #ff4444;">⚠️ <strong>Warning:</strong> No support team, including the Fly Infinity team, will ever ask for your recovery phrase. Beware of scammers!</p>
+                    <p style="color: #ff4444;" data-i18n="faq.a8warning">⚠️ <strong>Warning:</strong> No support team, including the Fly Infinity team, will ever ask for your recovery phrase. Beware of scammers!</p>
                 </div>
             </div>
         </div>
@@ -632,15 +801,27 @@
     </div>
 
     <div class="footer">
-        <a href="index.html">Dashboard</a> | 
-        <a href="compare.html">Comparison</a> | 
-        <a href="transactions.html">Transactions</a> | 
-        <a href="privacy.html">Privacy Policy</a> | 
-        <a href="warnings.html">Warnings</a> | 
-        <a href="faq.html">FAQ</a><br>
-        Fly Infinity DAO
+        <div class="footer-links">
+            <a href="index.html" data-i18n="nav.dashboard">Dashboard</a>
+            <span>|</span>
+            <a href="compare.html" data-i18n="nav.comparison">Comparison</a>
+            <span>|</span>
+            <a href="dapp.html" data-i18n="nav.dapp">DApp</a>
+            <span>|</span>
+            <a href="transactions.html" data-i18n="nav.transactions">Transactions</a>
+            <span>|</span>
+            <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+            <span>|</span>
+            <a href="warnings.html" data-i18n="nav.warnings">Warnings</a>
+            <span>|</span>
+            <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+            <span>|</span>
+            <a href="whitepaper.html" data-i18n="nav.whitepaper">White Paper</a>
+        </div>
+        <p class="footer-tagline" data-i18n="footer.tagline">
+            Fly Infinity — <span class="gold">Decentralized. Transparent. Forever Rising.</span>
+        </p>
     </div>
-</div>
 
 <!-- ===== SIDEBAR SCRIPT ===== -->
 <script>
