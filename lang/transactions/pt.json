@@ -1,4 +1,20 @@
 {
+  "header": {
+    "title": "Fly Infinity DAO"
+  },
+  "nav": {
+    "dashboard": "Painel de Controle",
+    "comparison": "Comparação",
+    "dapp": "DApp",
+    "transactions": "Transações",
+    "privacy": "Privacidade",
+    "warnings": "Avisos",
+    "faq": "Perguntas Frequentes",
+    "whitepaper": "White Paper"
+  },
+  "footer": {
+    "tagline": "Fly Infinity — Descentralizado. Transparente. Sempre Ascendendo."
+  },
   "transactions": {
     "title": "Explorador de Transações",
     "all": "📋 Todas as Transações",
