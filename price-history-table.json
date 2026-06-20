@@ -1,3 +1,14 @@
 {
-  "records": []
+  "records": [
+    {
+      "date": "2026-06-20",
+      "prices": {
+        "fit": {
+          "price": 6.39,
+          "yesterday": 6.326099999999999,
+          "change": 1
+        }
+      }
+    }
+  ]
 }
