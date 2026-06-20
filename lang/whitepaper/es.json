@@ -1,0 +1,180 @@
+{
+  "meta": {
+    "title": "Fly Infinity - Libro Blanco",
+    "description": "Libro Blanco de Fly Infinity Token - Plataforma Financiera Descentralizada"
+  },
+  "header": {
+    "title": "Fly Infinity DAO"
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "comparison": "Comparación",
+    "dapp": "DApp",
+    "transactions": "Transacciones",
+    "privacy": "Privacidad",
+    "warnings": "Advertencias",
+    "faq": "Preguntas Frecuentes",
+    "whitepaper": "Libro Blanco"
+  },
+  "whitepaper": {
+    "title": "Libro Blanco",
+    "version": "Versión 1.0",
+    "release": "Fecha de Lanzamiento: Junio 2026"
+  },
+  "wp": {
+    "s1": {
+      "title": "1. Prefacio",
+      "p1": "A pesar de su notable crecimiento, el mercado de criptomonedas sigue enfrentando desafíos estructurales fundamentales. La falta de transparencia en el respaldo de activos, la manipulación de precios por parte de las ballenas del mercado, la dependencia de libros de órdenes centralizados y los riesgos asociados con las burbujas especulativas han expuesto a los inversores a una volatilidad extrema e impredecible.",
+      "p2": "Fly Infinity Platform ha sido diseñada en respuesta a estos desafíos. Es una plataforma descentralizada con el objetivo de crear un activo digital transparente con respaldo real, construida sobre una estructura que reduce el riesgo de reversión de precios a cero."
+    },
+    "s2": {
+      "title": "2. Introducción a Fly Infinity Platform",
+      "p1": "Fly Infinity es una plataforma financiera descentralizada de próxima generación construida sobre dos componentes económicos completamente complementarios:",
+      "sub1": "2.1 Fly Infinity Network",
+      "sub1text": "Una red inteligente y autónoma responsable de inyectar capital real en el contrato del token. Esta red aumenta continuamente la liquidez sin necesidad de acuñar nuevos tokens.",
+      "sub2": "2.2 Fly Infinity Token (FIT)",
+      "sub2text": "El activo digital principal de la plataforma, cuyo precio se calcula no en función del hype del mercado, sino únicamente en la relación entre la Reserva de DAI y el Suministro Total."
+    },
+    "s3": {
+      "title": "3. Fórmula de Precios (Bonding Curve)",
+      "p1": "El precio del token FIT se calcula de manera transparente e inmutable dentro del contrato inteligente:",
+      "formula": "Precio FIT = Reserva DAI ÷ Suministro Total",
+      "features": "Características clave de este modelo:",
+      "f1": "Inmutable: El precio no puede ser alterado por ninguna entidad externa.",
+      "f2": "Transparente: Calculable y verificable en cualquier momento.",
+      "f3": "En continuo aumento: Cada compra aumenta la liquidez y eleva el precio base."
+    },
+    "s4": {
+      "title": "4. Característica Única: Precio No Decreciente",
+      "p1": "Fly Infinity es el único proyecto donde el precio base del token nunca disminuye. Esto se logra a través de la siguiente lógica:",
+      "table": {
+        "action": "Acción",
+        "effect": "Efecto",
+        "buy": "Comprar FIT",
+        "buyEffect": "DAI real entra al contrato → Aumenta la liquidez → Aumenta el precio",
+        "sell": "Vender FIT",
+        "sellEffect": "Los tokens se queman → Disminuye el suministro → Aumenta el precio",
+        "buyFee": "Comisión de Compra (3%)",
+        "buyFeeEffect": "Regresa a la liquidez → Refuerzo del precio",
+        "sellFee": "Comisión de Venta (6%)",
+        "sellFeeEffect": "Regresa a la liquidez → Refuerzo del precio"
+      },
+      "p2": "Resultado: Incluso las grandes ventas no necesariamente reducen el precio — en muchos casos, lo aumentan."
+    },
+    "s5": {
+      "title": "5. Estructura Descentralizada y Gobernanza DAO",
+      "sub1": "5.1 Descentralización Completa",
+      "li1": "Ningún equipo central tiene acceso a las claves administrativas.",
+      "li2": "Todas las reglas están integradas en contratos inteligentes públicos e inmutables.",
+      "li3": "Ninguna entidad puede detener, alterar o censurar transacciones.",
+      "sub2": "5.2 Gobernanza DAO",
+      "p1": "Todas las decisiones clave del proyecto, incluyendo:",
+      "li4": "Actualizaciones potenciales",
+      "li5": "Asignación de recursos",
+      "li6": "Desarrollos futuros",
+      "p2": "se toman mediante votación descentralizada, proporcional a la participación de cada titular en la red."
+    },
+    "s6": {
+      "title": "6. Modelo de Compra por Pasos",
+      "p1": "Para prevenir la entrada repentina de ballenas y mantener un crecimiento saludable de precios, las compras de FIT están estructuradas en un sistema por pasos:",
+      "table": {
+        "step": "Paso",
+        "points": "Puntos de Red Requeridos",
+        "cap": "Límite de Compra (DAI)"
+      },
+      "how": "Cómo funciona: Cada usuario puede comprar solo una vez por paso, hasta el límite especificado. Después de ganar los puntos de red requeridos, el siguiente paso estará disponible. El límite de compra total aumenta acumulativamente a medida que los usuarios avanzan a través de los pasos."
+    },
+    "s7": {
+      "title": "Ventaja de la Red Double Infinity",
+      "p1": "Desbloquee un Poder de Compra Superior a través de la Estructura de Red",
+      "p2": "La Red Double Infinity introduce un mecanismo revolucionario que permite a los usuarios comprar cantidades significativamente mayores de FIT con sustancialmente menos acciones de propiedad. Esto se logra a través de la estructura inteligente de árbol binario de la red, donde cada acción colocada en la red genera puntos de red que aumentan directamente la capacidad de compra del usuario.",
+      "p3": "Cómo funciona el Multiplicador de Árbol Binario:",
+      "li1": "Modelo Tradicional: Cada acción de propiedad proporciona un límite de compra fijo de 100 DAI. Para comprar FIT por valor de 6,000 DAI, un usuario necesitaría 60 acciones, con un costo adicional de 6,000 DAI — inversión total de 12,000 DAI.",
+      "li2": "Modelo Double Infinity: Colocando estratégicamente las acciones en un árbol binario equilibrado (1 línea superior + 2 líneas inferiores por nodo), la misma compra de 6,000 DAI se puede lograr con solo 40 acciones — una reducción del 33% en las acciones requeridas.",
+      "li3": "Ventaja Acumulada: A medida que aumenta el monto de la compra, la brecha de eficiencia se amplía. Para compras más grandes, la Red Double Infinity puede reducir las acciones requeridas hasta en un 50% o más, reduciendo drásticamente el capital total necesario para adquirir FIT.",
+      "p4": "Prueba Matemática: En un árbol binario equilibrado con 40 acciones, la red genera 57 puntos de recompensa (como se verifica a través de nuestro modelo de cálculo de recompensas). Cada punto representa una capacidad de compra desbloqueada, permitiendo a los usuarios alcanzar límites de compra más altos con menos acciones. Esto no es una afirmación promocional — es una propiedad matemáticamente verificable de la arquitectura de la Red Double Infinity.",
+      "p5": "Conclusión Clave: La Red Double Infinity no es meramente un sistema de referidos — es una innovación de ingeniería financiera que optimiza matemáticamente la eficiencia del capital. Los usuarios que entienden y aprovechan esta estructura pueden adquirir FIT con un desembolso de capital significativamente menor en comparación con los métodos de compra directa tradicionales.",
+      "example": "Ejemplo: Compra de FIT de 6,000 DAI — Tradicional: 60 acciones, 12,000 DAI costo total | Double Infinity: 40 acciones, 10,000 DAI costo total | Ahorro: 2,000 DAI (reducción del 17%)"
+    },
+    "s8": {
+      "title": "7. Seguridad y Transparencia",
+      "sub1": "7.1 Seguridad del Contrato",
+      "li1": "Los contratos inteligentes están implementados con los más altos estándares.",
+      "li2": "No existen funciones ocultas ni claves administrativas.",
+      "li3": "Todas las transacciones se registran y son visibles en la blockchain de BSC.",
+      "sub2": "7.2 Transparencia Económica",
+      "p1": "La siguiente información está disponible para el público en tiempo real:",
+      "li4": "Precio de FIT en vivo",
+      "li5": "Suministro total",
+      "li6": "Reserva de DAI",
+      "li7": "Historial de precios diarios",
+      "li8": "Distribución de titulares",
+      "li9": "Volumen de negociación"
+    },
+    "s9": {
+      "title": "8. Ventajas Competitivas",
+      "table": {
+        "feature": "Característica",
+        "fit": "Fly Infinity",
+        "traditional": "Proyectos Tradicionales",
+        "row1": "Respaldo de Activos Reales",
+        "row1fit": "✅ DAI",
+        "row1trad": "❌ Promesas de Marketing",
+        "row2": "Precio No Decreciente",
+        "row3": "Transparencia Total",
+        "row4": "Sin Manipulación de Ballenas",
+        "row5": "Gobernanza DAO",
+        "row6": "Comisiones Transparentes",
+        "row6trad": "Poco Claro",
+        "row7": "Eficiencia de Red Binaria",
+        "row7fit": "✅ Hasta 50% de Reducción de Acciones"
+      }
+    },
+    "s10": {
+      "title": "9. Hoja de Ruta de Desarrollo",
+      "sub1": "Fase 1: Estabilización y Acumulación",
+      "li1": "Entrada controlada de usuarios a través del modelo por pasos",
+      "li2": "Crecimiento gradual de la liquidez",
+      "li3": "Aumento de precio de baja volatilidad",
+      "sub2": "Fase 2: Crecimiento Acelerado",
+      "li4": "Inyección continua de DAI por la Red Fly Infinity",
+      "li5": "Crecimiento exponencial de liquidez sin acuñar nuevos tokens",
+      "li6": "Fuerte impulso alcista de precios",
+      "sub3": "Fase 3: Madurez del Sistema",
+      "li7": "Entrada de gran capital sin riesgo de caída",
+      "li8": "Evolución de FIT hacia un activo digital de grado reserva",
+      "li9": "Apreciación de precios sostenible y lógica"
+    },
+    "s11": {
+      "title": "10. Resumen",
+      "p1": "Fly Infinity no es un proyecto cripto típico. Es un sistema financiero diseñado desde primeros principios para:",
+      "li1": "Tener respaldo de activos reales",
+      "li2": "Asegurar precios transparentes e inmutables",
+      "li3": "Garantizar un crecimiento lógico y sostenible",
+      "li4": "Reducir el riesgo de reversión de precios a cero",
+      "li5": "Nunca formar una burbuja especulativa",
+      "quote": "\"Fly Infinity no promete ganancias poco realistas, pero tampoco permite la destrucción de capital.\""
+    },
+    "s12": {
+      "title": "11. Direcciones de Contratos",
+      "website": "🌐 Sitio Web",
+      "token": "🪙 Contrato de Token FIT",
+      "network": "🌐 Contrato de Red",
+      "gift": "🎁 Contrato de Regalos",
+      "dao": "🏛️ Contrato DAO"
+    },
+    "s13": {
+      "title": "12. Descargo de Responsabilidad",
+      "p1": "No es Asesoramiento Financiero: Nada en este documento constituye asesoramiento financiero. Los usuarios deben realizar su propia investigación (DYOR) y consultar con asesores financieros calificados antes de tomar cualquier decisión de inversión.",
+      "p2": "Advertencia de Riesgo: Las inversiones en criptomonedas conllevan riesgos inherentes, incluidos, entre otros, la volatilidad del mercado, las vulnerabilidades de los contratos inteligentes, los cambios regulatorios y la pérdida de claves privadas.",
+      "p3": "Código Abierto: Este proyecto es de código abierto y se proporciona \"TAL CUAL\" sin garantía de ningún tipo."
+    },
+    "s14": {
+      "closing": "Experimenta un crecimiento financiero infinito con Fly Infinity.",
+      "tagline": "Fly Infinity DAO — Descentralizado. Transparente. Siempre Subiendo."
+    }
+  },
+  "footer": {
+    "tagline": "Fly Infinity — Descentralizado. Transparente. Siempre Subiendo."
+  }
+}
