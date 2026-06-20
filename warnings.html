@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Fly Infinity Token - Important Warnings</title>
     
-        <!-- ===== FAVICON ===== -->
+    <!-- ===== FAVICON ===== -->
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="lang.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -73,15 +74,30 @@
         .top-bar .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             color: #D4AF37;
             font-size: 18px;
             font-weight: bold;
             text-decoration: none;
         }
         
-        .top-bar .logo i {
-            font-size: 22px;
+        .top-bar .logo img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #D4AF37;
+        }
+        
+        .top-bar .logo span {
+            color: #D4AF37;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         
         .hamburger {
@@ -105,7 +121,118 @@
             transform: rotate(90deg);
         }
         
-        /* ===== SIDEBAR OVERLAY ===== */
+        /* ===== LANGUAGE BUTTON ===== */
+        .lang-btn {
+            background: transparent;
+            border: 1px solid rgba(0, 200, 150, 0.3);
+            color: #D4AF37;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .lang-btn:hover {
+            border-color: #00C896;
+            background: rgba(0, 200, 150, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .lang-dropdown {
+            position: fixed;
+            top: 75px;
+            right: 20px;
+            background: #0F0F0F;
+            border: 1px solid rgba(0, 200, 150, 0.3);
+            border-radius: 16px;
+            padding: 8px;
+            min-width: 160px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .lang-dropdown.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .lang-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            color: #c0d0e8;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .lang-item:hover {
+            background: rgba(0, 200, 150, 0.08);
+            color: #D4AF37;
+        }
+        
+        .lang-item.active {
+            background: rgba(0, 200, 150, 0.15);
+            color: #D4AF37;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+        }
+        
+        .lang-item .flag {
+            font-size: 18px;
+        }
+        
+        .lang-item .lang-name {
+            font-size: 13px;
+        }
+        
+        @media (max-width: 768px) {
+            .lang-dropdown {
+                top: 65px;
+                right: 10px;
+                min-width: 140px;
+            }
+            .lang-item {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            .lang-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+            .top-bar .logo span {
+                font-size: 15px;
+            }
+            .top-bar .logo img {
+                width: 28px;
+                height: 28px;
+            }
+            .hamburger {
+                width: 38px;
+                height: 38px;
+                font-size: 17px;
+            }
+        }
+        
+        /* ===== SIDEBAR ===== */
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -125,7 +252,6 @@
             visibility: visible;
         }
         
-        /* ===== SIDEBAR ===== */
         .sidebar {
             position: fixed;
             top: 0;
@@ -157,9 +283,19 @@
         }
         
         .sidebar-header .logo-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             color: #D4AF37;
             font-size: 18px;
             font-weight: bold;
+        }
+        
+        .sidebar-header .logo-text img {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid #D4AF37;
         }
         
         .sidebar-header .close-btn {
@@ -304,16 +440,43 @@
             color: #00C896;
         }
         
+        /* ===== FOOTER ===== */
         .footer {
             text-align: center;
             font-size: 10px;
             color: #666;
             margin-top: 30px;
+            border-top: 1px solid rgba(0, 200, 150, 0.15);
+            padding-top: 20px;
         }
         
         .footer a {
             color: #00C896;
             text-decoration: none;
+        }
+        
+        .footer .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .footer .footer-links span {
+            color: #444;
+        }
+        
+        .footer .footer-tagline {
+            color: #888;
+            font-size: 11px;
+            margin: 0;
+            text-align: center;
+        }
+        
+        .footer .footer-tagline .gold {
+            color: #D4AF37;
         }
         
         @media (max-width: 768px) {
@@ -330,8 +493,17 @@
                 width: 85vw;
                 right: -85vw;
             }
-            .top-bar .logo {
+            .top-bar .logo span {
                 font-size: 15px;
+            }
+            .top-bar .logo img {
+                width: 28px;
+                height: 28px;
+            }
+            .hamburger {
+                width: 38px;
+                height: 38px;
+                font-size: 17px;
             }
         }
     </style>
@@ -342,12 +514,14 @@
     <!-- ===== TOP NAV BAR ===== -->
     <div class="top-bar">
         <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-    <img src="logo.png" alt="Fly Infinity DAO" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37;">
-    <span style="color: #D4AF37; font-size: 18px; font-weight: bold;">Fly Infinity DAO</span>
-</a>
-        <button class="hamburger" id="hamburgerBtn">
-            <i class="fas fa-bars"></i>
-        </button>
+            <img src="logo.png" alt="Fly Infinity DAO" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37;">
+            <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
+        </a>
+        <div class="top-bar-right">
+            <button class="hamburger" id="hamburgerBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
     </div>
 
     <!-- ===== SIDEBAR OVERLAY ===== -->
@@ -357,41 +531,41 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <span class="logo-text" style="display: flex; align-items: center; gap: 10px;">
-    <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
-    <span style="color: #D4AF37; font-size: 18px; font-weight: bold;">Fly Infinity DAO</span>
-</span>
+                <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
+                <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
+            </span>
             <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
         </div>
         
         <div class="sidebar-menu">
-            <a href="index.html">
+            <a href="index.html" data-i18n="nav.dashboard">
                 <i class="fas fa-home"></i> Dashboard
             </a>
-            <a href="compare.html">
+            <a href="compare.html" data-i18n="nav.comparison">
                 <i class="fas fa-chart-line"></i> Comparison
             </a>
-            <a href="dapp.html">
+            <a href="dapp.html" data-i18n="nav.dapp">
                 <i class="fas fa-charging-station"></i> DApp
             </a>
-            <a href="transactions.html">
+            <a href="transactions.html" data-i18n="nav.transactions">
                 <i class="fas fa-history"></i> Transactions
             </a>
-            <a href="privacy.html">
+            <a href="privacy.html" data-i18n="nav.privacy">
                 <i class="fas fa-shield-alt"></i> Privacy
             </a>
-            <a href="warnings.html" class="active">
+            <a href="warnings.html" class="active" data-i18n="nav.warnings">
                 <i class="fas fa-exclamation-triangle"></i> Warnings
             </a>
-            <a href="faq.html">
+            <a href="faq.html" data-i18n="nav.faq">
                 <i class="fas fa-question-circle"></i> FAQ
             </a>
-            <a href="whitepaper.html">
+            <a href="whitepaper.html" data-i18n="nav.whitepaper">
                 <i class="fas fa-file-pdf"></i> White Paper
             </a>
         </div>
         
         <div class="sidebar-footer">
-            <a href="https://flyinfinitydao.github.io/fit-price-display" target="_blank">flyinfinitydao.github.io</a><br>
+            <a href="https://flyinfinitydao.github.io" target="_blank">flyinfinitydao.github.io</a><br>
             Fly Infinity DAO
         </div>
     </div>
@@ -403,13 +577,13 @@
         <div class="warning-card">
             <div class="warning-header">
                 <i class="fas fa-exchange-alt warning-icon"></i>
-                <div class="warning-title">⚠️ Before Changing or Deleting Your Wallet</div>
+                <div class="warning-title" data-i18n="warnings.wallet.title">⚠️ Before Changing or Deleting Your Wallet</div>
             </div>
             <div class="warning-content">
-                <p>If you intend to perform a wallet change operation, you must sell your tokens first. Otherwise, your tokens will lose their transferability and you will not be able to sell them afterward.</p>
+                <p data-i18n="warnings.wallet.text">If you intend to perform a wallet change operation, you must sell your tokens first. Otherwise, your tokens will lose their transferability and you will not be able to sell them afterward.</p>
                 <div class="warning-solution">
-                    <strong>🔧 Solution:</strong><br>
-                    First, sell all your FIT tokens → Then change your wallet → Finally, buy FIT again in your new wallet.
+                    <strong data-i18n="warnings.wallet.solutionTitle">🔧 Solution:</strong><br>
+                    <span data-i18n="warnings.wallet.solutionText">First, sell all your FIT tokens → Then change your wallet → Finally, buy FIT again in your new wallet.</span>
                 </div>
             </div>
         </div>
@@ -418,15 +592,15 @@
         <div class="warning-card">
             <div class="warning-header">
                 <i class="fas fa-key warning-icon"></i>
-                <div class="warning-title">⚠️ Never Share Your Recovery Phrase</div>
+                <div class="warning-title" data-i18n="warnings.recovery.title">⚠️ Never Share Your Recovery Phrase</div>
             </div>
             <div class="warning-content">
-                <p>Recovery phrases (seed phrases) cannot be changed or reset. Keep them safe!</p>
+                <p data-i18n="warnings.recovery.text">Recovery phrases (seed phrases) cannot be changed or reset. Keep them safe!</p>
                 <ul>
-                    <li>✅ Write them down physically on paper</li>
-                    <li>✅ Store multiple copies in secure, separate locations</li>
-                    <li>✅ Never store them digitally (screenshots, cloud, email)</li>
-                    <li>❌ Never share them with anyone, including "support" teams</li>
+                    <li data-i18n="warnings.recovery.li1">✅ Write them down physically on paper</li>
+                    <li data-i18n="warnings.recovery.li2">✅ Store multiple copies in secure, separate locations</li>
+                    <li data-i18n="warnings.recovery.li3">✅ Never store them digitally (screenshots, cloud, email)</li>
+                    <li data-i18n="warnings.recovery.li4">❌ Never share them with anyone, including "support" teams</li>
                 </ul>
             </div>
         </div>
@@ -435,29 +609,42 @@
         <div class="warning-card">
             <div class="warning-header">
                 <i class="fas fa-ban warning-icon"></i>
-                <div class="warning-title">⚠️ Blockchain Transactions Are Irreversible</div>
+                <div class="warning-title" data-i18n="warnings.blockchain.title">⚠️ Blockchain Transactions Are Irreversible</div>
             </div>
             <div class="warning-content">
-                <p>Blockchain is a decentralized system with no central authority. Once a transaction is confirmed, it is permanently recorded on the blockchain and <strong>cannot be reversed, modified, or deleted</strong> by anyone.</p>
+                <p data-i18n="warnings.blockchain.text">Blockchain is a decentralized system with no central authority. Once a transaction is confirmed, it is permanently recorded on the blockchain and <strong>cannot be reversed, modified, or deleted</strong> by anyone.</p>
                 <ul>
-                    <li>🔒 Always double-check wallet addresses before sending</li>
-                    <li>🔒 Verify transaction amounts carefully</li>
-                    <li>🔒 Be cautious of scams and phishing attempts</li>
-                    <li>🔒 No one can "reverse" or "cancel" your transaction</li>
+                    <li data-i18n="warnings.blockchain.li1">🔒 Always double-check wallet addresses before sending</li>
+                    <li data-i18n="warnings.blockchain.li2">🔒 Verify transaction amounts carefully</li>
+                    <li data-i18n="warnings.blockchain.li3">🔒 Be cautious of scams and phishing attempts</li>
+                    <li data-i18n="warnings.blockchain.li4">🔒 No one can "reverse" or "cancel" your transaction</li>
                 </ul>
             </div>
         </div>
     </div>
 
     <div class="footer">
-        <a href="index.html">Dashboard</a> | 
-        <a href="transactions.html">Transactions</a> | 
-        <a href="privacy.html">Privacy Policy</a> | 
-        <a href="warnings.html">Important Warnings</a> | 
-        <a href="faq.html">FAQ</a><br>
-        Fly Infinity DAO
+        <div class="footer-links">
+            <a href="index.html" data-i18n="nav.dashboard">Dashboard</a>
+            <span>|</span>
+            <a href="compare.html" data-i18n="nav.comparison">Comparison</a>
+            <span>|</span>
+            <a href="dapp.html" data-i18n="nav.dapp">DApp</a>
+            <span>|</span>
+            <a href="transactions.html" data-i18n="nav.transactions">Transactions</a>
+            <span>|</span>
+            <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+            <span>|</span>
+            <a href="warnings.html" data-i18n="nav.warnings">Warnings</a>
+            <span>|</span>
+            <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+            <span>|</span>
+            <a href="whitepaper.html" data-i18n="nav.whitepaper">White Paper</a>
+        </div>
+        <p class="footer-tagline" data-i18n="footer.tagline">
+            Fly Infinity — <span class="gold">Decentralized. Transparent. Forever Rising.</span>
+        </p>
     </div>
-</div>
 
 <!-- ===== SIDEBAR SCRIPT ===== -->
 <script>
