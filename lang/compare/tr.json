@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "title": "Fly Infinity Token - Fiyat Karşılaştırma",
+    "description": "FIT fiyatını diğer kripto paralarla karşılaştırın"
+  },
+  "header": {
+    "title": "Fly Infinity DAO"
+  },
+  "nav": {
+    "dashboard": "Gösterge Paneli",
+    "comparison": "Karşılaştırma",
+    "dapp": "DApp",
+    "transactions": "İşlemler",
+    "privacy": "Gizlilik",
+    "warnings": "Uyarılar",
+    "faq": "SSS",
+    "whitepaper": "Beyaz Bülten"
+  },
+  "compare": {
+    "title": "Canlı Fiyat Karşılaştırma Tablosu",
+    "subtitle": "Son 24 saatteki gerçek zamanlı fiyat değişiklikleri",
+    "coin": "Coin",
+    "price24h": "Fiyat (24s Önce)",
+    "current": "Güncel Fiyat",
+    "change": "24s Değişim",
+    "today": "Bugün",
+    "yesterday": "Dün",
+    "days7": "7 Gün Önce",
+    "days14": "14 Gün Önce",
+    "days30": "30 Gün Önce",
+    "selectDate": "Bir tarih seçin...",
+    "go": "Git",
+    "showingToday": "Gösteriliyor: Bugün (Canlı Veri)",
+    "lastUpdated": "Son güncelleme:",
+    "loading": "Veriler yükleniyor...",
+    "loadingToday": "Bugünün verileri yükleniyor... Lütfen bekleyin veya Yenile'ye tıklayın",
+    "noData": "Bu tarih için veri mevcut değil",
+    "loadingCache": "Önbellek verileri yükleniyor...",
+    "all": "Tümü",
+    "description": "Bu sayfada, FIT'in sürekli yükselen (azalmayan) grafiğini ve önde gelen kripto paraların değişken grafiklerini görebilirsiniz. FIT — dünyanın ilk azalmayan, her zaman yükselen dijital varlığı."
+  },
+  "btn": {
+    "refresh": "Yenile"
+  },
+  "footer": {
+    "tagline": "Fly Infinity — Merkeziyetsiz. Şeffaf. Sonsuza Yükselen."
+  }
+}
