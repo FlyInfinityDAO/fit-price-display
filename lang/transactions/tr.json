@@ -1,4 +1,20 @@
 {
+  "header": {
+    "title": "Fly Infinity DAO"
+  },
+  "nav": {
+    "dashboard": "Kontrol Paneli",
+    "comparison": "Karşılaştırma",
+    "dapp": "DApp",
+    "transactions": "İşlemler",
+    "privacy": "Gizlilik",
+    "warnings": "Uyarılar",
+    "faq": "SSS",
+    "whitepaper": "Beyaz Bülten"
+  },
+  "footer": {
+    "tagline": "Fly Infinity — Merkeziyetsiz. Şeffaf. Sonsuza Kadar Yükselen."
+  },
   "transactions": {
     "title": "İşlem Gezgini",
     "all": "📋 Tüm İşlemler",
