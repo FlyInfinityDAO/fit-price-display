@@ -1,78 +1,60 @@
 {
   "records": [
     {
+      "date": "2026-06-18",
+      "prices": {
+        "bitcoin": { "price": 62500, "yesterday": 61800, "change": 1.13 },
+        "ethereum": { "price": 1650, "yesterday": 1620, "change": 1.85 },
+        "binancecoin": { "price": 590, "yesterday": 585, "change": 0.85 },
+        "ripple": { "price": 1.12, "yesterday": 1.10, "change": 1.82 },
+        "solana": { "price": 65.0, "yesterday": 63.5, "change": 2.36 },
+        "cardano": { "price": 0.158, "yesterday": 0.155, "change": 1.94 },
+        "dogecoin": { "price": 0.082, "yesterday": 0.080, "change": 2.50 },
+        "tron": { "price": 0.315, "yesterday": 0.312, "change": 0.96 },
+        "zcash": { "price": 440, "yesterday": 445, "change": -1.12 },
+        "stellar": { "price": 0.215, "yesterday": 0.218, "change": -1.38 },
+        "pancakeswap": { "price": 2.70, "yesterday": 2.65, "change": 1.89 },
+        "toncoin": { "price": 1.70, "yesterday": 1.68, "change": 1.19 },
+        "shibainu": { "price": 0.0000045, "yesterday": 0.0000044, "change": 2.27 },
+        "fit": { "price": 6.35, "yesterday": 6.30, "change": 0.79 }
+      }
+    },
+    {
+      "date": "2026-06-19",
+      "prices": {
+        "bitcoin": { "price": 62800, "yesterday": 62500, "change": 0.48 },
+        "ethereum": { "price": 1670, "yesterday": 1650, "change": 1.21 },
+        "binancecoin": { "price": 592, "yesterday": 590, "change": 0.34 },
+        "ripple": { "price": 1.13, "yesterday": 1.12, "change": 0.89 },
+        "solana": { "price": 66.0, "yesterday": 65.0, "change": 1.54 },
+        "cardano": { "price": 0.160, "yesterday": 0.158, "change": 1.27 },
+        "dogecoin": { "price": 0.083, "yesterday": 0.082, "change": 1.22 },
+        "tron": { "price": 0.318, "yesterday": 0.315, "change": 0.95 },
+        "zcash": { "price": 445, "yesterday": 440, "change": 1.14 },
+        "stellar": { "price": 0.218, "yesterday": 0.215, "change": 1.40 },
+        "pancakeswap": { "price": 2.75, "yesterday": 2.70, "change": 1.85 },
+        "toncoin": { "price": 1.72, "yesterday": 1.70, "change": 1.18 },
+        "shibainu": { "price": 0.0000046, "yesterday": 0.0000045, "change": 2.22 },
+        "fit": { "price": 6.38, "yesterday": 6.35, "change": 0.47 }
+      }
+    },
+    {
       "date": "2026-06-20",
       "prices": {
-        "bitcoin": {
-          "price": 63586,
-          "yesterday": 62653.61233538917,
-          "change": 1.4881626611083494
-        },
-        "ethereum": {
-          "price": 1722.08,
-          "yesterday": 1695.1554280094388,
-          "change": 1.5883246778248366
-        },
-        "binancecoin": {
-          "price": 581.62,
-          "yesterday": 574.9380742225311,
-          "change": 1.1621992136291606
-        },
-        "ripple": {
-          "price": 1.15,
-          "yesterday": 1.1303010170838907,
-          "change": 1.7428085632384345
-        },
-        "solana": {
-          "price": 71.59,
-          "yesterday": 68.40921040923118,
-          "change": 4.649651080228816
-        },
-        "cardano": {
-          "price": 0.163503,
-          "yesterday": 0.16036392742093197,
-          "change": 1.9574680101394848
-        },
-        "dogecoin": {
-          "price": 0.083712,
-          "yesterday": 0.08243927300162215,
-          "change": 1.5438357860734704
-        },
-        "tron": {
-          "price": 0.321891,
-          "yesterday": 0.3201079350106567,
-          "change": 0.5570199280701884
-        },
-        "zcash": {
-          "price": 471.53,
-          "yesterday": 448.49934141779113,
-          "change": 5.135048472848271
-        },
-        "stellar": {
-          "price": 0.216543,
-          "yesterday": 0.22016658457985688,
-          "change": -1.6458376673153001
-        },
-        "pancakeswap": {
-          "price": 1.37,
-          "yesterday": 1.3400835642696018,
-          "change": 2.232430613138959
-        },
-        "toncoin": {
-          "price": 1.59,
-          "yesterday": 1.6360789517720487,
-          "change": -2.816425926275761
-        },
-        "shibainu": {
-          "price": 0.00000472,
-          "yesterday": 0.000004707210376574464,
-          "change": 0.2717028218917967
-        },
-        "fit": {
-          "price": 6.39,
-          "yesterday": 6.3261,
-          "change": 1
-        }
+        "bitcoin": { "price": 63586, "yesterday": 62800, "change": 1.25 },
+        "ethereum": { "price": 1722.08, "yesterday": 1670, "change": 3.12 },
+        "binancecoin": { "price": 581.62, "yesterday": 592, "change": -1.75 },
+        "ripple": { "price": 1.15, "yesterday": 1.13, "change": 1.77 },
+        "solana": { "price": 71.59, "yesterday": 66.0, "change": 8.47 },
+        "cardano": { "price": 0.163503, "yesterday": 0.160, "change": 2.19 },
+        "dogecoin": { "price": 0.083712, "yesterday": 0.083, "change": 0.86 },
+        "tron": { "price": 0.321891, "yesterday": 0.318, "change": 1.22 },
+        "zcash": { "price": 471.53, "yesterday": 445, "change": 5.96 },
+        "stellar": { "price": 0.216543, "yesterday": 0.218, "change": -0.67 },
+        "pancakeswap": { "price": 1.37, "yesterday": 2.75, "change": -50.18 },
+        "toncoin": { "price": 1.59, "yesterday": 1.72, "change": -7.56 },
+        "shibainu": { "price": 0.00000472, "yesterday": 0.0000046, "change": 2.61 },
+        "fit": { "price": 6.39, "yesterday": 6.38, "change": 0.16 }
       }
     }
   ]
