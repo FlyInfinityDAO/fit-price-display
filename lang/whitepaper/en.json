@@ -1,0 +1,180 @@
+{
+  "meta": {
+    "title": "Fly Infinity Token - White Paper",
+    "description": "Fly Infinity Token White Paper - Decentralized Financial Platform"
+  },
+  "header": {
+    "title": "Fly Infinity DAO"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "comparison": "Comparison",
+    "dapp": "DApp",
+    "transactions": "Transactions",
+    "privacy": "Privacy",
+    "warnings": "Warnings",
+    "faq": "FAQ",
+    "whitepaper": "White Paper"
+  },
+  "whitepaper": {
+    "title": "White Paper",
+    "version": "Version 1.0",
+    "release": "Release Date: June 2026"
+  },
+  "wp": {
+    "s1": {
+      "title": "1. Preface",
+      "p1": "Despite its remarkable growth, the cryptocurrency market continues to face fundamental structural challenges. The lack of transparency in asset backing, price manipulation by market whales, reliance on centralized order books, and the risks associated with speculative bubbles have left investors exposed to extreme and unpredictable volatility.",
+      "p2": "Fly Infinity Platform has been designed in response to these challenges. It is a decentralized platform with the goal of creating a transparent digital asset with real backing, built on a structure that reduces the risk of price reversal to zero."
+    },
+    "s2": {
+      "title": "2. Introduction to Fly Infinity Platform",
+      "p1": "Fly Infinity is a next-generation decentralized financial platform built upon two fully complementary economic components:",
+      "sub1": "2.1 Fly Infinity Network",
+      "sub1text": "An intelligent and autonomous network responsible for injecting real capital into the token contract. This network continuously increases liquidity without the need to mint new tokens.",
+      "sub2": "2.2 Fly Infinity Token (FIT)",
+      "sub2text": "The platform's primary digital asset, whose price is calculated not based on market hype, but solely on the ratio of DAI Reserve to Total Supply."
+    },
+    "s3": {
+      "title": "3. Pricing Formula (Bonding Curve)",
+      "p1": "The price of the FIT token is calculated transparently and immutably within the smart contract:",
+      "formula": "FIT Price = DAI Reserve ÷ Total Supply",
+      "features": "Key Features of This Model:",
+      "f1": "Immutable: The price cannot be altered by any external entity.",
+      "f2": "Transparent: Calculable and verifiable at any moment.",
+      "f3": "Continuously Rising: Each purchase increases liquidity and raises the base price."
+    },
+    "s4": {
+      "title": "4. Unique Feature: Non-Diminishing Price",
+      "p1": "Fly Infinity is the only project where the base token price never decreases. This is achieved through the following logic:",
+      "table": {
+        "action": "Action",
+        "effect": "Effect",
+        "buy": "Buy FIT",
+        "buyEffect": "Real DAI enters the contract → Liquidity increases → Price increases",
+        "sell": "Sell FIT",
+        "sellEffect": "Tokens are burned → Supply decreases → Price increases",
+        "buyFee": "Buy Fee (3%)",
+        "buyFeeEffect": "Returns to liquidity → Price reinforcement",
+        "sellFee": "Sell Fee (6%)",
+        "sellFeeEffect": "Returns to liquidity → Price reinforcement"
+      },
+      "p2": "Result: Even large sell-offs do not necessarily reduce the price — in many cases, they increase it."
+    },
+    "s5": {
+      "title": "5. Decentralized Structure & DAO Governance",
+      "sub1": "5.1 Complete Decentralization",
+      "li1": "No central team has access to administrative keys.",
+      "li2": "All rules are embedded in public, immutable smart contracts.",
+      "li3": "No entity can stop, alter, or censor transactions.",
+      "sub2": "5.2 DAO Governance",
+      "p1": "All key project decisions, including:",
+      "li4": "Potential upgrades",
+      "li5": "Resource allocation",
+      "li6": "Future developments",
+      "p2": "are made through decentralized voting, proportional to each holder's stake in the network."
+    },
+    "s6": {
+      "title": "6. Step-Based Purchase Model",
+      "p1": "To prevent sudden whale entry and maintain healthy price growth, FIT purchases are structured in a step-based system:",
+      "table": {
+        "step": "Step",
+        "points": "Network Points Required",
+        "cap": "Purchase Cap (DAI)"
+      },
+      "how": "How It Works: Each user can purchase only once per step, up to the specified cap. After earning the required network points, the next step becomes available. The total purchase cap increases cumulatively as users progress through the steps."
+    },
+    "s7": {
+      "title": "Double Infinity Network Advantage",
+      "p1": "Unlock Superior Purchase Power Through Network Structure",
+      "p2": "The Double Infinity Network introduces a revolutionary mechanism that empowers users to purchase significantly larger amounts of FIT with substantially fewer ownership shares. This is achieved through the intelligent binary tree structure of the network, where each share placed in the network generates network points that directly increase the user's purchase capacity.",
+      "p3": "How the Binary Tree Multiplier Works:",
+      "li1": "Traditional Model: Each ownership share provides a fixed purchase cap of 100 DAI. To purchase 6,000 DAI worth of FIT, a user would need 60 shares, costing an additional 6,000 DAI — total investment of 12,000 DAI.",
+      "li2": "Double Infinity Model: By strategically placing shares in a balanced binary tree (1 upline + 2 downline per node), the same 6,000 DAI purchase can be achieved with only 40 shares — a 33% reduction in required shares.",
+      "li3": "Accumulated Advantage: As the purchase amount increases, the efficiency gap widens. For larger purchases, the Double Infinity Network can reduce required shares by up to 50% or more, dramatically lowering the total capital needed to acquire FIT.",
+      "p4": "Mathematical Proof: In a balanced binary tree with 40 shares, the network generates 57 reward points (as verified through our reward calculation model). Each point represents unlocked purchase capacity, allowing users to achieve higher purchase caps with fewer shares. This is not a promotional claim — it is a mathematically verifiable property of the Double Infinity Network architecture.",
+      "p5": "Key Takeaway: The Double Infinity Network is not merely a referral system — it is a financial engineering innovation that mathematically optimizes capital efficiency. Users who understand and leverage this structure can acquire FIT with significantly lower capital outlay compared to traditional direct purchase methods.",
+      "example": "Example: 6,000 DAI FIT Purchase — Traditional: 60 shares, 12,000 DAI total cost | Double Infinity: 40 shares, 10,000 DAI total cost | Savings: 2,000 DAI (17% reduction)"
+    },
+    "s8": {
+      "title": "7. Security & Transparency",
+      "sub1": "7.1 Contract Security",
+      "li1": "Smart contracts are implemented to the highest standards.",
+      "li2": "No hidden functions or administrative keys exist.",
+      "li3": "All transactions are recorded and visible on the BSC blockchain.",
+      "sub2": "7.2 Economic Transparency",
+      "p1": "The following information is available to the public in real-time:",
+      "li4": "Live FIT price",
+      "li5": "Total supply",
+      "li6": "DAI reserve",
+      "li7": "Daily price history",
+      "li8": "Holder distribution",
+      "li9": "Trading volume"
+    },
+    "s9": {
+      "title": "8. Competitive Advantages",
+      "table": {
+        "feature": "Feature",
+        "fit": "Fly Infinity",
+        "traditional": "Traditional Projects",
+        "row1": "Real Asset Backing",
+        "row1fit": "✅ DAI",
+        "row1trad": "❌ Marketing Promises",
+        "row2": "Non-Diminishing Price",
+        "row3": "Full Transparency",
+        "row4": "Anti-Whale Manipulation",
+        "row5": "DAO Governance",
+        "row6": "Transparent Fees",
+        "row6trad": "Unclear",
+        "row7": "Binary Network Efficiency",
+        "row7fit": "✅ Up to 50% Share Reduction"
+      }
+    },
+    "s10": {
+      "title": "9. Development Roadmap",
+      "sub1": "Phase 1: Stabilization & Accumulation",
+      "li1": "Controlled user entry through the step-based model",
+      "li2": "Gradual liquidity growth",
+      "li3": "Low-volatility price increase",
+      "sub2": "Phase 2: Accelerated Growth",
+      "li4": "Continuous DAI injection by Fly Infinity Network",
+      "li5": "Exponential liquidity growth without minting new tokens",
+      "li6": "Strong upward price momentum",
+      "sub3": "Phase 3: System Maturity",
+      "li7": "Entry of large capital without dump risk",
+      "li8": "FIT evolving into a reserve-grade digital asset",
+      "li9": "Sustainable and logical price appreciation"
+    },
+    "s11": {
+      "title": "10. Summary",
+      "p1": "Fly Infinity is not a typical crypto project. It is a financial system engineered from first principles to:",
+      "li1": "Have real asset backing",
+      "li2": "Ensure transparent and immutable pricing",
+      "li3": "Guarantee logical and sustainable growth",
+      "li4": "Reduce price reversal risk to zero",
+      "li5": "Never form a speculative bubble",
+      "quote": "\"Fly Infinity does not promise unrealistic profits, but it also does not allow capital destruction.\""
+    },
+    "s12": {
+      "title": "11. Contract Addresses",
+      "website": "🌐 Website",
+      "token": "🪙 FIT Token Contract",
+      "network": "🌐 Network Contract",
+      "gift": "🎁 Gift Contract",
+      "dao": "🏛️ DAO Contract"
+    },
+    "s13": {
+      "title": "12. Disclaimer",
+      "p1": "No Financial Advice: Nothing in this document constitutes financial advice. Users should conduct their own research (DYOR) and consult with qualified financial advisors before making any investment decisions.",
+      "p2": "Risk Warning: Cryptocurrency investments carry inherent risks, including but not limited to market volatility, smart contract vulnerabilities, regulatory changes, and loss of private keys.",
+      "p3": "Open Source: This project is open source and provided \"AS IS\" without warranty of any kind."
+    },
+    "s14": {
+      "closing": "Experience infinite financial growth with Fly Infinity.",
+      "tagline": "Fly Infinity DAO — Decentralized. Transparent. Forever Rising."
+    }
+  },
+  "footer": {
+    "tagline": "Fly Infinity — Decentralized. Transparent. Forever Rising."
+  }
+}
