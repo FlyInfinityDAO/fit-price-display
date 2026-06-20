@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Fly Infinity - DApp</title>
     
-        <!-- ===== FAVICON ===== -->
+    <!-- ===== FAVICON ===== -->
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="lang.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -74,15 +75,30 @@
         .top-bar .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             color: #D4AF37;
             font-size: 18px;
             font-weight: bold;
             text-decoration: none;
         }
         
-        .top-bar .logo i {
-            font-size: 22px;
+        .top-bar .logo img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #D4AF37;
+        }
+        
+        .top-bar .logo span {
+            color: #D4AF37;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         
         .hamburger {
@@ -106,7 +122,118 @@
             transform: rotate(90deg);
         }
         
-        /* ===== SIDEBAR OVERLAY ===== */
+        /* ===== LANGUAGE BUTTON ===== */
+        .lang-btn {
+            background: transparent;
+            border: 1px solid rgba(0, 200, 150, 0.3);
+            color: #D4AF37;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .lang-btn:hover {
+            border-color: #00C896;
+            background: rgba(0, 200, 150, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .lang-dropdown {
+            position: fixed;
+            top: 75px;
+            right: 20px;
+            background: #0F0F0F;
+            border: 1px solid rgba(0, 200, 150, 0.3);
+            border-radius: 16px;
+            padding: 8px;
+            min-width: 160px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .lang-dropdown.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .lang-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            color: #c0d0e8;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .lang-item:hover {
+            background: rgba(0, 200, 150, 0.08);
+            color: #D4AF37;
+        }
+        
+        .lang-item.active {
+            background: rgba(0, 200, 150, 0.15);
+            color: #D4AF37;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+        }
+        
+        .lang-item .flag {
+            font-size: 18px;
+        }
+        
+        .lang-item .lang-name {
+            font-size: 13px;
+        }
+        
+        @media (max-width: 768px) {
+            .lang-dropdown {
+                top: 65px;
+                right: 10px;
+                min-width: 140px;
+            }
+            .lang-item {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            .lang-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+            .top-bar .logo span {
+                font-size: 15px;
+            }
+            .top-bar .logo img {
+                width: 28px;
+                height: 28px;
+            }
+            .hamburger {
+                width: 38px;
+                height: 38px;
+                font-size: 17px;
+            }
+        }
+        
+        /* ===== SIDEBAR ===== */
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -126,7 +253,6 @@
             visibility: visible;
         }
         
-        /* ===== SIDEBAR ===== */
         .sidebar {
             position: fixed;
             top: 0;
@@ -158,9 +284,19 @@
         }
         
         .sidebar-header .logo-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             color: #D4AF37;
             font-size: 18px;
             font-weight: bold;
+        }
+        
+        .sidebar-header .logo-text img {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid #D4AF37;
         }
         
         .sidebar-header .close-btn {
@@ -415,16 +551,43 @@
             font-weight: bold;
         }
         
+        /* ===== FOOTER ===== */
         .footer {
             text-align: center;
             font-size: 10px;
             color: #666;
-            margin-top: 20px;
+            margin-top: 30px;
+            border-top: 1px solid rgba(0, 200, 150, 0.15);
+            padding-top: 20px;
         }
         
         .footer a {
             color: #00C896;
             text-decoration: none;
+        }
+        
+        .footer .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .footer .footer-links span {
+            color: #444;
+        }
+        
+        .footer .footer-tagline {
+            color: #888;
+            font-size: 11px;
+            margin: 0;
+            text-align: center;
+        }
+        
+        .footer .footer-tagline .gold {
+            color: #D4AF37;
         }
         
         /* ===== AGREEMENT MODAL ===== */
@@ -585,9 +748,6 @@
                 width: 85vw;
                 right: -85vw;
             }
-            .top-bar .logo {
-                font-size: 15px;
-            }
             .agreement-modal-content {
                 padding: 20px 16px;
             }
@@ -606,12 +766,14 @@
     <!-- ===== TOP NAV BAR ===== -->
     <div class="top-bar">
         <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-    <img src="logo.png" alt="Fly Infinity DAO" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37;">
-    <span style="color: #D4AF37; font-size: 18px; font-weight: bold;">Fly Infinity DAO</span>
-</a>
-        <button class="hamburger" id="hamburgerBtn">
-            <i class="fas fa-bars"></i>
-        </button>
+            <img src="logo.png" alt="Fly Infinity DAO" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37;">
+            <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
+        </a>
+        <div class="top-bar-right">
+            <button class="hamburger" id="hamburgerBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
     </div>
 
     <!-- ===== SIDEBAR OVERLAY ===== -->
@@ -621,41 +783,41 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <span class="logo-text" style="display: flex; align-items: center; gap: 10px;">
-    <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
-    <span style="color: #D4AF37; font-size: 18px; font-weight: bold;">Fly Infinity DAO</span>
-</span>
+                <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
+                <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
+            </span>
             <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
         </div>
         
         <div class="sidebar-menu">
-            <a href="index.html">
+            <a href="index.html" data-i18n="nav.dashboard">
                 <i class="fas fa-home"></i> Dashboard
             </a>
-            <a href="compare.html">
+            <a href="compare.html" data-i18n="nav.comparison">
                 <i class="fas fa-chart-line"></i> Comparison
             </a>
-            <a href="dapp.html" class="active">
+            <a href="dapp.html" class="active" data-i18n="nav.dapp">
                 <i class="fas fa-charging-station"></i> DApp
             </a>
-            <a href="transactions.html">
+            <a href="transactions.html" data-i18n="nav.transactions">
                 <i class="fas fa-history"></i> Transactions
             </a>
-            <a href="privacy.html">
+            <a href="privacy.html" data-i18n="nav.privacy">
                 <i class="fas fa-shield-alt"></i> Privacy
             </a>
-            <a href="warnings.html">
+            <a href="warnings.html" data-i18n="nav.warnings">
                 <i class="fas fa-exclamation-triangle"></i> Warnings
             </a>
-            <a href="faq.html">
+            <a href="faq.html" data-i18n="nav.faq">
                 <i class="fas fa-question-circle"></i> FAQ
             </a>
-            <a href="whitepaper.html">
+            <a href="whitepaper.html" data-i18n="nav.whitepaper">
                 <i class="fas fa-file-pdf"></i> White Paper
             </a>
         </div>
         
         <div class="sidebar-footer">
-            <a href="https://flyinfinitydao.github.io/fit-price-display" target="_blank">flyinfinitydao.github.io</a><br>
+            <a href="https://flyinfinitydao.github.io" target="_blank">flyinfinitydao.github.io</a><br>
             Fly Infinity DAO
         </div>
     </div>
@@ -663,59 +825,59 @@
     <!-- Wallet Connect -->
     <div class="wallet-card">
         <div id="walletStatus">
-            <button id="connectBtn" class="connect-btn"><i class="fas fa-wallet"></i> Connect Wallet</button>
-            <p style="color:#888; margin-top:12px; font-size:12px;">MetaMask, Trust Wallet, TokenPocket, or any Web3 wallet</p>
+            <button id="connectBtn" class="connect-btn"><i class="fas fa-wallet"></i> <span data-i18n="dapp.connect">Connect Wallet</span></button>
+            <p style="color:#888; margin-top:12px; font-size:12px;" data-i18n="dapp.walletDesc">MetaMask, Trust Wallet, TokenPocket, or any Web3 wallet</p>
         </div>
         <div id="walletInfo" style="display: none;">
             <div class="wallet-info">
                 <div><i class="fas fa-link"></i> <span id="walletAddress" class="wallet-address">—</span></div>
-                <div><i class="fas fa-coins"></i> FIT Balance: <span id="fitBalance" class="wallet-balance">—</span></div>
-                <div><i class="fas fa-dollar-sign"></i> DAI Balance: <span id="daiBalance" class="wallet-balance">—</span></div>
-                <button id="disconnectBtn" class="action-btn" style="width: auto; padding: 8px 20px; margin:0;">Disconnect</button>
+                <div><i class="fas fa-coins"></i> <span data-i18n="dapp.fitBalance">FIT Balance:</span> <span id="fitBalance" class="wallet-balance">—</span></div>
+                <div><i class="fas fa-dollar-sign"></i> <span data-i18n="dapp.daiBalance">DAI Balance:</span> <span id="daiBalance" class="wallet-balance">—</span></div>
+                <button id="disconnectBtn" class="action-btn" style="width: auto; padding: 8px 20px; margin:0;" data-i18n="dapp.disconnect">Disconnect</button>
             </div>
         </div>
     </div>
 
     <!-- Price & Info -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
-        <div class="info-row"><span class="info-label">Current FIT Price</span><span class="info-value" id="currentPrice">— DAI</span></div>
-        <div class="info-row"><span class="info-label">DAI Allowance (Network)</span><span class="info-value" id="networkAllowanceStatus">—</span></div>
-        <div class="info-row"><span class="info-label">DAI Allowance (Token)</span><span class="info-value" id="tokenAllowanceStatus">—</span></div>
+        <div class="info-row"><span class="info-label" data-i18n="dapp.currentPrice">Current FIT Price</span><span class="info-value" id="currentPrice">— DAI</span></div>
+        <div class="info-row"><span class="info-label" data-i18n="dapp.networkAllowance">DAI Allowance (Network)</span><span class="info-value" id="networkAllowanceStatus">—</span></div>
+        <div class="info-row"><span class="info-label" data-i18n="dapp.tokenAllowance">DAI Allowance (Token)</span><span class="info-value" id="tokenAllowanceStatus">—</span></div>
     </div>
 
     <!-- ==================== SECTION 1: REGISTER IN NETWORK ==================== -->
     <div class="action-card" style="margin-bottom: 25px;">
-        <div class="action-title"><i class="fas fa-charging-station"></i> 💎 Buy Fly Infinity Ownership Shares</div>
-        <p style="color:#888; font-size:12px; margin-bottom:15px; text-align:center;">Follow these 3 steps to become a network owner</p>
+        <div class="action-title"><i class="fas fa-charging-station"></i> <span data-i18n="dapp.buyShares">💎 Buy Fly Infinity Ownership Shares</span></div>
+        <p style="color:#888; font-size:12px; margin-bottom:15px; text-align:center;" data-i18n="dapp.followSteps">Follow these 3 steps to become a network owner</p>
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
             <!-- Step 1 -->
             <div style="background: #1a1a1a; border-radius: 20px; padding: 20px; border-left: 3px solid #00C896;">
-                <div style="color:#00C896; font-size:14px; margin-bottom:10px;"><span class="step-badge">1</span> Approve DAI</div>
-                <p style="color:#888; font-size:11px; margin-bottom:15px;">Allow Fly Infinity Network contract to spend DAI</p>
-                <button id="approveNetworkBtn" class="action-btn" style="margin-top:0;">Approve DAI</button>
-                <div id="networkApproveStatus" class="status-text">Not approved</div>
+                <div style="color:#00C896; font-size:14px; margin-bottom:10px;"><span class="step-badge">1</span> <span data-i18n="dapp.step1">Approve DAI</span></div>
+                <p style="color:#888; font-size:11px; margin-bottom:15px;" data-i18n="dapp.step1desc">Allow Fly Infinity Network contract to spend DAI</p>
+                <button id="approveNetworkBtn" class="action-btn" style="margin-top:0;" data-i18n="dapp.approveDai">Approve DAI</button>
+                <div id="networkApproveStatus" class="status-text" data-i18n="dapp.notApproved">Not approved</div>
             </div>
             
             <!-- Step 2 -->
             <div style="background: #1a1a1a; border-radius: 20px; padding: 20px; border-left: 3px solid #D4AF37;">
-                <div style="color:#D4AF37; font-size:14px; margin-bottom:10px;"><span class="step-badge">2</span> Agreement Road Map</div>
-                <p style="color:#888; font-size:11px; margin-bottom:15px;">Read and accept the network agreement</p>
-                <button id="agreementBtn" class="action-btn warning" style="border-color: #D4AF37; color: #D4AF37;">
+                <div style="color:#D4AF37; font-size:14px; margin-bottom:10px;"><span class="step-badge">2</span> <span data-i18n="dapp.step2">Agreement Road Map</span></div>
+                <p style="color:#888; font-size:11px; margin-bottom:15px;" data-i18n="dapp.step2desc">Read and accept the network agreement</p>
+                <button id="agreementBtn" class="action-btn warning" style="border-color: #D4AF37; color: #D4AF37;" data-i18n="dapp.viewSign">
                     <i class="fas fa-file-signature"></i> View & Sign Agreement
                 </button>
-                <div id="agreementStatus" class="status-text">Pending</div>
+                <div id="agreementStatus" class="status-text" data-i18n="dapp.pending">Pending</div>
             </div>
             
             <!-- Step 3 -->
             <div style="background: #1a1a1a; border-radius: 20px; padding: 20px; border-left: 3px solid #00C896;">
-                <div style="color:#00C896; font-size:14px; margin-bottom:10px;"><span class="step-badge">3</span> Become Owner</div>
+                <div style="color:#00C896; font-size:14px; margin-bottom:10px;"><span class="step-badge">3</span> <span data-i18n="dapp.step3">Become Owner</span></div>
                 <div class="input-group" style="margin-bottom:15px;">
-                    <label>👤 Referrer Address (Applicant)</label>
+                    <label data-i18n="dapp.referrerAddress">👤 Referrer Address (Applicant)</label>
                     <input type="text" id="referrerAddress" placeholder="0x..." value="">
                 </div>
-                <button id="becomeOwnerBtn" class="action-btn">Become Owner</button>
-                <div id="ownerStatus" class="status-text">Not registered</div>
+                <button id="becomeOwnerBtn" class="action-btn" data-i18n="dapp.becomeOwner">Become Owner</button>
+                <div id="ownerStatus" class="status-text" data-i18n="dapp.notRegistered">Not registered</div>
             </div>
         </div>
     </div>
@@ -724,50 +886,50 @@
     <div class="action-grid">
         <!-- Buy FIT -->
         <div class="action-card">
-            <div class="action-title"><i class="fas fa-shopping-cart"></i> 🟢 Buy FIT</div>
-            <p style="color:#888; font-size:11px; margin-bottom:15px;">Allow Fly Infinity Token contract to spend DAI, then buy</p>
+            <div class="action-title"><i class="fas fa-shopping-cart"></i> 🟢 <span data-i18n="dapp.buyFit">Buy FIT</span></div>
+            <p style="color:#888; font-size:11px; margin-bottom:15px;" data-i18n="dapp.buyDesc">Allow Fly Infinity Token contract to spend DAI, then buy</p>
             
             <div class="input-group">
-                <button id="approveTokenBtn" class="action-btn" style="margin-top:0;">Approve DAI</button>
-                <div id="tokenApproveStatus" class="status-text">Not approved</div>
+                <button id="approveTokenBtn" class="action-btn" style="margin-top:0;" data-i18n="dapp.approveDai">Approve DAI</button>
+                <div id="tokenApproveStatus" class="status-text" data-i18n="dapp.notApproved">Not approved</div>
             </div>
             
             <div class="input-group">
-                <label>👤 Buyer Wallet Address</label>
+                <label data-i18n="dapp.buyerAddress">👤 Buyer Wallet Address</label>
                 <input type="text" id="buyerAddress" placeholder="0x... (your wallet address)">
             </div>
             
             <div class="input-group">
-                <label>💰 Amount (DAI) to Buy</label>
+                <label data-i18n="dapp.amountToBuy">💰 Amount (DAI) to Buy</label>
                 <input type="number" id="buyAmount" placeholder="Enter DAI amount" step="10">
             </div>
             
-            <div class="info-row"><span class="info-label">You will receive</span><span class="info-value" id="buyEstimate">— FIT</span></div>
-            <button id="buyBtn" class="action-btn"><i class="fas fa-arrow-down"></i> Buy FIT</button>
+            <div class="info-row"><span class="info-label" data-i18n="dapp.youReceive">You will receive</span><span class="info-value" id="buyEstimate">— FIT</span></div>
+            <button id="buyBtn" class="action-btn"><i class="fas fa-arrow-down"></i> <span data-i18n="dapp.buyFit">Buy FIT</span></button>
             <div id="buyStatus" class="status-text">—</div>
         </div>
 
         <!-- Sell FIT -->
         <div class="action-card">
-            <div class="action-title"><i class="fas fa-chart-line"></i> 🔴 Sell FIT</div>
+            <div class="action-title"><i class="fas fa-chart-line"></i> 🔴 <span data-i18n="dapp.sellFit">Sell FIT</span></div>
             
             <div class="input-group">
-                <label>🪙 Amount (FIT) to Sell</label>
+                <label data-i18n="dapp.amountToSell">🪙 Amount (FIT) to Sell</label>
                 <input type="number" id="sellAmount" placeholder="Enter FIT amount" step="100">
             </div>
             
-            <div class="info-row"><span class="info-label">You will receive</span><span class="info-value" id="sellEstimate">— DAI</span></div>
-            <button id="sellBtn" class="action-btn danger"><i class="fas fa-arrow-up"></i> Sell FIT</button>
+            <div class="info-row"><span class="info-label" data-i18n="dapp.youReceive">You will receive</span><span class="info-value" id="sellEstimate">— DAI</span></div>
+            <button id="sellBtn" class="action-btn danger"><i class="fas fa-arrow-up"></i> <span data-i18n="dapp.sellFit">Sell FIT</span></button>
             <div id="sellStatus" class="status-text">—</div>
         </div>
     </div>
 
     <!-- ==================== SECTION 3: GIFT CONTRACT ==================== -->
     <div class="action-card" style="margin-bottom: 25px;">
-        <div class="action-title"><i class="fas fa-gift"></i> 🎁 Join Fly Infinity Gift Smart Contract & Participate in $5 Prize Lottery</div>
+        <div class="action-title"><i class="fas fa-gift"></i> <span data-i18n="dapp.giftTitle">🎁 Join Fly Infinity Gift Smart Contract & Participate in $5 Prize Lottery</span></div>
         <p style="color:#888; font-size:12px; margin-bottom:15px; text-align:center;">
             <a href="https://bscscan.com/address/0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8#writeContract" target="_blank" style="color: #00C896; text-decoration: none;">
-                <i class="fas fa-external-link-alt"></i> View Contract on BscScan
+                <i class="fas fa-external-link-alt"></i> <span data-i18n="dapp.viewContract">View Contract on BscScan</span>
             </a>
         </p>
         
@@ -777,119 +939,127 @@
             <div style="background: #1a1a1a; border-radius: 16px; padding: 16px; border-left: 3px solid #D4AF37;">
                 <div style="color:#D4AF37; font-size:13px; margin-bottom:8px;">
                     <span class="step-badge" style="background: #D4AF37; color: #0F0F0F; font-size: 10px; padding: 1px 8px;">1</span> 
-                    Join Contract (One-time)
+                    <span data-i18n="dapp.joinContract">Join Contract (One-time)</span>
                 </div>
                 <div class="input-group" style="margin-bottom:10px;">
-                    <label style="color: #D4AF37; font-size: 11px;">👤 Owner Address to Join</label>
+                    <label style="color: #D4AF37; font-size: 11px;" data-i18n="dapp.ownerAddressJoin">👤 Owner Address to Join</label>
                     <input type="text" id="joinGiftAddress" placeholder="0x... (address to join)" value="" style="padding: 8px 12px; font-size: 13px;">
                 </div>
                 <p style="color:#888; font-size:10px; margin-bottom:10px;">
-                    <span class="highlight" style="color: #D4AF37;">Function:</span> Join_Fly_Infinity_Gift (0x2852174f)<br>
-                    <span style="color: #888; font-size: 9px;">⚠️ One-time process, forever.</span>
+                    <span class="highlight" style="color: #D4AF37;" data-i18n="dapp.function">Function:</span> Join_Fly_Infinity_Gift (0x2852174f)<br>
+                    <span style="color: #888; font-size: 9px;" data-i18n="dapp.oneTime">⚠️ One-time process, forever.</span>
                 </p>
-                <button id="joinGiftBtn" class="action-btn" style="border-color: #D4AF37; color: #D4AF37; padding: 10px; font-size: 14px;">
+                <button id="joinGiftBtn" class="action-btn" style="border-color: #D4AF37; color: #D4AF37; padding: 10px; font-size: 14px;" data-i18n="dapp.joinContractBtn">
                     <i class="fas fa-handshake"></i> Join Contract
                 </button>
-                <div id="joinGiftStatus" class="status-text" style="font-size: 11px;">Not joined</div>
+                <div id="joinGiftStatus" class="status-text" style="font-size: 11px;" data-i18n="dapp.notJoined">Not joined</div>
             </div>
             
             <!-- Free Gift Lottery -->
             <div style="background: #1a1a1a; border-radius: 16px; padding: 16px; border-left: 3px solid #00C896;">
                 <div style="color:#00C896; font-size:13px; margin-bottom:8px;">
                     <span class="step-badge" style="font-size: 10px; padding: 1px 8px;">2</span> 
-                    $5 Gift Lottery
+                    <span data-i18n="dapp.giftLottery">$5 Gift Lottery</span>
                 </div>
                 <div class="input-group" style="margin-bottom:10px;">
-                    <label style="color: #00C896; font-size: 11px;">👤 Owner Address to Participate</label>
+                    <label style="color: #00C896; font-size: 11px;" data-i18n="dapp.ownerAddressParticipate">👤 Owner Address to Participate</label>
                     <input type="text" id="freeGiftAddress" placeholder="0x... (address to participate)" value="" style="padding: 8px 12px; font-size: 13px;">
                 </div>
                 <p style="color:#888; font-size:10px; margin-bottom:10px;">
-                    <span class="highlight" style="color: #00C896;">Function:</span> Free_Fly_Infinity_Gift (0xb4aecd59)<br>
-                    <span style="color: #888; font-size: 9px;">🎁 Win a $5 gift</span>
+                    <span class="highlight" style="color: #00C896;" data-i18n="dapp.function">Function:</span> Free_Fly_Infinity_Gift (0xb4aecd59)<br>
+                    <span style="color: #888; font-size: 9px;" data-i18n="dapp.winGift">🎁 Win a $5 gift</span>
                 </p>
-                <button id="freeGiftBtn" class="action-btn" style="padding: 10px; font-size: 14px;">
+                <button id="freeGiftBtn" class="action-btn" style="padding: 10px; font-size: 14px;" data-i18n="dapp.participate">
                     <i class="fas fa-ticket-alt"></i> Participate in Lottery
                 </button>
-                <div id="freeGiftStatus" class="status-text" style="font-size: 11px;">Not participated</div>
+                <div id="freeGiftStatus" class="status-text" style="font-size: 11px;" data-i18n="dapp.notParticipated">Not participated</div>
             </div>
             
         </div>
         
         <!-- Gift Contract Info -->
         <div style="margin-top: 15px; background: #1a1a1a; border-radius: 14px; padding: 12px 16px; border-left: 3px solid #D4AF37;">
-            <div style="color:#00C896; font-size:10px; margin-bottom:3px;">📜 Gift Smart Contract</div>
+            <div style="color:#00C896; font-size:10px; margin-bottom:3px;" data-i18n="dapp.giftContract">📜 Gift Smart Contract</div>
             <div style="font-family:monospace; font-size:11px; color:#D4AF37; word-break:break-all;">0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8</div>
             <div style="color:#888; font-size:9px; margin-top:5px;">
                 <i class="fas fa-info-circle"></i> 
-                <span style="color: #c0d0e8;">Step 1:</span> Join (one-time) → 
-                <span style="color: #c0d0e8;">Step 2:</span> Participate in lottery
+                <span style="color: #c0d0e8;" data-i18n="dapp.step1Label">Step 1:</span> <span data-i18n="dapp.joinOneTime">Join (one-time)</span> → 
+                <span style="color: #c0d0e8;" data-i18n="dapp.step2Label">Step 2:</span> <span data-i18n="dapp.participateLottery">Participate in lottery</span>
             </div>
         </div>
     </div>
 
     <div class="footer">
-        <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank">Token Contract</a> | 
-        <a href="https://bscscan.com/address/0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B" target="_blank">Network Contract</a><br>
-        Fly Infinity DAO
+        <div class="footer-links">
+            <a href="index.html" data-i18n="nav.dashboard">Dashboard</a>
+            <span>|</span>
+            <a href="compare.html" data-i18n="nav.comparison">Comparison</a>
+            <span>|</span>
+            <a href="dapp.html" data-i18n="nav.dapp">DApp</a>
+            <span>|</span>
+            <a href="transactions.html" data-i18n="nav.transactions">Transactions</a>
+            <span>|</span>
+            <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+            <span>|</span>
+            <a href="warnings.html" data-i18n="nav.warnings">Warnings</a>
+            <span>|</span>
+            <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+            <span>|</span>
+            <a href="whitepaper.html" data-i18n="nav.whitepaper">White Paper</a>
+        </div>
+        <p class="footer-tagline" data-i18n="footer.tagline">
+            Fly Infinity — <span class="gold">Decentralized. Transparent. Forever Rising.</span>
+        </p>
     </div>
-</div>
 
-<!-- ===== AGREEMENT MODAL ===== -->
+<!-- ===== AGREEMENT MODAL - FULLY TRANSLATED ===== -->
 <div class="agreement-modal-overlay" id="agreementModal">
     <div class="agreement-modal-content">
         <div class="agreement-modal-header">
-            <h2><i class="fas fa-file-signature"></i>Agreement Road Map</h2>
+            <h2><i class="fas fa-file-signature"></i><span data-i18n="dapp.agreementTitle">Agreement Road Map</span></h2>
             <button class="agreement-modal-close" id="closeAgreementModalBtn"><i class="fas fa-times"></i></button>
         </div>
         
         <div class="agreement-body">
-            <p><strong class="gold">📌 Preamble</strong><br>
-            By entering the Fly Infinity ecosystem, participants acknowledge their role as strategic investors within a decentralized financial framework. Acquisition of the native digital asset, FIT, is contingent upon the prior purchase of a Fly Infinity ownership share. Upon obtaining this share, participants are granted the right to acquire FIT tokens in varying amounts, ranging from $1 to $100 per transaction, either incrementally or in a single transaction, based on their discretion and investment strategy.</p>
+            <p><strong class="gold">📌 Preamble</strong><br><span data-i18n="dapp.agreementP1">By entering the Fly Infinity ecosystem, participants acknowledge their role as strategic investors within a decentralized financial framework. Acquisition of the native digital asset, FIT, is contingent upon the prior purchase of a Fly Infinity ownership share. Upon obtaining this share, participants are granted the right to acquire FIT tokens in varying amounts, ranging from $1 to $100 per transaction, either incrementally or in a single transaction, based on their discretion and investment strategy.</span></p>
             
             <div class="box-gold">
-                <p><strong class="gold">💎 Ownership Share – Lifetime, Non-Refundable</strong><br>
-                The capital contributed toward the acquisition of an ownership share constitutes a non-recoverable commitment. This contribution is not subject to withdrawal or refund under any circumstances. However, this share confers <strong class="green">perpetual membership</strong> within the network, requiring no further renewal, top-up, or recurring fees throughout the participant's engagement with the ecosystem.</p>
+                <p><strong class="gold">💎 Ownership Share – Lifetime, Non-Refundable</strong><br><span data-i18n="dapp.agreementP2">The capital contributed toward the acquisition of an ownership share constitutes a non-recoverable commitment. This contribution is not subject to withdrawal or refund under any circumstances. However, this share confers perpetual membership within the network, requiring no further renewal, top-up, or recurring fees throughout the participant's engagement with the ecosystem.</span></p>
             </div>
             
             <div class="box-green">
-                <p><strong class="green">💰 FIT Digital Asset – Fully Liquid</strong><br>
-                In contrast to the ownership share, any FIT tokens acquired through the platform remain entirely <strong class="green">liquid and redeemable</strong> at the participant's discretion. There are no restrictions on withdrawal, and participants may convert their FIT holdings to value at any time, without delay or penalty.</p>
+                <p><strong class="green">💰 FIT Digital Asset – Fully Liquid</strong><br><span data-i18n="dapp.agreementP3">In contrast to the ownership share, any FIT tokens acquired through the platform remain entirely liquid and redeemable at the participant's discretion. There are no restrictions on withdrawal, and participants may convert their FIT holdings to value at any time, without delay or penalty.</span></p>
             </div>
             
             <div class="box-gold">
-                <p><strong class="gold">🎁 Gift Allocation – Lottery-Based Rewards</strong><br>
-                Each ownership share entitles the participant to a predetermined allocation of lottery-based rewards. Specifically, participants may win up to <strong class="green">twenty (20) individual gifts</strong>, each valued at <strong class="gold">$5</strong>, through the platform's transparent and automated reward distribution mechanism.</p>
+                <p><strong class="gold">🎁 Gift Allocation – Lottery-Based Rewards</strong><br><span data-i18n="dapp.agreementP4">Each ownership share entitles the participant to a predetermined allocation of lottery-based rewards. Specifically, participants may win up to twenty (20) individual gifts, each valued at $5, through the platform's transparent and automated reward distribution mechanism.</span></p>
             </div>
             
             <div class="box-green">
-                <p><strong class="green">🎁 Welcome Bonus – Instant Token Credit</strong><br>
-                Upon successful registration and activation of an ownership share, a <strong class="gold">welcome bonus equivalent to $2 in FIT tokens</strong> is instantly and automatically credited to the participant's wallet. This bonus serves as an introductory benefit and is processed at the exact moment of network entry.</p>
+                <p><strong class="green">🎁 Welcome Bonus – Instant Token Credit</strong><br><span data-i18n="dapp.agreementP5">Upon successful registration and activation of an ownership share, a welcome bonus equivalent to $2 in FIT tokens is instantly and automatically credited to the participant's wallet. This bonus serves as an introductory benefit and is processed at the exact moment of network entry.</span></p>
             </div>
             
             <div class="box-gold">
-                <p><strong class="gold">🔗 Referral Identifier – Decentralized Invitation System</strong><br>
-                Each ownership share generates a unique and immutable referral identifier. This identifier is intrinsically linked to the participant's <strong class="green">BNB wallet address</strong>, which functions as their official referral code. Through active community expansion and network development, participants are empowered to progressively unlock elevated purchase caps, enabling the acquisition of larger volumes of FIT tokens in subsequent transactions.</p>
+                <p><strong class="gold">🔗 Referral Identifier – Decentralized Invitation System</strong><br><span data-i18n="dapp.agreementP6">Each ownership share generates a unique and immutable referral identifier. This identifier is intrinsically linked to the participant's BNB wallet address, which functions as their official referral code. Through active community expansion and network development, participants are empowered to progressively unlock elevated purchase caps, enabling the acquisition of larger volumes of FIT tokens in subsequent transactions.</span></p>
                 <p style="font-size: 12px; color: #888; margin-top: 8px;">
-                    📖 <em>For a comprehensive understanding of the tiered purchase structure and referral mechanics, please consult the official <a href="whitepaper.html" style="color: #00C896; text-decoration: none;">White Paper</a>.</em>
+                    📖 <em><span data-i18n="dapp.agreementWhitepaper">For a comprehensive understanding of the tiered purchase structure and referral mechanics, please consult the official</span> <a href="whitepaper.html" style="color: #00C896; text-decoration: none;">White Paper</a>.</em>
                 </p>
             </div>
             
             <div class="box-green">
-                <p><strong class="green">💰 Developer Rewards – Performance-Based Compensation</strong><br>
-                In recognition of network growth and community development, the ecosystem allocates <strong class="gold">monetary rewards in USD</strong> to qualifying participants. These rewards are processed and settled on an <strong class="green">hourly basis</strong>, ensuring timely and transparent compensation for those contributing to the expansion of the Fly Infinity network.</p>
+                <p><strong class="green">💰 Developer Rewards – Performance-Based Compensation</strong><br><span data-i18n="dapp.agreementP7">In recognition of network growth and community development, the ecosystem allocates monetary rewards in USD to qualifying participants. These rewards are processed and settled on an hourly basis, ensuring timely and transparent compensation for those contributing to the expansion of the Fly Infinity network.</span></p>
             </div>
             
             <div class="box-gold">
-                <p><strong class="gold">🔒 Decentralized Infrastructure – Security &amp; Anonymity</strong><br>
-                All transactions, interactions, and data exchanges within the Fly Infinity ecosystem are executed through a <strong class="green">fully decentralized architecture</strong>. Participant assets, subscription records, and personal information are securely stored on the <strong class="gold">blockchain</strong>, ensuring the highest standards of security, transparency, and pseudonymity. No centralized entity has access to or control over user data or funds.</p>
+                <p><strong class="gold">🔒 Decentralized Infrastructure – Security &amp; Anonymity</strong><br><span data-i18n="dapp.agreementP8">All transactions, interactions, and data exchanges within the Fly Infinity ecosystem are executed through a fully decentralized architecture. Participant assets, subscription records, and personal information are securely stored on the blockchain, ensuring the highest standards of security, transparency, and pseudonymity. No centralized entity has access to or control over user data or funds.</span></p>
             </div>
         </div>
         
         <div class="agreement-modal-footer">
-            <button class="btn-close-agreement" id="closeAgreementBtn"><i class="fas fa-check-circle"></i> I Understand &amp; Close</button>
+            <button class="btn-close-agreement" id="closeAgreementBtn"><i class="fas fa-check-circle"></i> <span data-i18n="dapp.understandClose">I Understand &amp; Close</span></button>
         </div>
         
-        <p class="agreement-modal-note">By continuing, you agree to the terms outlined above.</p>
+        <p class="agreement-modal-note" data-i18n="dapp.agreeTerms">By continuing, you agree to the terms outlined above.</p>
     </div>
 </div>
 
