@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "title": "Fly Infinity Token - 价格对比",
+    "description": "将FIT价格与其他加密货币进行比较"
+  },
+  "header": {
+    "title": "Fly Infinity DAO"
+  },
+  "nav": {
+    "dashboard": "仪表板",
+    "comparison": "对比",
+    "dapp": "DApp",
+    "transactions": "交易",
+    "privacy": "隐私",
+    "warnings": "警告",
+    "faq": "常见问题",
+    "whitepaper": "白皮书"
+  },
+  "compare": {
+    "title": "实时价格对比表",
+    "subtitle": "过去24小时的实时价格变化",
+    "coin": "货币",
+    "price24h": "价格（24小时前）",
+    "current": "当前价格",
+    "change": "24小时变化",
+    "today": "今天",
+    "yesterday": "昨天",
+    "days7": "7天前",
+    "days14": "14天前",
+    "days30": "30天前",
+    "selectDate": "选择日期...",
+    "go": "前往",
+    "showingToday": "显示：今天（实时数据）",
+    "lastUpdated": "最后更新：",
+    "loading": "加载数据中...",
+    "loadingToday": "正在加载今天的数据...请稍候或点击刷新",
+    "noData": "此日期没有可用数据",
+    "loadingCache": "加载缓存数据中...",
+    "all": "全部",
+    "description": "在此页面，您可以看到FIT的持续上涨（非递减）图表以及顶级加密货币的波动图表。FIT — 全球首个非递减、始终上涨的数字资产。"
+  },
+  "btn": {
+    "refresh": "刷新"
+  },
+  "footer": {
+    "tagline": "Fly Infinity — 去中心化。透明。永远上涨。"
+  }
+}
