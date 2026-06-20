@@ -1,3 +1,79 @@
 {
-  "records": []
+  "records": [
+    {
+      "date": "2026-06-20",
+      "prices": {
+        "bitcoin": {
+          "price": 63586,
+          "yesterday": 62653.61233538917,
+          "change": 1.4881626611083494
+        },
+        "ethereum": {
+          "price": 1722.08,
+          "yesterday": 1695.1554280094388,
+          "change": 1.5883246778248366
+        },
+        "binancecoin": {
+          "price": 581.62,
+          "yesterday": 574.9380742225311,
+          "change": 1.1621992136291606
+        },
+        "ripple": {
+          "price": 1.15,
+          "yesterday": 1.1303010170838907,
+          "change": 1.7428085632384345
+        },
+        "solana": {
+          "price": 71.59,
+          "yesterday": 68.40921040923118,
+          "change": 4.649651080228816
+        },
+        "cardano": {
+          "price": 0.163503,
+          "yesterday": 0.16036392742093197,
+          "change": 1.9574680101394848
+        },
+        "dogecoin": {
+          "price": 0.083712,
+          "yesterday": 0.08243927300162215,
+          "change": 1.5438357860734704
+        },
+        "tron": {
+          "price": 0.321891,
+          "yesterday": 0.3201079350106567,
+          "change": 0.5570199280701884
+        },
+        "zcash": {
+          "price": 471.53,
+          "yesterday": 448.49934141779113,
+          "change": 5.135048472848271
+        },
+        "stellar": {
+          "price": 0.216543,
+          "yesterday": 0.22016658457985688,
+          "change": -1.6458376673153001
+        },
+        "pancakeswap": {
+          "price": 1.37,
+          "yesterday": 1.3400835642696018,
+          "change": 2.232430613138959
+        },
+        "toncoin": {
+          "price": 1.59,
+          "yesterday": 1.6360789517720487,
+          "change": -2.816425926275761
+        },
+        "shibainu": {
+          "price": 0.00000472,
+          "yesterday": 0.000004707210376574464,
+          "change": 0.2717028218917967
+        },
+        "fit": {
+          "price": 6.39,
+          "yesterday": 6.3261,
+          "change": 1
+        }
+      }
+    }
+  ]
 }
