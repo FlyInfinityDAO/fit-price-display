@@ -121,103 +121,7 @@
             transform: rotate(90deg);
         }
         
-        /* ===== LANGUAGE BUTTON ===== */
-        .lang-btn {
-            background: transparent;
-            border: 1px solid rgba(0, 200, 150, 0.3);
-            color: #D4AF37;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            flex-shrink: 0;
-            position: relative;
-        }
-        
-        .lang-btn:hover {
-            border-color: #00C896;
-            background: rgba(0, 200, 150, 0.1);
-            transform: scale(1.05);
-        }
-        
-        .lang-dropdown {
-            position: fixed;
-            top: 75px;
-            right: 20px;
-            background: #0F0F0F;
-            border: 1px solid rgba(0, 200, 150, 0.3);
-            border-radius: 16px;
-            padding: 8px;
-            min-width: 160px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        
-        .lang-dropdown.open {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        .lang-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            border-radius: 12px;
-            color: #c0d0e8;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        
-        .lang-item:hover {
-            background: rgba(0, 200, 150, 0.08);
-            color: #D4AF37;
-        }
-        
-        .lang-item.active {
-            background: rgba(0, 200, 150, 0.15);
-            color: #D4AF37;
-            border: 1px solid rgba(0, 200, 150, 0.2);
-        }
-        
-        .lang-item .flag {
-            font-size: 18px;
-        }
-        
-        .lang-item .lang-name {
-            font-size: 13px;
-        }
-        
         @media (max-width: 768px) {
-            .lang-dropdown {
-                top: 65px;
-                right: 10px;
-                min-width: 140px;
-            }
-            .lang-item {
-                padding: 8px 12px;
-                font-size: 12px;
-            }
-            .lang-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 14px;
-            }
             .top-bar .logo span {
                 font-size: 15px;
             }
@@ -368,6 +272,14 @@
             text-decoration: none;
         }
         
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 85vw;
+                right: -85vw;
+            }
+        }
+        
+        /* ===== CARDS ===== */
         .card {
             background: #0F0F0F;
             backdrop-filter: blur(10px);
@@ -399,6 +311,12 @@
             margin-bottom: 25px;
         }
         
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
         .link-card {
             background: #1a1a1a;
             border-radius: 20px;
@@ -424,6 +342,7 @@
         .link-card h3 {
             font-size: 16px;
             margin-bottom: 8px;
+            color: #fff;
         }
         
         .link-card p {
@@ -468,6 +387,56 @@
         .link-card.gift { border-left: 3px solid #D4AF37; }
         .link-card.gift i, .link-card.gift h3 { color: #D4AF37; }
         
+        /* ===== CONTRACT SOURCE GRID ===== */
+        .source-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .source-card {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+            transition: all 0.3s ease;
+            display: block;
+        }
+        
+        .source-card:hover {
+            transform: translateY(-3px);
+            border-color: #00C896;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        .source-card .icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .source-card .title {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .source-card .sub {
+            color: #888;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+        
+        .source-card.token .icon { color: #D4AF37; }
+        .source-card.token .title { color: #00C896; }
+        
+        .source-card.network .icon { color: #00C896; }
+        .source-card.network .title { color: #00C896; }
+        
+        .source-card.gift .icon { color: #D4AF37; }
+        .source-card.gift .title { color: #D4AF37; }
+        
         /* ===== FOOTER ===== */
         .footer {
             text-align: center;
@@ -506,28 +475,6 @@
         .footer .footer-tagline .gold {
             color: #D4AF37;
         }
-        
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .sidebar {
-                width: 85vw;
-                right: -85vw;
-            }
-            .top-bar .logo span {
-                font-size: 15px;
-            }
-            .top-bar .logo img {
-                width: 28px;
-                height: 28px;
-            }
-            .hamburger {
-                width: 38px;
-                height: 38px;
-                font-size: 17px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -535,9 +482,9 @@
     
     <!-- ===== TOP NAV BAR ===== -->
     <div class="top-bar">
-        <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-            <img src="logo.png" alt="Fly Infinity DAO" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37;">
-            <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
+        <a href="index.html" class="logo">
+            <img src="logo.png" alt="Fly Infinity DAO">
+            <span data-i18n="header.title">Fly Infinity DAO</span>
         </a>
         <div class="top-bar-right">
             <button class="hamburger" id="hamburgerBtn">
@@ -552,37 +499,37 @@
     <!-- ===== SIDEBAR ===== -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <span class="logo-text" style="display: flex; align-items: center; gap: 10px;">
-                <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
-                <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
+            <span class="logo-text">
+                <img src="logo.png" alt="Fly Infinity DAO">
+                <span data-i18n="header.title">Fly Infinity DAO</span>
             </span>
             <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
         </div>
         
         <div class="sidebar-menu">
             <a href="index.html" data-i18n="nav.dashboard">
-                <i class="fas fa-home"></i> Dashboard
+                <i class="fas fa-home"></i> <span data-i18n="nav.dashboard">Dashboard</span>
             </a>
             <a href="compare.html" data-i18n="nav.comparison">
-                <i class="fas fa-chart-line"></i> Comparison
+                <i class="fas fa-chart-line"></i> <span data-i18n="nav.comparison">Comparison</span>
             </a>
             <a href="dapp.html" data-i18n="nav.dapp">
-                <i class="fas fa-charging-station"></i> DApp
+                <i class="fas fa-charging-station"></i> <span data-i18n="nav.dapp">DApp</span>
             </a>
             <a href="transactions.html" class="active" data-i18n="nav.transactions">
-                <i class="fas fa-history"></i> Transactions
+                <i class="fas fa-history"></i> <span data-i18n="nav.transactions">Transactions</span>
             </a>
             <a href="privacy.html" data-i18n="nav.privacy">
-                <i class="fas fa-shield-alt"></i> Privacy
+                <i class="fas fa-shield-alt"></i> <span data-i18n="nav.privacy">Privacy</span>
             </a>
             <a href="warnings.html" data-i18n="nav.warnings">
-                <i class="fas fa-exclamation-triangle"></i> Warnings
+                <i class="fas fa-exclamation-triangle"></i> <span data-i18n="nav.warnings">Warnings</span>
             </a>
             <a href="faq.html" data-i18n="nav.faq">
-                <i class="fas fa-question-circle"></i> FAQ
+                <i class="fas fa-question-circle"></i> <span data-i18n="nav.faq">FAQ</span>
             </a>
             <a href="whitepaper.html" data-i18n="nav.whitepaper">
-                <i class="fas fa-file-pdf"></i> White Paper
+                <i class="fas fa-file-pdf"></i> <span data-i18n="nav.whitepaper">White Paper</span>
             </a>
         </div>
         
@@ -592,7 +539,7 @@
         </div>
     </div>
 
-    <!-- Transaction Links Section -->
+    <!-- ===== TRANSACTION LINKS ===== -->
     <div class="card">
         <div class="card-title" data-i18n="transactions.title"><i class="fas fa-exchange-alt"></i> Transactions Explorer</div>
         <div class="stats-grid">
@@ -629,7 +576,7 @@
         </div>
     </div>
 
-    <!-- Network Events Section -->
+    <!-- ===== NETWORK EVENTS ===== -->
     <div class="card">
         <div class="card-title" data-i18n="transactions.networkEvents"><i class="fas fa-star"></i> Network Events</div>
         <div class="stats-grid">
@@ -654,7 +601,7 @@
         </div>
     </div>
 
-    <!-- Holder Information Section -->
+    <!-- ===== HOLDER INFORMATION ===== -->
     <div class="card">
         <div class="card-title" data-i18n="transactions.holderInfo"><i class="fas fa-users"></i> Holder Information</div>
         <div class="stats-grid">
@@ -673,7 +620,7 @@
         </div>
     </div>
 
-    <!-- Contract Stats Section -->
+    <!-- ===== CONTRACT STATISTICS ===== -->
     <div class="card">
         <div class="card-title" data-i18n="transactions.contractStats"><i class="fas fa-chart-simple"></i> Contract Statistics</div>
         <div class="stats-grid">
@@ -692,36 +639,32 @@
         </div>
     </div>
 
-    <!-- ===== Contract Source Code ===== -->
+    <!-- ===== CONTRACT SOURCE CODE ===== -->
     <div class="card">
         <div class="card-title" data-i18n="transactions.contractsSource"><i class="fas fa-file-code"></i> Contracts Source Code</div>
         
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 10px;">
-            
-            <!-- Fly Infinity Token -->
-            <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#code#F1#L1" target="_blank" style="background: #1a1a1a; border-radius: 20px; padding: 20px; text-align: center; text-decoration: none; border: 1px solid rgba(0, 200, 150, 0.2); transition: all 0.3s ease; display: block;">
-                <div style="font-size: 32px; color: #D4AF37; margin-bottom: 10px;">🪙</div>
-                <div style="color: #00C896; font-size: 14px; font-weight: bold;" data-i18n="transactions.tokenContract">Fly Infinity Token</div>
-                <div style="color: #888; font-size: 11px; margin-top: 5px;" data-i18n="transactions.viewSource">View Source Code →</div>
+        <div class="source-grid">
+            <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#code#F1#L1" target="_blank" class="source-card token">
+                <div class="icon">🪙</div>
+                <div class="title" data-i18n="transactions.tokenContract">Fly Infinity Token</div>
+                <div class="sub" data-i18n="transactions.viewSource">View Source Code →</div>
             </a>
             
-            <!-- Fly Infinity Network -->
-            <a href="https://bscscan.com/address/0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B#code#F1#L1" target="_blank" style="background: #1a1a1a; border-radius: 20px; padding: 20px; text-align: center; text-decoration: none; border: 1px solid rgba(0, 200, 150, 0.2); transition: all 0.3s ease; display: block;">
-                <div style="font-size: 32px; color: #00C896; margin-bottom: 10px;">🌐</div>
-                <div style="color: #00C896; font-size: 14px; font-weight: bold;" data-i18n="transactions.networkContract">Fly Infinity Network</div>
-                <div style="color: #888; font-size: 11px; margin-top: 5px;" data-i18n="transactions.viewSource">View Source Code →</div>
+            <a href="https://bscscan.com/address/0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B#code#F1#L1" target="_blank" class="source-card network">
+                <div class="icon">🌐</div>
+                <div class="title" data-i18n="transactions.networkContract">Fly Infinity Network</div>
+                <div class="sub" data-i18n="transactions.viewSource">View Source Code →</div>
             </a>
             
-            <!-- Fly Infinity Gift -->
-            <a href="https://bscscan.com/address/0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8#code#F1#L1" target="_blank" style="background: #1a1a1a; border-radius: 20px; padding: 20px; text-align: center; text-decoration: none; border: 1px solid rgba(212, 175, 55, 0.2); transition: all 0.3s ease; display: block;">
-                <div style="font-size: 32px; color: #D4AF37; margin-bottom: 10px;">🎁</div>
-                <div style="color: #D4AF37; font-size: 14px; font-weight: bold;" data-i18n="transactions.giftContract">Fly Infinity Gift</div>
-                <div style="color: #888; font-size: 11px; margin-top: 5px;" data-i18n="transactions.viewSource">View Source Code →</div>
+            <a href="https://bscscan.com/address/0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8#code#F1#L1" target="_blank" class="source-card gift">
+                <div class="icon">🎁</div>
+                <div class="title" data-i18n="transactions.giftContract">Fly Infinity Gift</div>
+                <div class="sub" data-i18n="transactions.viewSource">View Source Code →</div>
             </a>
-            
         </div>
     </div>
 
+    <!-- ===== FOOTER ===== -->
     <div class="footer">
         <div class="footer-links">
             <a href="index.html" data-i18n="nav.dashboard">Dashboard</a>
@@ -745,8 +688,11 @@
         </p>
     </div>
 
-<!-- ===== SIDEBAR SCRIPT ===== -->
+</div>
+
+<!-- ===== SCRIPTS ===== -->
 <script>
+    // ===== SIDEBAR =====
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const closeSidebarBtn = document.getElementById('closeSidebarBtn');
     const sidebar = document.getElementById('sidebar');
