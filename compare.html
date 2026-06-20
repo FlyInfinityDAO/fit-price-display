@@ -663,16 +663,27 @@
         </div>
     </div>
 
-    <div class="footer">
-        <a href="index.html">Dashboard</a> | 
-        <a href="compare.html">Comparison</a> | 
-        <a href="transactions.html">Transactions</a> | 
-        <a href="privacy.html">Privacy Policy</a> | 
-        <a href="warnings.html">Warnings</a> | 
-        <a href="faq.html">FAQ</a><br>
-        Data updates every 6 hours via GitHub Actions • FIT price from blockchain<br>
-        Fly Infinity DAO
+    <div class="footer" style="text-align: center; font-size: 10px; color: #666; margin-top: 30px; border-top: 1px solid rgba(0, 200, 150, 0.15); padding-top: 20px;">
+    <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; font-size: 12px; margin-bottom: 12px;">
+        <a href="index.html" style="color: #00C896; text-decoration: none;">Dashboard</a>
+        <span style="color: #444;">|</span>
+        <a href="compare.html" style="color: #00C896; text-decoration: none;">Comparison</a>
+        <span style="color: #444;">|</span>
+        <a href="dapp.html" style="color: #00C896; text-decoration: none;">DApp</a>
+        <span style="color: #444;">|</span>
+        <a href="transactions.html" style="color: #00C896; text-decoration: none;">Transactions</a>
+        <span style="color: #444;">|</span>
+        <a href="privacy.html" style="color: #00C896; text-decoration: none;">Privacy</a>
+        <span style="color: #444;">|</span>
+        <a href="warnings.html" style="color: #00C896; text-decoration: none;">Warnings</a>
+        <span style="color: #444;">|</span>
+        <a href="faq.html" style="color: #00C896; text-decoration: none;">FAQ</a>
+        <span style="color: #444;">|</span>
+        <a href="whitepaper.html" style="color: #00C896; text-decoration: none;">White Paper</a>
     </div>
+    <p style="color: #888; font-size: 11px; margin: 0; text-align: center;">
+        Fly Infinity — <span style="color: #D4AF37;">Decentralized. Transparent. Forever Rising.</span>
+    </p>
 </div>
 
 <script>
@@ -730,6 +741,7 @@
     let tablePrices = {};
     let historyData = { records: [] };
     let currentHistoryDate = 'today';
+    let isHistoryLoaded = false;
 
     // ===== LOAD HISTORY FROM GITHUB JSON =====
     async function loadTableHistory() {
@@ -739,6 +751,26 @@
                 const data = await response.json();
                 if (data && data.records) {
                     historyData = data;
+                    isHistoryLoaded = true;
+                    
+                    // Check if today has data in the JSON
+                    const today = new Date().toISOString().split('T')[0];
+                    const todayRecord = historyData.records.find(r => r.date === today);
+                    
+                    // If today has data, use it as tablePrices
+                    if (todayRecord && todayRecord.prices && Object.keys(todayRecord.prices).length > 0) {
+                        for (const tokenId of Object.keys(todayRecord.prices)) {
+                            const p = todayRecord.prices[tokenId];
+                            tablePrices[tokenId] = {
+                                current: p.price || 0,
+                                price: p.price || 0,
+                                yesterday: p.yesterday || 0,
+                                change: p.change || 0
+                            };
+                        }
+                        console.log('✅ Loaded today\'s data from JSON');
+                    }
+                    
                     updateHistoryDateSelect();
                     console.log('✅ Table history loaded:', historyData.records.length, 'records');
                     return true;
@@ -748,47 +780,6 @@
             console.log('⚠️ Table history not found, using empty');
         }
         return false;
-    }
-
-    // ===== SAVE TODAY'S PRICES TO HISTORY (Local) =====
-    function saveTodayToHistory() {
-        const today = new Date().toISOString().split('T')[0];
-        
-        // Check if today already exists
-        const existingIndex = historyData.records.findIndex(r => r.date === today);
-        if (existingIndex !== -1) {
-            // Update existing
-            historyData.records[existingIndex].prices = {};
-            for (const token of TABLE_TOKENS) {
-                if (tablePrices[token.id]) {
-                    historyData.records[existingIndex].prices[token.id] = {
-                        price: tablePrices[token.id].current,
-                        yesterday: tablePrices[token.id].yesterday,
-                        change: tablePrices[token.id].change
-                    };
-                }
-            }
-        } else {
-            // Add new record
-            const record = { date: today, prices: {} };
-            for (const token of TABLE_TOKENS) {
-                if (tablePrices[token.id]) {
-                    record.prices[token.id] = {
-                        price: tablePrices[token.id].current,
-                        yesterday: tablePrices[token.id].yesterday,
-                        change: tablePrices[token.id].change
-                    };
-                }
-            }
-            historyData.records.push(record);
-            // Keep only last 90 days
-            if (historyData.records.length > 90) {
-                historyData.records = historyData.records.slice(-90);
-            }
-        }
-        
-        // Sort records by date
-        historyData.records.sort((a, b) => a.date.localeCompare(b.date));
     }
 
     // ===== GET PRICES FOR A DATE =====
@@ -937,9 +928,28 @@
                 console.error("Error fetching FIT price:", e);
             }
             
-            // Save today's data to history (local)
+            // Update today's record in historyData
             if (hasPriceData) {
-                saveTodayToHistory();
+                const today = new Date().toISOString().split('T')[0];
+                const existingIndex = historyData.records.findIndex(r => r.date === today);
+                
+                const todayPrices = {};
+                for (const token of TABLE_TOKENS) {
+                    if (tablePrices[token.id]) {
+                        todayPrices[token.id] = {
+                            price: tablePrices[token.id].current,
+                            yesterday: tablePrices[token.id].yesterday,
+                            change: tablePrices[token.id].change
+                        };
+                    }
+                }
+                
+                if (existingIndex !== -1) {
+                    historyData.records[existingIndex].prices = todayPrices;
+                } else {
+                    historyData.records.push({ date: today, prices: todayPrices });
+                    historyData.records.sort((a, b) => a.date.localeCompare(b.date));
+                }
             }
             
             updateHistoryDateSelect();
@@ -992,7 +1002,24 @@
         }
         
         if (hasData) {
-            saveTodayToHistory();
+            const today = new Date().toISOString().split('T')[0];
+            const todayPrices = {};
+            for (const token of TABLE_TOKENS) {
+                if (tablePrices[token.id]) {
+                    todayPrices[token.id] = {
+                        price: tablePrices[token.id].current,
+                        yesterday: tablePrices[token.id].yesterday,
+                        change: tablePrices[token.id].change
+                    };
+                }
+            }
+            const existingIndex = historyData.records.findIndex(r => r.date === today);
+            if (existingIndex !== -1) {
+                historyData.records[existingIndex].prices = todayPrices;
+            } else {
+                historyData.records.push({ date: today, prices: todayPrices });
+                historyData.records.sort((a, b) => a.date.localeCompare(b.date));
+            }
         }
         
         updateHistoryDateSelect();
@@ -1274,6 +1301,14 @@
             const yesterday = dates[dates.length - 1];
             currentHistoryDate = yesterday;
             updateTableWithHistory(yesterday);
+        } else {
+            // If no history, try to get yesterday from current data
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayStr = yesterday.toISOString().split('T')[0];
+            currentHistoryDate = yesterdayStr;
+            updateTableWithHistory(yesterdayStr);
         }
     });
 
@@ -1285,6 +1320,17 @@
             const date = dates[dates.length - 7];
             currentHistoryDate = date;
             updateTableWithHistory(date);
+        } else if (dates.length > 0) {
+            const date = dates[0];
+            currentHistoryDate = date;
+            updateTableWithHistory(date);
+        } else {
+            const today = new Date();
+            const target = new Date(today);
+            target.setDate(target.getDate() - 7);
+            const targetStr = target.toISOString().split('T')[0];
+            currentHistoryDate = targetStr;
+            updateTableWithHistory(targetStr);
         }
     });
 
@@ -1296,6 +1342,17 @@
             const date = dates[dates.length - 14];
             currentHistoryDate = date;
             updateTableWithHistory(date);
+        } else if (dates.length > 0) {
+            const date = dates[0];
+            currentHistoryDate = date;
+            updateTableWithHistory(date);
+        } else {
+            const today = new Date();
+            const target = new Date(today);
+            target.setDate(target.getDate() - 14);
+            const targetStr = target.toISOString().split('T')[0];
+            currentHistoryDate = targetStr;
+            updateTableWithHistory(targetStr);
         }
     });
 
@@ -1307,6 +1364,17 @@
             const date = dates[dates.length - 30];
             currentHistoryDate = date;
             updateTableWithHistory(date);
+        } else if (dates.length > 0) {
+            const date = dates[0];
+            currentHistoryDate = date;
+            updateTableWithHistory(date);
+        } else {
+            const today = new Date();
+            const target = new Date(today);
+            target.setDate(target.getDate() - 30);
+            const targetStr = target.toISOString().split('T')[0];
+            currentHistoryDate = targetStr;
+            updateTableWithHistory(targetStr);
         }
     });
 
