@@ -2,42 +2,146 @@ name: Save Table Price History
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # هر 6 ساعت
-  workflow_dispatch:  # اجرای دستی
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
 
 jobs:
   save-history:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Save price history
+      - name: Fetch and save price history
         run: |
           node -e "
             const fs = require('fs');
             const historyFile = 'price-history-table.json';
+            
+            // Load existing history
             let history = { records: [] };
             if (fs.existsSync(historyFile)) {
               history = JSON.parse(fs.readFileSync(historyFile, 'utf8'));
             }
+            
             const today = new Date().toISOString().split('T')[0];
-            // Check if today already exists
-            const existing = history.records.findIndex(r => r.date === today);
-            if (existing === -1) {
-              // Create empty record for today (will be filled by users)
-              history.records.push({ date: today, prices: {} });
-              history.records.sort((a, b) => a.date.localeCompare(b.date));
-              fs.writeFileSync(historyFile, JSON.stringify(history, null, 2));
-              console.log('✅ Created empty record for', today);
-            } else {
-              console.log('ℹ️ Record for', today, 'already exists');
+            
+            // ===== FETCH PRICES FROM COINGECKO =====
+            const https = require('https');
+            
+            function fetchJSON(url) {
+              return new Promise((resolve, reject) => {
+                https.get(url, (res) => {
+                  let data = '';
+                  res.on('data', chunk => data += chunk);
+                  res.on('end', () => {
+                    try { resolve(JSON.parse(data)); } catch(e) { reject(e); }
+                  });
+                }).on('error', reject);
+              });
             }
+            
+            async function getPrices() {
+              const ids = ['bitcoin','ethereum','binancecoin','ripple','solana','cardano','dogecoin','tron','zcash','stellar','pancakeswap-token','the-open-network','shiba-inu','official-donald-trump'];
+              const url = 'https://api.coingecko.com/api/v3/simple/price?ids=' + ids.join(',') + '&vs_currencies=usd&include_24hr_change=true';
+              
+              try {
+                const data = await fetchJSON(url);
+                const prices = {};
+                
+                const mapping = {
+                  'bitcoin': 'bitcoin',
+                  'ethereum': 'ethereum',
+                  'binancecoin': 'binancecoin',
+                  'ripple': 'ripple',
+                  'solana': 'solana',
+                  'cardano': 'cardano',
+                  'dogecoin': 'dogecoin',
+                  'tron': 'tron',
+                  'zcash': 'zcash',
+                  'stellar': 'stellar',
+                  'pancakeswap-token': 'pancakeswap',
+                  'the-open-network': 'toncoin',
+                  'shiba-inu': 'shibainu',
+                  'official-donald-trump': 'trump'
+                };
+                
+                for (const [key, id] of Object.entries(mapping)) {
+                  if (data[key]) {
+                    const currentPrice = data[key].usd;
+                    const change24h = data[key].usd_24h_change || 0;
+                    const yesterdayPrice = currentPrice / (1 + change24h / 100);
+                    prices[id] = {
+                      price: currentPrice,
+                      yesterday: yesterdayPrice,
+                      change: change24h
+                    };
+                  }
+                }
+                
+                // Add FIT price (using fallback since we can't call contract from here)
+                // We'll use the price from the last recorded value or a reasonable estimate
+                // For now, we'll check if there's a previous record with FIT price
+                let fitPrice = 6.39; // fallback
+                if (history.records.length > 0) {
+                  const lastRecord = history.records[history.records.length - 1];
+                  if (lastRecord.prices && lastRecord.prices.fit) {
+                    fitPrice = lastRecord.prices.fit.price || 6.39;
+                  }
+                }
+                prices['fit'] = {
+                  price: fitPrice,
+                  yesterday: fitPrice * 0.99,
+                  change: 1.0
+                };
+                
+                return prices;
+              } catch(e) {
+                console.error('Error fetching prices:', e);
+                return null;
+              }
+            }
+            
+            (async function() {
+              const prices = await getPrices();
+              
+              if (!prices) {
+                console.log('⚠️ Could not fetch prices, skipping update');
+                process.exit(0);
+              }
+              
+              // Check if today already exists
+              const existingIndex = history.records.findIndex(r => r.date === today);
+              
+              if (existingIndex !== -1) {
+                // Update existing record
+                history.records[existingIndex].prices = prices;
+                console.log('✅ Updated record for', today);
+              } else {
+                // Add new record
+                history.records.push({ date: today, prices: prices });
+                console.log('✅ Added new record for', today);
+              }
+              
+              // Sort and keep only last 90 days
+              history.records.sort((a, b) => a.date.localeCompare(b.date));
+              if (history.records.length > 90) {
+                history.records = history.records.slice(-90);
+              }
+              
+              fs.writeFileSync(historyFile, JSON.stringify(history, null, 2));
+              console.log('💾 Saved to', historyFile);
+              console.log('📊 Records:', history.records.length);
+            })();
           "
 
       - name: Commit and push if changed
@@ -45,5 +149,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.github.com"
           git add price-history-table.json
-          git diff --quiet && git diff --staged --quiet || git commit -m "🤖 Auto-create price history record [skip ci]"
+          git diff --quiet && git diff --staged --quiet || git commit -m "🤖 Auto-save price history [skip ci]"
           git push
