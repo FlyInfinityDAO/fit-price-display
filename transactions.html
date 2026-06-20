@@ -74,30 +74,15 @@
         .top-bar .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             color: #D4AF37;
             font-size: 18px;
             font-weight: bold;
             text-decoration: none;
         }
         
-        .top-bar .logo img {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 2px solid #D4AF37;
-        }
-        
-        .top-bar .logo span {
-            color: #D4AF37;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        
-        .top-bar-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .top-bar .logo i {
+            font-size: 22px;
         }
         
         .hamburger {
@@ -121,22 +106,7 @@
             transform: rotate(90deg);
         }
         
-        @media (max-width: 768px) {
-            .top-bar .logo span {
-                font-size: 15px;
-            }
-            .top-bar .logo img {
-                width: 28px;
-                height: 28px;
-            }
-            .hamburger {
-                width: 38px;
-                height: 38px;
-                font-size: 17px;
-            }
-        }
-        
-        /* ===== SIDEBAR ===== */
+        /* ===== SIDEBAR OVERLAY ===== */
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -156,6 +126,7 @@
             visibility: visible;
         }
         
+        /* ===== SIDEBAR ===== */
         .sidebar {
             position: fixed;
             top: 0;
@@ -272,14 +243,6 @@
             text-decoration: none;
         }
         
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 85vw;
-                right: -85vw;
-            }
-        }
-        
-        /* ===== CARDS ===== */
         .card {
             background: #0F0F0F;
             backdrop-filter: blur(10px);
@@ -309,12 +272,6 @@
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             margin-bottom: 25px;
-        }
-        
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
         }
         
         .link-card {
@@ -387,7 +344,7 @@
         .link-card.gift { border-left: 3px solid #D4AF37; }
         .link-card.gift i, .link-card.gift h3 { color: #D4AF37; }
         
-        /* ===== CONTRACT SOURCE GRID ===== */
+        /* ===== SOURCE CODE GRID ===== */
         .source-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -475,6 +432,19 @@
         .footer .footer-tagline .gold {
             color: #D4AF37;
         }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                width: 85vw;
+                right: -85vw;
+            }
+            .top-bar .logo {
+                font-size: 15px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -482,11 +452,11 @@
     
     <!-- ===== TOP NAV BAR ===== -->
     <div class="top-bar">
-        <a href="index.html" class="logo">
-            <img src="logo.png" alt="Fly Infinity DAO">
-            <span data-i18n="header.title">Fly Infinity DAO</span>
+        <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+            <img src="logo.png" alt="Fly Infinity DAO" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37;">
+            <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
         </a>
-        <div class="top-bar-right">
+        <div class="top-bar-right" style="display: flex; align-items: center; gap: 12px;">
             <button class="hamburger" id="hamburgerBtn">
                 <i class="fas fa-bars"></i>
             </button>
@@ -499,9 +469,9 @@
     <!-- ===== SIDEBAR ===== -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <span class="logo-text">
-                <img src="logo.png" alt="Fly Infinity DAO">
-                <span data-i18n="header.title">Fly Infinity DAO</span>
+            <span class="logo-text" style="display: flex; align-items: center; gap: 10px;">
+                <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
+                <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
             </span>
             <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
         </div>
