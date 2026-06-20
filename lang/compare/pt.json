@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "title": "Fly Infinity Token - Comparação de Preços",
+    "description": "Compare o preço do FIT com outras criptomoedas"
+  },
+  "header": {
+    "title": "Fly Infinity DAO"
+  },
+  "nav": {
+    "dashboard": "Painel",
+    "comparison": "Comparação",
+    "dapp": "DApp",
+    "transactions": "Transações",
+    "privacy": "Privacidade",
+    "warnings": "Avisos",
+    "faq": "Perguntas Frequentes",
+    "whitepaper": "White Paper"
+  },
+  "compare": {
+    "title": "Tabela de Comparação de Preços ao Vivo",
+    "subtitle": "Mudanças de preço em tempo real nas últimas 24 horas",
+    "coin": "Moeda",
+    "price24h": "Preço (24h atrás)",
+    "current": "Preço Atual",
+    "change": "Mudança 24h",
+    "today": "Hoje",
+    "yesterday": "Ontem",
+    "days7": "Há 7 Dias",
+    "days14": "Há 14 Dias",
+    "days30": "Há 30 Dias",
+    "selectDate": "Selecione uma data...",
+    "go": "Ir",
+    "showingToday": "Mostrando: Hoje (Dados ao Vivo)",
+    "lastUpdated": "Última atualização:",
+    "loading": "Carregando dados...",
+    "loadingToday": "Carregando dados de hoje... Por favor aguarde ou clique em Atualizar",
+    "noData": "Não há dados disponíveis para esta data",
+    "loadingCache": "Carregando dados de cache...",
+    "all": "Todos",
+    "description": "Nesta página, você pode ver o gráfico em constante crescimento (não decrescente) do FIT junto com os gráficos voláteis das principais criptomoedas. FIT — o primeiro ativo digital não decrescente e sempre crescente do mundo."
+  },
+  "btn": {
+    "refresh": "Atualizar"
+  },
+  "footer": {
+    "tagline": "Fly Infinity — Descentralizado. Transparente. Sempre Subindo."
+  }
+}
