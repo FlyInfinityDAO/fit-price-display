@@ -883,90 +883,123 @@
     }
 
     // ===== FETCH LIVE PRICES =====
-    async function fetchTablePrices() {
-        const ids = TABLE_TOKENS.filter(t => t.id !== 'fit').map(t => t.id).join(',');
-        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`;
+async function fetchTablePrices() {
+    const ids = TABLE_TOKENS.filter(t => t.id !== 'fit').map(t => t.id).join(',');
+    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`;
+    
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
         
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            let hasPriceData = false;
-            
-            for (const token of TABLE_TOKENS) {
-                if (token.id !== 'fit' && data[token.id]) {
-                    const currentPrice = data[token.id].usd;
-                    const change24h = data[token.id].usd_24h_change || 0;
-                    const yesterdayPrice = currentPrice / (1 + change24h / 100);
-                    tablePrices[token.id] = { 
-                        current: currentPrice, 
-                        price: currentPrice,
-                        yesterday: yesterdayPrice, 
-                        change: change24h 
-                    };
-                    hasPriceData = true;
-                }
-            }
-            
-            // Get FIT price from contract
-            try {
-                const raw = await contract.Price();
-                const currentPrice = parseFloat(ethers.utils.formatEther(raw));
-                let yesterdayPrice = currentPrice;
-                if (fitPrices.length >= 2) {
-                    yesterdayPrice = fitPrices[fitPrices.length - 2] || currentPrice;
-                }
-                const change24h = ((currentPrice - yesterdayPrice) / yesterdayPrice) * 100;
-                tablePrices['fit'] = { 
-                    current: currentPrice, 
+        let hasPriceData = false;
+        
+        // ===== GET CRYPTO PRICES =====
+        const cryptoIds = {
+            'bitcoin': 'bitcoin', 'ethereum': 'ethereum', 'binancecoin': 'binancecoin',
+            'ripple': 'ripple', 'solana': 'solana', 'cardano': 'cardano',
+            'dogecoin': 'dogecoin', 'tron': 'tron', 'zcash': 'zcash',
+            'stellar': 'stellar', 'pancakeswap-token': 'pancakeswap',
+            'the-open-network': 'toncoin', 'shiba-inu': 'shibainu',
+            'official-donald-trump': 'trump'
+        };
+        
+        for (const [cgId, ourId] of Object.entries(cryptoIds)) {
+            if (data[cgId]) {
+                const currentPrice = data[cgId].usd;
+                const change24h = data[cgId].usd_24h_change || 0;
+                const yesterdayPrice = currentPrice / (1 + change24h / 100);
+                tablePrices[ourId] = {
+                    current: currentPrice,
                     price: currentPrice,
-                    yesterday: yesterdayPrice, 
-                    change: change24h 
+                    yesterday: yesterdayPrice,
+                    change: change24h
                 };
                 hasPriceData = true;
-            } catch(e) {
-                console.error("Error fetching FIT price:", e);
             }
-            
-            // Update today's record in historyData
-            if (hasPriceData) {
-                const today = new Date().toISOString().split('T')[0];
-                const existingIndex = historyData.records.findIndex(r => r.date === today);
-                
-                const todayPrices = {};
-                for (const token of TABLE_TOKENS) {
-                    if (tablePrices[token.id]) {
-                        todayPrices[token.id] = {
-                            price: tablePrices[token.id].current,
-                            yesterday: tablePrices[token.id].yesterday,
-                            change: tablePrices[token.id].change
-                        };
-                    }
-                }
-                
-                if (existingIndex !== -1) {
-                    historyData.records[existingIndex].prices = todayPrices;
-                } else {
-                    historyData.records.push({ date: today, prices: todayPrices });
-                    historyData.records.sort((a, b) => a.date.localeCompare(b.date));
-                }
-            }
-            
-            updateHistoryDateSelect();
-            
-            // Update table with today's data if today is selected
-            if (currentHistoryDate === 'today' || !currentHistoryDate) {
-                currentHistoryDate = 'today';
-                updateTableWithHistory('today');
-            }
-            
-            document.getElementById('tableLastUpdate').innerHTML = new Date().toLocaleString();
-        } catch(e) {
-            console.error("Error fetching table prices:", e);
-            useFallbackTableData();
         }
+        
+        // ===== GET FIT PRICE =====
+        try {
+            const raw = await contract.Price();
+            const currentPrice = parseFloat(ethers.utils.formatEther(raw));
+            
+            // Try to get yesterday from history
+            let yesterdayPrice = currentPrice;
+            let change24h = 0;
+            
+            // Check if we have history data
+            if (historyData.records.length > 0) {
+                const today = new Date().toISOString().split('T')[0];
+                const todayRecord = historyData.records.find(r => r.date === today);
+                if (todayRecord && todayRecord.prices && todayRecord.prices.fit) {
+                    // Use the stored value
+                    yesterdayPrice = todayRecord.prices.fit.yesterday || currentPrice;
+                    change24h = todayRecord.prices.fit.change || 0;
+                } else if (fitPrices.length >= 2) {
+                    yesterdayPrice = fitPrices[fitPrices.length - 2] || currentPrice;
+                    change24h = ((currentPrice - yesterdayPrice) / yesterdayPrice) * 100;
+                }
+            } else if (fitPrices.length >= 2) {
+                yesterdayPrice = fitPrices[fitPrices.length - 2] || currentPrice;
+                change24h = ((currentPrice - yesterdayPrice) / yesterdayPrice) * 100;
+            }
+            
+            tablePrices['fit'] = {
+                current: currentPrice,
+                price: currentPrice,
+                yesterday: yesterdayPrice,
+                change: change24h
+            };
+            hasPriceData = true;
+        } catch(e) {
+            console.error("Error fetching FIT price:", e);
+            // Use fallback
+            if (!tablePrices['fit']) {
+                tablePrices['fit'] = {
+                    current: 6.39,
+                    price: 6.39,
+                    yesterday: 6.3261,
+                    change: 1.0
+                };
+            }
+        }
+        
+        // ===== UPDATE HISTORY DATA IN MEMORY =====
+        if (hasPriceData) {
+            const today = new Date().toISOString().split('T')[0];
+            const todayPrices = {};
+            for (const token of TABLE_TOKENS) {
+                if (tablePrices[token.id]) {
+                    todayPrices[token.id] = {
+                        price: tablePrices[token.id].current,
+                        yesterday: tablePrices[token.id].yesterday,
+                        change: tablePrices[token.id].change
+                    };
+                }
+            }
+            
+            const existingIndex = historyData.records.findIndex(r => r.date === today);
+            if (existingIndex !== -1) {
+                historyData.records[existingIndex].prices = todayPrices;
+            } else {
+                historyData.records.push({ date: today, prices: todayPrices });
+                historyData.records.sort((a, b) => a.date.localeCompare(b.date));
+            }
+        }
+        
+        updateHistoryDateSelect();
+        
+        if (currentHistoryDate === 'today' || !currentHistoryDate) {
+            currentHistoryDate = 'today';
+            updateTableWithHistory('today');
+        }
+        
+        document.getElementById('tableLastUpdate').innerHTML = new Date().toLocaleString();
+    } catch(e) {
+        console.error("Error fetching table prices:", e);
+        useFallbackTableData();
     }
-
+}
     // ===== FALLBACK DATA =====
     function useFallbackTableData() {
         const fallbackData = {
