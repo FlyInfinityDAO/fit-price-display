@@ -512,9 +512,9 @@
     <!-- ===== TOP NAV BAR ===== -->
     <div class="top-bar">
         <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-    <img src="logo.png" alt="Fly Infinity DAO" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37;">
-    <span style="color: #D4AF37; font-size: 18px; font-weight: bold;">Fly Infinity DAO</span>
-</a>
+            <img src="logo.png" alt="Fly Infinity DAO" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37;">
+            <span style="color: #D4AF37; font-size: 18px; font-weight: bold;">Fly Infinity DAO</span>
+        </a>
         <button class="hamburger" id="hamburgerBtn">
             <i class="fas fa-bars"></i>
         </button>
@@ -527,9 +527,9 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <span class="logo-text" style="display: flex; align-items: center; gap: 10px;">
-    <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
-    <span style="color: #D4AF37; font-size: 18px; font-weight: bold;">Fly Infinity DAO</span>
-</span>
+                <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
+                <span style="color: #D4AF37; font-size: 18px; font-weight: bold;">Fly Infinity DAO</span>
+            </span>
             <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
         </div>
         
@@ -561,7 +561,7 @@
         </div>
         
         <div class="sidebar-footer">
-            <a href="https://flyinfinitydao.github.io/fit-price-display" target="_blank">flyinfinitydao.github.io</a><br>
+            <a href="https://flyinfinitydao.github.io" target="_blank">flyinfinitydao.github.io</a><br>
             Fly Infinity DAO
         </div>
     </div>
@@ -664,27 +664,27 @@
     </div>
 
     <div class="footer" style="text-align: center; font-size: 10px; color: #666; margin-top: 30px; border-top: 1px solid rgba(0, 200, 150, 0.15); padding-top: 20px;">
-    <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; font-size: 12px; margin-bottom: 12px;">
-        <a href="index.html" style="color: #00C896; text-decoration: none;">Dashboard</a>
-        <span style="color: #444;">|</span>
-        <a href="compare.html" style="color: #00C896; text-decoration: none;">Comparison</a>
-        <span style="color: #444;">|</span>
-        <a href="dapp.html" style="color: #00C896; text-decoration: none;">DApp</a>
-        <span style="color: #444;">|</span>
-        <a href="transactions.html" style="color: #00C896; text-decoration: none;">Transactions</a>
-        <span style="color: #444;">|</span>
-        <a href="privacy.html" style="color: #00C896; text-decoration: none;">Privacy</a>
-        <span style="color: #444;">|</span>
-        <a href="warnings.html" style="color: #00C896; text-decoration: none;">Warnings</a>
-        <span style="color: #444;">|</span>
-        <a href="faq.html" style="color: #00C896; text-decoration: none;">FAQ</a>
-        <span style="color: #444;">|</span>
-        <a href="whitepaper.html" style="color: #00C896; text-decoration: none;">White Paper</a>
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; font-size: 12px; margin-bottom: 12px;">
+            <a href="index.html" style="color: #00C896; text-decoration: none;">Dashboard</a>
+            <span style="color: #444;">|</span>
+            <a href="compare.html" style="color: #00C896; text-decoration: none;">Comparison</a>
+            <span style="color: #444;">|</span>
+            <a href="dapp.html" style="color: #00C896; text-decoration: none;">DApp</a>
+            <span style="color: #444;">|</span>
+            <a href="transactions.html" style="color: #00C896; text-decoration: none;">Transactions</a>
+            <span style="color: #444;">|</span>
+            <a href="privacy.html" style="color: #00C896; text-decoration: none;">Privacy</a>
+            <span style="color: #444;">|</span>
+            <a href="warnings.html" style="color: #00C896; text-decoration: none;">Warnings</a>
+            <span style="color: #444;">|</span>
+            <a href="faq.html" style="color: #00C896; text-decoration: none;">FAQ</a>
+            <span style="color: #444;">|</span>
+            <a href="whitepaper.html" style="color: #00C896; text-decoration: none;">White Paper</a>
+        </div>
+        <p style="color: #888; font-size: 11px; margin: 0; text-align: center;">
+            Fly Infinity — <span style="color: #D4AF37;">Decentralized. Transparent. Forever Rising.</span>
+        </p>
     </div>
-    <p style="color: #888; font-size: 11px; margin: 0; text-align: center;">
-        Fly Infinity — <span style="color: #D4AF37;">Decentralized. Transparent. Forever Rising.</span>
-    </p>
-</div>
 
 <script>
     // ==================== TOKEN CONFIGURATION ====================
@@ -750,7 +750,10 @@
             if (response.ok) {
                 const data = await response.json();
                 if (data && data.records) {
-                    historyData = data;
+                    // Only keep records that have actual price data
+                    historyData.records = data.records.filter(r => 
+                        r.prices && Object.keys(r.prices).length > 0
+                    );
                     isHistoryLoaded = true;
                     
                     // Check if today has data in the JSON
@@ -772,7 +775,7 @@
                     }
                     
                     updateHistoryDateSelect();
-                    console.log('✅ Table history loaded:', historyData.records.length, 'records');
+                    console.log('✅ Table history loaded:', historyData.records.length, 'records with data');
                     return true;
                 }
             }
@@ -788,9 +791,11 @@
         return record ? record.prices : null;
     }
 
-    // ===== GET ALL DATES =====
+    // ===== GET ALL DATES WITH DATA =====
     function getHistoryDates() {
-        return historyData.records.map(r => r.date);
+        return historyData.records
+            .filter(r => r.prices && Object.keys(r.prices).length > 0)
+            .map(r => r.date);
     }
 
     // ===== UPDATE DATE SELECT DROPDOWN =====
@@ -836,7 +841,7 @@
             priceData = tablePrices;
         } else {
             priceData = getPricesForDate(date);
-            if (!priceData) {
+            if (!priceData || Object.keys(priceData).length === 0) {
                 tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 30px; color: #888;">No data available for this date</td></tr>`;
                 return;
             }
@@ -883,123 +888,124 @@
     }
 
     // ===== FETCH LIVE PRICES =====
-async function fetchTablePrices() {
-    const ids = TABLE_TOKENS.filter(t => t.id !== 'fit').map(t => t.id).join(',');
-    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`;
-    
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
+    async function fetchTablePrices() {
+        const ids = TABLE_TOKENS.filter(t => t.id !== 'fit').map(t => t.id).join(',');
+        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`;
         
-        let hasPriceData = false;
-        
-        // ===== GET CRYPTO PRICES =====
-        const cryptoIds = {
-            'bitcoin': 'bitcoin', 'ethereum': 'ethereum', 'binancecoin': 'binancecoin',
-            'ripple': 'ripple', 'solana': 'solana', 'cardano': 'cardano',
-            'dogecoin': 'dogecoin', 'tron': 'tron', 'zcash': 'zcash',
-            'stellar': 'stellar', 'pancakeswap-token': 'pancakeswap',
-            'the-open-network': 'toncoin', 'shiba-inu': 'shibainu',
-            'official-donald-trump': 'trump'
-        };
-        
-        for (const [cgId, ourId] of Object.entries(cryptoIds)) {
-            if (data[cgId]) {
-                const currentPrice = data[cgId].usd;
-                const change24h = data[cgId].usd_24h_change || 0;
-                const yesterdayPrice = currentPrice / (1 + change24h / 100);
-                tablePrices[ourId] = {
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            let hasPriceData = false;
+            
+            // ===== GET CRYPTO PRICES =====
+            const cryptoIds = {
+                'bitcoin': 'bitcoin', 'ethereum': 'ethereum', 'binancecoin': 'binancecoin',
+                'ripple': 'ripple', 'solana': 'solana', 'cardano': 'cardano',
+                'dogecoin': 'dogecoin', 'tron': 'tron', 'zcash': 'zcash',
+                'stellar': 'stellar', 'pancakeswap-token': 'pancakeswap',
+                'the-open-network': 'toncoin', 'shiba-inu': 'shibainu',
+                'official-donald-trump': 'trump'
+            };
+            
+            for (const [cgId, ourId] of Object.entries(cryptoIds)) {
+                if (data[cgId]) {
+                    const currentPrice = data[cgId].usd;
+                    const change24h = data[cgId].usd_24h_change || 0;
+                    const yesterdayPrice = currentPrice / (1 + change24h / 100);
+                    tablePrices[ourId] = {
+                        current: currentPrice,
+                        price: currentPrice,
+                        yesterday: yesterdayPrice,
+                        change: change24h
+                    };
+                    hasPriceData = true;
+                }
+            }
+            
+            // ===== GET FIT PRICE =====
+            try {
+                const raw = await contract.Price();
+                const currentPrice = parseFloat(ethers.utils.formatEther(raw));
+                
+                // Try to get yesterday from history
+                let yesterdayPrice = currentPrice;
+                let change24h = 0;
+                
+                // Check if we have history data
+                if (historyData.records.length > 0) {
+                    const today = new Date().toISOString().split('T')[0];
+                    const todayRecord = historyData.records.find(r => r.date === today);
+                    if (todayRecord && todayRecord.prices && todayRecord.prices.fit) {
+                        // Use the stored value
+                        yesterdayPrice = todayRecord.prices.fit.yesterday || currentPrice;
+                        change24h = todayRecord.prices.fit.change || 0;
+                    } else if (fitPrices.length >= 2) {
+                        yesterdayPrice = fitPrices[fitPrices.length - 2] || currentPrice;
+                        change24h = ((currentPrice - yesterdayPrice) / yesterdayPrice) * 100;
+                    }
+                } else if (fitPrices.length >= 2) {
+                    yesterdayPrice = fitPrices[fitPrices.length - 2] || currentPrice;
+                    change24h = ((currentPrice - yesterdayPrice) / yesterdayPrice) * 100;
+                }
+                
+                tablePrices['fit'] = {
                     current: currentPrice,
                     price: currentPrice,
                     yesterday: yesterdayPrice,
                     change: change24h
                 };
                 hasPriceData = true;
-            }
-        }
-        
-        // ===== GET FIT PRICE =====
-        try {
-            const raw = await contract.Price();
-            const currentPrice = parseFloat(ethers.utils.formatEther(raw));
-            
-            // Try to get yesterday from history
-            let yesterdayPrice = currentPrice;
-            let change24h = 0;
-            
-            // Check if we have history data
-            if (historyData.records.length > 0) {
-                const today = new Date().toISOString().split('T')[0];
-                const todayRecord = historyData.records.find(r => r.date === today);
-                if (todayRecord && todayRecord.prices && todayRecord.prices.fit) {
-                    // Use the stored value
-                    yesterdayPrice = todayRecord.prices.fit.yesterday || currentPrice;
-                    change24h = todayRecord.prices.fit.change || 0;
-                } else if (fitPrices.length >= 2) {
-                    yesterdayPrice = fitPrices[fitPrices.length - 2] || currentPrice;
-                    change24h = ((currentPrice - yesterdayPrice) / yesterdayPrice) * 100;
-                }
-            } else if (fitPrices.length >= 2) {
-                yesterdayPrice = fitPrices[fitPrices.length - 2] || currentPrice;
-                change24h = ((currentPrice - yesterdayPrice) / yesterdayPrice) * 100;
-            }
-            
-            tablePrices['fit'] = {
-                current: currentPrice,
-                price: currentPrice,
-                yesterday: yesterdayPrice,
-                change: change24h
-            };
-            hasPriceData = true;
-        } catch(e) {
-            console.error("Error fetching FIT price:", e);
-            // Use fallback
-            if (!tablePrices['fit']) {
-                tablePrices['fit'] = {
-                    current: 6.39,
-                    price: 6.39,
-                    yesterday: 6.3261,
-                    change: 1.0
-                };
-            }
-        }
-        
-        // ===== UPDATE HISTORY DATA IN MEMORY =====
-        if (hasPriceData) {
-            const today = new Date().toISOString().split('T')[0];
-            const todayPrices = {};
-            for (const token of TABLE_TOKENS) {
-                if (tablePrices[token.id]) {
-                    todayPrices[token.id] = {
-                        price: tablePrices[token.id].current,
-                        yesterday: tablePrices[token.id].yesterday,
-                        change: tablePrices[token.id].change
+            } catch(e) {
+                console.error("Error fetching FIT price:", e);
+                // Use fallback
+                if (!tablePrices['fit']) {
+                    tablePrices['fit'] = {
+                        current: 6.39,
+                        price: 6.39,
+                        yesterday: 6.3261,
+                        change: 1.0
                     };
                 }
             }
             
-            const existingIndex = historyData.records.findIndex(r => r.date === today);
-            if (existingIndex !== -1) {
-                historyData.records[existingIndex].prices = todayPrices;
-            } else {
-                historyData.records.push({ date: today, prices: todayPrices });
-                historyData.records.sort((a, b) => a.date.localeCompare(b.date));
+            // ===== UPDATE HISTORY DATA IN MEMORY =====
+            if (hasPriceData) {
+                const today = new Date().toISOString().split('T')[0];
+                const todayPrices = {};
+                for (const token of TABLE_TOKENS) {
+                    if (tablePrices[token.id]) {
+                        todayPrices[token.id] = {
+                            price: tablePrices[token.id].current,
+                            yesterday: tablePrices[token.id].yesterday,
+                            change: tablePrices[token.id].change
+                        };
+                    }
+                }
+                
+                const existingIndex = historyData.records.findIndex(r => r.date === today);
+                if (existingIndex !== -1) {
+                    historyData.records[existingIndex].prices = todayPrices;
+                } else {
+                    historyData.records.push({ date: today, prices: todayPrices });
+                    historyData.records.sort((a, b) => a.date.localeCompare(b.date));
+                }
             }
+            
+            updateHistoryDateSelect();
+            
+            if (currentHistoryDate === 'today' || !currentHistoryDate) {
+                currentHistoryDate = 'today';
+                updateTableWithHistory('today');
+            }
+            
+            document.getElementById('tableLastUpdate').innerHTML = new Date().toLocaleString();
+        } catch(e) {
+            console.error("Error fetching table prices:", e);
+            useFallbackTableData();
         }
-        
-        updateHistoryDateSelect();
-        
-        if (currentHistoryDate === 'today' || !currentHistoryDate) {
-            currentHistoryDate = 'today';
-            updateTableWithHistory('today');
-        }
-        
-        document.getElementById('tableLastUpdate').innerHTML = new Date().toLocaleString();
-    } catch(e) {
-        console.error("Error fetching table prices:", e);
-        useFallbackTableData();
     }
-}
+
     // ===== FALLBACK DATA =====
     function useFallbackTableData() {
         const fallbackData = {
