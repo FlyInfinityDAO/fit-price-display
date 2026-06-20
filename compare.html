@@ -12,6 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="lang.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -75,15 +76,30 @@
         .top-bar .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             color: #D4AF37;
             font-size: 18px;
             font-weight: bold;
             text-decoration: none;
         }
         
-        .top-bar .logo i {
-            font-size: 22px;
+        .top-bar .logo img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #D4AF37;
+        }
+        
+        .top-bar .logo span {
+            color: #D4AF37;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         
         .hamburger {
@@ -107,7 +123,118 @@
             transform: rotate(90deg);
         }
         
-        /* ===== SIDEBAR OVERLAY ===== */
+        /* ===== LANGUAGE BUTTON ===== */
+        .lang-btn {
+            background: transparent;
+            border: 1px solid rgba(0, 200, 150, 0.3);
+            color: #D4AF37;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .lang-btn:hover {
+            border-color: #00C896;
+            background: rgba(0, 200, 150, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .lang-dropdown {
+            position: fixed;
+            top: 75px;
+            right: 20px;
+            background: #0F0F0F;
+            border: 1px solid rgba(0, 200, 150, 0.3);
+            border-radius: 16px;
+            padding: 8px;
+            min-width: 160px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .lang-dropdown.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .lang-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            color: #c0d0e8;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .lang-item:hover {
+            background: rgba(0, 200, 150, 0.08);
+            color: #D4AF37;
+        }
+        
+        .lang-item.active {
+            background: rgba(0, 200, 150, 0.15);
+            color: #D4AF37;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+        }
+        
+        .lang-item .flag {
+            font-size: 18px;
+        }
+        
+        .lang-item .lang-name {
+            font-size: 13px;
+        }
+        
+        @media (max-width: 768px) {
+            .lang-dropdown {
+                top: 65px;
+                right: 10px;
+                min-width: 140px;
+            }
+            .lang-item {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            .lang-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+            .top-bar .logo span {
+                font-size: 15px;
+            }
+            .top-bar .logo img {
+                width: 28px;
+                height: 28px;
+            }
+            .hamburger {
+                width: 38px;
+                height: 38px;
+                font-size: 17px;
+            }
+        }
+        
+        /* ===== SIDEBAR ===== */
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -127,7 +254,6 @@
             visibility: visible;
         }
         
-        /* ===== SIDEBAR ===== */
         .sidebar {
             position: fixed;
             top: 0;
@@ -159,9 +285,19 @@
         }
         
         .sidebar-header .logo-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             color: #D4AF37;
             font-size: 18px;
             font-weight: bold;
+        }
+        
+        .sidebar-header .logo-text img {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid #D4AF37;
         }
         
         .sidebar-header .close-btn {
@@ -375,18 +511,6 @@
             color: #0F0F0F;
         }
         
-        .footer {
-            text-align: center;
-            font-size: 10px;
-            color: #666;
-            margin-top: 20px;
-        }
-        
-        .footer a {
-            color: #00C896;
-            text-decoration: none;
-        }
-        
         .refresh-btn {
             background: transparent;
             border: 1px solid #00C896;
@@ -478,6 +602,45 @@
             margin-top: 10px;
         }
         
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            margin-top: 30px;
+            border-top: 1px solid rgba(0, 200, 150, 0.15);
+            padding-top: 20px;
+        }
+        
+        .footer a {
+            color: #00C896;
+            text-decoration: none;
+        }
+        
+        .footer .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .footer .footer-links span {
+            color: #444;
+        }
+        
+        .footer .footer-tagline {
+            color: #888;
+            font-size: 11px;
+            margin: 0;
+            text-align: center;
+        }
+        
+        .footer .footer-tagline .gold {
+            color: #D4AF37;
+        }
+        
         @media (max-width: 768px) {
             .chart-container {
                 height: 400px;
@@ -500,9 +663,6 @@
                 width: 85vw;
                 right: -85vw;
             }
-            .top-bar .logo {
-                font-size: 15px;
-            }
         }
     </style>
 </head>
@@ -513,11 +673,13 @@
     <div class="top-bar">
         <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
             <img src="logo.png" alt="Fly Infinity DAO" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37;">
-            <span style="color: #D4AF37; font-size: 18px; font-weight: bold;">Fly Infinity DAO</span>
+            <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
         </a>
-        <button class="hamburger" id="hamburgerBtn">
-            <i class="fas fa-bars"></i>
-        </button>
+        <div class="top-bar-right">
+            <button class="hamburger" id="hamburgerBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
     </div>
 
     <!-- ===== SIDEBAR OVERLAY ===== -->
@@ -528,34 +690,34 @@
         <div class="sidebar-header">
             <span class="logo-text" style="display: flex; align-items: center; gap: 10px;">
                 <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
-                <span style="color: #D4AF37; font-size: 18px; font-weight: bold;">Fly Infinity DAO</span>
+                <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
             </span>
             <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
         </div>
         
         <div class="sidebar-menu">
-            <a href="index.html">
+            <a href="index.html" data-i18n="nav.dashboard">
                 <i class="fas fa-home"></i> Dashboard
             </a>
-            <a href="compare.html" class="active">
+            <a href="compare.html" class="active" data-i18n="nav.comparison">
                 <i class="fas fa-chart-line"></i> Comparison
             </a>
-            <a href="dapp.html">
+            <a href="dapp.html" data-i18n="nav.dapp">
                 <i class="fas fa-charging-station"></i> DApp
             </a>
-            <a href="transactions.html">
+            <a href="transactions.html" data-i18n="nav.transactions">
                 <i class="fas fa-history"></i> Transactions
             </a>
-            <a href="privacy.html">
+            <a href="privacy.html" data-i18n="nav.privacy">
                 <i class="fas fa-shield-alt"></i> Privacy
             </a>
-            <a href="warnings.html">
+            <a href="warnings.html" data-i18n="nav.warnings">
                 <i class="fas fa-exclamation-triangle"></i> Warnings
             </a>
-            <a href="faq.html">
+            <a href="faq.html" data-i18n="nav.faq">
                 <i class="fas fa-question-circle"></i> FAQ
             </a>
-            <a href="whitepaper.html">
+            <a href="whitepaper.html" data-i18n="nav.whitepaper">
                 <i class="fas fa-file-pdf"></i> White Paper
             </a>
         </div>
@@ -569,9 +731,9 @@
     <!-- ===== PRICE TABLE WITH HISTORY ===== -->
     <div class="card">
         <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;">
-            <i class="fas fa-table"></i> Live Price Comparison Table
+            <i class="fas fa-table"></i> <span data-i18n="compare.title">Live Price Comparison Table</span>
         </div>
-        <p style="color:#888; text-align:center; font-size:11px; margin-bottom:20px;">
+        <p style="color:#888; text-align:center; font-size:11px; margin-bottom:20px;" data-i18n="compare.subtitle">
             Real-time price changes over the last 24 hours
         </p>
         
@@ -579,15 +741,15 @@
             <table id="priceTable" style="width: 100%; border-collapse: collapse; font-size: 13px;">
                 <thead>
                     <tr style="background: #1a1a1a; border-bottom: 2px solid rgba(0, 200, 150, 0.3);">
-                        <th style="padding: 12px 15px; text-align: left; color: #D4AF37; font-weight: bold;">Coin</th>
-                        <th style="padding: 12px 15px; text-align: right; color: #888; font-weight: bold;">Price (24h Ago)</th>
-                        <th style="padding: 12px 15px; text-align: right; color: #888; font-weight: bold;">Current Price</th>
-                        <th style="padding: 12px 15px; text-align: right; color: #888; font-weight: bold;">24h Change</th>
+                        <th style="padding: 12px 15px; text-align: left; color: #D4AF37; font-weight: bold;" data-i18n="compare.coin">Coin</th>
+                        <th style="padding: 12px 15px; text-align: right; color: #888; font-weight: bold;" data-i18n="compare.price24h">Price (24h Ago)</th>
+                        <th style="padding: 12px 15px; text-align: right; color: #888; font-weight: bold;" data-i18n="compare.current">Current Price</th>
+                        <th style="padding: 12px 15px; text-align: right; color: #888; font-weight: bold;" data-i18n="compare.change">24h Change</th>
                     </tr>
                 </thead>
                 <tbody id="priceTableBody">
                     <tr>
-                        <td colspan="4" style="text-align: center; padding: 30px; color: #888;">Loading data...</td>
+                        <td colspan="4" style="text-align: center; padding: 30px; color: #888;" data-i18n="compare.loading">Loading data...</td>
                     </tr>
                 </tbody>
             </table>
@@ -595,33 +757,33 @@
         
         <!-- ===== HISTORY CONTROLS ===== -->
         <div class="history-controls">
-            <button id="historyTodayBtn" class="active">Today</button>
-            <button id="historyYesterdayBtn">Yesterday</button>
-            <button id="history7daysBtn">7 Days Ago</button>
-            <button id="history14daysBtn">14 Days Ago</button>
-            <button id="history30daysBtn">30 Days Ago</button>
+            <button id="historyTodayBtn" class="active" data-i18n="compare.today">Today</button>
+            <button id="historyYesterdayBtn" data-i18n="compare.yesterday">Yesterday</button>
+            <button id="history7daysBtn" data-i18n="compare.days7">7 Days Ago</button>
+            <button id="history14daysBtn" data-i18n="compare.days14">14 Days Ago</button>
+            <button id="history30daysBtn" data-i18n="compare.days30">30 Days Ago</button>
             <select id="historyDateSelect">
-                <option value="">Select a date...</option>
+                <option value="" data-i18n="compare.selectDate">Select a date...</option>
             </select>
-            <button id="historyGoBtn">Go</button>
+            <button id="historyGoBtn" data-i18n="compare.go">Go</button>
         </div>
         
-        <div class="history-date-display" id="historyDateDisplay">Showing: Today (Live Data)</div>
+        <div class="history-date-display" id="historyDateDisplay" data-i18n="compare.showingToday">Showing: Today (Live Data)</div>
         
         <div style="text-align: center; margin-top: 15px;">
             <button id="refreshTableBtn" class="refresh-btn" style="padding: 6px 20px;">
-                <i class="fas fa-sync-alt"></i> Refresh Table
+                <i class="fas fa-sync-alt"></i> <span data-i18n="btn.refresh">Refresh Table</span>
             </button>
         </div>
         
         <div style="color: #888; font-size: 9px; text-align: center; margin-top: 10px;">
-            Last updated: <span id="tableLastUpdate">—</span>
+            <span data-i18n="compare.lastUpdated">Last updated:</span> <span id="tableLastUpdate">—</span>
         </div>
     </div>
 
     <!-- Description Card -->
     <div class="card" style="text-align: center; padding: 20px; margin-bottom: 25px;">
-        <p style="color: #D4AF37; font-size: 14px; line-height: 1.6; max-width: 800px; margin: 0 auto;">
+        <p style="color: #D4AF37; font-size: 14px; line-height: 1.6; max-width: 800px; margin: 0 auto;" data-i18n="compare.description">
             <i class="fas fa-chart-line" style="color: #D4AF37; margin-right: 8px;"></i>
             In this page, you can see the <strong style="color: #D4AF37;">constantly rising (non-diminishing) chart of FIT</strong> 
             alongside the <strong style="color: #D4AF37;">volatile charts of top cryptocurrencies</strong>.
@@ -647,7 +809,7 @@
             <button class="time-btn" data-days="90">3M</button>
             <button class="time-btn" data-days="180">6M</button>
             <button class="time-btn active" data-days="365">1Y</button>
-            <button class="time-btn" data-days="max">All</button>
+            <button class="time-btn" data-days="max"><span data-i18n="compare.all">All</span></button>
         </div>
         
         <div class="chart-container" id="chartContainer">
@@ -655,34 +817,34 @@
         </div>
         
         <div class="cache-info" id="cacheInfo">
-            <i class="fas fa-database"></i> Loading cache data...
+            <i class="fas fa-database"></i> <span data-i18n="compare.loadingCache">Loading cache data...</span>
         </div>
         
         <div style="display: flex; justify-content: center; margin-top: 15px;">
-            <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh Data</button>
+            <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> <span data-i18n="btn.refresh">Refresh Data</span></button>
         </div>
     </div>
 
-    <div class="footer" style="text-align: center; font-size: 10px; color: #666; margin-top: 30px; border-top: 1px solid rgba(0, 200, 150, 0.15); padding-top: 20px;">
-        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; font-size: 12px; margin-bottom: 12px;">
-            <a href="index.html" style="color: #00C896; text-decoration: none;">Dashboard</a>
-            <span style="color: #444;">|</span>
-            <a href="compare.html" style="color: #00C896; text-decoration: none;">Comparison</a>
-            <span style="color: #444;">|</span>
-            <a href="dapp.html" style="color: #00C896; text-decoration: none;">DApp</a>
-            <span style="color: #444;">|</span>
-            <a href="transactions.html" style="color: #00C896; text-decoration: none;">Transactions</a>
-            <span style="color: #444;">|</span>
-            <a href="privacy.html" style="color: #00C896; text-decoration: none;">Privacy</a>
-            <span style="color: #444;">|</span>
-            <a href="warnings.html" style="color: #00C896; text-decoration: none;">Warnings</a>
-            <span style="color: #444;">|</span>
-            <a href="faq.html" style="color: #00C896; text-decoration: none;">FAQ</a>
-            <span style="color: #444;">|</span>
-            <a href="whitepaper.html" style="color: #00C896; text-decoration: none;">White Paper</a>
+    <div class="footer">
+        <div class="footer-links">
+            <a href="index.html" data-i18n="nav.dashboard">Dashboard</a>
+            <span>|</span>
+            <a href="compare.html" data-i18n="nav.comparison">Comparison</a>
+            <span>|</span>
+            <a href="dapp.html" data-i18n="nav.dapp">DApp</a>
+            <span>|</span>
+            <a href="transactions.html" data-i18n="nav.transactions">Transactions</a>
+            <span>|</span>
+            <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+            <span>|</span>
+            <a href="warnings.html" data-i18n="nav.warnings">Warnings</a>
+            <span>|</span>
+            <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+            <span>|</span>
+            <a href="whitepaper.html" data-i18n="nav.whitepaper">White Paper</a>
         </div>
-        <p style="color: #888; font-size: 11px; margin: 0; text-align: center;">
-            Fly Infinity — <span style="color: #D4AF37;">Decentralized. Transparent. Forever Rising.</span>
+        <p class="footer-tagline" data-i18n="footer.tagline">
+            Fly Infinity — <span class="gold">Decentralized. Transparent. Forever Rising.</span>
         </p>
     </div>
 
@@ -803,7 +965,7 @@
         const dates = getHistoryDates();
         const select = document.getElementById('historyDateSelect');
         const currentValue = select.value;
-        select.innerHTML = '<option value="">Select a date...</option>';
+        select.innerHTML = '<option value="" data-i18n="compare.selectDate">Select a date...</option>';
         dates.forEach(date => {
             const option = document.createElement('option');
             option.value = date;
@@ -835,14 +997,14 @@
                 }
             }
             if (!hasValidData) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 30px; color: #888;">Loading today's data... Please wait or click Refresh</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 30px; color: #888;" data-i18n="compare.loadingToday">Loading today's data... Please wait or click Refresh</td></tr>`;
                 return;
             }
             priceData = tablePrices;
         } else {
             priceData = getPricesForDate(date);
             if (!priceData || Object.keys(priceData).length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 30px; color: #888;">No data available for this date</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 30px; color: #888;" data-i18n="compare.noData">No data available for this date</td></tr>`;
                 return;
             }
         }
@@ -883,7 +1045,7 @@
         }
         
         if (!hasData) {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 30px; color: #888;">No data available for this date</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 30px; color: #888;" data-i18n="compare.noData">No data available for this date</td></tr>`;
         }
     }
 
