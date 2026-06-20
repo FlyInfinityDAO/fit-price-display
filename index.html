@@ -436,6 +436,30 @@
             text-align: center;
         }
         
+        /* ===== CHART CARD ===== */
+        .chart-card {
+            min-height: 480px;
+            padding: 20px 20px 15px 20px;
+        }
+        
+        .chart-card canvas {
+            width: 100% !important;
+            height: auto !important;
+            max-height: 420px;
+            min-height: 350px;
+        }
+        
+        @media (max-width: 768px) {
+            .chart-card {
+                min-height: 320px;
+                padding: 12px;
+            }
+            .chart-card canvas {
+                min-height: 250px;
+                max-height: 320px;
+            }
+        }
+        
         @media (max-width: 800px) { 
             .top-grid { grid-template-columns: 1fr; } 
             .live-price { font-size: 36px; }
@@ -552,11 +576,11 @@
         <a href="dapp.html" class="action-btn dapp-btn"><i class="fas fa-rocket"></i> Buy Ownership Shares &amp; FIT</a>
     </div>
 
-    <!-- Chart -->
-    <div class="card" style="min-height: 550px;">
-    <canvas id="priceChart" width="800" height="500" style="max-width:100%; height:auto; min-height:450px;"></canvas>
-    <p style="color:#888; text-align:center; margin-top:10px; font-size:11px;">📈 Daily price chart ($ per FIT)</p>
-</div>
+    <!-- ===== CHART ===== -->
+    <div class="card chart-card">
+        <canvas id="priceChart"></canvas>
+        <p style="color:#888; text-align:center; margin-top:8px; font-size:11px;">📈 Daily price chart ($ per FIT)</p>
+    </div>
 
     <!-- Historical Price Changes -->
     <div class="card">
@@ -858,19 +882,26 @@
         
     </div>
 
-    <div class="footer">
-        <div style="display: flex; justify-content: center; gap: 12px; margin-top: 10px; flex-wrap: wrap; font-size: 12px;">
-            <a href="index.html" class="action-btn" style="border-color: #00C896; color: #00C896; padding: 6px 14px; font-size: 11px; border-radius: 30px;"><i class="fas fa-home"></i> Dashboard</a>
-            <a href="compare.html" class="action-btn" style="border-color: #00C896; color: #00C896; padding: 6px 14px; font-size: 11px; border-radius: 30px;"><i class="fas fa-chart-line"></i> Comparison</a>
-            <a href="dapp.html" class="action-btn" style="border-color: #00C896; color: #00C896; padding: 6px 14px; font-size: 11px; border-radius: 30px;"><i class="fas fa-charging-station"></i> DApp</a>
-            <a href="transactions.html" class="action-btn" style="border-color: #00C896; color: #00C896; padding: 6px 14px; font-size: 11px; border-radius: 30px;"><i class="fas fa-history"></i> Transactions</a>
-            <a href="privacy.html" class="action-btn" style="border-color: #00C896; color: #00C896; padding: 6px 14px; font-size: 11px; border-radius: 30px;"><i class="fas fa-shield-alt"></i> Privacy</a>
-            <a href="warnings.html" class="action-btn" style="border-color: #00C896; color: #00C896; padding: 6px 14px; font-size: 11px; border-radius: 30px;"><i class="fas fa-exclamation-triangle"></i> Warnings</a>
-            <a href="faq.html" class="action-btn" style="border-color: #00C896; color: #00C896; padding: 6px 14px; font-size: 11px; border-radius: 30px;"><i class="fas fa-question-circle"></i> FAQ</a>
-            <a href="whitepaper.html" class="action-btn" style="border-color: #00C896; color: #00C896; padding: 6px 14px; font-size: 11px; border-radius: 30px;"><i class="fas fa-file-pdf"></i> White Paper</a>
+    <div class="footer" style="text-align: center; font-size: 10px; color: #666; margin-top: 30px; border-top: 1px solid rgba(0, 200, 150, 0.15); padding-top: 20px;">
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; font-size: 12px; margin-bottom: 12px;">
+            <a href="index.html" style="color: #00C896; text-decoration: none;">Dashboard</a>
+            <span style="color: #444;">|</span>
+            <a href="compare.html" style="color: #00C896; text-decoration: none;">Comparison</a>
+            <span style="color: #444;">|</span>
+            <a href="dapp.html" style="color: #00C896; text-decoration: none;">DApp</a>
+            <span style="color: #444;">|</span>
+            <a href="transactions.html" style="color: #00C896; text-decoration: none;">Transactions</a>
+            <span style="color: #444;">|</span>
+            <a href="privacy.html" style="color: #00C896; text-decoration: none;">Privacy</a>
+            <span style="color: #444;">|</span>
+            <a href="warnings.html" style="color: #00C896; text-decoration: none;">Warnings</a>
+            <span style="color: #444;">|</span>
+            <a href="faq.html" style="color: #00C896; text-decoration: none;">FAQ</a>
+            <span style="color: #444;">|</span>
+            <a href="whitepaper.html" style="color: #00C896; text-decoration: none;">White Paper</a>
         </div>
-        <p style="color: #D4AF37; font-size: 11px; margin-top: 15px; text-align: center; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.6;">
-            Fly Infinity DAO — The world's decentralized cryptocurrency with a non-manipulable price and the first fully decentralized investment bank.
+        <p style="color: #888; font-size: 11px; margin: 0; text-align: center;">
+            Fly Infinity — <span style="color: #D4AF37;">Decentralized. Transparent. Forever Rising.</span>
         </p>
     </div>
 
@@ -977,10 +1008,104 @@
         const ctx = document.getElementById('priceChart').getContext('2d');
         if (priceChart) priceChart.destroy();
         if (chartLabels.length === 0) return;
+        
+        // تنظیم font برای خوانایی بهتر
+        Chart.defaults.font.size = 11;
+        Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+        
         priceChart = new Chart(ctx, {
             type: 'line',
-            data: { labels: chartLabels, datasets: [{ label: 'FIT Price ($)', data: chartPrices, borderColor: '#D4AF37', backgroundColor: 'rgba(212,175,55,0.1)', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 0 }] },
-            options: { responsive: true, maintainAspectRatio: true, plugins: { tooltip: { callbacks: { label: (ctx) => `$${ctx.raw.toFixed(6)}` } }, legend: { labels: { color: '#00C896' } } }, scales: { x: { ticks: { color: '#888', maxRotation: 45, autoSkip: true, maxTicksLimit: 10 } }, y: { ticks: { color: '#888', callback: (val) => '$' + val.toFixed(2) } } } }
+            data: { 
+                labels: chartLabels, 
+                datasets: [{ 
+                    label: 'FIT Price ($)', 
+                    data: chartPrices, 
+                    borderColor: '#D4AF37', 
+                    backgroundColor: 'rgba(212,175,55,0.06)', 
+                    borderWidth: 2.5, 
+                    fill: true, 
+                    tension: 0.3, 
+                    pointRadius: 1.5,
+                    pointBackgroundColor: '#D4AF37',
+                    pointBorderColor: '#D4AF37',
+                    pointBorderWidth: 0.5
+                }] 
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        top: 10,
+                        bottom: 5,
+                        left: 0,
+                        right: 5
+                    }
+                },
+                plugins: { 
+                    tooltip: { 
+                        callbacks: { 
+                            label: (ctx) => `$${ctx.raw.toFixed(6)}` 
+                        },
+                        backgroundColor: 'rgba(15,15,15,0.92)',
+                        titleColor: '#D4AF37',
+                        bodyColor: '#00C896',
+                        borderColor: 'rgba(0,200,150,0.25)',
+                        borderWidth: 1,
+                        cornerRadius: 8,
+                        padding: 10
+                    }, 
+                    legend: { 
+                        labels: { 
+                            color: '#00C896',
+                            font: { size: 12, weight: '500' },
+                            boxWidth: 12,
+                            padding: 12
+                        } 
+                    } 
+                }, 
+                scales: { 
+                    x: { 
+                        ticks: { 
+                            color: '#888', 
+                            maxRotation: 35, 
+                            autoSkip: true, 
+                            maxTicksLimit: 8,
+                            font: { size: 9, weight: '400' }
+                        },
+                        grid: { 
+                            display: false,
+                            drawTicks: false
+                        }
+                    }, 
+                    y: { 
+                        ticks: { 
+                            color: '#999', 
+                            callback: (val) => {
+                                if (val >= 10) return '$' + val.toFixed(1);
+                                if (val >= 1) return '$' + val.toFixed(2);
+                                return '$' + val.toFixed(3);
+                            },
+                            font: { size: 9, weight: '400' },
+                            stepSize: 0.5
+                        },
+                        grid: { 
+                            color: 'rgba(255,255,255,0.035)',
+                            drawTicks: false
+                        },
+                        beginAtZero: true
+                    } 
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
+                elements: {
+                    line: {
+                        borderJoinStyle: 'round'
+                    }
+                }
+            }
         });
     }
     
