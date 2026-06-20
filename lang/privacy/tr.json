@@ -1,0 +1,61 @@
+{
+  "meta": {
+    "title": "Fly Infinity - Gizlilik Politikası",
+    "description": "Fly Infinity Token Gizlilik Politikası ve Merkeziyetsiz Yapı"
+  },
+  "header": {
+    "title": "Fly Infinity DAO"
+  },
+  "nav": {
+    "dashboard": "Gösterge Paneli",
+    "comparison": "Karşılaştırma",
+    "dapp": "DApp",
+    "transactions": "İşlemler",
+    "privacy": "Gizlilik",
+    "warnings": "Uyarılar",
+    "faq": "SSS",
+    "whitepaper": "Beyaz Bülten"
+  },
+  "privacy": {
+    "title": "Gizlilik Politikası ve Merkeziyetsiz Yapı",
+    "badge1": "Azalmayan",
+    "badge2": "Sürekli Büyüme",
+    "badge3": "DAO Yönetişimi",
+    "badge4": "Manipüle Edilemeyen Fiyat",
+    "p1": "Fly Infinity Token (FIT), BNB Smart Chain ağında çalışan tamamen merkeziyetsiz bir projedir. Tüm proje kuralları ve mekanizmaları şeffaf akıllı sözleşmeler aracılığıyla uygulanır ve hiçbir merkezi otorite, geliştirici veya üçüncü taraf işleyişini değiştiremez, durduramaz veya manipüle edemez.",
+    "p2": "Bu projenin fiyatlandırma yapısı, Bonding Curve (Bağlanma Eğrisi) temel alınarak tasarlanmıştır. Bu, FIT token fiyatının yalnızca Fiyat = DAI Rezervi ÷ Toplam Arz formülü ile belirlendiği anlamına gelir. Bu şeffaf ve değişmez matematiksel mekanizma, balinalar, piyasa kartelleri veya merkezi kuruluşlar tarafından fiyat manipülasyonu olasılığını tamamen ortadan kaldırır.",
+    "sub1": "🧠 Azalmayan Yapı ve Sürekli Büyüme",
+    "p3": "Fly Infinity Token'ın benzersiz özelliklerinden biri, azalmayan doğasıdır. Bu, temel token fiyatının zamanla asla düşmediği anlamına gelir. Olumsuz dalgalanmaların yaygın olduğu geleneksel piyasaların aksine, Bonding Curve yapısı, token fiyatının her zaman yukarı yönlü ve büyüyen bir yörünge izlemesini sağlar. Her alım ve satım işlemi, DAI rezerv birikimini artırarak temel token fiyatını kalıcı olarak yükseltir.",
+    "sub2": "🏛️ Merkeziyetsiz Yönetişim (DAO)",
+    "p4": "Gelecekteki gelişmeler, kaynak tahsisi ve potansiyel yükseltmeler dahil olmak üzere tüm önemli proje kararları, yalnızca Merkeziyetsiz Otonom Organizasyon (DAO) oylama sistemi aracılığıyla alınır. Her FIT token sahibi, ağdaki payları oranında karar alma sürecine katılabilir. Hiçbir birey veya grup, projenin yönünü değiştirme konusunda tek taraflı yetkiye sahip değildir. Bu yapı, projenin her zaman topluluğun çıkarları doğrultusunda hareket etmesini sağlar.",
+    "sub3": "🔒 Gizlilik ve Kullanıcı Güvenliği",
+    "p5": "Merkeziyetsiz ve güvensiz bir proje olarak Fly Infinity Token, kullanıcılarından herhangi bir kişisel bilgi toplamaz, saklamaz veya işlemez. Tüm kullanıcı etkileşimleri, merkeziyetsiz cüzdanlar (MetaMask, Trust Wallet, TokenPocket gibi) aracılığıyla doğrudan blockchain üzerinde gerçekleşir. Bu modelde:",
+    "li1": "✅ Hiçbir kayıt formu yoktur.",
+    "li2": "✅ Hiçbir e-posta veya kişisel bilgi toplanmaz.",
+    "li3": "✅ Hiçbir merkezi sunucu veri saklamaz.",
+    "li4": "✅ Tüm işlemler blockchain üzerinde şeffaf ve denetlenebilirdir.",
+    "li5": "✅ Kullanıcılar varlıklarının tam sahipliğini korur.",
+    "sub4": "📊 Balina Manipülasyonu Yok",
+    "p6": "Geleneksel piyasalarda balinalar ve büyük oyuncular, yüksek hacimli alım satım yoluyla fiyatları manipüle edebilir. Ancak FIT projesinin Bonding Curve yapısında bu, aşağıdaki nedenlerle imkansızdır:",
+    "li6": "🔹 Matematiksel ve şeffaf fiyatlandırma: Fiyat doğrudan rezerv-arz oranından hesaplanır.",
+    "li7": "🔹 Emir defteri yok: Manipüle edilecek bir emir defteri yoktur.",
+    "li8": "🔹 Birleşik likidite: Tüm likidite tek bir havuzda bulunur ve parçalanamaz.",
+    "li9": "🔹 Doğrudan alım ve satım: Kullanıcılar doğrudan akıllı sözleşme ile işlem yapar.",
+    "li10": "🔹 Şeffaf işlem ücretleri: Ücretler açıkça alım için %3 ve satım için %6 olarak belirlenmiştir.",
+    "sub5": "💰 Ekonomik Şeffaflık",
+    "p7": "Aşağıdakiler dahil tüm proje ekonomik bilgileri:",
+    "li11": "💰 Gerçek zamanlı token fiyatı",
+    "li12": "🪙 Toplam dolaşımdaki arz",
+    "li13": "🏦 Sözleşmedeki DAI rezervi",
+    "li14": "📈 Günlük fiyat geçmişi",
+    "li15": "👥 Sahip dağılımı",
+    "li16": "📊 İşlem hacmi",
+    "p8": "gerçek zamanlı ve şeffaf bir şekilde halka açıktır ve tümü akıllı sözleşme veya blockchain kaşifleri aracılığıyla doğrulanabilir. Hiçbir veri kapalı kapılar ardında tutulmaz.",
+    "sub6": "⚖️ Sorumluluk Sınırlaması",
+    "p9": "Merkeziyetsiz ve açık kaynaklı bir proje olarak Fly Infinity Token, kullanıcıların işlem kararları, cüzdan erişim kaybı, işlem yürütmedeki kişisel hataları veya kullanıcıların kişisel altyapısındaki güvenlik açıkları nedeniyle hiçbir sorumluluk kabul etmez. Kullanıcılar, blockchain teknolojisinin doğasında bulunan riskleri bilerek ve tamamen kabul ederek projeye girerler.",
+    "lastUpdated": "Son Güncelleme: Haziran 2026"
+  },
+  "footer": {
+    "tagline": "Fly Infinity — Merkeziyetsiz. Şeffaf. Sonsuza Yükselen."
+  }
+}
