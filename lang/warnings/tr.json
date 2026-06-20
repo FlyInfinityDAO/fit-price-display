@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "title": "Fly Infinity - Önemli Uyarılar",
+    "description": "Fly Infinity Token kullanıcıları için önemli uyarılar"
+  },
+  "header": {
+    "title": "Fly Infinity DAO"
+  },
+  "nav": {
+    "dashboard": "Gösterge Paneli",
+    "comparison": "Karşılaştırma",
+    "dapp": "DApp",
+    "transactions": "İşlemler",
+    "privacy": "Gizlilik",
+    "warnings": "Uyarılar",
+    "faq": "SSS",
+    "whitepaper": "Beyaz Bülten"
+  },
+  "warnings": {
+    "wallet": {
+      "title": "⚠️ Cüzdanınızı Değiştirmeden veya Silmeden Önce",
+      "text": "Bir cüzdan değiştirme işlemi yapmayı düşünüyorsanız, önce token'larınızı satmalısınız. Aksi takdirde, token'larınız transfer edilebilirlik özelliğini kaybeder ve daha sonra onları satamazsınız.",
+      "solutionTitle": "🔧 Çözüm:",
+      "solutionText": "Önce, tüm FIT token'larınızı satın → Ardından cüzdanınızı değiştirin → Son olarak, yeni cüzdanınızda tekrar FIT satın alın."
+    },
+    "recovery": {
+      "title": "⚠️ Kurtarma İfadenizi Asla Paylaşmayın",
+      "text": "Kurtarma ifadeleri (seed ifadeleri) değiştirilemez veya sıfırlanamaz. Onları güvende tutun!",
+      "li1": "✅ Bunları fiziksel olarak kağıda yazın",
+      "li2": "✅ Birden fazla kopyayı güvenli, ayrı konumlarda saklayın",
+      "li3": "✅ Asla dijital olarak saklamayın (ekran görüntüsü, bulut, e-posta)",
+      "li4": "❌ Asla \"destek\" ekipleri dahil kimseyle paylaşmayın"
+    },
+    "blockchain": {
+      "title": "⚠️ Blockchain İşlemleri Geri Alınamaz",
+      "text": "Blockchain, merkezi otoritesi olmayan merkeziyetsiz bir sistemdir. Bir işlem onaylandıktan sonra, blockchain üzerinde kalıcı olarak kaydedilir ve hiç kimse tarafından geri alınamaz, değiştirilemez veya silinemez.",
+      "li1": "🔒 Göndermeden önce cüzdan adreslerini her zaman iki kez kontrol edin",
+      "li2": "🔒 İşlem tutarlarını dikkatlice doğrulayın",
+      "li3": "🔒 Dolandırıcılık ve kimlik avı girişimlerine karşı dikkatli olun",
+      "li4": "🔒 Hiç kimse işleminizi \"geri alamaz\" veya \"iptal edemez\""
+    }
+  },
+  "footer": {
+    "tagline": "Fly Infinity — Merkeziyetsiz. Şeffaf. Sonsuza Yükselen."
+  }
+}
