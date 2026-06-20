@@ -21,182 +21,94 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Fetch and save price history
+      - name: Fetch and save ALL prices
         run: |
+          curl -s "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,binancecoin,ripple,solana,cardano,dogecoin,tron,zcash,stellar,pancakeswap-token,the-open-network,shiba-inu,official-donald-trump&vs_currencies=usd&include_24hr_change=true" > prices.json
+          
           node -e "
             const fs = require('fs');
-            const https = require('https');
+            const cryptoPrices = JSON.parse(fs.readFileSync('prices.json', 'utf8'));
             const historyFile = 'price-history-table.json';
             
-            console.log('🚀 STARTING PRICE HISTORY SAVE');
-            console.log('================================');
-            
-            // ===== LOAD EXISTING HISTORY =====
             let history = { records: [] };
             if (fs.existsSync(historyFile)) {
-              try {
-                const raw = fs.readFileSync(historyFile, 'utf8');
-                history = JSON.parse(raw);
-                console.log('📂 Loaded existing history:', history.records.length, 'records');
-              } catch(e) {
-                console.log('⚠️ Could not parse existing file, starting fresh');
-              }
+              try { history = JSON.parse(fs.readFileSync(historyFile, 'utf8')); } catch(e) {}
             }
             
             const today = new Date().toISOString().split('T')[0];
-            console.log('📅 Today:', today);
             
-            // ===== FETCH PRICES FROM COINGECKO =====
-            function fetchJSON(url) {
-              return new Promise((resolve, reject) => {
-                https.get(url, (res) => {
-                  let data = '';
-                  res.on('data', chunk => data += chunk);
-                  res.on('end', () => {
-                    try { resolve(JSON.parse(data)); } catch(e) { reject(e); }
-                  });
-                }).on('error', reject);
-              });
-            }
-            
-            // ===== ALL TOKENS =====
-            const tokenConfig = {
-              'bitcoin': { id: 'bitcoin', name: 'Bitcoin' },
-              'ethereum': { id: 'ethereum', name: 'Ethereum' },
-              'binancecoin': { id: 'binancecoin', name: 'BNB' },
-              'ripple': { id: 'ripple', name: 'XRP' },
-              'solana': { id: 'solana', name: 'Solana' },
-              'cardano': { id: 'cardano', name: 'Cardano' },
-              'dogecoin': { id: 'dogecoin', name: 'Dogecoin' },
-              'tron': { id: 'tron', name: 'TRON' },
-              'zcash': { id: 'zcash', name: 'Zcash' },
-              'stellar': { id: 'stellar', name: 'Stellar' },
-              'pancakeswap-token': { id: 'pancakeswap', name: 'PancakeSwap' },
-              'the-open-network': { id: 'toncoin', name: 'Toncoin' },
-              'shiba-inu': { id: 'shibainu', name: 'Shiba Inu' },
-              'official-donald-trump': { id: 'trump', name: 'Trump' }
+            // Map CoinGecko IDs to our IDs
+            const map = {
+              'bitcoin': 'bitcoin',
+              'ethereum': 'ethereum',
+              'binancecoin': 'binancecoin',
+              'ripple': 'ripple',
+              'solana': 'solana',
+              'cardano': 'cardano',
+              'dogecoin': 'dogecoin',
+              'tron': 'tron',
+              'zcash': 'zcash',
+              'stellar': 'stellar',
+              'pancakeswap-token': 'pancakeswap',
+              'the-open-network': 'toncoin',
+              'shiba-inu': 'shibainu',
+              'official-donald-trump': 'trump'
             };
             
-            const cgIds = Object.keys(tokenConfig);
+            const prices = {};
             
-            async function getCryptoPrices() {
-              const url = 'https://api.coingecko.com/api/v3/simple/price?ids=' + cgIds.join(',') + '&vs_currencies=usd&include_24hr_change=true';
-              
-              try {
-                console.log('📡 Fetching from CoinGecko...');
-                const data = await fetchJSON(url);
-                const prices = {};
-                let count = 0;
-                
-                for (const cgId of cgIds) {
-                  const ourId = tokenConfig[cgId].id;
-                  if (data[cgId]) {
-                    const current = data[cgId].usd;
-                    const change = data[cgId].usd_24h_change || 0;
-                    const yesterday = current / (1 + change / 100);
-                    prices[ourId] = { price: current, yesterday: yesterday, change: change };
-                    console.log('  ✅', ourId, ':', current.toFixed(4), '(', change.toFixed(2), '%)');
-                    count++;
-                  } else {
-                    console.log('  ⚠️', ourId, ': No data');
-                  }
-                }
-                console.log('📊 Fetched', count, 'tokens');
-                return prices;
-              } catch(e) {
-                console.error('❌ CoinGecko error:', e.message);
-                return null;
+            // Add all crypto prices
+            for (const [cgId, ourId] of Object.entries(map)) {
+              if (cryptoPrices[cgId]) {
+                const current = cryptoPrices[cgId].usd;
+                const change = cryptoPrices[cgId].usd_24h_change || 0;
+                const yesterday = current / (1 + change / 100);
+                prices[ourId] = { price: current, yesterday: yesterday, change: change };
+                console.log('✅', ourId, ':', current);
               }
             }
             
-            async function getFITPrice() {
-              // Try to get from previous records
-              let price = 6.39;
-              let yesterday = 6.3261;
-              let change = 1.0;
-              
-              if (history.records.length > 0) {
-                for (let i = history.records.length - 1; i >= 0; i--) {
-                  const rec = history.records[i];
-                  if (rec.prices && rec.prices.fit && rec.prices.fit.price) {
-                    const prev = rec.prices.fit.price;
-                    price = prev * 1.001;
-                    yesterday = prev;
-                    change = ((price - yesterday) / yesterday) * 100;
-                    console.log('  📊 FIT estimated from previous:', price.toFixed(4));
-                    break;
-                  }
+            // Add FIT (use previous or default)
+            let fitPrice = 6.39;
+            let fitYesterday = 6.3261;
+            let fitChange = 1.0;
+            
+            if (history.records.length > 0) {
+              for (let i = history.records.length - 1; i >= 0; i--) {
+                const rec = history.records[i];
+                if (rec.prices && rec.prices.fit && rec.prices.fit.price) {
+                  const prev = rec.prices.fit.price;
+                  fitPrice = prev * 1.001;
+                  fitYesterday = prev;
+                  fitChange = ((fitPrice - fitYesterday) / fitYesterday) * 100;
+                  break;
                 }
               }
-              
-              return { price, yesterday, change };
             }
             
-            (async function() {
-              // ===== GET ALL PRICES =====
-              const cryptoPrices = await getCryptoPrices();
-              const fitPrice = await getFITPrice();
-              
-              if (!cryptoPrices) {
-                console.log('❌ Failed to fetch prices, skipping update');
-                process.exit(0);
-              }
-              
-              // ===== BUILD FINAL PRICES OBJECT =====
-              const allPrices = {};
-              
-              // Add FIT
-              allPrices['fit'] = {
-                price: fitPrice.price,
-                yesterday: fitPrice.yesterday,
-                change: fitPrice.change
-              };
-              
-              // Add all crypto
-              for (const [key, value] of Object.entries(cryptoPrices)) {
-                allPrices[key] = value;
-              }
-              
-              console.log('📊 Total tokens saved:', Object.keys(allPrices).length);
-              
-              // ===== UPDATE HISTORY =====
-              const existingIndex = history.records.findIndex(r => r.date === today);
-              
-              if (existingIndex !== -1) {
-                history.records[existingIndex].prices = allPrices;
-                console.log('✅ Updated record for', today);
-              } else {
-                history.records.push({ date: today, prices: allPrices });
-                console.log('✅ Added new record for', today);
-              }
-              
-              // Sort and keep last 90 days
-              history.records.sort((a, b) => a.date.localeCompare(b.date));
-              if (history.records.length > 90) {
-                history.records = history.records.slice(-90);
-              }
-              
-              // ===== SAVE TO FILE =====
-              fs.writeFileSync(historyFile, JSON.stringify(history, null, 2));
-              console.log('💾 Saved to', historyFile);
-              console.log('📊 Total records:', history.records.length);
-              
-              // ===== SHOW SAMPLE =====
-              if (history.records.length > 0) {
-                const last = history.records[history.records.length - 1];
-                console.log('📋 Latest record:', last.date);
-                console.log('   Tokens:', Object.keys(last.prices).join(', '));
-                console.log('   Sample:', JSON.stringify(last.prices).substring(0, 200) + '...');
-              }
-              
-              console.log('✅ DONE!');
-            })();
+            prices['fit'] = { price: fitPrice, yesterday: fitYesterday, change: fitChange };
+            console.log('✅ fit :', fitPrice);
+            
+            // Save to history
+            const existingIndex = history.records.findIndex(r => r.date === today);
+            if (existingIndex !== -1) {
+              history.records[existingIndex].prices = prices;
+            } else {
+              history.records.push({ date: today, prices: prices });
+            }
+            
+            history.records.sort((a, b) => a.date.localeCompare(b.date));
+            if (history.records.length > 90) history.records = history.records.slice(-90);
+            
+            fs.writeFileSync(historyFile, JSON.stringify(history, null, 2));
+            console.log('💾 Saved! Total records:', history.records.length);
+            console.log('📋 Tokens saved:', Object.keys(prices).join(', '));
           "
 
-      - name: Commit and push if changed
+      - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.github.com"
           git add price-history-table.json
-          git diff --quiet && git diff --staged --quiet || git commit -m "🤖 Auto-save price history [skip ci]"
+          git diff --quiet && git diff --staged --quiet || git commit -m "🤖 Save price history [skip ci]"
           git push
