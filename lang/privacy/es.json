@@ -1,0 +1,61 @@
+{
+  "meta": {
+    "title": "Fly Infinity - Política de Privacidad",
+    "description": "Política de Privacidad y Estructura Descentralizada de Fly Infinity Token"
+  },
+  "header": {
+    "title": "Fly Infinity DAO"
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "comparison": "Comparación",
+    "dapp": "DApp",
+    "transactions": "Transacciones",
+    "privacy": "Privacidad",
+    "warnings": "Advertencias",
+    "faq": "Preguntas Frecuentes",
+    "whitepaper": "Libro Blanco"
+  },
+  "privacy": {
+    "title": "Política de Privacidad y Estructura Descentralizada",
+    "badge1": "No Decreciente",
+    "badge2": "Crecimiento Perpetuo",
+    "badge3": "Gobernanza DAO",
+    "badge4": "Precio No Manipulable",
+    "p1": "Fly Infinity Token (FIT) es un proyecto totalmente descentralizado que opera en la red BNB Smart Chain. Todas las reglas y mecanismos del proyecto se implementan a través de contratos inteligentes transparentes, y ninguna autoridad central, desarrollador o tercero puede alterar, detener o manipular su funcionamiento.",
+    "p2": "La estructura de precios de este proyecto está diseñada basada en una Curva de Enlace (Bonding Curve). Esto significa que el precio del token FIT se determina únicamente por la fórmula Precio = Reserva de DAI ÷ Suministro Total. Este mecanismo matemático transparente e inmutable elimina por completo cualquier posibilidad de manipulación de precios por parte de ballenas, cárteles del mercado o entidades centralizadas.",
+    "sub1": "🧠 Estructura No Decreciente y Crecimiento Perpetuo",
+    "p3": "Una de las características únicas de Fly Infinity Token es su naturaleza no decreciente. Esto significa que el precio base del token nunca disminuye con el tiempo. A diferencia de los mercados tradicionales donde las fluctuaciones negativas son comunes, la estructura de Curva de Enlace asegura que el precio del token siempre siga una trayectoria ascendente y creciente. Cada transacción de compra y venta aumenta la acumulación de la reserva de DAI, elevando permanentemente el precio base del token.",
+    "sub2": "🏛️ Gobernanza Descentralizada (DAO)",
+    "p4": "Todas las decisiones clave del proyecto, incluidos los desarrollos futuros, la asignación de recursos y las posibles actualizaciones, se toman exclusivamente a través del sistema de votación de la Organización Autónoma Descentralizada (DAO). Cada titular del token FIT puede participar en el proceso de toma de decisiones proporcionalmente a su participación en la red. Ningún individuo o grupo tiene el poder unilateral de cambiar la dirección del proyecto. Esta estructura asegura que el proyecto siempre se mueva en el mejor interés de la comunidad.",
+    "sub3": "🔒 Privacidad y Seguridad del Usuario",
+    "p5": "Como proyecto descentralizado y sin confianza, Fly Infinity Token no recopila, almacena ni procesa ninguna información personal de sus usuarios. Todas las interacciones de los usuarios ocurren a través de billeteras descentralizadas (como MetaMask, Trust Wallet, TokenPocket) directamente en la blockchain. En este modelo:",
+    "li1": "✅ No existen formularios de registro.",
+    "li2": "✅ No se recopilan correos electrónicos ni información personal.",
+    "li3": "✅ Ningún servidor central almacena datos.",
+    "li4": "✅ Todas las transacciones son transparentes y auditables en la blockchain.",
+    "li5": "✅ Los usuarios mantienen la propiedad total de sus activos.",
+    "sub4": "📊 Sin Manipulación de Ballenas",
+    "p6": "En los mercados tradicionales, las ballenas y los grandes jugadores pueden manipular los precios mediante operaciones de alto volumen. Sin embargo, en la estructura de Curva de Enlace del proyecto FIT, esto es imposible por las siguientes razones:",
+    "li6": "🔹 Precios matemáticos y transparentes: El precio se calcula directamente a partir de la relación reserva-oferta.",
+    "li7": "🔹 Sin libro de órdenes: No hay libro de órdenes para manipular.",
+    "li8": "🔹 Liquidez unificada: Toda la liquidez reside en un solo pool y no puede fragmentarse.",
+    "li9": "🔹 Compra y venta directa: Los usuarios operan directamente con el contrato inteligente.",
+    "li10": "🔹 Tarifas de transacción transparentes: Las tarifas están claramente establecidas en 3% para compras y 6% para ventas.",
+    "sub5": "💰 Transparencia Económica",
+    "p7": "Toda la información económica del proyecto, incluyendo:",
+    "li11": "💰 Precio del token en tiempo real",
+    "li12": "🪙 Suministro total en circulación",
+    "li13": "🏦 Reserva de DAI en el contrato",
+    "li14": "📈 Historial de precios diarios",
+    "li15": "👥 Distribución de titulares",
+    "li16": "📊 Volumen de negociación",
+    "p8": "está disponible para el público en tiempo real y de forma transparente, y todo se puede verificar a través del contrato inteligente o los exploradores de blockchain. No se guardan datos a puerta cerrada.",
+    "sub6": "⚖️ Limitación de Responsabilidad",
+    "p9": "Como proyecto descentralizado y de código abierto, Fly Infinity Token no asume ninguna responsabilidad por las decisiones comerciales de los usuarios, la pérdida de acceso a la billetera, los errores personales en la ejecución de transacciones o las vulnerabilidades de seguridad en la infraestructura personal de los usuarios. Los usuarios entran al proyecto con pleno conocimiento y aceptación de los riesgos inherentes a la tecnología blockchain.",
+    "lastUpdated": "Última actualización: Junio 2026"
+  },
+  "footer": {
+    "tagline": "Fly Infinity — Descentralizado. Transparente. Siempre Subiendo."
+  }
+}
