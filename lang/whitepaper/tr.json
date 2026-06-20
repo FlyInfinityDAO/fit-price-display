@@ -1,0 +1,180 @@
+{
+  "meta": {
+    "title": "Fly Infinity - Beyaz Bülten",
+    "description": "Fly Infinity Token Beyaz Bülten - Merkeziyetsiz Finansal Platform"
+  },
+  "header": {
+    "title": "Fly Infinity DAO"
+  },
+  "nav": {
+    "dashboard": "Gösterge Paneli",
+    "comparison": "Karşılaştırma",
+    "dapp": "DApp",
+    "transactions": "İşlemler",
+    "privacy": "Gizlilik",
+    "warnings": "Uyarılar",
+    "faq": "SSS",
+    "whitepaper": "Beyaz Bülten"
+  },
+  "whitepaper": {
+    "title": "Beyaz Bülten",
+    "version": "Sürüm 1.0",
+    "release": "Yayın Tarihi: Haziran 2026"
+  },
+  "wp": {
+    "s1": {
+      "title": "1. Önsöz",
+      "p1": "Kayda değer büyümesine rağmen, kripto para piyasası temel yapısal zorluklarla karşılaşmaya devam ediyor. Varlık desteğinde şeffaflık eksikliği, piyasa balinaları tarafından fiyat manipülasyonu, merkezi emir defterlerine bağımlılık ve spekülatif balonlarla ilişkili riskler, yatırımcıları aşırı ve öngörülemez oynaklığa maruz bırakmıştır.",
+      "p2": "Fly Infinity Platform, bu zorluklara yanıt olarak tasarlanmıştır. Gerçek desteğe sahip şeffaf bir dijital varlık yaratma hedefi olan merkeziyetsiz bir platformdur ve fiyatın tersine dönme riskini sıfıra indiren bir yapı üzerine inşa edilmiştir."
+    },
+    "s2": {
+      "title": "2. Fly Infinity Platform'a Giriş",
+      "p1": "Fly Infinity, iki tamamen tamamlayıcı ekonomik bileşen üzerine inşa edilmiş yeni nesil bir merkeziyetsiz finansal platformdur:",
+      "sub1": "2.1 Fly Infinity Ağı",
+      "sub1text": "Token sözleşmesine gerçek sermaye enjekte etmekten sorumlu akıllı ve özerk bir ağ. Bu ağ, yeni token basmaya gerek kalmadan likiditeyi sürekli olarak artırır.",
+      "sub2": "2.2 Fly Infinity Token (FIT)",
+      "sub2text": "Platformun birincil dijital varlığı olup fiyatı piyasa heyecanına değil, yalnızca DAI Rezervi ile Toplam Arz oranına göre hesaplanır."
+    },
+    "s3": {
+      "title": "3. Fiyatlandırma Formülü (Bonding Curve)",
+      "p1": "FIT token'ının fiyatı, akıllı sözleşme içinde şeffaf ve değişmez bir şekilde hesaplanır:",
+      "formula": "FIT Fiyatı = DAI Rezervi ÷ Toplam Arz",
+      "features": "Bu Modelin Temel Özellikleri:",
+      "f1": "Değişmez: Fiyat herhangi bir dış varlık tarafından değiştirilemez.",
+      "f2": "Şeffaf: Her an hesaplanabilir ve doğrulanabilir.",
+      "f3": "Sürekli Yükselen: Her satın alma likiditeyi artırır ve taban fiyatı yükseltir."
+    },
+    "s4": {
+      "title": "4. Benzersiz Özellik: Azalmayan Fiyat",
+      "p1": "Fly Infinity, taban token fiyatının asla düşmediği tek projedir. Bu, aşağıdaki mantıkla elde edilir:",
+      "table": {
+        "action": "Eylem",
+        "effect": "Etki",
+        "buy": "FIT Satın Al",
+        "buyEffect": "Gerçek DAI sözleşmeye girer → Likidite artar → Fiyat artar",
+        "sell": "FIT Sat",
+        "sellEffect": "Token'lar yakılır → Arz azalır → Fiyat artar",
+        "buyFee": "Satın Alma Ücreti (%3)",
+        "buyFeeEffect": "Likiditeye döner → Fiyat güçlenir",
+        "sellFee": "Satış Ücreti (%6)",
+        "sellFeeEffect": "Likiditeye döner → Fiyat güçlenir"
+      },
+      "p2": "Sonuç: Büyük satışlar bile fiyatı düşürmez — çoğu durumda, artırır."
+    },
+    "s5": {
+      "title": "5. Merkeziyetsiz Yapı ve DAO Yönetişimi",
+      "sub1": "5.1 Tam Merkeziyetsizlik",
+      "li1": "Hiçbir merkezi ekibin idari anahtarlara erişimi yoktur.",
+      "li2": "Tüm kurallar, kamuya açık, değişmez akıllı sözleşmelere gömülüdür.",
+      "li3": "Hiçbir kuruluş işlemleri durduramaz, değiştiremez veya sansürleyemez.",
+      "sub2": "5.2 DAO Yönetişimi",
+      "p1": "Gelecekteki gelişmeler, kaynak tahsisi ve potansiyel yükseltmeler dahil olmak üzere tüm önemli proje kararları:",
+      "li4": "Potansiyel yükseltmeler",
+      "li5": "Kaynak tahsisi",
+      "li6": "Gelecekteki gelişmeler",
+      "p2": "merkeziyetsiz oylama yoluyla, her sahibin ağdaki payı oranında alınır."
+    },
+    "s6": {
+      "title": "6. Adım Tabanlı Satın Alma Modeli",
+      "p1": "Ani balina girişini önlemek ve sağlıklı fiyat büyümesini sürdürmek için FIT satın alımları adım tabanlı bir sistemde yapılandırılmıştır:",
+      "table": {
+        "step": "Adım",
+        "points": "Gerekli Ağ Puanları",
+        "cap": "Satın Alma Limiti (DAI)"
+      },
+      "how": "Nasıl Çalışır: Her kullanıcı, belirtilen limite kadar adım başına yalnızca bir kez satın alabilir. Gerekli ağ puanlarını kazandıktan sonra, bir sonraki adım kullanılabilir hale gelir. Kullanıcılar adımlarda ilerledikçe toplam satın alma limiti kümülatif olarak artar."
+    },
+    "s7": {
+      "title": "Double Infinity Ağ Avantajı",
+      "p1": "Ağ Yapısıyla Üstün Satın Alma Gücünün Kilidini Açın",
+      "p2": "Double Infinity Ağı, kullanıcıların önemli ölçüde daha az sahiplik hissesi ile çok daha büyük miktarlarda FIT satın almalarını sağlayan devrimci bir mekanizma sunar. Bu, ağın akıllı ikili ağaç yapısı sayesinde elde edilir ve ağa yerleştirilen her hisse, kullanıcının satın alma kapasitesini doğrudan artıran ağ puanları oluşturur.",
+      "p3": "İkili Ağaç Çarpanı Nasıl Çalışır:",
+      "li1": "Geleneksel Model: Her sahiplik hissesi 100 DAI'lik sabit bir satın alma limiti sağlar. 6.000 DAI değerinde FIT satın almak için bir kullanıcının 60 hisseye ihtiyacı olur ve bu da ek 6.000 DAI maliyet — toplam 12.000 DAI yatırım.",
+      "li2": "Double Infinity Modeli: Hisseleri dengeli bir ikili ağaca (düğüm başına 1 üst hat + 2 alt hat) stratejik olarak yerleştirerek, aynı 6.000 DAI satın alma işlemi yalnızca 40 hisse ile elde edilebilir — gerekli hisselerde %33 azalma.",
+      "li3": "Birikimli Avantaj: Satın alma miktarı arttıkça, verimlilik farkı genişler. Daha büyük satın alımlar için Double Infinity Ağı, gerekli hisseleri %50 veya daha fazla azaltabilir ve FIT elde etmek için gereken toplam sermayeyi önemli ölçüde düşürebilir.",
+      "p4": "Matematiksel Kanıt: 40 hisseli dengeli bir ikili ağaçta, ağ 57 ödül puanı oluşturur (ödül hesaplama modelimiz aracılığıyla doğrulandığı gibi). Her puan, kullanıcıların daha az hisse ile daha yüksek satın alma limitlerine ulaşmalarını sağlayan açılmış satın alma kapasitesini temsil eder. Bu bir tanıtım iddiası değildir — Double Infinity Ağ mimarisinin matematiksel olarak doğrulanabilir bir özelliğidir.",
+      "p5": "Önemli Çıkarım: Double Infinity Ağı yalnızca bir referans sistemi değildir — sermaye verimliliğini matematiksel olarak optimize eden bir finansal mühendislik inovasyonudur. Bu yapıyı anlayan ve kullanan kullanıcılar, geleneksel doğrudan satın alma yöntemlerine kıyasla önemli ölçüde daha düşük sermaye harcaması ile FIT elde edebilirler.",
+      "example": "Örnek: 6.000 DAI FIT Satın Alma — Geleneksel: 60 hisse, 12.000 DAI toplam maliyet | Double Infinity: 40 hisse, 10.000 DAI toplam maliyet | Tasarruf: 2.000 DAI (%17 azalma)"
+    },
+    "s8": {
+      "title": "7. Güvenlik ve Şeffaflık",
+      "sub1": "7.1 Sözleşme Güvenliği",
+      "li1": "Akıllı sözleşmeler en yüksek standartlarda uygulanmıştır.",
+      "li2": "Hiçbir gizli işlev veya idari anahtar yoktur.",
+      "li3": "Tüm işlemler BSC blockchain'inde kaydedilir ve görünürdür.",
+      "sub2": "7.2 Ekonomik Şeffaflık",
+      "p1": "Aşağıdaki bilgiler gerçek zamanlı olarak kamuya açıktır:",
+      "li4": "Canlı FIT fiyatı",
+      "li5": "Toplam arz",
+      "li6": "DAI rezervi",
+      "li7": "Günlük fiyat geçmişi",
+      "li8": "Sahip dağılımı",
+      "li9": "İşlem hacmi"
+    },
+    "s9": {
+      "title": "8. Rekabet Avantajları",
+      "table": {
+        "feature": "Özellik",
+        "fit": "Fly Infinity",
+        "traditional": "Geleneksel Projeler",
+        "row1": "Gerçek Varlık Desteği",
+        "row1fit": "✅ DAI",
+        "row1trad": "❌ Pazarlama Vaadleri",
+        "row2": "Azalmayan Fiyat",
+        "row3": "Tam Şeffaflık",
+        "row4": "Balina Manipülasyonu Yok",
+        "row5": "DAO Yönetişimi",
+        "row6": "Şeffaf Ücretler",
+        "row6trad": "Belirsiz",
+        "row7": "İkili Ağ Verimliliği",
+        "row7fit": "✅ %50'ye Varan Hisse Azaltımı"
+      }
+    },
+    "s10": {
+      "title": "9. Geliştirme Yol Haritası",
+      "sub1": "Aşama 1: İstikrar ve Birikim",
+      "li1": "Adım tabanlı model aracılığıyla kontrollü kullanıcı girişi",
+      "li2": "Kademeli likidite büyümesi",
+      "li3": "Düşük oynaklıklı fiyat artışı",
+      "sub2": "Aşama 2: Hızlandırılmış Büyüme",
+      "li4": "Fly Infinity Ağı tarafından sürekli DAI enjeksiyonu",
+      "li5": "Yeni token basmadan üstel likidite büyümesi",
+      "li6": "Güçlü yukarı yönlü fiyat momentumu",
+      "sub3": "Aşama 3: Sistem Olgunluğu",
+      "li7": "Büyük sermayenin düşüş riski olmadan girişi",
+      "li8": "FIT'in rezerv sınıfı bir dijital varlığa dönüşmesi",
+      "li9": "Sürdürülebilir ve mantıklı fiyat artışı"
+    },
+    "s11": {
+      "title": "10. Özet",
+      "p1": "Fly Infinity tipik bir kripto projesi değildir. İlk prensiplerden tasarlanmış bir finansal sistemdir:",
+      "li1": "Gerçek varlık desteğine sahip olmak",
+      "li2": "Şeffaf ve değişmez fiyatlandırmayı sağlamak",
+      "li3": "Mantıklı ve sürdürülebilir büyümeyi garanti etmek",
+      "li4": "Fiyatın tersine dönme riskini sıfıra indirmek",
+      "li5": "Asla spekülatif bir balon oluşturmamak",
+      "quote": "\"Fly Infinity gerçekçi olmayan kârlar vaat etmez, ancak sermaye yıkımına da izin vermez.\""
+    },
+    "s12": {
+      "title": "11. Sözleşme Adresleri",
+      "website": "🌐 Web Sitesi",
+      "token": "🪙 FIT Token Sözleşmesi",
+      "network": "🌐 Ağ Sözleşmesi",
+      "gift": "🎁 Hediye Sözleşmesi",
+      "dao": "🏛️ DAO Sözleşmesi"
+    },
+    "s13": {
+      "title": "12. Sorumluluk Reddi",
+      "p1": "Finansal Tavsiye Değildir: Bu belgedeki hiçbir şey finansal tavsiye teşkil etmez. Kullanıcılar herhangi bir yatırım kararı vermeden önce kendi araştırmalarını (DYOR) yapmalı ve nitelikli finansal danışmanlara danışmalıdır.",
+      "p2": "Risk Uyarısı: Kripto para yatırımları, piyasa oynaklığı, akıllı sözleşme güvenlik açıkları, düzenleyici değişiklikler ve özel anahtarların kaybı dahil ancak bunlarla sınırlı olmamak üzere doğal riskler taşır.",
+      "p3": "Açık Kaynak: Bu proje açık kaynaklıdır ve herhangi bir garanti olmaksızın \"OLDUĞU GİBİ\" sağlanmaktadır."
+    },
+    "s14": {
+      "closing": "Fly Infinity ile sonsuz finansal büyümeyi deneyimleyin.",
+      "tagline": "Fly Infinity DAO — Merkeziyetsiz. Şeffaf. Sonsuza Yükselen."
+    }
+  },
+  "footer": {
+    "tagline": "Fly Infinity — Merkeziyetsiz. Şeffaf. Sonsuza Yükselen."
+  }
+}
