@@ -44,7 +44,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(15, 15, 15, 0.75);
+            background: rgba(15, 15, 15, 0.6);
             pointer-events: none;
             z-index: 0;
         }
@@ -74,15 +74,30 @@
         .top-bar .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             color: #D4AF37;
             font-size: 18px;
             font-weight: bold;
             text-decoration: none;
         }
         
-        .top-bar .logo i {
-            font-size: 22px;
+        .top-bar .logo img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #D4AF37;
+        }
+        
+        .top-bar .logo span {
+            color: #D4AF37;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
         
         .hamburger {
@@ -106,7 +121,22 @@
             transform: rotate(90deg);
         }
         
-        /* ===== SIDEBAR OVERLAY ===== */
+        @media (max-width: 768px) {
+            .top-bar .logo span {
+                font-size: 15px;
+            }
+            .top-bar .logo img {
+                width: 28px;
+                height: 28px;
+            }
+            .hamburger {
+                width: 38px;
+                height: 38px;
+                font-size: 17px;
+            }
+        }
+        
+        /* ===== SIDEBAR ===== */
         .sidebar-overlay {
             position: fixed;
             top: 0;
@@ -126,7 +156,6 @@
             visibility: visible;
         }
         
-        /* ===== SIDEBAR ===== */
         .sidebar {
             position: fixed;
             top: 0;
@@ -243,6 +272,14 @@
             text-decoration: none;
         }
         
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 85vw;
+                right: -85vw;
+            }
+        }
+        
+        /* ===== CARDS ===== */
         .card {
             background: #0F0F0F;
             backdrop-filter: blur(10px);
@@ -272,6 +309,12 @@
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             margin-bottom: 25px;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
         }
         
         .link-card {
@@ -432,19 +475,6 @@
         .footer .footer-tagline .gold {
             color: #D4AF37;
         }
-        
-        @media (max-width: 768px) {
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .sidebar {
-                width: 85vw;
-                right: -85vw;
-            }
-            .top-bar .logo {
-                font-size: 15px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -456,7 +486,7 @@
             <img src="logo.png" alt="Fly Infinity DAO" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37;">
             <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
         </a>
-        <div class="top-bar-right" style="display: flex; align-items: center; gap: 12px;">
+        <div class="top-bar-right">
             <button class="hamburger" id="hamburgerBtn">
                 <i class="fas fa-bars"></i>
             </button>
@@ -660,9 +690,8 @@
 
 </div>
 
-<!-- ===== SCRIPTS ===== -->
+<!-- ===== SIDEBAR SCRIPT ===== -->
 <script>
-    // ===== SIDEBAR =====
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const closeSidebarBtn = document.getElementById('closeSidebarBtn');
     const sidebar = document.getElementById('sidebar');
