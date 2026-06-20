@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "title": "Fly Infinity Token - Important Warnings",
+    "description": "Important warnings for Fly Infinity Token users"
+  },
+  "header": {
+    "title": "Fly Infinity DAO"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "comparison": "Comparison",
+    "dapp": "DApp",
+    "transactions": "Transactions",
+    "privacy": "Privacy",
+    "warnings": "Warnings",
+    "faq": "FAQ",
+    "whitepaper": "White Paper"
+  },
+  "warnings": {
+    "wallet": {
+      "title": "⚠️ Before Changing or Deleting Your Wallet",
+      "text": "If you intend to perform a wallet change operation, you must sell your tokens first. Otherwise, your tokens will lose their transferability and you will not be able to sell them afterward.",
+      "solutionTitle": "🔧 Solution:",
+      "solutionText": "First, sell all your FIT tokens → Then change your wallet → Finally, buy FIT again in your new wallet."
+    },
+    "recovery": {
+      "title": "⚠️ Never Share Your Recovery Phrase",
+      "text": "Recovery phrases (seed phrases) cannot be changed or reset. Keep them safe!",
+      "li1": "✅ Write them down physically on paper",
+      "li2": "✅ Store multiple copies in secure, separate locations",
+      "li3": "✅ Never store them digitally (screenshots, cloud, email)",
+      "li4": "❌ Never share them with anyone, including \"support\" teams"
+    },
+    "blockchain": {
+      "title": "⚠️ Blockchain Transactions Are Irreversible",
+      "text": "Blockchain is a decentralized system with no central authority. Once a transaction is confirmed, it is permanently recorded on the blockchain and cannot be reversed, modified, or deleted by anyone.",
+      "li1": "🔒 Always double-check wallet addresses before sending",
+      "li2": "🔒 Verify transaction amounts carefully",
+      "li3": "🔒 Be cautious of scams and phishing attempts",
+      "li4": "🔒 No one can \"reverse\" or \"cancel\" your transaction"
+    }
+  },
+  "footer": {
+    "tagline": "Fly Infinity — Decentralized. Transparent. Forever Rising."
+  }
+}
