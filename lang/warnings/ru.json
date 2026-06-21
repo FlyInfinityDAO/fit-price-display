@@ -7,14 +7,15 @@
     "title": "Fly Infinity DAO"
   },
   "nav": {
-    "dashboard": "Панель",
+    "dashboard": "Панель управления",
     "comparison": "Сравнение",
     "dapp": "DApp",
     "transactions": "Транзакции",
     "privacy": "Конфиденциальность",
     "warnings": "Предупреждения",
     "faq": "Часто задаваемые вопросы",
-    "whitepaper": "Белая книга"
+    "whitepaper": "Белая книга",
+    "audit": "Аудит безопасности"
   },
   "warnings": {
     "wallet": {
