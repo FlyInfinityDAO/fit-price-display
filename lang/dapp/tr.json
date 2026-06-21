@@ -14,7 +14,8 @@
     "privacy": "Gizlilik",
     "warnings": "Uyarılar",
     "faq": "SSS",
-    "whitepaper": "Beyaz Bülten"
+    "whitepaper": "Beyaz Bülten",
+    "audit": "Güvenlik Denetimi"
   },
   "dapp": {
     "connect": "Cüzdan Bağla",
