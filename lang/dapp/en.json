@@ -14,7 +14,8 @@
     "privacy": "Privacy",
     "warnings": "Warnings",
     "faq": "FAQ",
-    "whitepaper": "White Paper"
+    "whitepaper": "White Paper",
+    "audit": "Security Audit"
   },
   "dapp": {
     "connect": "Connect Wallet",
