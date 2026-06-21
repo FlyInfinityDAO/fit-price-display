@@ -9,12 +9,13 @@
   "nav": {
     "dashboard": "لوحة التحكم",
     "comparison": "المقارنة",
-    "dapp": "التطبيق",
+    "dapp": "التطبيق اللامركزي",
     "transactions": "المعاملات",
     "privacy": "الخصوصية",
     "warnings": "تحذيرات",
     "faq": "الأسئلة الشائعة",
-    "whitepaper": "الورقة البيضاء"
+    "whitepaper": "الورقة البيضاء",
+    "audit": "تدقيق الأمان"
   },
   "warnings": {
     "wallet": {
