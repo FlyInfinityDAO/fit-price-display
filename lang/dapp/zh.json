@@ -9,12 +9,13 @@
   "nav": {
     "dashboard": "仪表板",
     "comparison": "对比",
-    "dapp": "DApp",
+    "dapp": "去中心化应用",
     "transactions": "交易",
     "privacy": "隐私",
     "warnings": "警告",
     "faq": "常见问题",
-    "whitepaper": "白皮书"
+    "whitepaper": "白皮书",
+    "audit": "安全审计"
   },
   "dapp": {
     "connect": "连接钱包",
