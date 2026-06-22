@@ -8,6 +8,7 @@
   },
   "nav": {
     "dashboard": "仪表板",
+    "whatisfit": "什么是FIT？",
     "comparison": "对比",
     "dapp": "去中心化应用",
     "transactions": "交易",
@@ -16,7 +17,7 @@
     "faq": "常见问题",
     "whitepaper": "白皮书",
     "audit": "安全审计"
-  },
+},
   "dapp": {
     "connect": "连接钱包",
     "walletDesc": "MetaMask、Trust Wallet、TokenPocket 或任何 Web3 钱包",
