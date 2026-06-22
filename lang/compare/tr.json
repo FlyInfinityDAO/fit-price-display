@@ -8,6 +8,7 @@
   },
   "nav": {
     "dashboard": "Gösterge Paneli",
+    "whatisfit": "FIT Nedir?",
     "comparison": "Karşılaştırma",
     "dapp": "DApp",
     "transactions": "İşlemler",
@@ -16,7 +17,7 @@
     "faq": "SSS",
     "whitepaper": "Beyaz Bülten",
     "audit": "Güvenlik Denetimi"
-  },
+},
   "compare": {
     "title": "Canlı Fiyat Karşılaştırma Tablosu",
     "subtitle": "Son 24 saatteki gerçek zamanlı fiyat değişiklikleri",
