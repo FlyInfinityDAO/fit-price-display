@@ -8,6 +8,7 @@
   },
   "nav": {
     "dashboard": "Dashboard",
+    "whatisfit": "What is FIT?",
     "comparison": "Comparison",
     "dapp": "DApp",
     "transactions": "Transactions",
@@ -16,7 +17,7 @@
     "faq": "FAQ",
     "whitepaper": "White Paper",
     "audit": "Security Audit"
-  },
+},
   "faq": {
     "title": "Frequently Asked Questions",
     "q1": "How much does it cost to buy Fly Infinity ownership shares?",
