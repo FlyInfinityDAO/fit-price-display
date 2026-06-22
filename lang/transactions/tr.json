@@ -3,7 +3,8 @@
     "title": "Fly Infinity DAO"
   },
   "nav": {
-    "dashboard": "Kontrol Paneli",
+    "dashboard": "Gösterge Paneli",
+    "whatisfit": "FIT Nedir?",
     "comparison": "Karşılaştırma",
     "dapp": "DApp",
     "transactions": "İşlemler",
@@ -12,7 +13,7 @@
     "faq": "SSS",
     "whitepaper": "Beyaz Bülten",
     "audit": "Güvenlik Denetimi"
-  },
+},
   "footer": {
     "tagline": "Fly Infinity — Merkeziyetsiz. Şeffaf. Sonsuza Kadar Yükselen."
   },
