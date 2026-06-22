@@ -3,7 +3,8 @@
     "title": "Fly Infinity DAO"
   },
   "nav": {
-    "dashboard": "Panel de Control",
+    "dashboard": "Panel",
+    "whatisfit": "¿Qué es FIT?",
     "comparison": "Comparación",
     "dapp": "DApp",
     "transactions": "Transacciones",
@@ -12,7 +13,7 @@
     "faq": "Preguntas Frecuentes",
     "whitepaper": "Libro Blanco",
     "audit": "Auditoría de Seguridad"
-  },
+},
   "footer": {
     "tagline": "Fly Infinity — Descentralizado. Transparente. Siempre en Auge."
   },
