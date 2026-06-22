@@ -8,6 +8,7 @@
   },
   "nav": {
     "dashboard": "Gösterge Paneli",
+    "whatisfit": "FIT Nedir?",
     "comparison": "Karşılaştırma",
     "dapp": "DApp",
     "transactions": "İşlemler",
@@ -16,7 +17,7 @@
     "faq": "SSS",
     "whitepaper": "Beyaz Bülten",
     "audit": "Güvenlik Denetimi"
-  },
+},
   "faq": {
     "title": "Sık Sorulan Sorular",
     "q1": "Fly Infinity sahiplik hissesi satın almanın maliyeti nedir?",
