@@ -4,6 +4,7 @@
   },
   "nav": {
     "dashboard": "Dashboard",
+    "whatisfit": "What is FIT?",
     "comparison": "Comparison",
     "dapp": "DApp",
     "transactions": "Transactions",
@@ -12,7 +13,7 @@
     "faq": "FAQ",
     "whitepaper": "White Paper",
     "audit": "Security Audit"
-  },
+},
   "footer": {
     "tagline": "Fly Infinity — Decentralized. Transparent. Forever Rising."
   },
