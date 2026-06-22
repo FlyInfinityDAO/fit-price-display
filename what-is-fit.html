@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>What is FIT? - Fly Infinity Token</title>
+    
+    <!-- ===== FAVICON ===== -->
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="lang.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-image: url('background-desktop.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                background-image: url('background-mobile.png');
+                background-size: contain;
+                background-position: center top;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                background-color: #0F0F0F;
+                padding: 15px;
+            }
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 15, 15, 0.6);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* ===== TOP NAV BAR ===== */
+        .top-bar {
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 12px 25px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 100;
+        }
+        
+        .top-bar .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #D4AF37;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .top-bar .logo img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #D4AF37;
+        }
+        
+        .top-bar .logo span {
+            color: #D4AF37;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .hamburger {
+            background: transparent;
+            border: 1px solid #00C896;
+            color: #00C896;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .hamburger:hover {
+            background: #00C896;
+            color: #0F0F0F;
+            transform: rotate(90deg);
+        }
+        
+        /* ===== LANGUAGE BUTTON ===== */
+        .lang-btn {
+            background: transparent;
+            border: 1px solid rgba(0, 200, 150, 0.3);
+            color: #D4AF37;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            flex-shrink: 0;
+            position: relative;
+        }
+        
+        .lang-btn:hover {
+            border-color: #00C896;
+            background: rgba(0, 200, 150, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .lang-dropdown {
+            position: fixed;
+            top: 75px;
+            right: 20px;
+            background: #0F0F0F;
+            border: 1px solid rgba(0, 200, 150, 0.3);
+            border-radius: 16px;
+            padding: 8px;
+            min-width: 160px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .lang-dropdown.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .lang-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            color: #c0d0e8;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .lang-item:hover {
+            background: rgba(0, 200, 150, 0.08);
+            color: #D4AF37;
+        }
+        
+        .lang-item.active {
+            background: rgba(0, 200, 150, 0.15);
+            color: #D4AF37;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+        }
+        
+        .lang-item .flag {
+            font-size: 18px;
+        }
+        
+        .lang-item .lang-name {
+            font-size: 13px;
+        }
+        
+        @media (max-width: 768px) {
+            .lang-dropdown {
+                top: 65px;
+                right: 10px;
+                min-width: 140px;
+            }
+            .lang-item {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            .lang-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+            .top-bar .logo span {
+                font-size: 15px;
+            }
+            .top-bar .logo img {
+                width: 28px;
+                height: 28px;
+            }
+            .hamburger {
+                width: 38px;
+                height: 38px;
+                font-size: 17px;
+            }
+        }
+        
+        /* ===== SIDEBAR ===== */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+        
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            max-width: 85vw;
+            height: 100%;
+            background: #0F0F0F;
+            border-left: 2px solid rgba(0, 200, 150, 0.3);
+            z-index: 1000;
+            padding: 30px 25px;
+            transition: right 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar.open {
+            right: 0;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 200, 150, 0.2);
+            margin-bottom: 25px;
+        }
+        
+        .sidebar-header .logo-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #D4AF37;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .sidebar-header .logo-text img {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid #D4AF37;
+        }
+        
+        .sidebar-header .close-btn {
+            background: transparent;
+            border: none;
+            color: #ff4444;
+            font-size: 28px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-header .close-btn:hover {
+            transform: rotate(90deg);
+        }
+        
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+        
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 20px;
+            border-radius: 16px;
+            color: #c0d0e8;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .sidebar-menu a i {
+            width: 24px;
+            font-size: 18px;
+            color: #00C896;
+        }
+        
+        .sidebar-menu a:hover {
+            background: rgba(0, 200, 150, 0.08);
+            border-color: rgba(0, 200, 150, 0.3);
+            transform: translateX(-5px);
+        }
+        
+        .sidebar-menu a.active {
+            background: rgba(0, 200, 150, 0.15);
+            border-color: #00C896;
+            color: #D4AF37;
+        }
+        
+        .sidebar-menu a.active i {
+            color: #D4AF37;
+        }
+        
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 200, 150, 0.2);
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+        }
+        
+        .sidebar-footer a {
+            color: #00C896;
+            text-decoration: none;
+        }
+        
+        /* ===== PAGE CONTENT ===== */
+        .page-title {
+            font-size: 32px;
+            color: #D4AF37;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(0, 200, 150, 0.3);
+            padding-bottom: 15px;
+        }
+        
+        .page-title i {
+            color: #00C896;
+            margin-right: 12px;
+        }
+        
+        .section-card {
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 35px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .section-card:hover {
+            border-color: rgba(0, 200, 150, 0.4);
+        }
+        
+        .section-card .icon-large {
+            font-size: 48px;
+            color: #D4AF37;
+            display: block;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .section-card h2 {
+            color: #D4AF37;
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 200, 150, 0.15);
+            padding-bottom: 12px;
+        }
+        
+        .section-card h3 {
+            color: #00C896;
+            font-size: 18px;
+            margin-top: 20px;
+            margin-bottom: 12px;
+        }
+        
+        .section-card p {
+            color: #c0d0e8;
+            line-height: 1.9;
+            font-size: 15px;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .section-card ul {
+            color: #c0d0e8;
+            line-height: 1.9;
+            margin-left: 25px;
+            margin-bottom: 15px;
+            font-size: 15px;
+        }
+        
+        .section-card ul li {
+            margin-bottom: 8px;
+        }
+        
+        .section-card .highlight {
+            color: #00C896;
+            font-weight: bold;
+        }
+        
+        .section-card .gold {
+            color: #D4AF37;
+            font-weight: bold;
+        }
+        
+        .section-card .danger {
+            color: #ff4444;
+            font-weight: bold;
+        }
+        
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        .badge {
+            background: #1a1a1a;
+            border: 1px solid #00C896;
+            border-radius: 60px;
+            padding: 8px 20px;
+            color: #00C896;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        
+        .badge.gold {
+            border-color: #D4AF37;
+            color: #D4AF37;
+        }
+        
+        .badge.gold-bg {
+            background: linear-gradient(135deg, #D4AF37, #c49a2a);
+            color: #0F0F0F;
+            border: none;
+        }
+        
+        .info-box {
+            background: rgba(0, 200, 150, 0.05);
+            border-left: 4px solid #00C896;
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        
+        .info-box.gold {
+            background: rgba(212, 175, 55, 0.05);
+            border-left-color: #D4AF37;
+        }
+        
+        .info-box h4 {
+            color: #00C896;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .info-box.gold h4 {
+            color: #D4AF37;
+        }
+        
+        .info-box p {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .comparison-box {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(0, 200, 150, 0.15);
+        }
+        
+        .comparison-box.fit {
+            border-color: #D4AF37;
+            background: rgba(212, 175, 55, 0.05);
+        }
+        
+        .comparison-box.others {
+            border-color: #ff4444;
+            background: rgba(255, 68, 68, 0.03);
+        }
+        
+        .comparison-box h4 {
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .comparison-box.fit h4 {
+            color: #D4AF37;
+        }
+        
+        .comparison-box.others h4 {
+            color: #ff4444;
+        }
+        
+        .comparison-box ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .comparison-box ul li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 13px;
+            color: #c0d0e8;
+        }
+        
+        .comparison-box ul li:last-child {
+            border-bottom: none;
+        }
+        
+        .comparison-box ul li .check {
+            color: #00C896;
+            margin-right: 8px;
+        }
+        
+        .comparison-box ul li .cross {
+            color: #ff4444;
+            margin-right: 8px;
+        }
+        
+        .cta-section {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(0, 200, 150, 0.05), rgba(212, 175, 55, 0.05));
+            border-radius: 20px;
+            border: 2px solid #D4AF37;
+            margin-top: 20px;
+        }
+        
+        .cta-section .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #00C896, #008a6a);
+            border: none;
+            color: white;
+            padding: 14px 40px;
+            border-radius: 48px;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        
+        .cta-section .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 200, 150, 0.3);
+        }
+        
+        .cta-section .btn-outline {
+            display: inline-block;
+            background: transparent;
+            border: 2px solid #D4AF37;
+            color: #D4AF37;
+            padding: 12px 35px;
+            border-radius: 48px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .cta-section .btn-outline:hover {
+            background: #D4AF37;
+            color: #0F0F0F;
+            transform: translateY(-2px);
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .feature-item {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border-left: 3px solid #00C896;
+        }
+        
+        .feature-item .icon {
+            font-size: 32px;
+            color: #D4AF37;
+            margin-bottom: 10px;
+        }
+        
+        .feature-item h4 {
+            color: #00C896;
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+        
+        .feature-item p {
+            font-size: 13px;
+            color: #c0d0e8;
+            margin: 0;
+        }
+        
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .step-item {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+            border-left: 3px solid #00C896;
+        }
+        
+        .step-item .step-num {
+            font-size: 28px;
+            color: #D4AF37;
+            font-weight: bold;
+        }
+        
+        .step-item.gold {
+            border-left-color: #D4AF37;
+        }
+        
+        .step-item h4 {
+            font-size: 14px;
+            margin: 8px 0;
+        }
+        
+        .step-item.gold h4 {
+            color: #D4AF37;
+        }
+        
+        .step-item p {
+            font-size: 12px;
+            color: #888;
+            margin: 0;
+        }
+        
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .number-item {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(0, 200, 150, 0.2);
+        }
+        
+        .number-item .label {
+            font-size: 14px;
+            color: #888;
+        }
+        
+        .number-item .value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #D4AF37;
+        }
+        
+        .number-item .value.green {
+            color: #00C896;
+        }
+        
+        .number-item .value.gold {
+            color: #D4AF37;
+        }
+        
+        .number-item .value.reward {
+            color: #FFD700;
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            font-size: 10px;
+            color: #666;
+            margin-top: 30px;
+            border-top: 1px solid rgba(0, 200, 150, 0.15);
+            padding-top: 20px;
+        }
+        
+        .footer a {
+            color: #00C896;
+            text-decoration: none;
+        }
+        
+        .footer .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .footer .footer-links span {
+            color: #444;
+        }
+        
+        .footer .footer-tagline {
+            color: #888;
+            font-size: 11px;
+            margin: 0;
+            text-align: center;
+        }
+        
+        .footer .footer-tagline .gold {
+            color: #D4AF37;
+        }
+        
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 24px;
+            }
+            .section-card {
+                padding: 20px;
+            }
+            .section-card h2 {
+                font-size: 20px;
+            }
+            .section-card p {
+                font-size: 14px;
+            }
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            .steps-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .number-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .sidebar {
+                width: 85vw;
+                right: -85vw;
+            }
+            .badge-container {
+                gap: 10px;
+            }
+            .badge {
+                font-size: 11px;
+                padding: 6px 14px;
+            }
+            .cta-section .btn {
+                padding: 12px 30px;
+                font-size: 16px;
+            }
+            .cta-section .btn-outline {
+                padding: 10px 25px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    
+    <!-- ===== TOP NAV BAR ===== -->
+    <div class="top-bar">
+        <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+            <img src="logo.png" alt="Fly Infinity DAO" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37;">
+            <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
+        </a>
+        <div class="top-bar-right">
+            <button class="hamburger" id="hamburgerBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== SIDEBAR OVERLAY ===== -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ===== SIDEBAR ===== -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="logo-text" style="display: flex; align-items: center; gap: 10px;">
+                <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
+                <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
+            </span>
+            <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="index.html" data-i18n="nav.dashboard">
+                <i class="fas fa-home"></i> <span data-i18n="nav.dashboard">Dashboard</span>
+            </a>
+            <a href="compare.html" data-i18n="nav.comparison">
+                <i class="fas fa-chart-line"></i> <span data-i18n="nav.comparison">Comparison</span>
+            </a>
+            <a href="dapp.html" data-i18n="nav.dapp">
+                <i class="fas fa-charging-station"></i> <span data-i18n="nav.dapp">DApp</span>
+            </a>
+            <a href="transactions.html" data-i18n="nav.transactions">
+                <i class="fas fa-history"></i> <span data-i18n="nav.transactions">Transactions</span>
+            </a>
+            <a href="privacy.html" data-i18n="nav.privacy">
+                <i class="fas fa-shield-alt"></i> <span data-i18n="nav.privacy">Privacy</span>
+            </a>
+            <a href="warnings.html" data-i18n="nav.warnings">
+                <i class="fas fa-exclamation-triangle"></i> <span data-i18n="nav.warnings">Warnings</span>
+            </a>
+            <a href="faq.html" data-i18n="nav.faq">
+                <i class="fas fa-question-circle"></i> <span data-i18n="nav.faq">FAQ</span>
+            </a>
+            <a href="whitepaper.html" data-i18n="nav.whitepaper">
+                <i class="fas fa-file-pdf"></i> <span data-i18n="nav.whitepaper">White Paper</span>
+            </a>
+            <a href="audit.html" data-i18n="nav.audit">
+                <i class="fas fa-shield-halved"></i> <span data-i18n="nav.audit">Security Audit</span>
+            </a>
+            <a href="what-is-fit.html" class="active" data-i18n="nav.whatisfit">
+                <i class="fas fa-question-circle"></i> <span data-i18n="nav.whatisfit">What is FIT?</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-footer">
+            <a href="https://flyinfinitydao.github.io" target="_blank">flyinfinitydao.github.io</a><br>
+            Fly Infinity DAO
+        </div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    
+    <h1 class="page-title">
+        <i class="fas fa-question-circle"></i> 
+        <span data-i18n="whatisfit.title">What is FIT? Why Should You Have It?</span>
+    </h1>
+
+    <!-- ===== SECTION 1: INTRODUCTION ===== -->
+    <div class="section-card">
+        <span class="icon-large">🚀</span>
+        <h2 data-i18n="whatisfit.introTitle">The Digital Asset That Never Goes Down</h2>
+        
+        <div class="badge-container">
+            <span class="badge gold-bg" data-i18n="whatisfit.badge1"><i class="fas fa-infinity"></i> Non-Diminishing</span>
+            <span class="badge" data-i18n="whatisfit.badge2"><i class="fas fa-shield-halved"></i> Fully Backed</span>
+            <span class="badge gold" data-i18n="whatisfit.badge3"><i class="fas fa-chart-line"></i> Always Rising</span>
+            <span class="badge" data-i18n="whatisfit.badge4"><i class="fas fa-users"></i> DAO Governed</span>
+        </div>
+        
+        <p data-i18n="whatisfit.introText1">
+            Imagine a digital asset that <span class="gold">never decreases in value</span>. Not "maybe" — <span class="highlight">mathematically guaranteed</span>. 
+            That's exactly what <span class="gold">Fly Infinity Token (FIT)</span> is. The world's first <span class="highlight">non-diminishing</span>, 
+            always-rising digital asset.
+        </p>
+        
+        <div class="info-box">
+            <h4 data-i18n="whatisfit.introSimpleTitle">💡 In Simple Words:</h4>
+            <p data-i18n="whatisfit.introSimple">
+                <span class="gold">FIT</span> is a digital currency that <span class="highlight">only goes up</span>. 
+                Unlike Bitcoin or Ethereum that can crash 50% or more, FIT is built on a smart contract that 
+                mathematically ensures its price <span class="gold">never decreases</span>. Every buy and every sell 
+                — yes, even sells — makes the price go up.
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== SECTION 2: WHAT IS FIT ===== -->
+    <div class="section-card">
+        <span class="icon-large">🪙</span>
+        <h2 data-i18n="whatisfit.whatIsTitle">What Exactly is FIT?</h2>
+        
+        <p data-i18n="whatisfit.whatIsText1">
+            <span class="gold">FIT</span> (<strong>Fly Infinity Token</strong>) is a decentralized digital asset built on the 
+            <span class="highlight">BNB Smart Chain</span>. But unlike any cryptocurrency you've seen before, 
+            FIT is backed by <span class="gold">real DAI</span> — a stablecoin pegged to the US dollar.
+        </p>
+        
+        <div class="info-box gold">
+            <h4 data-i18n="whatisfit.formulaTitle">📊 The Simple Formula:</h4>
+            <p style="font-size: 18px; text-align: center; color: #D4AF37; font-weight: bold;" data-i18n="whatisfit.formula">
+                FIT Price = DAI Reserve ÷ Total Supply
+            </p>
+            <p style="font-size: 13px; text-align: center; color: #888;" data-i18n="whatisfit.formulaNote">
+                When DAI increases OR Supply decreases → Price goes up
+            </p>
+        </div>
+        
+        <p data-i18n="whatisfit.whatIsText2">
+            This means <span class="gold">every single transaction</span> — whether you're buying or selling — 
+            <span class="highlight">increases the price</span>. How? Let's break it down:
+        </p>
+        
+        <div class="feature-grid">
+            <div class="feature-item">
+                <div class="icon">📈</div>
+                <h4 data-i18n="whatisfit.featureBuy">When You Buy</h4>
+                <p data-i18n="whatisfit.featureBuyDesc">DAI enters the contract → Reserve grows → Price increases</p>
+            </div>
+            <div class="feature-item">
+                <div class="icon">🔥</div>
+                <h4 data-i18n="whatisfit.featureSell">When You Sell</h4>
+                <p data-i18n="whatisfit.featureSellDesc">Tokens are burned → Supply decreases → Price increases</p>
+            </div>
+            <div class="feature-item">
+                <div class="icon">💎</div>
+                <h4 data-i18n="whatisfit.featureFee">Transaction Fees</h4>
+                <p data-i18n="whatisfit.featureFeeDesc">3% buy / 6% sell fees return to the reserve → Price increases</p>
+            </div>
+            <div class="feature-item">
+                <div class="icon">🏛️</div>
+                <h4 data-i18n="whatisfit.featureDAO">DAO Governance</h4>
+                <p data-i18n="whatisfit.featureDAODesc">All decisions made by the community, not a central team</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SECTION 3: WHY BUY FIT ===== -->
+    <div class="section-card">
+        <span class="icon-large">💎</span>
+        <h2 data-i18n="whatisfit.whyBuyTitle">Why Should You Buy FIT?</h2>
+        
+        <div class="comparison-grid">
+            <div class="comparison-box fit">
+                <h4 data-i18n="whatisfit.compareFitTitle">✅ Fly Infinity (FIT)</h4>
+                <ul>
+                    <li><span class="check">✅</span> <span data-i18n="whatisfit.compareFit1"><span class="gold">Never decreases</span> — mathematically guaranteed</span></li>
+                    <li><span class="check">✅</span> <span data-i18n="whatisfit.compareFit2">Backed by <span class="gold">real DAI</span> (stablecoin)</span></li>
+                    <li><span class="check">✅</span> <span data-i18n="whatisfit.compareFit3"><span class="gold">Transparent</span> — all on blockchain</span></li>
+                    <li><span class="check">✅</span> <span data-i18n="whatisfit.compareFit4"><span class="gold">DAO governed</span> — no central control</span></li>
+                    <li><span class="check">✅</span> <span data-i18n="whatisfit.compareFit5"><span class="gold">Always rising</span> — every transaction helps</span></li>
+                    <li><span class="check">✅</span> <span data-i18n="whatisfit.compareFit6"><span class="gold">Non-transferable</span> — no black market</span></li>
+                    <li><span class="check">✅</span> <span data-i18n="whatisfit.compareFit7"><span class="gold">Step-based purchase</span> — anti-whale</span></li>
+                </ul>
+            </div>
+            <div class="comparison-box others">
+                <h4 data-i18n="whatisfit.compareOtherTitle">❌ Traditional Crypto</h4>
+                <ul>
+                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.compareOther1"><span class="danger">Up and down</span> — unpredictable volatility</span></li>
+                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.compareOther2">Often <span class="danger">not backed</span> by real assets</span></li>
+                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.compareOther3"><span class="danger">No transparency</span> — centralized order books</span></li>
+                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.compareOther4"><span class="danger">Whales</span> can manipulate prices</span></li>
+                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.compareOther5">Can <span class="danger">crash 50-90%</span> in days</span></li>
+                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.compareOther6"><span class="danger">Black markets</span> and scams</span></li>
+                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.compareOther7">No protection against <span class="danger">whale manipulation</span></span></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <h4 data-i18n="whatisfit.bottomLineTitle">🎯 The Bottom Line:</h4>
+            <p data-i18n="whatisfit.bottomLineText">
+                FIT is not a speculative gamble. It's a <span class="gold">mathematical certainty</span>. 
+                While others hope their crypto goes up, FIT holders <span class="highlight">know</span> it will. 
+                Every single transaction — buy or sell — increases the value.
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== SECTION 4: WHAT MAKES FIT DIFFERENT ===== -->
+    <div class="section-card">
+        <span class="icon-large">⭐</span>
+        <h2 data-i18n="whatisfit.differentTitle">What Makes FIT Different?</h2>
+        
+        <div class="feature-grid">
+            <div class="feature-item" style="border-left-color: #D4AF37;">
+                <div class="icon">📉➡️📈</div>
+                <h4 style="color: #D4AF37;" data-i18n="whatisfit.diff1">Non-Diminishing Price</h4>
+                <p data-i18n="whatisfit.diff1Desc">The price <span class="gold">NEVER</span> goes down. This is not a promise — it's a mathematical guarantee built into the smart contract.</p>
+            </div>
+            <div class="feature-item" style="border-left-color: #D4AF37;">
+                <div class="icon">🏦</div>
+                <h4 style="color: #D4AF37;" data-i18n="whatisfit.diff2">Real Asset Backing</h4>
+                <p data-i18n="whatisfit.diff2Desc">Every FIT token is backed by <span class="gold">real DAI</span> in the contract. You can verify the reserve at any time.</p>
+            </div>
+            <div class="feature-item" style="border-left-color: #D4AF37;">
+                <div class="icon">🔐</div>
+                <h4 style="color: #D4AF37;" data-i18n="whatisfit.diff3">Anti-Whale Protection</h4>
+                <p data-i18n="whatisfit.diff3Desc">Step-based purchase limits prevent whales from dumping or manipulating the price.</p>
+            </div>
+            <div class="feature-item" style="border-left-color: #D4AF37;">
+                <div class="icon">🗳️</div>
+                <h4 style="color: #D4AF37;" data-i18n="whatisfit.diff4">True Decentralization</h4>
+                <p data-i18n="whatisfit.diff4Desc">All decisions are made through <span class="gold">DAO voting</span>. No central authority can change the rules.</p>
+            </div>
+            <div class="feature-item" style="border-left-color: #D4AF37;">
+                <div class="icon">🔄</div>
+                <h4 style="color: #D4AF37;" data-i18n="whatisfit.diff5">Every Transaction Helps</h4>
+                <p data-i18n="whatisfit.diff5Desc">Both buying AND selling increase the price. Even if you sell, you're helping the ecosystem grow.</p>
+            </div>
+            <div class="feature-item" style="border-left-color: #D4AF37;">
+                <div class="icon">🎁</div>
+                <h4 style="color: #D4AF37;" data-i18n="whatisfit.diff6">Gift Rewards</h4>
+                <p data-i18n="whatisfit.diff6Desc">Active participants earn $5 gift rewards through the automated lottery system.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SECTION 5: WHY SHOULD WE HAVE FIT ===== -->
+    <div class="section-card">
+        <span class="icon-large">🏆</span>
+        <h2 data-i18n="whatisfit.whyHaveTitle">Why Should We Have FIT?</h2>
+        
+        <div class="info-box gold">
+            <h4 data-i18n="whatisfit.whyHaveSub">A Better Way to Store Value</h4>
+        </div>
+        
+        <p data-i18n="whatisfit.whyHaveText1">
+            <span class="gold">FIT</span> solves the biggest problem in crypto: <span class="highlight">volatility</span>. 
+            Bitcoin can drop 20% in a day. Ethereum can crash 50% in a week. 
+            But <span class="gold">FIT</span> <span class="highlight">never drops</span>. 
+            It's a <span class="gold">mathematical certainty</span>.
+        </p>
+        
+        <div class="comparison-grid">
+            <div class="comparison-box fit">
+                <h4 data-i18n="whatisfit.withFitTitle">✅ With FIT You Get:</h4>
+                <ul>
+                    <li><span class="check">✅</span> <span data-i18n="whatisfit.withFit1"><span class="gold">Peace of mind</span> — your investment only goes up</span></li>
+                    <li><span class="check">✅</span> <span data-i18n="whatisfit.withFit2"><span class="gold">Transparency</span> — all data on blockchain</span></li>
+                    <li><span class="check">✅</span> <span data-i18n="whatisfit.withFit3"><span class="gold">Community power</span> — DAO governance</span></li>
+                    <li><span class="check">✅</span> <span data-i18n="whatisfit.withFit4"><span class="gold">Real backing</span> — DAI reserves</span></li>
+                    <li><span class="check">✅</span> <span data-i18n="whatisfit.withFit5"><span class="gold">Passive growth</span> — every transaction helps you</span></li>
+                </ul>
+            </div>
+            <div class="comparison-box others">
+                <h4 data-i18n="whatisfit.withoutFitTitle">❌ Without FIT You Face:</h4>
+                <ul>
+                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.withoutFit1"><span class="danger">Fear of crash</span> — constant worry</span></li>
+                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.withoutFit2"><span class="danger">No transparency</span> — hidden manipulations</span></li>
+                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.withoutFit3"><span class="danger">Central control</span> — someone can change rules</span></li>
+                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.withoutFit4"><span class="danger">No real backing</span> — just promises</span></li>
+                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.withoutFit5"><span class="danger">Zero-sum game</span> — your gain is someone's loss</span></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <h4 data-i18n="whatisfit.analogyTitle">💡 Think of It This Way:</h4>
+            <p data-i18n="whatisfit.analogyText">
+                Most cryptocurrencies are like a <span class="danger">roller coaster</span> — up, down, up, down. 
+                <span class="gold">FIT</span> is like an <span class="highlight">elevator</span> — 
+                it only goes <span class="gold">up</span>. Once you're in, you're always rising.
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== SECTION 6: HOW IT WORKS ===== -->
+    <div class="section-card">
+        <span class="icon-large">⚙️</span>
+        <h2 data-i18n="whatisfit.howWorksTitle">How Does FIT Work?</h2>
+        
+        <div class="steps-grid">
+            <div class="step-item">
+                <div class="step-num">1</div>
+                <h4 style="color: #00C896;" data-i18n="whatisfit.step1">Buy a Share</h4>
+                <p data-i18n="whatisfit.step1Desc">Purchase an ownership share (100 DAI)</p>
+            </div>
+            <div class="step-item gold">
+                <div class="step-num">2</div>
+                <h4 style="color: #D4AF37;" data-i18n="whatisfit.step2">Get FIT</h4>
+                <p data-i18n="whatisfit.step2Desc">Exchange DAI for FIT tokens</p>
+            </div>
+            <div class="step-item">
+                <div class="step-num">3</div>
+                <h4 style="color: #00C896;" data-i18n="whatisfit.step3">Earn Rewards</h4>
+                <p data-i18n="whatisfit.step3Desc">Participate in the ecosystem and earn</p>
+            </div>
+            <div class="step-item gold">
+                <div class="step-num">4</div>
+                <h4 style="color: #D4AF37;" data-i18n="whatisfit.step4">Watch It Grow</h4>
+                <p data-i18n="whatisfit.step4Desc">Your investment increases with every transaction</p>
+            </div>
+        </div>
+        
+        <div class="info-box gold">
+            <h4 data-i18n="whatisfit.growthTitle">📈 The Growth Cycle:</h4>
+            <p style="text-align: center; font-size: 16px; color: #D4AF37;" data-i18n="whatisfit.growthText">
+                More Users → More Transactions → More DAI Reserve → <span class="highlight">Higher Price</span>
+            </p>
+            <p style="text-align: center; font-size: 13px; color: #888;" data-i18n="whatisfit.growthNote">
+                It's a <span class="gold">self-reinforcing cycle</span> that benefits everyone.
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== SECTION 7: REAL NUMBERS ===== -->
+    <div class="section-card">
+        <span class="icon-large">📊</span>
+        <h2 data-i18n="whatisfit.numbersTitle">The Numbers Speak for Themselves</h2>
+        
+        <div class="number-grid">
+            <div class="number-item">
+                <div class="label" data-i18n="whatisfit.numStart">Starting Price</div>
+                <div class="value gold">$1.00</div>
+            </div>
+            <div class="number-item">
+                <div class="label" data-i18n="whatisfit.numCurrent">Current Price</div>
+                <div class="value green">$6.40+</div>
+            </div>
+            <div class="number-item">
+                <div class="label" data-i18n="whatisfit.numGrowth">Total Growth</div>
+                <div class="value gold">540%+</div>
+            </div>
+            <div class="number-item" style="border-color: rgba(255, 215, 0, 0.3);">
+                <div class="label" data-i18n="whatisfit.numFee">Earned in Rewards</div>
+                <div class="value reward">$5,000+</div>
+            </div>
+        </div>
+        
+        <div class="info-box">
+            <h4 data-i18n="whatisfit.numbersPointTitle">📌 Key Point:</h4>
+            <p data-i18n="whatisfit.numbersPoint">
+                FIT started at <span class="gold">$1.00</span> and has grown to over <span class="gold">$6.40</span> — 
+                and it <span class="highlight">never went down</span>. Not once. Every single day, the price 
+                has been higher than the day before.
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== SECTION 8: CTA ===== -->
+    <div class="section-card cta-section">
+        <div style="font-size: 48px; margin-bottom: 15px;">🚀</div>
+        <h2 style="color: #D4AF37; border: none; padding: 0; margin: 0 0 15px 0;" data-i18n="whatisfit.ctaTitle">Ready to Own FIT?</h2>
+        <p style="text-align: center; font-size: 16px; max-width: 600px; margin: 0 auto 20px auto;" data-i18n="whatisfit.ctaText">
+            Join the world's first non-diminishing digital asset. Start your journey to <span class="gold">infinite growth</span> today.
+        </p>
+        
+        <div>
+            <a href="dapp.html" class="btn"><i class="fas fa-rocket"></i> <span data-i18n="whatisfit.ctaBtn1">Get Started Now</span></a>
+            <a href="compare.html" class="btn-outline"><i class="fas fa-chart-line"></i> <span data-i18n="whatisfit.ctaBtn2">See the Difference</span></a>
+        </div>
+        
+        <p style="font-size: 12px; color: #888; margin-top: 20px;" data-i18n="whatisfit.ctaNote">
+            🔒 100% decentralized • 💎 Backed by real DAI • 📈 Always rising
+        </p>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <div class="footer">
+        <div class="footer-links">
+            <a href="index.html" data-i18n="nav.dashboard">Dashboard</a>
+            <span>|</span>
+            <a href="compare.html" data-i18n="nav.comparison">Comparison</a>
+            <span>|</span>
+            <a href="dapp.html" data-i18n="nav.dapp">DApp</a>
+            <span>|</span>
+            <a href="transactions.html" data-i18n="nav.transactions">Transactions</a>
+            <span>|</span>
+            <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+            <span>|</span>
+            <a href="warnings.html" data-i18n="nav.warnings">Warnings</a>
+            <span>|</span>
+            <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+            <span>|</span>
+            <a href="whitepaper.html" data-i18n="nav.whitepaper">White Paper</a>
+            <span>|</span>
+            <a href="audit.html" data-i18n="nav.audit">Security Audit</a>
+            <span>|</span>
+            <a href="what-is-fit.html" data-i18n="nav.whatisfit">What is FIT?</a>
+        </div>
+        <p class="footer-tagline" data-i18n-html="footer.tagline"></p>
+    </div>
+
+</div>
+
+<!-- ===== SIDEBAR SCRIPT ===== -->
+<script>
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const closeSidebarBtn = document.getElementById('closeSidebarBtn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    function openSidebar() {
+        sidebar.classList.add('open');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeSidebar() {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    hamburgerBtn.addEventListener('click', openSidebar);
+    closeSidebarBtn.addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeSidebar();
+        }
+    });
+</script>
+
+</body>
+</html>
