@@ -8,6 +8,7 @@
   },
   "nav": {
     "dashboard": "Dashboard",
+    "whatisfit": "What is FIT?",
     "comparison": "Comparison",
     "dapp": "DApp",
     "transactions": "Transactions",
@@ -16,7 +17,7 @@
     "faq": "FAQ",
     "whitepaper": "White Paper",
     "audit": "Security Audit"
-  },
+},
   "dapp": {
     "connect": "Connect Wallet",
     "walletDesc": "MetaMask, Trust Wallet, TokenPocket, or any Web3 wallet",
