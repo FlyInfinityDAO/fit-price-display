@@ -8,6 +8,7 @@
   },
   "nav": {
     "dashboard": "Панель управления",
+    "whatisfit": "Что такое FIT?",
     "comparison": "Сравнение",
     "dapp": "DApp",
     "transactions": "Транзакции",
@@ -16,7 +17,7 @@
     "faq": "Часто задаваемые вопросы",
     "whitepaper": "Белая книга",
     "audit": "Аудит безопасности"
-  },
+},
   "whitepaper": {
     "title": "Белая книга",
     "version": "Версия 1.0",
