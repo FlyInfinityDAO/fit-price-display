@@ -8,6 +8,7 @@
   },
   "nav": {
     "dashboard": "Painel",
+    "whatisfit": "O que é FIT?",
     "comparison": "Comparação",
     "dapp": "DApp",
     "transactions": "Transações",
@@ -16,7 +17,7 @@
     "faq": "Perguntas Frequentes",
     "whitepaper": "White Paper",
     "audit": "Auditoria de Segurança"
-  },
+},
   "faq": {
     "title": "Perguntas Frequentes",
     "q1": "Quanto custa comprar ações de propriedade da Fly Infinity?",
