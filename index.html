@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="lang.js"></script>
     <style>
-        /* ===== تمام استایل‌ها بدون تغییر ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
@@ -1065,6 +1064,7 @@
         
     </div>
 
+    <!-- ===== FOOTER با data-i18n-html اصلاح‌شده ===== -->
     <div class="footer">
         <div class="footer-links">
             <a href="index.html" data-i18n="nav.dashboard">Dashboard</a>
@@ -1085,9 +1085,7 @@
             <span>|</span>
             <a href="audit.html" data-i18n="nav.audit">Security Audit</a>
         </div>
-        <p class="footer-tagline" data-i18n="footer.tagline">
-            Fly Infinity — <span class="gold">Decentralized. Transparent. Forever Rising.</span>
-        </p>
+        <p class="footer-tagline" data-i18n-html="footer.tagline"></p>
     </div>
 
 <script>
@@ -1612,7 +1610,6 @@
         const savings = totalCostDirect - totalCostWithPlan;
         if (savings > 0) {
             document.getElementById('savingsContainer').style.display = 'block';
-            // ✅ استفاده از tWithReplace برای ترجمه
             const savingsText = tWithReplace('dashboard.purchaseSavings', { amount: savings.toFixed(2) });
             document.getElementById('savingsBadge').innerHTML = savingsText;
         } else {
@@ -1621,7 +1618,6 @@
         
         if (rewardWithPlan > 0) {
             document.getElementById('rewardContainer').style.display = 'block';
-            // ✅ استفاده از tWithReplace برای ترجمه
             const rewardText = tWithReplace('dashboard.purchaseEarn', { amount: rewardWithPlan.toFixed(2) });
             document.getElementById('rewardBadge').innerHTML = rewardText;
         } else {
