@@ -1,13 +1,14 @@
 {
   "meta": {
-    "title": "What is FIT? - Fly Infinity Token",
-    "description": "Learn what Fly Infinity Token (FIT) is and why you should have it"
+    "title": "Fly Infinity Token - Dashboard",
+    "description": "Fly Infinity Token Dashboard - Real-time price, statistics and tools"
   },
   "header": {
     "title": "Fly Infinity DAO"
   },
   "nav": {
     "dashboard": "Dashboard",
+    "whatisfit": "What is FIT?",
     "comparison": "Comparison",
     "dapp": "DApp",
     "transactions": "Transactions",
@@ -15,8 +16,7 @@
     "warnings": "Warnings",
     "faq": "FAQ",
     "whitepaper": "White Paper",
-    "audit": "Security Audit",
-    "whatisfit": "What is FIT?"
+    "audit": "Security Audit"
   },
   "whatisfit": {
     "title": "What is FIT? Why Should You Have It?",
