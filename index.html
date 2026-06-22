@@ -395,43 +395,96 @@
         .live-price { font-size: 48px; font-weight: 800; color: #D4AF37; }
         .usd-price { font-size: 20px; color: #D4AF37; opacity: 0.8; }
         
-        /* ===== دکمه طلایی WHAT IS FIT ===== */
+        /* ===== دکمه طلایی WHAT IS FIT - بین دو باکس ===== */
+        .whatisfit-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .whatisfit-btn-wrapper {
+            grid-column: 1 / -1;
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 18px 25px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 25px 45px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .whatisfit-btn-wrapper:hover {
+            border-color: #D4AF37;
+            box-shadow: 0 25px 45px rgba(212, 175, 55, 0.1);
+        }
+        
         .whatisfit-btn {
             display: inline-flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
             background: linear-gradient(135deg, #D4AF37, #b8941e);
             color: #0F0F0F;
-            padding: 14px 32px;
+            padding: 16px 40px;
             border-radius: 50px;
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
             text-decoration: none;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+            box-shadow: 0 4px 25px rgba(212, 175, 55, 0.25);
             border: none;
             cursor: pointer;
-            margin-top: 15px;
+            width: 100%;
+            justify-content: center;
         }
         
         .whatisfit-btn:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 35px rgba(212, 175, 55, 0.5);
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 8px 40px rgba(212, 175, 55, 0.4);
             background: linear-gradient(135deg, #e8c84a, #c49a2a);
         }
         
         .whatisfit-btn i {
-            font-size: 18px;
+            font-size: 20px;
         }
         
-        @media (max-width: 768px) {
+        .whatisfit-btn .arrow {
+            transition: transform 0.3s ease;
+        }
+        
+        .whatisfit-btn:hover .arrow {
+            transform: translateX(6px);
+        }
+        
+        @media (max-width: 800px) {
+            .whatisfit-container {
+                grid-template-columns: 1fr;
+            }
+            .whatisfit-btn-wrapper {
+                grid-column: 1;
+                padding: 14px 18px;
+            }
             .whatisfit-btn {
-                padding: 12px 20px;
-                font-size: 14px;
+                padding: 14px 24px;
+                font-size: 15px;
+                gap: 12px;
+            }
+            .whatisfit-btn i {
+                font-size: 17px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .whatisfit-btn {
+                padding: 12px 18px;
+                font-size: 13px;
                 gap: 8px;
             }
             .whatisfit-btn i {
-                font-size: 15px;
+                font-size: 14px;
             }
         }
         
@@ -768,8 +821,9 @@
         </div>
     </div>
 
-    <!-- Top Grid -->
+    <!-- ===== TOP GRID - دو باکس بالایی ===== -->
     <div class="top-grid">
+        <!-- باکس اول: قیمت FIT -->
         <div class="card" style="text-align:center">
             <div class="header-with-logo">
                 <img src="logo.png" alt="FIT Logo" class="token-logo" onerror="this.style.display='none'">
@@ -780,14 +834,9 @@
             <div class="live-price" id="fit-price">—</div>
             <div class="usd-price" id="usd-price">≈ $— </div>
             <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> <span data-i18n="btn.refresh">Refresh Price</span></button>
-            
-            <!-- ===== دکمه طلایی WHAT IS FIT ===== -->
-            <a href="what-is-fit.html" class="whatisfit-btn">
-                <i class="fas fa-question-circle"></i> 
-                <span data-i18n="nav.whatisfit">What is FIT?</span>
-                <i class="fas fa-arrow-right"></i>
-            </a>
         </div>
+        
+        <!-- باکس دوم: آمار توکن -->
         <div class="card">
             <div style="font-size:18px; margin-bottom:15px; text-align:center; color: #D4AF37;" data-i18n="dashboard.statistics"><i class="fas fa-chart-line"></i> Token Statistics</div>
             <div class="stats-grid">
@@ -802,6 +851,17 @@
                 <div style="color:#00C896; font-size:11px; margin-top:8px;" data-i18n="dashboard.formula">💰 Pricing Formula</div>
                 <div style="font-size:12px; color:#D4AF37;" data-i18n="dashboard.formulaText">Price = Reserve / Total Supply</div>
             </div>
+        </div>
+    </div>
+
+    <!-- ===== دکمه طلایی WHAT IS FIT - بین دو باکس ===== -->
+    <div class="whatisfit-container">
+        <div class="whatisfit-btn-wrapper">
+            <a href="what-is-fit.html" class="whatisfit-btn">
+                <i class="fas fa-question-circle"></i>
+                <span data-i18n="nav.whatisfit">What is FIT?</span>
+                <i class="fas fa-arrow-right arrow"></i>
+            </a>
         </div>
     </div>
 
