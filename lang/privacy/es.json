@@ -8,6 +8,7 @@
   },
   "nav": {
     "dashboard": "Panel",
+    "whatisfit": "¿Qué es FIT?",
     "comparison": "Comparación",
     "dapp": "DApp",
     "transactions": "Transacciones",
@@ -16,7 +17,7 @@
     "faq": "Preguntas Frecuentes",
     "whitepaper": "Libro Blanco",
     "audit": "Auditoría de Seguridad"
-  },
+},
   "privacy": {
     "title": "Política de Privacidad y Estructura Descentralizada",
     "badge1": "No Decreciente",
