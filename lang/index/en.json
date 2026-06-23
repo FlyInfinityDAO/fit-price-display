@@ -27,6 +27,7 @@
     "totalSupply": "Total Supply",
     "reserve": "$ Reserve",
     "tradingVolume": "Trading Volume ($)",
+    "totalAirdrops": "Total Airdrops Paid ($)",
     "holders": "Total Holders",
     "contract": "📜 Contract Address",
     "formula": "💰 Pricing Formula",
