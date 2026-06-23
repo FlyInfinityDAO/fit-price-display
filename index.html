@@ -489,7 +489,7 @@
         
         .stats-grid { 
             display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
+            grid-template-columns: repeat(5, 1fr); 
             gap: 12px; 
             margin-top: 15px; 
         }
@@ -737,9 +737,13 @@
         @media (max-width: 800px) { 
             .top-grid { grid-template-columns: 1fr; } 
             .live-price { font-size: 36px; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
             .fee-grid { grid-template-columns: 1fr; }
             .purchase-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 500px) { 
+            .stats-grid { grid-template-columns: repeat(2, 1fr); } 
         }
         
         @media (max-width: 768px) {
@@ -842,6 +846,7 @@
                 <div class="stat-card"><div class="stat-value" id="totalSupply">—</div><div class="stat-label" data-i18n="dashboard.totalSupply">Total Supply</div></div>
                 <div class="stat-card"><div class="stat-value" id="daiBalance">—</div><div class="stat-label" data-i18n="dashboard.reserve">$ Reserve</div></div>
                 <div class="stat-card"><div class="stat-value" id="tradingVolume">—</div><div class="stat-label" data-i18n="dashboard.tradingVolume">Trading Volume ($)</div></div>
+                <div class="stat-card"><div class="stat-value" id="totalAirdrops">—</div><div class="stat-label" data-i18n="dashboard.totalAirdrops">Total Airdrops Paid ($)</div></div>
                 <div class="stat-card"><div class="stat-value" id="holderCount">—</div><div class="stat-label" data-i18n="dashboard.holders">Total Holders</div></div>
             </div>
             <div style="margin-top:15px; background:#1a1a1a; border-radius:16px; padding:12px; border-left: 3px solid #00C896;">
@@ -1235,7 +1240,7 @@
     let chartLabels = [];
     let chartPrices = [];
     
-    // ===== تابع جدید برای دریافت Trading Volume =====
+    // ===== تابع برای دریافت Trading Volume =====
     async function fetchTradingVolume() {
         try {
             const response = await fetch('trading-volume.json?t=' + Date.now());
@@ -1247,6 +1252,20 @@
             console.log('⚠️ Could not load trading-volume.json');
         }
         return 30800; // fallback
+    }
+    
+    // ===== تابع برای دریافت Total Airdrops =====
+    async function fetchTotalAirdrops() {
+        try {
+            const response = await fetch('airdrop-stats.json?t=' + Date.now());
+            if (response.ok) {
+                const data = await response.json();
+                return data.totalAirdrops || 0;
+            }
+        } catch(e) {
+            console.log('⚠️ Could not load airdrop-stats.json');
+        }
+        return 810; // fallback (405 × 2)
     }
     
     async function loadAllFromJSON() {
@@ -1431,9 +1450,13 @@
             let reserve = parseFloat(ethers.utils.formatEther(await daiContract.balanceOf(CONTRACT_ADDRESS)));
             document.getElementById("daiBalance").innerHTML = "$" + reserve.toLocaleString(undefined, {maximumFractionDigits:2});
             
-            // ===== Trading Volume از فایل JSON =====
+            // ===== Trading Volume =====
             const tradingVolume = await fetchTradingVolume();
             document.getElementById("tradingVolume").innerHTML = "$" + tradingVolume.toLocaleString(undefined, {maximumFractionDigits:0});
+            
+            // ===== Total Airdrops =====
+            const totalAirdrops = await fetchTotalAirdrops();
+            document.getElementById("totalAirdrops").innerHTML = "$" + totalAirdrops.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
             
             updateSim();
             updateCalculatorPrice();
