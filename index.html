@@ -489,11 +489,23 @@
         
         .stats-grid { 
             display: grid; 
-            grid-template-columns: repeat(5, 1fr); 
+            grid-template-columns: repeat(4, 1fr); 
             gap: 12px; 
             margin-top: 15px; 
         }
         .stat-card { background: #1a1a1a; border-radius: 16px; padding: 12px; text-align: center; border-left: 3px solid #00C896; }
+        .stat-card-wide { 
+            background: #1a1a1a; 
+            border-radius: 16px; 
+            padding: 12px; 
+            text-align: center; 
+            border-left: 3px solid #D4AF37; 
+            grid-column: span 2;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
         .stat-value { font-size: 16px; font-weight: bold; color: #D4AF37; }
         .stat-label { font-size: 10px; color: #888; margin-top: 5px; }
         
@@ -737,13 +749,15 @@
         @media (max-width: 800px) { 
             .top-grid { grid-template-columns: 1fr; } 
             .live-price { font-size: 36px; }
-            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .stat-card-wide { grid-column: span 2; }
             .fee-grid { grid-template-columns: 1fr; }
             .purchase-grid { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 500px) { 
-            .stats-grid { grid-template-columns: repeat(2, 1fr); } 
+            .stats-grid { grid-template-columns: 1fr; }
+            .stat-card-wide { grid-column: span 1; }
         }
         
         @media (max-width: 768px) {
@@ -846,8 +860,11 @@
                 <div class="stat-card"><div class="stat-value" id="totalSupply">—</div><div class="stat-label" data-i18n="dashboard.totalSupply">Total Supply</div></div>
                 <div class="stat-card"><div class="stat-value" id="daiBalance">—</div><div class="stat-label" data-i18n="dashboard.reserve">$ Reserve</div></div>
                 <div class="stat-card"><div class="stat-value" id="tradingVolume">—</div><div class="stat-label" data-i18n="dashboard.tradingVolume">Trading Volume ($)</div></div>
-                <div class="stat-card"><div class="stat-value" id="totalAirdrops">—</div><div class="stat-label" data-i18n="dashboard.totalAirdrops">Total Airdrops Paid ($)</div></div>
                 <div class="stat-card"><div class="stat-value" id="holderCount">—</div><div class="stat-label" data-i18n="dashboard.holders">Total Holders</div></div>
+                <div class="stat-card stat-card-wide" style="grid-column: span 2; border-left-color: #D4AF37;">
+                    <div class="stat-value" id="totalAirdrops">—</div>
+                    <div class="stat-label" data-i18n="dashboard.totalAirdrops">Total Airdrops Paid ($)</div>
+                </div>
             </div>
             <div style="margin-top:15px; background:#1a1a1a; border-radius:16px; padding:12px; border-left: 3px solid #00C896;">
                 <div style="color:#00C896; font-size:11px;" data-i18n="dashboard.contract">📜 Contract Address</div>
