@@ -1,0 +1,11 @@
+{
+  "lastUpdated": "2026-06-23T00:00:00Z",
+  "totalVolume": 30800,
+  "dailyVolume": 171.11,
+  "transactions": {
+    "totalBuys": 18500,
+    "totalSells": 12300,
+    "buyCount": 750,
+    "sellCount": 400
+  }
+}
