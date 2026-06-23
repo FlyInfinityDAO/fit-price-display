@@ -25,7 +25,7 @@
     "refreshPrice": "刷新价格",
     "statistics": "代币统计",
     "totalSupply": "总供应量",
-    "reserve": "储备金 $",
+    "reserve": "流动性量 ($)",
     "tradingVolume": "交易量 ($)",
     "totalAirdrops": "已支付空投总额 ($)",
     "holders": "总持有者",
