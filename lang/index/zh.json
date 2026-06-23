@@ -27,6 +27,7 @@
     "totalSupply": "总供应量",
     "reserve": "储备金 $",
     "tradingVolume": "交易量 ($)",
+    "totalAirdrops": "已支付空投总额 ($)",
     "holders": "总持有者",
     "contract": "📜 合约地址",
     "formula": "💰 定价公式",
