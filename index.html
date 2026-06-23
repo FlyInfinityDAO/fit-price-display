@@ -489,7 +489,7 @@
         
         .stats-grid { 
             display: grid; 
-            grid-template-columns: repeat(5, 1fr); 
+            grid-template-columns: repeat(6, 1fr); 
             gap: 12px; 
             margin-top: 15px; 
         }
@@ -734,7 +734,7 @@
             color: #D4AF37;
         }
         
-        @media (max-width: 800px) { 
+        @media (max-width: 900px) { 
             .top-grid { grid-template-columns: 1fr; } 
             .live-price { font-size: 36px; }
             .stats-grid { grid-template-columns: repeat(3, 1fr); }
@@ -847,6 +847,7 @@
                 <div class="stat-card"><div class="stat-value" id="daiBalance">—</div><div class="stat-label" data-i18n="dashboard.reserve">$ Reserve</div></div>
                 <div class="stat-card"><div class="stat-value" id="tradingVolume">—</div><div class="stat-label" data-i18n="dashboard.tradingVolume">Trading Volume ($)</div></div>
                 <div class="stat-card"><div class="stat-value" id="totalAirdrops">—</div><div class="stat-label" data-i18n="dashboard.totalAirdrops">Total Airdrops Paid ($)</div></div>
+                <div class="stat-card"><div class="stat-value" id="communityIncome">—</div><div class="stat-label" data-i18n="dashboard.communityIncome">Income from Community Development ($)</div></div>
                 <div class="stat-card"><div class="stat-value" id="holderCount">—</div><div class="stat-label" data-i18n="dashboard.holders">Total Holders</div></div>
             </div>
             <div style="margin-top:15px; background:#1a1a1a; border-radius:16px; padding:12px; border-left: 3px solid #00C896;">
@@ -1268,6 +1269,20 @@
         return 810; // fallback (405 × 2)
     }
     
+    // ===== تابع برای دریافت Community Income =====
+    async function fetchCommunityIncome() {
+        try {
+            const response = await fetch('community-income.json?t=' + Date.now());
+            if (response.ok) {
+                const data = await response.json();
+                return data.totalIncome || 0;
+            }
+        } catch(e) {
+            console.log('⚠️ Could not load community-income.json');
+        }
+        return 12450; // fallback
+    }
+    
     async function loadAllFromJSON() {
         try {
             const response = await fetch('price-history.json?t=' + Date.now());
@@ -1457,6 +1472,10 @@
             // ===== Total Airdrops =====
             const totalAirdrops = await fetchTotalAirdrops();
             document.getElementById("totalAirdrops").innerHTML = "$" + totalAirdrops.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+            
+            // ===== Community Income =====
+            const communityIncome = await fetchCommunityIncome();
+            document.getElementById("communityIncome").innerHTML = "$" + communityIncome.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
             
             updateSim();
             updateCalculatorPrice();
