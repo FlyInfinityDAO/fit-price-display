@@ -841,7 +841,7 @@
             <div class="stats-grid">
                 <div class="stat-card"><div class="stat-value" id="totalSupply">—</div><div class="stat-label" data-i18n="dashboard.totalSupply">Total Supply</div></div>
                 <div class="stat-card"><div class="stat-value" id="daiBalance">—</div><div class="stat-label" data-i18n="dashboard.reserve">$ Reserve</div></div>
-                <div class="stat-card"><div class="stat-value" id="marketCap">—</div><div class="stat-label" data-i18n="dashboard.marketCap">Market Cap ($)</div></div>
+                <div class="stat-card"><div class="stat-value" id="tradingVolume">—</div><div class="stat-label" data-i18n="dashboard.tradingVolume">Trading Volume ($)</div></div>
                 <div class="stat-card"><div class="stat-value" id="holderCount">—</div><div class="stat-label" data-i18n="dashboard.holders">Total Holders</div></div>
             </div>
             <div style="margin-top:15px; background:#1a1a1a; border-radius:16px; padding:12px; border-left: 3px solid #00C896;">
@@ -1235,6 +1235,20 @@
     let chartLabels = [];
     let chartPrices = [];
     
+    // ===== تابع جدید برای دریافت Trading Volume =====
+    async function fetchTradingVolume() {
+        try {
+            const response = await fetch('trading-volume.json?t=' + Date.now());
+            if (response.ok) {
+                const data = await response.json();
+                return data.totalVolume || 0;
+            }
+        } catch(e) {
+            console.log('⚠️ Could not load trading-volume.json');
+        }
+        return 30800; // fallback
+    }
+    
     async function loadAllFromJSON() {
         try {
             const response = await fetch('price-history.json?t=' + Date.now());
@@ -1417,8 +1431,9 @@
             let reserve = parseFloat(ethers.utils.formatEther(await daiContract.balanceOf(CONTRACT_ADDRESS)));
             document.getElementById("daiBalance").innerHTML = "$" + reserve.toLocaleString(undefined, {maximumFractionDigits:2});
             
-            let mcap = currentPriceDAI * totalSup;
-            document.getElementById("marketCap").innerHTML = "$" + mcap.toLocaleString(undefined, {maximumFractionDigits:0});
+            // ===== Trading Volume از فایل JSON =====
+            const tradingVolume = await fetchTradingVolume();
+            document.getElementById("tradingVolume").innerHTML = "$" + tradingVolume.toLocaleString(undefined, {maximumFractionDigits:0});
             
             updateSim();
             updateCalculatorPrice();
@@ -1721,7 +1736,6 @@
         const savings = totalCostDirect - totalCostWithPlan;
         if (savings > 0) {
             document.getElementById('savingsContainer').style.display = 'block';
-            // ✅ استفاده از tWithReplace برای ترجمه
             const savingsText = tWithReplace('dashboard.purchaseSavings', { amount: savings.toFixed(2) });
             document.getElementById('savingsBadge').innerHTML = savingsText;
         } else {
@@ -1730,7 +1744,6 @@
         
         if (rewardWithPlan > 0) {
             document.getElementById('rewardContainer').style.display = 'block';
-            // ✅ استفاده از tWithReplace برای ترجمه
             const rewardText = tWithReplace('dashboard.purchaseEarn', { amount: rewardWithPlan.toFixed(2) });
             document.getElementById('rewardBadge').innerHTML = rewardText;
         } else {
