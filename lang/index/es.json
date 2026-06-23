@@ -26,7 +26,7 @@
     "statistics": "Estadísticas del Token",
     "totalSupply": "Suministro Total",
     "reserve": "Reserva $",
-    "marketCap": "Capitalización de Mercado ($)",
+    "tradingVolume": "Volumen de Comercio ($)",
     "holders": "Total de Titulares",
     "contract": "📜 Dirección del Contrato",
     "formula": "💰 Fórmula de Precios",
