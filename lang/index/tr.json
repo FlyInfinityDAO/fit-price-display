@@ -26,7 +26,7 @@
     "statistics": "Token İstatistikleri",
     "totalSupply": "Toplam Arz",
     "reserve": "Rezerv $",
-    "marketCap": "Piyasa Değeri ($)",
+    "tradingVolume": "İşlem Hacmi ($)",
     "holders": "Toplam Sahipler",
     "contract": "📜 Sözleşme Adresi",
     "formula": "💰 Fiyatlandırma Formülü",
