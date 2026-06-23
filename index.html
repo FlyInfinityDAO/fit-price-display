@@ -1228,7 +1228,7 @@
         }
     ];
     
-    const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
+    const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed1.binance.org/");
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
     const daiContract = new ethers.Contract(DAI_ADDRESS, DAI_ABI, provider);
     const networkContract = new ethers.Contract(NETWORK_ADDRESS, NETWORK_ABI, provider);
