@@ -57,7 +57,7 @@ jobs:
             
             const prices = {};
             
-            // Add all crypto prices
+            // Add all crypto prices (به جز FIT)
             for (const [cgId, ourId] of Object.entries(map)) {
               if (cryptoPrices[cgId]) {
                 const current = cryptoPrices[cgId].usd;
@@ -68,26 +68,7 @@ jobs:
               }
             }
             
-            // Add FIT (use previous or default)
-            let fitPrice = 6.39;
-            let fitYesterday = 6.3261;
-            let fitChange = 1.0;
-            
-            if (history.records.length > 0) {
-              for (let i = history.records.length - 1; i >= 0; i--) {
-                const rec = history.records[i];
-                if (rec.prices && rec.prices.fit && rec.prices.fit.price) {
-                  const prev = rec.prices.fit.price;
-                  fitPrice = prev * 1.001;
-                  fitYesterday = prev;
-                  fitChange = ((fitPrice - fitYesterday) / fitYesterday) * 100;
-                  break;
-                }
-              }
-            }
-            
-            prices['fit'] = { price: fitPrice, yesterday: fitYesterday, change: fitChange };
-            console.log('✅ fit :', fitPrice);
+            // FIT را ذخیره نکنید - از قرارداد خوانده می‌شود
             
             // Save to history
             const existingIndex = history.records.findIndex(r => r.date === today);
