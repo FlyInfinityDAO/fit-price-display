@@ -1254,8 +1254,20 @@
         try {
             const totalOwners = await networkContract.All_Owner_Number();
             const totalOwnersNumber = parseInt(totalOwners.toString());
+            
+            // ===== کم کردن تعداد مالکین قرارداد قبلی (Import شده) =====
+            const OLD_CONTRACT_OWNERS = 80897;
+            const newOwners = Math.max(0, totalOwnersNumber - OLD_CONTRACT_OWNERS);
+            
+            // هر مالک جدید ۲ دلار FIT هدیه گرفته
             const airdropPerOwner = 2;
-            return totalOwnersNumber * airdropPerOwner;
+            const totalAirdrops = newOwners * airdropPerOwner;
+            
+            console.log(`👥 Total Owners (All): ${totalOwnersNumber}`);
+            console.log(`👥 New Owners (Since Launch): ${newOwners}`);
+            console.log(`🎁 Total Airdrops: $${totalAirdrops.toFixed(2)}`);
+            
+            return totalAirdrops;
         } catch (error) {
             console.error('❌ Error fetching All_Owner_Number:', error);
             return 0;
