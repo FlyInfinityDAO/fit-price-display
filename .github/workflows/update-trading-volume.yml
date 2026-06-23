@@ -1,0 +1,37 @@
+name: Update Trading Volume from Blockchain
+
+on:
+  schedule:
+    - cron: '0 */12 * * *'  # هر ۱۲ ساعت
+  workflow_dispatch:
+
+jobs:
+  update-volume:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm install ethers@5.7.2
+      
+      - name: Scan blockchain and update trading volume
+        run: node update-trading-volume.js
+      
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.github.com"
+          git add trading-volume.json trading-volume-progress.json
+          git diff --quiet && git diff --staged --quiet || git commit -m "🤖 Auto-update trading volume [skip ci]"
+          git push
