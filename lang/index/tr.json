@@ -27,6 +27,7 @@
     "totalSupply": "Toplam Arz",
     "reserve": "Rezerv $",
     "tradingVolume": "İşlem Hacmi ($)",
+    "totalAirdrops": "Ödenen Toplam Airdrop ($)",
     "holders": "Toplam Sahipler",
     "contract": "📜 Sözleşme Adresi",
     "formula": "💰 Fiyatlandırma Formülü",
