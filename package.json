@@ -2,7 +2,7 @@
   "name": "fly-infinity-dao",
   "version": "1.0.0",
   "scripts": {
-    "update-airdrop": "node update-airdrop.js"
+    "update-trading-volume": "node update-trading-volume.js"
   },
   "dependencies": {
     "ethers": "^5.7.2"
