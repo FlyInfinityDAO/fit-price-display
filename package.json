@@ -1,0 +1,10 @@
+{
+  "name": "fly-infinity-dao",
+  "version": "1.0.0",
+  "scripts": {
+    "update-volume": "node update-trading-volume.js"
+  },
+  "devDependencies": {
+    "xlsx": "^0.18.5"
+  }
+}
