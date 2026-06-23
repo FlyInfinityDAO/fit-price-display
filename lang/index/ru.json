@@ -27,6 +27,7 @@
     "totalSupply": "Общее предложение",
     "reserve": "Резерв $",
     "tradingVolume": "Объем торгов ($)",
+    "totalAirdrops": "Всего выплачено Airdrop ($)",
     "holders": "Всего держателей",
     "contract": "📜 Адрес контракта",
     "formula": "💰 Формула ценообразования",
