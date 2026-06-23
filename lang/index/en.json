@@ -25,7 +25,7 @@
     "refreshPrice": "Refresh Price",
     "statistics": "Token Statistics",
     "totalSupply": "Total Supply",
-    "reserve": "$ Reserve",
+    "reserve": "Liquidity Volume ($)",
     "tradingVolume": "Trading Volume ($)",
     "totalAirdrops": "Total Airdrops Paid ($)",
     "holders": "Total Holders",
