@@ -1209,6 +1209,8 @@
     const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
     const DAI_ADDRESS = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
     const NETWORK_ADDRESS = "0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B";
+    const BSC_CHAIN_ID = 56;
+    const ETHERSCAN_API_KEY = "SKAHDN5X6UMW388XSIY1B8VH99WJ4KH7S4";
     
     const ABI = [
         {"constant":true,"inputs":[],"name":"Price","outputs":[{"name":"","type":"uint256"}],"type":"function"},
@@ -1235,37 +1237,45 @@
     let currentPriceDAI = 0;
     let priceChart = null;
     
-    const ETHERSCAN_API_KEY = "SKAHDN5X6UMW388XSIY1B8VH99WJ4KH7S4";
-    const BSC_CHAIN_ID = 56;
-    
-    async function fetchHolderCount() {
+    // ===== تابع برای دریافت تعداد کل هولدرها از BscScan API =====
+    async function fetchTotalHolders() {
         try {
-            const url = `https://api.etherscan.io/v2/api?chainid=${BSC_CHAIN_ID}&module=token&action=topholders&contractaddress=${CONTRACT_ADDRESS}&page=1&offset=1&apikey=${ETHERSCAN_API_KEY}`;
+            // روش ۱: استفاده از tokenholderlist
+            const url = `https://api.etherscan.io/v2/api?chainid=${BSC_CHAIN_ID}&module=token&action=tokenholderlist&contractaddress=${CONTRACT_ADDRESS}&page=1&offset=1&apikey=${ETHERSCAN_API_KEY}`;
             const response = await fetch(url);
             const data = await response.json();
-            document.getElementById("holderCount").innerHTML = "1,200";
-        } catch(e) {
-            document.getElementById("holderCount").innerHTML = "1,200";
+            
+            if (data.status === "1" && data.result && Array.isArray(data.result)) {
+                return data.result.length;
+            }
+            
+            // روش ۲: استفاده از tokenholders (تعداد کل رو برمیگردونه)
+            const url2 = `https://api.bscscan.com/api?module=token&action=tokenholders&contractaddress=${CONTRACT_ADDRESS}&page=1&offset=1&apikey=${ETHERSCAN_API_KEY}`;
+            const response2 = await fetch(url2);
+            const data2 = await response2.json();
+            
+            if (data2.status === "1" && data2.result) {
+                const total = parseInt(data2.result);
+                if (total > 0) return total;
+            }
+            
+            return 0;
+        } catch (error) {
+            console.error('❌ Error fetching total holders:', error);
+            return 0;
         }
     }
     
-    // ===== تابع جدید برای دریافت Total Airdrops از قرارداد =====
+    // ===== تابع برای دریافت Total Airdrops از قرارداد =====
     async function fetchTotalAirdrops() {
         try {
             const totalOwners = await networkContract.All_Owner_Number();
             const totalOwnersNumber = parseInt(totalOwners.toString());
             
-            // ===== کم کردن تعداد مالکین قرارداد قبلی (Import شده) =====
             const OLD_CONTRACT_OWNERS = 80897;
             const newOwners = Math.max(0, totalOwnersNumber - OLD_CONTRACT_OWNERS);
-            
-            // هر مالک جدید ۲ دلار FIT هدیه گرفته
             const airdropPerOwner = 2;
             const totalAirdrops = newOwners * airdropPerOwner;
-            
-            console.log(`👥 Total Owners (All): ${totalOwnersNumber}`);
-            console.log(`👥 New Owners (Since Launch): ${newOwners}`);
-            console.log(`🎁 Total Airdrops: $${totalAirdrops.toFixed(2)}`);
             
             return totalAirdrops;
         } catch (error) {
@@ -1273,7 +1283,7 @@
             return 0;
         }
     }
-
+    
     // ===== تابع برای دریافت Trading Volume =====
     async function fetchTradingVolume() {
         try {
@@ -1285,14 +1295,7 @@
         } catch(e) {
             console.log('⚠️ Could not load trading-volume.json');
         }
-        // Fallback: محاسبه از قرارداد (در صورت وجود)
-        try {
-            // اگر قرارداد تابعی برای حجم معاملات داشته باشه
-            // فعلاً از فایل JSON استفاده میکنیم
-            return 0;
-        } catch(e) {
-            return 0;
-        }
+        return 0;
     }
     
     let historicalStats = {
@@ -1485,13 +1488,22 @@
             let reserve = parseFloat(ethers.utils.formatEther(await daiContract.balanceOf(CONTRACT_ADDRESS)));
             document.getElementById("daiBalance").innerHTML = "$" + reserve.toLocaleString(undefined, {maximumFractionDigits:2});
             
-            // ===== Trading Volume (از فایل JSON) =====
+            // ===== Trading Volume =====
             const tradingVolume = await fetchTradingVolume();
             document.getElementById("tradingVolume").innerHTML = "$" + tradingVolume.toLocaleString(undefined, {maximumFractionDigits:0});
             
-            // ===== Total Airdrops (از قرارداد Network) =====
+            // ===== Total Airdrops =====
             const totalAirdrops = await fetchTotalAirdrops();
             document.getElementById("totalAirdrops").innerHTML = "$" + totalAirdrops.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
+            
+            // ===== Total Holders (از BscScan API) =====
+            try {
+                const totalHolders = await fetchTotalHolders();
+                document.getElementById("holderCount").innerHTML = totalHolders > 0 ? totalHolders.toLocaleString() : "—";
+            } catch(e) {
+                console.error('Error fetching holders:', e);
+                document.getElementById("holderCount").innerHTML = "—";
+            }
             
             updateSim();
             updateCalculatorPrice();
@@ -1598,14 +1610,21 @@
     async function init() {
         await loadAllFromJSON();
         fetchLive();
-        fetchHolderCount();
-        setInterval(fetchHolderCount, 300000);
+        
+        // ===== به‌روزرسانی دوره‌ای هولدرها (هر ۵ دقیقه) =====
+        setInterval(async () => {
+            try {
+                const count = await fetchTotalHolders();
+                document.getElementById("holderCount").innerHTML = count > 0 ? count.toLocaleString() : "—";
+            } catch(e) {
+                console.error('Error updating holders:', e);
+            }
+        }, 300000);
     }
     
     document.getElementById("refreshBtn").addEventListener("click", () => {
         fetchLive();
         loadAllFromJSON();
-        fetchHolderCount();
     });
     document.getElementById("fitAmount").addEventListener("input", updateSim);
     
