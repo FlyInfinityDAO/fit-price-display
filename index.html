@@ -845,7 +845,7 @@
             <div class="stats-grid">
                 <div class="stat-card"><div class="stat-value" id="totalSupply">—</div><div class="stat-label" data-i18n="dashboard.totalSupply">Total Supply</div></div>
                 <div class="stat-card"><div class="stat-value" id="daiBalance">—</div><div class="stat-label" data-i18n="dashboard.reserve">$ Reserve</div></div>
-                <div class="stat-card"><div class="stat-value" id="marketCap">—</div><div class="stat-label" data-i18n="dashboard.marketCap">Market Cap ($)</div></div>
+                <div class="stat-card"><div class="stat-value" id="tradingVolume">—</div><div class="stat-label" data-i18n="dashboard.tradingVolume">Trading Volume ($)</div></div>
                 <div class="stat-card"><div class="stat-value" id="totalAirdrops">—</div><div class="stat-label" data-i18n="dashboard.totalAirdrops">Total Airdrops Paid ($)</div></div>
                 <div class="stat-card"><div class="stat-value" id="holderCount">—</div><div class="stat-label" data-i18n="dashboard.holders">Total Holders</div></div>
             </div>
@@ -1273,6 +1273,27 @@
             return 0;
         }
     }
+
+    // ===== تابع برای دریافت Trading Volume =====
+    async function fetchTradingVolume() {
+        try {
+            const response = await fetch('trading-volume.json?t=' + Date.now());
+            if (response.ok) {
+                const data = await response.json();
+                return data.totalVolume || 0;
+            }
+        } catch(e) {
+            console.log('⚠️ Could not load trading-volume.json');
+        }
+        // Fallback: محاسبه از قرارداد (در صورت وجود)
+        try {
+            // اگر قرارداد تابعی برای حجم معاملات داشته باشه
+            // فعلاً از فایل JSON استفاده میکنیم
+            return 0;
+        } catch(e) {
+            return 0;
+        }
+    }
     
     let historicalStats = {
         days1: null, days7: null, days30: null, days90: null, 
@@ -1464,8 +1485,9 @@
             let reserve = parseFloat(ethers.utils.formatEther(await daiContract.balanceOf(CONTRACT_ADDRESS)));
             document.getElementById("daiBalance").innerHTML = "$" + reserve.toLocaleString(undefined, {maximumFractionDigits:2});
             
-            let mcap = currentPriceDAI * totalSup;
-            document.getElementById("marketCap").innerHTML = "$" + mcap.toLocaleString(undefined, {maximumFractionDigits:0});
+            // ===== Trading Volume (از فایل JSON) =====
+            const tradingVolume = await fetchTradingVolume();
+            document.getElementById("tradingVolume").innerHTML = "$" + tradingVolume.toLocaleString(undefined, {maximumFractionDigits:0});
             
             // ===== Total Airdrops (از قرارداد Network) =====
             const totalAirdrops = await fetchTotalAirdrops();
