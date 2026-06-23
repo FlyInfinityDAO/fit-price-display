@@ -999,29 +999,75 @@
         const dateDisplay = isToday ? 'Today (Live Data)' : date;
         document.getElementById('historyDateDisplay').innerHTML = `Showing: ${dateDisplay}`;
         
-        let priceData;
+        // ===== ساخت داده‌های قیمت برای تاریخ انتخاب‌شده =====
+        let priceData = {};
+        
         if (isToday) {
-            // Check if tablePrices has valid data (price > 0)
-            let hasValidData = false;
-            for (const token of TABLE_TOKENS) {
-                if (tablePrices[token.id] && tablePrices[token.id].current > 0) {
-                    hasValidData = true;
-                    break;
-                }
-            }
-            if (!hasValidData) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 30px; color: #888;" data-i18n="compare.loadingToday">Loading today's data... Please wait or click Refresh</td></tr>`;
-                return;
-            }
+            // برای امروز: از tablePrices استفاده کن (قیمت‌های زنده)
             priceData = tablePrices;
         } else {
-            priceData = getPricesForDate(date);
-            if (!priceData || Object.keys(priceData).length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 30px; color: #888;" data-i18n="compare.noData">No data available for this date</td></tr>`;
-                return;
+            // برای تاریخ‌های دیگر: از تاریخچه‌ها استفاده کن
+            // 1. ابتدا از price-history-table.json برای کریپتوها
+            const tableHistoryData = getPricesForDate(date);
+            if (tableHistoryData) {
+                for (const [tokenId, data] of Object.entries(tableHistoryData)) {
+                    if (tokenId !== 'fit') {
+                        priceData[tokenId] = data;
+                    }
+                }
+            }
+            
+            // 2. برای FIT: از price-history.json (فایل اصلی) استفاده کن
+            // پیدا کردن قیمت FIT در تاریخ مورد نظر
+            let fitPrice = null;
+            let fitYesterday = null;
+            let fitChange = 0;
+            
+            // جستجو در fitDates و fitPrices (که از price-history.json بارگذاری شده‌اند)
+            if (fitDates.length > 0 && fitPrices.length > 0) {
+                const dateIndex = fitDates.indexOf(date);
+                if (dateIndex !== -1 && dateIndex < fitPrices.length) {
+                    fitPrice = fitPrices[dateIndex];
+                    // قیمت روز قبل را پیدا کن
+                    if (dateIndex > 0) {
+                        fitYesterday = fitPrices[dateIndex - 1];
+                        fitChange = ((fitPrice - fitYesterday) / fitYesterday) * 100;
+                    } else {
+                        fitYesterday = fitPrice;
+                        fitChange = 0;
+                    }
+                } else {
+                    // اگر تاریخ دقیق پیدا نشد، نزدیک‌ترین تاریخ قبل را پیدا کن
+                    let closestIndex = -1;
+                    for (let i = fitDates.length - 1; i >= 0; i--) {
+                        if (fitDates[i] <= date) {
+                            closestIndex = i;
+                            break;
+                        }
+                    }
+                    if (closestIndex !== -1) {
+                        fitPrice = fitPrices[closestIndex];
+                        if (closestIndex > 0) {
+                            fitYesterday = fitPrices[closestIndex - 1];
+                            fitChange = ((fitPrice - fitYesterday) / fitYesterday) * 100;
+                        } else {
+                            fitYesterday = fitPrice;
+                            fitChange = 0;
+                        }
+                    }
+                }
+            }
+            
+            if (fitPrice !== null) {
+                priceData['fit'] = {
+                    price: fitPrice,
+                    yesterday: fitYesterday || fitPrice,
+                    change: fitChange
+                };
             }
         }
         
+        // ===== نمایش داده‌ها در جدول =====
         let hasData = false;
         for (const token of TABLE_TOKENS) {
             const data = priceData[token.id];
