@@ -933,9 +933,11 @@
                     const today = new Date().toISOString().split('T')[0];
                     const todayRecord = historyData.records.find(r => r.date === today);
                     
-                    // If today has data, use it as tablePrices
+                    // If today has data, use it as tablePrices (only for crypto, not for FIT)
                     if (todayRecord && todayRecord.prices && Object.keys(todayRecord.prices).length > 0) {
                         for (const tokenId of Object.keys(todayRecord.prices)) {
+                            // برای FIT از data تاریخچه استفاده نکن (قیمت واقعی از قرارداد میاد)
+                            if (tokenId === 'fit') continue;
                             const p = todayRecord.prices[tokenId];
                             tablePrices[tokenId] = {
                                 current: p.price || 0,
@@ -944,7 +946,7 @@
                                 change: p.change || 0
                             };
                         }
-                        console.log('✅ Loaded today\'s data from JSON');
+                        console.log('✅ Loaded today\'s crypto data from JSON');
                     }
                     
                     updateHistoryDateSelect();
@@ -1096,28 +1098,16 @@
                 }
             }
             
-            // ===== GET FIT PRICE =====
+            // ===== GET FIT PRICE (از قرارداد، نه از تاریخچه) =====
             try {
                 const raw = await contract.Price();
                 const currentPrice = parseFloat(ethers.utils.formatEther(raw));
                 
-                // Try to get yesterday from history
+                // استفاده از fitPrices واقعی (از price-history.json)
                 let yesterdayPrice = currentPrice;
                 let change24h = 0;
                 
-                // Check if we have history data
-                if (historyData.records.length > 0) {
-                    const today = new Date().toISOString().split('T')[0];
-                    const todayRecord = historyData.records.find(r => r.date === today);
-                    if (todayRecord && todayRecord.prices && todayRecord.prices.fit) {
-                        // Use the stored value
-                        yesterdayPrice = todayRecord.prices.fit.yesterday || currentPrice;
-                        change24h = todayRecord.prices.fit.change || 0;
-                    } else if (fitPrices.length >= 2) {
-                        yesterdayPrice = fitPrices[fitPrices.length - 2] || currentPrice;
-                        change24h = ((currentPrice - yesterdayPrice) / yesterdayPrice) * 100;
-                    }
-                } else if (fitPrices.length >= 2) {
+                if (fitPrices.length >= 2) {
                     yesterdayPrice = fitPrices[fitPrices.length - 2] || currentPrice;
                     change24h = ((currentPrice - yesterdayPrice) / yesterdayPrice) * 100;
                 }
@@ -1142,12 +1132,12 @@
                 }
             }
             
-            // ===== UPDATE HISTORY DATA IN MEMORY =====
+            // ===== UPDATE HISTORY DATA IN MEMORY (فقط برای کریپتوها، نه FIT) =====
             if (hasPriceData) {
                 const today = new Date().toISOString().split('T')[0];
                 const todayPrices = {};
                 for (const token of TABLE_TOKENS) {
-                    if (tablePrices[token.id]) {
+                    if (tablePrices[token.id] && token.id !== 'fit') {
                         todayPrices[token.id] = {
                             price: tablePrices[token.id].current,
                             yesterday: tablePrices[token.id].yesterday,
@@ -1217,7 +1207,7 @@
             const today = new Date().toISOString().split('T')[0];
             const todayPrices = {};
             for (const token of TABLE_TOKENS) {
-                if (tablePrices[token.id]) {
+                if (tablePrices[token.id] && token.id !== 'fit') {
                     todayPrices[token.id] = {
                         price: tablePrices[token.id].current,
                         yesterday: tablePrices[token.id].yesterday,
