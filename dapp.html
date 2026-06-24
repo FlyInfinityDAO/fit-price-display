@@ -793,7 +793,6 @@
             <a href="index.html" data-i18n="nav.dashboard">
                 <i class="fas fa-home"></i> <span data-i18n="nav.dashboard">Dashboard</span>
             </a>
-            <!-- ===== لینک What is FIT؟ اضافه شد ===== -->
             <a href="what-is-fit.html" data-i18n="nav.whatisfit">
                 <i class="fas fa-question-circle"></i> <span data-i18n="nav.whatisfit">What is FIT?</span>
             </a>
@@ -1000,7 +999,6 @@
         <div class="footer-links">
             <a href="index.html" data-i18n="nav.dashboard">Dashboard</a>
             <span>|</span>
-            <!-- ===== لینک What is FIT؟ به فوتر اضافه شد ===== -->
             <a href="what-is-fit.html" data-i18n="nav.whatisfit">What is FIT?</a>
             <span>|</span>
             <a href="compare.html" data-i18n="nav.comparison">Comparison</a>
@@ -1255,10 +1253,7 @@
             return;
         }
         
-        if (referrer.toLowerCase() === userAddress.toLowerCase()) {
-            setStatus("ownerStatus", "⚠️ Referrer cannot be yourself", "error");
-            return;
-        }
+        // ❌ بررسی تطابق با کیف پول متصل حذف شد - حالا میتونید برای هر آدرسی ثبت‌نام کنید
         
         try {
             setStatus("ownerStatus", "⏳ Registering...", "");
@@ -1312,10 +1307,7 @@
             return;
         }
         
-        if (buyer.toLowerCase() !== userAddress.toLowerCase()) {
-            setStatus("buyStatus", "⚠️ Buyer address does not match connected wallet", "error");
-            return;
-        }
+        // ❌ بررسی تطابق با کیف پول متصل حذف شد - حالا میتونید برای هر آدرسی خرید کنید
         
         let amountWei = ethers.utils.parseEther(amount.toString());
         
