@@ -1,18 +1,19 @@
 {
-  "lastUpdated": "2026-06-23T12:00:00Z",
-  "totalVolume": 30800.00,
-  "dailyVolume": 171.11,
+  "lastUpdated": "2026-06-24T05:05:39.085Z",
+  "totalVolume": 0,
+  "dailyVolume": 0,
   "scanInfo": {
-    "scannedBlocks": 105900000,
-    "fromBlock": 0,
-    "toBlock": 105900000,
-    "buyCount": 750,
-    "sellCount": 400
+    "scannedBlocks": 66034703,
+    "fromBlock": 40000000,
+    "toBlock": 106034702,
+    "buyCount": 0,
+    "sellCount": 0,
+    "daysSinceStart": 189
   },
   "transactions": {
-    "totalBuys": 18500.00,
-    "totalSells": 12300.00,
-    "buyCount": 750,
-    "sellCount": 400
+    "totalBuys": 0,
+    "totalSells": 0,
+    "buyCount": 0,
+    "sellCount": 0
   }
 }
