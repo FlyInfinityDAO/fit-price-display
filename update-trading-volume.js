@@ -51,6 +51,10 @@ function formatCurrency(num) {
     return '$' + Number(num).toFixed(2);
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // ==================== بارگذاری داده‌های قبلی ====================
 function loadProgress() {
     try {
@@ -69,7 +73,6 @@ function loadProgress() {
         console.log('⚠️ Could not load progress file, starting fresh');
     }
     
-    // مقدار پیش‌فرض
     return {
         lastScannedBlock: 106000000,
         totalBuy: 0,
@@ -108,7 +111,6 @@ function loadMainData() {
         console.log('⚠️ Could not load main data file, starting fresh');
     }
     
-    // مقدار پیش‌فرض
     return {
         lastUpdated: new Date().toISOString(),
         totalVolume: 0,
@@ -130,11 +132,9 @@ function loadMainData() {
     };
 }
 
-// ==================== ذخیره داده‌ها ====================
 function saveProgress(progress) {
     try {
         fs.writeFileSync(PROGRESS_FILE, JSON.stringify(progress, null, 2));
-        console.log(`💾 Progress saved to ${PROGRESS_FILE}`);
     } catch (e) {
         console.error(`❌ Error saving progress: ${e.message}`);
     }
@@ -143,9 +143,47 @@ function saveProgress(progress) {
 function saveMainData(data) {
     try {
         fs.writeFileSync(HISTORY_FILE, JSON.stringify(data, null, 2));
-        console.log(`💾 Main data saved to ${HISTORY_FILE}`);
     } catch (e) {
         console.error(`❌ Error saving main data: ${e.message}`);
+    }
+}
+
+// ==================== اسکن یک بازه کوچک ====================
+async function scanBlockRange(fromBlock, toBlock, price, decimals) {
+    try {
+        const filter = contract.filters.Transfer(null, null);
+        const events = await contract.queryFilter(filter, fromBlock, toBlock);
+        
+        let buyTotal = 0;
+        let sellTotal = 0;
+        let buyCount = 0;
+        let sellCount = 0;
+        
+        for (const event of events) {
+            try {
+                const { from, to, value } = event.args;
+                const amount = parseFloat(ethers.utils.formatUnits(value, decimals));
+                
+                if (amount < 0.1) continue;
+                
+                const usdValue = amount * price;
+                
+                if (to.toLowerCase() === TOKEN_ADDRESS.toLowerCase()) {
+                    buyTotal += usdValue;
+                    buyCount++;
+                } else if (from.toLowerCase() === TOKEN_ADDRESS.toLowerCase()) {
+                    sellTotal += usdValue;
+                    sellCount++;
+                }
+            } catch (e) {
+                // خطا در پردازش یک رویداد - نادیده گرفته میشه
+            }
+        }
+        
+        return { buyTotal, sellTotal, buyCount, sellCount, eventCount: events.length };
+    } catch (error) {
+        console.error(`  ❌ Error scanning blocks ${fromBlock}-${toBlock}:`, error.message);
+        return { buyTotal: 0, sellTotal: 0, buyCount: 0, sellCount: 0, eventCount: 0, error: error.message };
     }
 }
 
@@ -197,14 +235,6 @@ async function scanAllBlocks() {
         return;
     }
     
-    // ===== محدود کردن تعداد بلاک‌ها =====
-    const MAX_BLOCKS_PER_RUN = 5000;
-    if (toBlock - fromBlock + 1 > MAX_BLOCKS_PER_RUN) {
-        toBlock = fromBlock + MAX_BLOCKS_PER_RUN - 1;
-        console.log(`⚠️ Limiting to ${formatNumber(MAX_BLOCKS_PER_RUN)} blocks per run`);
-        console.log(`📊 Scanning: ${formatNumber(fromBlock)} to ${formatNumber(toBlock)}`);
-    }
-    
     // ===== دریافت قیمت و decimals =====
     console.log('\n📡 Fetching contract data...');
     let price = 6.00;
@@ -225,92 +255,107 @@ async function scanAllBlocks() {
         console.warn(`⚠️ Could not fetch decimals, using default: ${decimals}`);
     }
     
-    // ===== اسکن تراکنش‌ها =====
-    console.log('\n🔍 Scanning transactions...');
+    // ===== اسکن مرحله‌ای با بلاک‌های کوچک =====
+    console.log('\n🔍 Scanning transactions in batches...');
     console.log('═══════════════════════════════════════');
     
-    let events = [];
-    try {
-        const filter = contract.filters.Transfer(null, null);
-        events = await contract.queryFilter(filter, fromBlock, toBlock);
-        console.log(`📝 Found ${formatNumber(events.length)} Transfer events`);
-    } catch (e) {
-        console.error(`❌ Error fetching events: ${e.message}`);
-        // ذخیره پیشرفت و خروج
-        progress.lastScannedBlock = toBlock;
-        saveProgress(progress);
-        throw e;
-    }
+    const BATCH_SIZE = 1000; // هر بار ۱۰۰۰ بلاک
+    const DELAY_BETWEEN_BATCHES = 2000; // ۲ ثانیه بین هر اسکن
     
-    if (events.length === 0) {
-        console.log('ℹ️ No transfer events found in this range');
-        progress.lastScannedBlock = toBlock;
-        saveProgress(progress);
-        return;
-    }
-    
-    // ===== پردازش رویدادها =====
     let totalBuy = progress.totalBuy || 0;
     let totalSell = progress.totalSell || 0;
     let buyCount = progress.buyCount || 0;
     let sellCount = progress.sellCount || 0;
-    let processedCount = 0;
-    let displayCount = 0;
+    let scannedBlocks = 0;
+    let batchNumber = 0;
+    let hasError = false;
     
-    for (const event of events) {
-        try {
-            const { from, to, value } = event.args;
-            const amount = parseFloat(ethers.utils.formatUnits(value, decimals));
+    // محدود کردن به ۵۰ بچ (۵۰,۰۰۰ بلاک) در هر اجرا
+    const MAX_BATCHES = 50;
+    let currentFrom = fromBlock;
+    
+    while (currentFrom <= toBlock && batchNumber < MAX_BATCHES) {
+        const currentTo = Math.min(currentFrom + BATCH_SIZE - 1, toBlock);
+        batchNumber++;
+        
+        console.log(`\n📦 Batch ${batchNumber}/${Math.min(MAX_BATCHES, Math.ceil((toBlock - fromBlock + 1) / BATCH_SIZE))}`);
+        console.log(`   Scanning: ${formatNumber(currentFrom)} to ${formatNumber(currentTo)}`);
+        
+        const result = await scanBlockRange(currentFrom, currentTo, price, decimals);
+        
+        if (result.error) {
+            console.log(`   ⚠️ Error in batch, will retry with smaller size...`);
+            // اگر خطا داشت، با سایز کوچکتر امتحان کن
+            const SMALL_BATCH = 200;
+            let smallFrom = currentFrom;
+            let smallTo = Math.min(smallFrom + SMALL_BATCH - 1, currentTo);
             
-            // فقط تراکنش‌های بزرگتر از ۰.۱ FIT رو حساب کن
-            if (amount < 0.1) continue;
-            
-            const usdValue = amount * price;
-            
-            // تشخیص Buy (واریز به قرارداد)
-            if (to.toLowerCase() === TOKEN_ADDRESS.toLowerCase()) {
-                totalBuy += usdValue;
-                buyCount++;
-                processedCount++;
-                if (displayCount < 20) {
-                    console.log(`  🟢 BUY #${buyCount}: ${amount.toFixed(2)} FIT = $${usdValue.toFixed(2)}`);
-                    displayCount++;
+            while (smallFrom <= currentTo) {
+                console.log(`   🔄 Retry: ${formatNumber(smallFrom)} to ${formatNumber(smallTo)}`);
+                const smallResult = await scanBlockRange(smallFrom, smallTo, price, decimals);
+                
+                if (smallResult.error) {
+                    console.log(`   ❌ Still failing, skipping this range`);
+                    break;
                 }
+                
+                totalBuy += smallResult.buyTotal;
+                totalSell += smallResult.sellTotal;
+                buyCount += smallResult.buyCount;
+                sellCount += smallResult.sellCount;
+                scannedBlocks += (smallTo - smallFrom + 1);
+                
+                smallFrom = smallTo + 1;
+                smallTo = Math.min(smallFrom + SMALL_BATCH - 1, currentTo);
+                
+                // ذخیره موقت هر بار
+                progress.lastScannedBlock = smallTo;
+                progress.totalBuy = totalBuy;
+                progress.totalSell = totalSell;
+                progress.buyCount = buyCount;
+                progress.sellCount = sellCount;
+                saveProgress(progress);
+                
+                await sleep(1000);
             }
-            // تشخیص Sell (برداشت از قرارداد)
-            else if (from.toLowerCase() === TOKEN_ADDRESS.toLowerCase()) {
-                totalSell += usdValue;
-                sellCount++;
-                processedCount++;
-                if (displayCount < 20) {
-                    console.log(`  🔴 SELL #${sellCount}: ${amount.toFixed(2)} FIT = $${usdValue.toFixed(2)}`);
-                    displayCount++;
-                }
-            }
+        } else {
+            totalBuy += result.buyTotal;
+            totalSell += result.sellTotal;
+            buyCount += result.buyCount;
+            sellCount += result.sellCount;
+            scannedBlocks += (currentTo - currentFrom + 1);
             
-            // نمایش هر ۱۰۰ تراکنش
-            if (processedCount % 100 === 0 && processedCount > 0) {
-                console.log(`  📊 Processed ${formatNumber(processedCount)} transactions...`);
-            }
+            console.log(`   📝 Found ${result.eventCount} events`);
+            console.log(`   🟢 Buys: ${result.buyCount} ($${result.buyTotal.toFixed(2)})`);
+            console.log(`   🔴 Sells: ${result.sellCount} ($${result.sellTotal.toFixed(2)})`);
             
-        } catch (e) {
-            // خطا در پردازش یک رویداد - نادیده گرفته میشه
+            // ذخیره پیشرفت
+            progress.lastScannedBlock = currentTo;
+            progress.totalBuy = totalBuy;
+            progress.totalSell = totalSell;
+            progress.buyCount = buyCount;
+            progress.sellCount = sellCount;
+            saveProgress(progress);
+        }
+        
+        currentFrom = currentTo + 1;
+        
+        // صبر بین بچ‌ها
+        if (currentFrom <= toBlock && batchNumber < MAX_BATCHES) {
+            console.log(`   ⏳ Waiting ${DELAY_BETWEEN_BATCHES/1000}s before next batch...`);
+            await sleep(DELAY_BETWEEN_BATCHES);
         }
     }
     
-    if (processedCount > 20) {
-        console.log(`  ... and ${formatNumber(processedCount - 20)} more transactions`);
+    // ===== اگر بلاک‌های بیشتری مونده، ذخیره کن برای دفعه بعد =====
+    if (currentFrom <= toBlock) {
+        console.log(`\n⏸️  Paused. ${formatNumber(toBlock - currentFrom + 1)} blocks remaining for next run.`);
+        console.log(`   Last scanned: ${formatNumber(currentFrom - 1)}`);
+        progress.lastScannedBlock = currentFrom - 1;
+        saveProgress(progress);
     }
     
-    // ===== ذخیره پیشرفت =====
-    progress.lastScannedBlock = toBlock;
-    progress.totalBuy = totalBuy;
-    progress.totalSell = totalSell;
-    progress.buyCount = buyCount;
-    progress.sellCount = sellCount;
-    saveProgress(progress);
-    
-    // ===== محاسبه آمار =====
+    // ===== محاسبه آمار نهایی =====
     const totalVolume = totalBuy + totalSell;
     const daysSinceStart = Math.ceil((Date.now() - new Date(START_DATE).getTime()) / (1000 * 60 * 60 * 24));
     const dailyVolume = daysSinceStart > 0 ? totalVolume / daysSinceStart : 0;
@@ -320,9 +365,9 @@ async function scanAllBlocks() {
     mainData.totalVolume = Math.round(totalVolume * 100) / 100;
     mainData.dailyVolume = Math.round(dailyVolume * 100) / 100;
     mainData.scanInfo = {
-        scannedBlocks: toBlock - fromBlock + 1,
+        scannedBlocks: scannedBlocks,
         fromBlock: fromBlock,
-        toBlock: toBlock,
+        toBlock: currentFrom - 1,
         buyCount: buyCount,
         sellCount: sellCount,
         daysSinceStart: daysSinceStart
@@ -340,7 +385,7 @@ async function scanAllBlocks() {
     console.log('\n═══════════════════════════════════════');
     console.log('✅ ===== SCAN COMPLETED =====');
     console.log(`⏱️  Time: ${elapsed}s`);
-    console.log(`📊 Scanned: ${formatNumber(toBlock - fromBlock + 1)} blocks`);
+    console.log(`📊 Scanned: ${formatNumber(scannedBlocks)} blocks`);
     console.log(`📅 Days since start: ${daysSinceStart}`);
     console.log(`🟢 Buys: ${formatCurrency(mainData.transactions.totalBuys)} (${buyCount} txs)`);
     console.log(`🔴 Sells: ${formatCurrency(mainData.transactions.totalSells)} (${sellCount} txs)`);
