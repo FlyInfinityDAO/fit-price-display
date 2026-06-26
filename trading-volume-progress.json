@@ -1,7 +1,9 @@
 {
-  "lastScannedBlock": 106050000,
+  "lastScannedBlock": 106100000,
+  "totalTradingVolume": 0,
   "totalBuy": 0,
   "totalSell": 0,
   "buyCount": 0,
-  "sellCount": 0
+  "sellCount": 0,
+  "lastReserve": 46727.535244225466
 }
