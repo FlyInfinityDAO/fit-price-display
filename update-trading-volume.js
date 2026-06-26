@@ -23,16 +23,6 @@ const TOKEN_ABI = [
         "type": "event"
     },
     {
-        "anonymous": false,
-        "inputs": [
-            {"indexed": true, "internalType": "address", "name": "from", "type": "address"},
-            {"indexed": true, "internalType": "address", "name": "to", "type": "address"},
-            {"indexed": false, "internalType": "uint256", "name": "value", "type": "uint256"}
-        ],
-        "name": "Transfer",
-        "type": "event"
-    },
-    {
         "constant": true,
         "inputs": [],
         "name": "Price",
@@ -44,13 +34,6 @@ const TOKEN_ABI = [
         "inputs": [],
         "name": "decimals",
         "outputs": [{"name": "", "type": "uint8"}],
-        "type": "function"
-    },
-    {
-        "constant": true,
-        "inputs": [{"name": "account", "type": "address"}],
-        "name": "balanceOf",
-        "outputs": [{"name": "", "type": "uint256"}],
         "type": "function"
     }
 ];
@@ -103,12 +86,9 @@ function loadProgress() {
             const data = fs.readFileSync(PROGRESS_FILE, 'utf8');
             const parsed = JSON.parse(data);
             return {
-                lastScannedBlock: parsed.lastScannedBlock || 106000000,
-                totalTradingVolume: parsed.totalTradingVolume || 0,
+                lastScannedBlock: parsed.lastScannedBlock || 0, // از بلاک ۰ شروع کن
                 totalBuy: parsed.totalBuy || 0,
-                totalSell: parsed.totalSell || 0,
                 buyCount: parsed.buyCount || 0,
-                sellCount: parsed.sellCount || 0,
                 lastReserve: parsed.lastReserve || 0
             };
         }
@@ -117,12 +97,9 @@ function loadProgress() {
     }
     
     return {
-        lastScannedBlock: 106000000,
-        totalTradingVolume: 0,
+        lastScannedBlock: 0, // از بلاک ۰ شروع کن
         totalBuy: 0,
-        totalSell: 0,
         buyCount: 0,
-        sellCount: 0,
         lastReserve: 0
     };
 }
@@ -211,6 +188,7 @@ async function scanPurchaseEvents(fromBlock, toBlock) {
         let totalBuy = 0;
         let buyCount = 0;
         
+        // دریافت decimals
         let decimals = 18;
         try {
             decimals = await tokenContract.decimals();
@@ -220,10 +198,12 @@ async function scanPurchaseEvents(fromBlock, toBlock) {
         
         for (const log of logs) {
             try {
+                // Decode رویداد
                 const decoded = ethers.utils.defaultAbiCoder.decode(
                     ['address', 'uint256', 'uint256'],
                     log.data
                 );
+                // مقدار amount در رویداد به DAI هست (نه FIT)
                 const amount = parseFloat(ethers.utils.formatUnits(decoded[1], decimals));
                 totalBuy += amount;
                 buyCount++;
@@ -239,57 +219,10 @@ async function scanPurchaseEvents(fromBlock, toBlock) {
     }
 }
 
-// ==================== اسکن تراکنش‌های Transfer به قرارداد ====================
-async function scanTransferEvents(fromBlock, toBlock) {
-    try {
-        const filter = {
-            address: TOKEN_ADDRESS,
-            topics: [
-                ethers.utils.id("Transfer(address,address,uint256)"),
-                null,
-                ethers.utils.hexZeroPad(TOKEN_ADDRESS.toLowerCase(), 32)
-            ],
-            fromBlock: fromBlock,
-            toBlock: toBlock
-        };
-        
-        const logs = await provider.getLogs(filter);
-        let totalBuy = 0;
-        let buyCount = 0;
-        
-        let decimals = 18;
-        try {
-            decimals = await tokenContract.decimals();
-        } catch (e) {
-            decimals = 18;
-        }
-        
-        for (const log of logs) {
-            try {
-                const decoded = ethers.utils.defaultAbiCoder.decode(
-                    ['address', 'address', 'uint256'],
-                    log.data
-                );
-                const amount = parseFloat(ethers.utils.formatUnits(decoded[2], decimals));
-                totalBuy += amount;
-                buyCount++;
-            } catch (e) {
-                // خطا در decode - نادیده گرفته میشه
-            }
-        }
-        
-        return { totalBuy, buyCount };
-    } catch (error) {
-        console.error(`  ❌ Error scanning Transfer events:`, error.message);
-        return { totalBuy: 0, buyCount: 0 };
-    }
-}
-
 // ==================== اسکن اصلی ====================
 async function scanAllBlocks() {
-    console.log('🚀 Starting Trading Volume scanner (FIXED METHOD)...');
+    console.log('🚀 Starting Trading Volume scanner (FROM BLOCK 0)...');
     console.log(`📦 Token: ${TOKEN_ADDRESS}`);
-    console.log(`💰 DAI: ${DAI_ADDRESS}`);
     console.log(`🔗 RPC: ${RPC_URL}`);
     console.log('═══════════════════════════════════════');
     
@@ -300,9 +233,8 @@ async function scanAllBlocks() {
     const mainData = loadMainData();
     
     console.log(`📊 Previous data loaded:`);
-    console.log(`   Trading Volume: ${formatCurrency(progress.totalTradingVolume)}`);
+    console.log(`   Total Buy: $${progress.totalBuy.toFixed(2)}`);
     console.log(`   Buys: ${progress.buyCount}`);
-    console.log(`   Sells: ${progress.sellCount}`);
     console.log(`   Last Block: ${formatNumber(progress.lastScannedBlock)}`);
     
     // ===== دریافت بلاک فعلی =====
@@ -311,17 +243,18 @@ async function scanAllBlocks() {
     console.log(`📊 Current block: ${formatNumber(currentBlock)}`);
     
     // ===== تعیین محدوده اسکن =====
-    const lastScanned = progress.lastScannedBlock || 106000000;
+    const lastScanned = progress.lastScannedBlock || 0;
     let fromBlock = lastScanned + 1;
     let toBlock = currentBlock;
     
     console.log(`📍 Last scanned: ${formatNumber(lastScanned)}`);
     console.log(`🔄 New blocks: ${formatNumber(fromBlock)} to ${formatNumber(toBlock)}`);
+    console.log(`📊 Total blocks to scan: ${formatNumber(toBlock - fromBlock + 1)}`);
     
     // اگر بلاک جدیدی نداریم
     if (fromBlock > toBlock) {
         console.log('\n✅ No new blocks to scan!');
-        console.log(`📊 Trading Volume: ${formatCurrency(progress.totalTradingVolume)}`);
+        console.log(`📊 Trading Volume: ${formatCurrency(progress.totalBuy)}`);
         return;
     }
     
@@ -338,15 +271,8 @@ async function scanAllBlocks() {
         console.warn(`⚠️ Could not fetch price, using default: $${price.toFixed(2)}`);
     }
     
-    try {
-        decimals = await tokenContract.decimals();
-        console.log(`🔢 Decimals: ${decimals}`);
-    } catch (e) {
-        console.warn(`⚠️ Could not fetch decimals, using default: ${decimals}`);
-    }
-    
     // ===== اسکن مرحله‌ای =====
-    console.log('\n🔍 Scanning Purchase events...');
+    console.log('\n🔍 Scanning Purchase events from block 0...');
     console.log('═══════════════════════════════════════');
     
     const BATCH_SIZE = 5000;
@@ -354,9 +280,7 @@ async function scanAllBlocks() {
     const MAX_BATCHES = 20;
     
     let totalBuy = progress.totalBuy || 0;
-    let totalSell = progress.totalSell || 0;
     let buyCount = progress.buyCount || 0;
-    let sellCount = progress.sellCount || 0;
     let scannedBlocks = 0;
     let batchNumber = 0;
     let currentFrom = fromBlock;
@@ -368,22 +292,15 @@ async function scanAllBlocks() {
         console.log(`\n📦 Batch ${batchNumber}/${Math.min(MAX_BATCHES, Math.ceil((toBlock - fromBlock + 1) / BATCH_SIZE))}`);
         console.log(`   Scanning: ${formatNumber(currentFrom)} to ${formatNumber(currentTo)}`);
         
-        // ===== اسکن PurchaseExecuted =====
-        const purchaseResult = await scanPurchaseEvents(currentFrom, currentTo);
+        const result = await scanPurchaseEvents(currentFrom, currentTo);
         
-        // ===== اسکن Transfer به قرارداد =====
-        const transferResult = await scanTransferEvents(currentFrom, currentTo);
-        
-        // جمع کردن نتایج
-        const batchBuy = purchaseResult.totalBuy + transferResult.totalBuy;
-        const batchBuyCount = purchaseResult.buyCount + transferResult.buyCount;
-        
-        totalBuy += batchBuy;
-        buyCount += batchBuyCount;
+        totalBuy += result.totalBuy;
+        buyCount += result.buyCount;
         scannedBlocks += (currentTo - currentFrom + 1);
         
-        console.log(`   📝 Found ${batchBuyCount} purchase events`);
-        console.log(`   💰 Total Buy: $${(batchBuy * price).toFixed(2)}`);
+        console.log(`   📝 Found ${result.buyCount} purchase events`);
+        console.log(`   💰 Total Buy: $${result.totalBuy.toFixed(2)}`);
+        console.log(`   📊 Total so far: $${totalBuy.toFixed(2)} (${buyCount} txs)`);
         
         // ذخیره پیشرفت
         progress.lastScannedBlock = currentTo;
@@ -399,7 +316,14 @@ async function scanAllBlocks() {
         }
     }
     
-    // ===== محاسبه Trading Volume =====
+    // ===== اگر بلاک‌های بیشتری مونده =====
+    if (currentFrom <= toBlock) {
+        console.log(`\n⏸️  Paused. ${formatNumber(toBlock - currentFrom + 1)} blocks remaining for next run.`);
+        progress.lastScannedBlock = currentFrom - 1;
+        saveProgress(progress);
+    }
+    
+    // ===== دریافت نقدینگی فعلی و محاسبه Sell =====
     console.log('\n📊 Calculating Trading Volume...');
     console.log('═══════════════════════════════════════');
     
@@ -409,33 +333,30 @@ async function scanAllBlocks() {
     console.log(`💰 Current Reserve: $${currentReserve.toFixed(2)}`);
     
     // دریافت تعداد اعضا
-    const totalOwnersRaw = await networkContract.All_Owner_Number();
-    const totalOwners = parseInt(totalOwnersRaw.toString());
+    let totalOwners = 0;
+    try {
+        const totalOwnersRaw = await networkContract.All_Owner_Number();
+        totalOwners = parseInt(totalOwnersRaw.toString());
+    } catch (e) {
+        console.warn('⚠️ Could not fetch owners count');
+    }
+    
     const OLD_CONTRACT_OWNERS = 80897;
     const newOwners = Math.max(0, totalOwners - OLD_CONTRACT_OWNERS);
     const totalAirdrops = newOwners * 2;
     const totalMembershipFees = newOwners * 2;
-    
-    console.log(`👥 New Owners: ${newOwners}`);
-    console.log(`🎁 Total Airdrops: $${totalAirdrops.toFixed(2)}`);
-    console.log(`👥 Membership Fees: $${totalMembershipFees.toFixed(2)}`);
-    
-    // محاسبه Buy به دلار
-    const totalBuyUSD = totalBuy * price;
+    const nonBuyIncoming = totalAirdrops + totalMembershipFees;
     
     // محاسبه Sell
-    const nonBuyIncoming = totalAirdrops + totalMembershipFees;
-    const totalSellUSD = Math.max(0, totalBuyUSD + nonBuyIncoming - currentReserve);
-    
-    // Trading Volume = Buy + Sell
-    const tradingVolume = totalBuyUSD + totalSellUSD;
+    const totalSell = Math.max(0, totalBuy + nonBuyIncoming - currentReserve);
+    const tradingVolume = totalBuy + totalSell;
     
     console.log(`\n📊 Calculation Details:`);
-    console.log(`   📥 Total Buys: $${totalBuyUSD.toFixed(2)} (${buyCount} txs)`);
+    console.log(`   📥 Total Buys: $${totalBuy.toFixed(2)} (${buyCount} txs)`);
     console.log(`   🎁 Airdrops: $${totalAirdrops.toFixed(2)}`);
     console.log(`   👥 Membership Fees: $${totalMembershipFees.toFixed(2)}`);
     console.log(`   💰 Current Reserve: $${currentReserve.toFixed(2)}`);
-    console.log(`   📤 Total Sells: $${totalSellUSD.toFixed(2)}`);
+    console.log(`   📤 Total Sells: $${totalSell.toFixed(2)}`);
     console.log(`   📊 Trading Volume: $${tradingVolume.toFixed(2)}`);
     
     // ===== ذخیره داده‌ها =====
@@ -443,11 +364,8 @@ async function scanAllBlocks() {
     const dailyVolume = daysSinceStart > 0 ? tradingVolume / daysSinceStart : 0;
     
     // آپدیت progress
-    progress.totalTradingVolume = tradingVolume;
-    progress.totalBuy = totalBuyUSD;
-    progress.totalSell = totalSellUSD;
+    progress.totalBuy = totalBuy;
     progress.buyCount = buyCount;
-    progress.sellCount = sellCount;
     progress.lastReserve = currentReserve;
     saveProgress(progress);
     
@@ -460,14 +378,14 @@ async function scanAllBlocks() {
         fromBlock: fromBlock,
         toBlock: currentFrom - 1,
         buyCount: buyCount,
-        sellCount: sellCount,
+        sellCount: 0,
         daysSinceStart: daysSinceStart
     };
     mainData.transactions = {
-        totalBuys: Math.round(totalBuyUSD * 100) / 100,
-        totalSells: Math.round(totalSellUSD * 100) / 100,
+        totalBuys: Math.round(totalBuy * 100) / 100,
+        totalSells: Math.round(totalSell * 100) / 100,
         buyCount: buyCount,
-        sellCount: sellCount
+        sellCount: 0
     };
     saveMainData(mainData);
     
@@ -480,16 +398,16 @@ async function scanAllBlocks() {
     console.log(`📅 Days since start: ${daysSinceStart}`);
     console.log(`💰 Trading Volume: ${formatCurrency(tradingVolume)}`);
     console.log(`📈 Daily Avg: ${formatCurrency(dailyVolume)}`);
-    console.log(`🟢 Buys: ${formatCurrency(totalBuyUSD)} (${buyCount} txs)`);
-    console.log(`🔴 Sells: ${formatCurrency(totalSellUSD)}`);
+    console.log(`🟢 Buys: ${formatCurrency(totalBuy)} (${buyCount} txs)`);
+    console.log(`🔴 Sells: ${formatCurrency(totalSell)}`);
     console.log(`💾 Saved to: ${HISTORY_FILE}`);
     console.log('═══════════════════════════════════════');
 }
 
 // ==================== اجرا ====================
 console.log('=' .repeat(50));
-console.log('🚀 TRADING VOLUME UPDATER v3');
-console.log('📊 FIXED: Scanning PurchaseExecuted events');
+console.log('🚀 TRADING VOLUME UPDATER v5');
+console.log('📊 SCANNING FROM BLOCK 0');
 console.log('=' .repeat(50));
 
 scanAllBlocks()
