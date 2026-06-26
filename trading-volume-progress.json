@@ -1,15 +1,7 @@
 {
-  "lastUpdated": "2026-06-26T15:04:40.914Z",
-  "totalVolume": 0,
-  "scanInfo": {
-    "scannedBlocks": 66500000,
-    "buyCount": 0,
-    "sellCount": 0
-  },
-  "transactions": {
-    "totalBuys": 0,
-    "totalSells": 0,
-    "buyCount": 0,
-    "sellCount": 0
-  }
+  "lastScannedBlock": 106050000,
+  "totalBuy": 0,
+  "totalSell": 0,
+  "buyCount": 0,
+  "sellCount": 0
 }
