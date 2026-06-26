@@ -2,7 +2,7 @@ name: Update Trading Volume from Blockchain
 
 on:
   schedule:
-    - cron: '0 */12 * * *'  # هر ۱۲ ساعت
+    - cron: '0 */6 * * *'  # هر ۶ ساعت
   workflow_dispatch:
 
 jobs:
@@ -27,6 +27,8 @@ jobs:
       
       - name: Scan blockchain and update trading volume
         run: node update-trading-volume.js
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
       
       - name: Commit and push
         run: |
