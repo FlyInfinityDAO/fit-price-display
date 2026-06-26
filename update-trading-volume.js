@@ -3,13 +3,15 @@ const fs = require('fs');
 
 // ==================== CONFIG ====================
 const TOKEN_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
+const DAI_ADDRESS = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
+const NETWORK_ADDRESS = "0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B";
 const RPC_URL = "https://bsc-dataseed.binance.org/";
 const HISTORY_FILE = "trading-volume.json";
 const PROGRESS_FILE = "trading-volume-progress.json";
 const START_DATE = "2025-12-18";
 
 // ==================== ABI ====================
-const ERC20_ABI = [
+const TOKEN_ABI = [
     {
         "anonymous": false,
         "inputs": [
@@ -33,12 +35,41 @@ const ERC20_ABI = [
         "name": "decimals",
         "outputs": [{"name": "", "type": "uint8"}],
         "type": "function"
+    },
+    {
+        "constant": true,
+        "inputs": [{"name": "account", "type": "address"}],
+        "name": "balanceOf",
+        "outputs": [{"name": "", "type": "uint256"}],
+        "type": "function"
+    }
+];
+
+const DAI_ABI = [
+    {
+        "constant": true,
+        "inputs": [{"name": "account", "type": "address"}],
+        "name": "balanceOf",
+        "outputs": [{"name": "", "type": "uint256"}],
+        "type": "function"
+    }
+];
+
+const NETWORK_ABI = [
+    {
+        "constant": true,
+        "inputs": [],
+        "name": "All_Owner_Number",
+        "outputs": [{"name": "", "type": "uint64"}],
+        "type": "function"
     }
 ];
 
 // ==================== SETUP ====================
 const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
-const contract = new ethers.Contract(TOKEN_ADDRESS, ERC20_ABI, provider);
+const tokenContract = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, provider);
+const daiContract = new ethers.Contract(DAI_ADDRESS, DAI_ABI, provider);
+const networkContract = new ethers.Contract(NETWORK_ADDRESS, NETWORK_ABI, provider);
 
 // ==================== توابع کمکی ====================
 function formatNumber(num) {
@@ -63,10 +94,12 @@ function loadProgress() {
             const parsed = JSON.parse(data);
             return {
                 lastScannedBlock: parsed.lastScannedBlock || 106000000,
+                totalTradingVolume: parsed.totalTradingVolume || 0,
                 totalBuy: parsed.totalBuy || 0,
                 totalSell: parsed.totalSell || 0,
                 buyCount: parsed.buyCount || 0,
-                sellCount: parsed.sellCount || 0
+                sellCount: parsed.sellCount || 0,
+                lastReserve: parsed.lastReserve || 0
             };
         }
     } catch (e) {
@@ -75,10 +108,12 @@ function loadProgress() {
     
     return {
         lastScannedBlock: 106000000,
+        totalTradingVolume: 0,
         totalBuy: 0,
         totalSell: 0,
         buyCount: 0,
-        sellCount: 0
+        sellCount: 0,
+        lastReserve: 0
     };
 }
 
@@ -148,49 +183,92 @@ function saveMainData(data) {
     }
 }
 
-// ==================== اسکن یک بازه کوچک ====================
-async function scanBlockRange(fromBlock, toBlock, price, decimals) {
+// ==================== دریافت اطلاعات اولیه ====================
+async function getInitialData() {
     try {
-        const filter = contract.filters.Transfer(null, null);
-        const events = await contract.queryFilter(filter, fromBlock, toBlock);
+        // دریافت تعداد کل اعضای نتورک
+        const totalOwnersRaw = await networkContract.All_Owner_Number();
+        const totalOwners = parseInt(totalOwnersRaw.toString());
         
-        let buyTotal = 0;
-        let sellTotal = 0;
-        let buyCount = 0;
-        let sellCount = 0;
+        // تعداد اعضای جدید (کم کردن قرارداد قبلی)
+        const OLD_CONTRACT_OWNERS = 80897;
+        const newOwners = Math.max(0, totalOwners - OLD_CONTRACT_OWNERS);
         
-        for (const event of events) {
-            try {
-                const { from, to, value } = event.args;
-                const amount = parseFloat(ethers.utils.formatUnits(value, decimals));
-                
-                if (amount < 0.1) continue;
-                
-                const usdValue = amount * price;
-                
-                if (to.toLowerCase() === TOKEN_ADDRESS.toLowerCase()) {
-                    buyTotal += usdValue;
-                    buyCount++;
-                } else if (from.toLowerCase() === TOKEN_ADDRESS.toLowerCase()) {
-                    sellTotal += usdValue;
-                    sellCount++;
-                }
-            } catch (e) {
-                // خطا در پردازش یک رویداد - نادیده گرفته میشه
-            }
-        }
+        // هر عضو جدید ۲ دای هدیه گرفته
+        const airdropPerOwner = 2;
+        const totalAirdrops = newOwners * airdropPerOwner;
         
-        return { buyTotal, sellTotal, buyCount, sellCount, eventCount: events.length };
+        // دریافت نقدینگی فعلی
+        const reserveRaw = await daiContract.balanceOf(TOKEN_ADDRESS);
+        const reserve = parseFloat(ethers.utils.formatEther(reserveRaw));
+        
+        console.log(`   👥 Total Owners: ${totalOwners}`);
+        console.log(`   👥 New Owners: ${newOwners}`);
+        console.log(`   🎁 Total Airdrops: $${totalAirdrops.toFixed(2)}`);
+        console.log(`   💰 Current Reserve: $${reserve.toFixed(2)}`);
+        
+        return { totalOwners, newOwners, totalAirdrops, reserve };
     } catch (error) {
-        console.error(`  ❌ Error scanning blocks ${fromBlock}-${toBlock}:`, error.message);
-        return { buyTotal: 0, sellTotal: 0, buyCount: 0, sellCount: 0, eventCount: 0, error: error.message };
+        console.error('❌ Error getting initial data:', error.message);
+        return { totalOwners: 0, newOwners: 0, totalAirdrops: 0, reserve: 0 };
     }
 }
 
-// ==================== اسکن اصلی ====================
+// ==================== اسکن تراکنش‌های DAI به قرارداد ====================
+async function scanDAITransfers(fromBlock, toBlock) {
+    try {
+        const filter = {
+            address: DAI_ADDRESS,
+            topics: [
+                ethers.utils.id("Transfer(address,address,uint256)"),
+                null,
+                ethers.utils.hexZeroPad(TOKEN_ADDRESS.toLowerCase(), 32)
+            ],
+            fromBlock: fromBlock,
+            toBlock: toBlock
+        };
+        
+        const logs = await provider.getLogs(filter);
+        let totalIncomingDAI = 0;
+        let transactionCount = 0;
+        
+        const daiContract = new ethers.Contract(DAI_ADDRESS, [
+            "function decimals() view returns (uint8)"
+        ], provider);
+        
+        let decimals = 18;
+        try {
+            decimals = await daiContract.decimals();
+        } catch (e) {
+            decimals = 18;
+        }
+        
+        for (const log of logs) {
+            try {
+                const decoded = ethers.utils.defaultAbiCoder.decode(
+                    ['address', 'address', 'uint256'],
+                    log.data
+                );
+                const amount = parseFloat(ethers.utils.formatUnits(decoded[2], decimals));
+                totalIncomingDAI += amount;
+                transactionCount++;
+            } catch (e) {
+                // خطا در decode - نادیده گرفته میشه
+            }
+        }
+        
+        return { totalIncomingDAI, transactionCount };
+    } catch (error) {
+        console.error(`  ❌ Error scanning DAI transfers:`, error.message);
+        return { totalIncomingDAI: 0, transactionCount: 0 };
+    }
+}
+
+// ==================== روش جدید محاسبه Trading Volume ====================
 async function scanAllBlocks() {
-    console.log('🚀 Starting blockchain scan for Trading Volume...');
+    console.log('🚀 Starting Trading Volume scanner (NEW METHOD)...');
     console.log(`📦 Token: ${TOKEN_ADDRESS}`);
+    console.log(`💰 DAI: ${DAI_ADDRESS}`);
     console.log(`🔗 RPC: ${RPC_URL}`);
     console.log('═══════════════════════════════════════');
     
@@ -200,22 +278,21 @@ async function scanAllBlocks() {
     const progress = loadProgress();
     const mainData = loadMainData();
     
+    // ===== دریافت اطلاعات اولیه =====
+    console.log('\n📡 Fetching initial data...');
+    const initialData = await getInitialData();
+    
     console.log(`📊 Previous data loaded:`);
-    console.log(`   Total Volume: ${formatCurrency(progress.totalBuy + progress.totalSell)}`);
+    console.log(`   Trading Volume: ${formatCurrency(progress.totalTradingVolume)}`);
     console.log(`   Buys: ${progress.buyCount}`);
     console.log(`   Sells: ${progress.sellCount}`);
     console.log(`   Last Block: ${formatNumber(progress.lastScannedBlock)}`);
+    console.log(`   Last Reserve: ${formatCurrency(progress.lastReserve)}`);
     
     // ===== دریافت بلاک فعلی =====
     console.log('\n📡 Connecting to blockchain...');
-    let currentBlock;
-    try {
-        currentBlock = await provider.getBlockNumber();
-        console.log(`📊 Current block: ${formatNumber(currentBlock)}`);
-    } catch (e) {
-        console.error(`❌ Failed to get current block: ${e.message}`);
-        throw e;
-    }
+    const currentBlock = await provider.getBlockNumber();
+    console.log(`📊 Current block: ${formatNumber(currentBlock)}`);
     
     // ===== تعیین محدوده اسکن =====
     const lastScanned = progress.lastScannedBlock || 106000000;
@@ -224,54 +301,26 @@ async function scanAllBlocks() {
     
     console.log(`📍 Last scanned: ${formatNumber(lastScanned)}`);
     console.log(`🔄 New blocks: ${formatNumber(fromBlock)} to ${formatNumber(toBlock)}`);
-    console.log(`📊 Total blocks to scan: ${formatNumber(toBlock - fromBlock + 1)}`);
     
     // اگر بلاک جدیدی نداریم
     if (fromBlock > toBlock) {
         console.log('\n✅ No new blocks to scan!');
-        console.log(`📊 Total Volume: ${formatCurrency(mainData.totalVolume || 0)}`);
-        console.log(`🟢 Buys: ${mainData.transactions?.buyCount || 0}`);
-        console.log(`🔴 Sells: ${mainData.transactions?.sellCount || 0}`);
+        console.log(`📊 Trading Volume: ${formatCurrency(progress.totalTradingVolume)}`);
         return;
     }
     
-    // ===== دریافت قیمت و decimals =====
-    console.log('\n📡 Fetching contract data...');
-    let price = 6.00;
-    let decimals = 18;
-    
-    try {
-        const priceRaw = await contract.Price();
-        price = parseFloat(ethers.utils.formatEther(priceRaw));
-        console.log(`💲 Current Price: $${price.toFixed(6)}`);
-    } catch (e) {
-        console.warn(`⚠️ Could not fetch price, using default: $${price.toFixed(2)}`);
-    }
-    
-    try {
-        decimals = await contract.decimals();
-        console.log(`🔢 Decimals: ${decimals}`);
-    } catch (e) {
-        console.warn(`⚠️ Could not fetch decimals, using default: ${decimals}`);
-    }
-    
-    // ===== اسکن مرحله‌ای با بلاک‌های کوچک =====
-    console.log('\n🔍 Scanning transactions in batches...');
+    // ===== اسکن تراکنش‌های DAI به قرارداد =====
+    console.log('\n🔍 Scanning DAI transfers to contract...');
     console.log('═══════════════════════════════════════');
     
-    const BATCH_SIZE = 1000; // هر بار ۱۰۰۰ بلاک
-    const DELAY_BETWEEN_BATCHES = 2000; // ۲ ثانیه بین هر اسکن
+    const BATCH_SIZE = 2000;
+    const DELAY_BETWEEN_BATCHES = 1500;
+    const MAX_BATCHES = 25;
     
-    let totalBuy = progress.totalBuy || 0;
-    let totalSell = progress.totalSell || 0;
-    let buyCount = progress.buyCount || 0;
-    let sellCount = progress.sellCount || 0;
+    let totalIncomingDAI = 0;
+    let totalDAITransactions = 0;
     let scannedBlocks = 0;
     let batchNumber = 0;
-    let hasError = false;
-    
-    // محدود کردن به ۵۰ بچ (۵۰,۰۰۰ بلاک) در هر اجرا
-    const MAX_BATCHES = 50;
     let currentFrom = fromBlock;
     
     while (currentFrom <= toBlock && batchNumber < MAX_BATCHES) {
@@ -281,102 +330,102 @@ async function scanAllBlocks() {
         console.log(`\n📦 Batch ${batchNumber}/${Math.min(MAX_BATCHES, Math.ceil((toBlock - fromBlock + 1) / BATCH_SIZE))}`);
         console.log(`   Scanning: ${formatNumber(currentFrom)} to ${formatNumber(currentTo)}`);
         
-        const result = await scanBlockRange(currentFrom, currentTo, price, decimals);
+        const result = await scanDAITransfers(currentFrom, currentTo);
         
-        if (result.error) {
-            console.log(`   ⚠️ Error in batch, will retry with smaller size...`);
-            // اگر خطا داشت، با سایز کوچکتر امتحان کن
-            const SMALL_BATCH = 200;
-            let smallFrom = currentFrom;
-            let smallTo = Math.min(smallFrom + SMALL_BATCH - 1, currentTo);
-            
-            while (smallFrom <= currentTo) {
-                console.log(`   🔄 Retry: ${formatNumber(smallFrom)} to ${formatNumber(smallTo)}`);
-                const smallResult = await scanBlockRange(smallFrom, smallTo, price, decimals);
-                
-                if (smallResult.error) {
-                    console.log(`   ❌ Still failing, skipping this range`);
-                    break;
-                }
-                
-                totalBuy += smallResult.buyTotal;
-                totalSell += smallResult.sellTotal;
-                buyCount += smallResult.buyCount;
-                sellCount += smallResult.sellCount;
-                scannedBlocks += (smallTo - smallFrom + 1);
-                
-                smallFrom = smallTo + 1;
-                smallTo = Math.min(smallFrom + SMALL_BATCH - 1, currentTo);
-                
-                // ذخیره موقت هر بار
-                progress.lastScannedBlock = smallTo;
-                progress.totalBuy = totalBuy;
-                progress.totalSell = totalSell;
-                progress.buyCount = buyCount;
-                progress.sellCount = sellCount;
-                saveProgress(progress);
-                
-                await sleep(1000);
-            }
-        } else {
-            totalBuy += result.buyTotal;
-            totalSell += result.sellTotal;
-            buyCount += result.buyCount;
-            sellCount += result.sellCount;
-            scannedBlocks += (currentTo - currentFrom + 1);
-            
-            console.log(`   📝 Found ${result.eventCount} events`);
-            console.log(`   🟢 Buys: ${result.buyCount} ($${result.buyTotal.toFixed(2)})`);
-            console.log(`   🔴 Sells: ${result.sellCount} ($${result.sellTotal.toFixed(2)})`);
-            
-            // ذخیره پیشرفت
-            progress.lastScannedBlock = currentTo;
-            progress.totalBuy = totalBuy;
-            progress.totalSell = totalSell;
-            progress.buyCount = buyCount;
-            progress.sellCount = sellCount;
-            saveProgress(progress);
-        }
+        totalIncomingDAI += result.totalIncomingDAI;
+        totalDAITransactions += result.transactionCount;
+        scannedBlocks += (currentTo - currentFrom + 1);
+        
+        console.log(`   📝 Found ${result.transactionCount} DAI transfers`);
+        console.log(`   💰 Total DAI: $${result.totalIncomingDAI.toFixed(2)}`);
+        
+        // ذخیره پیشرفت
+        progress.lastScannedBlock = currentTo;
+        saveProgress(progress);
         
         currentFrom = currentTo + 1;
         
-        // صبر بین بچ‌ها
         if (currentFrom <= toBlock && batchNumber < MAX_BATCHES) {
-            console.log(`   ⏳ Waiting ${DELAY_BETWEEN_BATCHES/1000}s before next batch...`);
+            console.log(`   ⏳ Waiting ${DELAY_BETWEEN_BATCHES/1000}s...`);
             await sleep(DELAY_BETWEEN_BATCHES);
         }
     }
     
-    // ===== اگر بلاک‌های بیشتری مونده، ذخیره کن برای دفعه بعد =====
-    if (currentFrom <= toBlock) {
-        console.log(`\n⏸️  Paused. ${formatNumber(toBlock - currentFrom + 1)} blocks remaining for next run.`);
-        console.log(`   Last scanned: ${formatNumber(currentFrom - 1)}`);
-        progress.lastScannedBlock = currentFrom - 1;
-        saveProgress(progress);
-    }
+    // ===== محاسبه Trading Volume با روش جدید =====
+    console.log('\n📊 Calculating Trading Volume...');
+    console.log('═══════════════════════════════════════');
     
-    // ===== محاسبه آمار نهایی =====
-    const totalVolume = totalBuy + totalSell;
+    // 1. دریافت نقدینگی فعلی
+    const currentReserveRaw = await daiContract.balanceOf(TOKEN_ADDRESS);
+    const currentReserve = parseFloat(ethers.utils.formatEther(currentReserveRaw));
+    console.log(`💰 Current Reserve: $${currentReserve.toFixed(2)}`);
+    
+    // 2. دریافت تعداد کل اعضا و ریواردها
+    const totalOwnersRaw = await networkContract.All_Owner_Number();
+    const totalOwners = parseInt(totalOwnersRaw.toString());
+    const OLD_CONTRACT_OWNERS = 80897;
+    const newOwners = Math.max(0, totalOwners - OLD_CONTRACT_OWNERS);
+    const totalAirdrops = newOwners * 2; // هر عضو ۲ دای
+    
+    console.log(`👥 New Owners: ${newOwners}`);
+    console.log(`🎁 Total Airdrops: $${totalAirdrops.toFixed(2)}`);
+    
+    // 3. محاسبه کل DAI وارد شده به قرارداد (همه منابع)
+    const totalDAIIncoming = progress.totalBuy + totalIncomingDAI;
+    
+    // 4. محاسبه Sell = کل ورودی‌ها - (نقدینگی فعلی + ریواردها)
+    // توجه: نقدینگی فعلی = ورودی‌ها - خروجی‌ها + ریواردها + اشتراک‌ها
+    // پس: خروجی‌ها (Sell) = ورودی‌ها + ریواردها + اشتراک‌ها - نقدینگی فعلی
+    
+    // اشتراک‌های مالکیت = 2 DAI × تعداد اعضای جدید
+    const totalMembershipFees = newOwners * 2;
+    
+    // کل ورودی‌های غیر از Buy (ریوارد + اشتراک)
+    const nonBuyIncoming = totalAirdrops + totalMembershipFees;
+    
+    // محاسبه Sell
+    const totalSell = Math.max(0, totalDAIIncoming + nonBuyIncoming - currentReserve);
+    
+    // Trading Volume = Buy + Sell
+    const tradingVolume = totalDAIIncoming + totalSell;
+    
+    console.log(`\n📊 Calculation Details:`);
+    console.log(`   📥 Total DAI Incoming (Buys): $${totalDAIIncoming.toFixed(2)}`);
+    console.log(`   🎁 Airdrops: $${totalAirdrops.toFixed(2)}`);
+    console.log(`   👥 Membership Fees: $${totalMembershipFees.toFixed(2)}`);
+    console.log(`   💰 Current Reserve: $${currentReserve.toFixed(2)}`);
+    console.log(`   📤 Total Sells: $${totalSell.toFixed(2)}`);
+    console.log(`   📊 Trading Volume: $${tradingVolume.toFixed(2)}`);
+    
+    // ===== ذخیره داده‌ها =====
     const daysSinceStart = Math.ceil((Date.now() - new Date(START_DATE).getTime()) / (1000 * 60 * 60 * 24));
-    const dailyVolume = daysSinceStart > 0 ? totalVolume / daysSinceStart : 0;
+    const dailyVolume = daysSinceStart > 0 ? tradingVolume / daysSinceStart : 0;
     
-    // ===== ذخیره داده اصلی =====
+    // آپدیت progress
+    progress.totalTradingVolume = tradingVolume;
+    progress.totalBuy = totalDAIIncoming;
+    progress.totalSell = totalSell;
+    progress.buyCount += totalDAITransactions;
+    progress.lastReserve = currentReserve;
+    saveProgress(progress);
+    
+    // آپدیت main data
     mainData.lastUpdated = new Date().toISOString();
-    mainData.totalVolume = Math.round(totalVolume * 100) / 100;
+    mainData.totalVolume = Math.round(tradingVolume * 100) / 100;
     mainData.dailyVolume = Math.round(dailyVolume * 100) / 100;
     mainData.scanInfo = {
         scannedBlocks: scannedBlocks,
         fromBlock: fromBlock,
         toBlock: currentFrom - 1,
-        buyCount: buyCount,
-        sellCount: sellCount,
+        buyCount: totalDAITransactions,
+        sellCount: progress.sellCount,
         daysSinceStart: daysSinceStart
     };
     mainData.transactions = {
-        totalBuys: Math.round(totalBuy * 100) / 100,
+        totalBuys: Math.round(totalDAIIncoming * 100) / 100,
         totalSells: Math.round(totalSell * 100) / 100,
-        buyCount: buyCount,
-        sellCount: sellCount
+        buyCount: totalDAITransactions,
+        sellCount: progress.sellCount
     };
     saveMainData(mainData);
     
@@ -387,17 +436,18 @@ async function scanAllBlocks() {
     console.log(`⏱️  Time: ${elapsed}s`);
     console.log(`📊 Scanned: ${formatNumber(scannedBlocks)} blocks`);
     console.log(`📅 Days since start: ${daysSinceStart}`);
-    console.log(`🟢 Buys: ${formatCurrency(mainData.transactions.totalBuys)} (${buyCount} txs)`);
-    console.log(`🔴 Sells: ${formatCurrency(mainData.transactions.totalSells)} (${sellCount} txs)`);
-    console.log(`💰 Total Volume: ${formatCurrency(mainData.totalVolume)}`);
-    console.log(`📈 Daily Avg: ${formatCurrency(mainData.dailyVolume)}`);
+    console.log(`💰 Trading Volume: ${formatCurrency(tradingVolume)}`);
+    console.log(`📈 Daily Avg: ${formatCurrency(dailyVolume)}`);
+    console.log(`🟢 Buys: ${formatCurrency(totalDAIIncoming)} (${totalDAITransactions} txs)`);
+    console.log(`🔴 Sells: ${formatCurrency(totalSell)}`);
     console.log(`💾 Saved to: ${HISTORY_FILE}`);
     console.log('═══════════════════════════════════════');
 }
 
 // ==================== اجرا ====================
 console.log('=' .repeat(50));
-console.log('🚀 TRADING VOLUME UPDATER');
+console.log('🚀 TRADING VOLUME UPDATER v2');
+console.log('📊 NEW METHOD: Reserve-based calculation');
 console.log('=' .repeat(50));
 
 scanAllBlocks()
