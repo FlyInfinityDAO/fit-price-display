@@ -1,19 +1,21 @@
 {
-  "lastUpdated": "2026-06-26T22:05:11.463Z",
-  "totalVolume": 0,
-  "dailyVolume": 0,
+  "lastUpdated": "2026-06-26T22:57:35.827Z",
+  "totalVolume": 66511.54,
+  "dailyVolume": 348.23,
   "scanInfo": {
-    "scannedBlocks": 100000,
-    "fromBlock": 106350001,
-    "toBlock": 106450000,
-    "buyCount": 0,
-    "sellCount": 0,
+    "method": "AUTOMATIC_DELTA_FORMULA",
     "daysSinceStart": 191,
-    "method": "DAI Transfer + Reserve"
+    "totalOwners": 81305,
+    "newOwners": 408,
+    "reserve": 46727.54,
+    "deltaNewOwners": 408,
+    "deltaReserve": 46727.54,
+    "deltaVolume": 35711.54,
+    "perOwnerIncoming": 27
   },
   "transactions": {
     "totalBuys": 0,
-    "totalSells": 0,
+    "totalSells": 35711.54,
     "buyCount": 0,
     "sellCount": 0
   }
