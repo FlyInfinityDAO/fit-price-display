@@ -1,11 +1,11 @@
 {
-  "lastUpdated": "2026-06-26T05:40:40.772Z",
+  "lastUpdated": "2026-06-26T15:04:41.138Z",
   "totalVolume": 0,
   "dailyVolume": 0,
   "scanInfo": {
-    "scannedBlocks": 66419578,
+    "scannedBlocks": 66502472,
     "fromBlock": 40000000,
-    "toBlock": 106419577,
+    "toBlock": 106502471,
     "buyCount": 0,
     "sellCount": 0,
     "daysSinceStart": 191
