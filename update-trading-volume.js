@@ -9,7 +9,7 @@ const RPC_URL = "https://bsc-dataseed.binance.org/";
 const HISTORY_FILE = "trading-volume.json";
 
 const OLD_CONTRACT_OWNERS = 80897;
-const PER_OWNER_INCOMING = 27; // 2 (membership) + 25 (reward)
+const PER_OWNER_INCOMING = 22; // 2 (membership) + 20 (reward) ✅ اصلاح شد
 
 // ==================== ABI ====================
 const DAI_ABI = [
@@ -63,6 +63,7 @@ function loadPreviousData() {
 async function updateTradingVolume() {
     console.log('🚀 UPDATING TRADING VOLUME (ONLY INCREASE)');
     console.log('═══════════════════════════════════════');
+    console.log(`📊 Per Owner Incoming: ${PER_OWNER_INCOMING} (2 membership + 20 reward)`);
     
     try {
         // ===== 1. خواندن اطلاعات قبلی =====
@@ -151,6 +152,7 @@ async function updateTradingVolume() {
 console.log('=' .repeat(50));
 console.log('🚀 TRADING VOLUME UPDATER');
 console.log('📊 ONLY INCREASE - Sell doesn\'t decrease volume');
+console.log(`📊 Per Owner: ${PER_OWNER_INCOMING} DAI`);
 console.log('=' .repeat(50));
 
 updateTradingVolume()
