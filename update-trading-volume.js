@@ -61,7 +61,7 @@ function loadPreviousData() {
 
 // ==================== تابع اصلی ====================
 async function updateTradingVolume() {
-    console.log('🚀 UPDATING TRADING VOLUME');
+    console.log('🚀 UPDATING TRADING VOLUME (ONLY INCREASE)');
     console.log('═══════════════════════════════════════');
     
     try {
@@ -74,17 +74,14 @@ async function updateTradingVolume() {
         // ===== 2. دریافت اطلاعات فعلی از بلاکچین =====
         console.log('\n📡 Reading current data from blockchain...');
         
-        // نقدینگی فعلی
         const reserveRaw = await daiContract.balanceOf(TOKEN_ADDRESS);
         const currentReserve = parseFloat(ethers.utils.formatEther(reserveRaw));
         console.log(`💰 Current Reserve: $${currentReserve.toFixed(2)}`);
         
-        // تعداد کل اعضا
         const totalOwnersRaw = await networkContract.All_Owner_Number();
         const totalOwners = parseInt(totalOwnersRaw.toString());
         console.log(`👥 Total Owners: ${totalOwners}`);
         
-        // اعضای جدید
         const currentNewOwners = Math.max(0, totalOwners - OLD_CONTRACT_OWNERS);
         console.log(`🆕 Current New Owners: ${currentNewOwners}`);
         
@@ -97,12 +94,14 @@ async function updateTradingVolume() {
         console.log(`   Reserve Delta: $${deltaReserve.toFixed(2)}`);
         
         // ===== 4. محاسبه تغییرات تریدینگ ولوم =====
-        // تغییرات تریدینگ ولوم = تغییرات نقدینگی - (تغییرات اشتراک‌ها × ۲۷)
         const deltaVolume = deltaReserve - (deltaNewOwners * PER_OWNER_INCOMING);
-        console.log(`   Volume Delta: $${deltaVolume.toFixed(2)}`);
+        console.log(`   Raw Volume Delta: $${deltaVolume.toFixed(2)}`);
         
-        // ===== 5. محاسبه تریدینگ ولوم جدید =====
-        const newTradingVolume = Math.max(0, prev.tradingVolume + deltaVolume);
+        // ===== 5. فقط در صورتی که مثبت باشه به Volume اضافه کن =====
+        const volumeIncrease = Math.max(0, deltaVolume);
+        console.log(`   ✅ Volume Increase: $${volumeIncrease.toFixed(2)}`);
+        
+        const newTradingVolume = prev.tradingVolume + volumeIncrease;
         console.log(`\n📊 New Trading Volume: $${newTradingVolume.toFixed(2)}`);
         
         // ===== 6. ذخیره =====
@@ -114,7 +113,7 @@ async function updateTradingVolume() {
             totalVolume: Math.round(newTradingVolume * 100) / 100,
             dailyVolume: Math.round(dailyVolume * 100) / 100,
             scanInfo: {
-                method: "AUTOMATIC_DELTA_FORMULA",
+                method: "AUTOMATIC_DELTA_FORMULA_ONLY_INCREASE",
                 daysSinceStart: daysSinceStart,
                 totalOwners: totalOwners,
                 newOwners: currentNewOwners,
@@ -122,11 +121,12 @@ async function updateTradingVolume() {
                 deltaNewOwners: deltaNewOwners,
                 deltaReserve: Math.round(deltaReserve * 100) / 100,
                 deltaVolume: Math.round(deltaVolume * 100) / 100,
+                volumeIncrease: Math.round(volumeIncrease * 100) / 100,
                 perOwnerIncoming: PER_OWNER_INCOMING
             },
             transactions: {
                 totalBuys: 0,
-                totalSells: Math.round(deltaVolume * 100) / 100,
+                totalSells: Math.round(volumeIncrease * 100) / 100,
                 buyCount: 0,
                 sellCount: 0
             }
@@ -135,7 +135,6 @@ async function updateTradingVolume() {
         fs.writeFileSync(HISTORY_FILE, JSON.stringify(result, null, 2));
         console.log(`\n💾 Saved to: ${HISTORY_FILE}`);
         
-        // ===== 7. نمایش نتیجه =====
         console.log('\n═══════════════════════════════════════');
         console.log('✅ ===== UPDATE COMPLETED =====');
         console.log(`💰 Trading Volume: $${newTradingVolume.toFixed(2)}`);
@@ -151,7 +150,7 @@ async function updateTradingVolume() {
 // ==================== اجرا ====================
 console.log('=' .repeat(50));
 console.log('🚀 TRADING VOLUME UPDATER');
-console.log('📊 FORMULA: Volume += (ReserveΔ - (NewOwnersΔ × 27))');
+console.log('📊 ONLY INCREASE - Sell doesn\'t decrease volume');
 console.log('=' .repeat(50));
 
 updateTradingVolume()
