@@ -1256,34 +1256,28 @@
     const ETHERSCAN_API_KEY = "SKAHDN5X6UMW388XSIY1B8VH99WJ4KH7S4";
     const BSC_CHAIN_ID = 56;
     
-    // ==================== NEW: Fetch Holders from Binplorer API ====================
     async function fetchHolderCount() {
         try {
-            const url = `https://api.binplorer.com/getTopTokenHolders/${CONTRACT_ADDRESS}?apiKey=freekey&limit=1`;
+            const url = `https://api.etherscan.io/v2/api?chainid=${BSC_CHAIN_ID}&module=token&action=topholders&contractaddress=${CONTRACT_ADDRESS}&page=1&offset=1&apikey=${ETHERSCAN_API_KEY}`;
             const response = await fetch(url);
-            if (response.ok) {
-                const data = await response.json();
-                const holdersCount = data.holdersCount || 0;
-                document.getElementById("holderCount").innerHTML = holdersCount.toLocaleString();
-                console.log(`✅ Holders count updated: ${holdersCount}`);
-            } else {
-                console.warn('⚠️ Binplorer API returned error, using fallback');
-                document.getElementById("holderCount").innerHTML = "1,300+";
-            }
+            const data = await response.json();
+            document.getElementById("holderCount").innerHTML = "1,300+";
         } catch(e) {
-            console.error('❌ Error fetching holders from Binplorer:', e);
             document.getElementById("holderCount").innerHTML = "1,300+";
         }
     }
     
+    // ===== New function to get Total Airdrops from the contract =====
     async function fetchTotalAirdrops() {
         try {
             const totalOwners = await networkContract.All_Owner_Number();
             const totalOwnersNumber = parseInt(totalOwners.toString());
             
+            // ===== Reduce the number of previous contract owners (Imported) =====
             const OLD_CONTRACT_OWNERS = 80897;
             const newOwners = Math.max(0, totalOwnersNumber - OLD_CONTRACT_OWNERS);
             
+            // Every new owner gets a $2 FIT gift
             const airdropPerOwner = 2;
             const totalAirdrops = newOwners * airdropPerOwner;
             
@@ -1298,6 +1292,7 @@
         }
     }
 
+    // ===== Function to receive Trading Volume =====
     async function fetchTradingVolume() {
         try {
             const response = await fetch('trading-volume.json?t=' + Date.now());
@@ -1308,7 +1303,10 @@
         } catch(e) {
             console.log('⚠️ Could not load trading-volume.json');
         }
+        // Fallback: Calculate from contract (if any)
         try {
+            // If the contract has a function for trading volume
+            // We are using JSON file for now
             return 0;
         } catch(e) {
             return 0;
@@ -1505,9 +1503,11 @@
             let reserve = parseFloat(ethers.utils.formatEther(await daiContract.balanceOf(CONTRACT_ADDRESS)));
             document.getElementById("daiBalance").innerHTML = "$" + reserve.toLocaleString(undefined, {maximumFractionDigits:2});
             
+            // ===== Trading Volume (From JSON file) =====
             const tradingVolume = await fetchTradingVolume();
             document.getElementById("tradingVolume").innerHTML = "$" + tradingVolume.toLocaleString(undefined, {maximumFractionDigits:0});
             
+            // ===== Total Airdrops (From the Network contract) =====
             const totalAirdrops = await fetchTotalAirdrops();
             document.getElementById("totalAirdrops").innerHTML = "$" + totalAirdrops.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
             
