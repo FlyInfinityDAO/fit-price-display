@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="google-site-verification" content="rFlUHHk9XN0acAA-RKvL9BXDI3n9Y7QuhIkLBRajrqY" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Fly Infinity Token - Dashboard</title>
@@ -838,9 +839,9 @@
         </div>
     </div>
 
-    <!-- ===== TOP GRID - دو باکس بالایی ===== -->
+    <!-- ===== TOP GRID - The top two boxes ===== -->
     <div class="top-grid">
-        <!-- باکس اول: Fly Infinity Token (FIT) -->
+        <!-- First box: Fly Infinity Token (FIT) -->
         <div class="card" style="text-align:center">
             <div class="header-with-logo">
                 <img src="logo.png" alt="FIT Logo" class="token-logo" onerror="this.style.display='none'">
@@ -853,7 +854,7 @@
             <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> <span data-i18n="btn.refresh">Refresh Price</span></button>
         </div>
         
-        <!-- باکس دوم: Token Statistics -->
+        <!-- Second box: Token Statistics -->
         <div class="card">
             <div style="font-size:18px; margin-bottom:15px; text-align:center; color: #D4AF37;" data-i18n="dashboard.statistics"><i class="fas fa-chart-line"></i> Token Statistics</div>
             <div class="stats-grid">
@@ -875,7 +876,7 @@
         </div>
     </div>
 
-    <!-- ===== دکمه طلایی WHAT IS FIT - بین دو باکس (بعد از top-grid) ===== -->
+    <!-- ===== دکمه طلاییWHAT IS FIT - Between two boxes (after top-grid) ===== -->
     <div class="whatisfit-wrapper">
         <a href="what-is-fit.html" class="whatisfit-btn">
             <span class="btn-inner">
@@ -1255,28 +1256,34 @@
     const ETHERSCAN_API_KEY = "SKAHDN5X6UMW388XSIY1B8VH99WJ4KH7S4";
     const BSC_CHAIN_ID = 56;
     
+    // ==================== NEW: Fetch Holders from Binplorer API ====================
     async function fetchHolderCount() {
         try {
-            const url = `https://api.etherscan.io/v2/api?chainid=${BSC_CHAIN_ID}&module=token&action=topholders&contractaddress=${CONTRACT_ADDRESS}&page=1&offset=1&apikey=${ETHERSCAN_API_KEY}`;
+            const url = `https://api.binplorer.com/getTopTokenHolders/${CONTRACT_ADDRESS}?apiKey=freekey&limit=1`;
             const response = await fetch(url);
-            const data = await response.json();
-            document.getElementById("holderCount").innerHTML = "1,200";
+            if (response.ok) {
+                const data = await response.json();
+                const holdersCount = data.holdersCount || 0;
+                document.getElementById("holderCount").innerHTML = holdersCount.toLocaleString();
+                console.log(`✅ Holders count updated: ${holdersCount}`);
+            } else {
+                console.warn('⚠️ Binplorer API returned error, using fallback');
+                document.getElementById("holderCount").innerHTML = "1,300+";
+            }
         } catch(e) {
-            document.getElementById("holderCount").innerHTML = "1,200";
+            console.error('❌ Error fetching holders from Binplorer:', e);
+            document.getElementById("holderCount").innerHTML = "1,300+";
         }
     }
     
-    // ===== تابع جدید برای دریافت Total Airdrops از قرارداد =====
     async function fetchTotalAirdrops() {
         try {
             const totalOwners = await networkContract.All_Owner_Number();
             const totalOwnersNumber = parseInt(totalOwners.toString());
             
-            // ===== کم کردن تعداد مالکین قرارداد قبلی (Import شده) =====
             const OLD_CONTRACT_OWNERS = 80897;
             const newOwners = Math.max(0, totalOwnersNumber - OLD_CONTRACT_OWNERS);
             
-            // هر مالک جدید ۲ دلار FIT هدیه گرفته
             const airdropPerOwner = 2;
             const totalAirdrops = newOwners * airdropPerOwner;
             
@@ -1291,7 +1298,6 @@
         }
     }
 
-    // ===== تابع برای دریافت Trading Volume =====
     async function fetchTradingVolume() {
         try {
             const response = await fetch('trading-volume.json?t=' + Date.now());
@@ -1302,10 +1308,7 @@
         } catch(e) {
             console.log('⚠️ Could not load trading-volume.json');
         }
-        // Fallback: محاسبه از قرارداد (در صورت وجود)
         try {
-            // اگر قرارداد تابعی برای حجم معاملات داشته باشه
-            // فعلاً از فایل JSON استفاده میکنیم
             return 0;
         } catch(e) {
             return 0;
@@ -1502,11 +1505,9 @@
             let reserve = parseFloat(ethers.utils.formatEther(await daiContract.balanceOf(CONTRACT_ADDRESS)));
             document.getElementById("daiBalance").innerHTML = "$" + reserve.toLocaleString(undefined, {maximumFractionDigits:2});
             
-            // ===== Trading Volume (از فایل JSON) =====
             const tradingVolume = await fetchTradingVolume();
             document.getElementById("tradingVolume").innerHTML = "$" + tradingVolume.toLocaleString(undefined, {maximumFractionDigits:0});
             
-            // ===== Total Airdrops (از قرارداد Network) =====
             const totalAirdrops = await fetchTotalAirdrops();
             document.getElementById("totalAirdrops").innerHTML = "$" + totalAirdrops.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
             
