@@ -87,16 +87,16 @@
       "how": "Nasıl Çalışır: Her kullanıcı, belirtilen limite kadar adım başına yalnızca bir kez satın alabilir. Gerekli ağ puanlarını kazandıktan sonra, bir sonraki adım kullanılabilir hale gelir. Kullanıcılar adımlarda ilerledikçe toplam satın alma limiti kümülatif olarak artar."
     },
     "s7": {
-      "title": "Double Infinity Ağ Avantajı",
+      "title": "Infinity Development Ağ Avantajı",
       "p1": "Ağ Yapısıyla Üstün Satın Alma Gücünün Kilidini Açın",
-      "p2": "Double Infinity Ağı, kullanıcıların önemli ölçüde daha az sahiplik hissesi ile çok daha büyük miktarlarda FIT satın almalarını sağlayan devrimci bir mekanizma sunar. Bu, ağın akıllı ikili ağaç yapısı sayesinde elde edilir ve ağa yerleştirilen her hisse, kullanıcının satın alma kapasitesini doğrudan artıran ağ puanları oluşturur.",
+      "p2": "Infinity Development Ağı, kullanıcıların önemli ölçüde daha az sahiplik hissesi ile çok daha büyük miktarlarda FIT satın almalarını sağlayan devrimci bir mekanizma sunar. Bu, ağın akıllı ikili ağaç yapısı sayesinde elde edilir ve ağa yerleştirilen her hisse, kullanıcının satın alma kapasitesini doğrudan artıran ağ puanları oluşturur.",
       "p3": "İkili Ağaç Çarpanı Nasıl Çalışır:",
       "li1": "Geleneksel Model: Her sahiplik hissesi 100 DAI'lik sabit bir satın alma limiti sağlar. 6.000 DAI değerinde FIT satın almak için bir kullanıcının 60 hisseye ihtiyacı olur ve bu da ek 6.000 DAI maliyet — toplam 12.000 DAI yatırım.",
-      "li2": "Double Infinity Modeli: Hisseleri dengeli bir ikili ağaca (düğüm başına 1 üst hat + 2 alt hat) stratejik olarak yerleştirerek, aynı 6.000 DAI satın alma işlemi yalnızca 40 hisse ile elde edilebilir — gerekli hisselerde %33 azalma.",
-      "li3": "Birikimli Avantaj: Satın alma miktarı arttıkça, verimlilik farkı genişler. Daha büyük satın alımlar için Double Infinity Ağı, gerekli hisseleri %50 veya daha fazla azaltabilir ve FIT elde etmek için gereken toplam sermayeyi önemli ölçüde düşürebilir.",
-      "p4": "Matematiksel Kanıt: 40 hisseli dengeli bir ikili ağaçta, ağ 57 ödül puanı oluşturur (ödül hesaplama modelimiz aracılığıyla doğrulandığı gibi). Her puan, kullanıcıların daha az hisse ile daha yüksek satın alma limitlerine ulaşmalarını sağlayan açılmış satın alma kapasitesini temsil eder. Bu bir tanıtım iddiası değildir — Double Infinity Ağ mimarisinin matematiksel olarak doğrulanabilir bir özelliğidir.",
-      "p5": "Önemli Çıkarım: Double Infinity Ağı yalnızca bir referans sistemi değildir — sermaye verimliliğini matematiksel olarak optimize eden bir finansal mühendislik inovasyonudur. Bu yapıyı anlayan ve kullanan kullanıcılar, geleneksel doğrudan satın alma yöntemlerine kıyasla önemli ölçüde daha düşük sermaye harcaması ile FIT elde edebilirler.",
-      "example": "Örnek: 6.000 DAI FIT Satın Alma — Geleneksel: 60 hisse, 12.000 DAI toplam maliyet | Double Infinity: 40 hisse, 10.000 DAI toplam maliyet | Tasarruf: 2.000 DAI (%17 azalma)"
+      "li2": "Infinity Development Modeli: Hisseleri dengeli bir ikili ağaca (düğüm başına 1 üst hat + 2 alt hat) stratejik olarak yerleştirerek, aynı 6.000 DAI satın alma işlemi yalnızca 40 hisse ile elde edilebilir — gerekli hisselerde %33 azalma.",
+      "li3": "Birikimli Avantaj: Satın alma miktarı arttıkça, verimlilik farkı genişler. Daha büyük satın alımlar için Infinity Development Ağı, gerekli hisseleri %50 veya daha fazla azaltabilir ve FIT elde etmek için gereken toplam sermayeyi önemli ölçüde düşürebilir.",
+      "p4": "Matematiksel Kanıt: 40 hisseli dengeli bir ikili ağaçta, ağ 57 ödül puanı oluşturur (ödül hesaplama modelimiz aracılığıyla doğrulandığı gibi). Her puan, kullanıcıların daha az hisse ile daha yüksek satın alma limitlerine ulaşmalarını sağlayan açılmış satın alma kapasitesini temsil eder. Bu bir tanıtım iddiası değildir — Infinity Development Ağ mimarisinin matematiksel olarak doğrulanabilir bir özelliğidir.",
+      "p5": "Önemli Çıkarım: Infinity Development Ağı yalnızca bir referans sistemi değildir — sermaye verimliliğini matematiksel olarak optimize eden bir finansal mühendislik inovasyonudur. Bu yapıyı anlayan ve kullanan kullanıcılar, geleneksel doğrudan satın alma yöntemlerine kıyasla önemli ölçüde daha düşük sermaye harcaması ile FIT elde edebilirler.",
+      "example": "Örnek: 6.000 DAI FIT Satın Alma — Geleneksel: 60 hisse, 12.000 DAI toplam maliyet | Infinity Development: 40 hisse, 10.000 DAI toplam maliyet | Tasarruf: 2.000 DAI (%17 azalma)"
     },
     "s8": {
       "title": "7. Güvenlik ve Şeffaflık",
