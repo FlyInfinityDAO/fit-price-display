@@ -69,14 +69,14 @@
     "feeYouReceive": "You will receive",
     "feeNote": "Fees: 3% for Buy | 6% for Sell",
     "purchaseCalculator": "FIT Purchase Calculator",
-    "purchaseDesc": "Calculate required ownership shares based on Double Infinity network plan + Estimated Rewards for ALL shares",
+    "purchaseDesc": "Calculate required ownership shares based on Infinity Development network plan + Estimated Rewards for ALL shares",
     "purchaseFitAmount": "🪙 FIT Amount to Buy",
     "purchasePrice": "💰 Current FIT Price (DAI)",
     "purchaseFetch": "Fetch Live Price",
     "purchaseShareCost": "💎 Ownership Share Cost (DAI)",
     "purchaseRewardPerPoint": "💰 Reward Value Per Point ($)",
-    "purchaseWithPlan": "✅ With Double Infinity Network Plan",
-    "purchaseWithoutPlan": "❌ Without Double Infinity Plan (Direct)",
+    "purchaseWithPlan": "✅ With Infinity Development Network Plan",
+    "purchaseWithoutPlan": "❌ Without Infinity Development Plan (Direct)",
     "purchaseShares": "Required Shares",
     "purchaseShareCostTotal": "Total Cost for Shares (DAI)",
     "purchaseFitReceived": "FIT Received (after 3% fee)",
@@ -87,8 +87,8 @@
     "purchaseRewardPoints": "Total Reward Points",
     "purchaseRewardPerPointLabel": "Reward Per Point ($)",
     "purchaseTotalReward": "Total Estimated Reward ($)",
-    "purchaseSavings": "💰 Save {amount} DAI with Double Infinity Plan!",
-    "purchaseEarn": "🎁 Earn {amount} $ in Rewards with Double Infinity Plan!"
+    "purchaseSavings": "💰 Save {amount} DAI with Infinity Development Plan!",
+    "purchaseEarn": "🎁 Earn {amount} $ in Rewards with Infinity Development Plan!"
   },
   "footer": {
     "tagline": "Fly Infinity — <span class=\"gold\">Decentralized. Transparent. Forever Rising.</span>"

@@ -69,14 +69,14 @@
     "feeYouReceive": "دریافت خواهید کرد",
     "feeNote": "کارمزدها: ۳٪ برای خرید | ۶٪ برای فروش",
     "purchaseCalculator": "ماشین حساب خرید FIT",
-    "purchaseDesc": "محاسبه تعداد سهام مورد نیاز بر اساس طرح شبکه Infinity development + پاداش تخمینی برای همه سهام",
+    "purchaseDesc": "محاسبه تعداد سهام مورد نیاز بر اساس طرح شبکه Infinity Development + پاداش تخمینی برای همه سهام",
     "purchaseFitAmount": "🪙 مقدار FIT برای خرید",
     "purchasePrice": "💰 قیمت فعلی FIT (DAI)",
     "purchaseFetch": "دریافت قیمت لحظه‌ای",
     "purchaseShareCost": "💎 هزینه هر سهم مالکیت (DAI)",
     "purchaseRewardPerPoint": "💰 ارزش پاداش به ازای هر امتیاز ($)",
-    "purchaseWithPlan": "✅ با طرح شبکه Infinity development",
-    "purchaseWithoutPlan": "❌ بدون طرح Infinity development (مستقیم)",
+    "purchaseWithPlan": "✅ با طرح شبکه Infinity Development",
+    "purchaseWithoutPlan": "❌ بدون طرح Infinity Development (مستقیم)",
     "purchaseShares": "سهام مورد نیاز",
     "purchaseShareCostTotal": "هزینه کل سهام (DAI)",
     "purchaseFitReceived": "FIT دریافتی (پس از ۳٪ کارمزد)",
@@ -87,8 +87,8 @@
     "purchaseRewardPoints": "مجموع امتیازات پاداش",
     "purchaseRewardPerPointLabel": "پاداش به ازای هر امتیاز ($)",
     "purchaseTotalReward": "مجموع پاداش تخمینی ($)",
-    "purchaseSavings": "💰 {amount} DAI با طرح Infinity development صرفه‌جویی کنید!",
-    "purchaseEarn": "🎁 {amount} $ پاداش با طرح Infinity development کسب کنید!"
+    "purchaseSavings": "💰 {amount} DAI با طرح Infinity Development صرفه‌جویی کنید!",
+    "purchaseEarn": "🎁 {amount} $ پاداش با طرح Infinity Development کسب کنید!"
   },
   "footer": {
     "tagline": "فلای اینفینیتی — <span class=\"gold\">غیرمتمرکز. شفاف. همیشه در حال رشد.</span>"

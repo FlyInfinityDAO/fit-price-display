@@ -69,14 +69,14 @@
     "feeYouReceive": "Alacaksınız",
     "feeNote": "Ücretler: Alım için %3 | Satım için %6",
     "purchaseCalculator": "FIT Satın Alma Hesaplayıcı",
-    "purchaseDesc": "Double Infinity ağ planına göre gerekli sahiplik hisselerini hesaplayın + Tüm hisseler için Tahmini Ödüller",
+    "purchaseDesc": "Infinity Development ağ planına göre gerekli sahiplik hisselerini hesaplayın + Tüm hisseler için Tahmini Ödüller",
     "purchaseFitAmount": "🪙 Satın Alınacak FIT Miktarı",
     "purchasePrice": "💰 Güncel FIT Fiyatı (DAI)",
     "purchaseFetch": "Canlı Fiyatı Getir",
     "purchaseShareCost": "💎 Sahiplik Hissesi Maliyeti (DAI)",
     "purchaseRewardPerPoint": "💰 Puan Başına Ödül Değeri ($)",
-    "purchaseWithPlan": "✅ Double Infinity Ağ Planı İle",
-    "purchaseWithoutPlan": "❌ Double Infinity Planı Olmadan (Doğrudan)",
+    "purchaseWithPlan": "✅ Infinity Development Ağ Planı İle",
+    "purchaseWithoutPlan": "❌ Infinity Development Planı Olmadan (Doğrudan)",
     "purchaseShares": "Gerekli Hisseler",
     "purchaseShareCostTotal": "Hisseler için Toplam Maliyet (DAI)",
     "purchaseFitReceived": "Alınan FIT (%3 ücret sonrası)",
@@ -87,8 +87,8 @@
     "purchaseRewardPoints": "Toplam Ödül Puanı",
     "purchaseRewardPerPointLabel": "Puan Başına Ödül ($)",
     "purchaseTotalReward": "Toplam Tahmini Ödül ($)",
-    "purchaseSavings": "💰 Double Infinity Planı ile {amount} DAI tasarruf edin!",
-    "purchaseEarn": "🎁 Double Infinity Planı ile {amount} $ Ödül kazanın!"
+    "purchaseSavings": "💰 Infinity Development Planı ile {amount} DAI tasarruf edin!",
+    "purchaseEarn": "🎁 Infinity Development Planı ile {amount} $ Ödül kazanın!"
   },
   "footer": {
     "tagline": "Fly Infinity — <span class=\"gold\">Merkeziyetsiz. Şeffaf. Sonsuza Yükselen.</span>"

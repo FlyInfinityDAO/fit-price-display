@@ -69,14 +69,14 @@
     "feeYouReceive": "Recibirá",
     "feeNote": "Comisiones: 3% para Compra | 6% para Venta",
     "purchaseCalculator": "Calculadora de Compra de FIT",
-    "purchaseDesc": "Calcule las acciones de propiedad necesarias según el plan de red Double Infinity + Recompensas estimadas para TODAS las acciones",
+    "purchaseDesc": "Calcule las acciones de propiedad necesarias según el plan de red Infinity Development + Recompensas estimadas para TODAS las acciones",
     "purchaseFitAmount": "🪙 Cantidad de FIT a Comprar",
     "purchasePrice": "💰 Precio Actual de FIT (DAI)",
     "purchaseFetch": "Obtener Precio en Vivo",
     "purchaseShareCost": "💎 Costo de Acción de Propiedad (DAI)",
     "purchaseRewardPerPoint": "💰 Valor de Recompensa por Punto ($)",
-    "purchaseWithPlan": "✅ Con el Plan de Red Double Infinity",
-    "purchaseWithoutPlan": "❌ Sin el Plan Double Infinity (Directo)",
+    "purchaseWithPlan": "✅ Con el Plan de Red Infinity Development",
+    "purchaseWithoutPlan": "❌ Sin el Plan Infinity Development (Directo)",
     "purchaseShares": "Acciones Requeridas",
     "purchaseShareCostTotal": "Costo Total de Acciones (DAI)",
     "purchaseFitReceived": "FIT Recibido (después de comisión del 3%)",
@@ -87,8 +87,8 @@
     "purchaseRewardPoints": "Puntos Totales de Recompensa",
     "purchaseRewardPerPointLabel": "Recompensa por Punto ($)",
     "purchaseTotalReward": "Recompensa Total Estimada ($)",
-    "purchaseSavings": "💰 ¡Ahorre {amount} DAI con el Plan Double Infinity!",
-    "purchaseEarn": "🎁 ¡Gane {amount} $ en Recompensas con el Plan Double Infinity!"
+    "purchaseSavings": "💰 ¡Ahorre {amount} DAI con el Plan Infinity Development!",
+    "purchaseEarn": "🎁 ¡Gane {amount} $ en Recompensas con el Plan Infinity Development!"
   },
   "footer": {
     "tagline": "Fly Infinity — <span class=\"gold\">Descentralizado. Transparente. Siempre Subiendo.</span>"

@@ -69,14 +69,14 @@
     "feeYouReceive": "ستتلقى",
     "feeNote": "الرسوم: ٣٪ للشراء | ٦٪ للبيع",
     "purchaseCalculator": "آلة حاسبة شراء FIT",
-    "purchaseDesc": "احسب عدد أسهم الملكية المطلوبة بناءً على خطة شبكة Double Infinity + المكافآت التقديرية لجميع الأسهم",
+    "purchaseDesc": "احسب عدد أسهم الملكية المطلوبة بناءً على خطة شبكة Infinity Development + المكافآت التقديرية لجميع الأسهم",
     "purchaseFitAmount": "🪙 كمية FIT للشراء",
     "purchasePrice": "💰 سعر FIT الحالي (DAI)",
     "purchaseFetch": "جلب السعر المباشر",
     "purchaseShareCost": "💎 تكلفة سهم الملكية (DAI)",
     "purchaseRewardPerPoint": "💰 قيمة المكافأة لكل نقطة ($)",
-    "purchaseWithPlan": "✅ مع خطة شبكة Double Infinity",
-    "purchaseWithoutPlan": "❌ بدون خطة Double Infinity (مباشر)",
+    "purchaseWithPlan": "✅ مع خطة شبكة Infinity Development",
+    "purchaseWithoutPlan": "❌ بدون خطة Infinity Development (مباشر)",
     "purchaseShares": "الأسهم المطلوبة",
     "purchaseShareCostTotal": "التكلفة الإجمالية للأسهم (DAI)",
     "purchaseFitReceived": "FIT المستلمة (بعد رسوم ٣٪)",
@@ -87,8 +87,8 @@
     "purchaseRewardPoints": "إجمالي نقاط المكافأة",
     "purchaseRewardPerPointLabel": "المكافأة لكل نقطة ($)",
     "purchaseTotalReward": "إجمالي المكافأة التقديرية ($)",
-    "purchaseSavings": "💰 وفر {amount} DAI مع خطة Double Infinity!",
-    "purchaseEarn": "🎁 اربح {amount} $ مكافآت مع خطة Double Infinity!"
+    "purchaseSavings": "💰 وفر {amount} DAI مع خطة Infinity Development!",
+    "purchaseEarn": "🎁 اربح {amount} $ مكافآت مع خطة Infinity Development!"
   },
   "footer": {
     "tagline": "Fly Infinity — <span class=\"gold\">لا مركزي. شفاف. يرتفع للأبد.</span>"

@@ -69,14 +69,14 @@
     "feeYouReceive": "您将收到",
     "feeNote": "费用：买入3% | 卖出6%",
     "purchaseCalculator": "FIT购买计算器",
-    "purchaseDesc": "基于Double Infinity网络计划计算所需的所有权股份 + 所有股份的预估奖励",
+    "purchaseDesc": "基于Infinity Development网络计划计算所需的所有权股份 + 所有股份的预估奖励",
     "purchaseFitAmount": "🪙 要购买的FIT数量",
     "purchasePrice": "💰 当前FIT价格（DAI）",
     "purchaseFetch": "获取实时价格",
     "purchaseShareCost": "💎 所有权股份成本（DAI）",
     "purchaseRewardPerPoint": "💰 每点奖励价值（$）",
-    "purchaseWithPlan": "✅ 使用Double Infinity网络计划",
-    "purchaseWithoutPlan": "❌ 不使用Double Infinity计划（直接）",
+    "purchaseWithPlan": "✅ 使用Infinity Development网络计划",
+    "purchaseWithoutPlan": "❌ 不使用Infinity Development计划（直接）",
     "purchaseShares": "所需股份",
     "purchaseShareCostTotal": "股份总成本（DAI）",
     "purchaseFitReceived": "收到的FIT（扣除3%费用后）",
@@ -87,8 +87,8 @@
     "purchaseRewardPoints": "总奖励点数",
     "purchaseRewardPerPointLabel": "每点奖励（$）",
     "purchaseTotalReward": "总预估奖励（$）",
-    "purchaseSavings": "💰 使用Double Infinity计划节省 {amount} DAI！",
-    "purchaseEarn": "🎁 使用Double Infinity计划赚取 {amount} $ 奖励！"
+    "purchaseSavings": "💰 使用Infinity Development计划节省 {amount} DAI！",
+    "purchaseEarn": "🎁 使用Infinity Development计划赚取 {amount} $ 奖励！"
   },
   "footer": {
     "tagline": "Fly Infinity — <span class=\"gold\">去中心化。透明。永远上涨。</span>"

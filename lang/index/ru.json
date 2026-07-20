@@ -69,14 +69,14 @@
     "feeYouReceive": "Вы получите",
     "feeNote": "Комиссии: 3% за покупку | 6% за продажу",
     "purchaseCalculator": "Калькулятор покупки FIT",
-    "purchaseDesc": "Рассчитайте необходимое количество долей владения на основе плана сети Double Infinity + Оценочные вознаграждения за ВСЕ доли",
+    "purchaseDesc": "Рассчитайте необходимое количество долей владения на основе плана сети Infinity Development + Оценочные вознаграждения за ВСЕ доли",
     "purchaseFitAmount": "🪙 Количество FIT для покупки",
     "purchasePrice": "💰 Текущая цена FIT (DAI)",
     "purchaseFetch": "Получить актуальную цену",
     "purchaseShareCost": "💎 Стоимость доли владения (DAI)",
     "purchaseRewardPerPoint": "💰 Стоимость вознаграждения за балл ($)",
-    "purchaseWithPlan": "✅ С планом сети Double Infinity",
-    "purchaseWithoutPlan": "❌ Без плана Double Infinity (Прямая)",
+    "purchaseWithPlan": "✅ С планом сети Infinity Development",
+    "purchaseWithoutPlan": "❌ Без плана Infinity Development (Прямая)",
     "purchaseShares": "Необходимые доли",
     "purchaseShareCostTotal": "Общая стоимость долей (DAI)",
     "purchaseFitReceived": "Получено FIT (после комиссии 3%)",
@@ -87,8 +87,8 @@
     "purchaseRewardPoints": "Всего баллов вознаграждения",
     "purchaseRewardPerPointLabel": "Вознаграждение за балл ($)",
     "purchaseTotalReward": "Общее оценочное вознаграждение ($)",
-    "purchaseSavings": "💰 Сэкономьте {amount} DAI с планом Double Infinity!",
-    "purchaseEarn": "🎁 Заработайте {amount} $ вознаграждений с планом Double Infinity!"
+    "purchaseSavings": "💰 Сэкономьте {amount} DAI с планом Infinity Development!",
+    "purchaseEarn": "🎁 Заработайте {amount} $ вознаграждений с планом Infinity Development!"
   },
   "footer": {
     "tagline": "Fly Infinity — <span class=\"gold\">Децентрализованный. Прозрачный. Вечно Растущий.</span>"
