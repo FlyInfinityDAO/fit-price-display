@@ -1048,7 +1048,7 @@
             <i class="fas fa-calculator"></i> FIT Purchase Calculator
         </div>
         <p style="color:#888; text-align:center; font-size:12px; margin-bottom:20px;" data-i18n="dashboard.purchaseDesc">
-            Calculate required ownership shares based on Infinity development network plan + Estimated Rewards for ALL shares
+            Calculate required ownership shares based on Infinity Development network plan + Estimated Rewards for ALL shares
         </p>
         
         <!-- Inputs -->
@@ -1077,10 +1077,10 @@
         
         <!-- Results Grid -->
         <div class="purchase-grid">
-            <!-- With Infinity development Plan -->
+            <!-- With Infinity Development Plan -->
             <div class="purchase-box with-plan">
                 <div class="purchase-title with-plan" data-i18n="dashboard.purchaseWithPlan">
-                    <i class="fas fa-network-wired"></i> ✅ With Infinity development Network Plan
+                    <i class="fas fa-network-wired"></i> ✅ With Infinity Development Network Plan
                 </div>
                 <div class="purchase-row">
                     <span class="purchase-label" data-i18n="dashboard.purchaseShares">Required Shares</span>
@@ -1128,10 +1128,10 @@
                 </div>
             </div>
             
-            <!-- Without Infinity development Plan -->
+            <!-- Without Infinity Development Plan -->
             <div class="purchase-box without-plan">
                 <div class="purchase-title without-plan" data-i18n="dashboard.purchaseWithoutPlan">
-                    <i class="fas fa-user"></i> ❌ Without Infinity development Plan (Direct)
+                    <i class="fas fa-user"></i> ❌ Without Infinity Development Plan (Direct)
                 </div>
                 <div class="purchase-row">
                     <span class="purchase-label" data-i18n="dashboard.purchaseShares">Required Shares</span>
@@ -1741,7 +1741,7 @@
             return;
         }
 
-        // ===== WITHOUT Infinity development PLAN =====
+        // ===== WITHOUT Infinity Development PLAN =====
         const capPerShareDirect = 100;
         const sharesNeededDirect = Math.ceil(totalDAINeeded / capPerShareDirect);
         const shareCostDirect = sharesNeededDirect * shareCost;
@@ -1750,7 +1750,7 @@
         const minSideDirect = 0;
         const rewardDirect = 0;
 
-        // ===== WITH Infinity development PLAN =====
+        // ===== WITH Infinity Development PLAN =====
         let sharesWithPlan = 0;
         let totalCapWithPlan = 0;
         let minSideWithPlan = 0;
