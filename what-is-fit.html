@@ -10,6 +10,7 @@
     <link rel="apple-touch-icon" href="logo.png">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <script src="lang.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -734,10 +735,6 @@
             color: #D4AF37;
         }
         
-        .number-item .value.reward {
-            color: #FFD700;
-        }
-        
         /* ===== FOOTER ===== */
         .footer {
             text-align: center;
@@ -1147,34 +1144,30 @@
         </div>
     </div>
 
-    <!-- ===== SECTION 7: REAL NUMBERS ===== -->
+    <!-- ===== SECTION 7: REAL NUMBERS (AUTOMATIC) ===== -->
     <div class="section-card">
         <span class="icon-large">📊</span>
         <h2 data-i18n="whatisfit.numbersTitle">The Numbers Speak for Themselves</h2>
         
-        <div class="number-grid">
+        <div class="number-grid" id="numbersGrid">
             <div class="number-item">
                 <div class="label" data-i18n="whatisfit.numStart">Starting Price</div>
-                <div class="value gold">$1.00</div>
+                <div class="value gold" id="numStartingPrice">$1.00</div>
             </div>
             <div class="number-item">
                 <div class="label" data-i18n="whatisfit.numCurrent">Current Price</div>
-                <div class="value green">$6.40+</div>
+                <div class="value green" id="numCurrentPrice">$6.40+</div>
             </div>
             <div class="number-item">
                 <div class="label" data-i18n="whatisfit.numGrowth">Total Growth</div>
-                <div class="value gold">540%+</div>
-            </div>
-            <div class="number-item" style="border-color: rgba(255, 215, 0, 0.3);">
-                <div class="label" data-i18n="whatisfit.numFee">Earned in Rewards</div>
-                <div class="value reward">$5,000+</div>
+                <div class="value gold" id="numTotalGrowth">540%+</div>
             </div>
         </div>
         
         <div class="info-box">
             <h4 data-i18n="whatisfit.numbersPointTitle">📌 Key Point:</h4>
             <p data-i18n="whatisfit.numbersPoint">
-                FIT started at <span class="gold">$1.00</span> and has grown to over <span class="gold">$6.40</span> — 
+                FIT started at <span class="gold">$1.00</span> and has grown to over <span class="gold">$6.40+</span> — 
                 and it <span class="highlight">never went down</span>. Not once. Every single day, the price 
                 has been higher than the day before.
             </p>
@@ -1254,6 +1247,44 @@
         if (e.key === 'Escape') {
             closeSidebar();
         }
+    });
+</script>
+
+<!-- ===== AUTO UPDATE NUMBERS ===== -->
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<script>
+    const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
+    const ABI = [{"constant":true,"inputs":[],"name":"Price","outputs":[{"name":"","type":"uint256"}],"type":"function"}];
+    const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
+
+    async function updateNumbers() {
+        try {
+            const raw = await contract.Price();
+            const currentPrice = parseFloat(ethers.utils.formatEther(raw));
+            const startingPrice = 1.00;
+            const growth = ((currentPrice - startingPrice) / startingPrice) * 100;
+
+            document.getElementById("numCurrentPrice").innerHTML = `$${currentPrice.toFixed(4)}+`;
+            document.getElementById("numTotalGrowth").innerHTML = `${growth.toFixed(1)}%+`;
+            document.getElementById("numStartingPrice").innerHTML = `$${startingPrice.toFixed(2)}`;
+
+            // Update the description text too
+            const pointText = document.querySelector('[data-i18n="whatisfit.numbersPoint"]');
+            if (pointText) {
+                pointText.innerHTML = pointText.innerHTML.replace(
+                    /\$\d+\.\d+\+/g,
+                    `$${currentPrice.toFixed(4)}+`
+                );
+            }
+        } catch (e) {
+            console.error('Error fetching price for What is FIT page:', e);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateNumbers();
+        setInterval(updateNumbers, 30000);
     });
 </script>
 
