@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIT Price Simulator - Fly Infinity</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.03) 0%, transparent 60%),
+                        radial-gradient(circle at 80% 70%, rgba(0, 200, 150, 0.02) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* ===== HEADER ===== */
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: 2px solid rgba(212, 175, 55, 0.2);
+            margin-bottom: 30px;
+        }
+        
+        .header .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        
+        .header .logo img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 2px solid #D4AF37;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            color: #D4AF37;
+            font-weight: 900;
+        }
+        
+        .header h2 {
+            font-size: 16px;
+            color: #00C896;
+            font-weight: 400;
+        }
+        
+        .header .live-price {
+            margin-top: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 200, 150, 0.08);
+            border: 1px solid rgba(0, 200, 150, 0.2);
+            border-radius: 60px;
+            padding: 8px 24px;
+        }
+        
+        .header .live-price .label {
+            color: #888;
+            font-size: 13px;
+        }
+        
+        .header .live-price .value {
+            color: #D4AF37;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .header .live-price .value.green {
+            color: #00C896;
+        }
+        
+        .header .live-price .refresh-btn {
+            background: transparent;
+            border: 1px solid #00C896;
+            color: #00C896;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .header .live-price .refresh-btn:hover {
+            background: #00C896;
+            color: #0F0F0F;
+        }
+        
+        /* ===== BACK BUTTON ===== */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #D4AF37;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 13px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .back-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: #D4AF37;
+        }
+        
+        /* ===== CARDS ===== */
+        .card {
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 28px 30px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(0, 200, 150, 0.15);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.4);
+            transition: border-color 0.3s ease;
+        }
+        
+        .card:hover {
+            border-color: rgba(0, 200, 150, 0.3);
+        }
+        
+        .card-title {
+            font-size: 18px;
+            color: #D4AF37;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(0, 200, 150, 0.1);
+            padding-bottom: 12px;
+        }
+        
+        .card-title i {
+            color: #00C896;
+        }
+        
+        /* ===== INPUT GRID ===== */
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .input-group {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 16px 18px;
+            border-left: 3px solid #00C896;
+            transition: all 0.3s ease;
+        }
+        
+        .input-group.gold {
+            border-left-color: #D4AF37;
+        }
+        
+        .input-group .label {
+            display: block;
+            color: #888;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        
+        .input-group .label i {
+            margin-right: 6px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            background: #0F0F0F;
+            border: 1px solid #2a3a55;
+            color: #D4AF37;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #00C896;
+            box-shadow: 0 0 15px rgba(0, 200, 150, 0.08);
+        }
+        
+        .input-group input::-webkit-inner-spin-button {
+            opacity: 0.5;
+        }
+        
+        /* ===== CALCULATE BUTTON ===== */
+        .calc-btn {
+            background: linear-gradient(135deg, #00C896, #008a6a);
+            border: none;
+            color: white;
+            padding: 14px 40px;
+            border-radius: 48px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .calc-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 200, 150, 0.3);
+        }
+        
+        .calc-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .calc-btn .spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* ===== RESULTS ===== */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .result-card {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 16px 18px;
+            text-align: center;
+            border-left: 3px solid #D4AF37;
+            transition: all 0.3s ease;
+        }
+        
+        .result-card.green {
+            border-left-color: #00C896;
+        }
+        
+        .result-card .result-label {
+            color: #888;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .result-card .result-value {
+            font-size: 24px;
+            font-weight: 900;
+            color: #D4AF37;
+            margin-top: 4px;
+        }
+        
+        .result-card .result-value.green {
+            color: #00C896;
+        }
+        
+        .result-card .result-sub {
+            color: #666;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+        
+        /* ===== STEP LOG ===== */
+        .step-log {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+            border-radius: 12px;
+            background: #0a0a0a;
+            padding: 5px;
+        }
+        
+        .step-log::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .step-log::-webkit-scrollbar-track {
+            background: #1a1a1a;
+            border-radius: 10px;
+        }
+        
+        .step-log::-webkit-scrollbar-thumb {
+            background: #00C896;
+            border-radius: 10px;
+        }
+        
+        .step-item {
+            display: grid;
+            grid-template-columns: 50px 120px 1fr 1fr 1fr;
+            gap: 10px;
+            padding: 8px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            font-size: 12px;
+            align-items: center;
+            transition: background 0.2s ease;
+        }
+        
+        .step-item:hover {
+            background: rgba(0, 200, 150, 0.03);
+        }
+        
+        .step-item .step-num {
+            color: #666;
+            font-weight: 700;
+        }
+        
+        .step-item .step-event {
+            color: #D4AF37;
+            font-weight: 600;
+        }
+        
+        .step-item .step-event.buy {
+            color: #00C896;
+        }
+        
+        .step-item .step-event.sell {
+            color: #ff6b6b;
+        }
+        
+        .step-item .step-event.owner {
+            color: #D4AF37;
+        }
+        
+        .step-item .step-price {
+            color: #c0d0e8;
+            font-weight: 500;
+        }
+        
+        .step-item .step-change {
+            font-weight: 600;
+        }
+        
+        .step-item .step-change.up {
+            color: #00C896;
+        }
+        
+        .step-item .step-change.down {
+            color: #ff6b6b;
+        }
+        
+        .step-item .step-supply {
+            color: #888;
+            font-size: 11px;
+        }
+        
+        .step-log-header {
+            display: grid;
+            grid-template-columns: 50px 120px 1fr 1fr 1fr;
+            gap: 10px;
+            padding: 8px 14px;
+            font-size: 11px;
+            color: #666;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        /* ===== SUMMARY BADGES ===== */
+        .summary-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .summary-badge {
+            background: #1a1a1a;
+            border-radius: 30px;
+            padding: 6px 16px;
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .summary-badge .num {
+            color: #D4AF37;
+            font-weight: 700;
+        }
+        
+        .summary-badge .num.green {
+            color: #00C896;
+        }
+        
+        .summary-badge .num.gold {
+            color: #D4AF37;
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center;
+            font-size: 11px;
+            color: #555;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .footer a {
+            color: #00C896;
+            text-decoration: none;
+        }
+        
+        .footer .gold {
+            color: #D4AF37;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .card { padding: 18px 16px; }
+            .input-grid { grid-template-columns: 1fr; }
+            .results-grid { grid-template-columns: 1fr 1fr; }
+            .step-item, .step-log-header {
+                grid-template-columns: 35px 80px 1fr 70px 70px;
+                font-size: 10px;
+                gap: 6px;
+                padding: 6px 10px;
+            }
+            .step-item .step-supply { display: none; }
+            .step-log-header .step-supply { display: none; }
+            .header h1 { font-size: 22px; }
+        }
+        
+        @media (max-width: 480px) {
+            .results-grid { grid-template-columns: 1fr; }
+            .header .live-price { flex-wrap: wrap; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ===== HEADER ===== -->
+    <div class="header">
+        <div class="logo">
+            <img src="logo.png" alt="Fly Infinity DAO" onerror="this.style.display='none'">
+            <h1>FIT Price Simulator</h1>
+        </div>
+        <h2>Interactive Event-Based Price Projection Tool</h2>
+        
+        <div class="live-price">
+            <span class="label"><i class="fas fa-bolt"></i> Live Price</span>
+            <span class="value green" id="livePriceDisplay">$6.75656</span>
+            <button class="refresh-btn" id="refreshPriceBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
+            <span style="color: #555; font-size: 11px;" id="priceSource">(from contract)</span>
+        </div>
+    </div>
+
+    <!-- ===== BACK BUTTON ===== -->
+    <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+
+    <!-- ===== MAIN CALCULATOR ===== -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-sliders-h"></i> Simulation Parameters
+        </div>
+        <p style="color: #888; font-size: 13px; margin-bottom: 18px;">
+            Enter the number of events you expect in the next 24 hours. The simulator will calculate the price impact step-by-step.
+        </p>
+        
+        <div class="input-grid">
+            <div class="input-group">
+                <span class="label"><i class="fas fa-user-plus"></i> BeCome_Owner Events</span>
+                <input type="number" id="ownerCount" value="30" min="0" max="1000" step="1">
+            </div>
+            <div class="input-group gold">
+                <span class="label"><i class="fas fa-shopping-cart"></i> Buy $100 Events</span>
+                <input type="number" id="buyCount" value="30" min="0" max="1000" step="1">
+            </div>
+            <div class="input-group">
+                <span class="label"><i class="fas fa-chart-line"></i> Sell $200 Events</span>
+                <input type="number" id="sellCount" value="6" min="0" max="1000" step="1">
+            </div>
+        </div>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between;">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="calc-btn" id="calculateBtn"><i class="fas fa-play"></i> Run Simulation</button>
+                <button class="calc-btn" style="background: transparent; border: 1px solid #D4AF37; color: #D4AF37;" id="resetBtn"><i class="fas fa-undo"></i> Reset to Default</button>
+            </div>
+            <div style="color: #666; font-size: 12px;">
+                <i class="fas fa-info-circle"></i> Based on real-time price from BSC
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== RESULTS ===== -->
+    <div class="card" id="resultsCard">
+        <div class="card-title">
+            <i class="fas fa-chart-bar"></i> Simulation Results
+            <span style="margin-left: auto; font-size: 12px; color: #666; font-weight: 400;" id="simTime">—</span>
+        </div>
+        
+        <div class="results-grid">
+            <div class="result-card green">
+                <div class="result-label">Starting Price</div>
+                <div class="result-value green" id="startPrice">$6.75656</div>
+            </div>
+            <div class="result-card">
+                <div class="result-label">Final Price</div>
+                <div class="result-value" id="endPrice">$—</div>
+            </div>
+            <div class="result-card green">
+                <div class="result-label">Price Change ($)</div>
+                <div class="result-value green" id="priceChange">$—</div>
+            </div>
+            <div class="result-card">
+                <div class="result-label">Price Change (%)</div>
+                <div class="result-value" id="priceChangePercent">—</div>
+            </div>
+            <div class="result-card green">
+                <div class="result-label">Final Reserve</div>
+                <div class="result-value green" id="finalReserve">$—</div>
+            </div>
+            <div class="result-card">
+                <div class="result-label">Final Supply</div>
+                <div class="result-value" id="finalSupply">—</div>
+            </div>
+        </div>
+        
+        <div class="summary-badges" id="summaryBadges">
+            <span class="summary-badge"><i class="fas fa-user-plus"></i> Owners: <span class="num" id="badgeOwners">0</span></span>
+            <span class="summary-badge"><i class="fas fa-shopping-cart"></i> Buys: <span class="num green" id="badgeBuys">0</span></span>
+            <span class="summary-badge"><i class="fas fa-chart-line"></i> Sells: <span class="num gold" id="badgeSells">0</span></span>
+            <span class="summary-badge"><i class="fas fa-coins"></i> Net DAI Inflow: <span class="num green" id="badgeNetInflow">$0</span></span>
+            <span class="summary-badge"><i class="fas fa-fire"></i> Tokens Burned: <span class="num gold" id="badgeBurned">0</span></span>
+        </div>
+    </div>
+
+    <!-- ===== STEP LOG ===== -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-list-ol"></i> Step-by-Step Log
+            <span style="margin-left: auto; font-size: 12px; color: #666; font-weight: 400;" id="stepCount">0 events</span>
+        </div>
+        
+        <div class="step-log" id="stepLog">
+            <div class="step-log-header">
+                <span>#</span>
+                <span>Event</span>
+                <span>Price</span>
+                <span>Change</span>
+                <span class="step-supply">Supply</span>
+            </div>
+            <div style="padding: 20px; text-align: center; color: #555; font-size: 14px;" id="emptyLogMessage">
+                <i class="fas fa-arrow-right" style="color: #00C896;"></i> Click "Run Simulation" to see the step-by-step breakdown
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <div class="footer">
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; font-size: 12px; margin-bottom: 8px;">
+            <a href="index.html">Dashboard</a>
+            <span style="color: #444;">|</span>
+            <a href="what-is-fit.html">What is FIT?</a>
+            <span style="color: #444;">|</span>
+            <a href="compare.html">Comparison</a>
+            <span style="color: #444;">|</span>
+            <a href="dapp.html">DApp</a>
+            <span style="color: #444;">|</span>
+            <a href="audit.html">Security Audit</a>
+        </div>
+        <p>Fly Infinity DAO — <span class="gold">Decentralized. Transparent. Forever Rising.</span> 🚀</p>
+    </div>
+
+</div>
+
+<script>
+    // ==================== CONTRACT CONFIG ====================
+    const CONTRACT_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
+    const ABI = [
+        {"constant":true,"inputs":[],"name":"Price","outputs":[{"name":"","type":"uint256"}],"type":"function"},
+        {"constant":true,"inputs":[],"name":"totalSupply","outputs":[{"name":"","type":"uint256"}],"type":"function"}
+    ];
+    
+    // ==================== STATE ====================
+    let currentPrice = 6.75656;
+    let isSimulating = false;
+    
+    // ==================== DOM REFS ====================
+    const ownerInput = document.getElementById('ownerCount');
+    const buyInput = document.getElementById('buyCount');
+    const sellInput = document.getElementById('sellCount');
+    const calcBtn = document.getElementById('calculateBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const refreshBtn = document.getElementById('refreshPriceBtn');
+    const livePriceDisplay = document.getElementById('livePriceDisplay');
+    const priceSource = document.getElementById('priceSource');
+    
+    const startPriceEl = document.getElementById('startPrice');
+    const endPriceEl = document.getElementById('endPrice');
+    const priceChangeEl = document.getElementById('priceChange');
+    const priceChangePercentEl = document.getElementById('priceChangePercent');
+    const finalReserveEl = document.getElementById('finalReserve');
+    const finalSupplyEl = document.getElementById('finalSupply');
+    const simTimeEl = document.getElementById('simTime');
+    const stepCountEl = document.getElementById('stepCount');
+    const stepLog = document.getElementById('stepLog');
+    const emptyLogMessage = document.getElementById('emptyLogMessage');
+    
+    const badgeOwners = document.getElementById('badgeOwners');
+    const badgeBuys = document.getElementById('badgeBuys');
+    const badgeSells = document.getElementById('badgeSells');
+    const badgeNetInflow = document.getElementById('badgeNetInflow');
+    const badgeBurned = document.getElementById('badgeBurned');
+    
+    // ==================== FETCH LIVE DATA FROM CONTRACT ====================
+    async function fetchLiveData() {
+        try {
+            const provider = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
+            const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, provider);
+            
+            // Get Price (Function F8)
+            const rawPrice = await contract.Price();
+            const price = parseFloat(ethers.utils.formatEther(rawPrice));
+            
+            // Get Total Supply (Function F15)
+            const rawSupply = await contract.totalSupply();
+            const supply = parseFloat(ethers.utils.formatEther(rawSupply));
+            
+            // Calculate Reserve = Price * Supply
+            const reserve = price * supply;
+            
+            // Update state
+            currentPrice = price;
+            
+            // Update display
+            livePriceDisplay.textContent = '$' + price.toFixed(6);
+            priceSource.textContent = '(live from BSC)';
+            priceSource.style.color = '#00C896';
+            
+            console.log(`✅ Live Data: Price=$${price.toFixed(6)}, Supply=${supply.toFixed(2)}, Reserve=$${reserve.toFixed(2)}`);
+            
+            return { price, supply, reserve };
+            
+        } catch (e) {
+            console.error('Error fetching live data:', e);
+            priceSource.textContent = '(fallback)';
+            priceSource.style.color = '#888';
+            return {
+                price: currentPrice,
+                supply: 7912.5,
+                reserve: currentPrice * 7912.5
+            };
+        }
+    }
+    
+    // ==================== SIMULATION ENGINE ====================
+    function runSimulation(ownerCount, buyCount, sellCount, startPrice, startReserve, startSupply) {
+        // Use live values from contract
+        let reserve = startReserve;
+        let supply = startSupply;
+        let price = startPrice;
+        const steps = [];
+        
+        // Build event sequence: interleave owners and buys, with sells every 10 cycles
+        const events = [];
+        let ownerIndex = 0;
+        let buyIndex = 0;
+        let sellIndex = 0;
+        let cycle = 0;
+        
+        while (ownerIndex < ownerCount || buyIndex < buyCount || sellIndex < sellCount) {
+            cycle++;
+            
+            // BeCome_Owner
+            if (ownerIndex < ownerCount) {
+                events.push({ type: 'owner', index: ownerIndex + 1 });
+                ownerIndex++;
+            }
+            
+            // Buy
+            if (buyIndex < buyCount) {
+                events.push({ type: 'buy', index: buyIndex + 1 });
+                buyIndex++;
+            }
+            
+            // Sell every 10 cycles
+            if (cycle % 10 === 0 && sellIndex < sellCount) {
+                events.push({ type: 'sell', index: sellIndex + 1 });
+                sellIndex++;
+            }
+        }
+        
+        // Execute events
+        let totalBurned = 0;
+        let totalInflow = 0;
+        let totalOwners = 0;
+        let totalBuys = 0;
+        let totalSells = 0;
+        
+        for (let i = 0; i < events.length; i++) {
+            const event = events[i];
+            const prevPrice = price;
+            const prevReserve = reserve;
+            const prevSupply = supply;
+            
+            if (event.type === 'owner') {
+                // BeCome_Owner: +$20 to reserve, no new tokens
+                reserve += 20;
+                totalOwners++;
+                totalInflow += 20;
+                
+                const newPrice = reserve / supply;
+                const change = newPrice - prevPrice;
+                steps.push({
+                    num: i + 1,
+                    type: 'owner',
+                    eventLabel: 'BeCome_Owner #' + event.index,
+                    price: newPrice,
+                    change: change,
+                    changePercent: (change / prevPrice) * 100,
+                    supply: supply,
+                    reserve: reserve
+                });
+                price = newPrice;
+                
+            } else if (event.type === 'buy') {
+                // Buy $100: 3% fee to reserve, 97% used to buy tokens
+                const fee = 3;
+                const effectiveAmount = 97;
+                reserve += 100; // full amount goes in
+                const tokensBought = effectiveAmount / price;
+                supply += tokensBought;
+                totalBuys++;
+                totalInflow += 100;
+                
+                const newPrice = reserve / supply;
+                const change = newPrice - prevPrice;
+                steps.push({
+                    num: i + 1,
+                    type: 'buy',
+                    eventLabel: 'Buy $100 #' + event.index,
+                    price: newPrice,
+                    change: change,
+                    changePercent: (change / prevPrice) * 100,
+                    supply: supply,
+                    reserve: reserve,
+                    tokensBought: tokensBought
+                });
+                price = newPrice;
+                
+            } else if (event.type === 'sell') {
+                // Sell $200: 6% fee to reserve, 94% paid out
+                const fee = 12;
+                const payout = 188;
+                const tokensSold = 200 / price; // amount of tokens to burn
+                reserve = reserve + fee - payout;
+                supply = supply - tokensSold;
+                totalSells++;
+                totalBurned += tokensSold;
+                totalInflow += fee;
+                
+                const newPrice = reserve / supply;
+                const change = newPrice - prevPrice;
+                steps.push({
+                    num: i + 1,
+                    type: 'sell',
+                    eventLabel: 'Sell $200 #' + event.index,
+                    price: newPrice,
+                    change: change,
+                    changePercent: (change / prevPrice) * 100,
+                    supply: supply,
+                    reserve: reserve,
+                    tokensSold: tokensSold
+                });
+                price = newPrice;
+            }
+        }
+        
+        return {
+            steps,
+            finalPrice: price,
+            finalReserve: reserve,
+            finalSupply: supply,
+            totalOwners,
+            totalBuys,
+            totalSells,
+            totalBurned,
+            totalInflow,
+            startPrice
+        };
+    }
+    
+    // ==================== DISPLAY RESULTS ====================
+    function displayResults(result) {
+        const { steps, finalPrice, finalReserve, finalSupply, totalOwners, totalBuys, totalSells, totalBurned, totalInflow, startPrice } = result;
+        
+        // Summary
+        startPriceEl.textContent = '$' + startPrice.toFixed(6);
+        endPriceEl.textContent = '$' + finalPrice.toFixed(6);
+        const priceChange = finalPrice - startPrice;
+        const priceChangePercent = (priceChange / startPrice) * 100;
+        priceChangeEl.textContent = (priceChange >= 0 ? '+' : '') + '$' + priceChange.toFixed(6);
+        priceChangeEl.style.color = priceChange >= 0 ? '#00C896' : '#ff6b6b';
+        priceChangePercentEl.textContent = (priceChangePercent >= 0 ? '+' : '') + priceChangePercent.toFixed(2) + '%';
+        priceChangePercentEl.style.color = priceChangePercent >= 0 ? '#00C896' : '#ff6b6b';
+        finalReserveEl.textContent = '$' + finalReserve.toFixed(2);
+        finalSupplyEl.textContent = finalSupply.toFixed(2) + ' FIT';
+        
+        // Badges
+        badgeOwners.textContent = totalOwners;
+        badgeBuys.textContent = totalBuys;
+        badgeSells.textContent = totalSells;
+        badgeNetInflow.textContent = '$' + totalInflow.toFixed(2);
+        badgeBurned.textContent = totalBurned.toFixed(2) + ' FIT';
+        
+        // Step log
+        stepLog.innerHTML = '';
+        const header = document.createElement('div');
+        header.className = 'step-log-header';
+        header.innerHTML = `
+            <span>#</span>
+            <span>Event</span>
+            <span>Price</span>
+            <span>Change</span>
+            <span class="step-supply">Supply</span>
+        `;
+        stepLog.appendChild(header);
+        
+        for (const step of steps) {
+            const div = document.createElement('div');
+            div.className = 'step-item';
+            
+            const typeClass = step.type === 'buy' ? 'buy' : (step.type === 'sell' ? 'sell' : 'owner');
+            const changeSign = step.change >= 0 ? '+' : '';
+            const changeColor = step.change >= 0 ? 'up' : 'down';
+            
+            div.innerHTML = `
+                <span class="step-num">${step.num}</span>
+                <span class="step-event ${typeClass}">${step.eventLabel}</span>
+                <span class="step-price">$${step.price.toFixed(6)}</span>
+                <span class="step-change ${changeColor}">${changeSign}$${step.change.toFixed(6)} (${changeSign}${step.changePercent.toFixed(3)}%)</span>
+                <span class="step-supply">${step.supply.toFixed(2)}</span>
+            `;
+            stepLog.appendChild(div);
+        }
+        
+        stepCountEl.textContent = steps.length + ' events';
+        simTimeEl.textContent = '🕐 ' + new Date().toLocaleString();
+    }
+    
+    // ==================== RUN SIMULATION ====================
+    async function runSimulationFromInputs() {
+        if (isSimulating) return;
+        isSimulating = true;
+        calcBtn.disabled = true;
+        calcBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Running...';
+        
+        try {
+            // Get live data from contract
+            const liveData = await fetchLiveData();
+            
+            const ownerCount = parseInt(ownerInput.value) || 0;
+            const buyCount = parseInt(buyInput.value) || 0;
+            const sellCount = parseInt(sellInput.value) || 0;
+            
+            if (ownerCount === 0 && buyCount === 0 && sellCount === 0) {
+                alert('Please enter at least one event to simulate.');
+                calcBtn.disabled = false;
+                calcBtn.innerHTML = '<i class="fas fa-play"></i> Run Simulation';
+                isSimulating = false;
+                return;
+            }
+            
+            const result = runSimulation(ownerCount, buyCount, sellCount, liveData.price, liveData.reserve, liveData.supply);
+            displayResults(result);
+            
+        } catch (e) {
+            console.error('Simulation error:', e);
+            alert('Error running simulation. Please try again.');
+        }
+        
+        calcBtn.disabled = false;
+        calcBtn.innerHTML = '<i class="fas fa-play"></i> Run Simulation';
+        isSimulating = false;
+    }
+    
+    // ==================== RESET ====================
+    function resetToDefault() {
+        ownerInput.value = '30';
+        buyInput.value = '30';
+        sellInput.value = '6';
+        runSimulationFromInputs();
+    }
+    
+    // ==================== EVENT LISTENERS ====================
+    calcBtn.addEventListener('click', runSimulationFromInputs);
+    resetBtn.addEventListener('click', resetToDefault);
+    refreshBtn.addEventListener('click', async function() {
+        this.innerHTML = '<i class="fas fa-spinner spinner"></i>';
+        this.disabled = true;
+        await fetchLiveData();
+        this.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+        this.disabled = false;
+        runSimulationFromInputs();
+    });
+    
+    // Enter key support
+    [ownerInput, buyInput, sellInput].forEach(input => {
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') runSimulationFromInputs();
+        });
+    });
+    
+    // ==================== INIT ====================
+    async function init() {
+        await fetchLiveData();
+        // Run default simulation after a short delay
+        setTimeout(runSimulationFromInputs, 300);
+    }
+    
+    init();
+</script>
+
+</body>
+</html>
