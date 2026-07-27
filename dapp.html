@@ -551,6 +551,33 @@
             font-weight: bold;
         }
         
+        /* ===== REWARD SECTION ===== */
+        .reward-card {
+            background: #0F0F0F;
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid rgba(255, 215, 0, 0.25);
+            transition: all 0.3s ease;
+        }
+        
+        .reward-card:hover {
+            border-color: #FFD700;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
+        }
+        
+        .reward-title {
+            font-size: 18px;
+            color: #FFD700;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .reward-title i {
+            margin-right: 10px;
+        }
+        
         /* ===== FOOTER ===== */
         .footer {
             text-align: center;
@@ -995,6 +1022,34 @@
         </div>
     </div>
 
+    <!-- ==================== SECTION 4: REWARD (NEW) ==================== -->
+    <div class="reward-card">
+        <div class="reward-title">
+            <i class="fas fa-coins"></i> <span data-i18n="dapp.rewardTitle">💰 Claim Your Network Reward</span>
+        </div>
+        <p style="color:#888; font-size:12px; margin-bottom:15px; text-align:center;" data-i18n="dapp.rewardDesc">
+            If you have network points, you can claim your reward. Make sure you have been active in the network.
+        </p>
+        
+        <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 15px;">
+            <button id="rewardBtn" class="action-btn" style="border-color: #FFD700; color: #FFD700; max-width: 300px; padding: 14px 30px; font-size: 16px;">
+                <i class="fas fa-gift"></i> <span data-i18n="dapp.claimReward">Claim Reward</span>
+            </button>
+        </div>
+        
+        <div id="rewardStatus" class="status-text" style="margin-top: 15px;" data-i18n="dapp.rewardReady">Ready to claim</div>
+        
+        <!-- Reward Info -->
+        <div style="margin-top: 15px; background: #1a1a1a; border-radius: 14px; padding: 12px 16px; border-left: 3px solid #FFD700;">
+            <div style="color:#FFD700; font-size:10px; margin-bottom:3px;" data-i18n="dapp.rewardContract">📜 Network Reward Function</div>
+            <div style="font-family:monospace; font-size:11px; color:#D4AF37; word-break:break-all;">Reward (0x8e1e4567)</div>
+            <div style="color:#888; font-size:9px; margin-top:5px;">
+                <i class="fas fa-info-circle"></i> 
+                <span data-i18n="dapp.rewardNote">Claim your reward based on your network points. Reward is distributed every hour.</span>
+            </div>
+        </div>
+    </div>
+
     <div class="footer">
         <div class="footer-links">
             <a href="index.html" data-i18n="nav.dashboard">Dashboard</a>
@@ -1021,7 +1076,7 @@
     </div>
 
 
-<!-- ===== AGREEMENT MODAL - FULLY TRANSLATED ===== -->
+<!-- ===== AGREEMENT MODAL ===== -->
 <div class="agreement-modal-overlay" id="agreementModal">
     <div class="agreement-modal-content">
         <div class="agreement-modal-header">
@@ -1087,7 +1142,8 @@
     
     const FIT_NETWORK_ABI = [
         {"constant":false,"inputs":[],"name":"Agreement_Road_Map","outputs":[],"type":"function"},
-        {"constant":false,"inputs":[{"name":"_applicant","type":"address"}],"name":"BeCome_Owner","outputs":[],"type":"function"}
+        {"constant":false,"inputs":[{"name":"_applicant","type":"address"}],"name":"BeCome_Owner","outputs":[],"type":"function"},
+        {"constant":false,"inputs":[],"name":"Reward","outputs":[],"type":"function"}
     ];
     
     const DAI_ABI = [
@@ -1253,8 +1309,6 @@
             return;
         }
         
-        // ❌ بررسی تطابق با کیف پول متصل حذف شد - حالا میتونید برای هر آدرسی ثبت‌نام کنید
-        
         try {
             setStatus("ownerStatus", "⏳ Registering...", "");
             
@@ -1307,8 +1361,6 @@
             return;
         }
         
-        // ❌ بررسی تطابق با کیف پول متصل حذف شد - حالا میتونید برای هر آدرسی خرید کنید
-        
         let amountWei = ethers.utils.parseEther(amount.toString());
         
         try {
@@ -1355,6 +1407,47 @@
         } catch(e) {
             console.error("Sell Error:", e);
             setStatus("sellStatus", "❌ Error: " + e.message, "error");
+        }
+    }
+    
+    // ==================== REWARD FUNCTION (NEW) ====================
+    async function claimReward() {
+        if (!userAddress) {
+            setStatus("rewardStatus", "⚠️ Connect wallet first", "error");
+            return;
+        }
+        
+        try {
+            setStatus("rewardStatus", "⏳ Claiming reward...", "");
+            
+            let gasEstimate;
+            try {
+                gasEstimate = await fitNetworkContract.estimateGas.Reward();
+                gasEstimate = gasEstimate.mul(120).div(100);
+            } catch(estimateError) {
+                console.log("Gas estimation failed, using manual gas limit");
+                gasEstimate = 300000;
+            }
+            
+            const tx = await fitNetworkContract.Reward({
+                gasLimit: gasEstimate
+            });
+            
+            setStatus("rewardStatus", "⏳ Waiting for confirmation...", "");
+            await tx.wait();
+            setStatus("rewardStatus", "✅ Reward claimed successfully!", "success");
+            await loadBalances();
+        } catch(e) {
+            console.error("Reward Error:", e);
+            if (e.message.includes("Just Wallet")) {
+                setStatus("rewardStatus", "❌ This function can only be called from a standard wallet (EOA). Please use MetaMask, Trust Wallet, or TokenPocket.", "error");
+            } else if (e.message.includes("execution reverted")) {
+                setStatus("rewardStatus", "❌ Transaction reverted. Please check: You must have network points and be eligible for reward.", "error");
+            } else if (e.message.includes("Reward Time Has Not Come")) {
+                setStatus("rewardStatus", "⏳ Reward time has not come yet. Please wait 1 hour since last reward.", "error");
+            } else {
+                setStatus("rewardStatus", "❌ Error: " + e.message, "error");
+            }
         }
     }
     
@@ -1607,6 +1700,9 @@
     
     document.getElementById("joinGiftBtn").addEventListener("click", joinGiftContract);
     document.getElementById("freeGiftBtn").addEventListener("click", freeGift);
+    
+    // ===== REWARD EVENT LISTENER (NEW) =====
+    document.getElementById("rewardBtn").addEventListener("click", claimReward);
     
     checkNetwork();
 </script>
