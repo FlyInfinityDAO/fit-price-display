@@ -61,3 +61,14 @@ html[dir="rtl"] .fi-wallet-floating { right:auto; left:16px; }
 .fi-wallet-connect:disabled{opacity:.6;cursor:wait}
 .fi-wallet-status-dot.is-connected{background:#00C896;box-shadow:0 0 12px rgba(0,200,150,.65)}
 .fi-wallet-connect[hidden],.fi-wallet-disconnect[hidden]{display:none}
+
+/* Read-only FIT and Network contract metrics */
+.fi-wallet-panel { max-height: min(88vh, 820px); overflow-y: auto; }
+.fi-wallet-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 12px; }
+.fi-wallet-metric-value { font-size: 16px; }
+@media(max-width:420px) {
+  .fi-wallet-panel { padding: 15px; }
+  .fi-wallet-metrics { gap: 8px; }
+  .fi-wallet-metric { padding: 10px; }
+  .fi-wallet-metric-value { font-size: 14px; }
+}
