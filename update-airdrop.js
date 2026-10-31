@@ -7,7 +7,7 @@ const NETWORK_ADDRESS = "0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B";
 
 // ==================== ABI ====================
 const NETWORK_ABI = [
-    // ===== تابع All_Owner_Number =====
+    // ===== All_Owner_Number function =====
     {
         "constant": true,
         "inputs": [],
@@ -20,10 +20,10 @@ const NETWORK_ABI = [
 const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
 const networkContract = new ethers.Contract(NETWORK_ADDRESS, NETWORK_ABI, provider);
 
-// ==================== دریافت تعداد کل مالکین ====================
+// ==================== Get the total number of owners ====================
 async function fetchTotalOwners() {
     try {
-        // ✅ مستقیماً از قرارداد میخونیم، بدون API
+        // ✅ We read directly from the contract, without API
         const totalOwners = await networkContract.All_Owner_Number();
         return parseInt(totalOwners.toString());
     } catch (error) {
@@ -32,23 +32,23 @@ async function fetchTotalOwners() {
     }
 }
 
-// ==================== محاسبه و ذخیره ====================
+// ==================== Calculate and save ====================
 async function updateAirdropStats() {
     console.log('🔄 Updating Airdrop Stats from blockchain...');
     
     const startTime = Date.now();
     
     try {
-        // ۱. دریافت تعداد کل مالکین از قرارداد
+        // 1. Get the total number of owners from the contract
         const totalOwners = await fetchTotalOwners();
         console.log(`👥 Total Owners: ${totalOwners}`);
         
-        // ۲. محاسبه Airdrops (هر مالک ۲ دلار)
+        // 2. Airdrops Calculation ($2 per owner)
         const airdropPerOwner = 2;
         const totalAirdrops = totalOwners * airdropPerOwner;
         console.log(`🎁 Total Airdrops: $${totalAirdrops.toFixed(2)}`);
         
-        // ۳. ذخیره در فایل JSON
+        // 3. Save to JSON file
         const result = {
             lastUpdated: new Date().toISOString(),
             totalAirdrops: Math.round(totalAirdrops * 100) / 100,
@@ -68,5 +68,5 @@ async function updateAirdropStats() {
     }
 }
 
-// ==================== اجرا ====================
+// ==================== Execution ====================
 updateAirdropStats();

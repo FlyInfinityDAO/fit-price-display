@@ -1,6 +1,7 @@
 // ============================================
 // FLY INFINITY - LANGUAGE MANAGER
 // ============================================
+window.FI_LANG_HEADER_ENABLED = true;
 
 const LANGUAGES = {
     en: { code: 'en', name: 'English', flag: '🇬🇧', dir: 'ltr' },
@@ -123,6 +124,17 @@ function createLangButton() {
     return btn;
 }
 
+function createWalletButton() {
+    const btn = document.createElement('button');
+    btn.id = 'walletBtn';
+    btn.className = 'fi-wallet-button';
+    btn.type = 'button';
+    btn.title = 'Wallet';
+    btn.setAttribute('aria-label', 'Wallet');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M3 9h18"></path><path d="M16 14h2"></path></svg>';
+    return btn;
+}
+
 function createLangDropdown() {
     const dropdown = document.createElement('div');
     dropdown.id = 'langDropdown';
@@ -185,6 +197,7 @@ async function initLanguageSystem() {
         wrapper.style.cssText = 'display: flex; align-items: center; gap: 12px;';
         const logoClone = topBar.cloneNode(true);
         wrapper.appendChild(logoClone);
+        wrapper.appendChild(createWalletButton());
         wrapper.appendChild(langBtn);
         topBar.parentNode.replaceChild(wrapper, topBar);
     } else {
@@ -197,6 +210,7 @@ async function initLanguageSystem() {
                 const logoClone = logo.cloneNode(true);
                 wrapper.appendChild(logoClone);
             }
+            wrapper.appendChild(createWalletButton());
             wrapper.appendChild(langBtn);
             topBarContainer.prepend(wrapper);
         }

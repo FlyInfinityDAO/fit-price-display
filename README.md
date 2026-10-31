@@ -28,5 +28,5 @@ This is a decentralized project. Users are responsible for their own actions and
 
 ### 🔗 Links
 
-- [Website](https://flyinfinitydao.github.io/fit-price-display)
+- [Website](https://flyinfinitydao.github.io)
 - [White Paper](https://github.com/FlyInfinityDAO/Fly-Infinity-Token/blob/main/FIT%20-%20White%20Paper.pdf)

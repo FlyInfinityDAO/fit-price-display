@@ -9,7 +9,7 @@ const RPC_URL = "https://bsc-dataseed.binance.org/";
 const HISTORY_FILE = "trading-volume.json";
 
 const OLD_CONTRACT_OWNERS = 80897;
-const PER_OWNER_INCOMING = 22; // 2 (membership) + 20 (reward) ✅ اصلاح شد
+const PER_OWNER_INCOMING = 22; // 2 (membership) + 20 (reward) ✅ Corrected
 
 // ==================== ABI ====================
 const DAI_ABI = [
@@ -37,7 +37,7 @@ const provider = new ethers.providers.JsonRpcProvider(RPC_URL);
 const daiContract = new ethers.Contract(DAI_ADDRESS, DAI_ABI, provider);
 const networkContract = new ethers.Contract(NETWORK_ADDRESS, NETWORK_ABI, provider);
 
-// ==================== بارگذاری داده قبلی ====================
+// ==================== Loading previous data ====================
 function loadPreviousData() {
     try {
         if (fs.existsSync(HISTORY_FILE)) {
@@ -59,20 +59,20 @@ function loadPreviousData() {
     };
 }
 
-// ==================== تابع اصلی ====================
+// ==================== Main function ====================
 async function updateTradingVolume() {
     console.log('🚀 UPDATING TRADING VOLUME (ONLY INCREASE)');
     console.log('═══════════════════════════════════════');
     console.log(`📊 Per Owner Incoming: ${PER_OWNER_INCOMING} (2 membership + 20 reward)`);
     
     try {
-        // ===== 1. خواندن اطلاعات قبلی =====
+        // ===== 1. Reading previous information =====
         const prev = loadPreviousData();
         console.log(`📊 Previous Trading Volume: $${prev.tradingVolume.toFixed(2)}`);
         console.log(`📊 Previous New Owners: ${prev.newOwners}`);
         console.log(`📊 Previous Reserve: $${prev.reserve.toFixed(2)}`);
         
-        // ===== 2. دریافت اطلاعات فعلی از بلاکچین =====
+        // ===== 2. Get current information from the blockchain =====
         console.log('\n📡 Reading current data from blockchain...');
         
         const reserveRaw = await daiContract.balanceOf(TOKEN_ADDRESS);
@@ -86,7 +86,7 @@ async function updateTradingVolume() {
         const currentNewOwners = Math.max(0, totalOwners - OLD_CONTRACT_OWNERS);
         console.log(`🆕 Current New Owners: ${currentNewOwners}`);
         
-        // ===== 3. محاسبه تغییرات =====
+        // ===== 3. Calculate the changes =====
         const deltaNewOwners = currentNewOwners - prev.newOwners;
         const deltaReserve = currentReserve - prev.reserve;
         
@@ -94,18 +94,18 @@ async function updateTradingVolume() {
         console.log(`   New Owners Delta: ${deltaNewOwners}`);
         console.log(`   Reserve Delta: $${deltaReserve.toFixed(2)}`);
         
-        // ===== 4. محاسبه تغییرات تریدینگ ولوم =====
+        // ===== 4. Calculating Trading Volume Changes =====
         const deltaVolume = deltaReserve - (deltaNewOwners * PER_OWNER_INCOMING);
         console.log(`   Raw Volume Delta: $${deltaVolume.toFixed(2)}`);
         
-        // ===== 5. فقط در صورتی که مثبت باشه به Volume اضافه کن =====
+        // ===== 5. Add to Volume only if positive =====
         const volumeIncrease = Math.max(0, deltaVolume);
         console.log(`   ✅ Volume Increase: $${volumeIncrease.toFixed(2)}`);
         
         const newTradingVolume = prev.tradingVolume + volumeIncrease;
         console.log(`\n📊 New Trading Volume: $${newTradingVolume.toFixed(2)}`);
         
-        // ===== 6. ذخیره =====
+        // ===== 6. Save =====
         const daysSinceStart = Math.ceil((Date.now() - new Date('2025-12-18').getTime()) / (1000 * 60 * 60 * 24));
         const dailyVolume = daysSinceStart > 0 ? newTradingVolume / daysSinceStart : 0;
         
@@ -148,7 +148,7 @@ async function updateTradingVolume() {
     }
 }
 
-// ==================== اجرا ====================
+// ==================== Execution ====================
 console.log('=' .repeat(50));
 console.log('🚀 TRADING VOLUME UPDATER');
 console.log('📊 ONLY INCREASE - Sell doesn\'t decrease volume');

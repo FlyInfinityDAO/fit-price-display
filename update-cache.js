@@ -18,8 +18,8 @@ const TOKENS = [
 ];
 
 // ============================================================
-// داده‌های پشتیبان (Backup) - اگر API خراب شد از این استفاده کن
-// این داده‌ها دقیق و واقعی هستند
+// Backup data - use this if the API crashes
+// This data is accurate and real
 // ============================================================
 const BACKUP_DATA = {
     bitcoin: {
