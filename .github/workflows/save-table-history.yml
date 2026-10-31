@@ -68,7 +68,7 @@ jobs:
               }
             }
             
-            // FIT را ذخیره نکنید - از قرارداد خوانده می‌شود
+            // FIT Do not save - it is read from the contract
             
             // Save to history
             const existingIndex = history.records.findIndex(r => r.date === today);
