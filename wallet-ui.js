@@ -67,29 +67,58 @@
     const cl=document.getElementById('fiWalletClose');if(cl)cl.setAttribute('aria-label',z.close);
     if(document.getElementById('fiWalletStatus'))renderState();
   }
-  async function ethCall(to,data){return provider.request({method:'eth_call',params:[{to,data},'latest']});}
+  async function ethCall(to,data){
+    const result=await provider.request({method:'eth_call',params:[{to,data},'latest']});
+    if(typeof result!=='string'||!/^0x[0-9a-fA-F]+$/.test(result)||result.length<66)throw new Error('Empty or invalid contract response');
+    return result;
+  }
   async function loadContractData(){
     resetMetrics();
     if(!account||!provider)return;
     if(chainId!==BSC_CHAIN){note(t().wrongNetwork);return;}
     note(t().loading);
+    const addressArg=padAddress(account);
+    // Balance and price are the two core values. Read them independently so
+    // an optional profile method cannot hide otherwise valid token data.
+    const core=await Promise.allSettled([
+      ethCall(FIT,SEL.balanceOf+addressArg),
+      ethCall(FIT,SEL.price)
+    ]);
+    if(core[0].status!=='fulfilled'||core[1].status!=='fulfilled'){
+      const failed=core.find(x=>x.status==='rejected');
+      const reason=failed&&failed.reason&&failed.reason.message?failed.reason.message:'RPC read failed';
+      note(t().readError+' ('+reason.slice(0,110)+')');
+      return;
+    }
     try{
-      const [balHex,priceHex,ownerHex,lrHex]=await Promise.all([
-        ethCall(FIT,SEL.balanceOf+padAddress(account)),
-        ethCall(FIT,SEL.price),
-        ethCall(FIT,SEL.ownerInfo),
-        ethCall(NETWORK,SEL.leftRight)
-      ]);
-      const balanceRaw=fromHex(balHex),priceRaw=fromHex(priceHex);
-      const balance=units(balanceRaw),price=units(priceRaw),usd=balance*price;
-      const owner=ownerHex&&ownerHex.length>=194?ownerHex.slice(2):'';
-      const leftRight=lrHex&&lrHex.length>=130?lrHex.slice(2):'';
+      const balance=units(fromHex(core[0].value));
+      const price=units(fromHex(core[1].value));
       set('fiBalance',fmt(balance,6)+' FIT');
-      set('fiUsdValue','$'+fmt(usd,4));
-      if(owner){const vals=[0,1,2].map(i=>units(BigInt('0x'+owner.slice(i*64,(i+1)*64))));set('fiPurchased',fmt(vals[0],4));set('fiAllowed',fmt(vals[1],4));set('fiRemaining',fmt(vals[2],4));}
-      if(leftRight){const l=fromHex('0x'+leftRight.slice(0,64)),r=fromHex('0x'+leftRight.slice(64,128));set('fiSmallerSide',fmt(Number(l<r?l:r),0));}
-      note('');
-    }catch(err){note(t().readError);}
+      set('fiUsdValue','$'+fmt(balance*price,4));
+    }catch(err){note(t().readError+' (Invalid balance/price response)');return;}
+
+    // Both profile methods take the connected wallet address. The network
+    // contract call is intentionally routed through FIT's public wrapper.
+    const [ownerResult,lrResult]=await Promise.allSettled([
+      ethCall(FIT,SEL.ownerInfo+addressArg),
+      ethCall(FIT,SEL.leftRight+addressArg)
+    ]);
+    if(ownerResult.status==='fulfilled'){
+      const owner=ownerResult.value.slice(2);
+      if(owner.length>=192){
+        const vals=[0,1,2].map(i=>units(BigInt('0x'+owner.slice(i*64,(i+1)*64))));
+        set('fiPurchased',fmt(vals[0],4));set('fiAllowed',fmt(vals[1],4));set('fiRemaining',fmt(vals[2],4));
+      }
+    }
+    if(lrResult.status==='fulfilled'){
+      const lr=lrResult.value.slice(2);
+      if(lr.length>=128){
+        const l=BigInt('0x'+lr.slice(0,64)),r=BigInt('0x'+lr.slice(64,128));
+        set('fiSmallerSide',fmt(Number(l<r?l:r),0));
+      }
+    }
+    const optionalFailed=ownerResult.status==='rejected'||lrResult.status==='rejected';
+    note(optionalFailed?'Some profile fields could not be loaded. Token balance and value were read separately.':'');
   }
   async function refreshExisting(){
     provider=window.ethereum||null;
