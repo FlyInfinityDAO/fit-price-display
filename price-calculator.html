@@ -227,6 +227,71 @@
                 font-size: 28px;
             }
         }
+    
+
+        /* ===== FLY INFINITY GLASS THEME - SITE WIDE ===== */
+        .sidebar {
+            background: rgba(8, 18, 17, 0.66) !important;
+            -webkit-backdrop-filter: blur(26px) saturate(155%);
+            backdrop-filter: blur(26px) saturate(155%);
+            border-left: 1px solid rgba(0, 235, 178, 0.78) !important;
+            box-shadow: -12px 0 38px rgba(0,0,0,.34), -2px 0 24px rgba(0,220,165,.24), inset 1px 0 0 rgba(255,255,255,.09);
+        }
+        .sidebar-menu a {
+            background: rgba(255,255,255,.035);
+            border: 1px solid rgba(0,220,165,.20);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
+        }
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: rgba(0,200,150,.17);
+            border-color: rgba(0,245,185,.86);
+            box-shadow: 0 0 14px rgba(0,220,165,.28), 0 0 26px rgba(0,200,150,.13), inset 0 1px 0 rgba(255,255,255,.10);
+        }
+        .lang-dropdown {
+            background: rgba(8,18,17,.68) !important;
+            -webkit-backdrop-filter: blur(25px) saturate(155%);
+            backdrop-filter: blur(25px) saturate(155%);
+            border: 1px solid rgba(0,235,178,.78) !important;
+            box-shadow: 0 18px 44px rgba(0,0,0,.44), 0 0 22px rgba(0,220,165,.24), inset 0 1px 0 rgba(255,255,255,.10) !important;
+        }
+        .lang-item {
+            border-radius: 10px;
+            transition: background .2s ease, box-shadow .2s ease;
+        }
+        .lang-item:hover, .lang-item.active {
+            background: rgba(0,200,150,.16);
+            box-shadow: 0 0 12px rgba(0,220,165,.18);
+        }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .sidebar, .lang-dropdown { background-color: rgba(10,18,17,.92) !important; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { -webkit-backdrop-filter: blur(22px) saturate(145%); backdrop-filter: blur(22px) saturate(145%); }
+            .lang-dropdown { -webkit-backdrop-filter: blur(20px) saturate(145%); backdrop-filter: blur(20px) saturate(145%); }
+        }
+
+        /* ===== GLASS CARDS + BRIGHTER NEON ===== */
+        .card, .result-box, .nav-bar {
+            background-color: rgba(13, 22, 21, 0.38) !important;
+            -webkit-backdrop-filter: blur(21px) saturate(150%);
+            backdrop-filter: blur(21px) saturate(150%);
+            border-color: rgba(0, 225, 170, 0.66) !important;
+            box-shadow: 0 18px 42px rgba(0,0,0,.32), 0 0 18px rgba(0,220,165,.24), 0 0 34px rgba(0,200,150,.12), inset 0 1px 0 rgba(255,255,255,.11) !important;
+            transition: border-color .28s ease, box-shadow .28s ease, background-color .28s ease;
+        }
+        .card, .result-box, .nav-bar:hover {
+            border-color: rgba(0, 245, 185, 0.92) !important;
+            box-shadow: 0 20px 46px rgba(0,0,0,.36), 0 0 25px rgba(0,230,175,.36), 0 0 44px rgba(0,200,150,.18), inset 0 1px 0 rgba(255,255,255,.14) !important;
+        }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .card, .result-box, .nav-bar { background-color: rgba(13,22,21,.88) !important; }
+        }
+        @media (max-width: 768px) {
+            .card, .result-box, .nav-bar { -webkit-backdrop-filter: blur(17px) saturate(140%); backdrop-filter: blur(17px) saturate(140%); }
+        }
+
     </style>
 </head>
 <body>
@@ -326,12 +391,27 @@
         </button>
     </div>
 
-    <div class="footer">
-        <a href="index.html">Dashboard</a> | 
-        <a href="dapp.html">DApp</a> |
-        <a href="price-calculator.html">Price Calculator</a><br>
-        Fly Infinity DAO | 3% Buy Fee Included
+    <div class="footer" style="text-align: center; font-size: 10px; color: #666; margin-top: 30px; border-top: 1px solid rgba(0, 200, 150, 0.15); padding-top: 20px;">
+    <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; font-size: 12px; margin-bottom: 12px;">
+        <a href="index.html" style="color: #00C896; text-decoration: none;">Dashboard</a>
+        <span style="color: #444;">|</span>
+        <a href="compare.html" style="color: #00C896; text-decoration: none;">Comparison</a>
+        <span style="color: #444;">|</span>
+        <a href="dapp.html" style="color: #00C896; text-decoration: none;">DApp</a>
+        <span style="color: #444;">|</span>
+        <a href="transactions.html" style="color: #00C896; text-decoration: none;">Transactions</a>
+        <span style="color: #444;">|</span>
+        <a href="privacy.html" style="color: #00C896; text-decoration: none;">Privacy</a>
+        <span style="color: #444;">|</span>
+        <a href="warnings.html" style="color: #00C896; text-decoration: none;">Warnings</a>
+        <span style="color: #444;">|</span>
+        <a href="faq.html" style="color: #00C896; text-decoration: none;">FAQ</a>
+        <span style="color: #444;">|</span>
+        <a href="whitepaper.html" style="color: #00C896; text-decoration: none;">White Paper</a>
     </div>
+    <p style="color: #888; font-size: 11px; margin: 0; text-align: center;">
+        Fly Infinity — <span style="color: #D4AF37;">Decentralized. Transparent. Forever Rising.</span>
+    </p>
 </div>
 
 <script>

@@ -18,11 +18,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            background-image: url('background-desktop.png');
-            background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+            background: #0F0F0F;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding: 20px;
             min-height: 100vh;
@@ -30,12 +26,6 @@
 
         @media (max-width: 768px) {
             body {
-                background-image: url('background-mobile.png');
-                background-size: contain;
-                background-position: center top;
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-                background-color: #0F0F0F;
                 padding: 15px;
             }
         }
@@ -43,13 +33,32 @@
         body::before {
             content: "";
             position: fixed;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100%;
-            height: 100%;
-            background: rgba(15, 15, 15, 0.6);
+            height: 100vh;
+            height: 100dvh;
+            background-image:
+                linear-gradient(rgba(15, 15, 15, 0.60), rgba(15, 15, 15, 0.60)),
+                url('background-desktop.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
             pointer-events: none;
             z-index: 0;
+            transform: translate3d(0, 0, 0);
+            -webkit-transform: translate3d(0, 0, 0);
+            will-change: transform;
+        }
+
+        @media (max-width: 768px) {
+            body::before {
+                background-image:
+                    linear-gradient(rgba(15, 15, 15, 0.60), rgba(15, 15, 15, 0.60)),
+                    url('background-mobile.png');
+                background-size: contain;
+                background-position: center top;
+                background-color: #0F0F0F;
+            }
         }
         
         .container {
@@ -396,7 +405,7 @@
         .live-price { font-size: 48px; font-weight: 800; color: #D4AF37; }
         .usd-price { font-size: 20px; color: #D4AF37; opacity: 0.8; }
         
-        /* ===== دکمه طلایی WHAT IS FIT - بین دو باکس ===== */
+        /* =====Golden Button WHAT IS FIT - Between two boxes===== */
         .whatisfit-wrapper {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -767,6 +776,71 @@
                 right: -85vw;
             }
         }
+    
+
+        /* ===== FLY INFINITY GLASS THEME - SITE WIDE ===== */
+        .sidebar {
+            background: rgba(8, 18, 17, 0.66) !important;
+            -webkit-backdrop-filter: blur(26px) saturate(155%);
+            backdrop-filter: blur(26px) saturate(155%);
+            border-left: 1px solid rgba(0, 235, 178, 0.78) !important;
+            box-shadow: -12px 0 38px rgba(0,0,0,.34), -2px 0 24px rgba(0,220,165,.24), inset 1px 0 0 rgba(255,255,255,.09);
+        }
+        .sidebar-menu a {
+            background: rgba(255,255,255,.035);
+            border: 1px solid rgba(0,220,165,.20);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
+        }
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: rgba(0,200,150,.17);
+            border-color: rgba(0,245,185,.86);
+            box-shadow: 0 0 14px rgba(0,220,165,.28), 0 0 26px rgba(0,200,150,.13), inset 0 1px 0 rgba(255,255,255,.10);
+        }
+        .lang-dropdown {
+            background: rgba(8,18,17,.68) !important;
+            -webkit-backdrop-filter: blur(25px) saturate(155%);
+            backdrop-filter: blur(25px) saturate(155%);
+            border: 1px solid rgba(0,235,178,.78) !important;
+            box-shadow: 0 18px 44px rgba(0,0,0,.44), 0 0 22px rgba(0,220,165,.24), inset 0 1px 0 rgba(255,255,255,.10) !important;
+        }
+        .lang-item {
+            border-radius: 10px;
+            transition: background .2s ease, box-shadow .2s ease;
+        }
+        .lang-item:hover, .lang-item.active {
+            background: rgba(0,200,150,.16);
+            box-shadow: 0 0 12px rgba(0,220,165,.18);
+        }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .sidebar, .lang-dropdown { background-color: rgba(10,18,17,.92) !important; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { -webkit-backdrop-filter: blur(22px) saturate(145%); backdrop-filter: blur(22px) saturate(145%); }
+            .lang-dropdown { -webkit-backdrop-filter: blur(20px) saturate(145%); backdrop-filter: blur(20px) saturate(145%); }
+        }
+
+        /* ===== GLASS CARDS + BRIGHTER NEON ===== */
+        .card, .stat-card, .stat-card-wide, .price-stat-card, .result-box, .fee-box, .purchase-box, .chart-card {
+            background-color: rgba(13, 22, 21, 0.38) !important;
+            -webkit-backdrop-filter: blur(21px) saturate(150%);
+            backdrop-filter: blur(21px) saturate(150%);
+            border-color: rgba(0, 225, 170, 0.66) !important;
+            box-shadow: 0 18px 42px rgba(0,0,0,.32), 0 0 18px rgba(0,220,165,.24), 0 0 34px rgba(0,200,150,.12), inset 0 1px 0 rgba(255,255,255,.11) !important;
+            transition: border-color .28s ease, box-shadow .28s ease, background-color .28s ease;
+        }
+        .card, .stat-card, .stat-card-wide, .price-stat-card, .result-box, .fee-box, .purchase-box, .chart-card:hover {
+            border-color: rgba(0, 245, 185, 0.92) !important;
+            box-shadow: 0 20px 46px rgba(0,0,0,.36), 0 0 25px rgba(0,230,175,.36), 0 0 44px rgba(0,200,150,.18), inset 0 1px 0 rgba(255,255,255,.14) !important;
+        }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .card, .stat-card, .stat-card-wide, .price-stat-card, .result-box, .fee-box, .purchase-box, .chart-card { background-color: rgba(13,22,21,.88) !important; }
+        }
+        @media (max-width: 768px) {
+            .card, .stat-card, .stat-card-wide, .price-stat-card, .result-box, .fee-box, .purchase-box, .chart-card { -webkit-backdrop-filter: blur(17px) saturate(140%); backdrop-filter: blur(17px) saturate(140%); }
+        }
+
     </style>
 </head>
 <body>
@@ -876,7 +950,7 @@
         </div>
     </div>
 
-    <!-- ===== دکمه طلاییWHAT IS FIT - Between two boxes (after top-grid) ===== -->
+    <!-- =====  WHAT IS FIT - Between two boxes (after top-grid) Golden Button===== -->
     <div class="whatisfit-wrapper">
         <a href="what-is-fit.html" class="whatisfit-btn">
             <span class="btn-inner">
@@ -1261,9 +1335,9 @@
             const url = `https://api.etherscan.io/v2/api?chainid=${BSC_CHAIN_ID}&module=token&action=topholders&contractaddress=${CONTRACT_ADDRESS}&page=1&offset=1&apikey=${ETHERSCAN_API_KEY}`;
             const response = await fetch(url);
             const data = await response.json();
-            document.getElementById("holderCount").innerHTML = "1,300+";
+            document.getElementById("holderCount").innerHTML = "1,500+";
         } catch(e) {
-            document.getElementById("holderCount").innerHTML = "1,300+";
+            document.getElementById("holderCount").innerHTML = "1,500+";
         }
     }
     

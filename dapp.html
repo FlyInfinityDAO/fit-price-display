@@ -16,11 +16,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            background-image: url('background-desktop.png');
-            background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+            background: #0F0F0F;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             padding: 20px;
             min-height: 100vh;
@@ -28,12 +24,6 @@
         
         @media (max-width: 768px) {
             body {
-                background-image: url('background-mobile.png');
-                background-size: contain;
-                background-position: center top;
-                background-repeat: no-repeat;
-                background-attachment: fixed;
-                background-color: #0F0F0F;
                 padding: 15px;
             }
         }
@@ -41,13 +31,32 @@
         body::before {
             content: "";
             position: fixed;
-            top: 0;
-            left: 0;
+            inset: 0;
             width: 100%;
-            height: 100%;
-            background: rgba(15, 15, 15, 0.6);
+            height: 100vh;
+            height: 100dvh;
+            background-image:
+                linear-gradient(rgba(15, 15, 15, 0.60), rgba(15, 15, 15, 0.60)),
+                url('background-desktop.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
             pointer-events: none;
             z-index: 0;
+            transform: translate3d(0, 0, 0);
+            -webkit-transform: translate3d(0, 0, 0);
+            will-change: transform;
+        }
+
+        @media (max-width: 768px) {
+            body::before {
+                background-image:
+                    linear-gradient(rgba(15, 15, 15, 0.60), rgba(15, 15, 15, 0.60)),
+                    url('background-mobile.png');
+                background-size: contain;
+                background-position: center top;
+                background-color: #0F0F0F;
+            }
         }
         
         .container {
@@ -551,33 +560,6 @@
             font-weight: bold;
         }
         
-        /* ===== REWARD SECTION ===== */
-        .reward-card {
-            background: #0F0F0F;
-            backdrop-filter: blur(10px);
-            border-radius: 28px;
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 2px solid rgba(255, 215, 0, 0.25);
-            transition: all 0.3s ease;
-        }
-        
-        .reward-card:hover {
-            border-color: #FFD700;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
-        }
-        
-        .reward-title {
-            font-size: 18px;
-            color: #FFD700;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
-        .reward-title i {
-            margin-right: 10px;
-        }
-        
         /* ===== FOOTER ===== */
         .footer {
             text-align: center;
@@ -785,6 +767,71 @@
                 font-size: 13px;
             }
         }
+    
+
+        /* ===== FLY INFINITY GLASS THEME - SITE WIDE ===== */
+        .sidebar {
+            background: rgba(8, 18, 17, 0.66) !important;
+            -webkit-backdrop-filter: blur(26px) saturate(155%);
+            backdrop-filter: blur(26px) saturate(155%);
+            border-left: 1px solid rgba(0, 235, 178, 0.78) !important;
+            box-shadow: -12px 0 38px rgba(0,0,0,.34), -2px 0 24px rgba(0,220,165,.24), inset 1px 0 0 rgba(255,255,255,.09);
+        }
+        .sidebar-menu a {
+            background: rgba(255,255,255,.035);
+            border: 1px solid rgba(0,220,165,.20);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
+        }
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background: rgba(0,200,150,.17);
+            border-color: rgba(0,245,185,.86);
+            box-shadow: 0 0 14px rgba(0,220,165,.28), 0 0 26px rgba(0,200,150,.13), inset 0 1px 0 rgba(255,255,255,.10);
+        }
+        .lang-dropdown {
+            background: rgba(8,18,17,.68) !important;
+            -webkit-backdrop-filter: blur(25px) saturate(155%);
+            backdrop-filter: blur(25px) saturate(155%);
+            border: 1px solid rgba(0,235,178,.78) !important;
+            box-shadow: 0 18px 44px rgba(0,0,0,.44), 0 0 22px rgba(0,220,165,.24), inset 0 1px 0 rgba(255,255,255,.10) !important;
+        }
+        .lang-item {
+            border-radius: 10px;
+            transition: background .2s ease, box-shadow .2s ease;
+        }
+        .lang-item:hover, .lang-item.active {
+            background: rgba(0,200,150,.16);
+            box-shadow: 0 0 12px rgba(0,220,165,.18);
+        }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .sidebar, .lang-dropdown { background-color: rgba(10,18,17,.92) !important; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { -webkit-backdrop-filter: blur(22px) saturate(145%); backdrop-filter: blur(22px) saturate(145%); }
+            .lang-dropdown { -webkit-backdrop-filter: blur(20px) saturate(145%); backdrop-filter: blur(20px) saturate(145%); }
+        }
+
+        /* ===== GLASS CARDS + BRIGHTER NEON ===== */
+        .wallet-card, .action-card, .agreement-body .box-gold, .agreement-body .box-green {
+            background-color: rgba(13, 22, 21, 0.38) !important;
+            -webkit-backdrop-filter: blur(21px) saturate(150%);
+            backdrop-filter: blur(21px) saturate(150%);
+            border-color: rgba(0, 225, 170, 0.66) !important;
+            box-shadow: 0 18px 42px rgba(0,0,0,.32), 0 0 18px rgba(0,220,165,.24), 0 0 34px rgba(0,200,150,.12), inset 0 1px 0 rgba(255,255,255,.11) !important;
+            transition: border-color .28s ease, box-shadow .28s ease, background-color .28s ease;
+        }
+        .wallet-card, .action-card, .agreement-body .box-gold, .agreement-body .box-green:hover {
+            border-color: rgba(0, 245, 185, 0.92) !important;
+            box-shadow: 0 20px 46px rgba(0,0,0,.36), 0 0 25px rgba(0,230,175,.36), 0 0 44px rgba(0,200,150,.18), inset 0 1px 0 rgba(255,255,255,.14) !important;
+        }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .wallet-card, .action-card, .agreement-body .box-gold, .agreement-body .box-green { background-color: rgba(13,22,21,.88) !important; }
+        }
+        @media (max-width: 768px) {
+            .wallet-card, .action-card, .agreement-body .box-gold, .agreement-body .box-green { -webkit-backdrop-filter: blur(17px) saturate(140%); backdrop-filter: blur(17px) saturate(140%); }
+        }
+
     </style>
 </head>
 <body>
@@ -1022,34 +1069,6 @@
         </div>
     </div>
 
-    <!-- ==================== SECTION 4: REWARD (NEW) ==================== -->
-    <div class="reward-card">
-        <div class="reward-title">
-            <i class="fas fa-coins"></i> <span data-i18n="dapp.rewardTitle">💰 Claim Your Network Reward</span>
-        </div>
-        <p style="color:#888; font-size:12px; margin-bottom:15px; text-align:center;" data-i18n="dapp.rewardDesc">
-            If you have network points, you can claim your reward. Make sure you have been active in the network.
-        </p>
-        
-        <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 15px;">
-            <button id="rewardBtn" class="action-btn" style="border-color: #FFD700; color: #FFD700; max-width: 300px; padding: 14px 30px; font-size: 16px;">
-                <i class="fas fa-gift"></i> <span data-i18n="dapp.claimReward">Claim Reward</span>
-            </button>
-        </div>
-        
-        <div id="rewardStatus" class="status-text" style="margin-top: 15px;" data-i18n="dapp.rewardReady">Ready to claim</div>
-        
-        <!-- Reward Info -->
-        <div style="margin-top: 15px; background: #1a1a1a; border-radius: 14px; padding: 12px 16px; border-left: 3px solid #FFD700;">
-            <div style="color:#FFD700; font-size:10px; margin-bottom:3px;" data-i18n="dapp.rewardContract">📜 Network Reward Function</div>
-            <div style="font-family:monospace; font-size:11px; color:#D4AF37; word-break:break-all;">Reward (0x8e1e4567)</div>
-            <div style="color:#888; font-size:9px; margin-top:5px;">
-                <i class="fas fa-info-circle"></i> 
-                <span data-i18n="dapp.rewardNote">Claim your reward based on your network points. Reward is distributed every hour.</span>
-            </div>
-        </div>
-    </div>
-
     <div class="footer">
         <div class="footer-links">
             <a href="index.html" data-i18n="nav.dashboard">Dashboard</a>
@@ -1076,7 +1095,7 @@
     </div>
 
 
-<!-- ===== AGREEMENT MODAL ===== -->
+<!-- ===== AGREEMENT MODAL - FULLY TRANSLATED ===== -->
 <div class="agreement-modal-overlay" id="agreementModal">
     <div class="agreement-modal-content">
         <div class="agreement-modal-header">
@@ -1142,8 +1161,7 @@
     
     const FIT_NETWORK_ABI = [
         {"constant":false,"inputs":[],"name":"Agreement_Road_Map","outputs":[],"type":"function"},
-        {"constant":false,"inputs":[{"name":"_applicant","type":"address"}],"name":"BeCome_Owner","outputs":[],"type":"function"},
-        {"constant":false,"inputs":[],"name":"Reward","outputs":[],"type":"function"}
+        {"constant":false,"inputs":[{"name":"_applicant","type":"address"}],"name":"BeCome_Owner","outputs":[],"type":"function"}
     ];
     
     const DAI_ABI = [
@@ -1309,6 +1327,8 @@
             return;
         }
         
+        // ❌ Connected wallet compatibility check removed - now you can register for any address
+        
         try {
             setStatus("ownerStatus", "⏳ Registering...", "");
             
@@ -1361,6 +1381,8 @@
             return;
         }
         
+        // ❌ Connected wallet compatibility check removed - now you can make purchases for any address
+        
         let amountWei = ethers.utils.parseEther(amount.toString());
         
         try {
@@ -1407,47 +1429,6 @@
         } catch(e) {
             console.error("Sell Error:", e);
             setStatus("sellStatus", "❌ Error: " + e.message, "error");
-        }
-    }
-    
-    // ==================== REWARD FUNCTION (NEW) ====================
-    async function claimReward() {
-        if (!userAddress) {
-            setStatus("rewardStatus", "⚠️ Connect wallet first", "error");
-            return;
-        }
-        
-        try {
-            setStatus("rewardStatus", "⏳ Claiming reward...", "");
-            
-            let gasEstimate;
-            try {
-                gasEstimate = await fitNetworkContract.estimateGas.Reward();
-                gasEstimate = gasEstimate.mul(120).div(100);
-            } catch(estimateError) {
-                console.log("Gas estimation failed, using manual gas limit");
-                gasEstimate = 300000;
-            }
-            
-            const tx = await fitNetworkContract.Reward({
-                gasLimit: gasEstimate
-            });
-            
-            setStatus("rewardStatus", "⏳ Waiting for confirmation...", "");
-            await tx.wait();
-            setStatus("rewardStatus", "✅ Reward claimed successfully!", "success");
-            await loadBalances();
-        } catch(e) {
-            console.error("Reward Error:", e);
-            if (e.message.includes("Just Wallet")) {
-                setStatus("rewardStatus", "❌ This function can only be called from a standard wallet (EOA). Please use MetaMask, Trust Wallet, or TokenPocket.", "error");
-            } else if (e.message.includes("execution reverted")) {
-                setStatus("rewardStatus", "❌ Transaction reverted. Please check: You must have network points and be eligible for reward.", "error");
-            } else if (e.message.includes("Reward Time Has Not Come")) {
-                setStatus("rewardStatus", "⏳ Reward time has not come yet. Please wait 1 hour since last reward.", "error");
-            } else {
-                setStatus("rewardStatus", "❌ Error: " + e.message, "error");
-            }
         }
     }
     
@@ -1700,9 +1681,6 @@
     
     document.getElementById("joinGiftBtn").addEventListener("click", joinGiftContract);
     document.getElementById("freeGiftBtn").addEventListener("click", freeGift);
-    
-    // ===== REWARD EVENT LISTENER (NEW) =====
-    document.getElementById("rewardBtn").addEventListener("click", claimReward);
     
     checkNetwork();
 </script>
