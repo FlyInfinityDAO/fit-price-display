@@ -99,5 +99,22 @@
     "refresh": "تحديث",
     "loading": "جاري التحميل...",
     "calculate": "احسب"
+  },
+  "mission": {
+    "kickerMission": "المهمة",
+    "kickerVision": "الرؤية",
+    "kickerOf": "",
+    "slogan": "طوّر نفسك لتساعد البشرية",
+    "peopleTop": "من الناس،",
+    "peopleBottom": "للناس",
+    "ownershipTop": "الملكية",
+    "ownershipBottom": "للناس",
+    "governanceTop": "الحوكمة",
+    "governanceBottom": "بواسطة الناس",
+    "developmentTop": "التطوير",
+    "developmentBottom": "مع الناس",
+    "profitsTop": "كل الأرباح",
+    "profitsBottom": "للناس",
+    "separator": "و"
   }
 }

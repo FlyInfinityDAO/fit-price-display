@@ -99,5 +99,22 @@
     "refresh": "Yenile",
     "loading": "Yükleniyor...",
     "calculate": "Hesapla"
+  },
+  "mission": {
+    "kickerMission": "Misyon",
+    "kickerVision": "Vizyon",
+    "kickerOf": "",
+    "slogan": "İnsanlığa yardım etmek için kendini geliştir",
+    "peopleTop": "Halktan,",
+    "peopleBottom": "Halk için",
+    "ownershipTop": "Sahiplik",
+    "ownershipBottom": "Halk için",
+    "governanceTop": "Yönetişim",
+    "governanceBottom": "Halk tarafından",
+    "developmentTop": "Gelişim",
+    "developmentBottom": "Halkla birlikte",
+    "profitsTop": "Tüm Kârlar",
+    "profitsBottom": "Halk için",
+    "separator": "&amp;"
   }
 }

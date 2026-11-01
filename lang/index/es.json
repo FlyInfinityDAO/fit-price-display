@@ -99,5 +99,22 @@
     "refresh": "Actualizar",
     "loading": "Cargando...",
     "calculate": "Calcular"
+  },
+  "mission": {
+    "kickerMission": "Misión",
+    "kickerVision": "Visión",
+    "kickerOf": "",
+    "slogan": "Supérate para ayudar a toda la humanidad",
+    "peopleTop": "De la gente,",
+    "peopleBottom": "Para la gente",
+    "ownershipTop": "Propiedad",
+    "ownershipBottom": "Para la gente",
+    "governanceTop": "Gobernanza",
+    "governanceBottom": "Por la gente",
+    "developmentTop": "Desarrollo",
+    "developmentBottom": "Con la gente",
+    "profitsTop": "Todos los beneficios",
+    "profitsBottom": "Para la gente",
+    "separator": "&amp;"
   }
 }

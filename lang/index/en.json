@@ -99,5 +99,22 @@
     "refresh": "Refresh",
     "loading": "Loading...",
     "calculate": "Calculate"
+  },
+  "mission": {
+    "kickerMission": "Mission",
+    "kickerVision": "Vision",
+    "kickerOf": "of",
+    "slogan": "Raise yourself to help your mankind",
+    "peopleTop": "From People,",
+    "peopleBottom": "For People",
+    "ownershipTop": "Ownership",
+    "ownershipBottom": "For People",
+    "governanceTop": "Governance",
+    "governanceBottom": "By People",
+    "developmentTop": "Development",
+    "developmentBottom": "With People",
+    "profitsTop": "All Profits",
+    "profitsBottom": "For People",
+    "separator": "&amp;"
   }
 }

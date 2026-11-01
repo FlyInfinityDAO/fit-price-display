@@ -99,5 +99,22 @@
     "refresh": "刷新",
     "loading": "加载中...",
     "calculate": "计算"
+  },
+  "mission": {
+    "kickerMission": "使命",
+    "kickerVision": "愿景",
+    "kickerOf": "",
+    "slogan": "提升自我，助力全人类",
+    "peopleTop": "源于人民，",
+    "peopleBottom": "服务人民",
+    "ownershipTop": "共同所有",
+    "ownershipBottom": "属于人民",
+    "governanceTop": "共同治理",
+    "governanceBottom": "由人民决定",
+    "developmentTop": "共同发展",
+    "developmentBottom": "与人民同行",
+    "profitsTop": "全部收益",
+    "profitsBottom": "归于人民",
+    "separator": "与"
   }
 }

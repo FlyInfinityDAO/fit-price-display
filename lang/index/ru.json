@@ -99,5 +99,22 @@
     "refresh": "Обновить",
     "loading": "Загрузка...",
     "calculate": "Рассчитать"
+  },
+  "mission": {
+    "kickerMission": "Миссия",
+    "kickerVision": "Видение",
+    "kickerOf": "",
+    "slogan": "Развивай себя, чтобы помогать человечеству",
+    "peopleTop": "От людей,",
+    "peopleBottom": "Для людей",
+    "ownershipTop": "Владение",
+    "ownershipBottom": "Для людей",
+    "governanceTop": "Управление",
+    "governanceBottom": "Силами людей",
+    "developmentTop": "Развитие",
+    "developmentBottom": "Вместе с людьми",
+    "profitsTop": "Вся прибыль",
+    "profitsBottom": "Для людей",
+    "separator": "и"
   }
 }

@@ -99,5 +99,22 @@
     "refresh": "Atualizar",
     "loading": "Carregando...",
     "calculate": "Calcular"
+  },
+  "mission": {
+    "kickerMission": "Missão",
+    "kickerVision": "Visão",
+    "kickerOf": "",
+    "slogan": "Evolua para ajudar toda a humanidade",
+    "peopleTop": "Das pessoas,",
+    "peopleBottom": "Para as pessoas",
+    "ownershipTop": "Propriedade",
+    "ownershipBottom": "Para as pessoas",
+    "governanceTop": "Governança",
+    "governanceBottom": "Pelas pessoas",
+    "developmentTop": "Desenvolvimento",
+    "developmentBottom": "Com as pessoas",
+    "profitsTop": "Todos os lucros",
+    "profitsBottom": "Para as pessoas",
+    "separator": "&amp;"
   }
 }

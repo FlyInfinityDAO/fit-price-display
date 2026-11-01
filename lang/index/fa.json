@@ -99,5 +99,22 @@
     "refresh": "بروزرسانی",
     "loading": "در حال بارگذاری...",
     "calculate": "محاسبه"
+  },
+  "mission": {
+    "kickerMission": "ماموریت",
+    "kickerVision": "چشم‌انداز",
+    "kickerOf": "",
+    "slogan": "خودت را ارتقا بده تا به بشریت کمک کنی",
+    "peopleTop": "از مردم،",
+    "peopleBottom": "برای مردم",
+    "ownershipTop": "مالکیت",
+    "ownershipBottom": "برای مردم",
+    "governanceTop": "حاکمیت",
+    "governanceBottom": "به دست مردم",
+    "developmentTop": "توسعه",
+    "developmentBottom": "با مردم",
+    "profitsTop": "تمام سودها",
+    "profitsBottom": "برای مردم",
+    "separator": "و"
   }
 }
