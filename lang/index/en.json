@@ -116,5 +116,28 @@
     "profitsTop": "All Profits",
     "profitsBottom": "For People",
     "separator": "&"
+  },
+  "eco": {
+    "eyebrow": "ONE CONNECTED ECOSYSTEM",
+    "title": "The Fly Infinity Ecosystem",
+    "subtitle": "Four interconnected pillars. One community-driven vision.",
+    "core": "CONNECTED BY DESIGN",
+    "networkTitle": "Network",
+    "networkText": "The development layer that connects participants, activity and the wider platform.",
+    "networkTag": "FOUNDATION",
+    "fitTitle": "FIT Token",
+    "fitText": "A DAI-reserve-backed token model with an on-chain price calculated from reserve and supply.",
+    "fitTag": "TOKEN ECONOMY",
+    "giftTitle": "Gift",
+    "giftText": "A dedicated ecosystem component designed for community gifting and distribution features.",
+    "giftTag": "COMMUNITY LAYER",
+    "daoTitle": "DAO",
+    "daoText": "The governance component for proposals and networker voting, according to the deployed contract rules.",
+    "daoTag": "GOVERNANCE",
+    "reserveTitle": "How the FIT price is calculated",
+    "reserveText": "The displayed on-chain price is calculated as the DAI reserve held by the FIT token contract divided by the current FIT total supply. This is a contract formula, not a promise of future market value or guaranteed returns.",
+    "flowTitle": "A connected platform",
+    "flowText": "Network, FIT, Gift and DAO are presented as connected parts of the Fly Infinity platform. Each component has a distinct role while contributing to the wider ecosystem.",
+    "note": "Information describes the platform design and currently deployed contract logic. It is not financial advice or a guarantee of price performance."
   }
 }

@@ -116,5 +116,28 @@
     "profitsTop": "全部收益",
     "profitsBottom": "归于人民",
     "separator": "&"
+  },
+  "eco": {
+    "eyebrow": "一个互联生态系统",
+    "title": "Fly Infinity 生态系统",
+    "subtitle": "四大互联支柱，同一个由社区推动的愿景。",
+    "core": "以互联为设计核心",
+    "networkTitle": "网络",
+    "networkText": "连接参与者、活动与平台其他部分的发展层。",
+    "networkTag": "基础层",
+    "fitTitle": "FIT 代币",
+    "fitText": "由 DAI 储备支持，链上价格根据储备和供应量计算的代币模型。",
+    "fitTag": "代币经济",
+    "giftTitle": "Gift",
+    "giftText": "生态系统中的专属组成部分，面向社区赠礼与分发功能。",
+    "giftTag": "社区层",
+    "daoTitle": "DAO",
+    "daoText": "根据已部署合约规则处理提案和网络参与者投票的治理组件。",
+    "daoTag": "治理",
+    "reserveTitle": "FIT 价格如何计算？",
+    "reserveText": "链上显示价格的计算方式为：FIT 代币合约持有的 DAI 储备除以当前 FIT 总供应量。这是合约公式，并非对未来市场价值或收益的承诺。",
+    "flowTitle": "互联平台",
+    "flowText": "Network、FIT、Gift 和 DAO 是 Fly Infinity 平台相互连接的组成部分，各自承担不同角色。",
+    "note": "这些信息介绍平台设计及当前已部署合约逻辑，不构成财务建议，也不保证价格表现。"
   }
 }
