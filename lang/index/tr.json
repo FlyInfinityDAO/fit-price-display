@@ -116,28 +116,5 @@
     "profitsTop": "Tüm Kârlar",
     "profitsBottom": "Halk için",
     "separator": "&"
-  },
-  "eco": {
-    "eyebrow": "BİRBİRİNE BAĞLI TEK EKOSİSTEM",
-    "title": "Fly Infinity Ekosistemi",
-    "subtitle": "Birbirine bağlı dört temel bileşen. Topluluk odaklı tek vizyon.",
-    "core": "TASARIMLA BÜTÜNLEŞİK",
-    "networkTitle": "Ağ",
-    "networkText": "Katılımcıları, faaliyetleri ve platformun diğer bölümlerini birbirine bağlayan geliştirme katmanı.",
-    "networkTag": "TEMEL",
-    "fitTitle": "FIT Token",
-    "fitText": "Rezerv ve arz üzerinden zincir üzerinde fiyatı hesaplanan, DAI rezervi destekli token modeli.",
-    "fitTag": "TOKEN EKONOMİSİ",
-    "giftTitle": "Gift",
-    "giftText": "Topluluk için hediye ve dağıtım özelliklerine ayrılmış ekosistem bileşeni.",
-    "giftTag": "TOPLULUK KATMANI",
-    "daoTitle": "DAO",
-    "daoText": "Yayımlanmış sözleşme kurallarına göre öneriler ve networker oylaması için yönetişim bileşeni.",
-    "daoTag": "YÖNETİŞİM",
-    "reserveTitle": "FIT fiyatı nasıl hesaplanır?",
-    "reserveText": "Zincirde gösterilen fiyat, FIT token sözleşmesindeki DAI rezervinin mevcut toplam FIT arzına bölünmesiyle hesaplanır. Bu bir sözleşme formülüdür; gelecekteki piyasa değeri veya getiri garantisi değildir.",
-    "flowTitle": "Birbirine bağlı platform",
-    "flowText": "Ağ, FIT, Gift ve DAO; Fly Infinity platformunun bağlantılı parçalarıdır. Her bileşenin kendine özgü bir rolü vardır.",
-    "note": "Bu bilgiler platform tasarımını ve hâlihazırda dağıtılmış sözleşmelerin mantığını açıklar; finansal tavsiye veya fiyat performansı garantisi değildir."
   }
 }

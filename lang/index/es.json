@@ -116,28 +116,5 @@
     "profitsTop": "Todos los beneficios",
     "profitsBottom": "Para la gente",
     "separator": "&"
-  },
-  "eco": {
-    "eyebrow": "UN ECOSISTEMA CONECTADO",
-    "title": "El ecosistema Fly Infinity",
-    "subtitle": "Cuatro pilares conectados. Una visión impulsada por la comunidad.",
-    "core": "CONECTADO POR DISEÑO",
-    "networkTitle": "Red",
-    "networkText": "La capa de desarrollo que conecta participantes, actividad y el resto de la plataforma.",
-    "networkTag": "FUNDAMENTO",
-    "fitTitle": "Token FIT",
-    "fitText": "Modelo de token respaldado por una reserva DAI cuyo precio en cadena se calcula a partir de la reserva y la oferta.",
-    "fitTag": "ECONOMÍA DEL TOKEN",
-    "giftTitle": "Gift",
-    "giftText": "Componente dedicado del ecosistema para funciones de regalos y distribución comunitaria.",
-    "giftTag": "CAPA COMUNITARIA",
-    "daoTitle": "DAO",
-    "daoText": "Componente de gobernanza para propuestas y votaciones de networkers según las reglas del contrato desplegado.",
-    "daoTag": "GOBERNANZA",
-    "reserveTitle": "¿Cómo se calcula el precio de FIT?",
-    "reserveText": "El precio mostrado en cadena se calcula dividiendo la reserva DAI del contrato del token FIT entre la oferta total actual de FIT. Es una fórmula del contrato, no una promesa de valor futuro ni de rendimientos garantizados.",
-    "flowTitle": "Una plataforma conectada",
-    "flowText": "Red, FIT, Gift y DAO son partes conectadas de Fly Infinity. Cada componente cumple una función distinta dentro del ecosistema.",
-    "note": "La información describe el diseño de la plataforma y la lógica actual de los contratos desplegados. No es asesoramiento financiero ni garantía de rendimiento."
   }
 }
