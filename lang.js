@@ -68,7 +68,7 @@ function t(key) {
             return key;
         }
     }
-    return value || key;
+    return value === undefined || value === null ? key : value;
 }
 
 function tWithReplace(key, replacements) {
