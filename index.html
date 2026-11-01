@@ -1244,6 +1244,58 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
     .mission-pillar i { font-size: 19px !important; }
 }
 
+
+/* ===== FLY INFINITY ECOSYSTEM SHOWCASE ===== */
+.eco-fee-row{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin:12px auto 0}.eco-fee-row span{padding:8px 14px;border:1px solid rgba(212,175,55,.36);border-radius:30px;background:rgba(212,175,55,.07);color:#e5c65b;font-size:12px;font-weight:800}
+
+.ecosystem-showcase{position:relative;margin:34px 0 28px;padding:clamp(18px,3vw,34px);overflow:hidden;border:1px solid rgba(0,200,150,.48);border-radius:28px;background:linear-gradient(135deg,rgba(7,22,19,.70),rgba(10,13,13,.72) 48%,rgba(25,19,7,.62));-webkit-backdrop-filter:blur(18px) saturate(145%);backdrop-filter:blur(18px) saturate(145%);box-shadow:0 18px 50px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.08),0 0 28px rgba(0,200,150,.08)}
+.ecosystem-showcase:before{content:"";position:absolute;inset:-35% -10% auto;height:360px;background:radial-gradient(ellipse,rgba(0,200,150,.15),transparent 68%);pointer-events:none}
+.eco-head,.eco-hub,.eco-engine,.eco-history,.eco-transparency{position:relative;z-index:1}
+.eco-head{text-align:center;margin:0 auto 25px;max-width:850px}
+.eco-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 13px;border:1px solid rgba(212,175,55,.45);border-radius:30px;color:#D4AF37;background:rgba(212,175,55,.08);font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.eco-title{margin:13px 0 8px;font-size:clamp(25px,4vw,39px);line-height:1.2;font-weight:900;background:linear-gradient(90deg,#D4AF37,#f2e7a0 42%,#00C896);-webkit-background-clip:text;background-clip:text;color:transparent}
+.eco-subtitle{margin:0;color:#d1d8d5;font-size:clamp(13px,1.5vw,16px);line-height:1.8}
+.eco-hub{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;align-items:stretch;margin:22px 0 32px}
+.eco-node{position:relative;min-width:0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:20px 14px 17px;border:1px solid rgba(0,200,150,.38);border-radius:20px;background:linear-gradient(155deg,rgba(23,37,33,.72),rgba(9,13,12,.72));-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:#f4f5f3;text-decoration:none;transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;overflow:hidden}
+.eco-node:before{content:"";position:absolute;top:0;left:15%;right:15%;height:2px;background:linear-gradient(90deg,transparent,#D4AF37,#00C896,transparent);opacity:.9}
+.eco-node:hover,.eco-node:focus-visible{transform:translateY(-5px);border-color:#D4AF37;box-shadow:0 12px 30px rgba(0,200,150,.12),0 0 18px rgba(212,175,55,.12);outline:none}
+.eco-node-icon{width:54px;height:54px;display:grid;place-items:center;margin-bottom:11px;border-radius:17px;color:#D4AF37;font-size:25px;background:linear-gradient(145deg,rgba(212,175,55,.17),rgba(0,200,150,.10));border:1px solid rgba(212,175,55,.36);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 18px rgba(212,175,55,.08)}
+.eco-node strong{font-size:16px;color:#f7f4e8;margin-bottom:7px}
+.eco-node span:last-child{font-size:12px;line-height:1.65;color:#b9c6c0}
+.eco-section-label{display:flex;align-items:center;gap:12px;margin:28px 0 14px;color:#D4AF37;font-weight:850;font-size:clamp(17px,2.2vw,22px)}
+.eco-section-label:after{content:"";height:1px;flex:1;background:linear-gradient(90deg,rgba(212,175,55,.55),transparent)}
+.eco-engine{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:24px}
+.eco-step{position:relative;padding:18px 16px;border-radius:18px;border:1px solid rgba(212,175,55,.25);background:rgba(17,22,20,.72);text-align:center;min-width:0}
+.eco-step-icon{font-size:25px;color:#00C896;margin-bottom:8px}
+.eco-step h3{margin:0 0 7px;color:#f2d36a;font-size:15px}
+.eco-step p{margin:0;color:#c5ceca;font-size:12px;line-height:1.75}
+.eco-formula{margin:14px auto 0;padding:14px 16px;max-width:650px;text-align:center;border:1px solid rgba(0,200,150,.48);border-radius:15px;background:rgba(0,200,150,.07);color:#f3d45d;font-weight:900;font-size:clamp(16px,2.3vw,21px);direction:ltr}
+.eco-history{margin-top:30px;padding:20px;border:1px solid rgba(0,200,150,.35);border-radius:21px;background:rgba(6,14,12,.58)}
+.eco-history-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.eco-history-copy h3{margin:0 0 6px;color:#D4AF37;font-size:19px}
+.eco-history-copy p{margin:0;color:#b9c5c0;font-size:12px;line-height:1.7}
+.eco-history-badge{padding:8px 12px;border-radius:30px;border:1px solid rgba(0,200,150,.5);color:#00C896;background:rgba(0,200,150,.08);font-size:12px;font-weight:800;white-space:nowrap}
+.eco-history-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:17px 0}
+.eco-history-stat{padding:13px 10px;border-radius:15px;background:rgba(255,255,255,.045);border-left:3px solid #00C896;text-align:center;min-width:0}
+.eco-history-stat strong{display:block;color:#D4AF37;font-size:clamp(16px,2vw,23px);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.eco-history-stat span{display:block;margin-top:5px;color:#b9c5c0;font-size:11px;line-height:1.45}
+.eco-chart-wrap{height:120px;padding:8px 3px 0;overflow:hidden}
+#ecoHistoryLine{width:100%;height:100%;overflow:visible}
+.eco-history-note{margin:12px 0 0;color:#9eaaa5;font-size:11px;line-height:1.7}
+.eco-transparency{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:22px}
+.eco-trust-card{padding:17px;border-radius:18px;border:1px solid rgba(0,200,150,.28);background:rgba(16,23,21,.66)}
+.eco-trust-card i{font-size:22px;color:#D4AF37;margin-bottom:10px}
+.eco-trust-card h3{margin:0 0 7px;color:#00C896;font-size:15px}
+.eco-trust-card p{margin:0;color:#c1cbc6;font-size:12px;line-height:1.75}
+.eco-more-links{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:22px}
+.eco-more-links a{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border:1px solid rgba(212,175,55,.5);border-radius:30px;color:#e5c65b;text-decoration:none;font-size:12px;font-weight:800;background:rgba(212,175,55,.06);transition:all .2s ease}
+.eco-more-links a:hover{border-color:#00C896;color:#00C896;transform:translateY(-2px)}
+html[dir="rtl"] .eco-history-stat{text-align:center;border-left:0;border-right:3px solid #00C896}
+html[dir="rtl"] .eco-section-label:after{background:linear-gradient(270deg,rgba(212,175,55,.55),transparent)}
+@media(max-width:760px){.eco-hub{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.eco-node{padding:16px 10px}.eco-engine{grid-template-columns:1fr}.eco-history-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.eco-transparency{grid-template-columns:1fr}.eco-history{padding:15px}}
+@media(max-width:390px){.eco-hub{gap:8px}.eco-node strong{font-size:14px}.eco-node span:last-child{font-size:11px}.eco-history-badge{white-space:normal}}
+@media(prefers-reduced-motion:reduce){.eco-node,.eco-more-links a{transition:none}.eco-node:hover,.eco-more-links a:hover{transform:none}}
+
 </style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head>
@@ -1427,6 +1479,75 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
     </div>
     
     <!-- Profit and fee calculators moved to profit-simulator.html -->
+
+
+    <!-- ===== FLY INFINITY ECOSYSTEM SHOWCASE ===== -->
+    <section class="ecosystem-showcase" id="fly-infinity-ecosystem" aria-labelledby="ecoTitle">
+        <header class="eco-head">
+            <span class="eco-eyebrow"><i class="fas fa-infinity" aria-hidden="true"></i> <span data-i18n="eco.eyebrow">Inside the Ecosystem</span></span>
+            <h2 class="eco-title" id="ecoTitle" data-i18n="eco.title">One Ecosystem. Four Connected Layers.</h2>
+            <p class="eco-subtitle" data-i18n="eco.subtitle">Explore how the Network, FIT Token, Gift and DAO work together within the Fly Infinity platform.</p>
+        </header>
+
+        <div class="eco-hub" aria-label="Fly Infinity ecosystem components">
+            <a class="eco-node" href="whitepaper.html">
+                <span class="eco-node-icon"><i class="fas fa-project-diagram" aria-hidden="true"></i></span>
+                <strong data-i18n="eco.networkTitle">Fly Infinity Network</strong>
+                <span data-i18n="eco.networkText">Coordinates network activity and routes eligible FIT purchase requests.</span>
+            </a>
+            <a class="eco-node" href="what-is-fit.html">
+                <span class="eco-node-icon"><i class="fas fa-coins" aria-hidden="true"></i></span>
+                <strong data-i18n="eco.fitTitle">FIT Token</strong>
+                <span data-i18n="eco.fitText">A BNB Smart Chain token whose base price is calculated from DAI reserve and FIT supply.</span>
+            </a>
+            <a class="eco-node" href="whitepaper.html">
+                <span class="eco-node-icon"><i class="fas fa-gift" aria-hidden="true"></i></span>
+                <strong data-i18n="eco.giftTitle">Fly Infinity Gift</strong>
+                <span data-i18n="eco.giftText">A dedicated smart-contract layer for the platform's gift mechanisms.</span>
+            </a>
+            <a class="eco-node" href="privacy.html">
+                <span class="eco-node-icon"><i class="fas fa-landmark" aria-hidden="true"></i></span>
+                <strong data-i18n="eco.daoTitle">Fly Infinity DAO</strong>
+                <span data-i18n="eco.daoText">A proposal, voting and execution framework defined by the DAO contract.</span>
+            </a>
+        </div>
+
+        <div class="eco-section-label"><i class="fas fa-wave-square"></i> <span data-i18n="eco.engineTitle">How the FIT Price Model Works</span></div>
+        <div class="eco-engine">
+            <article class="eco-step"><div class="eco-step-icon"><i class="fas fa-vault"></i></div><h3 data-i18n="eco.reserveTitle">DAI Reserve</h3><p data-i18n="eco.reserveText">The DAI held by the FIT token contract is the reserve input used by the on-chain price function.</p></article>
+            <article class="eco-step"><div class="eco-step-icon"><i class="fas fa-coins"></i></div><h3 data-i18n="eco.supplyTitle">FIT Total Supply</h3><p data-i18n="eco.supplyText">The contract reads the current FIT total supply as the denominator of its price calculation.</p></article>
+            <article class="eco-step"><div class="eco-step-icon"><i class="fas fa-calculator"></i></div><h3 data-i18n="eco.priceTitle">On-chain Price</h3><p data-i18n="eco.priceText">The public Price() function calculates the base price directly from those two values.</p></article>
+        </div>
+        <div class="eco-formula" data-i18n="eco.formula">FIT Price = DAI Reserve ÷ FIT Total Supply</div>
+        <div class="eco-fee-row"><span data-i18n="eco.buyFee">Buy fee: 3%</span><span data-i18n="eco.sellFee">Sell fee: 6%</span></div>
+
+        <div class="eco-history">
+            <div class="eco-history-top">
+                <div class="eco-history-copy"><h3 data-i18n="eco.historyTitle">Recorded FIT Price History</h3><p data-i18n="eco.historyIntro">A summary of the historical daily records currently published with this website.</p></div>
+                <div class="eco-history-badge"><i class="fas fa-chart-line"></i> <span data-i18n="eco.historyBadge">Historical data · Not a forecast</span></div>
+            </div>
+            <div class="eco-history-stats">
+                <div class="eco-history-stat"><strong id="ecoHistoryStart">—</strong><span data-i18n="eco.startPrice">Recorded starting price</span></div>
+                <div class="eco-history-stat"><strong id="ecoHistoryLatest">—</strong><span data-i18n="eco.latestPrice">Latest recorded price</span></div>
+                <div class="eco-history-stat"><strong id="ecoHistoryCount">—</strong><span data-i18n="eco.recordCount">Daily records in file</span></div>
+                <div class="eco-history-stat"><strong id="ecoHistoryDrops">—</strong><span data-i18n="eco.recordedDrops">Downward steps between records</span></div>
+            </div>
+            <div class="eco-chart-wrap"><svg id="ecoHistoryLine" viewBox="0 0 900 120" role="img" aria-label="Recorded FIT price history line"><defs><linearGradient id="ecoLineGradient" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#D4AF37"/><stop offset="100%" stop-color="#00C896"/></linearGradient><linearGradient id="ecoAreaGradient" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#00C896" stop-opacity=".24"/><stop offset="100%" stop-color="#00C896" stop-opacity="0"/></linearGradient></defs><path id="ecoHistoryArea" fill="url(#ecoAreaGradient)" d=""/><path id="ecoHistoryPath" fill="none" stroke="url(#ecoLineGradient)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d=""/><circle id="ecoHistoryDot" r="5" fill="#D4AF37" stroke="#fff" stroke-width="2" cx="0" cy="0"/></svg></div>
+            <p class="eco-history-note" data-i18n="eco.historyNote">These figures describe the records in price-history.json, not a guarantee of future price behavior. The file contains dated observations and may not include every calendar day.</p>
+        </div>
+
+        <div class="eco-section-label"><i class="fas fa-shield-alt"></i> <span data-i18n="eco.transparencyTitle">Transparency, Governance & Privacy</span></div>
+        <div class="eco-transparency">
+            <article class="eco-trust-card"><i class="fas fa-file-code"></i><h3 data-i18n="eco.contractTitle">Public Contract Logic</h3><p data-i18n="eco.contractText">Core token functions and the pricing formula can be reviewed in the published Solidity source and checked against on-chain contract activity.</p></article>
+            <article class="eco-trust-card"><i class="fas fa-vote-yea"></i><h3 data-i18n="eco.governanceTitle">Defined DAO Process</h3><p data-i18n="eco.governanceText">The DAO contract defines proposal creation, networker voting and proposal execution rules. The exact permissions are part of the public contract logic.</p></article>
+            <article class="eco-trust-card"><i class="fas fa-user-shield"></i><h3 data-i18n="eco.privacyTitle">Privacy by Design</h3><p data-i18n="eco.privacyText">Review the website privacy policy to understand what local preferences and information are handled by the site.</p></article>
+        </div>
+        <div class="eco-more-links">
+            <a href="what-is-fit.html"><i class="fas fa-coins"></i><span data-i18n="eco.readFit">Explore FIT</span></a>
+            <a href="whitepaper.html"><i class="fas fa-book-open"></i><span data-i18n="eco.readWhitepaper">Read the White Paper</span></a>
+            <a href="privacy.html"><i class="fas fa-user-shield"></i><span data-i18n="eco.readPrivacy">Privacy & Structure</span></a>
+        </div>
+    </section>
 
     <!-- ===== FOOTER ===== -->
     <div class="footer">
@@ -1820,5 +1941,6 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
 </script>
 
     <script src="wallet-ui.js"></script>
+    <script src="ecosystem-dashboard.js"></script>
 </body>
 </html>
