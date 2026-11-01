@@ -1180,15 +1180,17 @@ textarea:focus,
     background: linear-gradient(rgba(5,12,11,.82), rgba(5,12,11,.82)) padding-box,
                 linear-gradient(100deg, #D4AF37 0%, #F4D45C 45%, #00C896 100%) border-box !important;
     box-shadow: 0 0 20px rgba(212,175,55,.28), 0 0 22px rgba(0,200,150,.20), inset 0 0 16px rgba(255,255,255,.045) !important;
-    background: linear-gradient(135deg, #D4AF37 0%, #C6D66A 48%, #00C896 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
+    background: linear-gradient(135deg, #D4AF37 0%, #C6D66A 48%, #00C896 100%) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
     color: transparent !important;
     font-size: clamp(20px, 2.65vw, 32px) !important;
     line-height: 1.25;
     font-weight: 800 !important;
     font-style: italic;
-    text-shadow: 0 2px 8px rgba(0,0,0,.75);
+    text-shadow: none !important;
+    filter: drop-shadow(0 2px 7px rgba(0,200,150,.22));
 }
 .mission-pillars {
     display: grid;
