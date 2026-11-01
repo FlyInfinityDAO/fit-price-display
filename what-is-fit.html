@@ -1286,6 +1286,75 @@ textarea:focus,
 .footer .footer-links a i{color:#00e6ad!important;filter:drop-shadow(0 0 5px rgba(0,230,173,.32))}
 .footer .footer-links a:hover,.footer .footer-links a:focus-visible,.footer .footer-links a:hover span,.footer .footer-links a:focus-visible span{color:#eafff8!important}
 .footer .footer-links a:hover i,.footer .footer-links a:focus-visible i{color:#a2ffe4!important;filter:drop-shadow(0 0 8px rgba(0,255,190,.9))}
+
+/* ===== WHAT IS FIT: ICON SYSTEM & FEATURE BADGES ===== */
+        .icon-large i { display:inline-block; font-size:42px; color:#D4AF37; filter:drop-shadow(0 0 10px rgba(212,175,55,.18)); }
+        .badge-container { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; align-items:stretch; }
+        .badge-container .badge {
+            display:flex; align-items:center; justify-content:center; gap:10px;
+            min-width:0; min-height:66px; padding:12px 14px; border-radius:16px;
+            color:#D4AF37 !important; font-size:13px; line-height:1.35; text-align:center;
+            background:linear-gradient(145deg,rgba(0,200,150,.16),rgba(255,255,255,.035)) !important;
+            border:1px solid rgba(0,200,150,.34) !important;
+            -webkit-backdrop-filter:blur(16px) saturate(140%); backdrop-filter:blur(16px) saturate(140%);
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 8px 20px rgba(0,0,0,.16);
+        }
+        .badge-container .badge i {
+            display:inline-flex; align-items:center; justify-content:center; flex:0 0 30px;
+            width:30px; height:30px; border-radius:10px; color:#00C896;
+            background:rgba(0,200,150,.12); font-size:15px;
+        }
+        .badge-container .badge span { min-width:0; }
+        .info-box h4 .heading-icon,.comparison-box h4 .heading-icon {
+            color:#00C896; margin-right:9px; font-size:15px; vertical-align:middle;
+        }
+        .comparison-box.fit h4 .heading-icon { color:#D4AF37; }
+        .comparison-box.others h4 .heading-icon { color:#00C896; }
+        .comparison-box ul li .check,.comparison-box ul li .cross {
+            display:inline-block; width:18px; margin-right:8px; font-size:15px; vertical-align:-1px;
+        }
+        .comparison-box ul li .check { color:#00C896; }
+        .comparison-box ul li .cross { color:#D4AF37; }
+        .feature-item .icon { display:flex; align-items:center; justify-content:center; min-height:42px; color:#D4AF37; }
+        .feature-item .icon i { font-size:28px; filter:drop-shadow(0 0 8px rgba(0,200,150,.18)); }
+        .step-item .step-icon {
+            width:44px; height:44px; margin:0 auto 9px; display:flex; align-items:center; justify-content:center;
+            border-radius:14px; color:#00C896; font-size:19px;
+            background:linear-gradient(145deg,rgba(0,200,150,.18),rgba(255,255,255,.035));
+            border:1px solid rgba(0,200,150,.30); box-shadow:inset 0 1px 0 rgba(255,255,255,.10);
+        }
+        .step-item.gold .step-icon { color:#D4AF37; border-color:rgba(212,175,55,.38); background:linear-gradient(145deg,rgba(212,175,55,.14),rgba(255,255,255,.03)); }
+        .step-item .step-num {
+            display:inline-flex; align-items:center; justify-content:center; min-width:25px; height:22px;
+            padding:0 7px; border-radius:20px; font-size:11px; line-height:1; color:#D4AF37;
+            background:rgba(212,175,55,.10); border:1px solid rgba(212,175,55,.22);
+        }
+        .cta-mark { margin:0 auto 15px; color:#D4AF37; font-size:38px; filter:drop-shadow(0 0 12px rgba(212,175,55,.22)); }
+        .cta-section .btn,.cta-section .btn-outline {
+            -webkit-backdrop-filter:blur(16px) saturate(145%); backdrop-filter:blur(16px) saturate(145%);
+            box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 8px 22px rgba(0,0,0,.18);
+        }
+        .cta-section .btn {
+            color:#D4AF37; background:linear-gradient(135deg,rgba(0,200,150,.22),rgba(0,200,150,.08));
+            border:1px solid rgba(0,200,150,.52);
+        }
+        .cta-section .btn-outline {
+            color:#D4AF37; background:linear-gradient(135deg,rgba(212,175,55,.14),rgba(255,255,255,.025));
+            border:1px solid rgba(212,175,55,.55);
+        }
+        .cta-section .btn:hover { background:linear-gradient(135deg,rgba(0,200,150,.34),rgba(0,200,150,.13)); color:#f3fff9; }
+        .cta-section .btn-outline:hover { background:linear-gradient(135deg,rgba(212,175,55,.24),rgba(0,200,150,.08)); color:#fff6d6; }
+        .cta-note { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:7px; font-size:12px !important; color:#b9d9d0 !important; }
+        .cta-note i { color:#00C896; font-size:13px; }
+        .cta-note span { color:#D4AF37; }
+        @media(max-width:768px) {
+            .badge-container { grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+            .badge-container .badge { min-height:58px; padding:10px; font-size:12px; }
+        }
+        @media(max-width:480px) {
+            #numCurrentPrice { font-size:clamp(11px,4vw,19px) !important; letter-spacing:-.055em; white-space:nowrap; max-width:100%; }
+        }
+        
 </style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head>
@@ -1300,7 +1369,7 @@ textarea:focus,
         </a>
         <div class="top-bar-right">
             <button class="hamburger" id="hamburgerBtn">
-                <i class="fas fa-bars"></i>
+                <i class="fas fa-bars" aria-hidden="true"></i>
             </button>
         </div>
     </div>
@@ -1315,18 +1384,18 @@ textarea:focus,
                 <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
                 <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
             </span>
-            <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
+            <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times" aria-hidden="true"></i></button>
         </div>
         
         <div class="sidebar-menu">
             <a href="index.html">
-                <i class="fas fa-gauge-high" aria-hidden="true"></i> <span data-i18n="nav.dashboard">Dashboard</span>
+                <i class="fas fa-tachometer-alt" aria-hidden="true"></i> <span data-i18n="nav.dashboard">Dashboard</span>
             </a>
             <a href="what-is-fit.html" class="active">
-                <i class="fas fa-circle-info" aria-hidden="true"></i> <span data-i18n="nav.whatisfit">What is FIT?</span>
+                <i class="fas fa-info-circle" aria-hidden="true"></i> <span data-i18n="nav.whatisfit">What is FIT?</span>
             </a>
             <a href="compare.html">
-                <i class="fas fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="nav.comparison">Comparison</span>
+                <i class="fas fa-balance-scale" aria-hidden="true"></i> <span data-i18n="nav.comparison">Comparison</span>
             </a>
             <a href="dapp.html">
                 <i class="fas fa-cubes" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span>
@@ -1338,13 +1407,13 @@ textarea:focus,
                 <i class="fas fa-rocket" aria-hidden="true"></i> <span data-i18n="nav.nextProjects">Upcoming Projects</span>
             </a>
             <a href="transactions.html">
-                <i class="fas fa-arrow-right-arrow-left" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span>
+                <i class="fas fa-exchange-alt" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span>
             </a>
             <a href="privacy.html">
                 <i class="fas fa-user-shield" aria-hidden="true"></i> <span data-i18n="nav.privacy">Privacy</span>
             </a>
             <a href="warnings.html">
-                <i class="fas fa-triangle-exclamation" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span>
+                <i class="fas fa-exclamation-triangle" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span>
             </a>
             <a href="faq.html">
                 <i class="fas fa-comments" aria-hidden="true"></i> <span data-i18n="nav.faq">FAQ</span>
@@ -1363,20 +1432,20 @@ textarea:focus,
     <!-- ===== PAGE CONTENT ===== -->
     
     <h1 class="page-title">
-        <i class="fas fa-question-circle"></i> 
+        <i class="fas fa-question-circle" aria-hidden="true"></i> 
         <span data-i18n="whatisfit.title">What is FIT? Why Should You Have It?</span>
     </h1>
 
     <!-- ===== SECTION 1: INTRODUCTION ===== -->
     <div class="section-card">
-        <span class="icon-large">🚀</span>
+        <span class="icon-large"><i class="fas fa-rocket" aria-hidden="true"></i></span>
         <h2 data-i18n="whatisfit.introTitle">The Digital Asset That Never Goes Down</h2>
         
         <div class="badge-container">
-            <span class="badge gold-bg" data-i18n="whatisfit.badge1"><i class="fas fa-infinity"></i> Non-Diminishing</span>
-            <span class="badge" data-i18n="whatisfit.badge2"><i class="fas fa-shield-halved"></i> Fully Backed</span>
-            <span class="badge gold" data-i18n="whatisfit.badge3"><i class="fas fa-chart-line"></i> Always Rising</span>
-            <span class="badge" data-i18n="whatisfit.badge4"><i class="fas fa-users"></i> DAO Governed</span>
+            <span class="badge" data-i18n-badge="whatisfit.badge1"><i class="fas fa-infinity" aria-hidden="true"></i><span data-i18n="whatisfit.badge1">Non-Diminishing</span></span>
+            <span class="badge" data-i18n-badge="whatisfit.badge2"><i class="fas fa-shield-alt" aria-hidden="true"></i><span data-i18n="whatisfit.badge2">Fully Backed</span></span>
+            <span class="badge" data-i18n-badge="whatisfit.badge3"><i class="fas fa-chart-line" aria-hidden="true"></i><span data-i18n="whatisfit.badge3">Always Rising</span></span>
+            <span class="badge" data-i18n-badge="whatisfit.badge4"><i class="fas fa-users" aria-hidden="true"></i><span data-i18n="whatisfit.badge4">DAO Governed</span></span>
         </div>
         
         <p data-i18n="whatisfit.introText1">
@@ -1386,7 +1455,7 @@ textarea:focus,
         </p>
         
         <div class="info-box">
-            <h4 data-i18n="whatisfit.introSimpleTitle">💡 In Simple Words:</h4>
+            <h4><i class="fas fa-lightbulb heading-icon" aria-hidden="true"></i><span data-i18n="whatisfit.introSimpleTitle">In Simple Words:</span></h4>
             <p data-i18n="whatisfit.introSimple">
                 <span class="gold">FIT</span> is a digital currency that <span class="highlight">only goes up</span>. 
                 Unlike Bitcoin or Ethereum that can crash 50% or more, FIT is built on a smart contract that 
@@ -1398,7 +1467,7 @@ textarea:focus,
 
     <!-- ===== SECTION 2: WHAT IS FIT ===== -->
     <div class="section-card">
-        <span class="icon-large">🪙</span>
+        <span class="icon-large"><i class="fas fa-coins" aria-hidden="true"></i></span>
         <h2 data-i18n="whatisfit.whatIsTitle">What Exactly is FIT?</h2>
         
         <p data-i18n="whatisfit.whatIsText1">
@@ -1408,7 +1477,7 @@ textarea:focus,
         </p>
         
         <div class="info-box gold">
-            <h4 data-i18n="whatisfit.formulaTitle">📊 The Simple Formula:</h4>
+            <h4><i class="fas fa-calculator heading-icon" aria-hidden="true"></i><span data-i18n="whatisfit.formulaTitle">The Simple Formula:</span></h4>
             <p style="font-size: 18px; text-align: center; color: #D4AF37; font-weight: bold;" data-i18n="whatisfit.formula">
                 FIT Price = DAI Reserve ÷ Total Supply
             </p>
@@ -1424,22 +1493,22 @@ textarea:focus,
         
         <div class="feature-grid">
             <div class="feature-item">
-                <div class="icon">📈</div>
+                <div class="icon"><i class="fas fa-chart-line" aria-hidden="true"></i></div>
                 <h4 data-i18n="whatisfit.featureBuy">When You Buy</h4>
                 <p data-i18n="whatisfit.featureBuyDesc">DAI enters the contract → Reserve grows → Price increases</p>
             </div>
             <div class="feature-item">
-                <div class="icon">🔥</div>
+                <div class="icon"><i class="fas fa-fire" aria-hidden="true"></i></div>
                 <h4 data-i18n="whatisfit.featureSell">When You Sell</h4>
                 <p data-i18n="whatisfit.featureSellDesc">Tokens are burned → Supply decreases → Price increases</p>
             </div>
             <div class="feature-item">
-                <div class="icon">💎</div>
+                <div class="icon"><i class="fas fa-coins" aria-hidden="true"></i></div>
                 <h4 data-i18n="whatisfit.featureFee">Transaction Fees</h4>
                 <p data-i18n="whatisfit.featureFeeDesc">3% buy / 6% sell fees return to the reserve → Price increases</p>
             </div>
             <div class="feature-item">
-                <div class="icon">🏛️</div>
+                <div class="icon"><i class="fas fa-landmark" aria-hidden="true"></i></div>
                 <h4 data-i18n="whatisfit.featureDAO">DAO Governance</h4>
                 <p data-i18n="whatisfit.featureDAODesc">All decisions made by the community, not a central team</p>
             </div>
@@ -1448,38 +1517,38 @@ textarea:focus,
 
     <!-- ===== SECTION 3: WHY BUY FIT ===== -->
     <div class="section-card">
-        <span class="icon-large">💎</span>
+        <span class="icon-large"><i class="fas fa-gem" aria-hidden="true"></i></span>
         <h2 data-i18n="whatisfit.whyBuyTitle">Why Should You Buy FIT?</h2>
         
         <div class="comparison-grid">
             <div class="comparison-box fit">
-                <h4 data-i18n="whatisfit.compareFitTitle">✅ Fly Infinity (FIT)</h4>
+                <h4><i class="fas fa-check-circle heading-icon" aria-hidden="true"></i><span data-i18n="whatisfit.compareFitTitle">Fly Infinity (FIT)</span></h4>
                 <ul>
-                    <li><span class="check">✅</span> <span data-i18n="whatisfit.compareFit1"><span class="gold">Never decreases</span> — mathematically guaranteed</span></li>
-                    <li><span class="check">✅</span> <span data-i18n="whatisfit.compareFit2">Backed by <span class="gold">real DAI</span> (stablecoin)</span></li>
-                    <li><span class="check">✅</span> <span data-i18n="whatisfit.compareFit3"><span class="gold">Transparent</span> — all on blockchain</span></li>
-                    <li><span class="check">✅</span> <span data-i18n="whatisfit.compareFit4"><span class="gold">DAO governed</span> — no central control</span></li>
-                    <li><span class="check">✅</span> <span data-i18n="whatisfit.compareFit5"><span class="gold">Always rising</span> — every transaction helps</span></li>
-                    <li><span class="check">✅</span> <span data-i18n="whatisfit.compareFit6"><span class="gold">Non-transferable</span> — no black market</span></li>
-                    <li><span class="check">✅</span> <span data-i18n="whatisfit.compareFit7"><span class="gold">Step-based purchase</span> — anti-whale</span></li>
+                    <li><i class="fas fa-check-circle check" aria-hidden="true"></i> <span data-i18n="whatisfit.compareFit1"><span class="gold">Never decreases</span> — mathematically guaranteed</span></li>
+                    <li><i class="fas fa-check-circle check" aria-hidden="true"></i> <span data-i18n="whatisfit.compareFit2">Backed by <span class="gold">real DAI</span> (stablecoin)</span></li>
+                    <li><i class="fas fa-check-circle check" aria-hidden="true"></i> <span data-i18n="whatisfit.compareFit3"><span class="gold">Transparent</span> — all on blockchain</span></li>
+                    <li><i class="fas fa-check-circle check" aria-hidden="true"></i> <span data-i18n="whatisfit.compareFit4"><span class="gold">DAO governed</span> — no central control</span></li>
+                    <li><i class="fas fa-check-circle check" aria-hidden="true"></i> <span data-i18n="whatisfit.compareFit5"><span class="gold">Always rising</span> — every transaction helps</span></li>
+                    <li><i class="fas fa-check-circle check" aria-hidden="true"></i> <span data-i18n="whatisfit.compareFit6"><span class="gold">Non-transferable</span> — no black market</span></li>
+                    <li><i class="fas fa-check-circle check" aria-hidden="true"></i> <span data-i18n="whatisfit.compareFit7"><span class="gold">Step-based purchase</span> — anti-whale</span></li>
                 </ul>
             </div>
             <div class="comparison-box others">
-                <h4 data-i18n="whatisfit.compareOtherTitle">❌ Traditional Crypto</h4>
+                <h4><i class="fas fa-chart-line heading-icon" aria-hidden="true"></i><span data-i18n="whatisfit.compareOtherTitle">Traditional Crypto</span></h4>
                 <ul>
-                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.compareOther1"><span class="danger">Up and down</span> — unpredictable volatility</span></li>
-                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.compareOther2">Often <span class="danger">not backed</span> by real assets</span></li>
-                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.compareOther3"><span class="danger">No transparency</span> — centralized order books</span></li>
-                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.compareOther4"><span class="danger">Whales</span> can manipulate prices</span></li>
-                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.compareOther5">Can <span class="danger">crash 50-90%</span> in days</span></li>
-                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.compareOther6"><span class="danger">Black markets</span> and scams</span></li>
-                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.compareOther7">No protection against <span class="danger">whale manipulation</span></span></li>
+                    <li><i class="fas fa-times-circle cross" aria-hidden="true"></i> <span data-i18n="whatisfit.compareOther1"><span class="danger">Up and down</span> — unpredictable volatility</span></li>
+                    <li><i class="fas fa-times-circle cross" aria-hidden="true"></i> <span data-i18n="whatisfit.compareOther2">Often <span class="danger">not backed</span> by real assets</span></li>
+                    <li><i class="fas fa-times-circle cross" aria-hidden="true"></i> <span data-i18n="whatisfit.compareOther3"><span class="danger">No transparency</span> — centralized order books</span></li>
+                    <li><i class="fas fa-times-circle cross" aria-hidden="true"></i> <span data-i18n="whatisfit.compareOther4"><span class="danger">Whales</span> can manipulate prices</span></li>
+                    <li><i class="fas fa-times-circle cross" aria-hidden="true"></i> <span data-i18n="whatisfit.compareOther5">Can <span class="danger">crash 50-90%</span> in days</span></li>
+                    <li><i class="fas fa-times-circle cross" aria-hidden="true"></i> <span data-i18n="whatisfit.compareOther6"><span class="danger">Black markets</span> and scams</span></li>
+                    <li><i class="fas fa-times-circle cross" aria-hidden="true"></i> <span data-i18n="whatisfit.compareOther7">No protection against <span class="danger">whale manipulation</span></span></li>
                 </ul>
             </div>
         </div>
         
         <div class="info-box">
-            <h4 data-i18n="whatisfit.bottomLineTitle">🎯 The Bottom Line:</h4>
+            <h4><i class="fas fa-bullseye heading-icon" aria-hidden="true"></i><span data-i18n="whatisfit.bottomLineTitle">The Bottom Line:</span></h4>
             <p data-i18n="whatisfit.bottomLineText">
                 FIT is not a speculative gamble. It's a <span class="gold">mathematical certainty</span>. 
                 While others hope their crypto goes up, FIT holders <span class="highlight">know</span> it will. 
@@ -1490,37 +1559,37 @@ textarea:focus,
 
     <!-- ===== SECTION 4: WHAT MAKES FIT DIFFERENT ===== -->
     <div class="section-card">
-        <span class="icon-large">⭐</span>
+        <span class="icon-large"><i class="fas fa-star" aria-hidden="true"></i></span>
         <h2 data-i18n="whatisfit.differentTitle">What Makes FIT Different?</h2>
         
         <div class="feature-grid">
             <div class="feature-item" style="border-left-color: #D4AF37;">
-                <div class="icon">📉➡️📈</div>
+                <div class="icon"><i class="fas fa-chart-line" aria-hidden="true"></i></div>
                 <h4 style="color: #D4AF37;" data-i18n="whatisfit.diff1">Non-Diminishing Price</h4>
                 <p data-i18n="whatisfit.diff1Desc">The price <span class="gold">NEVER</span> goes down. This is not a promise — it's a mathematical guarantee built into the smart contract.</p>
             </div>
             <div class="feature-item" style="border-left-color: #D4AF37;">
-                <div class="icon">🏦</div>
+                <div class="icon"><i class="fas fa-shield-alt" aria-hidden="true"></i></div>
                 <h4 style="color: #D4AF37;" data-i18n="whatisfit.diff2">Real Asset Backing</h4>
                 <p data-i18n="whatisfit.diff2Desc">Every FIT token is backed by <span class="gold">real DAI</span> in the contract. You can verify the reserve at any time.</p>
             </div>
             <div class="feature-item" style="border-left-color: #D4AF37;">
-                <div class="icon">🔐</div>
+                <div class="icon"><i class="fas fa-shield-alt" aria-hidden="true"></i></div>
                 <h4 style="color: #D4AF37;" data-i18n="whatisfit.diff3">Anti-Whale Protection</h4>
                 <p data-i18n="whatisfit.diff3Desc">Step-based purchase limits prevent whales from dumping or manipulating the price.</p>
             </div>
             <div class="feature-item" style="border-left-color: #D4AF37;">
-                <div class="icon">🗳️</div>
+                <div class="icon"><i class="fas fa-landmark" aria-hidden="true"></i></div>
                 <h4 style="color: #D4AF37;" data-i18n="whatisfit.diff4">True Decentralization</h4>
                 <p data-i18n="whatisfit.diff4Desc">All decisions are made through <span class="gold">DAO voting</span>. No central authority can change the rules.</p>
             </div>
             <div class="feature-item" style="border-left-color: #D4AF37;">
-                <div class="icon">🔄</div>
+                <div class="icon"><i class="fas fa-sync-alt" aria-hidden="true"></i></div>
                 <h4 style="color: #D4AF37;" data-i18n="whatisfit.diff5">Every Transaction Helps</h4>
                 <p data-i18n="whatisfit.diff5Desc">Both buying AND selling increase the price. Even if you sell, you're helping the ecosystem grow.</p>
             </div>
             <div class="feature-item" style="border-left-color: #D4AF37;">
-                <div class="icon">🎁</div>
+                <div class="icon"><i class="fas fa-gift" aria-hidden="true"></i></div>
                 <h4 style="color: #D4AF37;" data-i18n="whatisfit.diff6">Gift Rewards</h4>
                 <p data-i18n="whatisfit.diff6Desc">Active participants earn $5 gift rewards through the automated lottery system.</p>
             </div>
@@ -1529,7 +1598,7 @@ textarea:focus,
 
     <!-- ===== SECTION 5: WHY SHOULD WE HAVE FIT ===== -->
     <div class="section-card">
-        <span class="icon-large">🏆</span>
+        <span class="icon-large"><i class="fas fa-trophy" aria-hidden="true"></i></span>
         <h2 data-i18n="whatisfit.whyHaveTitle">Why Should We Have FIT?</h2>
         
         <div class="info-box gold">
@@ -1545,29 +1614,29 @@ textarea:focus,
         
         <div class="comparison-grid">
             <div class="comparison-box fit">
-                <h4 data-i18n="whatisfit.withFitTitle">✅ With FIT You Get:</h4>
+                <h4><i class="fas fa-check-circle heading-icon" aria-hidden="true"></i><span data-i18n="whatisfit.withFitTitle">With FIT You Get:</span></h4>
                 <ul>
-                    <li><span class="check">✅</span> <span data-i18n="whatisfit.withFit1"><span class="gold">Peace of mind</span> — your investment only goes up</span></li>
-                    <li><span class="check">✅</span> <span data-i18n="whatisfit.withFit2"><span class="gold">Transparency</span> — all data on blockchain</span></li>
-                    <li><span class="check">✅</span> <span data-i18n="whatisfit.withFit3"><span class="gold">Community power</span> — DAO governance</span></li>
-                    <li><span class="check">✅</span> <span data-i18n="whatisfit.withFit4"><span class="gold">Real backing</span> — DAI reserves</span></li>
-                    <li><span class="check">✅</span> <span data-i18n="whatisfit.withFit5"><span class="gold">Passive growth</span> — every transaction helps you</span></li>
+                    <li><i class="fas fa-check-circle check" aria-hidden="true"></i> <span data-i18n="whatisfit.withFit1"><span class="gold">Peace of mind</span> — your investment only goes up</span></li>
+                    <li><i class="fas fa-check-circle check" aria-hidden="true"></i> <span data-i18n="whatisfit.withFit2"><span class="gold">Transparency</span> — all data on blockchain</span></li>
+                    <li><i class="fas fa-check-circle check" aria-hidden="true"></i> <span data-i18n="whatisfit.withFit3"><span class="gold">Community power</span> — DAO governance</span></li>
+                    <li><i class="fas fa-check-circle check" aria-hidden="true"></i> <span data-i18n="whatisfit.withFit4"><span class="gold">Real backing</span> — DAI reserves</span></li>
+                    <li><i class="fas fa-check-circle check" aria-hidden="true"></i> <span data-i18n="whatisfit.withFit5"><span class="gold">Passive growth</span> — every transaction helps you</span></li>
                 </ul>
             </div>
             <div class="comparison-box others">
-                <h4 data-i18n="whatisfit.withoutFitTitle">❌ Without FIT You Face:</h4>
+                <h4><i class="fas fa-exclamation-triangle heading-icon" aria-hidden="true"></i><span data-i18n="whatisfit.withoutFitTitle">Without FIT You Face:</span></h4>
                 <ul>
-                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.withoutFit1"><span class="danger">Fear of crash</span> — constant worry</span></li>
-                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.withoutFit2"><span class="danger">No transparency</span> — hidden manipulations</span></li>
-                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.withoutFit3"><span class="danger">Central control</span> — someone can change rules</span></li>
-                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.withoutFit4"><span class="danger">No real backing</span> — just promises</span></li>
-                    <li><span class="cross">❌</span> <span data-i18n="whatisfit.withoutFit5"><span class="danger">Zero-sum game</span> — your gain is someone's loss</span></li>
+                    <li><i class="fas fa-times-circle cross" aria-hidden="true"></i> <span data-i18n="whatisfit.withoutFit1"><span class="danger">Fear of crash</span> — constant worry</span></li>
+                    <li><i class="fas fa-times-circle cross" aria-hidden="true"></i> <span data-i18n="whatisfit.withoutFit2"><span class="danger">No transparency</span> — hidden manipulations</span></li>
+                    <li><i class="fas fa-times-circle cross" aria-hidden="true"></i> <span data-i18n="whatisfit.withoutFit3"><span class="danger">Central control</span> — someone can change rules</span></li>
+                    <li><i class="fas fa-times-circle cross" aria-hidden="true"></i> <span data-i18n="whatisfit.withoutFit4"><span class="danger">No real backing</span> — just promises</span></li>
+                    <li><i class="fas fa-times-circle cross" aria-hidden="true"></i> <span data-i18n="whatisfit.withoutFit5"><span class="danger">Zero-sum game</span> — your gain is someone's loss</span></li>
                 </ul>
             </div>
         </div>
         
         <div class="info-box">
-            <h4 data-i18n="whatisfit.analogyTitle">💡 Think of It This Way:</h4>
+            <h4><i class="fas fa-lightbulb heading-icon" aria-hidden="true"></i><span data-i18n="whatisfit.analogyTitle">Think of It This Way:</span></h4>
             <p data-i18n="whatisfit.analogyText">
                 Most cryptocurrencies are like a <span class="danger">roller coaster</span> — up, down, up, down. 
                 <span class="gold">FIT</span> is like an <span class="highlight">elevator</span> — 
@@ -1578,34 +1647,34 @@ textarea:focus,
 
     <!-- ===== SECTION 6: HOW IT WORKS ===== -->
     <div class="section-card">
-        <span class="icon-large">⚙️</span>
+        <span class="icon-large"><i class="fas fa-cogs" aria-hidden="true"></i></span>
         <h2 data-i18n="whatisfit.howWorksTitle">How Does FIT Work?</h2>
         
         <div class="steps-grid">
             <div class="step-item">
-                <div class="step-num">1</div>
+                <div class="step-icon"><i class="fas fa-shopping-cart" aria-hidden="true"></i></div><div class="step-num">01</div>
                 <h4 style="color: #00C896;" data-i18n="whatisfit.step1">Buy a Share</h4>
                 <p data-i18n="whatisfit.step1Desc">Purchase an ownership share (100 DAI)</p>
             </div>
             <div class="step-item gold">
-                <div class="step-num">2</div>
+                <div class="step-icon"><i class="fas fa-coins" aria-hidden="true"></i></div><div class="step-num">02</div>
                 <h4 style="color: #D4AF37;" data-i18n="whatisfit.step2">Get FIT</h4>
                 <p data-i18n="whatisfit.step2Desc">Exchange DAI for FIT tokens</p>
             </div>
             <div class="step-item">
-                <div class="step-num">3</div>
+                <div class="step-icon"><i class="fas fa-gift" aria-hidden="true"></i></div><div class="step-num">03</div>
                 <h4 style="color: #00C896;" data-i18n="whatisfit.step3">Earn Rewards</h4>
                 <p data-i18n="whatisfit.step3Desc">Participate in the ecosystem and earn</p>
             </div>
             <div class="step-item gold">
-                <div class="step-num">4</div>
+                <div class="step-icon"><i class="fas fa-chart-line" aria-hidden="true"></i></div><div class="step-num">04</div>
                 <h4 style="color: #D4AF37;" data-i18n="whatisfit.step4">Watch It Grow</h4>
                 <p data-i18n="whatisfit.step4Desc">Your investment increases with every transaction</p>
             </div>
         </div>
         
         <div class="info-box gold">
-            <h4 data-i18n="whatisfit.growthTitle">📈 The Growth Cycle:</h4>
+            <h4><i class="fas fa-chart-line heading-icon" aria-hidden="true"></i><span data-i18n="whatisfit.growthTitle">The Growth Cycle:</span></h4>
             <p style="text-align: center; font-size: 16px; color: #D4AF37;" data-i18n="whatisfit.growthText">
                 More Users → More Transactions → More DAI Reserve → <span class="highlight">Higher Price</span>
             </p>
@@ -1617,7 +1686,7 @@ textarea:focus,
 
     <!-- ===== SECTION 7: REAL NUMBERS (AUTOMATIC) ===== -->
     <div class="section-card">
-        <span class="icon-large">📊</span>
+        <span class="icon-large"><i class="fas fa-chart-bar" aria-hidden="true"></i></span>
         <h2 data-i18n="whatisfit.numbersTitle">The Numbers Speak for Themselves</h2>
         
         <div class="number-grid" id="numbersGrid">
@@ -1636,7 +1705,7 @@ textarea:focus,
         </div>
         
         <div class="info-box">
-            <h4 data-i18n="whatisfit.numbersPointTitle">📌 Key Point:</h4>
+            <h4><i class="fas fa-info-circle heading-icon" aria-hidden="true"></i><span data-i18n="whatisfit.numbersPointTitle">Key Point:</span></h4>
             <p data-i18n="whatisfit.numbersPoint">
                 FIT started at <span class="gold">$1.00</span> and has grown to over <span class="gold">$6.40+</span> — 
                 and it <span class="highlight">never went down</span>. Not once. Every single day, the price 
@@ -1647,7 +1716,7 @@ textarea:focus,
 
     <!-- ===== SECTION 8: CTA ===== -->
     <div class="section-card cta-section">
-        <div style="font-size: 48px; margin-bottom: 15px;">🚀</div>
+        <div class="cta-mark"><i class="fas fa-rocket" aria-hidden="true"></i></div>
         <h2 style="color: #D4AF37; border: none; padding: 0; margin: 0 0 15px 0;" data-i18n="whatisfit.ctaTitle">Ready to Own FIT?</h2>
         <p style="text-align: center; font-size: 16px; max-width: 600px; margin: 0 auto 20px auto;" data-i18n="whatisfit.ctaText">
             Join the world's first non-diminishing digital asset. Start your journey to <span class="gold">infinite growth</span> today.
@@ -1658,19 +1727,17 @@ textarea:focus,
             <a href="compare.html" class="btn-outline"><i class="fas fa-chart-line"></i> <span data-i18n="whatisfit.ctaBtn2">See the Difference</span></a>
         </div>
         
-        <p style="font-size: 12px; color: #888; margin-top: 20px;" data-i18n="whatisfit.ctaNote">
-            🔒 100% decentralized • 💎 Backed by real DAI • 📈 Always rising
-        </p>
+        <p class="cta-note" data-i18n-html="whatisfit.ctaNote"><i class="fas fa-lock" aria-hidden="true"></i> 100% decentralized <span>•</span> <i class="fas fa-coins" aria-hidden="true"></i> Backed by real DAI <span>•</span> <i class="fas fa-chart-line" aria-hidden="true"></i> Always rising</p>
     </div>
 
     <!-- ===== FOOTER ===== -->
     <div class="footer">
         <div class="footer-links">
-            <a href="index.html"><i class="fas fa-gauge-high" aria-hidden="true"></i> <span data-i18n="nav.dashboard">Dashboard</span></a>
+            <a href="index.html"><i class="fas fa-tachometer-alt" aria-hidden="true"></i> <span data-i18n="nav.dashboard">Dashboard</span></a>
             <span>|</span>
-            <a href="what-is-fit.html"><i class="fas fa-circle-info" aria-hidden="true"></i> <span data-i18n="nav.whatisfit">What is FIT?</span></a>
+            <a href="what-is-fit.html"><i class="fas fa-info-circle" aria-hidden="true"></i> <span data-i18n="nav.whatisfit">What is FIT?</span></a>
             <span>|</span>
-            <a href="compare.html"><i class="fas fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="nav.comparison">Comparison</span></a>
+            <a href="compare.html"><i class="fas fa-balance-scale" aria-hidden="true"></i> <span data-i18n="nav.comparison">Comparison</span></a>
             <span>|</span>
             <a href="dapp.html"><i class="fas fa-cubes" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span></a>
             <span>|</span>
@@ -1678,11 +1745,11 @@ textarea:focus,
             <span>|</span>
             <a href="next-projects.html"><i class="fas fa-rocket" aria-hidden="true"></i> <span data-i18n="nav.nextProjects">Upcoming Projects</span></a>
             <span>|</span>
-            <a href="transactions.html"><i class="fas fa-arrow-right-arrow-left" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span></a>
+            <a href="transactions.html"><i class="fas fa-exchange-alt" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span></a>
             <span>|</span>
             <a href="privacy.html"><i class="fas fa-user-shield" aria-hidden="true"></i> <span data-i18n="nav.privacy">Privacy</span></a>
             <span>|</span>
-            <a href="warnings.html"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span></a>
+            <a href="warnings.html"><i class="fas fa-exclamation-triangle" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span></a>
             <span>|</span>
             <a href="faq.html"><i class="fas fa-comments" aria-hidden="true"></i> <span data-i18n="nav.faq">FAQ</span></a>
             <span>|</span>
