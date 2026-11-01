@@ -920,6 +920,93 @@ textarea:focus,
 
 </style>
     <link rel="stylesheet" href="wallet-ui.css">
+
+<style id="fly-infinity-nav-footer-premium">
+/* Fly Infinity — premium navigation and footer refresh */
+.sidebar-menu { gap: 9px !important; padding: 8px 10px 14px !important; }
+.sidebar-menu a {
+  position: relative !important; display: flex !important; align-items: center !important;
+  gap: 13px !important; min-height: 48px !important; padding: 10px 14px !important;
+  border: 1px solid rgba(0,200,150,.13) !important; border-radius: 15px !important;
+  background: linear-gradient(115deg, rgba(255,255,255,.045), rgba(0,200,150,.025)) !important;
+  color: rgba(232,245,241,.86) !important; font-weight: 600 !important;
+  letter-spacing: .12px; text-decoration: none !important;
+  transition: transform .22s ease, background .22s ease, border-color .22s ease, box-shadow .22s ease !important;
+  overflow: hidden;
+}
+.sidebar-menu a::before {
+  content: ""; position: absolute; inset: 0 auto 0 0; width: 2px;
+  background: linear-gradient(180deg, transparent, rgba(0,200,150,.8), transparent);
+  opacity: 0; transition: opacity .22s ease;
+}
+.sidebar-menu a > i {
+  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  flex: 0 0 32px !important; width: 32px !important; height: 32px !important;
+  margin: 0 !important; border-radius: 10px !important; font-size: 15px !important;
+  color: #00D6A2 !important; background: rgba(0,200,150,.105) !important;
+  border: 1px solid rgba(0,200,150,.20) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+  transition: color .22s ease, background .22s ease, box-shadow .22s ease, transform .22s ease !important;
+}
+.sidebar-menu a:hover, .sidebar-menu a:focus-visible {
+  transform: translateX(-3px) !important; color: #F2FFFA !important;
+  background: linear-gradient(110deg, rgba(0,200,150,.16), rgba(0,200,150,.055)) !important;
+  border-color: rgba(0,220,165,.55) !important;
+  box-shadow: 0 7px 22px rgba(0,0,0,.18), 0 0 17px rgba(0,200,150,.13), inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+.sidebar-menu a:hover::before, .sidebar-menu a.active::before { opacity: 1; }
+.sidebar-menu a:hover > i, .sidebar-menu a:focus-visible > i {
+  color: #07130F !important; background: linear-gradient(135deg,#00D6A2,#70F0C9) !important;
+  box-shadow: 0 0 15px rgba(0,220,165,.35) !important; transform: scale(1.04);
+}
+.sidebar-menu a.active {
+  color: #F4D978 !important; border-color: rgba(212,175,55,.58) !important;
+  background: linear-gradient(110deg, rgba(0,200,150,.18), rgba(212,175,55,.065)) !important;
+  box-shadow: 0 0 18px rgba(0,200,150,.12), inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+.sidebar-menu a.active > i {
+  color: #171309 !important; background: linear-gradient(135deg,#D4AF37,#F5DE8A) !important;
+  border-color: rgba(245,222,138,.65) !important; box-shadow: 0 0 14px rgba(212,175,55,.23) !important;
+}
+/* Footer links become individual, tactile navigation chips */
+.footer .footer-links, .footer-links {
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  flex-wrap: wrap !important; gap: 9px !important; margin: 0 auto 18px !important;
+  max-width: 1080px; padding: 14px !important; border-radius: 20px !important;
+  background: linear-gradient(135deg, rgba(255,255,255,.035), rgba(0,200,150,.035)) !important;
+  border: 1px solid rgba(0,200,150,.13) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035), 0 12px 30px rgba(0,0,0,.13) !important;
+}
+.footer .footer-links > a, .footer-links > a, .footer > div[style*="display: flex"] > a {
+  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  min-height: 36px !important; padding: 8px 13px !important; border-radius: 11px !important;
+  color: rgba(225,245,238,.86) !important; font-size: 12px !important; font-weight: 600 !important;
+  line-height: 1.25 !important; text-decoration: none !important;
+  background: rgba(8,22,19,.58) !important; border: 1px solid rgba(0,200,150,.19) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.045) !important;
+  transition: transform .2s ease, color .2s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease !important;
+}
+.footer .footer-links > a:hover, .footer-links > a:hover, .footer > div[style*="display: flex"] > a:hover {
+  color: #F5D978 !important; transform: translateY(-2px) !important;
+  background: rgba(0,200,150,.12) !important; border-color: rgba(0,220,165,.65) !important;
+  box-shadow: 0 5px 17px rgba(0,200,150,.13), 0 0 12px rgba(0,200,150,.10) !important;
+}
+.footer .footer-links > span, .footer-links > span, .footer > div[style*="display: flex"] > span { display: none !important; }
+.footer .footer-tagline { margin-top: 8px !important; }
+@media (max-width: 600px) {
+  .sidebar-menu { padding-left: 8px !important; padding-right: 8px !important; }
+  .sidebar-menu a { min-height: 46px !important; padding: 8px 11px !important; }
+  .footer .footer-links, .footer-links, .footer > div[style*="display: flex"] {
+    gap: 7px !important; padding: 11px !important; border-radius: 16px !important;
+  }
+  .footer .footer-links > a, .footer-links > a, .footer > div[style*="display: flex"] > a {
+    min-height: 34px !important; padding: 7px 10px !important; font-size: 11px !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-menu a, .sidebar-menu a > i, .footer-links > a { transition: none !important; }
+}
+</style>
 </head>
 <body>
 <div class="container">
