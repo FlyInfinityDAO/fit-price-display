@@ -1131,7 +1131,26 @@ textarea:focus,
             .sidebar-footer .sidebar-footer-tagline { font-size: 9px; }
         }
     
-</style>
+
+        /* ===== FLY INFINITY FOOTER COLOR REFINEMENT ===== */
+        .footer .footer-links a {
+            color: #D4AF37 !important;
+            border: 1px solid rgba(0,200,150,.48) !important;
+            background: linear-gradient(135deg, rgba(0,200,150,.24), rgba(0,200,150,.09)) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 5px 16px rgba(0,0,0,.18), 0 0 12px rgba(0,200,150,.07) !important;
+        }
+        .footer .footer-links a span { color: #D4AF37 !important; }
+        .footer .footer-links a i { color: #D4AF37 !important; }
+        .footer .footer-links a:hover {
+            color: #D4AF37 !important;
+            border-color: rgba(212,175,55,.72) !important;
+            background: linear-gradient(135deg, rgba(0,200,150,.30), rgba(212,175,55,.12)) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 7px 20px rgba(0,0,0,.22), 0 0 15px rgba(0,200,150,.12) !important;
+        }
+        .footer .footer-links a:hover i { color: #D4AF37 !important; }
+        .footer .footer-links a:focus-visible { outline: 2px solid #D4AF37; outline-offset: 3px; }
+        
+    </style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head><body>
 <div class="container">
@@ -1175,7 +1194,7 @@ textarea:focus,
                 <i class="fas fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="nav.comparison">Comparison</span>
             </a>
             <a href="dapp.html">
-                <i class="fas fa-cubes-stacked" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span>
+                <i class="fas fa-cubes" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span>
             </a>
             <a href="profit-simulator.html" class="active">
                 <i class="fas fa-calculator" aria-hidden="true"></i> <span data-i18n="nav.profitCalculator">Profit Calculator</span>
@@ -1199,7 +1218,7 @@ textarea:focus,
                 <i class="fas fa-book-open" aria-hidden="true"></i> <span data-i18n="nav.whitepaper">White Paper</span>
             </a>
             <a href="audit.html">
-                <i class="fas fa-shield-halved" aria-hidden="true"></i> <span data-i18n="nav.audit">Security Audit</span>
+                <i class="fas fa-clipboard-check" aria-hidden="true"></i> <span data-i18n="nav.audit">Security Audit</span>
             </a>
         </div>
         
@@ -1484,29 +1503,29 @@ textarea:focus,
     <!-- ===== FOOTER ===== -->
     <div class="footer">
         <div class="footer-links">
-            <a href="index.html"><span data-i18n="nav.dashboard"><i class="fas fa-gauge-high" aria-hidden="true"></i> Dashboard</span></a>
+            <a href="index.html"><i class="fas fa-gauge-high" aria-hidden="true"></i> <span data-i18n="nav.dashboard">Dashboard</span></a>
             <span>|</span>
-            <a href="what-is-fit.html"><span data-i18n="nav.whatisfit"><i class="fas fa-circle-info" aria-hidden="true"></i> What is FIT?</span></a>
+            <a href="what-is-fit.html"><i class="fas fa-circle-info" aria-hidden="true"></i> <span data-i18n="nav.whatisfit">What is FIT?</span></a>
             <span>|</span>
-            <a href="compare.html"><span data-i18n="nav.comparison"><i class="fas fa-scale-balanced" aria-hidden="true"></i> Comparison</span></a>
+            <a href="compare.html"><i class="fas fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="nav.comparison">Comparison</span></a>
             <span>|</span>
-            <a href="dapp.html"><span data-i18n="nav.dapp"><i class="fas fa-cubes-stacked" aria-hidden="true"></i> DApp</span></a>
+            <a href="dapp.html"><i class="fas fa-cubes" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span></a>
             <span>|</span>
-            <a href="profit-simulator.html"><span data-i18n="nav.profitCalculator"><i class="fas fa-calculator" aria-hidden="true"></i> Profit Calculator</span></a>
+            <a href="profit-simulator.html"><i class="fas fa-calculator" aria-hidden="true"></i> <span data-i18n="nav.profitCalculator">Profit Calculator</span></a>
             <span>|</span>
-            <a href="next-projects.html"><span data-i18n="nav.nextProjects"><i class="fas fa-rocket" aria-hidden="true"></i> Upcoming Projects</span></a>
+            <a href="next-projects.html"><i class="fas fa-rocket" aria-hidden="true"></i> <span data-i18n="nav.nextProjects">Upcoming Projects</span></a>
             <span>|</span>
-            <a href="transactions.html"><span data-i18n="nav.transactions"><i class="fas fa-arrow-right-arrow-left" aria-hidden="true"></i> Transactions</span></a>
+            <a href="transactions.html"><i class="fas fa-arrow-right-arrow-left" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span></a>
             <span>|</span>
-            <a href="privacy.html"><span data-i18n="nav.privacy"><i class="fas fa-user-shield" aria-hidden="true"></i> Privacy</span></a>
+            <a href="privacy.html"><i class="fas fa-user-shield" aria-hidden="true"></i> <span data-i18n="nav.privacy">Privacy</span></a>
             <span>|</span>
-            <a href="warnings.html"><span data-i18n="nav.warnings"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> Warnings</span></a>
+            <a href="warnings.html"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span></a>
             <span>|</span>
-            <a href="faq.html"><span data-i18n="nav.faq"><i class="fas fa-comments" aria-hidden="true"></i> FAQ</span></a>
+            <a href="faq.html"><i class="fas fa-comments" aria-hidden="true"></i> <span data-i18n="nav.faq">FAQ</span></a>
             <span>|</span>
-            <a href="whitepaper.html"><span data-i18n="nav.whitepaper"><i class="fas fa-book-open" aria-hidden="true"></i> White Paper</span></a>
+            <a href="whitepaper.html"><i class="fas fa-book-open" aria-hidden="true"></i> <span data-i18n="nav.whitepaper">White Paper</span></a>
             <span>|</span>
-            <a href="audit.html"><span data-i18n="nav.audit"><i class="fas fa-shield-halved" aria-hidden="true"></i> Security Audit</span></a>
+            <a href="audit.html"><i class="fas fa-clipboard-check" aria-hidden="true"></i> <span data-i18n="nav.audit">Security Audit</span></a>
         </div>
         <p class="footer-tagline" data-i18n-html="footer.tagline"></p>
     </div>
