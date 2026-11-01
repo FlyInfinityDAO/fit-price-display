@@ -1245,6 +1245,53 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
 }
 
 </style>
+
+    /* ===== QUICK LINKS: EMERALD GLASS + HOVER NEON ===== */
+    .action-buttons {
+        display:flex; justify-content:center; align-items:stretch; gap:14px;
+        flex-wrap:wrap; margin:22px 0 24px;
+    }
+    .action-buttons .action-btn-glass {
+        position:relative; isolation:isolate; overflow:hidden;
+        display:inline-flex; align-items:center; justify-content:center; gap:11px;
+        min-width:190px; min-height:52px; padding:13px 25px;
+        color:#70f5cf !important; text-decoration:none; font-size:14px; font-weight:750;
+        letter-spacing:.2px; border:1px solid rgba(0,220,165,.48) !important;
+        border-radius:16px;
+        background:linear-gradient(135deg,rgba(0,200,150,.19),rgba(8,35,29,.34) 55%,rgba(0,200,150,.10)) !important;
+        -webkit-backdrop-filter:blur(18px) saturate(150%); backdrop-filter:blur(18px) saturate(150%);
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 8px 24px rgba(0,0,0,.22),0 0 12px rgba(0,200,150,.10);
+        transition:transform .25s ease,border-color .25s ease,color .25s ease,box-shadow .25s ease,background .25s ease;
+    }
+    .action-buttons .action-btn-glass::before {
+        content:""; position:absolute; z-index:-1; inset:0; opacity:0;
+        background:linear-gradient(110deg,transparent 15%,rgba(255,255,255,.16) 48%,transparent 78%);
+        transform:translateX(-120%); transition:transform .55s ease,opacity .25s ease;
+    }
+    .action-buttons .action-btn-glass i {
+        color:#00e6ad; font-size:17px; filter:drop-shadow(0 0 5px rgba(0,230,173,.32));
+        transition:color .25s ease,filter .25s ease;
+    }
+    .action-buttons .action-btn-glass:hover,
+    .action-buttons .action-btn-glass:focus-visible {
+        color:#eafff8 !important; border-color:rgba(0,255,190,.95) !important;
+        background:linear-gradient(135deg,rgba(0,220,165,.32),rgba(5,48,38,.55) 58%,rgba(0,200,150,.22)) !important;
+        box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 10px 28px rgba(0,0,0,.28),
+                   0 0 10px rgba(0,255,190,.62),0 0 25px rgba(0,230,173,.40),0 0 42px rgba(0,200,150,.20);
+        transform:translateY(-3px); outline:none;
+    }
+    .action-buttons .action-btn-glass:hover::before,
+    .action-buttons .action-btn-glass:focus-visible::before { opacity:1; transform:translateX(120%); }
+    .action-buttons .action-btn-glass:hover i,
+    .action-buttons .action-btn-glass:focus-visible i { color:#a2ffe4; filter:drop-shadow(0 0 8px rgba(0,255,190,.9)); }
+    @media(max-width:640px) {
+        .action-buttons { gap:10px; }
+        .action-buttons .action-btn-glass { flex:1 1 100%; min-width:0; min-height:48px; padding:12px 16px; }
+    }
+    @media(prefers-reduced-motion:reduce) {
+        .action-buttons .action-btn-glass,.action-buttons .action-btn-glass::before,.action-buttons .action-btn-glass i { transition:none !important; }
+    }
+
     <link rel="stylesheet" href="wallet-ui.css">
 
     <style>
@@ -1398,9 +1445,16 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
         </div>
     </div>
 <!-- Action Buttons -->
-    <div class="action-buttons">
-        <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="action-btn"><i class="fas fa-file-contract"></i> BscScan</a>
-<a href="dapp.html" class="action-btn dapp-btn"><i class="fas fa-rocket"></i> <span data-i18n="nav.dapp">Buy Ownership Shares &amp; FIT</span></a>
+    <div class="action-buttons" aria-label="Fly Infinity quick links">
+        <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" rel="noopener noreferrer" class="action-btn action-btn-glass">
+            <i class="fas fa-file-contract" aria-hidden="true"></i><span>BscScan</span>
+        </a>
+        <a href="dapp.html" class="action-btn action-btn-glass">
+            <i class="fas fa-rocket" aria-hidden="true"></i><span data-i18n="nav.dapp">Buy Ownership Shares &amp; FIT</span>
+        </a>
+        <a href="https://github.com/FlyInfinityDAO/Fly-Infinity-Token/blob/main/FIT%20-%20White%20Paper.pdf" target="_blank" rel="noopener noreferrer" class="action-btn action-btn-glass">
+            <i class="fas fa-file-pdf" aria-hidden="true"></i><span data-i18n="nav.whitepaper">White Paper</span>
+        </a>
     </div>
 
     <!-- ===== CHART ===== -->
