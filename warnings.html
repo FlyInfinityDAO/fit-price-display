@@ -760,6 +760,116 @@ textarea:focus,
   }
 }
 
+
+        /* ===== FLY INFINITY NAVIGATION REFRESH ===== */
+        .sidebar-menu a {
+            min-height: 48px;
+            padding: 12px 16px;
+            gap: 13px;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(212,175,55,0.10);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.025);
+        }
+        .sidebar-menu a i {
+            width: 25px;
+            min-width: 25px;
+            height: 25px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: rgba(0,200,150,0.10);
+            color: #00C896;
+            font-size: 14px;
+            transition: background .25s ease, color .25s ease, transform .25s ease;
+        }
+        .sidebar-menu a:hover i {
+            background: rgba(212,175,55,0.15);
+            color: #D4AF37;
+            transform: scale(1.06);
+        }
+        .sidebar-menu a.active i {
+            background: rgba(212,175,55,0.16);
+            color: #D4AF37;
+        }
+        .sidebar-footer {
+            padding: 18px 10px 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            line-height: 1.5;
+        }
+        .sidebar-footer .sidebar-footer-brand {
+            color: #D4AF37;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .08em;
+        }
+        .sidebar-footer .sidebar-footer-tagline {
+            color: #aebdb8;
+            font-size: 10px;
+            letter-spacing: .015em;
+            text-align: center;
+        }
+        .footer .footer-links {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 9px;
+            row-gap: 10px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            margin: 0 auto 16px;
+            max-width: 1100px;
+        }
+        .footer .footer-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            min-height: 36px;
+            padding: 8px 12px;
+            border: 1px solid rgba(0,200,150,.22);
+            border-radius: 12px;
+            color: #c7d8d2;
+            background: linear-gradient(135deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 5px 16px rgba(0,0,0,.16);
+            text-decoration: none;
+            transition: transform .22s ease, border-color .22s ease, background .22s ease, color .22s ease;
+            white-space: nowrap;
+        }
+        .footer .footer-links a i {
+            color: #00C896;
+            font-size: 12px;
+            transition: color .22s ease;
+        }
+        .footer .footer-links a:hover {
+            color: #D4AF37;
+            border-color: rgba(212,175,55,.55);
+            background: linear-gradient(135deg, rgba(212,175,55,.13), rgba(0,200,150,.07));
+            transform: translateY(-2px);
+        }
+        .footer .footer-links a:hover i { color: #D4AF37; }
+        .footer .footer-links > span { display: none; }
+        .footer .footer-tagline {
+            line-height: 1.7;
+            letter-spacing: .02em;
+        }
+        @media (max-width: 600px) {
+            .footer .footer-links { gap: 7px; row-gap: 8px; }
+            .footer .footer-links a {
+                min-height: 34px;
+                padding: 7px 9px;
+                gap: 6px;
+                font-size: 11px;
+                border-radius: 10px;
+            }
+            .sidebar-footer .sidebar-footer-tagline { font-size: 9px; }
+        }
+    
 </style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head>
@@ -793,49 +903,46 @@ textarea:focus,
         </div>
         
         <div class="sidebar-menu">
-            <a href="index.html" data-i18n="nav.dashboard">
-                <i class="fas fa-home"></i> <span data-i18n="nav.dashboard">Dashboard</span>
+            <a href="index.html">
+                <i class="fas fa-gauge-high" aria-hidden="true"></i> <span data-i18n="nav.dashboard">Dashboard</span>
             </a>
             <!-- ===== What is FIT? link added ===== -->
-            <a href="what-is-fit.html" data-i18n="nav.whatisfit">
-                <i class="fas fa-question-circle"></i> <span data-i18n="nav.whatisfit">What is FIT?</span>
+            <a href="what-is-fit.html">
+                <i class="fas fa-circle-info" aria-hidden="true"></i> <span data-i18n="nav.whatisfit">What is FIT?</span>
             </a>
-            <a href="compare.html" data-i18n="nav.comparison">
-                <i class="fas fa-chart-line"></i> <span data-i18n="nav.comparison">Comparison</span>
+            <a href="compare.html">
+                <i class="fas fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="nav.comparison">Comparison</span>
             </a>
-            <a href="dapp.html" data-i18n="nav.dapp">
-                <i class="fas fa-charging-station"></i> <span data-i18n="nav.dapp">DApp</span>
+            <a href="dapp.html">
+                <i class="fas fa-cubes-stacked" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span>
             </a>
-            <a href="profit-simulator.html" data-i18n="nav.profitCalculator">
-                <i class="fas fa-calculator"></i> <span data-i18n="nav.profitCalculator">Profit Calculator</span>
+            <a href="profit-simulator.html">
+                <i class="fas fa-calculator" aria-hidden="true"></i> <span data-i18n="nav.profitCalculator">Profit Calculator</span>
             </a>
-            <a href="next-projects.html" data-i18n="nav.nextProjects">
-                <i class="fas fa-rocket"></i> <span data-i18n="nav.nextProjects">Upcoming Projects</span>
+            <a href="next-projects.html">
+                <i class="fas fa-rocket" aria-hidden="true"></i> <span data-i18n="nav.nextProjects">Upcoming Projects</span>
             </a>
-            <a href="transactions.html" data-i18n="nav.transactions">
-                <i class="fas fa-history"></i> <span data-i18n="nav.transactions">Transactions</span>
+            <a href="transactions.html">
+                <i class="fas fa-arrow-right-arrow-left" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span>
             </a>
-            <a href="privacy.html" data-i18n="nav.privacy">
-                <i class="fas fa-shield-alt"></i> <span data-i18n="nav.privacy">Privacy</span>
+            <a href="privacy.html">
+                <i class="fas fa-user-shield" aria-hidden="true"></i> <span data-i18n="nav.privacy">Privacy</span>
             </a>
-            <a href="warnings.html" class="active" data-i18n="nav.warnings">
-                <i class="fas fa-exclamation-triangle"></i> <span data-i18n="nav.warnings">Warnings</span>
+            <a href="warnings.html" class="active">
+                <i class="fas fa-triangle-exclamation" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span>
             </a>
-            <a href="faq.html" data-i18n="nav.faq">
-                <i class="fas fa-question-circle"></i> <span data-i18n="nav.faq">FAQ</span>
+            <a href="faq.html">
+                <i class="fas fa-comments" aria-hidden="true"></i> <span data-i18n="nav.faq">FAQ</span>
             </a>
-            <a href="whitepaper.html" data-i18n="nav.whitepaper">
-                <i class="fas fa-file-pdf"></i> <span data-i18n="nav.whitepaper">White Paper</span>
+            <a href="whitepaper.html">
+                <i class="fas fa-book-open" aria-hidden="true"></i> <span data-i18n="nav.whitepaper">White Paper</span>
             </a>
-            <a href="audit.html" data-i18n="nav.audit">
-                <i class="fas fa-shield-halved"></i> <span data-i18n="nav.audit">Security Audit</span>
+            <a href="audit.html">
+                <i class="fas fa-shield-halved" aria-hidden="true"></i> <span data-i18n="nav.audit">Security Audit</span>
             </a>
         </div>
         
-        <div class="sidebar-footer">
-            <a href="https://flyinfinitydao.github.io" target="_blank">flyinfinitydao.github.io</a><br>
-            Fly Infinity DAO
-        </div>
+        <div class="sidebar-footer"><span class="sidebar-footer-brand">Fly Infinity DAO</span><span class="sidebar-footer-tagline">Decentralized. Transparent. Forever Rising.</span></div>
     </div>
 
     <!-- Warnings Container -->
@@ -893,30 +1000,30 @@ textarea:focus,
 
     <div class="footer">
         <div class="footer-links">
-            <a href="index.html" data-i18n="nav.dashboard">Dashboard</a>
+            <a href="index.html"><span data-i18n="nav.dashboard"><i class="fas fa-gauge-high" aria-hidden="true"></i> Dashboard</span></a>
             <span>|</span>
             <!-- ===== What is FIT? link added to the footer ===== -->
-            <a href="what-is-fit.html" data-i18n="nav.whatisfit">What is FIT?</a>
+            <a href="what-is-fit.html"><span data-i18n="nav.whatisfit"><i class="fas fa-circle-info" aria-hidden="true"></i> What is FIT?</span></a>
             <span>|</span>
-            <a href="compare.html" data-i18n="nav.comparison">Comparison</a>
+            <a href="compare.html"><span data-i18n="nav.comparison"><i class="fas fa-scale-balanced" aria-hidden="true"></i> Comparison</span></a>
             <span>|</span>
-            <a href="dapp.html" data-i18n="nav.dapp">DApp</a>
+            <a href="dapp.html"><span data-i18n="nav.dapp"><i class="fas fa-cubes-stacked" aria-hidden="true"></i> DApp</span></a>
             <span>|</span>
-            <a href="profit-simulator.html" data-i18n="nav.profitCalculator">Profit Calculator</a>
+            <a href="profit-simulator.html"><span data-i18n="nav.profitCalculator"><i class="fas fa-calculator" aria-hidden="true"></i> Profit Calculator</span></a>
             <span>|</span>
-            <a href="next-projects.html" data-i18n="nav.nextProjects">Upcoming Projects</a>
+            <a href="next-projects.html"><span data-i18n="nav.nextProjects"><i class="fas fa-rocket" aria-hidden="true"></i> Upcoming Projects</span></a>
             <span>|</span>
-            <a href="transactions.html" data-i18n="nav.transactions">Transactions</a>
+            <a href="transactions.html"><span data-i18n="nav.transactions"><i class="fas fa-arrow-right-arrow-left" aria-hidden="true"></i> Transactions</span></a>
             <span>|</span>
-            <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+            <a href="privacy.html"><span data-i18n="nav.privacy"><i class="fas fa-user-shield" aria-hidden="true"></i> Privacy</span></a>
             <span>|</span>
-            <a href="warnings.html" data-i18n="nav.warnings">Warnings</a>
+            <a href="warnings.html"><span data-i18n="nav.warnings"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> Warnings</span></a>
             <span>|</span>
-            <a href="faq.html" data-i18n="nav.faq">FAQ</a>
+            <a href="faq.html"><span data-i18n="nav.faq"><i class="fas fa-comments" aria-hidden="true"></i> FAQ</span></a>
             <span>|</span>
-            <a href="whitepaper.html" data-i18n="nav.whitepaper">White Paper</a>
+            <a href="whitepaper.html"><span data-i18n="nav.whitepaper"><i class="fas fa-book-open" aria-hidden="true"></i> White Paper</span></a>
             <span>|</span>
-            <a href="audit.html" data-i18n="nav.audit">Security Audit</a>
+            <a href="audit.html"><span data-i18n="nav.audit"><i class="fas fa-shield-halved" aria-hidden="true"></i> Security Audit</span></a>
         </div>
         <p class="footer-tagline" data-i18n="footer.tagline">
             Fly Infinity — <span class="gold">Decentralized. Transparent. Forever Rising.</span>
