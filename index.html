@@ -1250,6 +1250,23 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
     .mission-pillar i { font-size: 19px !important; }
 }
 
+
+
+/* Token Statistics: glass panel for contract address and pricing formula */
+.token-contract-panel {
+    background: rgba(10, 20, 19, 0.24) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(135%);
+    backdrop-filter: blur(18px) saturate(135%);
+    border: 1px solid rgba(0, 200, 150, 0.24) !important;
+    border-left: 3px solid #00C896 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18),
+                0 0 16px rgba(0, 200, 150, 0.10),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .token-contract-panel { background: rgba(10, 20, 19, 0.82) !important; }
+}
+
 </style>
 
     <style>
@@ -1454,7 +1471,7 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
                     <div class="stat-label" data-i18n="dashboard.totalAirdrops">Total Airdrops Paid ($)</div>
                 </div>
             </div>
-            <div style="margin-top:15px; background:#1a1a1a; border-radius:16px; padding:12px; border-left: 3px solid #00C896;">
+            <div class="token-contract-panel" style="margin-top:15px; border-radius:16px; padding:12px;">
                 <div style="color:#00C896; font-size:11px;" data-i18n="dashboard.contract">📜 Contract Address</div>
                 <div style="font-family:monospace; font-size:12px; color:#D4AF37; word-break:break-all;">0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa</div>
                 <div style="color:#00C896; font-size:11px; margin-top:8px;" data-i18n="dashboard.formula">💰 Pricing Formula</div>
