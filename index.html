@@ -1246,10 +1246,11 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
 
 </style>
 
+    <style>
     /* ===== QUICK LINKS: EMERALD GLASS + HOVER NEON ===== */
     .action-buttons {
         display:flex; justify-content:center; align-items:stretch; gap:14px;
-        flex-wrap:wrap; margin:22px 0 24px;
+        flex-wrap:wrap; margin:16px 0 20px;
     }
     .action-buttons .action-btn-glass {
         position:relative; isolation:isolate; overflow:hidden;
@@ -1285,12 +1286,23 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
     .action-buttons .action-btn-glass:hover i,
     .action-buttons .action-btn-glass:focus-visible i { color:#a2ffe4; filter:drop-shadow(0 0 8px rgba(0,255,190,.9)); }
     @media(max-width:640px) {
-        .action-buttons { gap:10px; }
-        .action-buttons .action-btn-glass { flex:1 1 100%; min-width:0; min-height:48px; padding:12px 16px; }
+        .action-buttons { gap:8px; margin:14px 0 18px; }
+        .action-buttons .action-btn-glass {
+            flex:1 1 0; min-width:0; min-height:50px; padding:10px 7px;
+            gap:6px; border-radius:13px; font-size:clamp(10px, 2.8vw, 12px);
+            line-height:1.2; text-align:center; white-space:normal;
+        }
+        .action-buttons .action-btn-glass i { font-size:15px; }
+    }
+    @media(max-width:360px) {
+        .action-buttons { gap:6px; }
+        .action-buttons .action-btn-glass { padding:9px 4px; font-size:10px; }
     }
     @media(prefers-reduced-motion:reduce) {
         .action-buttons .action-btn-glass,.action-buttons .action-btn-glass::before,.action-buttons .action-btn-glass i { transition:none !important; }
     }
+
+    </style>
 
     <link rel="stylesheet" href="wallet-ui.css">
 
