@@ -68,7 +68,7 @@ function t(key) {
             return key;
         }
     }
-    return value || key;
+    return value === undefined || value === null ? key : value;
 }
 
 function tWithReplace(key, replacements) {
@@ -81,12 +81,17 @@ function tWithReplace(key, replacements) {
     return text;
 }
 
-function setLanguage(lang) {
+async function setLanguage(lang) {
     if (!LANGUAGES[lang]) return;
     currentLang = lang;
     localStorage.setItem('fit_lang', lang);
     document.documentElement.lang = lang;
     document.documentElement.dir = LANGUAGES[lang].dir;
+    document.body && document.body.classList.toggle('fi-rtl', LANGUAGES[lang].dir === 'rtl');
+    // Load the selected page dictionary before updating the dashboard.
+    // Previously this reused the old dictionary, so changing the flag could
+    // leave the first price card and other labels in the previous language.
+    await loadLanguage(lang);
     updateAllTranslations();
     updateLangButton();
     document.dispatchEvent(new Event('fi-language-updated'));
@@ -186,35 +191,20 @@ async function initLanguageSystem() {
     currentLang = getDefaultLang();
     document.documentElement.lang = currentLang;
     document.documentElement.dir = LANGUAGES[currentLang].dir;
+    document.body && document.body.classList.toggle('fi-rtl', LANGUAGES[currentLang].dir === 'rtl');
     
     // Load translations
     await loadLanguage(currentLang);
     
-    // Create and insert language button
+    // Keep the original logo node untouched. Inject language and wallet controls
+    // into the dedicated right-side toolbar so the first dashboard card/layout
+    // is never reparented or affected by language initialization.
     const langBtn = createLangButton();
-    const topBar = document.querySelector('.top-bar .logo');
-    if (topBar && topBar.parentNode) {
-        const wrapper = document.createElement('div');
-        wrapper.style.cssText = 'display: flex; align-items: center; gap: 12px;';
-        const logoClone = topBar.cloneNode(true);
-        wrapper.appendChild(logoClone);
-        wrapper.appendChild(createWalletButton());
-        wrapper.appendChild(langBtn);
-        topBar.parentNode.replaceChild(wrapper, topBar);
-    } else {
-        const topBarContainer = document.querySelector('.top-bar');
-        if (topBarContainer) {
-            const wrapper = document.createElement('div');
-            wrapper.style.cssText = 'display: flex; align-items: center; gap: 12px;';
-            const logo = topBarContainer.querySelector('.logo');
-            if (logo) {
-                const logoClone = logo.cloneNode(true);
-                wrapper.appendChild(logoClone);
-            }
-            wrapper.appendChild(createWalletButton());
-            wrapper.appendChild(langBtn);
-            topBarContainer.prepend(wrapper);
-        }
+    const walletBtn = createWalletButton();
+    const topBarRight = document.querySelector('.top-bar-right');
+    if (topBarRight) {
+        topBarRight.insertBefore(walletBtn, topBarRight.firstChild);
+        topBarRight.insertBefore(langBtn, walletBtn.nextSibling);
     }
     
     // Create and insert dropdown
