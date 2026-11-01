@@ -1146,12 +1146,13 @@ textarea:focus,
 .mission-heading { position: relative; padding: 0 !important; }
 .mission-kicker {
     color: #f7f7f7;
-    font-size: clamp(19px, 2.25vw, 27px) !important;
+    font-size: clamp(20px, 2.4vw, 29px) !important;
     line-height: 1.25 !important;
     font-weight: 800 !important;
     text-shadow: 0 2px 12px rgba(0,0,0,.8);
 }
 .mission-kicker .vision-word { color: #D4AF37 !important; }
+.mission-kicker .mission-word { color: #00C896 !important; }
 .mission-title {
     margin: 2px 0 20px !important;
     font-size: clamp(42px, 5.7vw, 66px) !important;
@@ -1179,8 +1180,11 @@ textarea:focus,
     background: linear-gradient(rgba(5,12,11,.82), rgba(5,12,11,.82)) padding-box,
                 linear-gradient(100deg, #D4AF37 0%, #F4D45C 45%, #00C896 100%) border-box !important;
     box-shadow: 0 0 20px rgba(212,175,55,.28), 0 0 22px rgba(0,200,150,.20), inset 0 0 16px rgba(255,255,255,.045) !important;
-    color: #fff !important;
-    font-size: clamp(18px, 2.45vw, 30px) !important;
+    background: linear-gradient(135deg, #D4AF37 0%, #C6D66A 48%, #00C896 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent !important;
+    font-size: clamp(20px, 2.65vw, 32px) !important;
     line-height: 1.25;
     font-weight: 800 !important;
     font-style: italic;
@@ -1349,7 +1353,7 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
     <!-- ===== MISSION & VISION ===== -->
     <section class="mission-hero" aria-label="Fly Infinity Mission and Vision">
         <div class="mission-heading">
-            <div class="mission-kicker"><span data-i18n="mission.kickerMission">Mission</span> <span data-i18n="mission.separator">&amp;</span> <span class="vision-word" data-i18n="mission.kickerVision">Vision</span> <span data-i18n="mission.kickerOf">of</span></div>
+            <div class="mission-kicker"><span class="vision-word" data-i18n="mission.kickerVision">Vision</span> <span data-i18n="mission.separator">&amp;</span> <span class="mission-word" data-i18n="mission.kickerMission">Mission</span> <span data-i18n="mission.kickerOf">of</span></div>
             <h2 class="mission-title">Fly Infinity</h2>
         </div>
         <div class="mission-slogan" data-i18n="mission.slogan">Raise yourself to help your mankind</div>
