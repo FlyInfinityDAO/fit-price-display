@@ -1106,6 +1106,144 @@ textarea:focus,
   }
 }
 
+
+
+/* ===== DASHBOARD HERO: MATCH THE APPROVED EARTH / NEON REFERENCE ===== */
+.top-bar {
+    margin-bottom: 8px !important;
+    background: rgba(5, 13, 12, .58) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(145%);
+    backdrop-filter: blur(18px) saturate(145%);
+    border-color: rgba(0, 200, 150, .72) !important;
+    box-shadow: 0 8px 28px rgba(0,0,0,.22), 0 0 16px rgba(0,200,150,.12), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.mission-hero {
+    isolation: isolate;
+    position: relative;
+    overflow: hidden;
+    min-height: 0 !important;
+    margin: 0 0 16px !important;
+    padding: 78px 18px 22px !important;
+    border: 1px solid rgba(0, 200, 150, .76) !important;
+    border-radius: 34px !important;
+    background: linear-gradient(180deg, rgba(3,12,10,.10), rgba(3,12,10,.22)) !important;
+    -webkit-backdrop-filter: blur(2px) saturate(125%);
+    backdrop-filter: blur(2px) saturate(125%);
+    box-shadow: 0 12px 34px rgba(0,0,0,.20), 0 0 20px rgba(0,200,150,.12), inset 0 1px 0 rgba(255,255,255,.08), inset 0 -3px 0 rgba(212,175,55,.48) !important;
+    text-align: center;
+}
+/* Let the real Earth artwork show through; remove the artificial green dome. */
+.mission-hero::before { content: none !important; display: none !important; }
+.mission-hero::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    height: 100%;
+    background: radial-gradient(ellipse at 50% 4%, rgba(255,205,55,.10), transparent 42%), linear-gradient(180deg, transparent 62%, rgba(0,200,150,.045));
+    pointer-events: none;
+}
+.mission-heading { position: relative; padding: 0 !important; }
+.mission-kicker {
+    color: #f7f7f7;
+    font-size: clamp(19px, 2.25vw, 27px) !important;
+    line-height: 1.25 !important;
+    font-weight: 800 !important;
+    text-shadow: 0 2px 12px rgba(0,0,0,.8);
+}
+.mission-kicker .vision-word { color: #D4AF37 !important; }
+.mission-title {
+    margin: 2px 0 20px !important;
+    font-size: clamp(42px, 5.7vw, 66px) !important;
+    line-height: 1.08 !important;
+    font-weight: 900 !important;
+    letter-spacing: .3px;
+    background: linear-gradient(90deg, #E0B92F 7%, #C6D66A 48%, #00C896 94%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 3px 8px rgba(0,0,0,.42));
+}
+.mission-slogan {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(100%, 1080px);
+    min-height: 76px !important;
+    margin: 0 auto 22px !important;
+    padding: 12px 28px !important;
+    border: 2px solid transparent !important;
+    border-radius: 0 !important;
+    clip-path: polygon(3.2% 0,96.8% 0,100% 50%,96.8% 100%,3.2% 100%,0 50%);
+    background: linear-gradient(rgba(5,12,11,.82), rgba(5,12,11,.82)) padding-box,
+                linear-gradient(100deg, #D4AF37 0%, #F4D45C 45%, #00C896 100%) border-box !important;
+    box-shadow: 0 0 20px rgba(212,175,55,.28), 0 0 22px rgba(0,200,150,.20), inset 0 0 16px rgba(255,255,255,.045) !important;
+    color: #fff !important;
+    font-size: clamp(18px, 2.45vw, 30px) !important;
+    line-height: 1.25;
+    font-weight: 800 !important;
+    font-style: italic;
+    text-shadow: 0 2px 8px rgba(0,0,0,.75);
+}
+.mission-pillars {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0,1fr));
+    align-items: stretch;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.mission-pillar {
+    min-width: 0;
+    padding: 5px 9px 0 !important;
+    gap: 5px !important;
+    color: #fff !important;
+    font-size: clamp(11px, 1.3vw, 15px) !important;
+    line-height: 1.28 !important;
+    text-shadow: 0 2px 6px rgba(0,0,0,.75);
+}
+.mission-pillar + .mission-pillar { border-left: 1px solid rgba(212,175,55,.72) !important; }
+html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; border-right: 1px solid rgba(212,175,55,.72) !important; }
+.mission-pillar i {
+    color: #E6B92E !important;
+    font-size: clamp(28px, 3.5vw, 43px) !important;
+    text-shadow: 0 0 12px rgba(212,175,55,.30), 0 2px 5px rgba(0,0,0,.6) !important;
+}
+.mission-pillar span { color: #E5C34B !important; }
+/* The reference places the FIT price card full-width directly below the hero. */
+.top-grid { grid-template-columns: minmax(0,1fr) !important; gap: 0 !important; margin-bottom: 20px !important; }
+.top-grid > .card { width: 100%; }
+.top-grid > .card:first-child { margin-bottom: 18px !important; }
+.top-grid > .card:nth-child(2) { margin-bottom: 0 !important; }
+
+@media (max-width: 768px) {
+    .top-bar { margin-bottom: 5px !important; }
+    .mission-hero {
+        margin: 0 0 13px !important;
+        padding: 54px 10px 17px !important;
+        border-radius: 27px !important;
+        background: linear-gradient(180deg, rgba(3,12,10,.07), rgba(3,12,10,.20)) !important;
+    }
+    .mission-heading { padding: 0 !important; }
+    .mission-kicker { font-size: clamp(16px, 4.1vw, 22px) !important; }
+    .mission-title { font-size: clamp(38px, 9vw, 52px) !important; margin: 3px 0 17px !important; }
+    .mission-slogan {
+        min-height: 58px !important;
+        padding: 9px 18px !important;
+        margin-bottom: 16px !important;
+        font-size: clamp(14px, 3.8vw, 20px) !important;
+    }
+    .mission-pillar { padding: 4px 3px 0 !important; gap: 4px !important; font-size: clamp(9px, 2.5vw, 12px) !important; }
+    .mission-pillar i { font-size: clamp(20px, 5.8vw, 29px) !important; }
+    .top-grid { grid-template-columns: minmax(0,1fr) !important; }
+    .top-grid > .card:first-child { padding: 22px 14px !important; }
+}
+@media (max-width: 380px) {
+    .mission-hero { padding-top: 43px !important; }
+    .mission-pillar { font-size: 8px !important; }
+    .mission-pillar i { font-size: 19px !important; }
+}
+
 </style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head>
