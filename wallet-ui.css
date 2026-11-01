@@ -72,3 +72,10 @@ html[dir="rtl"] .fi-wallet-floating { right:auto; left:16px; }
   .fi-wallet-metric { padding: 10px; }
   .fi-wallet-metric-value { font-size: 14px; }
 }
+
+/* Wallet metric accent colors requested for Fly Infinity */
+.fi-wallet-network-value { color: #F0B90B !important; }
+.fi-wallet-balance-label,
+.fi-wallet-balance-value { color: #D4AF37 !important; }
+.fi-wallet-usd-label,
+.fi-wallet-usd-value { color: #00C896 !important; }
