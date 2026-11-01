@@ -16,8 +16,10 @@
     "warnings": "Warnings",
     "faq": "FAQ",
     "whitepaper": "White Paper",
-    "audit": "Security Audit"
-},
+    "audit": "Security Audit",
+    "profitCalculator": "Profit Calculator",
+    "nextProjects": "Upcoming Projects"
+  },
   "faq": {
     "title": "Frequently Asked Questions",
     "q1": "How much does it cost to buy Fly Infinity ownership shares?",

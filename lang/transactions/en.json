@@ -12,8 +12,10 @@
     "warnings": "Warnings",
     "faq": "FAQ",
     "whitepaper": "White Paper",
-    "audit": "Security Audit"
-},
+    "audit": "Security Audit",
+    "profitCalculator": "Profit Calculator",
+    "nextProjects": "Upcoming Projects"
+  },
   "footer": {
     "tagline": "Fly Infinity — Decentralized. Transparent. Forever Rising."
   },

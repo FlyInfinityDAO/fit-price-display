@@ -12,7 +12,9 @@
     "warnings": "هشدارها",
     "faq": "سوالات متداول",
     "whitepaper": "وایت‌پیپر",
-    "audit": "ممیزی امنیت"
+    "audit": "ممیزی امنیت",
+    "profitCalculator": "محاسبه‌گر و شبیه‌ساز سود",
+    "nextProjects": "پروژه‌های بعدی"
   },
   "audit": {
     "statusTitle": "✅ ممیزی امنیتی تأیید شد",

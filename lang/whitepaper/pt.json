@@ -16,8 +16,10 @@
     "warnings": "Avisos",
     "faq": "Perguntas Frequentes",
     "whitepaper": "White Paper",
-    "audit": "Auditoria de Segurança"
-},
+    "audit": "Auditoria de Segurança",
+    "profitCalculator": "Calculadora e simulador de lucros",
+    "nextProjects": "Próximos projetos"
+  },
   "whitepaper": {
     "title": "White Paper",
     "version": "Versão 1.0",

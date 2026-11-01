@@ -12,8 +12,10 @@
     "warnings": "Uyarılar",
     "faq": "SSS",
     "whitepaper": "Beyaz Bülten",
-    "audit": "Güvenlik Denetimi"
-},
+    "audit": "Güvenlik Denetimi",
+    "profitCalculator": "Kâr Hesaplayıcı ve Simülatör",
+    "nextProjects": "Gelecek Projeler"
+  },
   "footer": {
     "tagline": "Fly Infinity — Merkeziyetsiz. Şeffaf. Sonsuza Kadar Yükselen."
   },

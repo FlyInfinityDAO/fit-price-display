@@ -16,8 +16,10 @@
     "warnings": "Uyarılar",
     "faq": "SSS",
     "whitepaper": "Beyaz Bülten",
-    "audit": "Güvenlik Denetimi"
-},
+    "audit": "Güvenlik Denetimi",
+    "profitCalculator": "Kâr Hesaplayıcı ve Simülatör",
+    "nextProjects": "Gelecek Projeler"
+  },
   "faq": {
     "title": "Sık Sorulan Sorular",
     "q1": "Fly Infinity sahiplik hissesi satın almanın maliyeti nedir?",

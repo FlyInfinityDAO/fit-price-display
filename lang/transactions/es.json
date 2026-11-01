@@ -12,8 +12,10 @@
     "warnings": "Advertencias",
     "faq": "Preguntas Frecuentes",
     "whitepaper": "Libro Blanco",
-    "audit": "Auditoría de Seguridad"
-},
+    "audit": "Auditoría de Seguridad",
+    "profitCalculator": "Calculadora y simulador de ganancias",
+    "nextProjects": "Próximos proyectos"
+  },
   "footer": {
     "tagline": "Fly Infinity — Descentralizado. Transparente. Siempre en Auge."
   },

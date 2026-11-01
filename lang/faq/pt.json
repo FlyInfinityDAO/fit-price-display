@@ -16,8 +16,10 @@
     "warnings": "Avisos",
     "faq": "Perguntas Frequentes",
     "whitepaper": "White Paper",
-    "audit": "Auditoria de Segurança"
-},
+    "audit": "Auditoria de Segurança",
+    "profitCalculator": "Calculadora e simulador de lucros",
+    "nextProjects": "Próximos projetos"
+  },
   "faq": {
     "title": "Perguntas Frequentes",
     "q1": "Quanto custa comprar ações de propriedade da Fly Infinity?",

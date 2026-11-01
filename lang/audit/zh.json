@@ -12,7 +12,9 @@
     "warnings": "警告",
     "faq": "常见问题",
     "whitepaper": "白皮书",
-    "audit": "安全审计"
+    "audit": "安全审计",
+    "profitCalculator": "利润计算器与模拟器",
+    "nextProjects": "后续项目"
   },
   "audit": {
     "statusTitle": "✅ 安全审计通过",

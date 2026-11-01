@@ -16,8 +16,10 @@
     "warnings": "Avisos",
     "faq": "Perguntas Frequentes",
     "whitepaper": "White Paper",
-    "audit": "Auditoria de Segurança"
-},
+    "audit": "Auditoria de Segurança",
+    "profitCalculator": "Calculadora e simulador de lucros",
+    "nextProjects": "Próximos projetos"
+  },
   "compare": {
     "title": "Tabela de Comparação de Preços ao Vivo",
     "subtitle": "Mudanças de preço em tempo real nas últimas 24 horas",

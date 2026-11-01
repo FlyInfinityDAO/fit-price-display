@@ -16,8 +16,10 @@
     "warnings": "Avisos",
     "faq": "Perguntas Frequentes",
     "whitepaper": "White Paper",
-    "audit": "Auditoria de Segurança"
-},
+    "audit": "Auditoria de Segurança",
+    "profitCalculator": "Calculadora e simulador de lucros",
+    "nextProjects": "Próximos projetos"
+  },
   "privacy": {
     "title": "Política de Privacidade e Estrutura Descentralizada",
     "badge1": "Não Decrescente",

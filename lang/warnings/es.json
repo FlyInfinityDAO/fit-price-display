@@ -16,8 +16,10 @@
     "warnings": "Advertencias",
     "faq": "Preguntas Frecuentes",
     "whitepaper": "Libro Blanco",
-    "audit": "Auditoría de Seguridad"
-},
+    "audit": "Auditoría de Seguridad",
+    "profitCalculator": "Calculadora y simulador de ganancias",
+    "nextProjects": "Próximos proyectos"
+  },
   "warnings": {
     "wallet": {
       "title": "⚠️ Antes de Cambiar o Eliminar su Billetera",

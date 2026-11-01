@@ -16,8 +16,10 @@
     "warnings": "Uyarılar",
     "faq": "SSS",
     "whitepaper": "Beyaz Bülten",
-    "audit": "Güvenlik Denetimi"
-},
+    "audit": "Güvenlik Denetimi",
+    "profitCalculator": "Kâr Hesaplayıcı ve Simülatör",
+    "nextProjects": "Gelecek Projeler"
+  },
   "dapp": {
     "connect": "Cüzdan Bağla",
     "walletDesc": "MetaMask, Trust Wallet, TokenPocket veya herhangi bir Web3 cüzdanı",

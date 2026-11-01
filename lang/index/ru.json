@@ -16,7 +16,9 @@
     "warnings": "Предупреждения",
     "faq": "Часто задаваемые вопросы",
     "whitepaper": "Белая книга",
-    "audit": "Аудит безопасности"
+    "audit": "Аудит безопасности",
+    "profitCalculator": "Калькулятор и симулятор прибыли",
+    "nextProjects": "Будущие проекты"
   },
   "dashboard": {
     "title": "Fly Infinity Token (FIT)",

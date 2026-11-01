@@ -16,8 +16,10 @@
     "warnings": "Warnings",
     "faq": "FAQ",
     "whitepaper": "White Paper",
-    "audit": "Security Audit"
-},
+    "audit": "Security Audit",
+    "profitCalculator": "Profit Calculator",
+    "nextProjects": "Upcoming Projects"
+  },
   "whitepaper": {
     "title": "White Paper",
     "version": "Version 1.0",

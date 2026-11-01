@@ -16,7 +16,9 @@
     "warnings": "Uyarılar",
     "faq": "SSS",
     "whitepaper": "Beyaz Bülten",
-    "audit": "Güvenlik Denetimi"
+    "audit": "Güvenlik Denetimi",
+    "profitCalculator": "Kâr Hesaplayıcı ve Simülatör",
+    "nextProjects": "Gelecek Projeler"
   },
   "dashboard": {
     "title": "Fly Infinity Token (FIT)",

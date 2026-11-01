@@ -16,8 +16,10 @@
     "warnings": "Warnings",
     "faq": "FAQ",
     "whitepaper": "White Paper",
-    "audit": "Security Audit"
-},
+    "audit": "Security Audit",
+    "profitCalculator": "Profit Calculator",
+    "nextProjects": "Upcoming Projects"
+  },
   "privacy": {
     "title": "Privacy Policy & Decentralized Structure",
     "badge1": "Non-Diminishing",

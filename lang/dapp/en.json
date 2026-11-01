@@ -16,8 +16,10 @@
     "warnings": "Warnings",
     "faq": "FAQ",
     "whitepaper": "White Paper",
-    "audit": "Security Audit"
-},
+    "audit": "Security Audit",
+    "profitCalculator": "Profit Calculator",
+    "nextProjects": "Upcoming Projects"
+  },
   "dapp": {
     "connect": "Connect Wallet",
     "walletDesc": "MetaMask, Trust Wallet, TokenPocket, or any Web3 wallet",

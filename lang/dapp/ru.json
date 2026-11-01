@@ -16,8 +16,10 @@
     "warnings": "Предупреждения",
     "faq": "Часто задаваемые вопросы",
     "whitepaper": "Белая книга",
-    "audit": "Аудит безопасности"
-},
+    "audit": "Аудит безопасности",
+    "profitCalculator": "Калькулятор и симулятор прибыли",
+    "nextProjects": "Будущие проекты"
+  },
   "dapp": {
     "connect": "Подключить кошелек",
     "walletDesc": "MetaMask, Trust Wallet, TokenPocket или любой Web3-кошелек",

@@ -16,8 +16,10 @@
     "warnings": "Uyarılar",
     "faq": "SSS",
     "whitepaper": "Beyaz Bülten",
-    "audit": "Güvenlik Denetimi"
-},
+    "audit": "Güvenlik Denetimi",
+    "profitCalculator": "Kâr Hesaplayıcı ve Simülatör",
+    "nextProjects": "Gelecek Projeler"
+  },
   "compare": {
     "title": "Canlı Fiyat Karşılaştırma Tablosu",
     "subtitle": "Son 24 saatteki gerçek zamanlı fiyat değişiklikleri",

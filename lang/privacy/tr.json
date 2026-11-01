@@ -16,8 +16,10 @@
     "warnings": "Uyarılar",
     "faq": "SSS",
     "whitepaper": "Beyaz Bülten",
-    "audit": "Güvenlik Denetimi"
-},
+    "audit": "Güvenlik Denetimi",
+    "profitCalculator": "Kâr Hesaplayıcı ve Simülatör",
+    "nextProjects": "Gelecek Projeler"
+  },
   "privacy": {
     "title": "Gizlilik Politikası ve Merkeziyetsiz Yapı",
     "badge1": "Azalmayan",
