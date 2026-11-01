@@ -1068,6 +1068,12 @@ textarea:focus,
             <a href="dapp.html" data-i18n="nav.dapp">
                 <i class="fas fa-charging-station"></i> <span data-i18n="nav.dapp">DApp</span>
             </a>
+            <a href="profit-simulator.html" data-i18n="nav.profitCalculator">
+                <i class="fas fa-calculator"></i> <span data-i18n="nav.profitCalculator">Profit Calculator</span>
+            </a>
+            <a href="next-projects.html" data-i18n="nav.nextProjects">
+                <i class="fas fa-rocket"></i> <span data-i18n="nav.nextProjects">Upcoming Projects</span>
+            </a>
             <a href="transactions.html" data-i18n="nav.transactions">
                 <i class="fas fa-history"></i> <span data-i18n="nav.transactions">Transactions</span>
             </a>
@@ -1180,276 +1186,7 @@ textarea:focus,
         </p>
     </div>
     
-    <!-- Profit Simulator -->
-    <div class="card">
-        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="dashboard.profitSimulator">💰 Profit Simulator</div>
-        
-        <div class="simulator-input">
-            <div class="input-group">
-                <label data-i18n="dashboard.profitHoldings">Your FIT Holdings</label>
-                <input type="number" id="fitAmount" value="1000" step="100">
-            </div>
-        </div>
-        
-        <div class="growth-badges">
-            <span class="growth-badge" id="dailyGrowthRate" data-i18n="dashboard.profitDaily">📈 Daily: --</span>
-            <span class="growth-badge" id="weeklyGrowthRate" data-i18n="dashboard.profitWeekly">📊 Weekly: --</span>
-            <span class="growth-badge" id="monthlyGrowthRate" data-i18n="dashboard.profitMonthly">📅 Monthly: --</span>
-        </div>
-        
-        <div class="simulator-results">
-            <div class="result-box"><div class="result-period" data-i18n="dashboard.profit24h">24h Projection</div><div class="result-return" id="dailyReturn">—</div></div>
-            <div class="result-box"><div class="result-period" data-i18n="dashboard.profit7d">7 Days Projection</div><div class="result-return" id="weeklyReturn">—</div></div>
-            <div class="result-box"><div class="result-period" data-i18n="dashboard.profit30d">30 Days Projection</div><div class="result-return" id="monthlyReturn">—</div></div>
-        </div>
-        <p style="color:#888; text-align:center; font-size:10px; margin-top:15px;" data-i18n="dashboard.profitNote">⚡ Based on past growth rates. Not financial advice.</p>
-    </div>
-
-    <!-- Manual Profit Simulator -->
-    <div class="card">
-        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="dashboard.manualProfit">
-            <i class="fas fa-calculator"></i> Manual Profit Simulator
-        </div>
-        <p style="color:#888; text-align:center; font-size:12px; margin-bottom:20px;" data-i18n="dashboard.manualDesc">
-            Calculate your potential profit based on daily price increase
-        </p>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-            <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #00C896;">
-                <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.manualHoldings">🪙 Your FIT Holdings</label>
-                <input type="number" id="manualFitAmount" value="100" step="10" style="width: 100%; background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
-            </div>
-            
-            <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #D4AF37;">
-                <label style="color: #D4AF37; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.manualIncrease">📈 Daily Price Increase ($)</label>
-                <input type="number" id="dailyPriceIncrease" value="1.00" step="0.10" min="0.01" style="width: 100%; background: #0F0F0F; border: 1px solid #D4AF37; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
-            </div>
-        </div>
-        
-        <div class="simulator-results" style="margin-top: 20px;">
-            <div class="result-box">
-                <div class="result-period" data-i18n="dashboard.manualDaily">📅 Daily Profit</div>
-                <div class="result-return" id="manualDailyReturn">—</div>
-                <div style="color: #888; font-size: 10px; margin-top: 5px;" id="manualDailyDetails">—</div>
-            </div>
-            <div class="result-box">
-                <div class="result-period" data-i18n="dashboard.manualWeekly">📊 Weekly Profit (7 Days)</div>
-                <div class="result-return" id="manualWeeklyReturn">—</div>
-                <div style="color: #888; font-size: 10px; margin-top: 5px;" id="manualWeeklyDetails">—</div>
-            </div>
-            <div class="result-box">
-                <div class="result-period" data-i18n="dashboard.manualMonthly">📅 Monthly Profit (30 Days)</div>
-                <div class="result-return" id="manualMonthlyReturn">—</div>
-                <div style="color: #888; font-size: 10px; margin-top: 5px;" id="manualMonthlyDetails">—</div>
-            </div>
-        </div>
-        
-        <div style="text-align: center; margin-top: 15px;">
-            <button id="manualSimBtn" class="action-btn" style="width: auto; padding: 10px 40px; border-color: #D4AF37; color: #D4AF37;">
-                <i class="fas fa-play"></i> <span data-i18n="btn.calculate">Calculate</span>
-            </button>
-        </div>
-        
-        <p style="color:#888; text-align:center; font-size:10px; margin-top:15px;" data-i18n="dashboard.manualNote">
-            ⚡ Based on your input values. Not financial advice.
-        </p>
-    </div>
-    
-    <!-- Fee Calculator -->
-    <div class="card">
-        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="dashboard.feeCalculator">
-            <i class="fas fa-calculator"></i> Fee Calculator (Buy: 3% | Sell: 6%)
-        </div>
-        
-        <div class="fee-grid">
-            <div class="fee-box buy">
-                <div class="fee-title buy" data-i18n="dashboard.feeBuy">
-                    <i class="fas fa-shopping-cart"></i> Buy Calculator
-                </div>
-                <div class="input-group" style="width: 100%; margin-bottom: 15px;">
-                    <label style="color: #00C896; font-size: 12px;" data-i18n="dashboard.feeAmount">💰 Amount (USD)</label>
-                    <input type="number" id="buyAmountUSD" placeholder="Enter USD amount" step="10" style="width: 100%;">
-                </div>
-                <div class="fee-result">
-                    <div class="fee-result-label" data-i18n="dashboard.feeYouReceive">You will receive</div>
-                    <div class="fee-result-amount" id="buyFITAmount">— FIT</div>
-                    <div class="fee-breakdown" id="buyFeeBreakdown">—</div>
-                </div>
-            </div>
-            
-            <div class="fee-box sell">
-                <div class="fee-title sell" data-i18n="dashboard.feeSell">
-                    <i class="fas fa-chart-line"></i> Sell Calculator
-                </div>
-                <div class="input-group" style="width: 100%; margin-bottom: 15px;">
-                    <label style="color: #00C896; font-size: 12px;" data-i18n="dashboard.feeFitAmount">🪙 Amount (FIT)</label>
-                    <input type="number" id="sellAmountFIT" placeholder="Enter FIT amount" step="100" style="width: 100%;">
-                </div>
-                <div class="fee-result">
-                    <div class="fee-result-label" data-i18n="dashboard.feeYouReceive">You will receive</div>
-                    <div class="fee-result-amount" id="sellUSDAmount">— USD</div>
-                    <div class="fee-breakdown" id="sellFeeBreakdown">—</div>
-                </div>
-            </div>
-        </div>
-        <div class="fee-price-note">
-            <i class="fas fa-info-circle"></i> <span data-i18n="dashboard.feeNote">Fees: 3% for Buy | 6% for Sell</span> | Current Price: <span id="calcPrice">—</span> USD
-        </div>
-    </div>
-
-    <!-- ===== PURCHASE CALCULATOR WITH REWARD ===== -->
-    <div class="card">
-        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="dashboard.purchaseCalculator">
-            <i class="fas fa-calculator"></i> FIT Purchase Calculator
-        </div>
-        <p style="color:#888; text-align:center; font-size:12px; margin-bottom:20px;" data-i18n="dashboard.purchaseDesc">
-            Calculate required ownership shares based on Infinity Development network plan + Estimated Rewards for ALL shares
-        </p>
-        
-        <!-- Inputs -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-            <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #00C896;">
-                <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.purchaseFitAmount">🪙 FIT Amount to Buy</label>
-                <input type="number" id="calcFitAmount" value="1000" step="10" min="1" style="width: 100%; background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
-            </div>
-            
-            <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #D4AF37;">
-                <label style="color: #D4AF37; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.purchasePrice">💰 Current FIT Price (DAI)</label>
-                <input type="number" id="calcFitPrice" value="6.00" step="0.01" min="0.01" style="width: 100%; background: #0F0F0F; border: 1px solid #D4AF37; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
-                <button id="calcFetchPrice" style="margin-top: 8px; background: transparent; border: 1px solid #00C896; color: #00C896; padding: 4px 12px; border-radius: 20px; font-size: 11px; cursor: pointer;" data-i18n="dashboard.purchaseFetch">Fetch Live Price</button>
-            </div>
-            
-            <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #00C896;">
-                <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.purchaseShareCost">💎 Ownership Share Cost (DAI)</label>
-                <input type="number" id="calcShareCost" value="100" step="1" min="1" style="width: 100%; background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
-            </div>
-            
-            <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #FFD700;">
-                <label style="color: #FFD700; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.purchaseRewardPerPoint">💰 Reward Value Per Point ($)</label>
-                <input type="number" id="rewardPerPoint" value="20" step="1" min="1" style="width: 100%; background: #0F0F0F; border: 1px solid #FFD700; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
-            </div>
-        </div>
-        
-        <!-- Results Grid -->
-        <div class="purchase-grid">
-            <!-- With Infinity Development Plan -->
-            <div class="purchase-box with-plan">
-                <div class="purchase-title with-plan" data-i18n="dashboard.purchaseWithPlan">
-                    <i class="fas fa-network-wired"></i> ✅ With Infinity Development Network Plan
-                </div>
-                <div class="purchase-row">
-                    <span class="purchase-label" data-i18n="dashboard.purchaseShares">Required Shares</span>
-                    <span class="purchase-value" id="calcSharesWithPlan">—</span>
-                </div>
-                <div class="purchase-row">
-                    <span class="purchase-label" data-i18n="dashboard.purchaseShareCostTotal">Total Cost for Shares (DAI)</span>
-                    <span class="purchase-value" id="calcShareCostWithPlan">—</span>
-                </div>
-                <div class="purchase-row">
-                    <span class="purchase-label" data-i18n="dashboard.purchaseFitReceived">FIT Received (after 3% fee)</span>
-                    <span class="purchase-value green" id="calcFitReceivedWithPlan">—</span>
-                </div>
-                <div class="purchase-row">
-                    <span class="purchase-label" data-i18n="dashboard.purchaseMaxCap">Max Purchase Cap (DAI)</span>
-                    <span class="purchase-value" id="calcCapWithPlan">—</span>
-                </div>
-                <div class="purchase-row">
-                    <span class="purchase-label" data-i18n="dashboard.purchaseMinSide">Min Side (members)</span>
-                    <span class="purchase-value" id="calcMinSideWithPlan">—</span>
-                </div>
-                <div class="purchase-row">
-                    <span class="purchase-label" data-i18n="dashboard.purchaseTotalCost">Total Cost (Shares + FIT)</span>
-                    <span class="purchase-value" style="color: #00C896;" id="calcTotalCostWithPlan">—</span>
-                </div>
-                
-                <!-- REWARD SECTION -->
-                <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid rgba(255, 215, 0, 0.3);">
-                    <div style="color: #FFD700; font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 10px;" data-i18n="dashboard.purchaseRewards">
-                        <i class="fas fa-gift"></i> Estimated Rewards (All Shares)
-                    </div>
-                    <div class="purchase-row">
-                        <span class="purchase-label" data-i18n="dashboard.purchaseRewardPoints">Total Reward Points</span>
-                        <span class="purchase-value reward" id="calcRewardPointsWithPlan">—</span>
-                    </div>
-                    <div class="purchase-row">
-                        <span class="purchase-label" data-i18n="dashboard.purchaseRewardPerPointLabel">Reward Per Point ($)</span>
-                        <span class="purchase-value reward" id="calcRewardPerPointWithPlan">—</span>
-                    </div>
-                    <div class="purchase-row" style="border-bottom: none;">
-                        <span class="purchase-label" data-i18n="dashboard.purchaseTotalReward">Total Estimated Reward ($)</span>
-                        <span class="purchase-value reward" style="font-size: 18px; color: #FFD700;" id="calcTotalRewardWithPlan">—</span>
-                    </div>
-                    <div class="reward-detail" id="rewardBreakdownWithPlan">—</div>
-                </div>
-            </div>
-            
-            <!-- Without Infinity Development Plan -->
-            <div class="purchase-box without-plan">
-                <div class="purchase-title without-plan" data-i18n="dashboard.purchaseWithoutPlan">
-                    <i class="fas fa-user"></i> ❌ Without Infinity Development Plan (Direct)
-                </div>
-                <div class="purchase-row">
-                    <span class="purchase-label" data-i18n="dashboard.purchaseShares">Required Shares</span>
-                    <span class="purchase-value" id="calcSharesWithoutPlan">—</span>
-                </div>
-                <div class="purchase-row">
-                    <span class="purchase-label" data-i18n="dashboard.purchaseShareCostTotal">Total Cost for Shares (DAI)</span>
-                    <span class="purchase-value" id="calcShareCostWithoutPlan">—</span>
-                </div>
-                <div class="purchase-row">
-                    <span class="purchase-label" data-i18n="dashboard.purchaseFitReceived">FIT Received (after 3% fee)</span>
-                    <span class="purchase-value green" id="calcFitReceivedWithoutPlan">—</span>
-                </div>
-                <div class="purchase-row">
-                    <span class="purchase-label" data-i18n="dashboard.purchaseMaxCap">Max Purchase Cap (DAI)</span>
-                    <span class="purchase-value" id="calcCapWithoutPlan">—</span>
-                </div>
-                <div class="purchase-row">
-                    <span class="purchase-label" data-i18n="dashboard.purchaseMinSide">Min Side (members)</span>
-                    <span class="purchase-value" id="calcMinSideWithoutPlan">—</span>
-                </div>
-                <div class="purchase-row">
-                    <span class="purchase-label" data-i18n="dashboard.purchaseTotalCost">Total Cost (Shares + FIT)</span>
-                    <span class="purchase-value" style="color: #D4AF37;" id="calcTotalCostWithoutPlan">—</span>
-                </div>
-                
-                <!-- REWARD SECTION - ZERO -->
-                <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid rgba(255, 215, 0, 0.15);">
-                    <div style="color: #FFD700; font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 10px; opacity: 0.5;" data-i18n="dashboard.purchaseRewards">
-                        <i class="fas fa-gift"></i> Estimated Rewards
-                    </div>
-                    <div class="purchase-row">
-                        <span class="purchase-label" data-i18n="dashboard.purchaseRewardPoints">Total Reward Points</span>
-                        <span class="purchase-value reward" style="opacity: 0.5;" id="calcRewardPointsWithoutPlan">—</span>
-                    </div>
-                    <div class="purchase-row">
-                        <span class="purchase-label" data-i18n="dashboard.purchaseRewardPerPointLabel">Reward Per Point ($)</span>
-                        <span class="purchase-value reward" style="opacity: 0.5;" id="calcRewardPerPointWithoutPlan">—</span>
-                    </div>
-                    <div class="purchase-row" style="border-bottom: none;">
-                        <span class="purchase-label" data-i18n="dashboard.purchaseTotalReward">Total Estimated Reward ($)</span>
-                        <span class="purchase-value reward" style="font-size: 18px; opacity: 0.5;" id="calcTotalRewardWithoutPlan">—</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Savings & Rewards Summary -->
-        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-top: 20px; gap: 15px;">
-            <div>
-                <div id="savingsContainer" style="display: none;">
-                    <span class="savings-badge" id="savingsBadge"></span>
-                </div>
-                <div id="rewardContainer" style="display: none; margin-top: 10px;">
-                    <span class="reward-badge" id="rewardBadge"></span>
-                </div>
-            </div>
-            <button id="calcBtn" class="action-btn" style="width: auto; padding: 10px 40px; border-color: #D4AF37; color: #D4AF37;">
-                <i class="fas fa-play"></i> <span data-i18n="btn.calculate">Calculate</span>
-            </button>
-        </div>
-        
-    </div>
+    <!-- Profit and fee calculators moved to profit-simulator.html -->
 
     <!-- ===== FOOTER ===== -->
     <div class="footer">
@@ -1461,6 +1198,10 @@ textarea:focus,
             <a href="compare.html" data-i18n="nav.comparison">Comparison</a>
             <span>|</span>
             <a href="dapp.html" data-i18n="nav.dapp">DApp</a>
+            <span>|</span>
+            <a href="profit-simulator.html" data-i18n="nav.profitCalculator">Profit Calculator</a>
+            <span>|</span>
+            <a href="next-projects.html" data-i18n="nav.nextProjects">Upcoming Projects</a>
             <span>|</span>
             <a href="transactions.html" data-i18n="nav.transactions">Transactions</a>
             <span>|</span>
@@ -1617,8 +1358,6 @@ textarea:focus,
                 console.log("✅ Historical stats from JSON:", historicalStats);
             }
             updateStats();
-            updateGrowthRates();
-            updateSim();
             drawChart();
         } catch(e) {
             console.log("⚠️ Could not load JSON, using fallback data");
@@ -1634,8 +1373,6 @@ textarea:focus,
         chartLabels = ["2025-12-18", "2026-03-18", "2026-04-01", "2026-05-01", "2026-06-01", "2026-06-06", "2026-06-12", "2026-06-13"];
         chartPrices = [1.000, 1.001, 2.015, 3.045, 4.076, 6.181, 6.278, 6.324];
         updateStats();
-        updateGrowthRates();
-        updateSim();
         drawChart();
     }
     
@@ -1766,13 +1503,6 @@ textarea:focus,
             const totalAirdrops = await fetchTotalAirdrops();
             document.getElementById("totalAirdrops").innerHTML = "$" + totalAirdrops.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2});
             
-            updateSim();
-            updateCalculatorPrice();
-            const priceInput = document.getElementById('calcFitPrice');
-            if (priceInput && !priceInput.dataset.userEdited) {
-                priceInput.value = currentPriceDAI.toFixed(6);
-                calculatePurchase();
-            }
         } catch(e) { console.error(e); }
     }
     
@@ -1801,73 +1531,6 @@ textarea:focus,
         document.getElementById("changeInitial").innerHTML = chg(historicalStats.initial);
     }
     
-    function updateGrowthRates() {
-        let d = ((historicalStats.current - historicalStats.days1)/historicalStats.days1)*100;
-        let w = ((historicalStats.current - historicalStats.days7)/historicalStats.days7)*100;
-        let m = ((historicalStats.current - historicalStats.days30)/historicalStats.days30)*100;
-        document.getElementById("dailyGrowthRate").innerHTML = `📈 Daily: ${d.toFixed(2)}%`;
-        document.getElementById("weeklyGrowthRate").innerHTML = `📊 Weekly: ${w.toFixed(2)}%`;
-        document.getElementById("monthlyGrowthRate").innerHTML = `📅 Monthly: ${m.toFixed(2)}%`;
-    }
-    
-    function updateSim() {
-        let amt = parseFloat(document.getElementById("fitAmount").value);
-        if (isNaN(amt) || amt <=0 || currentPriceDAI===0) return;
-        let val = amt * currentPriceDAI;
-        let d = ((historicalStats.current - historicalStats.days1)/historicalStats.days1)*100;
-        let w = ((historicalStats.current - historicalStats.days7)/historicalStats.days7)*100;
-        let m = ((historicalStats.current - historicalStats.days30)/historicalStats.days30)*100;
-        document.getElementById("dailyReturn").innerHTML = `+$${(val * d / 100).toFixed(2)}`;
-        document.getElementById("weeklyReturn").innerHTML = `+$${(val * w / 100).toFixed(2)}`;
-        document.getElementById("monthlyReturn").innerHTML = `+$${(val * m / 100).toFixed(2)}`;
-    }
-    
-    const BUY_FEE = 0.03;
-    const SELL_FEE = 0.06;
-    
-    function updateBuyCalculator() {
-        const usdAmount = parseFloat(document.getElementById("buyAmountUSD").value);
-        const currentPrice = currentPriceDAI;
-        
-        if (isNaN(usdAmount) || usdAmount <= 0 || currentPrice <= 0) {
-            document.getElementById("buyFITAmount").innerHTML = "— FIT";
-            document.getElementById("buyFeeBreakdown").innerHTML = "—";
-            return;
-        }
-        
-        const amountAfterFee = usdAmount * (1 - BUY_FEE);
-        const fitAmount = amountAfterFee / currentPrice;
-        
-        document.getElementById("buyFITAmount").innerHTML = fitAmount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 4}) + " FIT";
-        document.getElementById("buyFeeBreakdown").innerHTML = `Fee (3%): $${(usdAmount * BUY_FEE).toFixed(2)} | You get: $${amountAfterFee.toFixed(2)} worth of FIT`;
-    }
-    
-    function updateSellCalculator() {
-        const fitAmount = parseFloat(document.getElementById("sellAmountFIT").value);
-        const currentPrice = currentPriceDAI;
-        
-        if (isNaN(fitAmount) || fitAmount <= 0 || currentPrice <= 0) {
-            document.getElementById("sellUSDAmount").innerHTML = "— USD";
-            document.getElementById("sellFeeBreakdown").innerHTML = "—";
-            return;
-        }
-        
-        const totalValue = fitAmount * currentPrice;
-        const amountAfterFee = totalValue * (1 - SELL_FEE);
-        
-        document.getElementById("sellUSDAmount").innerHTML = `$${amountAfterFee.toFixed(2)} USD`;
-        document.getElementById("sellFeeBreakdown").innerHTML = `Fee (6%): $${(totalValue * SELL_FEE).toFixed(2)} | You receive: $${amountAfterFee.toFixed(2)}`;
-    }
-    
-    function updateCalculatorPrice() {
-        document.getElementById("calcPrice").innerHTML = `$${currentPriceDAI.toFixed(4)}`;
-        updateBuyCalculator();
-        updateSellCalculator();
-    }
-    
-    document.getElementById("buyAmountUSD").addEventListener("input", updateBuyCalculator);
-    document.getElementById("sellAmountFIT").addEventListener("input", updateSellCalculator);
-    
     async function init() {
         await loadAllFromJSON();
         fetchLive();
@@ -1880,246 +1543,10 @@ textarea:focus,
         loadAllFromJSON();
         fetchHolderCount();
     });
-    document.getElementById("fitAmount").addEventListener("input", updateSim);
     
     init();
     setInterval(fetchLive, 30000);
     setInterval(loadAllFromJSON, 60000);
-
-    // ==================== MANUAL PROFIT SIMULATOR ====================
-    function calculateManualProfit() {
-        const fitAmount = parseFloat(document.getElementById("manualFitAmount").value) || 0;
-        const dailyIncrease = parseFloat(document.getElementById("dailyPriceIncrease").value) || 0;
-        
-        if (fitAmount <= 0 || dailyIncrease <= 0) {
-            document.getElementById("manualDailyReturn").innerHTML = "—";
-            document.getElementById("manualDailyDetails").innerHTML = "Enter valid values";
-            document.getElementById("manualWeeklyReturn").innerHTML = "—";
-            document.getElementById("manualWeeklyDetails").innerHTML = "—";
-            document.getElementById("manualMonthlyReturn").innerHTML = "—";
-            document.getElementById("manualMonthlyDetails").innerHTML = "—";
-            return;
-        }
-        
-        const dailyProfit = fitAmount * dailyIncrease;
-        const weeklyProfit = dailyProfit * 7;
-        const monthlyProfit = dailyProfit * 30;
-        
-        const formatCurrency = (value) => {
-            return '$' + value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        };
-        
-        document.getElementById("manualDailyReturn").innerHTML = formatCurrency(dailyProfit);
-        document.getElementById("manualDailyDetails").innerHTML = `${fitAmount} FIT × $${dailyIncrease.toFixed(2)} = ${formatCurrency(dailyProfit)}`;
-        
-        document.getElementById("manualWeeklyReturn").innerHTML = formatCurrency(weeklyProfit);
-        document.getElementById("manualWeeklyDetails").innerHTML = `${formatCurrency(dailyProfit)} × 7 days = ${formatCurrency(weeklyProfit)}`;
-        
-        document.getElementById("manualMonthlyReturn").innerHTML = formatCurrency(monthlyProfit);
-        document.getElementById("manualMonthlyDetails").innerHTML = `${formatCurrency(dailyProfit)} × 30 days = ${formatCurrency(monthlyProfit)}`;
-    }
-    
-    document.getElementById("manualSimBtn").addEventListener("click", calculateManualProfit);
-    document.getElementById("manualFitAmount").addEventListener("input", calculateManualProfit);
-    document.getElementById("dailyPriceIncrease").addEventListener("input", calculateManualProfit);
-    
-    document.addEventListener("DOMContentLoaded", function() {
-        calculateManualProfit();
-    });
-
-    // ==================== PURCHASE CALCULATOR WITH REWARD ====================
-    const BUY_FEE_CALC = 0.03;
-
-    function calculatePurchaseLimit(minSide) {
-        let totalLimit = 100;
-        
-        if (minSide >= 1) totalLimit += 100;
-        if (minSide >= 10) totalLimit += 100;
-        if (minSide >= 30) totalLimit += 100;
-        if (minSide >= 100) totalLimit += 1000;
-        if (minSide >= 300) totalLimit += 1000;
-        if (minSide >= 1000) totalLimit += 10000;
-        if (minSide >= 3000) totalLimit += 10000;
-        if (minSide >= 10000) totalLimit += 100000;
-        if (minSide >= 30000) totalLimit += 100000;
-        if (minSide >= 100000) totalLimit += 1000000;
-        if (minSide >= 300000) totalLimit += 1000000;
-        if (minSide >= 1000000) totalLimit += 10000000;
-        if (minSide >= 3000000) totalLimit += 10000000;
-        if (minSide >= 10000000) totalLimit += 100000000;
-        if (minSide >= 30000000) totalLimit += 100000000;
-        if (minSide >= 100000000) totalLimit += 1000000000;
-        if (minSide >= 300000000) totalLimit += 1000000000;
-        if (minSide >= 1000000000) totalLimit += 10000000000;
-        
-        return totalLimit;
-    }
-
-    function calculateTotalRewardPoints(totalShares) {
-        if (totalShares <= 1) return 0;
-        
-        function buildTree(nodes) {
-            if (nodes <= 0) return { size: 0, points: 0 };
-            if (nodes === 1) return { size: 1, points: 0 };
-            
-            let leftSize = Math.floor((nodes - 1) / 2);
-            let rightSize = nodes - 1 - leftSize;
-            
-            let left = buildTree(leftSize);
-            let right = buildTree(rightSize);
-            
-            let minSide = Math.min(leftSize, rightSize);
-            let points = left.points + right.points + minSide;
-            
-            return { size: 1 + leftSize + rightSize, points: points };
-        }
-        
-        let result = buildTree(totalShares);
-        return result.points;
-    }
-
-    function calculatePurchase() {
-        const fitAmount = parseFloat(document.getElementById('calcFitAmount').value) || 0;
-        const fitPrice = parseFloat(document.getElementById('calcFitPrice').value) || 0;
-        const shareCost = parseFloat(document.getElementById('calcShareCost').value) || 100;
-        const rewardPerPoint = parseFloat(document.getElementById('rewardPerPoint').value) || 20;
-        
-        const totalDAINeeded = fitAmount * fitPrice;
-        const fitReceived = totalDAINeeded * (1 - BUY_FEE_CALC) / fitPrice;
-        
-        if (fitAmount <= 0 || fitPrice <= 0 || shareCost <= 0) {
-            const ids = ['calcSharesWithPlan', 'calcShareCostWithPlan', 'calcFitReceivedWithPlan', 'calcCapWithPlan', 'calcMinSideWithPlan', 'calcTotalCostWithPlan', 'calcRewardPointsWithPlan', 'calcRewardPerPointWithPlan', 'calcTotalRewardWithPlan', 'calcSharesWithoutPlan', 'calcShareCostWithoutPlan', 'calcFitReceivedWithoutPlan', 'calcCapWithoutPlan', 'calcMinSideWithoutPlan', 'calcTotalCostWithoutPlan', 'calcRewardPointsWithoutPlan', 'calcRewardPerPointWithoutPlan', 'calcTotalRewardWithoutPlan'];
-            ids.forEach(id => document.getElementById(id).innerHTML = '—');
-            document.getElementById('rewardBreakdownWithPlan').innerHTML = '—';
-            document.getElementById('savingsContainer').style.display = 'none';
-            document.getElementById('rewardContainer').style.display = 'none';
-            return;
-        }
-
-        // ===== WITHOUT Infinity Development PLAN =====
-        const capPerShareDirect = 100;
-        const sharesNeededDirect = Math.ceil(totalDAINeeded / capPerShareDirect);
-        const shareCostDirect = sharesNeededDirect * shareCost;
-        const totalCapDirect = sharesNeededDirect * capPerShareDirect;
-        const totalCostDirect = shareCostDirect + totalDAINeeded;
-        const minSideDirect = 0;
-        const rewardDirect = 0;
-
-        // ===== WITH Infinity Development PLAN =====
-        let sharesWithPlan = 0;
-        let totalCapWithPlan = 0;
-        let minSideWithPlan = 0;
-        
-        for (let shares = 1; shares <= 10000; shares++) {
-            let minSide = Math.floor((shares - 1) / 2);
-            if (minSide < 0) minSide = 0;
-            
-            const limitPerShare = calculatePurchaseLimit(minSide);
-            const totalCap = shares * limitPerShare;
-            
-            if (totalCap >= totalDAINeeded) {
-                sharesWithPlan = shares;
-                totalCapWithPlan = totalCap;
-                minSideWithPlan = minSide;
-                break;
-            }
-        }
-        
-        if (sharesWithPlan === 0) {
-            sharesWithPlan = Math.ceil(totalDAINeeded / 100);
-            totalCapWithPlan = sharesWithPlan * 100;
-            minSideWithPlan = 0;
-        }
-        
-        const shareCostWithPlan = sharesWithPlan * shareCost;
-        const totalCostWithPlan = shareCostWithPlan + totalDAINeeded;
-        
-        // ===== REWARD CALCULATION FOR ALL SHARES =====
-        const totalRewardPoints = calculateTotalRewardPoints(sharesWithPlan);
-        const rewardWithPlan = totalRewardPoints * rewardPerPoint;
-        
-        let breakdown = `Total points from ${sharesWithPlan} shares = ${totalRewardPoints} points × $${rewardPerPoint} = $${rewardWithPlan.toFixed(2)}`;
-        document.getElementById('rewardBreakdownWithPlan').innerHTML = breakdown;
-
-        // ===== DISPLAY RESULTS =====
-        document.getElementById('calcSharesWithPlan').innerHTML = sharesWithPlan.toLocaleString();
-        document.getElementById('calcShareCostWithPlan').innerHTML = `$${shareCostWithPlan.toFixed(2)}`;
-        document.getElementById('calcFitReceivedWithPlan').innerHTML = `${fitReceived.toFixed(2)} FIT`;
-        document.getElementById('calcCapWithPlan').innerHTML = `$${totalCapWithPlan.toFixed(2)}`;
-        document.getElementById('calcMinSideWithPlan').innerHTML = minSideWithPlan.toLocaleString();
-        document.getElementById('calcTotalCostWithPlan').innerHTML = `$${totalCostWithPlan.toFixed(2)}`;
-        
-        document.getElementById('calcRewardPointsWithPlan').innerHTML = totalRewardPoints.toLocaleString();
-        document.getElementById('calcRewardPerPointWithPlan').innerHTML = `$${rewardPerPoint.toFixed(2)}`;
-        document.getElementById('calcTotalRewardWithPlan').innerHTML = `$${rewardWithPlan.toFixed(2)}`;
-        
-        document.getElementById('calcSharesWithoutPlan').innerHTML = sharesNeededDirect.toLocaleString();
-        document.getElementById('calcShareCostWithoutPlan').innerHTML = `$${shareCostDirect.toFixed(2)}`;
-        document.getElementById('calcFitReceivedWithoutPlan').innerHTML = `${fitReceived.toFixed(2)} FIT`;
-        document.getElementById('calcCapWithoutPlan').innerHTML = `$${totalCapDirect.toFixed(2)}`;
-        document.getElementById('calcMinSideWithoutPlan').innerHTML = '0';
-        document.getElementById('calcTotalCostWithoutPlan').innerHTML = `$${totalCostDirect.toFixed(2)}`;
-        
-        document.getElementById('calcRewardPointsWithoutPlan').innerHTML = '0';
-        document.getElementById('calcRewardPerPointWithoutPlan').innerHTML = `$${rewardPerPoint.toFixed(2)}`;
-        document.getElementById('calcTotalRewardWithoutPlan').innerHTML = `$0.00`;
-        
-        const savings = totalCostDirect - totalCostWithPlan;
-        if (savings > 0) {
-            document.getElementById('savingsContainer').style.display = 'block';
-            const savingsText = tWithReplace('dashboard.purchaseSavings', { amount: savings.toFixed(2) });
-            document.getElementById('savingsBadge').innerHTML = savingsText;
-        } else {
-            document.getElementById('savingsContainer').style.display = 'none';
-        }
-        
-        if (rewardWithPlan > 0) {
-            document.getElementById('rewardContainer').style.display = 'block';
-            const rewardText = tWithReplace('dashboard.purchaseEarn', { amount: rewardWithPlan.toFixed(2) });
-            document.getElementById('rewardBadge').innerHTML = rewardText;
-        } else {
-            document.getElementById('rewardContainer').style.display = 'none';
-        }
-    }
-
-    document.getElementById('calcBtn').addEventListener('click', calculatePurchase);
-    document.getElementById('calcFitAmount').addEventListener('input', calculatePurchase);
-    document.getElementById('calcFitPrice').addEventListener('input', function() {
-        this.dataset.userEdited = 'true';
-        calculatePurchase();
-    });
-    document.getElementById('calcShareCost').addEventListener('input', calculatePurchase);
-    document.getElementById('rewardPerPoint').addEventListener('input', calculatePurchase);
-
-    document.getElementById('calcFetchPrice').addEventListener('click', async function() {
-        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-        this.disabled = true;
-        
-        try {
-            const CONTRACT_ADDRESS_CALC = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
-            const ABI_CALC = [{"constant":true,"inputs":[],"name":"Price","outputs":[{"name":"","type":"uint256"}],"type":"function"}];
-            const providerCalc = new ethers.providers.JsonRpcProvider("https://bsc-dataseed.binance.org/");
-            const contractCalc = new ethers.Contract(CONTRACT_ADDRESS_CALC, ABI_CALC, providerCalc);
-            
-            const raw = await contractCalc.Price();
-            const price = parseFloat(ethers.utils.formatEther(raw));
-            const priceInput = document.getElementById('calcFitPrice');
-            priceInput.value = price.toFixed(6);
-            priceInput.dataset.userEdited = 'false';
-            calculatePurchase();
-        } catch(e) {
-            console.error('Error fetching price:', e);
-            alert('Could not fetch live price. Please enter manually.');
-        } finally {
-            this.innerHTML = 'Fetch Live Price';
-            this.disabled = false;
-        }
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        calculatePurchase();
-    });
-    
 </script>
 
 <!-- ===== SIDEBAR SCRIPT ===== -->

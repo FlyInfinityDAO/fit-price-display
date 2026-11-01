@@ -89,6 +89,7 @@ function setLanguage(lang) {
     document.documentElement.dir = LANGUAGES[lang].dir;
     updateAllTranslations();
     updateLangButton();
+    document.dispatchEvent(new Event('fi-language-updated'));
 }
 
 function updateAllTranslations() {
@@ -224,6 +225,7 @@ async function initLanguageSystem() {
     
     updateAllTranslations();
     updateLangButton();
+    document.dispatchEvent(new Event('fi-language-updated'));
 }
 
 document.addEventListener('DOMContentLoaded', initLanguageSystem);
