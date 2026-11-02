@@ -103,7 +103,13 @@
     "ownershipGuideStep1": "First, click Approve DAI and confirm the transaction in your wallet.",
     "ownershipGuideStep2": "Next, open View & Sign Agreement, read it through to the end, and accept it.",
     "ownershipGuideStep3": "Finally, enter your referrer's address in the Referrer Address field, click Become Owner, and confirm the transaction.",
-    "ownershipGuideCongrats": "Congratulations! You are now one of the shareholders of the Fly Infinity ecosystem."
+    "ownershipGuideCongrats": "Congratulations! You are now one of the shareholders of the Fly Infinity ecosystem.",
+    "sellGuideTitle": "FIT Sale Steps",
+    "sellGuideStep1": "First, enter the amount of FIT you want to sell in the FIT amount field.",
+    "sellGuideStep2": "Then click Sell FIT and confirm the transaction in your wallet.",
+    "sellGuideCongrats": "Congratulations! Your FIT was converted to DAI in one second and added to your DAI wallet balance.",
+    "sellNetReceive": "You will receive (after 6% fee)",
+    "sellFeeIncluded": "Estimated DAI amount includes the 6% selling fee."
   },
   "footer": {
     "tagline": "Fly Infinity — Decentralized. Transparent. Forever Rising."
