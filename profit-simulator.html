@@ -1410,6 +1410,27 @@ label[data-i18n="dashboard.purchaseShareCost"]::before { content: "\f4b9"; color
 [data-i18n="dashboard.purchaseShareCost"] > i,
 [data-i18n="dashboard.purchaseRewardPerPoint"] > i { display: none; }
 
+    
+
+/* Replace translated emoji markers with one consistent Font Awesome icon. */
+label[data-i18n="dashboard.profitHoldings"]::before,
+p[data-i18n="dashboard.profitNote"]::before,
+p[data-i18n="dashboard.manualNote"]::before,
+.savings-badge::before,
+.reward-badge::before {
+    display: inline-block;
+    margin-inline-end: 8px;
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    line-height: 1;
+    vertical-align: -0.08em;
+}
+label[data-i18n="dashboard.profitHoldings"]::before { content: "\\f51e"; color: #00C896; }
+p[data-i18n="dashboard.profitNote"]::before,
+p[data-i18n="dashboard.manualNote"]::before { content: "\\f0e7"; color: #D4AF37; }
+.savings-badge::before { content: "\\f4d3"; color: #00C896; }
+.reward-badge::before { content: "\\f06b"; color: #D4AF37; }
+
     </style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head><body>
