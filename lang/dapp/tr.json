@@ -91,7 +91,13 @@
     "hubGiftDesc": "Yalnızca yatırımcıysanız, belirlenen limite kadar 5$ ödüllü hediyelere katılabilirsiniz.",
     "openOperation": "İşlemi aç",
     "walletOverview": "Cüzdan Özeti",
-    "backToDapp": "DApp'e dön"
+    "backToDapp": "DApp'e dön",
+    "ownershipGuideTitle": "Sahiplik hissesi satın alma rehberi",
+    "ownershipGuideSubtitle": "Sahiplik hissenizi etkinleştirmek için bu üç adımı tamamlayın.",
+    "ownershipGuideStep1": "Önce DAI Onayla seçeneğine tıklayın ve işlemi cüzdanınızda onaylayın.",
+    "ownershipGuideStep2": "Ardından Anlaşmayı Görüntüle ve İmzala seçeneğini açın, metni sonuna kadar okuyun ve kabul edin.",
+    "ownershipGuideStep3": "Son olarak, yönlendiren kişinin adresini Yönlendiren Adresi alanına girin, Sahip Ol'a tıklayın ve işlemi onaylayın.",
+    "ownershipGuideCongrats": "Tebrikler! Artık Fly Infinity ekosisteminin hissedarlarından birisiniz."
   },
   "footer": {
     "tagline": "Fly Infinity — Merkeziyetsiz. Şeffaf. Sonsuza Yükselen."

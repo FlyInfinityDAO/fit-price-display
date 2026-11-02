@@ -91,7 +91,13 @@
     "hubGiftDesc": "If you are an investor, you can participate in the $5 gift rewards, subject to the applicable limit.",
     "openOperation": "Open operation",
     "walletOverview": "Wallet Overview",
-    "backToDapp": "Back to DApp"
+    "backToDapp": "Back to DApp",
+    "ownershipGuideTitle": "Ownership purchase guide",
+    "ownershipGuideSubtitle": "Complete these three steps to activate your ownership share.",
+    "ownershipGuideStep1": "First, click Approve DAI and confirm the transaction in your wallet.",
+    "ownershipGuideStep2": "Next, open View & Sign Agreement, read it through to the end, and accept it.",
+    "ownershipGuideStep3": "Finally, enter your referrer's address in the Referrer Address field, click Become Owner, and confirm the transaction.",
+    "ownershipGuideCongrats": "Congratulations! You are now one of the shareholders of the Fly Infinity ecosystem."
   },
   "footer": {
     "tagline": "Fly Infinity — Decentralized. Transparent. Forever Rising."

@@ -91,7 +91,13 @@
     "hubGiftDesc": "Se você é apenas um investidor, pode participar dos prêmios de US$ 5, sujeito ao limite aplicável.",
     "openOperation": "Abrir operação",
     "walletOverview": "Visão geral da carteira",
-    "backToDapp": "Voltar ao DApp"
+    "backToDapp": "Voltar ao DApp",
+    "ownershipGuideTitle": "Guia de compra da cota de propriedade",
+    "ownershipGuideSubtitle": "Conclua estas três etapas para ativar sua cota de propriedade.",
+    "ownershipGuideStep1": "Primeiro, clique em Aprovar DAI e confirme a transação na sua carteira.",
+    "ownershipGuideStep2": "Em seguida, abra Ver e assinar o acordo, leia até o final e aceite.",
+    "ownershipGuideStep3": "Por fim, insira o endereço de quem indicou você no campo Endereço do indicador, clique em Tornar-se proprietário e confirme a transação.",
+    "ownershipGuideCongrats": "Parabéns! Agora você é um dos acionistas do ecossistema Fly Infinity."
   },
   "footer": {
     "tagline": "Fly Infinity — Descentralizado. Transparente. Sempre Subindo."
