@@ -122,7 +122,12 @@
     "networkContract": "📜 العقد الذكي لشبكة Fly Infinity",
     "fitTokenContract": "📜 العقد الذكي لرمز FIT من Fly Infinity",
     "ownershipContractFlow": "الخطوة 1: الموافقة على DAI ← الخطوة 2: قراءة الاتفاقية وقبولها ← الخطوة 3: إكمال تسجيل الملكية",
-    "fitContractFlow": "الخطوة 1: الموافقة على DAI ← الخطوة 2: شراء FIT أو بيعه"
+    "fitContractFlow": "الخطوة 1: الموافقة على DAI ← الخطوة 2: شراء FIT أو بيعه",
+    "hubGiftTitle": "هدية فلاي إنفينيتي",
+    "hubWalletTitle": "محفظة Fly Infinity",
+    "hubWalletDesc": "اربط محفظتك لعرض رصيد FIT والشبكة ومعلومات المحفظة.",
+    "hubWalletAction": "اتصال المحفظة",
+    "hubWalletFootnote": "اتصال آمن بالمحفظة · BNB Smart Chain"
   },
   "footer": {
     "tagline": "Fly Infinity — لا مركزي. شفاف. يرتفع للأبد."
