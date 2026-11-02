@@ -1087,9 +1087,12 @@ textarea:focus,
   border-left: 1px solid rgba(0,200,150,.20) !important;
 }
 .source-grid {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 15px;
   margin-top: 0;
+}
+.source-card.dao {
+  grid-column: 2;
 }
 .source-card {
   min-height: 165px;
@@ -1106,8 +1109,9 @@ textarea:focus,
   .container > .card { padding: 19px 15px; border-radius: 21px; }
   .stats-grid { grid-template-columns: 1fr; gap: 12px; }
   .link-card { min-height: 175px; padding: 19px 16px; }
-  .source-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 145px), 1fr)); }
+  .source-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .source-card { min-height: 150px; padding: 17px 12px; }
+  .source-card.dao { grid-column: 1 / -1; width: min(100%, 320px); justify-self: center; }
 }
 @media (prefers-reduced-motion: reduce) {
   .link-card, .source-card { transition: none; }
@@ -1303,7 +1307,6 @@ textarea:focus,
                 <div class="sub" data-i18n="transactions.viewSource">View Source Code →</div>
             </a>
             
-            <
             <a href="https://bscscan.com/address/0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8#code#F1#L1" target="_blank" class="source-card gift">
                 <div class="icon"><i class="fas fa-gift" aria-hidden="true"></i></div>
                 <div class="title" data-i18n="transactions.giftContract">Fly Infinity Gift</div>
