@@ -122,7 +122,12 @@
     "networkContract": "📜 Fly Infinity 网络智能合约",
     "fitTokenContract": "📜 Fly Infinity FIT 代币智能合约",
     "ownershipContractFlow": "步骤 1：授权 DAI → 步骤 2：阅读并接受协议 → 步骤 3：完成所有权注册",
-    "fitContractFlow": "步骤 1：授权 DAI → 步骤 2：购买或出售 FIT"
+    "fitContractFlow": "步骤 1：授权 DAI → 步骤 2：购买或出售 FIT",
+    "hubGiftTitle": "Fly Infinity 礼品",
+    "hubWalletTitle": "您的 Fly Infinity 钱包",
+    "hubWalletDesc": "连接钱包以查看 FIT 余额、网络和钱包信息。",
+    "hubWalletAction": "连接钱包",
+    "hubWalletFootnote": "安全连接钱包 · BNB Smart Chain"
   },
   "footer": {
     "tagline": "Fly Infinity — 去中心化。透明。永远上涨。"
