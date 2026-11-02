@@ -123,7 +123,16 @@
         "fitTokenContract": "📜 Contrato inteligente del token FIT de Fly Infinity",
         "ownershipContractFlow": "Paso 1: Aprobar DAI → Paso 2: Leer y aceptar el acuerdo → Paso 3: Completar el registro de propiedad",
         "fitContractFlow": "Paso 1: Aprobar DAI → Paso 2: Comprar o vender FIT",
-        "walletHubDesc": "Conecta tu billetera para ver tus saldos y los datos de tu cuenta FIT."
+        "walletHubDesc": "Conecta tu billetera para ver tus saldos y los datos de tu cuenta FIT.",
+        "hubGiftTitle": "Regalo Fly Infinity",
+        "agreementHeadingPreamble": "📌 Preámbulo",
+        "agreementHeadingOwnership": "💎 Participación de propiedad – De por vida y no reembolsable",
+        "agreementHeadingFit": "💰 Activo digital FIT – Totalmente líquido",
+        "agreementHeadingGift": "🎁 Asignación de regalos – Recompensas mediante sorteo",
+        "agreementHeadingWelcome": "🎁 Bono de bienvenida – Acreditación instantánea de tokens",
+        "agreementHeadingReferral": "🔗 Identificador de referido – Sistema descentralizado de invitaciones",
+        "agreementHeadingDeveloper": "💰 Recompensas para desarrolladores – Compensación basada en el rendimiento",
+        "agreementHeadingInfrastructure": "🔒 Infraestructura descentralizada – Seguridad y anonimato"
     },
     "footer": {
         "tagline": "Fly Infinity — Descentralizado. Transparente. Siempre Subiendo."
