@@ -27,8 +27,6 @@
     "buyDesc": "Solo transacciones de Compra (función Buy)",
     "sell": "Transacciones de Venta",
     "sellDesc": "Solo transacciones de Venta (función Sell)",
-    "transfers": "Transferencias de Tokens",
-    "transfersDesc": "Transferencias de tokens FIT entre direcciones",
     "genesis": "Liquidez Inicial",
     "genesisDesc": "Creación del precio base inicial",
     "openBsc": "→ Abrir en BscScan →",
@@ -53,6 +51,12 @@
     "tokenContract": "Fly Infinity Token",
     "networkContract": "Fly Infinity Network",
     "giftContract": "Fly Infinity Gift",
-    "viewSource": "Ver Código Fuente →"
+    "viewSource": "Ver Código Fuente →",
+    "fitTransactions": "Transacciones de FIT",
+    "fitTransactionsDesc": "Incluye compras y ventas de FIT",
+    "daiTransactions": "Transacciones de DAI",
+    "daiTransactionsDesc": "Pagos y cobros en DAI realizados por inversores y desarrolladores",
+    "bscscanLoginNote": "Para ver las transacciones en BscScan, debes iniciar sesión en tu cuenta.",
+    "daoContract": "Fly Infinity DAO"
   }
 }
