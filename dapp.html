@@ -1150,6 +1150,27 @@ textarea:focus,
 /* ===== DAPP OPERATIONS HUB / SEPARATE OPERATION VIEWS ===== */
 .dapp-hub{margin:10px 0 26px}.dapp-hub-heading{text-align:center;max-width:850px;margin:0 auto 25px}.dapp-eyebrow{display:inline-flex;align-items:center;gap:8px;color:#00C896;font-size:11px;font-weight:800;letter-spacing:.16em;margin-bottom:12px}.dapp-hub-heading h1{color:#D4AF37;font-size:clamp(24px,4vw,36px);margin-bottom:12px}.dapp-hub-heading p{color:#c0d0e8;font-size:14px;line-height:1.9}.dapp-operation-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.dapp-operation-card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;gap:13px;min-height:235px;padding:26px;text-decoration:none;border:1px solid rgba(0,200,150,.26);border-radius:25px;background:linear-gradient(145deg,rgba(18,34,30,.60),rgba(8,14,14,.48));-webkit-backdrop-filter:blur(22px) saturate(140%);backdrop-filter:blur(22px) saturate(140%);box-shadow:0 12px 32px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.08);transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease}.dapp-operation-card:before{content:"";position:absolute;z-index:-1;width:190px;height:190px;right:-65px;top:-90px;border-radius:50%;background:radial-gradient(circle,rgba(0,200,150,.19),transparent 68%);transition:transform .4s ease}.dapp-operation-card:hover{transform:translateY(-6px);border-color:rgba(0,235,178,.72);box-shadow:0 18px 42px rgba(0,0,0,.3),0 0 22px rgba(0,200,150,.14),inset 0 1px 0 rgba(255,255,255,.12)}.dapp-operation-card:hover:before{transform:scale(1.45)}.dapp-card-icon{width:54px;height:54px;display:grid;place-items:center;border-radius:17px;color:#00C896;font-size:23px;background:rgba(0,200,150,.10);border:1px solid rgba(0,200,150,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}.dapp-card-title{font-size:18px;font-weight:800;line-height:1.4;color:#D4AF37}.dapp-card-desc{color:#c0d0e8;font-size:13px;line-height:1.8;flex:1}.dapp-card-action{display:flex;align-items:center;justify-content:space-between;color:#70f5cf;font-size:12px;font-weight:700;padding-top:12px;border-top:1px solid rgba(0,200,150,.13)}.dapp-card-action i{transition:transform .25s ease}.dapp-operation-card:hover .dapp-card-action i{transform:translateX(-4px)}.dapp-wallet-heading{color:#D4AF37;font-size:17px;font-weight:800;margin-bottom:16px;text-align:left}.dapp-back-row{margin:0 0 18px}.dapp-back-btn{display:inline-flex;align-items:center;gap:9px;padding:11px 18px;border-radius:30px;text-decoration:none;color:#70f5cf;border:1px solid rgba(0,200,150,.32);background:rgba(0,200,150,.07);font-size:13px;font-weight:700;transition:all .2s ease}.dapp-back-btn:hover{background:rgba(0,200,150,.15);border-color:#00C896;transform:translateY(-2px)}.dapp-operation-view{margin-bottom:25px}body[data-dapp-view="home"] .dapp-operation-view{display:none!important}body[data-dapp-view="ownership"] #dappHub,body[data-dapp-view="buy"] #dappHub,body[data-dapp-view="sell"] #dappHub,body[data-dapp-view="gift"] #dappHub{display:none}body[data-dapp-view="ownership"] #dappTokenOperations,body[data-dapp-view="ownership"] #dappGiftOperation{display:none!important}body[data-dapp-view="buy"] #dappOwnershipOperation,body[data-dapp-view="buy"] #dappSellOperation,body[data-dapp-view="buy"] #dappGiftOperation{display:none!important}body[data-dapp-view="sell"] #dappOwnershipOperation,body[data-dapp-view="sell"] #dappBuyOperation,body[data-dapp-view="sell"] #dappGiftOperation{display:none!important}body[data-dapp-view="gift"] #dappOwnershipOperation,body[data-dapp-view="gift"] #dappTokenOperations{display:none!important}@media(max-width:760px){.dapp-operation-grid{grid-template-columns:1fr;gap:14px}.dapp-operation-card{min-height:205px;padding:21px}.dapp-hub-heading p{font-size:13px}.dapp-wallet-heading{text-align:center}}
 
+
+/* ===== FLY INFINITY DAPP — MATCHED CLEAR GLASS REFINEMENT ===== */
+:root{--dapp-glass:rgba(10,19,18,.31);--dapp-glass-soft:rgba(255,255,255,.025);--dapp-shadow:0 12px 32px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.065)}
+.action-card,.wallet-card,.contract-reference-card,.ownership-guide-card,.buy-guide-card,.sell-guide-card,.gift-guide-card{background:linear-gradient(145deg,rgba(13,24,23,.34),rgba(7,13,13,.25))!important;-webkit-backdrop-filter:blur(23px) saturate(128%)!important;backdrop-filter:blur(23px) saturate(128%)!important;box-shadow:var(--dapp-shadow)!important}
+.action-card div[style*="background: #1a1a1a"],.action-card div[style*="background:#1a1a1a"],.ownership-guide-step,.buy-guide-step,.sell-guide-step,.gift-guide-step{background:rgba(255,255,255,.026)!important;-webkit-backdrop-filter:blur(17px) saturate(122%)!important;backdrop-filter:blur(17px) saturate(122%)!important;border-color:rgba(255,255,255,.075)!important}
+.ownership-guide-congrats,.buy-guide-congrats,.sell-guide-congrats,.gift-guide-congrats{background:linear-gradient(100deg,rgba(0,200,150,.055),rgba(255,255,255,.018) 52%,rgba(212,175,55,.055))!important;-webkit-backdrop-filter:blur(16px) saturate(120%);backdrop-filter:blur(16px) saturate(120%)}
+.contract-reference-card{background:linear-gradient(135deg,rgba(34,34,34,.38),rgba(15,15,15,.34))!important;border-color:rgba(212,175,55,.22)!important}
+@media(max-width:760px){.action-card,.wallet-card,.contract-reference-card,.ownership-guide-card,.buy-guide-card,.sell-guide-card,.gift-guide-card{-webkit-backdrop-filter:blur(18px) saturate(122%)!important;backdrop-filter:blur(18px) saturate(122%)!important}}
+
+/* Home hub wallet card — reuses the existing floating wallet panel */
+.dapp-wallet-connect-card{position:relative;isolation:isolate;overflow:hidden;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:20px;margin:22px 0 26px;padding:25px 28px;border-radius:25px;border:1px solid rgba(0,200,150,.24);background:linear-gradient(120deg,rgba(10,24,21,.38),rgba(13,17,16,.26) 58%,rgba(35,29,13,.22));-webkit-backdrop-filter:blur(25px) saturate(132%);backdrop-filter:blur(25px) saturate(132%);box-shadow:0 14px 34px rgba(0,0,0,.19),inset 0 1px 0 rgba(255,255,255,.08)}
+.dapp-wallet-connect-card:before{content:"";position:absolute;z-index:-1;width:220px;height:220px;inset-inline-start:-85px;top:-125px;border-radius:50%;background:radial-gradient(circle,rgba(0,200,150,.12),transparent 70%);pointer-events:none}
+.dapp-wallet-card-mark{width:66px;height:66px;display:grid;place-items:center;border-radius:21px;color:#00C896;font-size:27px;background:linear-gradient(145deg,rgba(0,200,150,.13),rgba(0,200,150,.035));border:1px solid rgba(0,200,150,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.09)}
+.dapp-wallet-card-copy h2{margin:0 0 7px;color:#D4AF37;font-size:18px;font-weight:800}.dapp-wallet-card-copy p{margin:0;color:#c0d0e8;font-size:13px;line-height:1.8}.dapp-wallet-card-footnote{display:inline-block;margin-top:8px;color:rgba(192,208,232,.62);font-size:10px;letter-spacing:.025em}
+.dapp-wallet-connect-action{min-width:220px;min-height:58px;display:inline-flex;align-items:center;justify-content:center;gap:11px;padding:14px 22px;border:1px solid rgba(0,200,150,.42);border-radius:17px;color:#eafff8;background:linear-gradient(125deg,rgba(0,200,150,.23),rgba(0,200,150,.10) 65%,rgba(212,175,55,.10));box-shadow:0 8px 20px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.12);font:700 14px inherit;cursor:pointer;transition:transform .22s ease,border-color .22s ease,background .22s ease,box-shadow .22s ease}
+.dapp-wallet-connect-action>i:first-child{font-size:17px;color:#00C896}.dapp-wallet-connect-action .dapp-wallet-action-arrow{font-size:11px;color:#D4AF37}
+.dapp-wallet-connect-action:hover{transform:translateY(-2px);border-color:rgba(212,175,55,.55);background:linear-gradient(125deg,rgba(0,200,150,.27),rgba(0,200,150,.12) 65%,rgba(212,175,55,.14));box-shadow:0 11px 24px rgba(0,0,0,.2),0 0 13px rgba(0,200,150,.08),inset 0 1px 0 rgba(255,255,255,.14)}
+.dapp-wallet-connect-action:focus-visible{outline:2px solid #D4AF37;outline-offset:4px}
+@media(max-width:760px){.dapp-wallet-connect-card{grid-template-columns:auto minmax(0,1fr);gap:14px;padding:19px;border-radius:21px}.dapp-wallet-card-mark{width:54px;height:54px;border-radius:17px;font-size:22px}.dapp-wallet-card-copy h2{font-size:16px}.dapp-wallet-connect-action{grid-column:1/-1;width:100%;min-height:56px}}
+@media(prefers-reduced-motion:reduce){.dapp-wallet-connect-action{transition:none}.dapp-wallet-connect-action:hover{transform:none}}
+
 </style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head>
@@ -1235,32 +1256,16 @@ textarea:focus,
         <a class="dapp-operation-card ownership" href="dapp-ownership.html"><span class="dapp-card-icon"><i class="fas fa-gem"></i></span><span class="dapp-card-title" data-i18n="dapp.hubOwnershipTitle">Buy Fly Infinity Ownership Shares</span><span class="dapp-card-desc" data-i18n="dapp.hubOwnershipDesc">اشتراک مالکیت فلای اینفینیتی را بخرید و سهامدار اکوسیستم شوید. با خرید اشتراک معادل 2$ فیت رایگان بعنوان هدیه ورود دریافت میکنید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
         <a class="dapp-operation-card buy" href="dapp-buy-fit.html"><span class="dapp-card-icon"><i class="fas fa-cart-shopping"></i></span><span class="dapp-card-title" data-i18n="dapp.hubBuyTitle">Buy FIT</span><span class="dapp-card-desc" data-i18n="dapp.hubBuyDesc">میتوانید توکن فیت خود بصورت آنی با پرداخت دای خرید کنید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
         <a class="dapp-operation-card sell" href="dapp-sell-fit.html"><span class="dapp-card-icon"><i class="fas fa-arrow-trend-up"></i></span><span class="dapp-card-title" data-i18n="dapp.hubSellTitle">Sell FIT</span><span class="dapp-card-desc" data-i18n="dapp.hubSellDesc">میتوانید توکن فیت خود را بدون هیچ محدودیتی در کسری از ثانیه تمام نقد کنید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
-        <a class="dapp-operation-card gift" href="dapp-gift.html"><span class="dapp-card-icon"><i class="fas fa-gift"></i></span><span class="dapp-card-title">Fly Infinity Gift</span><span class="dapp-card-desc" data-i18n="dapp.hubGiftDesc">اگر فقط یک سرمایه گذار هستید میتوانید در جوایز 5 دلاری شرکت کنید و تا سقف مشخصی از این جوایز بهرهمند شوید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
+        <a class="dapp-operation-card gift" href="dapp-gift.html"><span class="dapp-card-icon"><i class="fas fa-gift"></i></span><span class="dapp-card-title" data-i18n="dapp.hubGiftTitle">Fly Infinity Gift</span><span class="dapp-card-desc" data-i18n="dapp.hubGiftDesc">اگر فقط یک سرمایه گذار هستید میتوانید در جوایز 5 دلاری شرکت کنید و تا سقف مشخصی از این جوایز بهرهمند شوید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
       </div>
+      <section class="dapp-wallet-connect-card" aria-labelledby="dappWalletCardTitle">
+ <div class="dapp-wallet-card-mark" aria-hidden="true"><i class="fas fa-wallet"></i></div>
+ <div class="dapp-wallet-card-copy"><h2 id="dappWalletCardTitle" data-i18n="dapp.hubWalletTitle">Your Fly Infinity Wallet</h2>
+ <p data-i18n="dapp.hubWalletDesc">Connect your wallet to view your FIT balance, network, and wallet metrics.</p>
+ <span class="dapp-wallet-card-footnote" data-i18n="dapp.hubWalletFootnote">Secure wallet connection · BNB Smart Chain</span></div>
+ <button type="button" id="dappWalletOpenBtn" class="dapp-wallet-connect-action"><i class="fas fa-wallet" aria-hidden="true"></i><span data-i18n="dapp.hubWalletAction">Connect Wallet</span><i class="fas fa-arrow-up-right-from-square dapp-wallet-action-arrow" aria-hidden="true"></i></button>
+</section>
     </section>
-    <!-- Wallet Overview -->
-    <div class="wallet-card" id="dappWalletOverview"><div class="dapp-wallet-heading" data-i18n="dapp.walletOverview">Wallet Overview</div>
-        <div id="walletStatus">
-            <button id="connectBtn" class="connect-btn"><i class="fas fa-wallet"></i> <span data-i18n="dapp.connect">Connect Wallet</span></button>
-            <p style="color:#888; margin-top:12px; font-size:12px;" data-i18n="dapp.walletDesc">MetaMask, Trust Wallet, TokenPocket, or any Web3 wallet</p>
-        </div>
-        <div id="walletInfo" style="display: none;">
-            <div class="wallet-info">
-                <div><i class="fas fa-link"></i> <span id="walletAddress" class="wallet-address">—</span></div>
-                <div><i class="fas fa-coins"></i> <span data-i18n="dapp.fitBalance">FIT Balance:</span> <span id="fitBalance" class="wallet-balance">—</span></div>
-                <div><i class="fas fa-dollar-sign"></i> <span data-i18n="dapp.daiBalance">DAI Balance:</span> <span id="daiBalance" class="wallet-balance">—</span></div>
-                <button id="disconnectBtn" class="action-btn" style="width: auto; padding: 8px 20px; margin:0;" data-i18n="dapp.disconnect">Disconnect</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Price & Info -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
-        <div class="info-row"><span class="info-label" data-i18n="dapp.currentPrice">Current FIT Price</span><span class="info-value" id="currentPrice">— DAI</span></div>
-        <div class="info-row"><span class="info-label" data-i18n="dapp.networkAllowance">DAI Allowance (Network)</span><span class="info-value" id="networkAllowanceStatus">—</span></div>
-        <div class="info-row"><span class="info-label" data-i18n="dapp.tokenAllowance">DAI Allowance (Token)</span><span class="info-value" id="tokenAllowanceStatus">—</span></div>
-    </div>
-
     <section class="dapp-operation-view" id="dappOwnershipOperation">
 <div class="dapp-back-row"><a class="dapp-back-btn" href="dapp.html"><i class="fas fa-arrow-left"></i><span data-i18n="dapp.backToDapp">Back to DApp</span></a></div>
     <!-- ==================== SECTION 1: REGISTER IN NETWORK ==================== -->
@@ -1539,9 +1544,8 @@ textarea:focus,
         document.getElementById("buyerAddress").value = userAddress;
         document.getElementById("referrerAddress").value = userAddress;
         
-        document.getElementById("walletAddress").innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
-        document.getElementById("walletStatus").style.display = "none";
-        document.getElementById("walletInfo").style.display = "block";
+        const walletAddressEl = document.getElementById("walletAddress"); if (walletAddressEl) walletAddressEl.innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
+        const walletStatusEl = document.getElementById("walletStatus"); const walletInfoEl = document.getElementById("walletInfo"); if (walletStatusEl) walletStatusEl.style.display = "none"; if (walletInfoEl) walletInfoEl.style.display = "block";
         
         await loadBalances();
         await loadPrice();
@@ -1555,8 +1559,7 @@ textarea:focus,
         try {
             let fitBalance = await fitTokenContract.balanceOf(userAddress);
             let daiBalance = await daiContract.balanceOf(userAddress);
-            document.getElementById("fitBalance").innerHTML = parseFloat(ethers.utils.formatEther(fitBalance)).toFixed(4);
-            document.getElementById("daiBalance").innerHTML = parseFloat(ethers.utils.formatEther(daiBalance)).toFixed(4);
+            const fitBalanceEl = document.getElementById("fitBalance"); const daiBalanceEl = document.getElementById("daiBalance"); if (fitBalanceEl) fitBalanceEl.innerHTML = parseFloat(ethers.utils.formatEther(fitBalance)).toFixed(4); if (daiBalanceEl) daiBalanceEl.innerHTML = parseFloat(ethers.utils.formatEther(daiBalance)).toFixed(4);
         } catch(e) { console.error(e); }
     }
     
@@ -1564,7 +1567,7 @@ textarea:focus,
         try {
             let priceRaw = await fitTokenContract.Price();
             currentPrice = parseFloat(ethers.utils.formatEther(priceRaw));
-            document.getElementById("currentPrice").innerHTML = currentPrice.toFixed(6) + " DAI";
+            const currentPriceEl = document.getElementById("currentPrice"); if (currentPriceEl) currentPriceEl.innerHTML = currentPrice.toFixed(6) + " DAI";
             updateBuyEstimate();
             updateSellEstimate();
         } catch(e) { console.error(e); }
@@ -1575,20 +1578,20 @@ textarea:focus,
             let networkAllowance = await daiContract.allowance(userAddress, FIT_NETWORK_ADDRESS);
             let networkAllowanceNum = parseFloat(ethers.utils.formatEther(networkAllowance));
             if (networkAllowanceNum >= 100) {
-                document.getElementById("networkAllowanceStatus").innerHTML = `✅ ${networkAllowanceNum.toFixed(2)} DAI`;
+                const networkAllowanceEl = document.getElementById("networkAllowanceStatus"); if (networkAllowanceEl) networkAllowanceEl.innerHTML = `✅ ${networkAllowanceNum.toFixed(2)} DAI`;
                 document.getElementById("networkApproveStatus").innerHTML = "✅ Approved";
             } else {
-                document.getElementById("networkAllowanceStatus").innerHTML = "❌ Not approved";
+                const networkAllowanceEl = document.getElementById("networkAllowanceStatus"); if (networkAllowanceEl) networkAllowanceEl.innerHTML = "❌ Not approved";
                 document.getElementById("networkApproveStatus").innerHTML = "⚠️ Need approval";
             }
             
             let tokenAllowance = await daiContract.allowance(userAddress, FIT_TOKEN_ADDRESS);
             let tokenAllowanceNum = parseFloat(ethers.utils.formatEther(tokenAllowance));
             if (tokenAllowanceNum >= 1000) {
-                document.getElementById("tokenAllowanceStatus").innerHTML = `✅ ${tokenAllowanceNum.toFixed(2)} DAI`;
+                const tokenAllowanceEl = document.getElementById("tokenAllowanceStatus"); if (tokenAllowanceEl) tokenAllowanceEl.innerHTML = `✅ ${tokenAllowanceNum.toFixed(2)} DAI`;
                 document.getElementById("tokenApproveStatus").innerHTML = "✅ Approved";
             } else {
-                document.getElementById("tokenAllowanceStatus").innerHTML = "❌ Not approved";
+                const tokenAllowanceEl = document.getElementById("tokenAllowanceStatus"); if (tokenAllowanceEl) tokenAllowanceEl.innerHTML = "❌ Not approved";
                 document.getElementById("tokenApproveStatus").innerHTML = "⚠️ Need approval";
             }
         } catch(e) { console.error(e); }
@@ -1819,8 +1822,7 @@ textarea:focus,
     
     function disconnectWallet() {
         userAddress = null;
-        document.getElementById("walletStatus").style.display = "block";
-        document.getElementById("walletInfo").style.display = "none";
+        const walletStatusEl = document.getElementById("walletStatus"); const walletInfoEl = document.getElementById("walletInfo"); if (walletStatusEl) walletStatusEl.style.display = "block"; if (walletInfoEl) walletInfoEl.style.display = "none";
     }
     
     async function checkNetwork() {
@@ -2020,9 +2022,15 @@ textarea:focus,
         }
     });
     
+    // Reuse the existing circular wallet control and its localized wallet panel.
+    const dappWalletOpenBtn = document.getElementById("dappWalletOpenBtn");
+    if (dappWalletOpenBtn) dappWalletOpenBtn.addEventListener("click", function () {
+        const existingWalletButton = document.getElementById("walletBtn");
+        if (existingWalletButton) existingWalletButton.click();
+    });
+
     // ===== EVENT LISTENERS =====
-    document.getElementById("connectBtn").addEventListener("click", connectWallet);
-    document.getElementById("disconnectBtn").addEventListener("click", disconnectWallet);
+    const legacyConnectBtn = document.getElementById("connectBtn"); const legacyDisconnectBtn = document.getElementById("disconnectBtn"); if (legacyConnectBtn) legacyConnectBtn.addEventListener("click", connectWallet); if (legacyDisconnectBtn) legacyDisconnectBtn.addEventListener("click", disconnectWallet);
     
     document.getElementById("approveNetworkBtn").addEventListener("click", approveNetworkDAI);
     document.getElementById("becomeOwnerBtn").addEventListener("click", becomeOwner);
