@@ -123,7 +123,16 @@
         "fitTokenContract": "📜 Смарт-контракт токена FIT Fly Infinity",
         "ownershipContractFlow": "Шаг 1: Подтвердить DAI → Шаг 2: Прочитать и принять соглашение → Шаг 3: Завершить регистрацию владения",
         "fitContractFlow": "Шаг 1: Подтвердить DAI → Шаг 2: Купить или продать FIT",
-        "walletHubDesc": "Подключите кошелёк, чтобы просматривать балансы и данные аккаунта FIT."
+        "walletHubDesc": "Подключите кошелёк, чтобы просматривать балансы и данные аккаунта FIT.",
+        "hubGiftTitle": "Подарок Fly Infinity",
+        "agreementHeadingPreamble": "📌 Преамбула",
+        "agreementHeadingOwnership": "💎 Доля владения – Пожизненная, без возврата средств",
+        "agreementHeadingFit": "💰 Цифровой актив FIT – Полностью ликвидный",
+        "agreementHeadingGift": "🎁 Распределение подарков – Награды по результатам розыгрыша",
+        "agreementHeadingWelcome": "🎁 Приветственный бонус – Мгновенное зачисление токенов",
+        "agreementHeadingReferral": "🔗 Реферальный идентификатор – Децентрализованная система приглашений",
+        "agreementHeadingDeveloper": "💰 Вознаграждения разработчикам – Оплата по результатам работы",
+        "agreementHeadingInfrastructure": "🔒 Децентрализованная инфраструктура – Безопасность и анонимность"
     },
     "footer": {
         "tagline": "Fly Infinity — Децентрализованный. Прозрачный. Вечно Растущий."
