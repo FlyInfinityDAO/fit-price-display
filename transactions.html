@@ -541,6 +541,8 @@
         
         .source-card.gift .icon { color: #D4AF37; }
         .source-card.gift .title { color: #D4AF37; }
+        .source-card.dao .icon { color: #00C896; }
+        .source-card.dao .title { color: #D4AF37; }
         
         /* ===== FOOTER ===== */
         .footer {
@@ -1196,25 +1198,19 @@ textarea:focus,
                 <p data-i18n="transactions.allDesc">View all contract transactions</p>
                 <span class="arrow" data-i18n="transactions.openBsc">→ Open in BscScan →</span>
             </a>
-            <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0xe3d4187f%7eBuy" target="_blank" class="link-card buy">
-                <i class="fas fa-arrow-down"></i>
-                <h3 data-i18n="transactions.buy">🟢 Buy Transactions</h3>
-                <p data-i18n="transactions.buyDesc">Only Buy transactions (Buy function)</p>
-                <span class="arrow" data-i18n="transactions.openBsc">→ Open in BscScan →</span>
-            </a>
-            <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0x52288195%7eSell" target="_blank" class="link-card sell">
-                <i class="fas fa-arrow-up"></i>
-                <h3 data-i18n="transactions.sell">🔴 Sell Transactions</h3>
-                <p data-i18n="transactions.sellDesc">Only Sell transactions (Sell function)</p>
-                <span class="arrow" data-i18n="transactions.openBsc">→ Open in BscScan →</span>
-            </a>
-            <a href="https://bscscan.com/tokentxns?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card all">
+            <a href="https://bscscan.com/token/0xbebe4ea7aa4037cef5d0bc25a10f9dca16120dfa#transactions" target="_blank" rel="noopener noreferrer" class="link-card buy">
                 <i class="fas fa-arrow-right-arrow-left"></i>
-                <h3 data-i18n="transactions.transfers">🔄 Token Transfers</h3>
-                <p data-i18n="transactions.transfersDesc">FIT token transfers between addresses</p>
+                <h3 data-i18n="transactions.fitTransactions">FIT Transactions</h3>
+                <p data-i18n="transactions.fitTransactionsDesc">Includes FIT purchases and sales</p>
                 <span class="arrow" data-i18n="transactions.openBsc">→ Open in BscScan →</span>
             </a>
-            <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0x05068727%7eGenesis_Liquidity" target="_blank" class="link-card genesis">
+            <a href="https://bscscan.com/tokentxns?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" rel="noopener noreferrer" class="link-card sell">
+                <i class="fas fa-coins"></i>
+                <h3 data-i18n="transactions.daiTransactions">DAI Transactions</h3>
+                <p data-i18n="transactions.daiTransactionsDesc">DAI payments and receipts involving investors and developers</p>
+                <span class="arrow" data-i18n="transactions.openBsc">→ Open in BscScan →</span>
+            </a>
+            <a href="https://bscscan.com/tx/0xc224de5daf4665ed1750b7efb82df1ab509d6fb44c0b16310a51503c018ab675" target="_blank" class="link-card genesis">
                 <i class="fas fa-droplet"></i>
                 <h3 data-i18n="transactions.genesis">💧 Genesis Liquidity</h3>
                 <p data-i18n="transactions.genesisDesc">Creation of the initial base price</p>
@@ -1230,19 +1226,22 @@ textarea:focus,
             <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0x949ded00%7eBe+Come_Owner" target="_blank" class="link-card owner">
                 <i class="fas fa-user-plus"></i>
                 <h3 data-i18n="transactions.owner">👑 Become Owner Events</h3>
-                <p data-i18n="transactions.ownerDesc">Registration of new Fly Infinity ownership shares (BeCome_Owner function)</p>
+                <
+                <small class="login-note" data-i18n="transactions.bscscanLoginNote">To view transactions on BscScan, you must be signed in to your account.</small>
                 <span class="arrow" data-i18n="transactions.openBsc">→ Open in BscScan →</span>
             </a>
             <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0xe2e15f2e%7eReward" target="_blank" class="link-card reward">
                 <i class="fas fa-coins"></i>
                 <h3 data-i18n="transactions.reward">🪙 Reward Events</h3>
-                <p data-i18n="transactions.rewardDesc">List of rewards paid to developers</p>
+                <
+                <small class="login-note" data-i18n="transactions.bscscanLoginNote">To view transactions on BscScan, you must be signed in to your account.</small>
                 <span class="arrow" data-i18n="transactions.openBsc">→ Open in BscScan →</span>
             </a>
             <a href="https://bscscan.com/advanced-filter?fadd=0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8&tadd=0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8&txntype=2&mtd=0xda9c88dc%7ePay_Fly_Infinity_Gift&qt=2" target="_blank" class="link-card gift">
                 <i class="fas fa-gift"></i>
                 <h3 data-i18n="transactions.gift">🎁 Gift Events</h3>
-                <p data-i18n="transactions.giftDesc">List of $5 gifts paid out</p>
+                <
+                <small class="login-note" data-i18n="transactions.bscscanLoginNote">To view transactions on BscScan, you must be signed in to your account.</small>
                 <span class="arrow" data-i18n="transactions.openBsc">→ Open in BscScan →</span>
             </a>
         </div>
@@ -1258,7 +1257,7 @@ textarea:focus,
                 <p data-i18n="transactions.distributionDesc">Chart of holder distribution and ownership percentages</p>
                 <span class="arrow" data-i18n="transactions.openBsc">→ Open in BscScan →</span>
             </a>
-            <a href="https://bscscan.com/token/gauge?type=holders&a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card holders">
+            <a href="https://bscscan.com/token/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#balances" target="_blank" class="link-card holders">
                 <i class="fas fa-list-ol"></i>
                 <h3 data-i18n="transactions.topHolders">👥 Top Holders List</h3>
                 <p data-i18n="transactions.topHoldersDesc">Complete list of holders with FIT balances</p>
@@ -1303,9 +1302,10 @@ textarea:focus,
                 <div class="sub" data-i18n="transactions.viewSource">View Source Code →</div>
             </a>
             
-            <a href="https://bscscan.com/address/0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8#code#F1#L1" target="_blank" class="source-card gift">
-                <div class="icon"><i class="fas fa-gift" aria-hidden="true"></i></div>
-                <div class="title" data-i18n="transactions.giftContract">Fly Infinity Gift</div>
+            <
+            <a href="https://bscscan.com/address/0xB56c380287b7Fdc9940501f13Fc185A787a6F5D9#code" target="_blank" rel="noopener noreferrer" class="source-card dao">
+                <div class="icon"><i class="fas fa-landmark" aria-hidden="true"></i></div>
+                <div class="title" data-i18n="transactions.daoContract">Fly Infinity DAO</div>
                 <div class="sub" data-i18n="transactions.viewSource">View Source Code →</div>
             </a>
         </div>
