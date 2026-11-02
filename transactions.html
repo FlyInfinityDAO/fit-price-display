@@ -959,6 +959,158 @@ textarea:focus,
 .footer .footer-links a i{color:#00e6ad!important;filter:drop-shadow(0 0 5px rgba(0,230,173,.32))}
 .footer .footer-links a:hover,.footer .footer-links a:focus-visible,.footer .footer-links a:hover span,.footer .footer-links a:focus-visible span{color:#eafff8!important}
 .footer .footer-links a:hover i,.footer .footer-links a:focus-visible i{color:#a2ffe4!important;filter:drop-shadow(0 0 8px rgba(0,255,190,.9))}
+
+/* ===== TRANSACTIONS PAGE — MATCH NEXT PROJECTS GLASS SYSTEM ===== */
+.container > .card {
+  background: rgba(10, 20, 19, 0.22) !important;
+  border: 1px solid rgba(0, 200, 150, 0.20) !important;
+  border-radius: 24px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.075) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+  backdrop-filter: blur(18px) saturate(125%);
+  padding: 24px;
+}
+.container > .card + .card { margin-top: 22px; }
+.card-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  color: #D4AF37;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  padding: 0 0 15px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(0,200,150,.18);
+}
+.card-title i {
+  color: #00C896;
+  font-size: 17px;
+  margin: 0;
+  filter: drop-shadow(0 0 5px rgba(0,200,150,.16));
+}
+.stats-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 245px), 1fr));
+  gap: 15px;
+  margin: 0;
+}
+.link-card,
+.source-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  min-height: 190px;
+  padding: 22px 18px 19px;
+  border-radius: 20px;
+  background: rgba(10,20,19,.22) !important;
+  border: 1px solid rgba(0,200,150,.20) !important;
+  border-left: 1px solid rgba(0,200,150,.20) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.075) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+  backdrop-filter: blur(18px) saturate(125%);
+  transition: transform .22s ease, border-color .22s ease, background-color .22s ease, box-shadow .22s ease;
+}
+.link-card::before,
+.source-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 18% auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,200,150,.32), transparent);
+  pointer-events: none;
+}
+.link-card:hover,
+.source-card:hover {
+  transform: translateY(-3px);
+  background: rgba(10,25,22,.32) !important;
+  border-color: rgba(0,200,150,.34) !important;
+  box-shadow: 0 12px 28px rgba(0,0,0,.20), 0 0 10px rgba(0,200,150,.055), inset 0 1px 0 rgba(255,255,255,.09) !important;
+}
+.link-card > i,
+.source-card .icon {
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  margin: 0 0 13px;
+  border-radius: 15px;
+  background: rgba(0,200,150,.075);
+  border: 1px solid rgba(0,200,150,.16);
+  color: #00C896 !important;
+  font-size: 20px;
+  filter: none;
+}
+.link-card h3,
+.source-card .title {
+  color: #D4AF37 !important;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 0 0 7px;
+}
+.link-card p,
+.source-card .sub {
+  color: #aebdb8 !important;
+  font-size: 12px;
+  line-height: 1.75;
+  margin: 0 0 12px;
+  max-width: 100%;
+}
+.link-card .arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #70f5cf !important;
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: auto;
+  padding-top: 4px;
+}
+.link-card.all > i, .link-card.buy > i, .link-card.sell > i,
+.link-card.reward > i, .link-card.owner > i, .link-card.holders > i,
+.link-card.supply > i, .link-card.liquidity > i, .link-card.genesis > i,
+.link-card.gift > i { color: #00C896 !important; }
+.link-card.all, .link-card.buy, .link-card.sell, .link-card.reward,
+.link-card.owner, .link-card.holders, .link-card.supply,
+.link-card.liquidity, .link-card.genesis, .link-card.gift {
+  border-left: 1px solid rgba(0,200,150,.20) !important;
+}
+.source-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 15px;
+  margin-top: 0;
+}
+.source-card {
+  min-height: 165px;
+  justify-content: center;
+  gap: 0;
+}
+.source-card .icon {
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+.source-card .title { margin-bottom: 5px; }
+.source-card .sub { margin: 0; color: #70f5cf !important; }
+@media (max-width: 768px) {
+  .container > .card { padding: 19px 15px; border-radius: 21px; }
+  .stats-grid { grid-template-columns: 1fr; gap: 12px; }
+  .link-card { min-height: 175px; padding: 19px 16px; }
+  .source-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 145px), 1fr)); }
+  .source-card { min-height: 150px; padding: 17px 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .link-card, .source-card { transition: none; }
+  .link-card:hover, .source-card:hover { transform: none; }
+}
+
 </style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head>
@@ -1036,7 +1188,7 @@ textarea:focus,
 
     <!-- ===== TRANSACTION LINKS ===== -->
     <div class="card">
-        <div class="card-title" data-i18n="transactions.title"><i class="fas fa-exchange-alt"></i> Transactions Explorer</div>
+        <div class="card-title"><i class="fas fa-arrow-right-arrow-left" aria-hidden="true"></i><span data-i18n="transactions.title">Transactions Explorer</span></div>
         <div class="stats-grid">
             <a href="https://bscscan.com/txs?a=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card all">
                 <i class="fas fa-list"></i>
@@ -1073,7 +1225,7 @@ textarea:focus,
 
     <!-- ===== NETWORK EVENTS ===== -->
     <div class="card">
-        <div class="card-title" data-i18n="transactions.networkEvents"><i class="fas fa-star"></i> Network Events</div>
+        <div class="card-title"><i class="fas fa-diagram-project" aria-hidden="true"></i><span data-i18n="transactions.networkEvents">Network Events</span></div>
         <div class="stats-grid">
             <a href="https://bscscan.com/advanced-filter?fadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&tadd=0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa&txntype=2&mtd=0x949ded00%7eBe+Come_Owner" target="_blank" class="link-card owner">
                 <i class="fas fa-user-plus"></i>
@@ -1098,7 +1250,7 @@ textarea:focus,
 
     <!-- ===== HOLDER INFORMATION ===== -->
     <div class="card">
-        <div class="card-title" data-i18n="transactions.holderInfo"><i class="fas fa-users"></i> Holder Information</div>
+        <div class="card-title"><i class="fas fa-users" aria-hidden="true"></i><span data-i18n="transactions.holderInfo">Holder Information</span></div>
         <div class="stats-grid">
             <a href="https://bscscan.com/token/tokenholderchart/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card holders">
                 <i class="fas fa-chart-pie"></i>
@@ -1117,7 +1269,7 @@ textarea:focus,
 
     <!-- ===== CONTRACT STATISTICS ===== -->
     <div class="card">
-        <div class="card-title" data-i18n="transactions.contractStats"><i class="fas fa-chart-simple"></i> Contract Statistics</div>
+        <div class="card-title"><i class="fas fa-chart-line" aria-hidden="true"></i><span data-i18n="transactions.contractStats">Contract Statistics</span></div>
         <div class="stats-grid">
             <a href="https://bscscan.com/token/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" class="link-card supply">
                 <i class="fas fa-coins"></i>
@@ -1136,23 +1288,23 @@ textarea:focus,
 
     <!-- ===== CONTRACT SOURCE CODE ===== -->
     <div class="card">
-        <div class="card-title" data-i18n="transactions.contractsSource"><i class="fas fa-file-code"></i> Contracts Source Code</div>
+        <div class="card-title"><i class="fas fa-file-code" aria-hidden="true"></i><span data-i18n="transactions.contractsSource">Contracts Source Code</span></div>
         
         <div class="source-grid">
             <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#code#F1#L1" target="_blank" class="source-card token">
-                <div class="icon">🪙</div>
+                <div class="icon"><i class="fas fa-coins" aria-hidden="true"></i></div>
                 <div class="title" data-i18n="transactions.tokenContract">Fly Infinity Token</div>
                 <div class="sub" data-i18n="transactions.viewSource">View Source Code →</div>
             </a>
             
             <a href="https://bscscan.com/address/0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B#code#F1#L1" target="_blank" class="source-card network">
-                <div class="icon">🌐</div>
+                <div class="icon"><i class="fas fa-diagram-project" aria-hidden="true"></i></div>
                 <div class="title" data-i18n="transactions.networkContract">Fly Infinity Network</div>
                 <div class="sub" data-i18n="transactions.viewSource">View Source Code →</div>
             </a>
             
             <a href="https://bscscan.com/address/0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8#code#F1#L1" target="_blank" class="source-card gift">
-                <div class="icon">🎁</div>
+                <div class="icon"><i class="fas fa-gift" aria-hidden="true"></i></div>
                 <div class="title" data-i18n="transactions.giftContract">Fly Infinity Gift</div>
                 <div class="sub" data-i18n="transactions.viewSource">View Source Code →</div>
             </a>
