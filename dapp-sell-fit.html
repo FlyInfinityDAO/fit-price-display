@@ -1535,7 +1535,18 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             margin-top: 7px;
         }
 
-    </style>
+    
+/* ===== MATCHED, MORE TRANSPARENT GLASS SURFACES ===== */
+:root{--fi-dapp-glass-shadow:0 12px 32px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.06)}
+.top-bar,.wallet-card,.action-card,.contract-reference-card,.ownership-guide-card,.buy-guide-card,.sell-guide-card,.info-row,.wallet-info,.agreement-modal-content{background:linear-gradient(145deg,rgba(13,24,23,.30),rgba(7,13,13,.22))!important;-webkit-backdrop-filter:blur(23px) saturate(130%)!important;backdrop-filter:blur(23px) saturate(130%)!important;box-shadow:var(--fi-dapp-glass-shadow)!important}
+.top-bar,.wallet-card,.action-card,.ownership-guide-card,.buy-guide-card,.sell-guide-card,.agreement-modal-content{border-color:rgba(0,200,150,.20)!important}
+.action-card div[style*="background: #1a1a1a"],.action-card div[style*="background:#1a1a1a"],.ownership-guide-step,.buy-guide-step,.sell-guide-step{background:rgba(255,255,255,.035)!important;-webkit-backdrop-filter:blur(17px) saturate(122%)!important;backdrop-filter:blur(17px) saturate(122%)!important;border-color:rgba(255,255,255,.075)!important}
+.ownership-guide-congrats,.buy-guide-congrats,.sell-guide-congrats{background:linear-gradient(100deg,rgba(0,200,150,.055),rgba(255,255,255,.022) 52%,rgba(212,175,55,.05))!important;-webkit-backdrop-filter:blur(16px) saturate(120%)!important;backdrop-filter:blur(16px) saturate(120%)!important}
+.contract-reference-card{border-color:rgba(212,175,55,.20)!important}
+.info-row,.wallet-info{background:rgba(255,255,255,.035)!important}
+@media(max-width:760px){.top-bar,.wallet-card,.action-card,.contract-reference-card,.ownership-guide-card,.buy-guide-card,.sell-guide-card,.agreement-modal-content{-webkit-backdrop-filter:blur(18px) saturate(122%)!important;backdrop-filter:blur(18px) saturate(122%)!important}}
+
+</style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head>
 <body data-dapp-view="sell">
