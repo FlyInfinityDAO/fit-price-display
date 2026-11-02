@@ -122,7 +122,11 @@
     "networkContract": "📜 Fly Infinity Network Smart Contract",
     "fitTokenContract": "📜 Fly Infinity FIT Token Smart Contract",
     "ownershipContractFlow": "Step 1: Approve DAI → Step 2: Review and accept the agreement → Step 3: Complete ownership registration.",
-    "fitContractFlow": "Step 1: Approve DAI → Step 2: Buy or sell FIT."
+    "fitContractFlow": "Step 1: Approve DAI → Step 2: Buy or sell FIT.",
+    "hubWalletTitle": "Your Fly Infinity Wallet",
+    "hubWalletDesc": "Connect your wallet to view your FIT balance, network, and wallet metrics.",
+    "hubWalletFootnote": "Secure wallet connection · BNB Smart Chain",
+    "hubWalletAction": "Connect Wallet"
   },
   "footer": {
     "tagline": "Fly Infinity — Decentralized. Transparent. Forever Rising."
