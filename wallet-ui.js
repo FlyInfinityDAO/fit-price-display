@@ -151,7 +151,7 @@
       const owner=ownerResult.value.slice(2);
       if(owner.length>=192){
         const vals=[0,1,2].map(i=>units(BigInt('0x'+owner.slice(i*64,(i+1)*64))));
-        set('fiPurchased','
+        set('fiPurchased','$'+fmt(vals[0],4));set('fiAllowed','$'+fmt(vals[1],4));set('fiRemaining','$'+fmt(vals[2],4));
       }
     }
     if(lrResult.status==='fulfilled'){
@@ -159,123 +159,6 @@
       if(lr.length>=128){
         const l=BigInt('0x'+lr.slice(0,64)),r=BigInt('0x'+lr.slice(64,128));
         set('fiSmallerSide',t().left+': '+fmt(Number(l),0)+'  |  '+t().right+': '+fmt(Number(r),0));
-      }
-    }
-    const optionalFailed=ownerResult.status==='rejected'||lrResult.status==='rejected';
-    note(optionalFailed?'Some profile fields could not be loaded. Token balance and value were read separately.':'');
-  }
-  async function refreshExisting(){
-    provider=window.ethereum||null;
-    if(!provider){account='';chainId='';renderState();resetMetrics();note(t().noProvider);return;}
-    try{const accounts=await provider.request({method:'eth_accounts'});account=accounts&&accounts[0]||'';chainId=await provider.request({method:'eth_chainId'});listen();renderState();if(account)await loadContractData();else{resetMetrics();note('');}}
-    catch(e){renderState();note(t().error);}
-  }
-  async function connect(){
-    provider=window.ethereum||null;
-    if(!provider){note(t().noProvider);return;}
-    const b=document.getElementById('fiWalletConnect');b.disabled=true;note(t().connecting);
-    try{const accounts=await provider.request({method:'eth_requestAccounts'});account=accounts&&accounts[0]||'';chainId=await provider.request({method:'eth_chainId'});listen();renderState();await loadContractData();}
-    catch(e){note(e&&e.code===4001?t().rejected:t().error);}
-    finally{b.disabled=false;}
-  }
-  function disconnectLocal(){account='';resetMetrics();renderState();note(t().localDisconnect);}
-  function listen(){
-    if(!provider||provider.__fiWalletPanelBound)return;
-    provider.__fiWalletPanelBound=true;
-    if(provider.on){
-      provider.on('accountsChanged',async a=>{account=a&&a[0]||'';renderState();if(account)await loadContractData();else{resetMetrics();note(t().statusOff);}});
-      provider.on('chainChanged',async id=>{chainId=id;renderState();if(account)await loadContractData();});
-      provider.on('disconnect',()=>{account='';chainId='';resetMetrics();renderState();note(t().statusOff);});
-    }
-  }
-  function init(){if(!window.FI_LANG_HEADER_ENABLED)button();panel();}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
-})();+fmt(vals[0],4));set('fiAllowed','
-      }
-    }
-    if(lrResult.status==='fulfilled'){
-      const lr=lrResult.value.slice(2);
-      if(lr.length>=128){
-        const l=BigInt('0x'+lr.slice(0,64)),r=BigInt('0x'+lr.slice(64,128));
-        set('fiSmallerSide',fmt(Number(l<r?l:r),0));
-      }
-    }
-    const optionalFailed=ownerResult.status==='rejected'||lrResult.status==='rejected';
-    note(optionalFailed?'Some profile fields could not be loaded. Token balance and value were read separately.':'');
-  }
-  async function refreshExisting(){
-    provider=window.ethereum||null;
-    if(!provider){account='';chainId='';renderState();resetMetrics();note(t().noProvider);return;}
-    try{const accounts=await provider.request({method:'eth_accounts'});account=accounts&&accounts[0]||'';chainId=await provider.request({method:'eth_chainId'});listen();renderState();if(account)await loadContractData();else{resetMetrics();note('');}}
-    catch(e){renderState();note(t().error);}
-  }
-  async function connect(){
-    provider=window.ethereum||null;
-    if(!provider){note(t().noProvider);return;}
-    const b=document.getElementById('fiWalletConnect');b.disabled=true;note(t().connecting);
-    try{const accounts=await provider.request({method:'eth_requestAccounts'});account=accounts&&accounts[0]||'';chainId=await provider.request({method:'eth_chainId'});listen();renderState();await loadContractData();}
-    catch(e){note(e&&e.code===4001?t().rejected:t().error);}
-    finally{b.disabled=false;}
-  }
-  function disconnectLocal(){account='';resetMetrics();renderState();note(t().localDisconnect);}
-  function listen(){
-    if(!provider||provider.__fiWalletPanelBound)return;
-    provider.__fiWalletPanelBound=true;
-    if(provider.on){
-      provider.on('accountsChanged',async a=>{account=a&&a[0]||'';renderState();if(account)await loadContractData();else{resetMetrics();note(t().statusOff);}});
-      provider.on('chainChanged',async id=>{chainId=id;renderState();if(account)await loadContractData();});
-      provider.on('disconnect',()=>{account='';chainId='';resetMetrics();renderState();note(t().statusOff);});
-    }
-  }
-  function init(){if(!window.FI_LANG_HEADER_ENABLED)button();panel();}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
-})();+fmt(vals[1],4));set('fiRemaining','
-      }
-    }
-    if(lrResult.status==='fulfilled'){
-      const lr=lrResult.value.slice(2);
-      if(lr.length>=128){
-        const l=BigInt('0x'+lr.slice(0,64)),r=BigInt('0x'+lr.slice(64,128));
-        set('fiSmallerSide',fmt(Number(l<r?l:r),0));
-      }
-    }
-    const optionalFailed=ownerResult.status==='rejected'||lrResult.status==='rejected';
-    note(optionalFailed?'Some profile fields could not be loaded. Token balance and value were read separately.':'');
-  }
-  async function refreshExisting(){
-    provider=window.ethereum||null;
-    if(!provider){account='';chainId='';renderState();resetMetrics();note(t().noProvider);return;}
-    try{const accounts=await provider.request({method:'eth_accounts'});account=accounts&&accounts[0]||'';chainId=await provider.request({method:'eth_chainId'});listen();renderState();if(account)await loadContractData();else{resetMetrics();note('');}}
-    catch(e){renderState();note(t().error);}
-  }
-  async function connect(){
-    provider=window.ethereum||null;
-    if(!provider){note(t().noProvider);return;}
-    const b=document.getElementById('fiWalletConnect');b.disabled=true;note(t().connecting);
-    try{const accounts=await provider.request({method:'eth_requestAccounts'});account=accounts&&accounts[0]||'';chainId=await provider.request({method:'eth_chainId'});listen();renderState();await loadContractData();}
-    catch(e){note(e&&e.code===4001?t().rejected:t().error);}
-    finally{b.disabled=false;}
-  }
-  function disconnectLocal(){account='';resetMetrics();renderState();note(t().localDisconnect);}
-  function listen(){
-    if(!provider||provider.__fiWalletPanelBound)return;
-    provider.__fiWalletPanelBound=true;
-    if(provider.on){
-      provider.on('accountsChanged',async a=>{account=a&&a[0]||'';renderState();if(account)await loadContractData();else{resetMetrics();note(t().statusOff);}});
-      provider.on('chainChanged',async id=>{chainId=id;renderState();if(account)await loadContractData();});
-      provider.on('disconnect',()=>{account='';chainId='';resetMetrics();renderState();note(t().statusOff);});
-    }
-  }
-  function init(){if(!window.FI_LANG_HEADER_ENABLED)button();panel();}
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
-})();+fmt(vals[2],4));
-      }
-    }
-    if(lrResult.status==='fulfilled'){
-      const lr=lrResult.value.slice(2);
-      if(lr.length>=128){
-        const l=BigInt('0x'+lr.slice(0,64)),r=BigInt('0x'+lr.slice(64,128));
-        set('fiSmallerSide',fmt(Number(l<r?l:r),0));
       }
     }
     const optionalFailed=ownerResult.status==='rejected'||lrResult.status==='rejected';
