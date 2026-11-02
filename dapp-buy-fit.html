@@ -1417,6 +1417,85 @@ button:focus-visible,a:focus-visible,input:focus-visible{
   .action-card:hover,.action-btn:hover,.connect-btn:hover,.dapp-back-btn:hover{transform:none!important}
 }
 
+    
+/* ===== BUY FIT GUIDE + PRECISE MAX DAI CONTROL ===== */
+.buy-guide-card{
+  position:relative;isolation:isolate;overflow:hidden;
+  margin:0 0 25px;padding:clamp(20px,3vw,28px);
+  border:1px solid rgba(0,200,150,.23);border-radius:23px;
+  background:linear-gradient(135deg,rgba(12,27,23,.64),rgba(9,16,17,.54) 58%,rgba(28,23,12,.36));
+  -webkit-backdrop-filter:blur(23px) saturate(130%);backdrop-filter:blur(23px) saturate(130%);
+  box-shadow:0 13px 34px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.08);
+}
+.buy-guide-card:before{
+  content:"";position:absolute;z-index:-1;inset:0 7% auto;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,200,150,.38),rgba(212,175,55,.40),transparent);
+  pointer-events:none;
+}
+.buy-guide-card:after{
+  content:"";position:absolute;z-index:-1;width:220px;height:220px;right:-115px;top:-145px;
+  border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.065),transparent 68%);
+  pointer-events:none;
+}
+.buy-guide-heading{display:flex;align-items:center;gap:13px;margin-bottom:20px}
+.buy-guide-icon{
+  width:47px;height:47px;flex:0 0 47px;display:grid;place-items:center;
+  border-radius:14px;color:#70dabb;font-size:18px;
+  background:linear-gradient(145deg,rgba(0,200,150,.13),rgba(255,255,255,.035));
+  border:1px solid rgba(0,200,150,.23);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 4px 13px rgba(0,0,0,.12);
+}
+.buy-guide-heading h2{margin:0;color:#D4AF37;font-size:clamp(15px,2vw,18px);font-weight:800;line-height:1.5}
+.buy-guide-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.buy-guide-step{
+  position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:12px;
+  min-height:150px;padding:18px;border-radius:17px;
+  background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.018));
+  border:1px solid rgba(255,255,255,.08);
+  -webkit-backdrop-filter:blur(15px);backdrop-filter:blur(15px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 6px 18px rgba(0,0,0,.10);
+  transition:border-color .2s ease,background .2s ease,transform .2s ease;
+}
+.buy-guide-step:hover{transform:translateY(-2px);background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.023))}
+.buy-guide-step.guide-green{border-inline-start:2px solid rgba(0,200,150,.50)}
+.buy-guide-step.guide-gold{border-inline-start:2px solid rgba(212,175,55,.55)}
+.buy-guide-number{position:absolute;top:13px;inset-inline-end:15px;color:rgba(220,225,218,.40);font-size:10px;font-weight:850;letter-spacing:.12em}
+.buy-guide-step-icon{width:35px;height:35px;display:grid;place-items:center;border-radius:11px;font-size:13px}
+.buy-guide-step.guide-green .buy-guide-step-icon{color:#70dfbd;background:rgba(0,200,150,.09);border:1px solid rgba(0,200,150,.21)}
+.buy-guide-step.guide-gold .buy-guide-step-icon{color:#e4cb7e;background:rgba(212,175,55,.085);border:1px solid rgba(212,175,55,.22)}
+.buy-guide-step p{margin:0;color:#d0dad5;font-size:12px;line-height:1.9}
+.buy-guide-congrats{
+  display:flex;align-items:center;gap:12px;margin-top:14px;padding:15px 17px;
+  border-radius:15px;background:linear-gradient(100deg,rgba(0,200,150,.075),rgba(255,255,255,.022) 52%,rgba(212,175,55,.075));
+  border:1px solid rgba(212,175,55,.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 6px 17px rgba(0,0,0,.09);
+}
+.buy-guide-congrats>i{flex:0 0 auto;color:#D4AF37;font-size:18px}
+.buy-guide-congrats p{margin:0;color:#e5d79f;font-size:12px;font-weight:750;line-height:1.85}
+.buy-amount-control{display:flex;align-items:stretch;gap:9px}
+.buy-amount-control #buyAmount{flex:1;min-width:0}
+.buy-max-btn{
+  flex:0 0 auto;min-width:82px;padding:0 16px;border-radius:13px;
+  color:#ead58e;background:linear-gradient(145deg,rgba(212,175,55,.12),rgba(212,175,55,.045));
+  border:1px solid rgba(212,175,55,.34);font-size:12px;font-weight:800;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
+  transition:background .2s ease,border-color .2s ease,transform .2s ease;
+}
+.buy-max-btn:hover{background:rgba(212,175,55,.15);border-color:rgba(212,175,55,.52);transform:translateY(-1px)}
+.buy-max-btn:active{transform:translateY(0)}
+.buy-max-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+@media(max-width:760px){
+  .buy-guide-card{padding:18px;border-radius:20px}
+  .buy-guide-steps{grid-template-columns:1fr;gap:10px}
+  .buy-guide-step{min-height:0;padding:15px}
+  .buy-guide-congrats{align-items:flex-start;padding:13px}
+}
+@media(max-width:420px){
+  .buy-amount-control{gap:7px}
+  .buy-max-btn{min-width:72px;padding:0 11px}
+}
+@media(prefers-reduced-motion:reduce){.buy-guide-step,.buy-max-btn{transition:none}.buy-guide-step:hover,.buy-max-btn:hover{transform:none}}
+
     </style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head>
@@ -1521,6 +1600,37 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         </div>
     </div>
 
+    <!-- BUY FIT GUIDE -->
+    <section class="buy-guide-card" aria-labelledby="buyGuideTitle">
+      <div class="buy-guide-heading">
+        <span class="buy-guide-icon"><i class="fas fa-cart-shopping" aria-hidden="true"></i></span>
+        <div>
+          <h2 id="buyGuideTitle" data-i18n="dapp.buyGuideTitle">FIT Purchase Steps</h2>
+        </div>
+      </div>
+      <div class="buy-guide-steps">
+        <article class="buy-guide-step guide-green">
+          <span class="buy-guide-number">01</span>
+          <span class="buy-guide-step-icon"><i class="fas fa-shield-check" aria-hidden="true"></i></span>
+          <p data-i18n="dapp.buyGuideStep1">First, click Approve DAI and confirm the transaction.</p>
+        </article>
+        <article class="buy-guide-step guide-gold">
+          <span class="buy-guide-number">02</span>
+          <span class="buy-guide-step-icon"><i class="fas fa-coins" aria-hidden="true"></i></span>
+          <p data-i18n="dapp.buyGuideStep2">Next, enter the amount of DAI you want to spend in the DAI amount field.</p>
+        </article>
+        <article class="buy-guide-step guide-green">
+          <span class="buy-guide-number">03</span>
+          <span class="buy-guide-step-icon"><i class="fas fa-check-circle" aria-hidden="true"></i></span>
+          <p data-i18n="dapp.buyGuideStep3">Finally, click Buy FIT and confirm the transaction.</p>
+        </article>
+      </div>
+      <div class="buy-guide-congrats">
+        <i class="fas fa-circle-check" aria-hidden="true"></i>
+        <p data-i18n="dapp.buyGuideCongrats">Congratulations! Your FIT has been purchased and sent to your wallet.</p>
+      </div>
+    </section>
+
     <!-- Price & Info -->
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
         <div class="info-row"><span class="info-label" data-i18n="dapp.currentPrice">Current FIT Price</span><span class="info-value" id="currentPrice">— DAI</span></div>
@@ -1590,7 +1700,10 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             
             <div class="input-group">
                 <label data-i18n="dapp.amountToBuy">💰 Amount (DAI) to Buy</label>
-                <input type="number" id="buyAmount" placeholder="Enter DAI amount" step="10">
+                <div class="buy-amount-control">
+                    <input type="number" id="buyAmount" placeholder="Enter DAI amount" step="any" min="0" inputmode="decimal">
+                    <button type="button" id="useMaxDaiBtn" class="buy-max-btn" data-i18n="dapp.maxDai">Max</button>
+                </div>
             </div>
             
             <div class="info-row"><span class="info-label" data-i18n="dapp.youReceive">You will receive</span><span class="info-value" id="buyEstimate">— FIT</span></div>
@@ -1826,6 +1939,32 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             document.getElementById("daiBalance").innerHTML = parseFloat(ethers.utils.formatEther(daiBalance)).toFixed(4);
         } catch(e) { console.error(e); }
     }
+
+    async function setMaxDaiAmount() {
+        if (!userAddress || !daiContract) {
+            setStatus("buyStatus", "⚠️ Connect wallet first", "error");
+            return;
+        }
+        const maxButton = document.getElementById("useMaxDaiBtn");
+        try {
+            maxButton.disabled = true;
+            const [balance, decimals] = await Promise.all([
+                daiContract.balanceOf(userAddress),
+                daiContract.decimals()
+            ]);
+            const precision = Number(decimals);
+            const formatted = ethers.utils.formatUnits(balance, precision);
+            const parts = formatted.split(".");
+            const exactAmount = parts[0] + "." + (parts[1] || "").padEnd(precision, "0").slice(0, precision);
+            document.getElementById("buyAmount").value = exactAmount;
+            updateBuyEstimate();
+        } catch (e) {
+            console.error("Load maximum DAI balance error:", e);
+            setStatus("buyStatus", "❌ Could not read your DAI balance: " + e.message, "error");
+        } finally {
+            maxButton.disabled = false;
+        }
+    }
     
     async function loadPrice() {
         try {
@@ -1983,7 +2122,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     
     async function buyFIT() {
         let buyer = document.getElementById("buyerAddress").value.trim();
-        let amount = parseFloat(document.getElementById("buyAmount").value);
+        const amountInput = document.getElementById("buyAmount").value.trim();
         
         if (!userAddress) {
             setStatus("buyStatus", "⚠️ Connect wallet first", "error");
@@ -1995,14 +2134,16 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             return;
         }
         
-        if (isNaN(amount) || amount <= 0) {
-            setStatus("buyStatus", "⚠️ Please enter a valid amount", "error");
+        let amountWei;
+        try {
+            amountWei = ethers.utils.parseUnits(amountInput, 18);
+            if (amountWei.lte(0)) throw new Error("Amount must be greater than zero");
+        } catch (e) {
+            setStatus("buyStatus", "⚠️ Please enter a valid DAI amount with up to 18 decimal places", "error");
             return;
         }
         
-        // ❌ Connected wallet compatibility check removed - now you can make purchases for any address
-        
-        let amountWei = ethers.utils.parseEther(amount.toString());
+        // Keep the entered decimal string intact so 18-decimal DAI amounts are not rounded by JavaScript numbers.
         
         try {
             setStatus("buyStatus", "⏳ Buying...", "");
@@ -2295,6 +2436,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     document.getElementById("becomeOwnerBtn").addEventListener("click", becomeOwner);
     
     document.getElementById("approveTokenBtn").addEventListener("click", approveTokenDAI);
+    document.getElementById("useMaxDaiBtn").addEventListener("click", setMaxDaiAmount);
     document.getElementById("buyBtn").addEventListener("click", buyFIT);
     document.getElementById("sellBtn").addEventListener("click", sellFIT);
     
