@@ -1535,7 +1535,67 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             margin-top: 7px;
         }
 
-    </style>
+    
+/* ===== DAPP OPERATION PAGES: MATCHED GLASS TRANSPARENCY ===== */
+.top-bar {
+  background: rgba(10,18,17,.42) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(125%) !important;
+  backdrop-filter: blur(18px) saturate(125%) !important;
+}
+.sidebar, .lang-dropdown {
+  background: rgba(8,18,17,.72) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(125%) !important;
+  backdrop-filter: blur(22px) saturate(125%) !important;
+}
+.wallet-card, #dappWalletOverview {
+  background: linear-gradient(145deg, rgba(13,25,23,.43), rgba(7,13,13,.31)) !important;
+  border-color: rgba(0,200,150,.20) !important;
+}
+.action-card {
+  background: linear-gradient(145deg, rgba(13,24,23,.43), rgba(7,13,13,.31)) !important;
+  border-color: rgba(0,200,150,.19) !important;
+}
+.wallet-info, .info-row,
+.action-card div[style*="background: #1a1a1a"] {
+  background: rgba(255,255,255,.028) !important;
+}
+.step-badge { background: rgba(0,200,150,.11) !important; }
+.input-group input, .action-card input[type="text"], .action-card input[type="number"] {
+  background: rgba(255,255,255,.035) !important;
+}
+.dapp-back-btn { background: rgba(0,200,150,.045) !important; }
+.dapp-back-btn:hover { background: rgba(0,200,150,.11) !important; }
+.agreement-modal-overlay { background: rgba(0,0,0,.66) !important; }
+.agreement-modal-content {
+  background: linear-gradient(145deg, rgba(13,24,23,.86), rgba(7,13,13,.82)) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(125%) !important;
+  backdrop-filter: blur(24px) saturate(125%) !important;
+}
+.agreement-body > p,
+.agreement-body .box-gold,
+.agreement-body .box-green {
+  background: rgba(255,255,255,.026) !important;
+}
+.buy-guide-card, .ownership-guide-card, .sell-guide-card {
+  background: linear-gradient(135deg, rgba(12,27,23,.43), rgba(9,16,17,.34) 58%, rgba(28,23,12,.23)) !important;
+}
+.buy-guide-step, .ownership-guide-step, .sell-guide-step {
+  background: linear-gradient(145deg, rgba(255,255,255,.038), rgba(255,255,255,.012)) !important;
+}
+.buy-guide-step:hover, .ownership-guide-step:hover, .sell-guide-step:hover {
+  background: linear-gradient(145deg, rgba(255,255,255,.052), rgba(255,255,255,.018)) !important;
+}
+.buy-guide-congrats, .ownership-guide-congrats, .sell-guide-congrats {
+  background: linear-gradient(100deg, rgba(0,200,150,.055), rgba(255,255,255,.015) 52%, rgba(212,175,55,.05)) !important;
+}
+.contract-reference-card {
+  background: linear-gradient(135deg, rgba(34,34,34,.46), rgba(15,15,15,.50)) !important;
+}
+.status-text { background: rgba(255,255,255,.018) !important; }
+.status-text.success { background: rgba(0,200,150,.04) !important; }
+.status-text.error { background: rgba(212,175,55,.04) !important; }
+
+</style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head>
 <body data-dapp-view="sell">
