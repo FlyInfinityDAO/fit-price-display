@@ -79,7 +79,19 @@
     "agreementP8": "Todas as transações, interações e trocas de dados dentro do ecossistema Fly Infinity são executadas através de uma arquitetura totalmente descentralizada. Os ativos dos participantes, registros de assinatura e informações pessoais são armazenados com segurança na blockchain, garantindo os mais altos padrões de segurança, transparência e pseudonimidade. Nenhuma entidade centralizada tem acesso ou controle sobre os dados ou fundos dos usuários.",
     "agreementWhitepaper": "Para uma compreensão abrangente da estrutura de compra em níveis e da mecânica de referência, consulte o",
     "understandClose": "Entendi e Fechar",
-    "agreeTerms": "Ao continuar, você concorda com os termos descritos acima."
+    "agreeTerms": "Ao continuar, você concorda com os termos descritos acima.",
+    "hubTitle": "Operações Fly Infinity",
+    "hubIntro": "Use as opções abaixo para comprar cotas de propriedade, comprar ou vender FIT ou participar do sorteio de brindes.",
+    "hubOwnershipTitle": "Comprar cotas de propriedade Fly Infinity",
+    "hubOwnershipDesc": "Compre uma cota de propriedade Fly Infinity e torne-se acionista do ecossistema. Receba FIT no valor de US$ 2 como presente de boas-vindas.",
+    "hubBuyTitle": "Comprar FIT",
+    "hubBuyDesc": "Compre tokens FIT instantaneamente pagando com DAI.",
+    "hubSellTitle": "Vender FIT",
+    "hubSellDesc": "Venda seus tokens FIT e receba DAI em segundos.",
+    "hubGiftDesc": "Se você é apenas um investidor, pode participar dos prêmios de US$ 5, sujeito ao limite aplicável.",
+    "openOperation": "Abrir operação",
+    "walletOverview": "Visão geral da carteira",
+    "backToDapp": "Voltar ao DApp"
   },
   "footer": {
     "tagline": "Fly Infinity — Descentralizado. Transparente. Sempre Subindo."
