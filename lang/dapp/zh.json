@@ -91,7 +91,13 @@
     "hubGiftDesc": "如果您只是投资者，可以在规定限额内参与 5 美元礼品奖励。",
     "openOperation": "进入操作",
     "walletOverview": "钱包概览",
-    "backToDapp": "返回 DApp"
+    "backToDapp": "返回 DApp",
+    "ownershipGuideTitle": "所有权份额购买指南",
+    "ownershipGuideSubtitle": "请按顺序完成以下三个步骤以激活您的所有权份额。",
+    "ownershipGuideStep1": "首先，点击“批准 DAI”，并在钱包中确认交易。",
+    "ownershipGuideStep2": "然后，打开“查看并签署协议”，阅读全文并确认接受。",
+    "ownershipGuideStep3": "最后，在“推荐人地址”栏中输入推荐人的地址，点击“成为所有者”，并确认交易。",
+    "ownershipGuideCongrats": "恭喜您！您现在已成为 Fly Infinity 生态系统的股东之一。"
   },
   "footer": {
     "tagline": "Fly Infinity — 去中心化。透明。永远上涨。"
