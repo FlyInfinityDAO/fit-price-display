@@ -27,8 +27,6 @@
     "buyDesc": "معاملات الشراء فقط (وظيفة Buy)",
     "sell": "معاملات البيع",
     "sellDesc": "معاملات البيع فقط (وظيفة Sell)",
-    "transfers": "تحويلات الرموز",
-    "transfersDesc": "تحويلات رمز FIT بين العناوين",
     "genesis": "السيولة الأولية",
     "genesisDesc": "إنشاء السعر الأساسي الأولي",
     "openBsc": "→ فتح في BscScan →",
@@ -53,6 +51,12 @@
     "tokenContract": "رمز Fly Infinity",
     "networkContract": "شبكة Fly Infinity",
     "giftContract": "هدية Fly Infinity",
-    "viewSource": "عرض كود المصدر →"
+    "viewSource": "عرض كود المصدر →",
+    "fitTransactions": "معاملات FIT",
+    "fitTransactionsDesc": "تشمل عمليات شراء وبيع FIT",
+    "daiTransactions": "معاملات DAI",
+    "daiTransactionsDesc": "تشمل مدفوعات واستلامات DAI من المستثمرين والمطورين",
+    "bscscanLoginNote": "لعرض المعاملات على BscScan، يجب تسجيل الدخول إلى حسابك.",
+    "daoContract": "Fly Infinity DAO"
   }
 }
