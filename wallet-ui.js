@@ -107,7 +107,7 @@
       const payload=await response.json();
       const records=Array.isArray(payload)?payload:payload.records;
       if(!Array.isArray(records)||!records.length)throw new Error('No price history records');
-      historyRows=records.filter(r=>r&&/^\\d{4}-\\d{2}-\\d{2}$/.test(r.date)&&Number.isFinite(Number(r.price))&&Number(r.price)>0).sort((a,b)=>a.date.localeCompare(b.date));
+      historyRows=records.filter(r=>r&&/^\d{4}-\d{2}-\d{2}$/.test(r.date)&&Number.isFinite(Number(r.price))&&Number(r.price)>0).sort((a,b)=>a.date.localeCompare(b.date));
       const p7=historicalRecord('day7'),p30=historicalRecord('day30');
       if(p7)set('fiUsd7Value','$'+fmt(balance*Number(p7.price),4));
       if(p30)set('fiUsd30Value','$'+fmt(balance*Number(p30.price),4));
