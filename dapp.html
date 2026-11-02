@@ -2024,7 +2024,9 @@ textarea:focus,
     
     // Reuse the existing circular wallet control and its localized wallet panel.
     const dappWalletOpenBtn = document.getElementById("dappWalletOpenBtn");
-    if (dappWalletOpenBtn) dappWalletOpenBtn.addEventListener("click", function () {
+    if (dappWalletOpenBtn) dappWalletOpenBtn.addEventListener("click", async function () {
+        // Initialize the DApp signer and contract instances before showing the shared wallet panel.
+        await connectWallet();
         const existingWalletButton = document.getElementById("walletBtn");
         if (existingWalletButton) existingWalletButton.click();
     });
