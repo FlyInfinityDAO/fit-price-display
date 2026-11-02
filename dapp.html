@@ -1146,10 +1146,14 @@ textarea:focus,
 .footer .footer-links a i{color:#00e6ad!important;filter:drop-shadow(0 0 5px rgba(0,230,173,.32))}
 .footer .footer-links a:hover,.footer .footer-links a:focus-visible,.footer .footer-links a:hover span,.footer .footer-links a:focus-visible span{color:#eafff8!important}
 .footer .footer-links a:hover i,.footer .footer-links a:focus-visible i{color:#a2ffe4!important;filter:drop-shadow(0 0 8px rgba(0,255,190,.9))}
+
+/* ===== DAPP OPERATIONS HUB / SEPARATE OPERATION VIEWS ===== */
+.dapp-hub{margin:10px 0 26px}.dapp-hub-heading{text-align:center;max-width:850px;margin:0 auto 25px}.dapp-eyebrow{display:inline-flex;align-items:center;gap:8px;color:#00C896;font-size:11px;font-weight:800;letter-spacing:.16em;margin-bottom:12px}.dapp-hub-heading h1{color:#D4AF37;font-size:clamp(24px,4vw,36px);margin-bottom:12px}.dapp-hub-heading p{color:#c0d0e8;font-size:14px;line-height:1.9}.dapp-operation-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.dapp-operation-card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;gap:13px;min-height:235px;padding:26px;text-decoration:none;border:1px solid rgba(0,200,150,.26);border-radius:25px;background:linear-gradient(145deg,rgba(18,34,30,.60),rgba(8,14,14,.48));-webkit-backdrop-filter:blur(22px) saturate(140%);backdrop-filter:blur(22px) saturate(140%);box-shadow:0 12px 32px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.08);transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease}.dapp-operation-card:before{content:"";position:absolute;z-index:-1;width:190px;height:190px;right:-65px;top:-90px;border-radius:50%;background:radial-gradient(circle,rgba(0,200,150,.19),transparent 68%);transition:transform .4s ease}.dapp-operation-card:hover{transform:translateY(-6px);border-color:rgba(0,235,178,.72);box-shadow:0 18px 42px rgba(0,0,0,.3),0 0 22px rgba(0,200,150,.14),inset 0 1px 0 rgba(255,255,255,.12)}.dapp-operation-card:hover:before{transform:scale(1.45)}.dapp-card-icon{width:54px;height:54px;display:grid;place-items:center;border-radius:17px;color:#00C896;font-size:23px;background:rgba(0,200,150,.10);border:1px solid rgba(0,200,150,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}.dapp-card-title{font-size:18px;font-weight:800;line-height:1.4;color:#D4AF37}.dapp-card-desc{color:#c0d0e8;font-size:13px;line-height:1.8;flex:1}.dapp-card-action{display:flex;align-items:center;justify-content:space-between;color:#70f5cf;font-size:12px;font-weight:700;padding-top:12px;border-top:1px solid rgba(0,200,150,.13)}.dapp-card-action i{transition:transform .25s ease}.dapp-operation-card:hover .dapp-card-action i{transform:translateX(-4px)}.dapp-wallet-heading{color:#D4AF37;font-size:17px;font-weight:800;margin-bottom:16px;text-align:left}.dapp-back-row{margin:0 0 18px}.dapp-back-btn{display:inline-flex;align-items:center;gap:9px;padding:11px 18px;border-radius:30px;text-decoration:none;color:#70f5cf;border:1px solid rgba(0,200,150,.32);background:rgba(0,200,150,.07);font-size:13px;font-weight:700;transition:all .2s ease}.dapp-back-btn:hover{background:rgba(0,200,150,.15);border-color:#00C896;transform:translateY(-2px)}.dapp-operation-view{margin-bottom:25px}body[data-dapp-view="home"] .dapp-operation-view{display:none!important}body[data-dapp-view="ownership"] #dappHub,body[data-dapp-view="buy"] #dappHub,body[data-dapp-view="sell"] #dappHub,body[data-dapp-view="gift"] #dappHub{display:none}body[data-dapp-view="ownership"] #dappTokenOperations,body[data-dapp-view="ownership"] #dappGiftOperation{display:none!important}body[data-dapp-view="buy"] #dappOwnershipOperation,body[data-dapp-view="buy"] #dappSellOperation,body[data-dapp-view="buy"] #dappGiftOperation{display:none!important}body[data-dapp-view="sell"] #dappOwnershipOperation,body[data-dapp-view="sell"] #dappBuyOperation,body[data-dapp-view="sell"] #dappGiftOperation{display:none!important}body[data-dapp-view="gift"] #dappOwnershipOperation,body[data-dapp-view="gift"] #dappTokenOperations{display:none!important}@media(max-width:760px){.dapp-operation-grid{grid-template-columns:1fr;gap:14px}.dapp-operation-card{min-height:205px;padding:21px}.dapp-hub-heading p{font-size:13px}.dapp-wallet-heading{text-align:center}}
+
 </style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head>
-<body>
+<body data-dapp-view="home">
 <div class="container">
     
     <!-- ===== TOP NAV BAR ===== -->
@@ -1220,8 +1224,22 @@ textarea:focus,
         <div class="sidebar-footer"><span class="sidebar-footer-brand">Fly Infinity DAO</span><span class="sidebar-footer-tagline">Decentralized. Transparent. Forever Rising.</span></div>
     </div>
 
-    <!-- Wallet Connect -->
-    <div class="wallet-card">
+    <!-- DAPP OPERATIONS HUB -->
+    <section class="dapp-hub" id="dappHub">
+      <div class="dapp-hub-heading">
+        <span class="dapp-eyebrow"><i class="fas fa-cubes"></i> FLY INFINITY DAPP</span>
+        <h1 data-i18n="dapp.hubTitle">Fly Infinity Operations</h1>
+        <p data-i18n="dapp.hubIntro">از طریق گزینه های زیر میتوانید عملیات خرید اشتراک مالکیت و خرید فیت یا فروش فیت و یا شرکت در قرعه کشی را انجام دهید</p>
+      </div>
+      <div class="dapp-operation-grid">
+        <a class="dapp-operation-card ownership" href="dapp-ownership.html"><span class="dapp-card-icon"><i class="fas fa-gem"></i></span><span class="dapp-card-title" data-i18n="dapp.hubOwnershipTitle">Buy Fly Infinity Ownership Shares</span><span class="dapp-card-desc" data-i18n="dapp.hubOwnershipDesc">اشتراک مالکیت فلای اینفینیتی را بخرید و سهامدار اکوسیستم شوید. با خرید اشتراک معادل 2$ فیت رایگان بعنوان هدیه ورود دریافت میکنید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
+        <a class="dapp-operation-card buy" href="dapp-buy-fit.html"><span class="dapp-card-icon"><i class="fas fa-cart-shopping"></i></span><span class="dapp-card-title" data-i18n="dapp.hubBuyTitle">Buy FIT</span><span class="dapp-card-desc" data-i18n="dapp.hubBuyDesc">میتوانید توکن فیت خود بصورت آنی با پرداخت دای خرید کنید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
+        <a class="dapp-operation-card sell" href="dapp-sell-fit.html"><span class="dapp-card-icon"><i class="fas fa-arrow-trend-up"></i></span><span class="dapp-card-title" data-i18n="dapp.hubSellTitle">Sell FIT</span><span class="dapp-card-desc" data-i18n="dapp.hubSellDesc">میتوانید توکن فیت خود را بدون هیچ محدودیتی در کسری از ثانیه تمام نقد کنید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
+        <a class="dapp-operation-card gift" href="dapp-gift.html"><span class="dapp-card-icon"><i class="fas fa-gift"></i></span><span class="dapp-card-title">Fly Infinity Gift</span><span class="dapp-card-desc" data-i18n="dapp.hubGiftDesc">اگر فقط یک سرمایه گذار هستید میتوانید در جوایز 5 دلاری شرکت کنید و تا سقف مشخصی از این جوایز بهرهمند شوید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
+      </div>
+    </section>
+    <!-- Wallet Overview -->
+    <div class="wallet-card" id="dappWalletOverview"><div class="dapp-wallet-heading" data-i18n="dapp.walletOverview">Wallet Overview</div>
         <div id="walletStatus">
             <button id="connectBtn" class="connect-btn"><i class="fas fa-wallet"></i> <span data-i18n="dapp.connect">Connect Wallet</span></button>
             <p style="color:#888; margin-top:12px; font-size:12px;" data-i18n="dapp.walletDesc">MetaMask, Trust Wallet, TokenPocket, or any Web3 wallet</p>
@@ -1243,6 +1261,8 @@ textarea:focus,
         <div class="info-row"><span class="info-label" data-i18n="dapp.tokenAllowance">DAI Allowance (Token)</span><span class="info-value" id="tokenAllowanceStatus">—</span></div>
     </div>
 
+    <section class="dapp-operation-view" id="dappOwnershipOperation">
+<div class="dapp-back-row"><a class="dapp-back-btn" href="dapp.html"><i class="fas fa-arrow-left"></i><span data-i18n="dapp.backToDapp">Back to DApp</span></a></div>
     <!-- ==================== SECTION 1: REGISTER IN NETWORK ==================== -->
     <div class="action-card" style="margin-bottom: 25px;">
         <div class="action-title"><i class="fas fa-charging-station"></i> <span data-i18n="dapp.buyShares">💎 Buy Fly Infinity Ownership Shares</span></div>
@@ -1280,10 +1300,14 @@ textarea:focus,
         </div>
     </div>
 
+</section>
+
+    <section class="dapp-operation-view" id="dappTokenOperations">
+<div class="dapp-back-row"><a class="dapp-back-btn" href="dapp.html"><i class="fas fa-arrow-left"></i><span data-i18n="dapp.backToDapp">Back to DApp</span></a></div>
     <!-- ==================== SECTION 2: BUY & SELL TOKEN ==================== -->
     <div class="action-grid">
         <!-- Buy FIT -->
-        <div class="action-card">
+        <div class="action-card" id="dappBuyOperation">
             <div class="action-title"><i class="fas fa-shopping-cart"></i> 🟢 <span data-i18n="dapp.buyFit">Buy FIT</span></div>
             <p style="color:#888; font-size:11px; margin-bottom:15px;" data-i18n="dapp.buyDesc">Allow Fly Infinity Token contract to spend DAI, then buy</p>
             
@@ -1308,7 +1332,7 @@ textarea:focus,
         </div>
 
         <!-- Sell FIT -->
-        <div class="action-card">
+        <div class="action-card" id="dappSellOperation">
             <div class="action-title"><i class="fas fa-chart-line"></i> 🔴 <span data-i18n="dapp.sellFit">Sell FIT</span></div>
             
             <div class="input-group">
@@ -1322,6 +1346,10 @@ textarea:focus,
         </div>
     </div>
 
+</section>
+
+    <section class="dapp-operation-view" id="dappGiftOperation">
+<div class="dapp-back-row"><a class="dapp-back-btn" href="dapp.html"><i class="fas fa-arrow-left"></i><span data-i18n="dapp.backToDapp">Back to DApp</span></a></div>
     <!-- ==================== SECTION 3: GIFT CONTRACT ==================== -->
     <div class="action-card" style="margin-bottom: 25px;">
         <div class="action-title"><i class="fas fa-gift"></i> <span data-i18n="dapp.giftTitle">🎁 Join Fly Infinity Gift Smart Contract & Participate in $5 Prize Lottery</span></div>
@@ -1386,6 +1414,8 @@ textarea:focus,
             </div>
         </div>
     </div>
+
+</section>
 
     <div class="footer">
         <div class="footer-links">

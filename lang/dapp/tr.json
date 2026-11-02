@@ -79,7 +79,19 @@
     "agreementP8": "Fly Infinity ekosistemi içindeki tüm işlemler, etkileşimler ve veri alışverişleri, tamamen merkeziyetsiz bir mimari aracılığıyla yürütülür. Katılımcı varlıkları, abonelik kayıtları ve kişisel bilgiler, en yüksek güvenlik, şeffaflık ve anonimlik standartlarını sağlayarak blockchain üzerinde güvenli bir şekilde saklanır. Hiçbir merkezi kuruluşun kullanıcı verileri veya fonları üzerinde erişimi veya kontrolü yoktur.",
     "agreementWhitepaper": "Kademeli satın alma yapısı ve referans mekaniği hakkında kapsamlı bir anlayış için lütfen resmi",
     "understandClose": "Anladım ve Kapat",
-    "agreeTerms": "Devam ederek, yukarıda belirtilen şartları kabul ediyorsunuz."
+    "agreeTerms": "Devam ederek, yukarıda belirtilen şartları kabul ediyorsunuz.",
+    "hubTitle": "Fly Infinity İşlemleri",
+    "hubIntro": "Aşağıdaki seçeneklerle sahiplik hissesi satın alabilir, FIT alıp satabilir veya hediye çekilişine katılabilirsiniz.",
+    "hubOwnershipTitle": "Fly Infinity Sahiplik Hissesi Satın Al",
+    "hubOwnershipDesc": "Fly Infinity sahiplik hissesi satın alarak ekosistemin hissedarı olun. Giriş hediyesi olarak 2$ değerinde ücretsiz FIT alın.",
+    "hubBuyTitle": "FIT Satın Al",
+    "hubBuyDesc": "DAI ödeyerek FIT tokenlarını anında satın alabilirsiniz.",
+    "hubSellTitle": "FIT Sat",
+    "hubSellDesc": "FIT tokenlarınızı saniyeler içinde DAI karşılığında satabilirsiniz.",
+    "hubGiftDesc": "Yalnızca yatırımcıysanız, belirlenen limite kadar 5$ ödüllü hediyelere katılabilirsiniz.",
+    "openOperation": "İşlemi aç",
+    "walletOverview": "Cüzdan Özeti",
+    "backToDapp": "DApp'e dön"
   },
   "footer": {
     "tagline": "Fly Infinity — Merkeziyetsiz. Şeffaf. Sonsuza Yükselen."

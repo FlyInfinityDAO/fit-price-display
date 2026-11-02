@@ -79,7 +79,19 @@
     "agreementP8": "Fly Infinity生态系统内的所有交易、互动和数据交换均通过完全去中心化的架构执行。参与者的资产、订阅记录和个人信息安全地存储在区块链上，确保最高标准的安全性、透明度和假名性。没有任何中心化实体可以访问或控制用户数据或资金。",
     "agreementWhitepaper": "有关分级购买结构和推荐机制的全面了解，请参阅官方",
     "understandClose": "我了解并关闭",
-    "agreeTerms": "继续即表示您同意上述条款。"
+    "agreeTerms": "继续即表示您同意上述条款。",
+    "hubTitle": "Fly Infinity 操作中心",
+    "hubIntro": "使用以下选项购买所有权份额、买卖 FIT，或参与礼品抽奖。",
+    "hubOwnershipTitle": "购买 Fly Infinity 所有权份额",
+    "hubOwnershipDesc": "购买 Fly Infinity 所有权份额，成为生态系统股东，并获得价值 2 美元的 FIT 作为入场礼物。",
+    "hubBuyTitle": "购买 FIT",
+    "hubBuyDesc": "使用 DAI 即时购买 FIT 代币。",
+    "hubSellTitle": "出售 FIT",
+    "hubSellDesc": "出售 FIT 代币，并在数秒内收到 DAI。",
+    "hubGiftDesc": "如果您只是投资者，可以在规定限额内参与 5 美元礼品奖励。",
+    "openOperation": "进入操作",
+    "walletOverview": "钱包概览",
+    "backToDapp": "返回 DApp"
   },
   "footer": {
     "tagline": "Fly Infinity — 去中心化。透明。永远上涨。"
