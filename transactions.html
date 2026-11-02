@@ -1113,16 +1113,16 @@ textarea:focus,
   .source-card { min-height: 150px; padding: 17px 12px; }
   .source-card.dao { grid-column: 1 / -1; width: min(100%, 320px); justify-self: center; }
 }
-/* Mobile-only alignment for the DAO source card */
+/* Keep Gift and DAO side by side on mobile, matching Token and Network */
 @media (max-width: 768px) {
   .source-grid > .source-card.dao {
-    grid-column: 1 / -1 !important;
-    justify-self: center !important;
-    width: calc((100% - 15px) / 2) !important;
+    grid-column: auto !important;
+    justify-self: stretch !important;
+    width: 100% !important;
     max-width: none !important;
     min-width: 0 !important;
     box-sizing: border-box !important;
-    margin-inline: auto !important;
+    margin: 0 !important;
   }
 }
 
