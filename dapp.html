@@ -1169,6 +1169,100 @@ textarea:focus,
 }
 .wallet-info { background: rgba(255,255,255,.028) !important; }
 
+
+/* ===== LARGE WALLET ENTRY: USES THE EXISTING SHARED WALLET PANEL ===== */
+.dapp-wallet-hub-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 0 0 28px;
+  padding: 25px 28px;
+  border: 1px solid rgba(0,200,150,.24);
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(17,34,29,.46), rgba(8,15,15,.34) 62%, rgba(26,24,15,.22));
+  -webkit-backdrop-filter: blur(22px) saturate(135%);
+  backdrop-filter: blur(22px) saturate(135%);
+  box-shadow: 0 14px 34px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.075);
+}
+.dapp-wallet-hub-heading {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  min-width: 0;
+}
+.dapp-wallet-hub-icon {
+  width: 62px;
+  height: 62px;
+  flex: 0 0 62px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(0,200,150,.24);
+  border-radius: 19px;
+  color: #00C896;
+  background: rgba(0,200,150,.075);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.07);
+}
+.dapp-wallet-hub-icon svg { width: 31px; height: 31px; }
+.dapp-wallet-hub-copy h2 {
+  color: #D4AF37;
+  font-size: clamp(17px,2vw,21px);
+  font-weight: 700;
+  margin: 0 0 7px;
+}
+.dapp-wallet-hub-copy p {
+  color: rgba(225,235,231,.76);
+  font-size: 13px;
+  line-height: 1.8;
+  margin: 0;
+}
+.dapp-wallet-hub-button {
+  min-height: 62px;
+  min-width: 245px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  padding: 15px 23px;
+  border: 1px solid rgba(0,200,150,.42);
+  border-radius: 17px;
+  color: #eafff8;
+  background: linear-gradient(115deg, rgba(0,200,150,.23), rgba(0,135,105,.16));
+  box-shadow: 0 8px 22px rgba(0,0,0,.17), inset 0 1px 0 rgba(255,255,255,.10);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .22s ease, border-color .22s ease, transform .22s ease, box-shadow .22s ease;
+}
+.dapp-wallet-hub-button svg { width: 23px; height: 23px; flex: 0 0 23px; }
+.dapp-wallet-hub-arrow { margin-inline-start: 3px; font-size: 13px; opacity: .8; }
+.dapp-wallet-hub-button:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0,200,150,.66);
+  background: linear-gradient(115deg, rgba(0,200,150,.31), rgba(0,135,105,.23));
+  box-shadow: 0 11px 27px rgba(0,0,0,.22), 0 0 18px rgba(0,200,150,.08);
+}
+.dapp-wallet-hub-button:focus-visible {
+  outline: 2px solid rgba(0,200,150,.8);
+  outline-offset: 3px;
+}
+@media (max-width: 760px) {
+  .dapp-wallet-hub-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 19px;
+    padding: 21px;
+    border-radius: 21px;
+  }
+  .dapp-wallet-hub-heading { gap: 13px; }
+  .dapp-wallet-hub-icon { width: 54px; height: 54px; flex-basis: 54px; border-radius: 16px; }
+  .dapp-wallet-hub-icon svg { width: 27px; height: 27px; }
+  .dapp-wallet-hub-button { width: 100%; min-width: 0; min-height: 59px; }
+}
+
 </style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head>
@@ -1257,27 +1351,45 @@ textarea:focus,
         <a class="dapp-operation-card gift" href="dapp-gift.html"><span class="dapp-card-icon"><i class="fas fa-gift"></i></span><span class="dapp-card-title">Fly Infinity Gift</span><span class="dapp-card-desc" data-i18n="dapp.hubGiftDesc">اگر فقط یک سرمایه گذار هستید میتوانید در جوایز 5 دلاری شرکت کنید و تا سقف مشخصی از این جوایز بهرهمند شوید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
       </div>
     </section>
-    <!-- Wallet Overview -->
-    <div class="wallet-card" id="dappWalletOverview"><div class="dapp-wallet-heading" data-i18n="dapp.walletOverview">Wallet Overview</div>
-        <div id="walletStatus">
-            <button id="connectBtn" class="connect-btn"><i class="fas fa-wallet"></i> <span data-i18n="dapp.connect">Connect Wallet</span></button>
-            <p style="color:#888; margin-top:12px; font-size:12px;" data-i18n="dapp.walletDesc">MetaMask, Trust Wallet, TokenPocket, or any Web3 wallet</p>
-        </div>
-        <div id="walletInfo" style="display: none;">
-            <div class="wallet-info">
-                <div><i class="fas fa-link"></i> <span id="walletAddress" class="wallet-address">—</span></div>
-                <div><i class="fas fa-coins"></i> <span data-i18n="dapp.fitBalance">FIT Balance:</span> <span id="fitBalance" class="wallet-balance">—</span></div>
-                <div><i class="fas fa-dollar-sign"></i> <span data-i18n="dapp.daiBalance">DAI Balance:</span> <span id="daiBalance" class="wallet-balance">—</span></div>
-                <button id="disconnectBtn" class="action-btn" style="width: auto; padding: 8px 20px; margin:0;" data-i18n="dapp.disconnect">Disconnect</button>
+    <!-- ===== SHARED WALLET HUB CARD ===== -->
+    <section class="dapp-wallet-hub-card" aria-labelledby="dappWalletHubTitle">
+        <div class="dapp-wallet-hub-heading">
+            <div class="dapp-wallet-hub-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+                    <path d="M3 9h18"></path>
+                    <path d="M16 14h2"></path>
+                </svg>
+            </div>
+            <div class="dapp-wallet-hub-copy">
+                <h2 id="dappWalletHubTitle" data-i18n="dapp.walletOverview">Wallet Overview</h2>
+                <p data-i18n="dapp.walletHubDesc">Connect your wallet to view your balances and FIT account details.</p>
             </div>
         </div>
-    </div>
+        <button class="dapp-wallet-hub-button" type="button"
+            onclick="if (document.getElementById('walletBtn')) document.getElementById('walletBtn').click();">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="3"></rect>
+                <path d="M3 9h18"></path>
+                <path d="M16 14h2"></path>
+            </svg>
+            <span data-i18n="dapp.connect">Connect Wallet</span>
+            <i class="fas fa-arrow-right dapp-wallet-hub-arrow" aria-hidden="true"></i>
+        </button>
+    </section>
 
-    <!-- Price & Info -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
-        <div class="info-row"><span class="info-label" data-i18n="dapp.currentPrice">Current FIT Price</span><span class="info-value" id="currentPrice">— DAI</span></div>
-        <div class="info-row"><span class="info-label" data-i18n="dapp.networkAllowance">DAI Allowance (Network)</span><span class="info-value" id="networkAllowanceStatus">—</span></div>
-        <div class="info-row"><span class="info-label" data-i18n="dapp.tokenAllowance">DAI Allowance (Token)</span><span class="info-value" id="tokenAllowanceStatus">—</span></div>
+    <!-- Hidden legacy nodes retained for existing DApp scripts and operation dependencies. -->
+    <div id="dappLegacyWalletNodes" hidden aria-hidden="true">
+        <div id="walletStatus"><button id="connectBtn" type="button"></button></div>
+        <div id="walletInfo">
+            <span id="walletAddress">—</span>
+            <span id="fitBalance">—</span>
+            <span id="daiBalance">—</span>
+            <button id="disconnectBtn" type="button"></button>
+        </div>
+        <span id="currentPrice">—</span>
+        <span id="networkAllowanceStatus">—</span>
+        <span id="tokenAllowanceStatus">—</span>
     </div>
 
     <section class="dapp-operation-view" id="dappOwnershipOperation">
