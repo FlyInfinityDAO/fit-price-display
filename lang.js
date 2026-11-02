@@ -21,7 +21,10 @@ let currentPage = '';
 function getPageName() {
     const path = window.location.pathname;
     const page = path.split('/').pop().split('.')[0] || 'index';
-    return page;
+
+    // All dedicated DApp operation pages share the main DApp dictionaries.
+    const dappPages = ['dapp', 'dapp-ownership', 'dapp-buy-fit', 'dapp-sell-fit', 'dapp-gift'];
+    return dappPages.includes(page) ? 'dapp' : page;
 }
 
 function getDefaultLang() {
