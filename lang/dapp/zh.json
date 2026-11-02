@@ -118,7 +118,11 @@
     "giftGuideStep3Before": "然后，在 ",
     "giftGuideLotteryLabel": "5 美元礼品抽奖",
     "giftGuideStep3After": " 区域，将您的钱包地址填入指定输入框，点击加入抽奖并确认交易。",
-    "giftGuideCongrats": "恭喜！您现在已成功加入抽奖。"
+    "giftGuideCongrats": "恭喜！您现在已成功加入抽奖。",
+    "networkContract": "📜 Fly Infinity 网络智能合约",
+    "fitTokenContract": "📜 Fly Infinity FIT 代币智能合约",
+    "ownershipContractFlow": "步骤 1：授权 DAI → 步骤 2：阅读并接受协议 → 步骤 3：完成所有权注册",
+    "fitContractFlow": "步骤 1：授权 DAI → 步骤 2：购买或出售 FIT"
   },
   "footer": {
     "tagline": "Fly Infinity — 去中心化。透明。永远上涨。"

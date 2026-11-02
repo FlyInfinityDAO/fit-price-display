@@ -118,7 +118,11 @@
     "giftGuideStep3Before": "Ardından ",
     "giftGuideLotteryLabel": "5 Dolarlık Hediye Çekilişi",
     "giftGuideStep3After": " bölümünde cüzdan adresinizi belirtilen alana girin, Çekilişe Katıl düğmesine basın ve işlemi onaylayın.",
-    "giftGuideCongrats": "Tebrikler! Artık çekilişe katıldınız."
+    "giftGuideCongrats": "Tebrikler! Artık çekilişe katıldınız.",
+    "networkContract": "📜 Fly Infinity Ağ Akıllı Sözleşmesi",
+    "fitTokenContract": "📜 Fly Infinity FIT Token Akıllı Sözleşmesi",
+    "ownershipContractFlow": "1. Adım: DAI onayı → 2. Adım: Sözleşmeyi okuyup kabul etme → 3. Adım: Sahiplik kaydını tamamlama",
+    "fitContractFlow": "1. Adım: DAI onayı → 2. Adım: FIT satın alma veya satma"
   },
   "footer": {
     "tagline": "Fly Infinity — Merkeziyetsiz. Şeffaf. Sonsuza Yükselen."

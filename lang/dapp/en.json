@@ -118,7 +118,11 @@
     "giftGuideStep3Before": "Then, in the ",
     "giftGuideLotteryLabel": "$5 Gift Lottery",
     "giftGuideStep3After": " section, enter your wallet address in the designated field, click Join Lottery, and confirm the transaction.",
-    "giftGuideCongrats": "Congratulations! You have now joined the lottery."
+    "giftGuideCongrats": "Congratulations! You have now joined the lottery.",
+    "networkContract": "📜 Fly Infinity Network Smart Contract",
+    "fitTokenContract": "📜 Fly Infinity FIT Token Smart Contract",
+    "ownershipContractFlow": "Step 1: Approve DAI → Step 2: Review and accept the agreement → Step 3: Complete ownership registration.",
+    "fitContractFlow": "Step 1: Approve DAI → Step 2: Buy or sell FIT."
   },
   "footer": {
     "tagline": "Fly Infinity — Decentralized. Transparent. Forever Rising."
