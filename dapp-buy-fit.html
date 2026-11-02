@@ -2129,7 +2129,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             document.getElementById("buyEstimate").innerHTML = "— FIT";
             return;
         }
-        let fitAmount = amount / currentPrice;
+        // Apply the 3% buy fee to the DAI input before estimating the FIT received.
+        const daiAfterBuyFee = amount * 0.97;
+        const fitAmount = daiAfterBuyFee / currentPrice;
         document.getElementById("buyEstimate").innerHTML = fitAmount.toFixed(4) + " FIT";
     }
     
