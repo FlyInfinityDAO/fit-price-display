@@ -122,7 +122,12 @@
     "networkContract": "📜 قرارداد هوشمند شبکه فلای اینفینیتی",
     "fitTokenContract": "📜 قرارداد هوشمند توکن FIT فلای اینفینیتی",
     "ownershipContractFlow": "مرحله ۱: تأیید DAI ← مرحله ۲: مطالعه و پذیرش توافق‌نامه ← مرحله ۳: تکمیل ثبت مالکیت",
-    "fitContractFlow": "مرحله ۱: تأیید DAI ← مرحله ۲: خرید یا فروش FIT"
+    "fitContractFlow": "مرحله ۱: تأیید DAI ← مرحله ۲: خرید یا فروش FIT",
+    "hubGiftTitle": "هدیه فلای اینفینیتی",
+    "hubWalletTitle": "کیف پول فلای اینفینیتی",
+    "hubWalletDesc": "کیف پول خود را متصل کنید تا موجودی FIT، شبکه و اطلاعات کیف پول را مشاهده کنید.",
+    "hubWalletAction": "اتصال کیف پول",
+    "hubWalletFootnote": "اتصال امن کیف پول · شبکه BNB Smart Chain"
   },
   "footer": {
     "tagline": "فلای اینفینیتی — غیرمتمرکز. شفاف. همیشه در حال رشد."
