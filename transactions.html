@@ -1113,6 +1113,19 @@ textarea:focus,
   .source-card { min-height: 150px; padding: 17px 12px; }
   .source-card.dao { grid-column: 1 / -1; width: min(100%, 320px); justify-self: center; }
 }
+/* Mobile-only alignment for the DAO source card */
+@media (max-width: 768px) {
+  .source-grid > .source-card.dao {
+    grid-column: 1 / -1 !important;
+    justify-self: center !important;
+    width: 100% !important;
+    max-width: 320px !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    margin-inline: auto !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .link-card, .source-card { transition: none; }
   .link-card:hover, .source-card:hover { transform: none; }
