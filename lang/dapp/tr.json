@@ -122,7 +122,12 @@
     "networkContract": "📜 Fly Infinity Ağ Akıllı Sözleşmesi",
     "fitTokenContract": "📜 Fly Infinity FIT Token Akıllı Sözleşmesi",
     "ownershipContractFlow": "1. Adım: DAI onayı → 2. Adım: Sözleşmeyi okuyup kabul etme → 3. Adım: Sahiplik kaydını tamamlama",
-    "fitContractFlow": "1. Adım: DAI onayı → 2. Adım: FIT satın alma veya satma"
+    "fitContractFlow": "1. Adım: DAI onayı → 2. Adım: FIT satın alma veya satma",
+    "hubGiftTitle": "Fly Infinity Hediyesi",
+    "hubWalletTitle": "Fly Infinity Cüzdanınız",
+    "hubWalletDesc": "FIT bakiyenizi, ağınızı ve cüzdan bilgilerinizi görüntülemek için cüzdanınızı bağlayın.",
+    "hubWalletAction": "Cüzdanı Bağla",
+    "hubWalletFootnote": "Güvenli cüzdan bağlantısı · BNB Smart Chain"
   },
   "footer": {
     "tagline": "Fly Infinity — Merkeziyetsiz. Şeffaf. Sonsuza Yükselen."
