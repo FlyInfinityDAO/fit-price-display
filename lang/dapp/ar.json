@@ -118,7 +118,11 @@
     "giftGuideStep3Before": "ثم في قسم ",
     "giftGuideLotteryLabel": "سحب الهدية بقيمة 5 دولارات",
     "giftGuideStep3After": " أدخل عنوان محفظتك في الحقل المحدد، واضغط على الانضمام إلى السحب، ثم أكّد المعاملة.",
-    "giftGuideCongrats": "تهانينا! لقد انضممت الآن إلى السحب."
+    "giftGuideCongrats": "تهانينا! لقد انضممت الآن إلى السحب.",
+    "networkContract": "📜 العقد الذكي لشبكة Fly Infinity",
+    "fitTokenContract": "📜 العقد الذكي لرمز FIT من Fly Infinity",
+    "ownershipContractFlow": "الخطوة 1: الموافقة على DAI ← الخطوة 2: قراءة الاتفاقية وقبولها ← الخطوة 3: إكمال تسجيل الملكية",
+    "fitContractFlow": "الخطوة 1: الموافقة على DAI ← الخطوة 2: شراء FIT أو بيعه"
   },
   "footer": {
     "tagline": "Fly Infinity — لا مركزي. شفاف. يرتفع للأبد."
