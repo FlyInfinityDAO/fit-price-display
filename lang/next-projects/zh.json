@@ -104,8 +104,14 @@
     "title": "后续项目",
     "description": "了解 Fly Infinity 生态系统计划推出的后续项目。随着项目推进，我们将逐步公布详细信息。",
     "exchangeDescription": "Fly Infinity 生态系统未来的交易平台项目。",
-    "lotteryDescription": "拟推出的抽奖相关项目，具体信息将在之后公布。",
-    "payDescription": "Fly Infinity 生态系统未来的支付服务项目。",
-    "planned": "规划中"
+    "lotteryDescription": "拟议中的公开奖项抽选项目，未来运营须遵守适用法律、参与资格要求及已公布规则。向获奖者支付奖项后，计划将分配给创始人的剩余款项转入 FIT 储备。",
+    "payDescription": "面向全球企业的公共去中心化支付网关。支付手续费将分配至 FIT 储备和开发者奖励，以支持生态发展及开发者贡献。",
+    "planned": "规划中",
+    "dexDescription": "面向全球用户的公共去中心化交易平台，支持将加密货币兑换为其他数字资产。所有交易手续费均用于 FIT 储备，支持其储备与定价机制。",
+    "dexTarget": "启动目标：5,000 名 FIT 持有者",
+    "marketplaceDescription": "连接全球买家与卖家的公共数字市场。平台费用将分配至 FIT 储备和开发者奖励，以支持 FIT 生态及持续开发。",
+    "marketplaceTarget": "启动目标：10,000 名 FIT 持有者",
+    "lotteryTarget": "启动目标：20,000 名 FIT 持有者",
+    "payTarget": "启动目标：30,000 名 FIT 持有者"
   }
 }
