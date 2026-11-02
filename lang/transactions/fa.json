@@ -27,8 +27,6 @@
     "buyDesc": "فقط تراکنش‌های خرید (تابع Buy)",
     "sell": "تراکنش‌های فروش",
     "sellDesc": "فقط تراکنش‌های فروش (تابع Sell)",
-    "transfers": "انتقال توکن‌ها",
-    "transfersDesc": "انتقال توکن FIT بین آدرس‌ها",
     "genesis": "نقدینگی اولیه",
     "genesisDesc": "ایجاد قیمت پایه اولیه",
     "openBsc": "→ باز کردن در BscScan →",
@@ -53,6 +51,12 @@
     "tokenContract": "توکن فلای اینفینیتی",
     "networkContract": "شبکه فلای اینفینیتی",
     "giftContract": "هدیه فلای اینفینیتی",
-    "viewSource": "مشاهده کد منبع →"
+    "viewSource": "مشاهده کد منبع →",
+    "fitTransactions": "تراکنش‌های فیت",
+    "fitTransactionsDesc": "شامل خرید و فروش فیت",
+    "daiTransactions": "تراکنش‌های دای",
+    "daiTransactionsDesc": "شامل پرداخت‌ها و دریافت‌های دای از طرف سرمایه‌گذاران و توسعه‌دهندگان",
+    "bscscanLoginNote": "برای دیدن تراکنش در سایت BscScan باید وارد حساب کاربری خود شوید.",
+    "daoContract": "فلای اینفینیتی دائو"
   }
 }
