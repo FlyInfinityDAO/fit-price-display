@@ -109,7 +109,16 @@
     "sellGuideStep2": "然后点击“卖出 FIT”，并在钱包中确认交易。",
     "sellGuideCongrats": "恭喜！您的 FIT 已在一秒内兑换为 DAI，并计入钱包的 DAI 余额。",
     "sellNetReceive": "您将收到的金额（扣除 6% 手续费后）",
-    "sellFeeIncluded": "预计 DAI 金额已扣除 6% 的卖出手续费。"
+    "sellFeeIncluded": "预计 DAI 金额已扣除 6% 的卖出手续费。",
+    "giftGuideTitle": "参与礼品抽奖的步骤",
+    "giftGuideStep1Before": "首先，在 ",
+    "giftGuideJoinContractLabel": "加入合约",
+    "giftGuideStep1After": " 区域，将您的钱包地址填入指定输入框，点击加入合约并确认交易。",
+    "giftGuideStep2": "此步骤只需完成一次，之后无需重复操作。",
+    "giftGuideStep3Before": "然后，在 ",
+    "giftGuideLotteryLabel": "5 美元礼品抽奖",
+    "giftGuideStep3After": " 区域，将您的钱包地址填入指定输入框，点击加入抽奖并确认交易。",
+    "giftGuideCongrats": "恭喜！您现在已成功加入抽奖。"
   },
   "footer": {
     "tagline": "Fly Infinity — 去中心化。透明。永远上涨。"
