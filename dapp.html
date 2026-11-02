@@ -1152,15 +1152,15 @@ textarea:focus,
 
 
 /* ===== DAPP GLASS TRANSPARENCY BALANCE ===== */
-.dapp-operation-card {
+.dapp-operation-card:not(.gift) {
   background: linear-gradient(145deg, rgba(18,34,30,.40), rgba(8,14,14,.30)) !important;
   border-color: rgba(0,200,150,.22) !important;
   box-shadow: 0 12px 30px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.07) !important;
 }
-.dapp-operation-card:hover {
+.dapp-operation-card:not(.gift):hover {
   background: linear-gradient(145deg, rgba(18,34,30,.48), rgba(8,14,14,.36)) !important;
 }
-.dapp-card-icon { background: rgba(0,200,150,.075) !important; }
+.dapp-operation-card:not(.gift) .dapp-card-icon { background: rgba(0,200,150,.075) !important; }
 .dapp-back-btn { background: rgba(0,200,150,.045) !important; }
 .dapp-back-btn:hover { background: rgba(0,200,150,.11) !important; }
 /* Keep the existing wallet panel legible while reducing its solid fill. */
