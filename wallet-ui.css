@@ -104,3 +104,7 @@ html[dir="rtl"] .fi-wallet-period { text-align:right; }
   .fi-wallet-comparison { padding:11px; gap:8px; }
   .fi-wallet-comparison-value { font-size:15px; }
 }
+
+/* Historical FIT value figures use neutral white; labels retain the gold accent. */
+#fiUsd7Value,
+#fiUsd30Value { color:#F2F7F5 !important; }
