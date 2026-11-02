@@ -103,7 +103,13 @@
     "ownershipGuideStep1": "Önce DAI Onayla seçeneğine tıklayın ve işlemi cüzdanınızda onaylayın.",
     "ownershipGuideStep2": "Ardından Anlaşmayı Görüntüle ve İmzala seçeneğini açın, metni sonuna kadar okuyun ve kabul edin.",
     "ownershipGuideStep3": "Son olarak, yönlendiren kişinin adresini Yönlendiren Adresi alanına girin, Sahip Ol'a tıklayın ve işlemi onaylayın.",
-    "ownershipGuideCongrats": "Tebrikler! Artık Fly Infinity ekosisteminin hissedarlarından birisiniz."
+    "ownershipGuideCongrats": "Tebrikler! Artık Fly Infinity ekosisteminin hissedarlarından birisiniz.",
+    "sellGuideTitle": "FIT Satış Adımları",
+    "sellGuideStep1": "Önce satmak istediğiniz FIT miktarını FIT satış tutarı alanına girin.",
+    "sellGuideStep2": "Ardından FIT Sat düğmesine tıklayın ve işlemi cüzdanınızda onaylayın.",
+    "sellGuideCongrats": "Tebrikler! FIT'iniz bir saniye içinde DAI'ye dönüştürüldü ve cüzdanınızdaki DAI bakiyesine eklendi.",
+    "sellNetReceive": "Alacağınız tutar (%6 ücret düşüldükten sonra)",
+    "sellFeeIncluded": "Tahmini DAI tutarına %6 satış ücreti dahildir."
   },
   "footer": {
     "tagline": "Fly Infinity — Merkeziyetsiz. Şeffaf. Sonsuza Yükselen."

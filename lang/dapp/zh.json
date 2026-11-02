@@ -103,7 +103,13 @@
     "ownershipGuideStep1": "首先，点击“批准 DAI”，并在钱包中确认交易。",
     "ownershipGuideStep2": "然后，打开“查看并签署协议”，阅读全文并确认接受。",
     "ownershipGuideStep3": "最后，在“推荐人地址”栏中输入推荐人的地址，点击“成为所有者”，并确认交易。",
-    "ownershipGuideCongrats": "恭喜您！您现在已成为 Fly Infinity 生态系统的股东之一。"
+    "ownershipGuideCongrats": "恭喜您！您现在已成为 Fly Infinity 生态系统的股东之一。",
+    "sellGuideTitle": "FIT 卖出步骤",
+    "sellGuideStep1": "首先，在 FIT 卖出数量框中输入您要卖出的 FIT 数量。",
+    "sellGuideStep2": "然后点击“卖出 FIT”，并在钱包中确认交易。",
+    "sellGuideCongrats": "恭喜！您的 FIT 已在一秒内兑换为 DAI，并计入钱包的 DAI 余额。",
+    "sellNetReceive": "您将收到的金额（扣除 6% 手续费后）",
+    "sellFeeIncluded": "预计 DAI 金额已扣除 6% 的卖出手续费。"
   },
   "footer": {
     "tagline": "Fly Infinity — 去中心化。透明。永远上涨。"

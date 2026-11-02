@@ -103,7 +103,13 @@
     "ownershipGuideStep1": "Primero, pulsa Aprobar DAI y confirma la transacción en tu cartera.",
     "ownershipGuideStep2": "Después, abre Ver y firmar el acuerdo, léelo hasta el final y acéptalo.",
     "ownershipGuideStep3": "Por último, introduce la dirección de tu referente en el campo Dirección del referente, pulsa Convertirse en propietario y confirma la transacción.",
-    "ownershipGuideCongrats": "¡Enhorabuena! Ahora eres uno de los accionistas del ecosistema Fly Infinity."
+    "ownershipGuideCongrats": "¡Enhorabuena! Ahora eres uno de los accionistas del ecosistema Fly Infinity.",
+    "sellGuideTitle": "Pasos para vender FIT",
+    "sellGuideStep1": "Primero, introduce la cantidad de FIT que deseas vender en el campo correspondiente.",
+    "sellGuideStep2": "Después, pulsa Vender FIT y confirma la transacción en tu cartera.",
+    "sellGuideCongrats": "¡Enhorabuena! Tus FIT se convirtieron en DAI en un segundo y se añadieron al saldo DAI de tu cartera.",
+    "sellNetReceive": "Recibirás (después de la comisión del 6%)",
+    "sellFeeIncluded": "La cantidad estimada de DAI ya incluye la comisión de venta del 6%."
   },
   "footer": {
     "tagline": "Fly Infinity — Descentralizado. Transparente. Siempre Subiendo."
