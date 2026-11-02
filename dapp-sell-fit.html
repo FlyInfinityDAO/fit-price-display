@@ -1417,7 +1417,73 @@ button:focus-visible,a:focus-visible,input:focus-visible{
   .action-card:hover,.action-btn:hover,.connect-btn:hover,.dapp-back-btn:hover{transform:none!important}
 }
 
-    </style>
+    
+/* ===== SELL FIT GUIDE + NET RECEIVED ESTIMATE ===== */
+.sell-guide-card{
+  position:relative;isolation:isolate;overflow:hidden;
+  margin:0 0 25px;padding:clamp(20px,3vw,28px);
+  border:1px solid rgba(0,200,150,.23);border-radius:23px;
+  background:linear-gradient(135deg,rgba(12,27,23,.64),rgba(9,16,17,.54) 58%,rgba(28,23,12,.36));
+  -webkit-backdrop-filter:blur(23px) saturate(130%);backdrop-filter:blur(23px) saturate(130%);
+  box-shadow:0 13px 34px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.08);
+}
+.sell-guide-card:before{
+  content:"";position:absolute;z-index:-1;inset:0 7% auto;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,200,150,.38),rgba(212,175,55,.40),transparent);
+  pointer-events:none;
+}
+.sell-guide-card:after{
+  content:"";position:absolute;z-index:-1;width:220px;height:220px;right:-115px;top:-145px;
+  border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.065),transparent 68%);
+  pointer-events:none;
+}
+.sell-guide-heading{display:flex;align-items:center;gap:13px;margin-bottom:20px}
+.sell-guide-icon{
+  width:47px;height:47px;flex:0 0 47px;display:grid;place-items:center;
+  border-radius:14px;color:#70dabb;font-size:18px;
+  background:linear-gradient(145deg,rgba(0,200,150,.13),rgba(255,255,255,.035));
+  border:1px solid rgba(0,200,150,.23);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 4px 13px rgba(0,0,0,.12);
+}
+.sell-guide-heading h2{margin:0;color:#D4AF37;font-size:clamp(15px,2vw,18px);font-weight:800;line-height:1.5}
+.sell-guide-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.sell-guide-step{
+  position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:12px;
+  min-height:140px;padding:18px;border-radius:17px;
+  background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.018));
+  border:1px solid rgba(255,255,255,.08);
+  -webkit-backdrop-filter:blur(15px);backdrop-filter:blur(15px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 6px 18px rgba(0,0,0,.10);
+  transition:border-color .2s ease,background .2s ease,transform .2s ease;
+}
+.sell-guide-step:hover{transform:translateY(-2px);background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.023))}
+.sell-guide-step.guide-green{border-inline-start:2px solid rgba(0,200,150,.50)}
+.sell-guide-step.guide-gold{border-inline-start:2px solid rgba(212,175,55,.55)}
+.sell-guide-number{position:absolute;top:13px;inset-inline-end:15px;color:rgba(220,225,218,.40);font-size:10px;font-weight:850;letter-spacing:.12em}
+.sell-guide-step-icon{width:35px;height:35px;display:grid;place-items:center;border-radius:11px;font-size:13px}
+.sell-guide-step.guide-green .sell-guide-step-icon{color:#70dfbd;background:rgba(0,200,150,.09);border:1px solid rgba(0,200,150,.21)}
+.sell-guide-step.guide-gold .sell-guide-step-icon{color:#e4cb7e;background:rgba(212,175,55,.085);border:1px solid rgba(212,175,55,.22)}
+.sell-guide-step p{margin:0;color:#d0dad5;font-size:12px;line-height:1.9}
+.sell-guide-congrats{
+  display:flex;align-items:center;gap:12px;margin-top:14px;padding:15px 17px;
+  border-radius:15px;background:linear-gradient(100deg,rgba(0,200,150,.075),rgba(255,255,255,.022) 52%,rgba(212,175,55,.075));
+  border:1px solid rgba(212,175,55,.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 6px 17px rgba(0,0,0,.09);
+}
+.sell-guide-congrats>i{flex:0 0 auto;color:#D4AF37;font-size:18px}
+.sell-guide-congrats p{margin:0;color:#e5d79f;font-size:12px;font-weight:750;line-height:1.85}
+.sell-net-receive-row{border-color:rgba(0,200,150,.20)!important;background:linear-gradient(100deg,rgba(0,200,150,.065),rgba(255,255,255,.02))!important}
+.sell-net-receive-row #sellEstimate{color:#80dfbd!important;font-weight:800}
+.sell-fee-note{margin:-5px 0 13px;color:rgba(212,175,55,.78);font-size:10px;line-height:1.7;text-align:end}
+@media(max-width:760px){
+  .sell-guide-card{padding:18px;border-radius:20px}
+  .sell-guide-steps{grid-template-columns:1fr;gap:10px}
+  .sell-guide-step{min-height:0;padding:15px}
+  .sell-guide-congrats{align-items:flex-start;padding:13px}
+}
+@media(prefers-reduced-motion:reduce){.sell-guide-step{transition:none}.sell-guide-step:hover{transform:none}}
+
+</style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head>
 <body data-dapp-view="sell">
@@ -1521,12 +1587,29 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         </div>
     </div>
 
-    <!-- Price & Info -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
-        <div class="info-row"><span class="info-label" data-i18n="dapp.currentPrice">Current FIT Price</span><span class="info-value" id="currentPrice">— DAI</span></div>
-        <div class="info-row"><span class="info-label" data-i18n="dapp.networkAllowance">DAI Allowance (Network)</span><span class="info-value" id="networkAllowanceStatus">—</span></div>
-        <div class="info-row"><span class="info-label" data-i18n="dapp.tokenAllowance">DAI Allowance (Token)</span><span class="info-value" id="tokenAllowanceStatus">—</span></div>
-    </div>
+    <!-- SELL FIT GUIDE -->
+    <section class="sell-guide-card" aria-labelledby="sellGuideTitle">
+      <div class="sell-guide-heading">
+        <span class="sell-guide-icon"><i class="fas fa-arrow-right-arrow-left" aria-hidden="true"></i></span>
+        <div><h2 id="sellGuideTitle" data-i18n="dapp.sellGuideTitle">FIT Sale Steps</h2></div>
+      </div>
+      <div class="sell-guide-steps">
+        <article class="sell-guide-step guide-green">
+          <span class="sell-guide-number">01</span>
+          <span class="sell-guide-step-icon"><i class="fas fa-coins" aria-hidden="true"></i></span>
+          <p data-i18n="dapp.sellGuideStep1">First, enter the amount of FIT you want to sell in the FIT amount field.</p>
+        </article>
+        <article class="sell-guide-step guide-gold">
+          <span class="sell-guide-number">02</span>
+          <span class="sell-guide-step-icon"><i class="fas fa-file-signature" aria-hidden="true"></i></span>
+          <p data-i18n="dapp.sellGuideStep2">Then click Sell FIT and confirm the transaction in your wallet.</p>
+        </article>
+      </div>
+      <div class="sell-guide-congrats">
+        <i class="fas fa-circle-check" aria-hidden="true"></i>
+        <p data-i18n="dapp.sellGuideCongrats">Congratulations! Your FIT was converted to DAI in one second and added to your DAI wallet balance.</p>
+      </div>
+    </section>
 
     <section class="dapp-operation-view" id="dappOwnershipOperation">
 <div class="dapp-back-row"><a class="dapp-back-btn" href="dapp.html"><i class="fas fa-arrow-left"></i><span data-i18n="dapp.backToDapp">Back to DApp</span></a></div>
@@ -1607,7 +1690,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                 <input type="number" id="sellAmount" placeholder="Enter FIT amount" step="100">
             </div>
             
-            <div class="info-row"><span class="info-label" data-i18n="dapp.youReceive">You will receive</span><span class="info-value" id="sellEstimate">— DAI</span></div>
+            <div class="info-row sell-net-receive-row"><span class="info-label" data-i18n="dapp.sellNetReceive">You will receive (after 6% fee)</span><span class="info-value" id="sellEstimate">— DAI</span></div>
+            <p class="sell-fee-note" data-i18n="dapp.sellFeeIncluded">Estimated DAI amount includes the 6% selling fee.</p>
             <button id="sellBtn" class="action-btn danger"><i class="fas fa-arrow-up"></i> <span data-i18n="dapp.sellFit">Sell FIT</span></button>
             <div id="sellStatus" class="status-text">—</div>
         </div>
@@ -1831,7 +1915,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         try {
             let priceRaw = await fitTokenContract.Price();
             currentPrice = parseFloat(ethers.utils.formatEther(priceRaw));
-            document.getElementById("currentPrice").innerHTML = currentPrice.toFixed(6) + " DAI";
+            const currentPriceEl = document.getElementById("currentPrice");
+            if (currentPriceEl) currentPriceEl.innerHTML = currentPrice.toFixed(6) + " DAI";
             updateBuyEstimate();
             updateSellEstimate();
         } catch(e) { console.error(e); }
@@ -1842,20 +1927,24 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             let networkAllowance = await daiContract.allowance(userAddress, FIT_NETWORK_ADDRESS);
             let networkAllowanceNum = parseFloat(ethers.utils.formatEther(networkAllowance));
             if (networkAllowanceNum >= 100) {
-                document.getElementById("networkAllowanceStatus").innerHTML = `✅ ${networkAllowanceNum.toFixed(2)} DAI`;
+                const networkAllowanceEl = document.getElementById("networkAllowanceStatus");
+                if (networkAllowanceEl) networkAllowanceEl.innerHTML = `✅ ${networkAllowanceNum.toFixed(2)} DAI`;
                 document.getElementById("networkApproveStatus").innerHTML = "✅ Approved";
             } else {
-                document.getElementById("networkAllowanceStatus").innerHTML = "❌ Not approved";
+                const networkAllowanceEl = document.getElementById("networkAllowanceStatus");
+                if (networkAllowanceEl) networkAllowanceEl.innerHTML = "❌ Not approved";
                 document.getElementById("networkApproveStatus").innerHTML = "⚠️ Need approval";
             }
             
             let tokenAllowance = await daiContract.allowance(userAddress, FIT_TOKEN_ADDRESS);
             let tokenAllowanceNum = parseFloat(ethers.utils.formatEther(tokenAllowance));
             if (tokenAllowanceNum >= 1000) {
-                document.getElementById("tokenAllowanceStatus").innerHTML = `✅ ${tokenAllowanceNum.toFixed(2)} DAI`;
+                const tokenAllowanceEl = document.getElementById("tokenAllowanceStatus");
+                if (tokenAllowanceEl) tokenAllowanceEl.innerHTML = `✅ ${tokenAllowanceNum.toFixed(2)} DAI`;
                 document.getElementById("tokenApproveStatus").innerHTML = "✅ Approved";
             } else {
-                document.getElementById("tokenAllowanceStatus").innerHTML = "❌ Not approved";
+                const tokenAllowanceEl = document.getElementById("tokenAllowanceStatus");
+                if (tokenAllowanceEl) tokenAllowanceEl.innerHTML = "❌ Not approved";
                 document.getElementById("tokenApproveStatus").innerHTML = "⚠️ Need approval";
             }
         } catch(e) { console.error(e); }
@@ -1877,8 +1966,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             document.getElementById("sellEstimate").innerHTML = "— DAI";
             return;
         }
-        let daiAmount = amount * currentPrice;
-        document.getElementById("sellEstimate").innerHTML = daiAmount.toFixed(4) + " DAI";
+        const grossDaiAmount = amount * currentPrice;
+        const netDaiAmount = grossDaiAmount * 0.94;
+        document.getElementById("sellEstimate").innerHTML = netDaiAmount.toFixed(4) + " DAI";
     }
     
     function setStatus(elementId, message, type) {
