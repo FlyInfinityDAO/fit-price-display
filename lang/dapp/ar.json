@@ -109,7 +109,16 @@
     "sellGuideStep2": "ثم اضغط على بيع FIT وأكّد المعاملة في محفظتك.",
     "sellGuideCongrats": "تهانينا! تم تحويل FIT إلى DAI خلال ثانية واحدة وإضافتها إلى رصيد DAI في محفظتك.",
     "sellNetReceive": "المبلغ الذي ستستلمه بعد خصم رسوم 6٪",
-    "sellFeeIncluded": "تقدير مبلغ DAI يتضمن رسوم البيع البالغة 6٪."
+    "sellFeeIncluded": "تقدير مبلغ DAI يتضمن رسوم البيع البالغة 6٪.",
+    "giftGuideTitle": "خطوات الانضمام إلى سحب الهدايا",
+    "giftGuideStep1Before": "أولاً، في قسم ",
+    "giftGuideJoinContractLabel": "الانضمام إلى العقد",
+    "giftGuideStep1After": " أدخل عنوان محفظتك في الحقل المحدد، واضغط على الانضمام إلى العقد، ثم أكّد المعاملة.",
+    "giftGuideStep2": "تُنفّذ هذه الخطوة مرة واحدة فقط، ولا تحتاج إلى تكرارها في المرات القادمة.",
+    "giftGuideStep3Before": "ثم في قسم ",
+    "giftGuideLotteryLabel": "سحب الهدية بقيمة 5 دولارات",
+    "giftGuideStep3After": " أدخل عنوان محفظتك في الحقل المحدد، واضغط على الانضمام إلى السحب، ثم أكّد المعاملة.",
+    "giftGuideCongrats": "تهانينا! لقد انضممت الآن إلى السحب."
   },
   "footer": {
     "tagline": "Fly Infinity — لا مركزي. شفاف. يرتفع للأبد."

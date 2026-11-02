@@ -109,7 +109,16 @@
     "sellGuideStep2": "Then click Sell FIT and confirm the transaction in your wallet.",
     "sellGuideCongrats": "Congratulations! Your FIT was converted to DAI in one second and added to your DAI wallet balance.",
     "sellNetReceive": "You will receive (after 6% fee)",
-    "sellFeeIncluded": "Estimated DAI amount includes the 6% selling fee."
+    "sellFeeIncluded": "Estimated DAI amount includes the 6% selling fee.",
+    "giftGuideTitle": "How to Join the Gift Lottery",
+    "giftGuideStep1Before": "First, in the ",
+    "giftGuideJoinContractLabel": "Join Contract",
+    "giftGuideStep1After": " section, enter your wallet address in the designated field, click Join Contract, and confirm the transaction.",
+    "giftGuideStep2": "This step is completed only once. You do not need to repeat it in future visits.",
+    "giftGuideStep3Before": "Then, in the ",
+    "giftGuideLotteryLabel": "$5 Gift Lottery",
+    "giftGuideStep3After": " section, enter your wallet address in the designated field, click Join Lottery, and confirm the transaction.",
+    "giftGuideCongrats": "Congratulations! You have now joined the lottery."
   },
   "footer": {
     "tagline": "Fly Infinity — Decentralized. Transparent. Forever Rising."
