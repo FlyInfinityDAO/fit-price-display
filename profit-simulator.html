@@ -1155,6 +1155,208 @@ textarea:focus,
 .footer .footer-links a i{color:#00e6ad!important;filter:drop-shadow(0 0 5px rgba(0,230,173,.32))}
 .footer .footer-links a:hover,.footer .footer-links a:focus-visible,.footer .footer-links a:hover span,.footer .footer-links a:focus-visible span{color:#eafff8!important}
 .footer .footer-links a:hover i,.footer .footer-links a:focus-visible i{color:#a2ffe4!important;filter:drop-shadow(0 0 8px rgba(0,255,190,.9))}
+
+    
+    /* ===== DAPP-MATCHED GLASS VISUAL SYSTEM ===== */
+    :root {
+        --fi-glass-surface: rgba(10, 20, 19, 0.30);
+        --fi-glass-inner: rgba(255, 255, 255, 0.035);
+        --fi-glass-line: rgba(0, 200, 150, 0.18);
+        --fi-glass-gold-line: rgba(212, 175, 55, 0.18);
+        --fi-glass-highlight: rgba(255, 255, 255, 0.065);
+        --fi-glass-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+    }
+
+    .card, .stat-card, .stat-card-wide, .price-stat-card, .result-box,
+    .fee-box, .purchase-box, .chart-card, .fee-result, .growth-badge,
+    .purchase-row, .input-group, .fee-breakdown, .reward-detail,
+    .savings-badge, .reward-badge {
+        background: var(--fi-glass-surface) !important;
+        -webkit-backdrop-filter: blur(18px) saturate(130%);
+        backdrop-filter: blur(18px) saturate(130%);
+        border: 1px solid var(--fi-glass-line) !important;
+        box-shadow: var(--fi-glass-shadow), inset 0 1px 0 var(--fi-glass-highlight) !important;
+    }
+
+    .card {
+        border-radius: 26px;
+        border-color: rgba(0, 200, 150, 0.20) !important;
+    }
+
+    .stat-card, .stat-card-wide, .price-stat-card, .result-box,
+    .fee-box, .purchase-box, .chart-card, .fee-result {
+        border-radius: 18px;
+    }
+
+    .stat-card, .stat-card-wide, .price-stat-card, .result-box,
+    .fee-box, .purchase-box {
+        border-left: 1px solid var(--fi-glass-line) !important;
+    }
+
+    .fee-box.buy, .purchase-box.with-plan {
+        border-color: rgba(0, 200, 150, 0.22) !important;
+    }
+
+    .fee-box.sell, .purchase-box.without-plan {
+        border-color: var(--fi-glass-gold-line) !important;
+    }
+
+    .input-group {
+        border-radius: 16px;
+        padding: 14px;
+    }
+
+    .input-group input, input, select, textarea {
+        background: rgba(5, 12, 11, 0.42) !important;
+        border: 1px solid rgba(0, 200, 150, 0.22) !important;
+        border-radius: 12px;
+        color: #e6eee9 !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.045) !important;
+    }
+
+    .input-group input:focus, input:focus, select:focus, textarea:focus {
+        border-color: rgba(0, 200, 150, 0.48) !important;
+        box-shadow: 0 0 0 3px rgba(0, 200, 150, 0.07) !important;
+        outline: none;
+    }
+
+    .input-group label, .result-period, .price-stat-label {
+        color: #70dabb;
+    }
+
+    .stat-label, .purchase-label, .fee-result-label,
+    .fee-breakdown, .fee-price-note, .reward-detail {
+        color: #aab8b2;
+    }
+
+    .stat-value, .price-stat-value, .result-return,
+    .fee-result-amount, .purchase-value {
+        color: #D4AF37;
+    }
+
+    .card > div:first-child > i,
+    .card > div[style*="text-align:center"] > i,
+    .fee-title > i, .purchase-title > i,
+    .fee-price-note > i {
+        color: #00C896;
+        margin-right: 8px;
+        filter: drop-shadow(0 0 5px rgba(0, 200, 150, 0.18));
+    }
+
+    .action-btn, .refresh-btn, #calcFetchPrice {
+        background: linear-gradient(135deg, rgba(0, 200, 150, 0.13), rgba(0, 200, 150, 0.045)) !important;
+        border: 1px solid rgba(0, 200, 150, 0.32) !important;
+        color: #70e2c3 !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 5px 16px rgba(0,0,0,0.14);
+        transition: transform .22s ease, border-color .22s ease, background .22s ease, box-shadow .22s ease;
+    }
+
+    .action-btn:hover, .refresh-btn:hover, #calcFetchPrice:hover {
+        background: linear-gradient(135deg, rgba(0, 200, 150, 0.22), rgba(212, 175, 55, 0.08)) !important;
+        border-color: rgba(0, 200, 150, 0.52) !important;
+        color: #eafff8 !important;
+        box-shadow: 0 7px 20px rgba(0,0,0,0.20), 0 0 12px rgba(0,200,150,0.08);
+        transform: translateY(-2px);
+    }
+
+    .action-btn i, .refresh-btn i, #calcFetchPrice i {
+        margin-right: 7px;
+        color: #D4AF37;
+    }
+
+    .growth-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border-radius: 30px;
+        color: #c9e8dc;
+        padding: 9px 15px;
+    }
+
+    .purchase-row {
+        background: rgba(255,255,255,0.025) !important;
+        border-bottom: 1px solid rgba(0,200,150,0.09);
+        border-radius: 10px;
+        box-shadow: none !important;
+    }
+
+    .fee-result {
+        background: rgba(5, 12, 11, 0.32) !important;
+    }
+
+    .fee-result-amount, .result-return {
+        text-shadow: 0 0 12px rgba(212, 175, 55, 0.10);
+    }
+
+    .card:hover, .stat-card:hover, .stat-card-wide:hover,
+    .price-stat-card:hover, .result-box:hover, .fee-box:hover,
+    .purchase-box:hover, .chart-card:hover {
+        border-color: rgba(0, 200, 150, 0.30) !important;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.20), inset 0 1px 0 var(--fi-glass-highlight) !important;
+    }
+
+    .top-bar, .sidebar, .lang-dropdown, .agreement-modal-content {
+        background: rgba(8, 17, 16, 0.48) !important;
+        -webkit-backdrop-filter: blur(24px) saturate(135%);
+        backdrop-filter: blur(24px) saturate(135%);
+        border-color: rgba(0, 200, 150, 0.22) !important;
+        box-shadow: 0 12px 32px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    .agreement-modal-overlay {
+        background: rgba(0,0,0,0.72);
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
+    }
+
+    .footer {
+        border-top-color: rgba(0, 200, 150, 0.14);
+    }
+
+    /* Consistent icon sizing and subtle glass icon tiles */
+    .sidebar-menu a i {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        min-width: 26px;
+        height: 26px;
+        border-radius: 8px;
+        background: rgba(0, 200, 150, 0.09);
+        color: #00C896;
+        font-size: 14px;
+        transition: color .22s ease, background .22s ease, transform .22s ease;
+    }
+
+    .sidebar-menu a:hover i, .sidebar-menu a.active i {
+        background: rgba(212, 175, 55, 0.12);
+        color: #D4AF37;
+        transform: translateY(-1px);
+    }
+
+    .card h1, .card h2, .card h3, .fee-title, .purchase-title {
+        letter-spacing: 0.01em;
+    }
+
+    @media (max-width: 768px) {
+        .card, .stat-card, .stat-card-wide, .price-stat-card, .result-box,
+        .fee-box, .purchase-box, .chart-card, .fee-result, .growth-badge,
+        .purchase-row, .input-group {
+            -webkit-backdrop-filter: blur(15px) saturate(125%);
+            backdrop-filter: blur(15px) saturate(125%);
+        }
+        .card { padding: 20px 16px; }
+    }
+
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+        .card, .stat-card, .stat-card-wide, .price-stat-card, .result-box,
+        .fee-box, .purchase-box, .chart-card, .fee-result, .growth-badge,
+        .purchase-row, .input-group, .top-bar, .sidebar, .lang-dropdown,
+        .agreement-modal-content {
+            background: rgba(10, 18, 17, 0.90) !important;
+        }
+    }
+
 </style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head><body>
@@ -1170,7 +1372,7 @@ textarea:focus,
         </div>
         <div class="top-bar-right">
             <button class="hamburger" id="hamburgerBtn">
-                <i class="fas fa-bars"></i>
+                <i class="fas fa-bars-staggered" aria-hidden="true"></i>
             </button>
         </div>
     </div>
@@ -1185,7 +1387,7 @@ textarea:focus,
                 <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
                 <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
             </span>
-            <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
+            <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-xmark" aria-hidden="true"></i></button>
         </div>
         
         <div class="sidebar-menu">
@@ -1262,7 +1464,7 @@ textarea:focus,
     <!-- Manual Profit Simulator -->
     <div class="card">
         <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="dashboard.manualProfit">
-            <i class="fas fa-calculator"></i> Manual Profit Simulator
+            <i class="fas fa-chart-line" aria-hidden="true"></i> Manual Profit Simulator
         </div>
         <p style="color:#888; text-align:center; font-size:12px; margin-bottom:20px;" data-i18n="dashboard.manualDesc">
             Calculate your potential profit based on daily price increase
@@ -1300,7 +1502,7 @@ textarea:focus,
         
         <div style="text-align: center; margin-top: 15px;">
             <button id="manualSimBtn" class="action-btn" style="width: auto; padding: 10px 40px; border-color: #D4AF37; color: #D4AF37;">
-                <i class="fas fa-play"></i> <span data-i18n="btn.calculate">Calculate</span>
+                <i class="fas fa-calculator" aria-hidden="true"></i> <span data-i18n="btn.calculate">Calculate</span>
             </button>
         </div>
         
@@ -1312,13 +1514,13 @@ textarea:focus,
     <!-- Fee Calculator -->
     <div class="card">
         <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="dashboard.feeCalculator">
-            <i class="fas fa-calculator"></i> Fee Calculator (Buy: 3% | Sell: 6%)
+            <i class="fas fa-percent" aria-hidden="true"></i> Fee Calculator (Buy: 3% | Sell: 6%)
         </div>
         
         <div class="fee-grid">
             <div class="fee-box buy">
                 <div class="fee-title buy" data-i18n="dashboard.feeBuy">
-                    <i class="fas fa-shopping-cart"></i> Buy Calculator
+                    <i class="fas fa-cart-shopping" aria-hidden="true"></i> Buy Calculator
                 </div>
                 <div class="input-group" style="width: 100%; margin-bottom: 15px;">
                     <label style="color: #00C896; font-size: 12px;" data-i18n="dashboard.feeAmount">💰 Amount (USD)</label>
@@ -1347,14 +1549,14 @@ textarea:focus,
             </div>
         </div>
         <div class="fee-price-note">
-            <i class="fas fa-info-circle"></i> <span data-i18n="dashboard.feeNote">Fees: 3% for Buy | 6% for Sell</span> | Current Price: <span id="calcPrice">—</span> USD
+            <i class="fas fa-circle-info" aria-hidden="true"></i> <span data-i18n="dashboard.feeNote">Fees: 3% for Buy | 6% for Sell</span> | Current Price: <span id="calcPrice">—</span> USD
         </div>
     </div>
 
     <!-- ===== PURCHASE CALCULATOR WITH REWARD ===== -->
     <div class="card">
         <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="dashboard.purchaseCalculator">
-            <i class="fas fa-calculator"></i> FIT Purchase Calculator
+            <i class="fas fa-coins" aria-hidden="true"></i> FIT Purchase Calculator
         </div>
         <p style="color:#888; text-align:center; font-size:12px; margin-bottom:20px;" data-i18n="dashboard.purchaseDesc">
             Calculate required ownership shares based on Infinity Development network plan + Estimated Rewards for ALL shares
@@ -1389,7 +1591,7 @@ textarea:focus,
             <!-- With Infinity Development Plan -->
             <div class="purchase-box with-plan">
                 <div class="purchase-title with-plan" data-i18n="dashboard.purchaseWithPlan">
-                    <i class="fas fa-network-wired"></i> ✅ With Infinity Development Network Plan
+                    <i class="fas fa-diagram-project" aria-hidden="true"></i> ✅ With Infinity Development Network Plan
                 </div>
                 <div class="purchase-row">
                     <span class="purchase-label" data-i18n="dashboard.purchaseShares">Required Shares</span>
