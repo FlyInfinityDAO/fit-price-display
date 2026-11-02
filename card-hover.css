@@ -1,15 +1,15 @@
 /* Shared card hover glow — visual-only interaction */
-:where(.privacy-card,.card,[class*="card"],.feature-item,.step-item,.number-item,.info-box,.warning-box,.comparison-box,.section-card,.result-box,.fee-box,.purchase-box,.chart-card,.source-card,.action-card,.cta-section,.audit-section,.score-section,.score-circle,.table-wrap,.price-info-bar,.history-controls,.purchase-row,.fee-breakdown,.input-group,.input-grid,.result-card,.stats-grid > *,.results-grid > *,.summary-badges > *) {
+:where(.privacy-card,.card,[class*="-card"],[class~="card"],.feature-item,.step-item,.number-item,.info-box,.warning-box,.comparison-box,.section-card,.result-box,.fee-box,.purchase-box,.chart-card,.source-card,.action-card,.cta-section,.audit-section,.score-section,.score-circle,.table-wrap,.price-info-bar,.history-controls,.purchase-row,.fee-breakdown,.input-group,.input-grid,.result-card,.stats-grid > *,.results-grid > *,.summary-badges > *) {
   transition: border-color .28s ease, box-shadow .28s ease !important;
 }
 @media (hover:hover) and (pointer:fine) {
-  :where(.privacy-card,.card,[class*="card"],.feature-item,.step-item,.number-item,.info-box,.warning-box,.comparison-box,.section-card,.result-box,.fee-box,.purchase-box,.chart-card,.source-card,.action-card,.cta-section,.audit-section,.score-section,.score-circle,.table-wrap,.price-info-bar,.history-controls,.purchase-row,.fee-breakdown,.input-group,.input-grid,.result-card,.stats-grid > *,.results-grid > *,.summary-badges > *):hover {
+  :where(.privacy-card,.card,[class*="-card"],[class~="card"],.feature-item,.step-item,.number-item,.info-box,.warning-box,.comparison-box,.section-card,.result-box,.fee-box,.purchase-box,.chart-card,.source-card,.action-card,.cta-section,.audit-section,.score-section,.score-circle,.table-wrap,.price-info-bar,.history-controls,.purchase-row,.fee-breakdown,.input-group,.input-grid,.result-card,.stats-grid > *,.results-grid > *,.summary-badges > *):hover {
     border-color:rgba(0,245,185,.92) !important;
     box-shadow:0 20px 46px rgba(0,0,0,.36),0 0 25px rgba(0,230,175,.36),0 0 44px rgba(0,200,150,.18),inset 0 1px 0 rgba(255,255,255,.14) !important;
   }
 }
 @media (hover:none), (pointer:coarse) {
-  :where(.privacy-card,.card,[class*="card"],.feature-item,.step-item,.number-item,.info-box,.warning-box,.comparison-box,.section-card,.result-box,.fee-box,.purchase-box,.chart-card,.source-card,.action-card,.cta-section,.audit-section,.score-section,.score-circle,.table-wrap,.price-info-bar,.history-controls,.purchase-row,.fee-breakdown,.input-group,.input-grid,.result-card,.stats-grid > *,.results-grid > *,.summary-badges > *):active {
+  :where(.privacy-card,.card,[class*="-card"],[class~="card"],.feature-item,.step-item,.number-item,.info-box,.warning-box,.comparison-box,.section-card,.result-box,.fee-box,.purchase-box,.chart-card,.source-card,.action-card,.cta-section,.audit-section,.score-section,.score-circle,.table-wrap,.price-info-bar,.history-controls,.purchase-row,.fee-breakdown,.input-group,.input-grid,.result-card,.stats-grid > *,.results-grid > *,.summary-badges > *):active {
     border-color:rgba(0,245,185,.92) !important;
     box-shadow:0 20px 46px rgba(0,0,0,.36),0 0 25px rgba(0,230,175,.36),0 0 44px rgba(0,200,150,.18),inset 0 1px 0 rgba(255,255,255,.14) !important;
   }
