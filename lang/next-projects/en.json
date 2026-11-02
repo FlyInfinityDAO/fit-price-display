@@ -104,8 +104,14 @@
     "title": "Upcoming Projects",
     "description": "Explore the next initiatives planned for the Fly Infinity ecosystem. Detailed information will be published as each project develops.",
     "exchangeDescription": "A future exchange initiative within the Fly Infinity ecosystem.",
-    "lotteryDescription": "A proposed lottery-related project to be introduced with its own details later.",
-    "payDescription": "A future payment-focused initiative for the Fly Infinity ecosystem.",
-    "planned": "Planned Project"
+    "lotteryDescription": "A proposed public prize-draw concept, subject to applicable laws, eligibility requirements and published rules. Any founder allocation remaining after the winner's prize is paid is planned to be directed to FIT backing.",
+    "payDescription": "A public, decentralized payment gateway for businesses worldwide. Payment fees are allocated to FIT backing and developer rewards, supporting the FIT ecosystem and developer contributions.",
+    "planned": "Planned Project",
+    "dexDescription": "A public, decentralized exchange where users worldwide can swap cryptocurrencies for other digital assets. All trading fees are directed to FIT backing, supporting its backing and price mechanism.",
+    "dexTarget": "Launch target: 5,000 FIT holders",
+    "marketplaceDescription": "A global digital marketplace connecting buyers and sellers. Fees are allocated to FIT backing and developer rewards, supporting both the FIT ecosystem and ongoing development.",
+    "marketplaceTarget": "Launch target: 10,000 FIT holders",
+    "lotteryTarget": "Launch target: 20,000 FIT holders",
+    "payTarget": "Launch target: 30,000 FIT holders"
   }
 }
