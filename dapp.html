@@ -1800,7 +1800,7 @@ textarea:focus,
                         disconnectWallet();
                     } else {
                         userAddress = accounts[0];
-                        document.getElementById("walletAddress").innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
+                        const walletAddressEl = document.getElementById("walletAddress"); if (walletAddressEl) walletAddressEl.innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
                         document.getElementById("buyerAddress").value = userAddress;
                         document.getElementById("referrerAddress").value = userAddress;
                         await loadBalances();
