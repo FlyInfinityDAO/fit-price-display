@@ -12,7 +12,7 @@
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <script src="lang.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1357,7 +1357,60 @@ textarea:focus,
         }
     }
 
-</style>
+
+/* ===== Modern icon system: current Font Awesome + consistent iconography ===== */
+.fi-icon-profit-heading::before,
+#dailyGrowthRate::before,
+#weeklyGrowthRate::before,
+#monthlyGrowthRate::before,
+label[data-i18n="dashboard.manualHoldings"]::before,
+label[data-i18n="dashboard.manualIncrease"]::before,
+.result-period[data-i18n="dashboard.manualDaily"]::before,
+.result-period[data-i18n="dashboard.manualWeekly"]::before,
+.result-period[data-i18n="dashboard.manualMonthly"]::before,
+label[data-i18n="dashboard.feeAmount"]::before,
+label[data-i18n="dashboard.feeFitAmount"]::before,
+label[data-i18n="dashboard.purchaseFitAmount"]::before,
+label[data-i18n="dashboard.purchasePrice"]::before,
+label[data-i18n="dashboard.purchaseShareCost"]::before,
+label[data-i18n="dashboard.purchaseRewardPerPoint"]::before {
+    display: inline-block;
+    margin-inline-end: 8px;
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    line-height: 1;
+    vertical-align: -0.08em;
+    color: #00C896;
+}
+.fi-icon-profit-heading::before { content: "\f201"; color: #D4AF37; }
+#dailyGrowthRate::before { content: "\f062"; }
+#weeklyGrowthRate::before { content: "\f201"; }
+#monthlyGrowthRate::before { content: "\f073"; }
+label[data-i18n="dashboard.manualHoldings"]::before,
+label[data-i18n="dashboard.purchaseFitAmount"]::before,
+label[data-i18n="dashboard.feeFitAmount"]::before { content: "\f51e"; }
+label[data-i18n="dashboard.manualIncrease"]::before { content: "\f062"; color: #D4AF37; }
+.result-period[data-i18n="dashboard.manualDaily"]::before { content: "\f017"; }
+.result-period[data-i18n="dashboard.manualWeekly"]::before { content: "\f073"; }
+.result-period[data-i18n="dashboard.manualMonthly"]::before { content: "\f073"; }
+label[data-i18n="dashboard.feeAmount"]::before,
+label[data-i18n="dashboard.purchasePrice"]::before,
+label[data-i18n="dashboard.purchaseRewardPerPoint"]::before { content: "\f155"; color: #D4AF37; }
+label[data-i18n="dashboard.purchaseShareCost"]::before { content: "\f4b9"; color: #D4AF37; }
+[data-i18n="dashboard.profitSimulator"] > i,
+[data-i18n="dashboard.manualHoldings"] > i,
+[data-i18n="dashboard.manualIncrease"] > i,
+[data-i18n="dashboard.manualDaily"] > i,
+[data-i18n="dashboard.manualWeekly"] > i,
+[data-i18n="dashboard.manualMonthly"] > i,
+[data-i18n="dashboard.feeAmount"] > i,
+[data-i18n="dashboard.feeFitAmount"] > i,
+[data-i18n="dashboard.purchaseFitAmount"] > i,
+[data-i18n="dashboard.purchasePrice"] > i,
+[data-i18n="dashboard.purchaseShareCost"] > i,
+[data-i18n="dashboard.purchaseRewardPerPoint"] > i { display: none; }
+
+    </style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head><body>
 <div class="container">
@@ -1438,7 +1491,7 @@ textarea:focus,
     </div>
     <!-- Profit Simulator -->
     <div class="card">
-        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="dashboard.profitSimulator">💰 Profit Simulator</div>
+        <div class="fi-icon-profit-heading" style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="dashboard.profitSimulator">Profit Simulator</div>
         
         <div class="simulator-input">
             <div class="input-group">
@@ -1448,9 +1501,9 @@ textarea:focus,
         </div>
         
         <div class="growth-badges">
-            <span class="growth-badge" id="dailyGrowthRate" data-i18n="dashboard.profitDaily">📈 Daily: --</span>
-            <span class="growth-badge" id="weeklyGrowthRate" data-i18n="dashboard.profitWeekly">📊 Weekly: --</span>
-            <span class="growth-badge" id="monthlyGrowthRate" data-i18n="dashboard.profitMonthly">📅 Monthly: --</span>
+            <span class="growth-badge" id="dailyGrowthRate" data-i18n="dashboard.profitDaily">Daily: --</span>
+            <span class="growth-badge" id="weeklyGrowthRate" data-i18n="dashboard.profitWeekly">Weekly: --</span>
+            <span class="growth-badge" id="monthlyGrowthRate" data-i18n="dashboard.profitMonthly">Monthly: --</span>
         </div>
         
         <div class="simulator-results">
@@ -1458,7 +1511,7 @@ textarea:focus,
             <div class="result-box"><div class="result-period" data-i18n="dashboard.profit7d">7 Days Projection</div><div class="result-return" id="weeklyReturn">—</div></div>
             <div class="result-box"><div class="result-period" data-i18n="dashboard.profit30d">30 Days Projection</div><div class="result-return" id="monthlyReturn">—</div></div>
         </div>
-        <p style="color:#888; text-align:center; font-size:10px; margin-top:15px;" data-i18n="dashboard.profitNote">⚡ Based on past growth rates. Not financial advice.</p>
+        <p style="color:#888; text-align:center; font-size:10px; margin-top:15px;" data-i18n="dashboard.profitNote">Based on past growth rates. Not financial advice.</p>
     </div>
 
     <!-- Manual Profit Simulator -->
@@ -1472,29 +1525,29 @@ textarea:focus,
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
             <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #00C896;">
-                <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.manualHoldings">🪙 Your FIT Holdings</label>
+                <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.manualHoldings">Your FIT Holdings</label>
                 <input type="number" id="manualFitAmount" value="100" step="10" style="width: 100%; background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
             </div>
             
             <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #D4AF37;">
-                <label style="color: #D4AF37; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.manualIncrease">📈 Daily Price Increase ($)</label>
+                <label style="color: #D4AF37; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.manualIncrease">Daily Price Increase ($)</label>
                 <input type="number" id="dailyPriceIncrease" value="1.00" step="0.10" min="0.01" style="width: 100%; background: #0F0F0F; border: 1px solid #D4AF37; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
             </div>
         </div>
         
         <div class="simulator-results" style="margin-top: 20px;">
             <div class="result-box">
-                <div class="result-period" data-i18n="dashboard.manualDaily">📅 Daily Profit</div>
+                <div class="result-period" data-i18n="dashboard.manualDaily">Daily Profit</div>
                 <div class="result-return" id="manualDailyReturn">—</div>
                 <div style="color: #888; font-size: 10px; margin-top: 5px;" id="manualDailyDetails">—</div>
             </div>
             <div class="result-box">
-                <div class="result-period" data-i18n="dashboard.manualWeekly">📊 Weekly Profit (7 Days)</div>
+                <div class="result-period" data-i18n="dashboard.manualWeekly">Weekly Profit (7 Days)</div>
                 <div class="result-return" id="manualWeeklyReturn">—</div>
                 <div style="color: #888; font-size: 10px; margin-top: 5px;" id="manualWeeklyDetails">—</div>
             </div>
             <div class="result-box">
-                <div class="result-period" data-i18n="dashboard.manualMonthly">📅 Monthly Profit (30 Days)</div>
+                <div class="result-period" data-i18n="dashboard.manualMonthly">Monthly Profit (30 Days)</div>
                 <div class="result-return" id="manualMonthlyReturn">—</div>
                 <div style="color: #888; font-size: 10px; margin-top: 5px;" id="manualMonthlyDetails">—</div>
             </div>
@@ -1507,7 +1560,7 @@ textarea:focus,
         </div>
         
         <p style="color:#888; text-align:center; font-size:10px; margin-top:15px;" data-i18n="dashboard.manualNote">
-            ⚡ Based on your input values. Not financial advice.
+            Based on your input values. Not financial advice.
         </p>
     </div>
     
@@ -1523,7 +1576,7 @@ textarea:focus,
                     <i class="fas fa-cart-shopping" aria-hidden="true"></i> Buy Calculator
                 </div>
                 <div class="input-group" style="width: 100%; margin-bottom: 15px;">
-                    <label style="color: #00C896; font-size: 12px;" data-i18n="dashboard.feeAmount">💰 Amount (USD)</label>
+                    <label style="color: #00C896; font-size: 12px;" data-i18n="dashboard.feeAmount">Amount (USD)</label>
                     <input type="number" id="buyAmountUSD" placeholder="Enter USD amount" step="10" style="width: 100%;">
                 </div>
                 <div class="fee-result">
@@ -1535,10 +1588,10 @@ textarea:focus,
             
             <div class="fee-box sell">
                 <div class="fee-title sell" data-i18n="dashboard.feeSell">
-                    <i class="fas fa-chart-line"></i> Sell Calculator
+                    <i class="fa-solid fa-arrow-trend-down" aria-hidden="true"></i> Sell Calculator
                 </div>
                 <div class="input-group" style="width: 100%; margin-bottom: 15px;">
-                    <label style="color: #00C896; font-size: 12px;" data-i18n="dashboard.feeFitAmount">🪙 Amount (FIT)</label>
+                    <label style="color: #00C896; font-size: 12px;" data-i18n="dashboard.feeFitAmount">Amount (FIT)</label>
                     <input type="number" id="sellAmountFIT" placeholder="Enter FIT amount" step="100" style="width: 100%;">
                 </div>
                 <div class="fee-result">
@@ -1565,23 +1618,23 @@ textarea:focus,
         <!-- Inputs -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
             <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #00C896;">
-                <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.purchaseFitAmount">🪙 FIT Amount to Buy</label>
+                <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.purchaseFitAmount">FIT Amount to Buy</label>
                 <input type="number" id="calcFitAmount" value="1000" step="10" min="1" style="width: 100%; background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
             </div>
             
             <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #D4AF37;">
-                <label style="color: #D4AF37; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.purchasePrice">💰 Current FIT Price (DAI)</label>
+                <label style="color: #D4AF37; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.purchasePrice">Current FIT Price (DAI)</label>
                 <input type="number" id="calcFitPrice" value="6.00" step="0.01" min="0.01" style="width: 100%; background: #0F0F0F; border: 1px solid #D4AF37; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
                 <button id="calcFetchPrice" style="margin-top: 8px; background: transparent; border: 1px solid #00C896; color: #00C896; padding: 4px 12px; border-radius: 20px; font-size: 11px; cursor: pointer;" data-i18n="dashboard.purchaseFetch">Fetch Live Price</button>
             </div>
             
             <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #00C896;">
-                <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.purchaseShareCost">💎 Ownership Share Cost (DAI)</label>
+                <label style="color: #00C896; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.purchaseShareCost">Ownership Share Cost (DAI)</label>
                 <input type="number" id="calcShareCost" value="100" step="1" min="1" style="width: 100%; background: #0F0F0F; border: 1px solid #00C896; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
             </div>
             
             <div class="input-group" style="width: 100%; display: block; background: #1a1a1a; padding: 15px; border-radius: 16px; border-left: 3px solid #FFD700;">
-                <label style="color: #FFD700; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.purchaseRewardPerPoint">💰 Reward Value Per Point ($)</label>
+                <label style="color: #FFD700; font-size: 12px; display: block; margin-bottom: 8px;" data-i18n="dashboard.purchaseRewardPerPoint">Reward Value Per Point ($)</label>
                 <input type="number" id="rewardPerPoint" value="20" step="1" min="1" style="width: 100%; background: #0F0F0F; border: 1px solid #FFD700; color: #D4AF37; padding: 10px; border-radius: 12px; text-align: center;">
             </div>
         </div>
@@ -1621,7 +1674,7 @@ textarea:focus,
                 <!-- REWARD SECTION -->
                 <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid rgba(255, 215, 0, 0.3);">
                     <div style="color: #FFD700; font-size: 13px; font-weight: bold; text-align: center; margin-bottom: 10px;" data-i18n="dashboard.purchaseRewards">
-                        <i class="fas fa-gift"></i> Estimated Rewards (All Shares)
+                        <i class="fa-solid fa-gift" aria-hidden="true"></i> Estimated Rewards (All Shares)
                     </div>
                     <div class="purchase-row">
                         <span class="purchase-label" data-i18n="dashboard.purchaseRewardPoints">Total Reward Points</span>
@@ -1642,7 +1695,7 @@ textarea:focus,
             <!-- Without Infinity Development Plan -->
             <div class="purchase-box without-plan">
                 <div class="purchase-title without-plan" data-i18n="dashboard.purchaseWithoutPlan">
-                    <i class="fas fa-user"></i> ❌ Without Infinity Development Plan (Direct)
+                    <i class="fa-solid fa-user-minus" aria-hidden="true"></i> Without Infinity Development Plan (Direct)
                 </div>
                 <div class="purchase-row">
                     <span class="purchase-label" data-i18n="dashboard.purchaseShares">Required Shares</span>
@@ -1771,7 +1824,7 @@ function updateGrowthRates() {
         ["weeklyGrowthRate", historicalStats.days7],
         ["monthlyGrowthRate", historicalStats.days30]
     ];
-    const labels = ["📈 Daily: ","📊 Weekly: ","📅 Monthly: "];
+    const labels = ["Daily: ","Weekly: ","Monthly: "];
     rates.forEach(([id, oldPrice], i) => {
         const value = oldPrice > 0 && historicalStats.current > 0 ? ((historicalStats.current-oldPrice)/oldPrice)*100 : null;
         document.getElementById(id).textContent = value === null ? labels[i] + "—" : labels[i] + `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
@@ -1915,7 +1968,7 @@ document.getElementById('calcFitPrice').addEventListener('input',function(){this
 document.getElementById('calcShareCost').addEventListener('input',calculatePurchase);
 document.getElementById('rewardPerPoint').addEventListener('input',calculatePurchase);
 document.getElementById('calcFetchPrice').addEventListener('click',async function(){
-    const button=this; button.disabled=true; const old=button.innerHTML; button.innerHTML='<i class="fas fa-spinner fa-spin"></i>';
+    const button=this; button.disabled=true; const old=button.innerHTML; button.innerHTML='<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i>';
     try { const raw=await fitReadContract.Price(); const price=Number(ethers.utils.formatEther(raw)); if(!Number.isFinite(price)||price<=0)throw new Error('Invalid FIT price'); const input=document.getElementById('calcFitPrice'); input.value=price.toFixed(6); input.dataset.userEdited='false'; currentPriceDAI=price; document.getElementById('calcPrice').textContent=`$${price.toFixed(4)}`; calculatePurchase(); updateBuyCalculator(); updateSellCalculator(); }
     catch(error){console.error('Error fetching FIT price:',error);alert('Could not fetch live price. Please enter it manually.');}
     finally{button.disabled=false;button.innerHTML=old;}
