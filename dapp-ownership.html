@@ -1418,26 +1418,69 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 }
 
     
-/* ===== OWNERSHIP PURCHASE GUIDE ===== */
-.ownership-guide-card{position:relative;overflow:hidden;margin:0 0 25px;padding:clamp(19px,3vw,27px);border:1px solid rgba(0,200,150,.22);border-radius:23px;background:linear-gradient(145deg,rgba(12,25,22,.70),rgba(9,14,15,.58));-webkit-backdrop-filter:blur(22px) saturate(135%);backdrop-filter:blur(22px) saturate(135%);box-shadow:0 15px 38px rgba(0,0,0,.23),inset 0 1px 0 rgba(255,255,255,.075)}
-.ownership-guide-card:before{content:"";position:absolute;inset:0 8% auto;height:1px;background:linear-gradient(90deg,transparent,rgba(212,175,55,.35),rgba(0,200,150,.30),transparent);pointer-events:none}
-.ownership-guide-heading{display:flex;align-items:center;gap:14px;margin-bottom:21px}
-.ownership-guide-icon{width:49px;height:49px;flex:0 0 49px;display:grid;place-items:center;color:#00C896;font-size:19px;border-radius:15px;background:linear-gradient(145deg,rgba(0,200,150,.14),rgba(0,200,150,.045));border:1px solid rgba(0,200,150,.24);box-shadow:0 0 13px rgba(0,200,150,.06),inset 0 1px 0 rgba(255,255,255,.08)}
+/* ===== OWNERSHIP PURCHASE GUIDE — BALANCED GLASS / SOFT NEON ===== */
+.ownership-guide-card{
+  position:relative;isolation:isolate;overflow:hidden;
+  margin:0 0 25px;padding:clamp(20px,3vw,29px);
+  border:1px solid rgba(0,200,150,.23);border-radius:24px;
+  background:linear-gradient(135deg,rgba(12,27,23,.66),rgba(12,17,19,.58) 55%,rgba(28,23,12,.40));
+  -webkit-backdrop-filter:blur(24px) saturate(130%);backdrop-filter:blur(24px) saturate(130%);
+  box-shadow:0 14px 36px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.085);
+}
+.ownership-guide-card:before{
+  content:"";position:absolute;z-index:-1;inset:0 7% auto;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,200,150,.38),rgba(212,175,55,.42),transparent);
+  pointer-events:none;
+}
+.ownership-guide-card:after{
+  content:"";position:absolute;z-index:-1;width:230px;height:230px;right:-115px;top:-145px;
+  border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.075),transparent 68%);
+  pointer-events:none;
+}
+.ownership-guide-heading{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.ownership-guide-icon{
+  width:49px;height:49px;flex:0 0 49px;display:grid;place-items:center;
+  color:#65dabb;font-size:19px;border-radius:15px;
+  background:linear-gradient(145deg,rgba(0,200,150,.14),rgba(255,255,255,.035));
+  border:1px solid rgba(0,200,150,.24);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 4px 14px rgba(0,0,0,.12);
+}
 .ownership-guide-heading h2{margin:0 0 5px;color:#D4AF37;font-size:clamp(15px,2vw,18px);font-weight:800;line-height:1.5}
-.ownership-guide-heading p{margin:0;color:rgba(192,208,232,.68);font-size:12px;line-height:1.7}
-.ownership-guide-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
-.ownership-guide-step{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:12px;min-height:160px;padding:18px;border-radius:17px;background:rgba(255,255,255,.032);border:1px solid rgba(255,255,255,.075);box-shadow:inset 0 1px 0 rgba(255,255,255,.045)}
-.ownership-guide-step.guide-green{border-inline-start:2px solid rgba(0,200,150,.48)}
-.ownership-guide-step.guide-gold{border-inline-start:2px solid rgba(212,175,55,.50)}
-.ownership-guide-number{position:absolute;top:13px;inset-inline-end:15px;color:rgba(192,208,232,.32);font-size:11px;font-weight:850;letter-spacing:.1em}
-.ownership-guide-step-icon{width:36px;height:36px;display:grid;place-items:center;border-radius:11px;font-size:14px}
-.guide-green .ownership-guide-step-icon{color:#55dcb5;background:rgba(0,200,150,.09);border:1px solid rgba(0,200,150,.19)}
-.guide-gold .ownership-guide-step-icon{color:#e1c56f;background:rgba(212,175,55,.085);border:1px solid rgba(212,175,55,.20)}
-.ownership-guide-step p{margin:0;color:#c6d5d0;font-size:12px;line-height:1.9}
-.ownership-guide-congrats{display:flex;align-items:center;gap:12px;margin-top:15px;padding:15px 17px;border-radius:15px;background:linear-gradient(100deg,rgba(0,200,150,.075),rgba(212,175,55,.065));border:1px solid rgba(212,175,55,.20);box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
-.ownership-guide-congrats>i{flex:0 0 auto;color:#D4AF37;font-size:19px;text-shadow:0 0 10px rgba(212,175,55,.13)}
-.ownership-guide-congrats p{margin:0;color:#e2d49e;font-size:13px;font-weight:750;line-height:1.8}
-@media(max-width:760px){.ownership-guide-card{padding:18px;border-radius:19px}.ownership-guide-steps{grid-template-columns:1fr;gap:10px}.ownership-guide-step{min-height:0;padding:15px}.ownership-guide-congrats{align-items:flex-start;padding:13px}}
+.ownership-guide-heading p{margin:0;color:rgba(192,208,232,.72);font-size:12px;line-height:1.7}
+.ownership-guide-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.ownership-guide-step{
+  position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:13px;
+  min-height:164px;padding:19px;border-radius:18px;
+  background:linear-gradient(145deg,rgba(255,255,255,.052),rgba(255,255,255,.018));
+  border:1px solid rgba(255,255,255,.085);
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.065),0 7px 20px rgba(0,0,0,.10);
+  transition:border-color .22s ease,background .22s ease,transform .22s ease;
+}
+.ownership-guide-step:hover{transform:translateY(-2px);background:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.025))}
+.ownership-guide-step.guide-green{border-inline-start:2px solid rgba(0,200,150,.52)}
+.ownership-guide-step.guide-gold{border-inline-start:2px solid rgba(212,175,55,.58)}
+.ownership-guide-number{position:absolute;top:14px;inset-inline-end:16px;color:rgba(220,225,218,.42);font-size:11px;font-weight:850;letter-spacing:.12em}
+.ownership-guide-step-icon{width:37px;height:37px;display:grid;place-items:center;border-radius:12px;font-size:14px}
+.guide-green .ownership-guide-step-icon{color:#70dfbd;background:rgba(0,200,150,.10);border:1px solid rgba(0,200,150,.23)}
+.guide-gold .ownership-guide-step-icon{color:#e4cb7e;background:rgba(212,175,55,.095);border:1px solid rgba(212,175,55,.25)}
+.ownership-guide-step p{margin:0;color:#d0dad5;font-size:12px;line-height:1.95}
+.ownership-guide-congrats{
+  position:relative;display:flex;align-items:center;gap:13px;margin-top:16px;padding:16px 18px;
+  border-radius:16px;
+  background:linear-gradient(100deg,rgba(0,200,150,.085),rgba(255,255,255,.025) 52%,rgba(212,175,55,.085));
+  border:1px solid rgba(212,175,55,.24);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 7px 20px rgba(0,0,0,.10);
+}
+.ownership-guide-congrats>i{flex:0 0 auto;color:#D4AF37;font-size:19px}
+.ownership-guide-congrats p{margin:0;color:#e5d79f;font-size:13px;font-weight:750;line-height:1.85}
+@media(max-width:760px){
+  .ownership-guide-card{padding:18px;border-radius:20px}
+  .ownership-guide-steps{grid-template-columns:1fr;gap:11px}
+  .ownership-guide-step{min-height:0;padding:16px}
+  .ownership-guide-congrats{align-items:flex-start;padding:14px}
+}
+@media(prefers-reduced-motion:reduce){.ownership-guide-step{transition:none}.ownership-guide-step:hover{transform:none}}
 
 </style>
     <link rel="stylesheet" href="wallet-ui.css">
