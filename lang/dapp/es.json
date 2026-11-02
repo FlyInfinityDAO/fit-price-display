@@ -109,7 +109,16 @@
     "sellGuideStep2": "Después, pulsa Vender FIT y confirma la transacción en tu cartera.",
     "sellGuideCongrats": "¡Enhorabuena! Tus FIT se convirtieron en DAI en un segundo y se añadieron al saldo DAI de tu cartera.",
     "sellNetReceive": "Recibirás (después de la comisión del 6%)",
-    "sellFeeIncluded": "La cantidad estimada de DAI ya incluye la comisión de venta del 6%."
+    "sellFeeIncluded": "La cantidad estimada de DAI ya incluye la comisión de venta del 6%.",
+    "giftGuideTitle": "Cómo unirse al sorteo de regalos",
+    "giftGuideStep1Before": "Primero, en la sección ",
+    "giftGuideJoinContractLabel": "Unirse al contrato",
+    "giftGuideStep1After": " introduce la dirección de tu cartera en el campo indicado, pulsa Unirse al contrato y confirma la transacción.",
+    "giftGuideStep2": "Este paso se realiza una sola vez. No tendrás que repetirlo en futuras ocasiones.",
+    "giftGuideStep3Before": "Después, en la sección ",
+    "giftGuideLotteryLabel": "Sorteo de regalo de 5 $",
+    "giftGuideStep3After": " introduce la dirección de tu cartera en el campo indicado, pulsa Unirse al sorteo y confirma la transacción.",
+    "giftGuideCongrats": "¡Enhorabuena! Ya te has unido al sorteo."
   },
   "footer": {
     "tagline": "Fly Infinity — Descentralizado. Transparente. Siempre Subiendo."
