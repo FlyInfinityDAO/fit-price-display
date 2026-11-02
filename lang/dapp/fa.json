@@ -123,7 +123,16 @@
         "fitTokenContract": "📜 قرارداد هوشمند توکن FIT فلای اینفینیتی",
         "ownershipContractFlow": "مرحله ۱: تأیید DAI ← مرحله ۲: مطالعه و پذیرش توافق‌نامه ← مرحله ۳: تکمیل ثبت مالکیت",
         "fitContractFlow": "مرحله ۱: تأیید DAI ← مرحله ۲: خرید یا فروش FIT",
-        "walletHubDesc": "کیف پول خود را متصل کنید تا موجودی‌ها و اطلاعات حساب FIT را مشاهده کنید."
+        "walletHubDesc": "کیف پول خود را متصل کنید تا موجودی‌ها و اطلاعات حساب FIT را مشاهده کنید.",
+        "hubGiftTitle": "هدیه فلای اینفینیتی",
+        "agreementHeadingPreamble": "📌 مقدمه",
+        "agreementHeadingOwnership": "💎 سهم مالکیت – مادام‌العمر و غیرقابل‌استرداد",
+        "agreementHeadingFit": "💰 دارایی دیجیتال FIT – کاملاً نقدشونده",
+        "agreementHeadingGift": "🎁 تخصیص هدیه – پاداش‌های مبتنی بر قرعه‌کشی",
+        "agreementHeadingWelcome": "🎁 پاداش خوش‌آمدگویی – واریز فوری توکن",
+        "agreementHeadingReferral": "🔗 شناسه معرف – سیستم دعوت غیرمتمرکز",
+        "agreementHeadingDeveloper": "💰 پاداش توسعه‌دهندگان – جبران خدمات بر اساس عملکرد",
+        "agreementHeadingInfrastructure": "🔒 زیرساخت غیرمتمرکز – امنیت و ناشناس‌بودن"
     },
     "footer": {
         "tagline": "فلای اینفینیتی — غیرمتمرکز. شفاف. همیشه در حال رشد."
