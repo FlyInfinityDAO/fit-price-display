@@ -27,8 +27,6 @@
     "buyDesc": "Sadece Satın Alma işlemleri (Buy fonksiyonu)",
     "sell": "Satış İşlemleri",
     "sellDesc": "Sadece Satış işlemleri (Sell fonksiyonu)",
-    "transfers": "Token Transferleri",
-    "transfersDesc": "Adresler arası FIT token transferleri",
     "genesis": "Başlangıç Likiditesi",
     "genesisDesc": "Başlangıç taban fiyatının oluşturulması",
     "openBsc": "→ BscScan'de Aç →",
@@ -53,6 +51,12 @@
     "tokenContract": "Fly Infinity Token",
     "networkContract": "Fly Infinity Ağı",
     "giftContract": "Fly Infinity Hediye",
-    "viewSource": "Kaynak Kodunu Görüntüle →"
+    "viewSource": "Kaynak Kodunu Görüntüle →",
+    "fitTransactions": "FIT İşlemleri",
+    "fitTransactionsDesc": "FIT alım ve satımlarını içerir",
+    "daiTransactions": "DAI İşlemleri",
+    "daiTransactionsDesc": "Yatırımcılar ve geliştiriciler tarafından yapılan DAI ödemelerini ve tahsilatlarını içerir",
+    "bscscanLoginNote": "BscScan'deki işlemleri görüntülemek için hesabınıza giriş yapmalısınız.",
+    "daoContract": "Fly Infinity DAO"
   }
 }
