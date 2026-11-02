@@ -890,6 +890,51 @@ textarea:focus,
 .footer .footer-links a i{color:#00e6ad!important;filter:drop-shadow(0 0 5px rgba(0,230,173,.32))}
 .footer .footer-links a:hover,.footer .footer-links a:focus-visible,.footer .footer-links a:hover span,.footer .footer-links a:focus-visible span{color:#eafff8!important}
 .footer .footer-links a:hover i,.footer .footer-links a:focus-visible i{color:#a2ffe4!important;filter:drop-shadow(0 0 8px rgba(0,255,190,.9))}
+    
+    /* ===== PRIVACY BADGES: MATCH WHAT IS FIT ===== */
+    .badge-container {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        align-items: stretch;
+    }
+    .badge-container .badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-width: 0;
+        min-height: 66px;
+        padding: 12px 14px;
+        border-radius: 16px;
+        color: #D4AF37 !important;
+        font-size: 13px;
+        line-height: 1.35;
+        text-align: center;
+        background: linear-gradient(145deg, rgba(0,200,150,.16), rgba(255,255,255,.035)) !important;
+        border: 1px solid rgba(0,200,150,.34) !important;
+        -webkit-backdrop-filter: blur(16px) saturate(140%);
+        backdrop-filter: blur(16px) saturate(140%);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.10), 0 8px 20px rgba(0,0,0,.16);
+    }
+    .badge-container .badge i {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 30px;
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+        color: #00C896;
+        background: rgba(0,200,150,.12);
+        font-size: 15px;
+    }
+    .badge-container .badge span { min-width: 0; }
+    @media (max-width: 768px) {
+        .badge-container { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .badge-container .badge { min-height: 58px; padding: 10px; font-size: 12px; }
+    }
+
 </style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head>
@@ -904,7 +949,7 @@ textarea:focus,
         </a>
         <div class="top-bar-right">
             <button class="hamburger" id="hamburgerBtn">
-                <i class="fas fa-bars"></i>
+                <i class="fas fa-bars-staggered"></i>
             </button>
         </div>
     </div>
@@ -919,7 +964,7 @@ textarea:focus,
                 <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
                 <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
             </span>
-            <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
+            <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-xmark"></i></button>
         </div>
         
         <div class="sidebar-menu">
@@ -934,7 +979,7 @@ textarea:focus,
                 <i class="fas fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="nav.comparison">Comparison</span>
             </a>
             <a href="dapp.html">
-                <i class="fas fa-cubes" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span>
+                <i class="fas fa-layer-group" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span>
             </a>
             <a href="profit-simulator.html">
                 <i class="fas fa-calculator" aria-hidden="true"></i> <span data-i18n="nav.profitCalculator">Profit Calculator</span>
@@ -943,22 +988,22 @@ textarea:focus,
                 <i class="fas fa-rocket" aria-hidden="true"></i> <span data-i18n="nav.nextProjects">Upcoming Projects</span>
             </a>
             <a href="transactions.html">
-                <i class="fas fa-arrow-right-arrow-left" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span>
+                <i class="fas fa-right-left" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span>
             </a>
             <a href="privacy.html" class="active">
-                <i class="fas fa-user-shield" aria-hidden="true"></i> <span data-i18n="nav.privacy">Privacy</span>
+                <i class="fas fa-shield-halved" aria-hidden="true"></i> <span data-i18n="nav.privacy">Privacy</span>
             </a>
             <a href="warnings.html">
-                <i class="fas fa-triangle-exclamation" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span>
+                <i class="fas fa-shield-exclamation" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span>
             </a>
             <a href="faq.html">
-                <i class="fas fa-comments" aria-hidden="true"></i> <span data-i18n="nav.faq">FAQ</span>
+                <i class="fas fa-comment-dots" aria-hidden="true"></i> <span data-i18n="nav.faq">FAQ</span>
             </a>
             <a href="whitepaper.html">
-                <i class="fas fa-book-open" aria-hidden="true"></i> <span data-i18n="nav.whitepaper">White Paper</span>
+                <i class="fas fa-book-open-reader" aria-hidden="true"></i> <span data-i18n="nav.whitepaper">White Paper</span>
             </a>
             <a href="audit.html">
-                <i class="fas fa-clipboard-check" aria-hidden="true"></i> <span data-i18n="nav.audit">Security Audit</span>
+                <i class="fas fa-clipboard-list" aria-hidden="true"></i> <span data-i18n="nav.audit">Security Audit</span>
             </a>
         </div>
         
@@ -970,10 +1015,10 @@ textarea:focus,
         <h1 class="privacy-title" data-i18n="privacy.title">Privacy Policy & Decentralized Structure</h1>
         
         <div class="badge-container">
-            <span class="badge" data-i18n="privacy.badge1"><i class="fas fa-chart-line"></i> Non-Diminishing</span>
-            <span class="badge" data-i18n="privacy.badge2"><i class="fas fa-infinity"></i> Perpetual Growth</span>
-            <span class="badge" data-i18n="privacy.badge3"><i class="fas fa-users"></i> DAO Governance</span>
-            <span class="badge" data-i18n="privacy.badge4"><i class="fas fa-chart-simple"></i> Non-Manipulable Price</span>
+            <span class="badge" data-i18n-badge="privacy.badge1"><i class="fas fa-arrow-trend-up" aria-hidden="true"></i><span data-i18n="privacy.badge1">Non-Diminishing</span></span>
+            <span class="badge" data-i18n-badge="privacy.badge2"><i class="fas fa-infinity" aria-hidden="true"></i><span data-i18n="privacy.badge2">Perpetual Growth</span></span>
+            <span class="badge" data-i18n-badge="privacy.badge3"><i class="fas fa-landmark" aria-hidden="true"></i><span data-i18n="privacy.badge3">DAO Governance</span></span>
+            <span class="badge" data-i18n-badge="privacy.badge4"><i class="fas fa-shield-halved" aria-hidden="true"></i><span data-i18n="privacy.badge4">Non-Manipulable Price</span></span>
         </div>
 
         <div class="privacy-text" data-i18n="privacy.p1">
@@ -1053,23 +1098,23 @@ textarea:focus,
             <span>|</span>
             <a href="compare.html"><i class="fas fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="nav.comparison">Comparison</span></a>
             <span>|</span>
-            <a href="dapp.html"><i class="fas fa-cubes" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span></a>
+            <a href="dapp.html"><i class="fas fa-layer-group" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span></a>
             <span>|</span>
             <a href="profit-simulator.html"><i class="fas fa-calculator" aria-hidden="true"></i> <span data-i18n="nav.profitCalculator">Profit Calculator</span></a>
             <span>|</span>
             <a href="next-projects.html"><i class="fas fa-rocket" aria-hidden="true"></i> <span data-i18n="nav.nextProjects">Upcoming Projects</span></a>
             <span>|</span>
-            <a href="transactions.html"><i class="fas fa-arrow-right-arrow-left" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span></a>
+            <a href="transactions.html"><i class="fas fa-right-left" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span></a>
             <span>|</span>
-            <a href="privacy.html"><i class="fas fa-user-shield" aria-hidden="true"></i> <span data-i18n="nav.privacy">Privacy</span></a>
+            <a href="privacy.html"><i class="fas fa-shield-halved" aria-hidden="true"></i> <span data-i18n="nav.privacy">Privacy</span></a>
             <span>|</span>
-            <a href="warnings.html"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span></a>
+            <a href="warnings.html"><i class="fas fa-shield-exclamation" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span></a>
             <span>|</span>
-            <a href="faq.html"><i class="fas fa-comments" aria-hidden="true"></i> <span data-i18n="nav.faq">FAQ</span></a>
+            <a href="faq.html"><i class="fas fa-comment-dots" aria-hidden="true"></i> <span data-i18n="nav.faq">FAQ</span></a>
             <span>|</span>
-            <a href="whitepaper.html"><i class="fas fa-book-open" aria-hidden="true"></i> <span data-i18n="nav.whitepaper">White Paper</span></a>
+            <a href="whitepaper.html"><i class="fas fa-book-open-reader" aria-hidden="true"></i> <span data-i18n="nav.whitepaper">White Paper</span></a>
             <span>|</span>
-            <a href="audit.html"><i class="fas fa-clipboard-check" aria-hidden="true"></i> <span data-i18n="nav.audit">Security Audit</span></a>
+            <a href="audit.html"><i class="fas fa-clipboard-list" aria-hidden="true"></i> <span data-i18n="nav.audit">Security Audit</span></a>
         </div>
         <p class="footer-tagline" data-i18n="footer.tagline">
             Fly Infinity — <span class="gold">Decentralized. Transparent. Forever Rising.</span>
