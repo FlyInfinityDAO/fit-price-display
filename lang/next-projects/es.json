@@ -104,8 +104,14 @@
     "title": "Próximos proyectos",
     "description": "Conoce las próximas iniciativas previstas para el ecosistema Fly Infinity. Publicaremos más detalles a medida que avance cada proyecto.",
     "exchangeDescription": "Una futura iniciativa de intercambio dentro del ecosistema Fly Infinity.",
-    "lotteryDescription": "Un proyecto propuesto relacionado con loterías; sus detalles se publicarán más adelante.",
-    "payDescription": "Una futura iniciativa centrada en pagos para el ecosistema Fly Infinity.",
-    "planned": "Proyecto planificado"
+    "lotteryDescription": "Concepto propuesto de sorteo público de premios, sujeto a la legislación aplicable, los requisitos de elegibilidad y las reglas publicadas. Se prevé destinar al respaldo de FIT cualquier asignación del fundador restante después de pagar el premio al ganador.",
+    "payDescription": "Una pasarela de pagos pública y descentralizada para empresas de todo el mundo. Las comisiones de pago se destinan al respaldo de FIT y a las recompensas de los desarrolladores.",
+    "planned": "Proyecto planificado",
+    "dexDescription": "Un exchange público y descentralizado donde usuarios de todo el mundo pueden intercambiar criptomonedas por otros activos digitales. Todas las comisiones de negociación se destinan al respaldo de FIT y apoyan su mecanismo de respaldo y precio.",
+    "dexTarget": "Objetivo de lanzamiento: 5.000 holders de FIT",
+    "marketplaceDescription": "Un mercado digital global que conecta a compradores y vendedores. Las comisiones se asignan al respaldo de FIT y a las recompensas de los desarrolladores, apoyando el ecosistema y su desarrollo continuo.",
+    "marketplaceTarget": "Objetivo de lanzamiento: 10.000 holders de FIT",
+    "lotteryTarget": "Objetivo de lanzamiento: 20.000 holders de FIT",
+    "payTarget": "Objetivo de lanzamiento: 30.000 holders de FIT"
   }
 }
