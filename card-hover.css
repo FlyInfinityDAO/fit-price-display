@@ -1,68 +1,17 @@
-/* Shared neon hover for primary, outer cards only.
-   Inner links, buttons, content panels and nested utility boxes keep their original styles. */
-:where(
-  .privacy-card,
-  .card,
-  .section-card,
-  .audit-section,
-  .warning-card,
-  .faq-item,
-  .wp-content,
-  .dapp-operation-card,
-  .dapp-wallet-hub-card,
-  .wallet-card,
-  .action-card
-) {
+/* Neon hover only on outermost interactive cards; nested content remains unchanged. */
+:is(.privacy-card, .card, .section-card, .audit-section, .warning-card, .faq-item, .wp-content, .dapp-operation-card, .dapp-wallet-hub-card, .wallet-card, .action-card):not(:is(.privacy-card, .card, .section-card, .audit-section, .warning-card, .faq-item, .wp-content, .dapp-operation-card, .dapp-wallet-hub-card, .wallet-card, .action-card) *) {
   transition: border-color .28s ease, box-shadow .28s ease !important;
 }
-
 @media (hover: hover) and (pointer: fine) {
-  :where(
-    .privacy-card,
-    .card,
-    .section-card,
-    .audit-section,
-    .warning-card,
-    .faq-item,
-    .wp-content,
-    .dapp-operation-card,
-    .dapp-wallet-hub-card,
-    .wallet-card,
-    .action-card
-  ):hover {
+  :is(.privacy-card, .card, .section-card, .audit-section, .warning-card, .faq-item, .wp-content, .dapp-operation-card, .dapp-wallet-hub-card, .wallet-card, .action-card):not(:is(.privacy-card, .card, .section-card, .audit-section, .warning-card, .faq-item, .wp-content, .dapp-operation-card, .dapp-wallet-hub-card, .wallet-card, .action-card) *):hover {
     border-color: rgba(0, 245, 185, 0.92) !important;
     box-shadow: 0 20px 46px rgba(0,0,0,.36), 0 0 25px rgba(0,230,175,.36), 0 0 44px rgba(0,200,150,.18), inset 0 1px 0 rgba(255,255,255,.14) !important;
   }
 }
-
 @media (hover: none), (pointer: coarse) {
-  :where(
-    .privacy-card,
-    .card,
-    .section-card,
-    .audit-section,
-    .warning-card,
-    .faq-item,
-    .wp-content,
-    .dapp-operation-card,
-    .dapp-wallet-hub-card,
-    .wallet-card,
-    .action-card
-  ):active,
-  :where(
-    .privacy-card,
-    .card,
-    .section-card,
-    .audit-section,
-    .warning-card,
-    .faq-item,
-    .wp-content,
-    .dapp-operation-card,
-    .dapp-wallet-hub-card,
-    .wallet-card,
-    .action-card
-  ):has(:active) {
-    border-color: rgba(0, 245, 185, .92);
+  :is(.privacy-card, .card, .section-card, .audit-section, .warning-card, .faq-item, .wp-content, .dapp-operation-card, .dapp-wallet-hub-card, .wallet-card, .action-card):not(:is(.privacy-card, .card, .section-card, .audit-section, .warning-card, .faq-item, .wp-content, .dapp-operation-card, .dapp-wallet-hub-card, .wallet-card, .action-card) *):active,
+  :is(.privacy-card, .card, .section-card, .audit-section, .warning-card, .faq-item, .wp-content, .dapp-operation-card, .dapp-wallet-hub-card, .wallet-card, .action-card):not(:is(.privacy-card, .card, .section-card, .audit-section, .warning-card, .faq-item, .wp-content, .dapp-operation-card, .dapp-wallet-hub-card, .wallet-card, .action-card) *):has(:active) {
+    border-color: rgba(0, 245, 185, 0.92) !important;
     box-shadow: 0 20px 46px rgba(0,0,0,.36), 0 0 25px rgba(0,230,175,.36), 0 0 44px rgba(0,200,150,.18), inset 0 1px 0 rgba(255,255,255,.14) !important;
   }
 }
