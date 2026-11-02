@@ -10,7 +10,7 @@
     <link rel="apple-touch-icon" href="logo.png">
     
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="wallet-ui.css">
     <script src="lang.js"></script>
     <style>
@@ -1496,6 +1496,58 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 }
 @media(prefers-reduced-motion:reduce){.buy-guide-step,.buy-max-btn{transition:none}.buy-guide-step:hover,.buy-max-btn:hover{transform:none}}
 
+    
+        /* ===== CONTRACT REFERENCE: glass panel and separate explorer link ===== */
+        .contract-bscscan-row {
+            text-align: center;
+            margin: 0 0 15px;
+            font-size: 12px;
+        }
+        .contract-bscscan-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #00C896;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color .2s ease, text-shadow .2s ease;
+        }
+        .contract-bscscan-link:hover {
+            color: #D4AF37;
+            text-shadow: 0 0 10px rgba(212,175,55,.18);
+        }
+        .contract-reference-card {
+            margin-top: 15px;
+            padding: 14px 17px;
+            border: 1px solid rgba(212,175,55,.24);
+            border-left: 3px solid #D4AF37;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(34,34,34,.76), rgba(15,15,15,.82));
+            -webkit-backdrop-filter: blur(18px);
+            backdrop-filter: blur(18px);
+            box-shadow: 0 10px 28px rgba(0,0,0,.2);
+        }
+        .contract-reference-title {
+            color: #00C896;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+        .contract-reference-address {
+            color: #D4AF37;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: 12px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+        .contract-reference-flow {
+            color: #c0d0e8;
+            font-size: 10px;
+            line-height: 1.8;
+            margin-top: 7px;
+        }
+
     </style>
     <link rel="stylesheet" href="wallet-ui.css">
 </head>
@@ -1682,6 +1734,12 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     <section class="dapp-operation-view" id="dappTokenOperations">
 <div class="dapp-back-row"><a class="dapp-back-btn" href="dapp.html"><i class="fas fa-arrow-left"></i><span data-i18n="dapp.backToDapp">Back to DApp</span></a></div>
     <!-- ==================== SECTION 2: BUY & SELL TOKEN ==================== -->
+    <p class="contract-bscscan-row">
+        <a class="contract-bscscan-link" href="https://bscscan.com/token/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa#transactions" target="_blank" rel="noopener noreferrer">
+            <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+            <span data-i18n="dapp.viewContract">View Contract on BscScan</span>
+        </a>
+    </p>
     <div class="action-grid">
         <!-- Buy FIT -->
         <div class="action-card" id="dappBuyOperation">
@@ -1724,6 +1782,11 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             <button id="sellBtn" class="action-btn danger"><i class="fas fa-arrow-up"></i> <span data-i18n="dapp.sellFit">Sell FIT</span></button>
             <div id="sellStatus" class="status-text">—</div>
         </div>
+    </div>
+    <div class="contract-reference-card">
+        <div class="contract-reference-title" data-i18n="dapp.fitTokenContract">📜 Fly Infinity FIT Token Smart Contract</div>
+        <div class="contract-reference-address">0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa</div>
+        <div class="contract-reference-flow" data-i18n="dapp.fitContractFlow">Step 1: Approve DAI → Step 2: Buy or sell FIT.</div>
     </div>
 
 </section>
