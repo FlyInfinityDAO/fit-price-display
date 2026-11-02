@@ -123,7 +123,16 @@
         "fitTokenContract": "📜 العقد الذكي لرمز FIT من Fly Infinity",
         "ownershipContractFlow": "الخطوة 1: الموافقة على DAI ← الخطوة 2: قراءة الاتفاقية وقبولها ← الخطوة 3: إكمال تسجيل الملكية",
         "fitContractFlow": "الخطوة 1: الموافقة على DAI ← الخطوة 2: شراء FIT أو بيعه",
-        "walletHubDesc": "اربط محفظتك لعرض أرصدتك وتفاصيل حساب FIT."
+        "walletHubDesc": "اربط محفظتك لعرض أرصدتك وتفاصيل حساب FIT.",
+        "hubGiftTitle": "هدية فلاي إنفينيتي",
+        "agreementHeadingPreamble": "📌 تمهيد",
+        "agreementHeadingOwnership": "💎 حصة الملكية – مدى الحياة وغير قابلة للاسترداد",
+        "agreementHeadingFit": "💰 الأصل الرقمي FIT – قابل للتسييل بالكامل",
+        "agreementHeadingGift": "🎁 تخصيص الهدايا – مكافآت قائمة على السحب",
+        "agreementHeadingWelcome": "🎁 مكافأة الترحيب – إضافة فورية للرموز",
+        "agreementHeadingReferral": "🔗 معرّف الإحالة – نظام دعوة لامركزي",
+        "agreementHeadingDeveloper": "💰 مكافآت المطورين – تعويض قائم على الأداء",
+        "agreementHeadingInfrastructure": "🔒 بنية تحتية لامركزية – الأمان وإخفاء الهوية"
     },
     "footer": {
         "tagline": "Fly Infinity — لا مركزي. شفاف. يرتفع للأبد."
