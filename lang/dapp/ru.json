@@ -122,7 +122,12 @@
     "networkContract": "📜 Смарт-контракт сети Fly Infinity",
     "fitTokenContract": "📜 Смарт-контракт токена FIT Fly Infinity",
     "ownershipContractFlow": "Шаг 1: Подтвердить DAI → Шаг 2: Прочитать и принять соглашение → Шаг 3: Завершить регистрацию владения",
-    "fitContractFlow": "Шаг 1: Подтвердить DAI → Шаг 2: Купить или продать FIT"
+    "fitContractFlow": "Шаг 1: Подтвердить DAI → Шаг 2: Купить или продать FIT",
+    "hubGiftTitle": "Подарок Fly Infinity",
+    "hubWalletTitle": "Ваш кошелёк Fly Infinity",
+    "hubWalletDesc": "Подключите кошелёк, чтобы увидеть баланс FIT, сеть и данные кошелька.",
+    "hubWalletAction": "Подключить кошелёк",
+    "hubWalletFootnote": "Безопасное подключение кошелька · BNB Smart Chain"
   },
   "footer": {
     "tagline": "Fly Infinity — Децентрализованный. Прозрачный. Вечно Растущий."
