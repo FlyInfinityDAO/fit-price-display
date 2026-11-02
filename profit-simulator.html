@@ -1412,12 +1412,14 @@ label[data-i18n="dashboard.purchaseShareCost"]::before { content: "\f4b9"; color
 
     
 
-/* Replace translated emoji markers with one consistent Font Awesome icon. */
+/* Consistent Font Awesome icons for translated labels and dynamic badges. */
 label[data-i18n="dashboard.profitHoldings"]::before,
 p[data-i18n="dashboard.profitNote"]::before,
 p[data-i18n="dashboard.manualNote"]::before,
 .savings-badge::before,
-.reward-badge::before {
+.reward-badge::before,
+.purchase-title[data-i18n="dashboard.purchaseWithPlan"]::before,
+.purchase-title[data-i18n="dashboard.purchaseWithoutPlan"]::before {
     display: inline-block;
     margin-inline-end: 8px;
     font-family: "Font Awesome 6 Free";
@@ -1425,11 +1427,13 @@ p[data-i18n="dashboard.manualNote"]::before,
     line-height: 1;
     vertical-align: -0.08em;
 }
-label[data-i18n="dashboard.profitHoldings"]::before { content: "\\f51e"; color: #00C896; }
+label[data-i18n="dashboard.profitHoldings"]::before { content: "\\f555"; color: #00C896; }
 p[data-i18n="dashboard.profitNote"]::before,
-p[data-i18n="dashboard.manualNote"]::before { content: "\\f0e7"; color: #D4AF37; }
+p[data-i18n="dashboard.manualNote"]::before { content: "\\f05a"; color: #D4AF37; }
 .savings-badge::before { content: "\\f4d3"; color: #00C896; }
 .reward-badge::before { content: "\\f06b"; color: #D4AF37; }
+.purchase-title[data-i18n="dashboard.purchaseWithPlan"]::before { content: "\\f542"; color: #00C896; }
+.purchase-title[data-i18n="dashboard.purchaseWithoutPlan"]::before { content: "\\f007"; color: #D4AF37; }
 
     </style>
     <link rel="stylesheet" href="wallet-ui.css">
