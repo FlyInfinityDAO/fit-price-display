@@ -151,7 +151,7 @@
       const owner=ownerResult.value.slice(2);
       if(owner.length>=192){
         const vals=[0,1,2].map(i=>units(BigInt('0x'+owner.slice(i*64,(i+1)*64))));
-        set('fiPurchased','$'+fmt(vals[0],4));set('fiAllowed','$'+fmt(vals[1],4));set('fiRemaining','$'+fmt(vals[2],4));
+        set('fiPurchased','
       }
     }
     if(lrResult.status==='fulfilled'){
