@@ -104,8 +104,14 @@
     "title": "Gelecek Projeler",
     "description": "Fly Infinity ekosistemi için planlanan sonraki girişimleri keşfedin. Ayrıntılar projeler geliştikçe yayımlanacaktır.",
     "exchangeDescription": "Fly Infinity ekosistemi içinde gelecekteki bir borsa girişimi.",
-    "lotteryDescription": "Ayrıntıları daha sonra açıklanacak, piyango ile ilgili önerilen bir proje.",
-    "payDescription": "Fly Infinity ekosistemi için gelecekteki ödeme odaklı bir girişim.",
-    "planned": "Planlanan Proje"
+    "lotteryDescription": "Önerilen halka açık ödül çekilişi konsepti; yürürlükteki yasalara, katılım uygunluğu koşullarına ve yayımlanan kurallara tabidir. Kazananın ödülü ödendikten sonra kurucuya ayrılan tutarın FIT rezervine aktarılması planlanmaktadır.",
+    "payDescription": "Dünya genelindeki işletmelere yönelik herkese açık, merkeziyetsiz ödeme geçidi. Ödeme ücretleri FIT rezervi ve geliştirici ödüllerine aktarılır.",
+    "planned": "Planlanan Proje",
+    "dexDescription": "Dünya genelindeki kullanıcıların kripto paraları diğer dijital varlıklarla takas edebildiği herkese açık, merkeziyetsiz bir borsa. Tüm işlem ücretleri FIT rezervine aktarılır ve rezerv ile fiyat mekanizmasını destekler.",
+    "dexTarget": "Lansman hedefi: 5.000 FIT sahibi",
+    "marketplaceDescription": "Alıcılarla satıcıları dünya çapında buluşturan herkese açık dijital pazar yeri. Ücretler FIT rezervi ve geliştirici ödülleri arasında paylaştırılarak ekosistemi ve geliştirme çalışmalarını destekler.",
+    "marketplaceTarget": "Lansman hedefi: 10.000 FIT sahibi",
+    "lotteryTarget": "Lansman hedefi: 20.000 FIT sahibi",
+    "payTarget": "Lansman hedefi: 30.000 FIT sahibi"
   }
 }
