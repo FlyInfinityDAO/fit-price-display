@@ -123,7 +123,16 @@
         "fitTokenContract": "📜 Fly Infinity FIT Token Akıllı Sözleşmesi",
         "ownershipContractFlow": "1. Adım: DAI onayı → 2. Adım: Sözleşmeyi okuyup kabul etme → 3. Adım: Sahiplik kaydını tamamlama",
         "fitContractFlow": "1. Adım: DAI onayı → 2. Adım: FIT satın alma veya satma",
-        "walletHubDesc": "Bakiyelerinizi ve FIT hesap bilgilerinizi görüntülemek için cüzdanınızı bağlayın."
+        "walletHubDesc": "Bakiyelerinizi ve FIT hesap bilgilerinizi görüntülemek için cüzdanınızı bağlayın.",
+        "hubGiftTitle": "Fly Infinity Hediyesi",
+        "agreementHeadingPreamble": "📌 Önsöz",
+        "agreementHeadingOwnership": "💎 Sahiplik Payı – Ömür Boyu ve İade Edilemez",
+        "agreementHeadingFit": "💰 FIT Dijital Varlığı – Tamamen Likit",
+        "agreementHeadingGift": "🎁 Hediye Tahsisi – Çekiliş Tabanlı Ödüller",
+        "agreementHeadingWelcome": "🎁 Hoş Geldin Bonusu – Anında Token Yüklemesi",
+        "agreementHeadingReferral": "🔗 Referans Kimliği – Merkeziyetsiz Davet Sistemi",
+        "agreementHeadingDeveloper": "💰 Geliştirici Ödülleri – Performansa Dayalı Ödeme",
+        "agreementHeadingInfrastructure": "🔒 Merkeziyetsiz Altyapı – Güvenlik ve Anonimlik"
     },
     "footer": {
         "tagline": "Fly Infinity — Merkeziyetsiz. Şeffaf. Sonsuza Yükselen."
