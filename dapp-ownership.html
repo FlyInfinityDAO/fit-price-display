@@ -1681,7 +1681,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         <a class="dapp-operation-card ownership" href="dapp-ownership.html"><span class="dapp-card-icon"><i class="fas fa-gem"></i></span><span class="dapp-card-title" data-i18n="dapp.hubOwnershipTitle">Buy Fly Infinity Ownership Shares</span><span class="dapp-card-desc" data-i18n="dapp.hubOwnershipDesc">اشتراک مالکیت فلای اینفینیتی را بخرید و سهامدار اکوسیستم شوید. با خرید اشتراک معادل 2$ فیت رایگان بعنوان هدیه ورود دریافت میکنید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
         <a class="dapp-operation-card buy" href="dapp-buy-fit.html"><span class="dapp-card-icon"><i class="fas fa-cart-shopping"></i></span><span class="dapp-card-title" data-i18n="dapp.hubBuyTitle">Buy FIT</span><span class="dapp-card-desc" data-i18n="dapp.hubBuyDesc">میتوانید توکن فیت خود بصورت آنی با پرداخت دای خرید کنید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
         <a class="dapp-operation-card sell" href="dapp-sell-fit.html"><span class="dapp-card-icon"><i class="fas fa-arrow-trend-up"></i></span><span class="dapp-card-title" data-i18n="dapp.hubSellTitle">Sell FIT</span><span class="dapp-card-desc" data-i18n="dapp.hubSellDesc">میتوانید توکن فیت خود را بدون هیچ محدودیتی در کسری از ثانیه تمام نقد کنید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
-        <a class="dapp-operation-card gift" href="dapp-gift.html"><span class="dapp-card-icon"><i class="fas fa-gift"></i></span><span class="dapp-card-title">Fly Infinity Gift</span><span class="dapp-card-desc" data-i18n="dapp.hubGiftDesc">اگر فقط یک سرمایه گذار هستید میتوانید در جوایز 5 دلاری شرکت کنید و تا سقف مشخصی از این جوایز بهره‌مند شوید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
+        <a class="dapp-operation-card gift" href="dapp-gift.html"><span class="dapp-card-icon"><i class="fas fa-gift"></i></span><span class="dapp-card-title">Fly Infinity Gift</span><span class="dapp-card-desc" data-i18n="dapp.hubGiftDesc">اگر فقط یک سرمایه گذار هستید میتوانید در جوایز 5 دلاری شرکت کنید و تا سقف مشخصی از این جوایز بهرهمند شوید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
       </div>
     </section>
     <!-- Wallet Overview -->
@@ -1980,9 +1980,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     </div>
 </div>
 
-<script type="module">
-    import { openConnectModal, getSigner, modal } from './wallet-connect.js';
-
+<script>
     // ==================== CONTRACT ADDRESSES ====================
     const FIT_TOKEN_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
     const FIT_NETWORK_ADDRESS = "0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B";
@@ -2011,49 +2009,29 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     let fitTokenContract, fitNetworkContract, daiContract;
     let userAddress = null;
     let currentPrice = 0;
-
-    // تابع اتصال کیف پول - حالا از Reown AppKit استفاده می‌کند
-    window.connectWallet = function() {
-        openConnectModal();
-    };
-
-    // گوش دادن به تغییرات وضعیت کیف پول
-    window.addEventListener('walletStateChanged', async (e) => {
-        if (e.detail.isConnected && e.detail.address) {
-            userAddress = e.detail.address;
-            signer = await getSigner();
-            if (signer) {
-                provider = signer.provider;
-                fitTokenContract = new ethers.Contract(FIT_TOKEN_ADDRESS, FIT_TOKEN_ABI, signer);
-                fitNetworkContract = new ethers.Contract(FIT_NETWORK_ADDRESS, FIT_NETWORK_ABI, signer);
-                daiContract = new ethers.Contract(DAI_TOKEN_ADDRESS, DAI_ABI, signer);
-                
-                document.getElementById("buyerAddress").value = userAddress;
-                // Referrer address must be entered manually by the user.
-                
-                document.getElementById("walletAddress").innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
-                document.getElementById("walletStatus").style.display = "none";
-                document.getElementById("walletInfo").style.display = "block";
-                
-                await loadBalances();
-                await loadPrice();
-                await checkAllAllowances();
-                
-                document.getElementById("buyAmount").addEventListener("input", updateBuyEstimate);
-                document.getElementById("sellAmount").addEventListener("input", updateSellEstimate);
-            }
-        } else {
-            userAddress = null;
-            signer = null;
-            provider = null;
-            document.getElementById("walletStatus").style.display = "block";
-            document.getElementById("walletInfo").style.display = "none";
-        }
-    });
     
-    window.disconnectWallet = function() {
-        modal.disconnect();
-    };
+    async function initContracts(web3Provider) {
+        provider = new ethers.providers.Web3Provider(web3Provider);
+        signer = provider.getSigner();
+        fitTokenContract = new ethers.Contract(FIT_TOKEN_ADDRESS, FIT_TOKEN_ABI, signer);
+        fitNetworkContract = new ethers.Contract(FIT_NETWORK_ADDRESS, FIT_NETWORK_ABI, signer);
+        daiContract = new ethers.Contract(DAI_TOKEN_ADDRESS, DAI_ABI, signer);
+        userAddress = await signer.getAddress();
+        
+        document.getElementById("buyerAddress").value = userAddress;
+        // Referrer address must be entered manually by the user.
+        
+        document.getElementById("walletAddress").innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
+        document.getElementById("walletStatus").style.display = "none";
+        document.getElementById("walletInfo").style.display = "block";
+        
+        await loadBalances();
+        await loadPrice();
+        await checkAllAllowances();
+        
+        document.getElementById("buyAmount").addEventListener("input", updateBuyEstimate);
+        document.getElementById("sellAmount").addEventListener("input", updateSellEstimate);
+    }
     
     async function loadBalances() {
         try {
@@ -2184,6 +2162,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             return;
         }
         
+        // ❌ Connected wallet compatibility check removed - now you can register for any address
+        
         try {
             setStatus("ownerStatus", "⏳ Registering...", "");
             
@@ -2236,6 +2216,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             return;
         }
         
+        // ❌ Connected wallet compatibility check removed - now you can make purchases for any address
+        
         let amountWei = ethers.utils.parseEther(amount.toString());
         
         try {
@@ -2285,8 +2267,52 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         }
     }
     
+    // ==================== WALLET CONNECT ====================
+    
+    async function connectWallet() {
+        if (typeof window.ethereum !== 'undefined') {
+            try {
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                await initContracts(window.ethereum);
+                
+                window.ethereum.on('accountsChanged', async (accounts) => {
+                    if (accounts.length === 0) {
+                        disconnectWallet();
+                    } else {
+                        userAddress = accounts[0];
+                        document.getElementById("walletAddress").innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
+                        document.getElementById("buyerAddress").value = userAddress;
+                        // Referrer address must be entered manually by the user.
+                        await loadBalances();
+                        await checkAllAllowances();
+                    }
+                });
+                
+                window.ethereum.on('chainChanged', () => {
+                    window.location.reload();
+                });
+                
+            } catch(e) {
+                alert("Connection failed: " + e.message);
+            }
+        } else {
+            alert("Please install MetaMask, Trust Wallet, or TokenPocket!");
+        }
+    }
+    
+    function disconnectWallet() {
+        userAddress = null;
+        document.getElementById("walletStatus").style.display = "block";
+        document.getElementById("walletInfo").style.display = "none";
+    }
+    
     async function checkNetwork() {
-        // Network check is handled by AppKit - it will prompt to switch if needed
+        if (window.ethereum) {
+            const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+            if (chainId !== '0x38') {
+                alert("Please switch to BNB Smart Chain (BSC) Mainnet in your wallet.");
+            }
+        }
     }
     
     // ==================== GIFT CONTRACT FUNCTIONS ====================
@@ -2478,8 +2504,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     });
     
     // ===== EVENT LISTENERS =====
-    document.getElementById("connectBtn").addEventListener("click", window.connectWallet);
-    document.getElementById("disconnectBtn").addEventListener("click", window.disconnectWallet);
+    document.getElementById("connectBtn").addEventListener("click", connectWallet);
+    document.getElementById("disconnectBtn").addEventListener("click", disconnectWallet);
     
     document.getElementById("approveNetworkBtn").addEventListener("click", approveNetworkDAI);
     document.getElementById("becomeOwnerBtn").addEventListener("click", becomeOwner);
