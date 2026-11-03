@@ -39,7 +39,9 @@
   const lang=()=>{const l=(document.documentElement.lang||'en').slice(0,2);return words[l]?l:'en';};
   const t=()=>words[lang()];
   const short=a=>a?a.slice(0,6)+'…'+a.slice(-4):'—';
-  const chainName=id=>id===BSC_CHAIN?t().bsc:(id?`${t().other} (${parseInt(id,16)})`:t().unknown);
+  // Normalize decimal chain IDs returned by some mobile wallet bridges.
+  const normalizeChainId=id=>{if(id===null||id===undefined||id==='')return '';const s=String(id).trim();const n=/^0x[0-9a-f]+$/i.test(s)?parseInt(s,16):(/^\d+$/.test(s)?Number(s):NaN);return Number.isSafeInteger(n)&&n>=0?'0x'+n.toString(16):s.toLowerCase();};
+  const chainName=id=>id===BSC_CHAIN?t().bsc:(id?'${t().other} ('+parseInt(id,16)+')':t().unknown);
   const padAddress=a=>a.toLowerCase().replace(/^0x/,'').padStart(64,'0');
   const fromHex=h=>BigInt(h||'0x0');
   const units=v=>Number(v)/1e18;
@@ -182,7 +184,7 @@
   async function refreshExisting(){
     provider=window.ethereum||walletConnectProvider||null;
     if(!provider){account='';chainId='';renderState();resetMetrics();note(t().noProvider);return;}
-    try{const accounts=await provider.request({method:'eth_accounts'});account=accounts&&accounts[0]||'';chainId=await provider.request({method:'eth_chainId'});listen();renderState();if(account)await loadContractData();else{resetMetrics();note('');}}
+    try{const accounts=await provider.request({method:'eth_accounts'});account=accounts&&accounts[0]||'';chainId=normalizeChainId(await provider.request({method:'eth_chainId'}));listen();renderState();if(account)await loadContractData();else{resetMetrics();note('');}}
     catch(e){renderState();note(t().error);}
   }
   async function connect(){
@@ -200,7 +202,7 @@
         accounts=await provider.request({method:'eth_requestAccounts'});
       }
       account=accounts&&accounts[0]||'';
-      chainId=await provider.request({method:'eth_chainId'});
+      chainId=normalizeChainId(await provider.request({method:'eth_chainId'}));
       listen();renderState();
       if(account)await loadContractData();
     }catch(e){
@@ -214,7 +216,7 @@
     provider.__fiWalletPanelBound=true;
     if(provider.on){
       provider.on('accountsChanged',async a=>{account=a&&a[0]||'';renderState();if(account)await loadContractData();else{resetMetrics();note(t().statusOff);}});
-      provider.on('chainChanged',async id=>{chainId=id;renderState();if(account)await loadContractData();});
+      provider.on('chainChanged',async id=>{chainId=normalizeChainId(id);renderState();if(account)await loadContractData();});
       provider.on('disconnect',()=>{account='';chainId='';resetMetrics();renderState();note(t().statusOff);});
     }
   }
