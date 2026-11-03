@@ -935,6 +935,10 @@ textarea:focus,
         .badge-container .badge { min-height: 58px; padding: 10px; font-size: 12px; }
     }
 
+
+    /* ===== PRIVACY PAGE: CONSISTENT MODERN ICONS ===== */
+    .privacy-subtitle > i { display:inline-flex; align-items:center; justify-content:center; width:26px; margin-right:7px; color:#00C896; font-size:17px; vertical-align:middle; filter:drop-shadow(0 0 6px rgba(0,200,150,.18)); }
+    .privacy-list li > i { display:inline-flex; align-items:center; justify-content:center; width:22px; margin-right:7px; color:#00C896; font-size:14px; vertical-align:baseline; }
 </style>
     <link rel="stylesheet" href="wallet-ui.css">
     <link rel="stylesheet" href="card-hover.css?v=4">
@@ -1017,10 +1021,10 @@ textarea:focus,
         <h1 class="privacy-title" data-i18n="privacy.title">Privacy Policy & Decentralized Structure</h1>
         
         <div class="badge-container">
-            <span class="badge" data-i18n-badge="privacy.badge1"><i class="fas fa-arrow-trend-up" aria-hidden="true"></i><span data-i18n="privacy.badge1">Non-Diminishing</span></span>
-            <span class="badge" data-i18n-badge="privacy.badge2"><i class="fas fa-infinity" aria-hidden="true"></i><span data-i18n="privacy.badge2">Perpetual Growth</span></span>
-            <span class="badge" data-i18n-badge="privacy.badge3"><i class="fas fa-landmark" aria-hidden="true"></i><span data-i18n="privacy.badge3">DAO Governance</span></span>
-            <span class="badge" data-i18n-badge="privacy.badge4"><i class="fas fa-shield-halved" aria-hidden="true"></i><span data-i18n="privacy.badge4">Non-Manipulable Price</span></span>
+            <span class="badge"><i class="fas fa-arrow-trend-up" aria-hidden="true"></i><span data-i18n="privacy.badge1">Non-Diminishing</span></span>
+            <span class="badge"><i class="fas fa-infinity" aria-hidden="true"></i><span data-i18n="privacy.badge2">Perpetual Growth</span></span>
+            <span class="badge"><i class="fas fa-landmark" aria-hidden="true"></i><span data-i18n="privacy.badge3">DAO Governance</span></span>
+            <span class="badge"><i class="fas fa-shield-halved" aria-hidden="true"></i><span data-i18n="privacy.badge4">Non-Manipulable Price</span></span>
         </div>
 
         <div class="privacy-text" data-i18n="privacy.p1">
@@ -1031,57 +1035,57 @@ textarea:focus,
             The pricing structure of this project is designed based on a <strong class="highlight">Bonding Curve</strong>. This means the FIT token price is determined solely by the formula <strong>Price = DAI Reserve ÷ Total Supply</strong>. This transparent and immutable mathematical mechanism completely eliminates any possibility of price manipulation by whales, market cartels, or centralized entities.
         </div>
 
-        <h2 class="privacy-subtitle" data-i18n="privacy.sub1">🧠 Non-Diminishing Structure & Perpetual Growth</h2>
+        <h2 class="privacy-subtitle"><i class="fas fa-chart-line" aria-hidden="true"></i> <span data-i18n="privacy.sub1">Non-Diminishing Structure & Perpetual Growth</span></h2>
         <div class="privacy-text" data-i18n="privacy.p3">
             One of the unique features of <strong class="highlight">Fly Infinity Token</strong> is its <strong class="highlight">non-diminishing nature</strong>. This means the base token price <strong class="highlight">never decreases</strong> over time. Unlike traditional markets where negative fluctuations are common, the Bonding Curve structure ensures the token price always follows an upward and growing trajectory. Every buy and sell transaction increases the DAI reserve accumulation, permanently raising the base token price.
         </div>
 
-        <h2 class="privacy-subtitle" data-i18n="privacy.sub2">🏛️ Decentralized Governance (DAO)</h2>
+        <h2 class="privacy-subtitle"><i class="fas fa-landmark" aria-hidden="true"></i> <span data-i18n="privacy.sub2">Decentralized Governance (DAO)</span></h2>
         <div class="privacy-text" data-i18n="privacy.p4">
             All key project decisions, including future developments, resource allocation, and potential upgrades, are made exclusively through the <strong class="highlight">Decentralized Autonomous Organization (DAO) voting system</strong>. Every FIT token holder can participate in the decision-making process proportional to their stake in the network. No individual or group has the unilateral power to change the project's direction. This structure ensures the project always moves in the best interest of the community.
         </div>
 
-        <h2 class="privacy-subtitle" data-i18n="privacy.sub3">🔒 Privacy & User Security</h2>
+        <h2 class="privacy-subtitle"><i class="fas fa-user-shield" aria-hidden="true"></i> <span data-i18n="privacy.sub3">Privacy & User Security</span></h2>
         <div class="privacy-text" data-i18n="privacy.p5">
             As a <strong class="highlight">decentralized and trustless</strong> project, Fly Infinity Token does not collect, store, or process any personal information from its users. All user interactions occur through decentralized wallets (such as MetaMask, Trust Wallet, TokenPocket) directly on the blockchain. In this model:
         </div>
         <ul class="privacy-list">
-            <li data-i18n="privacy.li1">✅ <strong>No registration forms</strong> exist.</li>
-            <li data-i18n="privacy.li2">✅ <strong>No emails or personal information</strong> are collected.</li>
-            <li data-i18n="privacy.li3">✅ <strong>No central servers</strong> store any data.</li>
-            <li data-i18n="privacy.li4">✅ All transactions are <strong>transparent and auditable</strong> on the blockchain.</li>
-            <li data-i18n="privacy.li5">✅ Users maintain <strong>full ownership of their assets</strong>.</li>
+            <li><i class="fas fa-file-lines" aria-hidden="true"></i> <span data-i18n="privacy.li1">✅ <strong>No registration forms</strong> exist.</span></li>
+            <li><i class="fas fa-envelope" aria-hidden="true"></i> <span data-i18n="privacy.li2">✅ <strong>No emails or personal information</strong> are collected.</span></li>
+            <li><i class="fas fa-server" aria-hidden="true"></i> <span data-i18n="privacy.li3">✅ <strong>No central servers</strong> store any data.</span></li>
+            <li><i class="fas fa-magnifying-glass-chart" aria-hidden="true"></i> <span data-i18n="privacy.li4">✅ All transactions are <strong>transparent and auditable</strong> on the blockchain.</span></li>
+            <li><i class="fas fa-wallet" aria-hidden="true"></i> <span data-i18n="privacy.li5">✅ Users maintain <strong>full ownership of their assets</strong>.</span></li>
         </ul>
 
-        <h2 class="privacy-subtitle" data-i18n="privacy.sub4">📊 No Whale Manipulation</h2>
+        <h2 class="privacy-subtitle"><i class="fas fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="privacy.sub4">No Whale Manipulation</span></h2>
         <div class="privacy-text" data-i18n="privacy.p6">
             In traditional markets, whales and large players can manipulate prices through high-volume trading. However, in the <strong class="highlight">Bonding Curve</strong> structure of the FIT project, this is impossible for the following reasons:
         </div>
         <ul class="privacy-list">
-            <li data-i18n="privacy.li6">🔹 <strong>Mathematical and transparent pricing:</strong> Price is calculated directly from the reserve-to-supply ratio.</li>
-            <li data-i18n="privacy.li7">🔹 <strong>No order book:</strong> There is no order book to manipulate.</li>
-            <li data-i18n="privacy.li8">🔹 <strong>Unified liquidity:</strong> All liquidity resides in a single pool and cannot be fragmented.</li>
-            <li data-i18n="privacy.li9">🔹 <strong>Direct buying and selling:</strong> Users trade directly with the smart contract.</li>
-            <li data-i18n="privacy.li10">🔹 <strong>Transparent transaction fees:</strong> Fees are clearly set at 3% for buying and 6% for selling.</li>
+            <li><i class="fas fa-calculator" aria-hidden="true"></i> <span data-i18n="privacy.li6">🔹 <strong>Mathematical and transparent pricing:</strong> Price is calculated directly from the reserve-to-supply ratio.</span></li>
+            <li><i class="fas fa-book-open" aria-hidden="true"></i> <span data-i18n="privacy.li7">🔹 <strong>No order book:</strong> There is no order book to manipulate.</span></li>
+            <li><i class="fas fa-droplet" aria-hidden="true"></i> <span data-i18n="privacy.li8">🔹 <strong>Unified liquidity:</strong> All liquidity resides in a single pool and cannot be fragmented.</span></li>
+            <li><i class="fas fa-arrow-right-arrow-left" aria-hidden="true"></i> <span data-i18n="privacy.li9">🔹 <strong>Direct buying and selling:</strong> Users trade directly with the smart contract.</span></li>
+            <li><i class="fas fa-receipt" aria-hidden="true"></i> <span data-i18n="privacy.li10">🔹 <strong>Transparent transaction fees:</strong> Fees are clearly set at 3% for buying and 6% for selling.</span></li>
         </ul>
 
-        <h2 class="privacy-subtitle" data-i18n="privacy.sub5">💰 Economic Transparency</h2>
+        <h2 class="privacy-subtitle"><i class="fas fa-coins" aria-hidden="true"></i> <span data-i18n="privacy.sub5">Economic Transparency</span></h2>
         <div class="privacy-text" data-i18n="privacy.p7">
             All project economic information, including:
         </div>
         <ul class="privacy-list">
-            <li data-i18n="privacy.li11">💰 <strong>Real-time token price</strong></li>
-            <li data-i18n="privacy.li12">🪙 <strong>Total circulating supply</strong></li>
-            <li data-i18n="privacy.li13">🏦 <strong>DAI reserve in the contract</strong></li>
-            <li data-i18n="privacy.li14">📈 <strong>Daily price history</strong></li>
-            <li data-i18n="privacy.li15">👥 <strong>Holder distribution</strong></li>
-            <li data-i18n="privacy.li16">📊 <strong>Trading volume</strong></li>
+            <li><i class="fas fa-dollar-sign" aria-hidden="true"></i> <span data-i18n="privacy.li11">💰 <strong>Real-time token price</strong></span></li>
+            <li><i class="fas fa-coins" aria-hidden="true"></i> <span data-i18n="privacy.li12">🪙 <strong>Total circulating supply</strong></span></li>
+            <li><i class="fas fa-vault" aria-hidden="true"></i> <span data-i18n="privacy.li13">🏦 <strong>DAI reserve in the contract</strong></span></li>
+            <li><i class="fas fa-chart-line" aria-hidden="true"></i> <span data-i18n="privacy.li14">📈 <strong>Daily price history</strong></span></li>
+            <li><i class="fas fa-users" aria-hidden="true"></i> <span data-i18n="privacy.li15">👥 <strong>Holder distribution</strong></span></li>
+            <li><i class="fas fa-chart-column" aria-hidden="true"></i> <span data-i18n="privacy.li16">📊 <strong>Trading volume</strong></span></li>
         </ul>
         <div class="privacy-text" data-i18n="privacy.p8">
             is available to the public in <strong class="highlight">real-time and transparently</strong>, and all can be verified through the smart contract or blockchain explorers. No data is kept behind closed doors.
         </div>
 
-        <h2 class="privacy-subtitle" data-i18n="privacy.sub6">⚖️ Limitation of Liability</h2>
+        <h2 class="privacy-subtitle"><i class="fas fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="privacy.sub6">Limitation of Liability</span></h2>
         <div class="privacy-text" data-i18n="privacy.p9">
             As a decentralized and open-source project, <strong class="highlight">Fly Infinity Token assumes no liability</strong> for users' trading decisions, loss of wallet access, personal errors in transaction execution, or security vulnerabilities in users' personal infrastructure. Users enter the project knowingly and with full acceptance of the risks inherent in blockchain technology.
         </div>
