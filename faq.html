@@ -1004,7 +1004,28 @@ textarea:focus,
             .faq-topic-icon { font-size: 15px; }
         }
 
-    </style>
+    
+/* Modern icons for FAQ answer text; independent of translated content. */
+[data-i18n="faq.a1info"]::before{content:"\f0eb";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#D4AF37;font-size:.92em;}
+[data-i18n="faq.a2info"]::before{content:"\f0eb";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#D4AF37;font-size:.92em;}
+[data-i18n="faq.a3info"]::before{content:"\f0eb";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#D4AF37;font-size:.92em;}
+[data-i18n="faq.a4info"]::before{content:"\f0eb";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#D4AF37;font-size:.92em;}
+[data-i18n="faq.a5info"]::before{content:"\f0eb";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#D4AF37;font-size:.92em;}
+[data-i18n="faq.a6info"]::before{content:"\f0eb";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#D4AF37;font-size:.92em;}
+[data-i18n="faq.a7info"]::before{content:"\f0eb";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#D4AF37;font-size:.92em;}
+[data-i18n="faq.a5li1"]::before{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#00C896;font-size:.92em;}
+[data-i18n="faq.a5li2"]::before{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#00C896;font-size:.92em;}
+[data-i18n="faq.a5li3"]::before{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#00C896;font-size:.92em;}
+[data-i18n="faq.a6note"]::before{content:"\f080";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#D4AF37;font-size:.92em;}
+[data-i18n="faq.a7warning"]::before{content:"\f071";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#ff5a5f;font-size:.92em;}
+[data-i18n="faq.a7correct"]::before{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#00C896;font-size:.92em;}
+[data-i18n="faq.a8li1"]::before{content:"\f05e";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#D4AF37;font-size:.92em;}
+[data-i18n="faq.a8li2"]::before{content:"\f05e";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#D4AF37;font-size:.92em;}
+[data-i18n="faq.a8li3"]::before{content:"\f05e";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#D4AF37;font-size:.92em;}
+[data-i18n="faq.a8li4"]::before{content:"\f05e";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#D4AF37;font-size:.92em;}
+[data-i18n="faq.a8security"]::before{content:"\f3ed";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#00C896;font-size:.92em;}
+[data-i18n="faq.a8warning"]::before{content:"\f071";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#ff5a5f;font-size:.92em;}
+</style>
     <link rel="stylesheet" href="wallet-ui.css">
     <link rel="stylesheet" href="card-hover.css?v=4">
     <script src="card-hover.js?v=1" defer></script>
@@ -1249,10 +1270,10 @@ textarea:focus,
                 <p data-i18n="faq.a8p1"><span class="highlight">Unfortunately</span>, if you lose your recovery phrase (Seed Phrase / Recovery Phrase), <strong>there is no way to recover your wallet</strong>.</p>
                 <p data-i18n="faq.a8p2">The recovery phrase is the only way to access your wallet, and:</p>
                 <ul>
-                    <li data-i18n="faq.a8li1">❌ Cannot be changed</li>
-                    <li data-i18n="faq.a8li2">❌ Cannot be reset</li>
-                    <li data-i18n="faq.a8li3">❌ No support team can recover it</li>
-                    <li data-i18n="faq.a8li4">❌ No one else has access to it</li>
+                    <li data-i18n="faq.a8li1">Cannot be changed</li>
+                    <li data-i18n="faq.a8li2">Cannot be reset</li>
+                    <li data-i18n="faq.a8li3">No support team can recover it</li>
+                    <li data-i18n="faq.a8li4">No one else has access to it</li>
                 </ul>
                 <div class="info-box">
                     <p style="color: #00C896; font-weight: bold;" data-i18n="faq.a8security">Security recommendations:</p>
