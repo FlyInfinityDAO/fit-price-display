@@ -2108,57 +2108,36 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     // ==================== WALLET CONNECT ====================
     
     async function connectWallet() {
-        const usingWalletConnect = typeof window.ethereum === 'undefined' || window.fiWalletConnectActive === true;
-        if (usingWalletConnect) {
-            try {
-                window.ethereum = await window.fiConnectWalletConnect();
-            } catch (walletConnectError) {
-                console.error("WalletConnect Error:", walletConnectError);
-                alert("Wallet connection failed: " + (walletConnectError.message || "Please try again."));
-                return;
-            }
-        }
-        if (typeof window.ethereum !== 'undefined') {
-            try {
-                if (!usingWalletConnect) {
-                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+        try {
+            if (typeof window.fiSelectWalletProvider !== 'function') throw new Error('Wallet selector is unavailable. Please refresh the page.');
+            window.ethereum = await window.fiSelectWalletProvider();
+            await initContracts(window.ethereum);
+            window.ethereum.on('accountsChanged', async (accounts) => {
+                if (!accounts || accounts.length === 0) disconnectWallet();
+                else {
+                    userAddress = accounts[0];
+                    document.getElementById("walletAddress").innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
+                    document.getElementById("buyerAddress").value = userAddress;
+                    document.getElementById("referrerAddress").value = userAddress;
+                    await loadBalances();
+                    await checkAllAllowances();
                 }
-                await initContracts(window.ethereum);
-                
-                window.ethereum.on('accountsChanged', async (accounts) => {
-                    if (accounts.length === 0) {
-                        disconnectWallet();
-                    } else {
-                        userAddress = accounts[0];
-                        document.getElementById("walletAddress").innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
-                        document.getElementById("buyerAddress").value = userAddress;
-                        document.getElementById("referrerAddress").value = userAddress;
-                        await loadBalances();
-                        await checkAllAllowances();
-                    }
-                });
-                
-                window.ethereum.on('chainChanged', () => {
-                    window.location.reload();
-                });
-                
-            } catch(e) {
-                alert("Connection failed: " + e.message);
-            }
-        } else {
-            alert("Please install MetaMask, Trust Wallet, or TokenPocket!");
+            });
+            window.ethereum.on('chainChanged', () => window.location.reload());
+        } catch(e) {
+            console.error("Wallet connection error:", e);
+            if (e && e.message !== 'Wallet selection cancelled.') alert("Connection failed: " + (e.message || "Please try again."));
         }
     }
-    
+
     function disconnectWallet() {
-        if (window.fiDisconnectWalletConnect) {
-            window.fiDisconnectWalletConnect();
-        }
+        if (window.fiDisconnectSelectedWallet) window.fiDisconnectSelectedWallet();
+        else if (window.fiDisconnectWalletConnect) window.fiDisconnectWalletConnect();
         userAddress = null;
         document.getElementById("walletStatus").style.display = "block";
         document.getElementById("walletInfo").style.display = "none";
     }
-    
+
     async function checkNetwork() {
         if (window.ethereum) {
             const chainId = await window.ethereum.request({ method: 'eth_chainId' });
