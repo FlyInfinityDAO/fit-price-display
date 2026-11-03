@@ -41,7 +41,7 @@
   const short=a=>a?a.slice(0,6)+'…'+a.slice(-4):'—';
   // Normalize decimal chain IDs returned by some mobile wallet bridges.
   const normalizeChainId=id=>{if(id===null||id===undefined||id==='')return '';const s=String(id).trim();const n=/^0x[0-9a-f]+$/i.test(s)?parseInt(s,16):(/^\d+$/.test(s)?Number(s):NaN);return Number.isSafeInteger(n)&&n>=0?'0x'+n.toString(16):s.toLowerCase();};
-  const chainName=id=>id===BSC_CHAIN?t().bsc:(id?'${t().other} ('+parseInt(id,16)+')':t().unknown);
+  const chainName=id=>id===BSC_CHAIN?t().bsc:(id?t().other+' ('+parseInt(id,16)+')':t().unknown);
   const padAddress=a=>a.toLowerCase().replace(/^0x/,'').padStart(64,'0');
   const fromHex=h=>BigInt(h||'0x0');
   const units=v=>Number(v)/1e18;
