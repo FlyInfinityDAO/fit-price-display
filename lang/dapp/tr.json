@@ -23,6 +23,8 @@
     "dapp": {
         "connect": "Cüzdan Bağla",
         "walletDesc": "MetaMask, Trust Wallet, TokenPocket veya herhangi bir Web3 cüzdanı",
+        "walletConnecting": "Bağlanıyor…",
+        "walletConnectFailed": "Cüzdan bağlantısı açılamadı. Lütfen tekrar deneyin.",
         "fitBalance": "FIT Bakiyesi:",
         "daiBalance": "DAI Bakiyesi:",
         "disconnect": "Bağlantıyı Kes",

@@ -23,6 +23,8 @@
     "dapp": {
         "connect": "连接钱包",
         "walletDesc": "MetaMask、Trust Wallet、TokenPocket 或任何 Web3 钱包",
+        "walletConnecting": "连接中…",
+        "walletConnectFailed": "无法打开钱包连接，请重试。",
         "fitBalance": "FIT余额：",
         "daiBalance": "DAI余额：",
         "disconnect": "断开连接",

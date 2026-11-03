@@ -23,6 +23,8 @@
     "dapp": {
         "connect": "ربط المحفظة",
         "walletDesc": "ميتاماسك، تراست والت، توكين‌بوكيت أو أي محفظة Web3",
+        "walletConnecting": "جارٍ الاتصال…",
+        "walletConnectFailed": "تعذر فتح اتصال المحفظة. يرجى المحاولة مرة أخرى.",
         "fitBalance": "رصيد FIT:",
         "daiBalance": "رصيد DAI:",
         "disconnect": "قطع الاتصال",

@@ -23,6 +23,8 @@
     "dapp": {
         "connect": "Подключить кошелек",
         "walletDesc": "MetaMask, Trust Wallet, TokenPocket или любой Web3-кошелек",
+        "walletConnecting": "Подключение…",
+        "walletConnectFailed": "Не удалось открыть подключение кошелька. Попробуйте ещё раз.",
         "fitBalance": "Баланс FIT:",
         "daiBalance": "Баланс DAI:",
         "disconnect": "Отключить",

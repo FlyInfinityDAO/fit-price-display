@@ -23,6 +23,8 @@
     "dapp": {
         "connect": "اتصال کیف پول",
         "walletDesc": "متاماسک، تراست والت، توکن‌پاکت یا هر کیف پول Web3",
+        "walletConnecting": "در حال اتصال…",
+        "walletConnectFailed": "باز کردن اتصال کیف پول ممکن نشد. لطفاً دوباره تلاش کنید.",
         "fitBalance": "موجودی FIT:",
         "daiBalance": "موجودی DAI:",
         "disconnect": "قطع اتصال",

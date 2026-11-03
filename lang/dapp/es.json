@@ -23,6 +23,8 @@
     "dapp": {
         "connect": "Conectar Billetera",
         "walletDesc": "MetaMask, Trust Wallet, TokenPocket o cualquier billetera Web3",
+        "walletConnecting": "Conectando…",
+        "walletConnectFailed": "No se pudo abrir la conexión de la billetera. Inténtalo de nuevo.",
         "fitBalance": "Saldo FIT:",
         "daiBalance": "Saldo DAI:",
         "disconnect": "Desconectar",

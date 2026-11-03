@@ -23,6 +23,8 @@
     "dapp": {
         "connect": "Connect Wallet",
         "walletDesc": "MetaMask, Trust Wallet, TokenPocket, or any Web3 wallet",
+        "walletConnecting": "Connecting…",
+        "walletConnectFailed": "Could not open the wallet connection. Please try again.",
         "fitBalance": "FIT Balance:",
         "daiBalance": "DAI Balance:",
         "disconnect": "Disconnect",
