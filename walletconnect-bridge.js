@@ -8,8 +8,25 @@
   let wcProvider = null;
   let initPromise = null;
   let connectPromise = null;
+  let mobileWarmupPromise = null;
   let selectedInjectedProvider = null;
   const announcedProviders = new Map();
+  // Keep the browser's original multi-wallet root separate from the active selection.
+  const injectedRootProvider = window.ethereum;
+
+  function isMobileBrowser() {
+    return /Android|iPhone|iPad|iPod|Mobile/i.test(
+      (navigator && navigator.userAgent) || ''
+    );
+  }
+
+  function resetInjectedSelection() {
+    selectedInjectedProvider = null;
+    if (injectedRootProvider) window.ethereum = injectedRootProvider;
+    else {
+      try { delete window.ethereum; } catch (_) { window.ethereum = undefined; }
+    }
+  }
 
   // EIP-6963 announcements let users choose between multiple browser extensions.
   window.addEventListener('eip6963:announceProvider', function (event) {
@@ -32,7 +49,7 @@
       });
     }
     announcedProviders.forEach(detail => add(detail.provider, detail.info));
-    const ethereum = window.ethereum;
+    const ethereum = injectedRootProvider;
     if (ethereum && Array.isArray(ethereum.providers)) {
       ethereum.providers.forEach(provider => add(provider, provider.providerInfo || provider));
     }
@@ -41,6 +58,13 @@
   }
 
   async function selectWalletProvider() {
+    // On phones, always use Reown's own wallet explorer. Do not replace its
+    // mobile handoff with injected-provider discovery or a delayed prompt.
+    if (isMobileBrowser()) {
+      selectedInjectedProvider = null;
+      return connectWithWalletConnect();
+    }
+
     // Allow EIP-6963 wallet extensions a short time to announce themselves.
     try { window.dispatchEvent(new Event('eip6963:requestProvider')); } catch (_) {}
     await new Promise(resolve => setTimeout(resolve, 350));
@@ -133,6 +157,15 @@
     if (connectPromise) return connectPromise;
 
     connectPromise = (async function () {
+      if (!initPromise && mobileWarmupPromise) {
+        const warmedProvider = await mobileWarmupPromise;
+        if (warmedProvider) {
+          wcProvider = warmedProvider;
+          initPromise = Promise.resolve(warmedProvider);
+        }
+        mobileWarmupPromise = null;
+      }
+
       if (!initPromise) {
         initPromise = createProvider().then(function (provider) {
           wcProvider = provider;
@@ -201,9 +234,24 @@
   }
 
   function disconnectSelectedWallet() {
-    selectedInjectedProvider = null;
+    const wasInjected = !!selectedInjectedProvider;
+    resetInjectedSelection();
     if (!window.fiWalletConnectActive) window.fiWalletConnectActive = false;
+    if (wasInjected) return Promise.resolve();
     return disconnectWalletConnect();
+  }
+
+  // Preload the WalletConnect provider on mobile before the user taps Connect.
+  // This avoids delaying the wallet-launch flow while importing the SDK after
+  // the click, which can cause Android browsers to lose transient user activation.
+  if (isMobileBrowser()) {
+    mobileWarmupPromise = createProvider().then(function (provider) {
+      wcProvider = provider;
+      return provider;
+    }).catch(function (error) {
+      console.warn('[Fly Infinity WalletConnect] Mobile pre-initialization failed:', error);
+      return null;
+    });
   }
 
   window.fiSelectWalletProvider = selectWalletProvider;
