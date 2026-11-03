@@ -20,7 +20,7 @@
     pt:{wallet:'Carteira',title:'Visão geral da carteira',statusOff:'Não conectada',statusOn:'Conectada',connect:'Conectar carteira',disconnect:'Desconectar',account:'Endereço da carteira',network:'Rede',noProvider:'Nenhuma carteira de navegador compatível foi detectada.',connecting:'Aguardando aprovação…',rejected:'A solicitação foi recusada.',error:'Não foi possível conectar. Tente novamente.',localDisconnect:'A conta exibida foi limpa. Para revogar o acesso, gerencie os sites conectados na carteira.',close:'Fechar',unknown:'Rede desconhecida',bsc:'BNB Smart Chain',other:'Rede',balance:'Saldo FIT',usdValue:'Valor do FIT em dólares',usd7:'Valor do FIT há 7 dias',usd30:'Valor do FIT há 30 dias',historyBasis:'Calculado com o saldo FIT atual e o preço histórico; não representa o saldo real da carteira nessas datas.',compareLabel:'Valor do lucro do período',period24h:'Há 24 horas',period7d:'Há 7 dias',period30d:'Há 30 dias',period6m:'Há 6 meses',period1y:'Há 1 ano',compareValue:'Diferença no valor do FIT',compareHistoryNote:'Não há preço histórico disponível para esta data. O histórico é diário, então 24 horas usa o registro diário anterior.',historyUnavailable:'Não há dados históricos para este período',purchased:'Comprado',allowed:'Limite permitido',remaining:'Restante',smallerSide:'Pontos da rede',left:'Esquerda',right:'Direita',loading:'Carregando dados do contrato…',readError:'Não foi possível ler os dados do contrato. Verifique a BNB Smart Chain.',wrongNetwork:'Mude sua carteira para BNB Smart Chain para ver os dados do FIT.',notAvailable:'—'}
   };
   const icon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M3 9h18"></path><path d="M16 14h2"></path></svg>';
-  let provider=null, account='', chainId='', currentBalance=0, currentPrice=0, historyRows=[];
+  let provider=null, account='', chainId='', currentBalance=0, currentPrice=0, historyRows=[], selectorLoadPromise=null;
   const lang=()=>{const l=(document.documentElement.lang||'en').slice(0,2);return words[l]?l:'en';};
   const t=()=>words[lang()];
   const short=a=>a?a.slice(0,6)+'…'+a.slice(-4):'—';
@@ -166,17 +166,56 @@
   }
   async function refreshExisting(){
     provider=window.ethereum||null;
-    if(!provider){account='';chainId='';renderState();resetMetrics();note(t().noProvider);return;}
+    if(!provider){account='';chainId='';renderState();resetMetrics();note('');return;}
     try{const accounts=await provider.request({method:'eth_accounts'});account=accounts&&accounts[0]||'';chainId=await provider.request({method:'eth_chainId'});listen();renderState();if(account)await loadContractData();else{resetMetrics();note('');}}
     catch(e){renderState();note(t().error);}
   }
+  // Load the same shared wallet selector used by the four DApp pages.
+  // Most site pages do not include the bridge script until a wallet is requested.
+  function ensureWalletSelector(){
+    if(typeof window.fiSelectWalletProvider==='function')return Promise.resolve();
+    if(selectorLoadPromise)return selectorLoadPromise;
+    selectorLoadPromise=new Promise((resolve,reject)=>{
+      const script=document.createElement('script');
+      script.src='walletconnect-bridge.js?v=20261104-android-pairing';
+      script.async=true;
+      script.onload=()=>{
+        if(typeof window.fiSelectWalletProvider==='function')resolve();
+        else{selectorLoadPromise=null;reject(new Error('Wallet selector did not initialize.'));}
+      };
+      script.onerror=()=>{selectorLoadPromise=null;reject(new Error('Wallet connection module could not be loaded.'));};
+      (document.head||document.documentElement).appendChild(script);
+    });
+    return selectorLoadPromise;
+  }
   async function connect(){
-    provider=window.ethereum||null;
-    if(!provider){note(t().noProvider);return;}
-    const b=document.getElementById('fiWalletConnect');b.disabled=true;note(t().connecting);
-    try{const accounts=await provider.request({method:'eth_requestAccounts'});account=accounts&&accounts[0]||'';chainId=await provider.request({method:'eth_chainId'});listen();renderState();await loadContractData();}
-    catch(e){note(e&&e.code===4001?t().rejected:t().error);}
-    finally{b.disabled=false;}
+    const b=document.getElementById('fiWalletConnect');
+    if(!b||b.disabled)return;
+    b.disabled=true;note(t().connecting);
+    try{
+      await ensureWalletSelector();
+      // Match DApp connectWallet(): select through the shared EIP-1193
+      // provider bridge rather than calling window.ethereum directly.
+      const selectedProvider=await window.fiSelectWalletProvider();
+      if(!selectedProvider||typeof selectedProvider.request!=='function'){
+        throw new Error('The selected wallet did not provide a valid EIP-1193 provider.');
+      }
+      const accounts=await selectedProvider.request({method:'eth_accounts'});
+      if(!Array.isArray(accounts)||!accounts[0]){
+        throw new Error('The wallet connection returned no account.');
+      }
+      const selectedChainId=await selectedProvider.request({method:'eth_chainId'});
+      provider=selectedProvider;
+      window.ethereum=selectedProvider;
+      account=accounts[0];
+      chainId=selectedChainId;
+      listen();renderState();await loadContractData();
+    }catch(e){
+      console.error('[Fly Infinity Wallet Panel] Connection error:',e);
+      note(e&&e.code===4001?t().rejected:t().error);
+    }finally{
+      b.disabled=false;
+    }
   }
   function disconnectLocal(){account='';resetMetrics();renderState();note(t().localDisconnect);}
   function listen(){
