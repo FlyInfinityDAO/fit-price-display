@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <script src="lang.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -415,7 +415,12 @@
         .warning-title {
             font-size: 22px;
             font-weight: bold;
-            color: #00C896;
+            color: #ff5a5f;
+        }
+
+        .warning-icon--yellow {
+            color: #D4AF37;
+            filter: drop-shadow(0 0 7px rgba(212, 175, 55, 0.22));
         }
         
         .warning-content {
@@ -910,7 +915,7 @@ textarea:focus,
         </a>
         <div class="top-bar-right">
             <button class="hamburger" id="hamburgerBtn">
-                <i class="fas fa-bars"></i>
+                <i class="fas fa-bars" aria-hidden="true"></i>
             </button>
         </div>
     </div>
@@ -925,7 +930,7 @@ textarea:focus,
                 <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
                 <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
             </span>
-            <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
+            <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-xmark" aria-hidden="true"></i></button>
         </div>
         
         <div class="sidebar-menu">
@@ -977,7 +982,7 @@ textarea:focus,
         <!-- Warning 1: Wallet Change -->
         <div class="warning-card">
             <div class="warning-header">
-                <i class="fas fa-exchange-alt warning-icon"></i>
+                <i class="fas fa-wallet warning-icon" aria-hidden="true"></i>
                 <div class="warning-title" data-i18n="warnings.wallet.title">⚠️ Before Changing or Deleting Your Wallet</div>
             </div>
             <div class="warning-content">
@@ -992,7 +997,7 @@ textarea:focus,
         <!-- Warning 2: Recovery Phrase -->
         <div class="warning-card">
             <div class="warning-header">
-                <i class="fas fa-key warning-icon"></i>
+                <i class="fas fa-key warning-icon warning-icon--yellow" aria-hidden="true"></i>
                 <div class="warning-title" data-i18n="warnings.recovery.title">⚠️ Never Share Your Recovery Phrase</div>
             </div>
             <div class="warning-content">
@@ -1009,7 +1014,7 @@ textarea:focus,
         <!-- Warning 3: Blockchain Irreversibility -->
         <div class="warning-card">
             <div class="warning-header">
-                <i class="fas fa-ban warning-icon"></i>
+                <i class="fas fa-ban warning-icon" aria-hidden="true"></i>
                 <div class="warning-title" data-i18n="warnings.blockchain.title">⚠️ Blockchain Transactions Are Irreversible</div>
             </div>
             <div class="warning-content">
