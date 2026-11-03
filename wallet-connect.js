@@ -1,12 +1,10 @@
 import { createAppKit } from 'https://cdn.jsdelivr.net/npm/@reown/appkit@1.6.3/dist/appkit.js';
-import { Ethers5Adapter } from 'https://cdn.jsdelivr.net/npm/@reown/appkit-adapter-ethers5@1.6.3/dist/appkit-adapter-ethers5.js';
+import { EthersAdapter } from 'https://cdn.jsdelivr.net/npm/@reown/appkit-adapter-ethers@1.6.3/dist/appkit-adapter-ethers.js';
 import { bsc } from 'https://cdn.jsdelivr.net/npm/@reown/appkit@1.6.3/dist/networks.js';
 
 const projectId = '2e312445cba4a41a1aab5f01552c5668';
-
 const networks = [bsc];
-
-const ethers5Adapter = new Ethers5Adapter();
+const ethersAdapter = new EthersAdapter();
 
 const metadata = {
     name: 'Fly Infinity DAO',
@@ -21,22 +19,15 @@ const featuredWalletIds = [
 ];
 
 export const modal = createAppKit({
-    adapters: [ethers5Adapter],
+    adapters: [ethersAdapter],
     networks,
     projectId,
     metadata,
     allWallets: 'SHOW',
     featuredWalletIds,
-    features: {
-        analytics: false,
-        email: false,
-        socials: false
-    },
+    features: { analytics: false, email: false, socials: false },
     themeMode: 'dark',
-    themeVariables: {
-        '--w3m-accent': '#00C896',
-        '--w3m-border-radius-master': '8px'
-    }
+    themeVariables: { '--w3m-accent': '#00C896', '--w3m-border-radius-master': '8px' }
 });
 
 export function openConnectModal() {
@@ -47,7 +38,7 @@ export async function getSigner() {
     if (!modal.getIsConnected()) return null;
     const walletProvider = modal.getWalletProvider();
     if (!walletProvider) return null;
-    const provider = new ethers.providers.Web3Provider(walletProvider);
+    const provider = new ethers.BrowserProvider(walletProvider);
     return provider.getSigner();
 }
 
