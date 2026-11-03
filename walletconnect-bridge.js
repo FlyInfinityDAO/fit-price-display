@@ -14,10 +14,17 @@
   // Keep the browser's original multi-wallet root separate from the active selection.
   const injectedRootProvider = window.ethereum;
 
+  function userAgent() {
+    return (navigator && navigator.userAgent) || '';
+  }
+
   function isMobileBrowser() {
-    return /Android|iPhone|iPad|iPod|Mobile/i.test(
-      (navigator && navigator.userAgent) || ''
-    );
+    return /Android|iPhone|iPad|iPod|Mobile/i.test(userAgent());
+  }
+
+  function isIOSBrowser() {
+    return /iPhone|iPad|iPod/i.test(userAgent()) ||
+      (/Macintosh/i.test(userAgent()) && navigator && navigator.maxTouchPoints > 1);
   }
 
   function resetInjectedSelection() {
@@ -178,9 +185,23 @@
       }
 
       let provider = await initPromise;
-      if (provider.session) {
+      let hasExistingSession = false;
+
+      // Keep a valid WalletConnect session on Android and desktop. Recreating
+      // it on every tap discards the pairing and can break the mobile return flow.
+      // Preserve the existing iOS reconnect path to avoid changing its working UX.
+      if (provider.session && !isIOSBrowser()) {
+        try {
+          const existingAccounts = await provider.request({ method: 'eth_accounts' });
+          hasExistingSession = Array.isArray(existingAccounts) && existingAccounts.length > 0;
+        } catch (error) {
+          console.warn('[Fly Infinity WalletConnect] Existing session check failed:', error);
+        }
+      }
+
+      if (provider.session && !hasExistingSession) {
         try { await provider.disconnect(); } catch (error) {
-          console.warn('Could not clear previous WalletConnect session:', error);
+          console.warn('Could not clear stale WalletConnect session:', error);
         }
         clearProvider(provider);
         provider = await createProvider();
@@ -189,7 +210,7 @@
       }
 
       try {
-        await provider.enable();
+        if (!hasExistingSession) await provider.enable();
         const accounts = await provider.request({ method: 'eth_accounts' });
         if (!accounts || accounts.length === 0) {
           throw new Error('The wallet approved the connection but returned no account.');
@@ -213,7 +234,9 @@
       window.fiWalletConnectActive = true;
       return provider;
     })().catch(function (error) {
-      if (wcProvider) clearProvider(wcProvider);
+      // Keep Android/desktop provider state after a user rejection so a retry
+      // can reuse the initialized provider. Retain the historical iOS cleanup.
+      if (isIOSBrowser() && wcProvider) clearProvider(wcProvider);
       throw error;
     }).finally(function () {
       connectPromise = null;
