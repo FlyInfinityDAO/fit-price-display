@@ -2108,6 +2108,15 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     // ==================== WALLET CONNECT ====================
     
     async function connectWallet() {
+        if (typeof window.ethereum === 'undefined') {
+            try {
+                window.ethereum = await window.fiConnectWalletConnect();
+            } catch (walletConnectError) {
+                console.error("WalletConnect Error:", walletConnectError);
+                alert("Wallet connection failed: " + (walletConnectError.message || "Please try again."));
+                return;
+            }
+        }
         if (typeof window.ethereum !== 'undefined') {
             try {
                 await window.ethereum.request({ method: 'eth_requestAccounts' });
@@ -2389,5 +2398,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 </script>
 
     <script src="wallet-ui.js"></script>
+    <script src="walletconnect-bridge.js"></script>
 </body>
 </html>
