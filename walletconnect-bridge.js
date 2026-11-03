@@ -299,7 +299,28 @@
     });
   }
 
+  async function connectWithBrowserWallet() {
+    // Prefer the wallet injected by the current in-app browser. This path
+    // deliberately avoids opening Reown or WalletConnect.
+    const root = injectedRootProvider;
+    const candidates = getInjectedWallets();
+    const target = selectedInjectedProvider ||
+      (root && !Array.isArray(root.providers) && typeof root.request === 'function' ? root :
+        (candidates[0] && candidates[0].provider)) ||
+      (window.ethereum && typeof window.ethereum.request === 'function' ? window.ethereum : null);
+    if (!target) throw new Error('No injected browser wallet was detected.');
+    const accounts = await target.request({ method: 'eth_requestAccounts' });
+    if (!Array.isArray(accounts) || !accounts[0]) {
+      throw new Error('The browser wallet returned no account.');
+    }
+    selectedInjectedProvider = target;
+    window.ethereum = target;
+    window.fiWalletConnectActive = false;
+    return target;
+  }
+
   window.fiSelectWalletProvider = selectWalletProvider;
+  window.fiConnectBrowserWallet = connectWithBrowserWallet;
   window.fiConnectWalletConnect = connectWithWalletConnect;
   window.fiDisconnectWalletConnect = disconnectWalletConnect;
   window.fiDisconnectSelectedWallet = disconnectSelectedWallet;
