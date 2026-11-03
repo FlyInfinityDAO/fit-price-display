@@ -2011,7 +2011,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     let currentPrice = 0;
     
     async function initContracts(web3Provider) {
-        provider = new ethers.providers.Web3Provider(web3Provider, "any");
+        provider = new ethers.providers.Web3Provider(web3Provider);
         signer = provider.getSigner();
         fitTokenContract = new ethers.Contract(FIT_TOKEN_ADDRESS, FIT_TOKEN_ABI, signer);
         fitNetworkContract = new ethers.Contract(FIT_NETWORK_ADDRESS, FIT_NETWORK_ABI, signer);
@@ -2029,8 +2029,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         await loadPrice();
         await checkAllAllowances();
         
-        document.getElementById("buyAmount").oninput = updateBuyEstimate;
-        document.getElementById("sellAmount").oninput = updateSellEstimate;
+        document.getElementById("buyAmount").addEventListener("input", updateBuyEstimate);
+        document.getElementById("sellAmount").addEventListener("input", updateSellEstimate);
     }
     
     async function loadBalances() {
@@ -2269,71 +2269,118 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     
     // ==================== WALLET CONNECT ====================
     
-    async function connectWallet() {
-        try {
-            if (typeof window.fiSelectWalletProvider !== 'function') {
-                throw new Error('Wallet selector is unavailable. Please refresh the page.');
-            }
-
-            const selectedProvider = await window.fiSelectWalletProvider();
-            if (!selectedProvider || typeof selectedProvider.request !== 'function') {
-                throw new Error('The selected wallet did not provide a valid EIP-1193 provider.');
-            }
-
-            window.ethereum = selectedProvider;
-            await initContracts(selectedProvider);
-
-            // Bind wallet events once per provider. Repeated Connect taps must
-            // not register duplicate listeners or trigger repeated reloads.
-            if (window.__fiBoundWalletProvider !== selectedProvider) {
-                window.__fiBoundWalletProvider = selectedProvider;
-                if (typeof selectedProvider.on === 'function') {
-                    selectedProvider.on('accountsChanged', async (accounts) => {
-                        if (!accounts || accounts.length === 0) {
-                            disconnectWallet();
-                            return;
-                        }
-                        try {
-                            await initContracts(selectedProvider);
-                        } catch (error) {
-                            console.error('Wallet account refresh failed:', error);
-                        }
-                    });
-
-                    selectedProvider.on('chainChanged', async () => {
-                        try {
-                            // Ethers v5 is configured with network="any", so
-                            // refresh contracts in place instead of reloading
-                            // the page during WalletConnect's app handoff.
-                            await initContracts(selectedProvider);
-                            await checkNetwork();
-                        } catch (error) {
-                            console.error('Wallet network refresh failed:', error);
-                        }
-                    });
-
-                    selectedProvider.on('disconnect', () => disconnectWallet());
+    // Attach account/network listeners once per provider (injected or WalletConnect).
+    function attachProviderListeners(p) {
+        if (!p || !p.on || p.__fiDappBound) return;
+        p.__fiDappBound = true;
+        p.on('accountsChanged', async (accounts) => {
+                if (accounts.length === 0) {
+                    disconnectWallet();
+                } else {
+                    userAddress = accounts[0];
+                    document.getElementById("walletAddress").innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
+                    document.getElementById("buyerAddress").value = userAddress;
+                    // Referrer address must be entered manually by the user.
+                    await loadBalances();
+                    await checkAllAllowances();
                 }
+        });
+
+        p.on('chainChanged', () => {
+            window.location.reload();
+        });
+
+        p.on('disconnect', () => {
+            if (userAddress) disconnectWallet();
+        });
+    }
+
+    // Start a session with any EIP-1193 provider (WalletConnect or injected).
+    let walletSessionStarting = false;
+    async function startWalletSession(rawProvider, viaWalletConnect) {
+        if (walletSessionStarting || userAddress) return;
+        walletSessionStarting = true;
+        try {
+            if (viaWalletConnect && window.FIWalletConnect) {
+                const onBsc = await window.FIWalletConnect.ensureBsc(rawProvider);
+                if (!onBsc) alert("Please switch to BNB Smart Chain (BSC) Mainnet in your wallet.");
             }
+            await initContracts(rawProvider);
+            attachProviderListeners(rawProvider);
         } catch(e) {
-            console.error("Wallet connection error:", e);
-            if (e && e.message !== 'Wallet selection cancelled.') {
-                alert("Connection failed: " + (e.message || "Please try again."));
-            }
+            alert("Connection failed: " + e.message);
+        } finally {
+            walletSessionStarting = false;
         }
     }
 
-    function disconnectWallet() {
-        if (window.fiDisconnectSelectedWallet) {
-            window.fiDisconnectSelectedWallet();
-        } else if (window.fiDisconnectWalletConnect) {
-            window.fiDisconnectWalletConnect();
+    // Original flow: wallet extension or in-app wallet browser (window.ethereum).
+    async function connectInjectedWallet() {
+        if (typeof window.ethereum !== 'undefined') {
+            try {
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                await initContracts(window.ethereum);
+                attachProviderListeners(window.ethereum);
+            } catch(e) {
+                alert("Connection failed: " + e.message);
+            }
+        } else {
+            alert("Please install MetaMask, Trust Wallet, or TokenPocket!");
         }
+    }
+
+    // Wallet modal (Reown AppKit) works in desktop and mobile browsers.
+    // The session itself is started by the 'fi-wallet-connected' event below.
+    let walletModalOpening = false;
+    async function connectWallet() {
+        if (walletModalOpening) return;
+        if (window.FIWalletConnect) {
+            walletModalOpening = true;
+            const label = document.querySelector('#connectBtn [data-i18n="dapp.connect"]');
+            const idleText = label ? label.textContent : '';
+            if (label && typeof t === 'function') label.textContent = t('dapp.walletConnecting');
+            try {
+                await window.FIWalletConnect.open();
+                return;
+            } catch(e) {
+                if (!e || e.code !== 'FI_WC_UNAVAILABLE') {
+                    alert((typeof t === 'function' ? t('dapp.walletConnectFailed') : "Could not open wallet connection.") + " " + (e && e.message ? e.message : ""));
+                    return;
+                }
+                // AppKit could not be loaded: fall through to the injected-wallet flow.
+            } finally {
+                walletModalOpening = false;
+                if (label) label.textContent = (typeof t === 'function' ? t('dapp.connect') : idleText);
+            }
+        }
+        await connectInjectedWallet();
+    }
+
+    window.addEventListener('fi-wallet-connected', (e) => {
+        if (e && e.detail && e.detail.provider) startWalletSession(e.detail.provider, true);
+    });
+    window.addEventListener('fi-wallet-disconnected', () => {
+        if (userAddress) disconnectWallet();
+    });
+
+    // Warm up the wallet modal as soon as the visitor shows intent to connect.
+    (function () {
+        const btn = document.getElementById("connectBtn");
+        if (!btn) return;
+        const warm = () => { if (window.FIWalletConnect) window.FIWalletConnect.prefetch(); };
+        btn.addEventListener('pointerenter', warm, { once: true });
+        btn.addEventListener('touchstart', warm, { once: true, passive: true });
+        btn.addEventListener('focus', warm, { once: true });
+    })();
+
+    function disconnectWallet() {
         userAddress = null;
         document.getElementById("walletStatus").style.display = "block";
         document.getElementById("walletInfo").style.display = "none";
+        // End the WalletConnect / AppKit session too (no-op for injected wallets).
+        if (window.FIWalletConnect) window.FIWalletConnect.disconnect();
     }
-
+    
     async function checkNetwork() {
         if (window.ethereum) {
             const chainId = await window.ethereum.request({ method: 'eth_chainId' });
@@ -2578,7 +2625,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     });
 </script>
 
+    <script type="module" src="wallet-connect.js?v=1"></script>
     <script src="wallet-ui.js"></script>
-    <script src="walletconnect-bridge.js?v=20261104-android-pairing"></script>
 </body>
 </html>
