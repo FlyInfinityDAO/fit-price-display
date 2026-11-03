@@ -10,6 +10,7 @@
     <link rel="apple-touch-icon" href="logo.png">
     
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <script src="wallet-connect.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="wallet-ui.css">
     <script src="lang.js"></script>
@@ -2108,33 +2109,33 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     // ==================== WALLET CONNECT ====================
     
     async function connectWallet() {
-        if (typeof window.ethereum !== 'undefined') {
-            try {
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
-                await initContracts(window.ethereum);
-                
-                window.ethereum.on('accountsChanged', async (accounts) => {
-                    if (accounts.length === 0) {
-                        disconnectWallet();
-                    } else {
-                        userAddress = accounts[0];
-                        document.getElementById("walletAddress").innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
-                        document.getElementById("buyerAddress").value = userAddress;
-                        document.getElementById("referrerAddress").value = userAddress;
-                        await loadBalances();
-                        await checkAllAllowances();
-                    }
-                });
-                
-                window.ethereum.on('chainChanged', () => {
-                    window.location.reload();
-                });
-                
-            } catch(e) {
-                alert("Connection failed: " + e.message);
-            }
-        } else {
-            alert("Please install MetaMask, Trust Wallet, or TokenPocket!");
+        try {
+            // Prefer an injected wallet; use WalletConnect/Reown as the QR/deep-link fallback.
+            const walletProvider = await window.FlyWalletConnect.connect();
+            await initContracts(walletProvider);
+
+            walletProvider.on('accountsChanged', async (accounts) => {
+                if (!accounts || accounts.length === 0) {
+                    disconnectWallet();
+                    return;
+                }
+                userAddress = accounts[0];
+                document.getElementById("walletAddress").innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
+                const buyerInput = document.getElementById("buyerAddress");
+                const referrerInput = document.getElementById("referrerAddress");
+                if (buyerInput) buyerInput.value = userAddress;
+                if (referrerInput) referrerInput.value = userAddress;
+                await loadBalances();
+                await checkAllAllowances();
+            });
+            walletProvider.on('chainChanged', () => window.location.reload());
+            walletProvider.on('disconnect', () => disconnectWallet());
+        } catch(e) {
+            console.error('Wallet connection failed:', e);
+            const message = e && e.code === 4001
+                ? 'Connection request was rejected in the wallet.'
+                : (e && e.message ? e.message : 'Unknown error');
+            alert("Connection failed: " + message);
         }
     }
     
