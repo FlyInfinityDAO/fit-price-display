@@ -1,5 +1,5 @@
-/* Fly Infinity — Reown/WalletConnect bridge for the existing ethers v5 flows.
-   Injected browser wallets keep using the original connection path. */
+/* Fly Infinity — Reown WalletConnect bridge for ethers v5 pages.
+   Uses the required BNB Smart Chain namespace and resets sessions on disconnect. */
 (function () {
   'use strict';
 
@@ -7,91 +7,110 @@
   const BSC_CHAIN_ID = 56;
   let wcProvider = null;
   let initPromise = null;
+  let connectPromise = null;
 
-  function appMetadata() {
+  function clearProvider(provider) {
+    if (provider && window.ethereum === provider) {
+      try { delete window.ethereum; } catch (_) { window.ethereum = undefined; }
+    }
+    if (!provider || wcProvider === provider) {
+      wcProvider = null;
+      initPromise = null;
+    }
+    window.fiWalletConnectActive = false;
+  }
+
+  function metadata() {
+    const origin = window.location.origin;
     return {
       name: 'Fly Infinity',
       description: 'Connect your wallet to Fly Infinity',
-      url: window.location.origin && window.location.origin !== 'null'
-        ? window.location.origin
-        : 'http://localhost',
+      url: origin && origin !== 'null' ? origin : 'https://example.com',
       icons: [new URL('logo.png', window.location.href).href]
     };
   }
 
-  async function connectWithWalletConnect() {
-    if (wcProvider && wcProvider.accounts && wcProvider.accounts.length) {
-      return wcProvider;
-    }
-    if (!initPromise) {
-      initPromise = (async function () {
-        const moduleUrl = 'https://esm.sh/@walletconnect/ethereum-provider@2.26.0?bundle';
-        const module = await import(moduleUrl);
-        const EthereumProvider = module.EthereumProvider ||
-          (module.default && module.default.EthereumProvider);
-        if (!EthereumProvider) {
-          throw new Error('WalletConnect provider could not be loaded.');
-        }
+  async function createProvider() {
+    const module = await import('https://esm.sh/@walletconnect/ethereum-provider@2.26.0?bundle');
+    const EthereumProvider = module.EthereumProvider ||
+      (module.default && module.default.EthereumProvider);
+    if (!EthereumProvider) throw new Error('WalletConnect provider could not be loaded.');
 
-        wcProvider = await EthereumProvider.init({
-          projectId: PROJECT_ID,
-          optionalChains: [BSC_CHAIN_ID],
-          showQrModal: true,
-          metadata: appMetadata()
-        });
-        wcProvider.on('disconnect', function () {
-          wcProvider = null;
-          initPromise = null;
-        });
-        return wcProvider;
-      })().catch(function (error) {
-        initPromise = null;
-        wcProvider = null;
-        throw error;
-      });
-    }
+    const provider = await EthereumProvider.init({
+      projectId: PROJECT_ID,
+      chains: [BSC_CHAIN_ID],
+      showQrModal: true,
+      metadata: metadata()
+    });
 
-    const provider = await initPromise;
-    if (!provider.accounts || provider.accounts.length === 0) {
-      await provider.enable();
-    }
-    window.ethereum = provider;
+    provider.on('disconnect', function () { clearProvider(provider); });
+    provider.on('accountsChanged', function (accounts) {
+      if (!accounts || accounts.length === 0) clearProvider(provider);
+    });
     return provider;
   }
 
-  window.fiConnectWalletConnect = connectWithWalletConnect;
+  async function connectWithWalletConnect() {
+    if (connectPromise) return connectPromise;
 
-  function wrapDisconnect() {
-    if (typeof window.disconnectWallet !== 'function' ||
-        window.disconnectWallet.__fiWalletConnectWrapped) return false;
-    const original = window.disconnectWallet;
-    const wrapped = function () {
-      if (wcProvider) {
-        const current = wcProvider;
-        wcProvider = null;
-        initPromise = null;
-        current.disconnect().catch(function (error) {
-          console.warn('WalletConnect disconnect:', error);
+    connectPromise = (async function () {
+      if (!initPromise) {
+        initPromise = createProvider().then(function (provider) {
+          wcProvider = provider;
+          return provider;
+        }).catch(function (error) {
+          initPromise = null;
+          wcProvider = null;
+          throw error;
         });
-        if (window.ethereum === current) {
-          try { delete window.ethereum; } catch (_) { window.ethereum = undefined; }
-        }
       }
-      return original.apply(this, arguments);
-    };
-    wrapped.__fiWalletConnectWrapped = true;
-    window.disconnectWallet = wrapped;
-    return true;
+
+      let provider = await initPromise;
+
+      // A previous session must not silently bypass the wallet chooser.
+      // Disconnect it, then create a clean provider instance for a fresh pairing.
+      if (provider.session) {
+        try { await provider.disconnect(); } catch (error) {
+          console.warn('Could not clear previous WalletConnect session:', error);
+        }
+        clearProvider(provider);
+        provider = await createProvider();
+        wcProvider = provider;
+        initPromise = Promise.resolve(provider);
+      }
+
+      await provider.enable();
+      const accounts = await provider.request({ method: 'eth_accounts' });
+      if (!accounts || accounts.length === 0) {
+        throw new Error('The wallet approved the connection but returned no account.');
+      }
+
+      wcProvider = provider;
+      initPromise = Promise.resolve(provider);
+      window.ethereum = provider;
+      window.fiWalletConnectActive = true;
+      return provider;
+    })().catch(function (error) {
+      if (wcProvider) clearProvider(wcProvider);
+      throw error;
+    }).finally(function () {
+      connectPromise = null;
+    });
+
+    return connectPromise;
   }
 
-  if (!wrapDisconnect()) {
-    const observer = new MutationObserver(function () {
-      if (wrapDisconnect()) observer.disconnect();
-    });
-    observer.observe(document.documentElement, { childList: true, subtree: true });
-    window.addEventListener('load', function () {
-      wrapDisconnect();
-      observer.disconnect();
-    }, { once: true });
+  function disconnectWalletConnect() {
+    const provider = wcProvider;
+    clearProvider(provider);
+    if (provider) {
+      return provider.disconnect().catch(function (error) {
+        console.warn('WalletConnect disconnect:', error);
+      });
+    }
+    return Promise.resolve();
   }
+
+  window.fiConnectWalletConnect = connectWithWalletConnect;
+  window.fiDisconnectWalletConnect = disconnectWalletConnect;
 })();
