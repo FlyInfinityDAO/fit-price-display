@@ -209,8 +209,20 @@
         try { await provider.disconnect(); } catch (error) {
           console.warn('Could not clear stale WalletConnect session:', error);
         }
-        clearProvider(provider);
-        provider = await createProvider();
+
+        if (isIOSBrowser()) {
+          // Keep the previously working iOS reconnect behavior unchanged.
+          clearProvider(provider);
+          provider = await createProvider();
+        } else {
+          // disconnect() emits the provider's disconnect event, which clears
+          // the shared references. Reuse this initialized instance instead of
+          // calling EthereumProvider.init() again for the same page lifecycle.
+          // This avoids repeatedly creating WalletConnect Core instances.
+          wcProvider = provider;
+          initPromise = Promise.resolve(provider);
+        }
+
         wcProvider = provider;
         initPromise = Promise.resolve(provider);
       }
