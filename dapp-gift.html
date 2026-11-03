@@ -1442,6 +1442,19 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 @media(max-width:760px){.gift-guide-card{padding:18px;border-radius:20px}.gift-guide-steps{grid-template-columns:1fr;gap:10px}.gift-guide-step{min-height:0;padding:15px}.gift-guide-congrats{align-items:flex-start;padding:13px}}
 @media(prefers-reduced-motion:reduce){.gift-guide-step{transition:none}.gift-guide-step:hover{transform:none}}
 
+
+/* Modern, language-independent DApp label icons */
+[data-i18n^="dapp."]::before{display:inline-block;margin-inline-end:.55em;color:#00C896;font-family:"Font Awesome 6 Free";font-weight:900;line-height:1;vertical-align:-.05em}
+[data-i18n="dapp.buyShares"]::before,[data-i18n="dapp.agreementHeadingOwnership"]::before{content:"\\f3a5"}
+[data-i18n="dapp.referrerAddress"]::before,[data-i18n="dapp.buyerAddress"]::before,[data-i18n="dapp.ownerAddressJoin"]::before,[data-i18n="dapp.ownerAddressParticipate"]::before{content:"\\f007"}
+[data-i18n="dapp.amountToBuy"]::before,[data-i18n="dapp.amountToSell"]::before,[data-i18n="dapp.agreementHeadingFit"]::before,[data-i18n="dapp.agreementHeadingDeveloper"]::before{content:"\\f51e"}
+[data-i18n="dapp.giftTitle"]::before,[data-i18n="dapp.winGift"]::before,[data-i18n="dapp.agreementHeadingGift"]::before,[data-i18n="dapp.agreementHeadingWelcome"]::before{content:"\\f06b"}
+[data-i18n="dapp.giftContract"]::before,[data-i18n="dapp.networkContract"]::before,[data-i18n="dapp.fitTokenContract"]::before{content:"\\f56c"}
+[data-i18n="dapp.agreementHeadingPreamble"]::before{content:"\\f05a"}
+[data-i18n="dapp.agreementHeadingReferral"]::before{content:"\\f0c1"}
+[data-i18n="dapp.agreementHeadingInfrastructure"]::before{content:"\\f3ed"}
+[data-i18n="dapp.oneTime"]::before{content:"\\f017";color:#D4AF37}
+
 </style>
     <link rel="stylesheet" href="wallet-ui.css?v=20261104-2">
     <link rel="stylesheet" href="card-hover.css?v=4">
@@ -1584,7 +1597,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 <div class="dapp-back-row"><a class="dapp-back-btn" href="dapp.html"><i class="fa-solid fa-arrow-left-long"></i><span data-i18n="dapp.backToDapp">Back to DApp</span></a></div>
     <!-- ==================== SECTION 1: REGISTER IN NETWORK ==================== -->
     <div class="action-card" style="margin-bottom: 25px;">
-        <div class="action-title"><i class="fa-solid fa-bolt"></i> <span data-i18n="dapp.buyShares">💎 Buy Fly Infinity Ownership Shares</span></div>
+        <div class="action-title"><i class="fa-solid fa-bolt"></i> <span data-i18n="dapp.buyShares"> Buy Fly Infinity Ownership Shares</span></div>
         <p style="color:#888; font-size:12px; margin-bottom:15px; text-align:center;" data-i18n="dapp.followSteps">Follow these 3 steps to become a network owner</p>
         
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
@@ -1610,7 +1623,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             <div style="background: #1a1a1a; border-radius: 20px; padding: 20px; border-left: 3px solid #00C896;">
                 <div style="color:#00C896; font-size:14px; margin-bottom:10px;"><span class="step-badge">3</span> <span data-i18n="dapp.step3">Become Owner</span></div>
                 <div class="input-group" style="margin-bottom:15px;">
-                    <label data-i18n="dapp.referrerAddress">👤 Referrer Address (Applicant)</label>
+                    <label data-i18n="dapp.referrerAddress"> Referrer Address (Applicant)</label>
                     <input type="text" id="referrerAddress" placeholder="0x..." value="">
                 </div>
                 <button id="becomeOwnerBtn" class="action-btn" data-i18n="dapp.becomeOwner">Become Owner</button>
@@ -1627,7 +1640,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     <div class="action-grid">
         <!-- Buy FIT -->
         <div class="action-card" id="dappBuyOperation">
-            <div class="action-title"><i class="fa-solid fa-cart-shopping"></i> 🟢 <span data-i18n="dapp.buyFit">Buy FIT</span></div>
+            <div class="action-title"><i class="fa-solid fa-cart-shopping"></i>  <span data-i18n="dapp.buyFit">Buy FIT</span></div>
             <p style="color:#888; font-size:11px; margin-bottom:15px;" data-i18n="dapp.buyDesc">Allow Fly Infinity Token contract to spend DAI, then buy</p>
             
             <div class="input-group">
@@ -1636,12 +1649,12 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             </div>
             
             <div class="input-group">
-                <label data-i18n="dapp.buyerAddress">👤 Buyer Wallet Address</label>
+                <label data-i18n="dapp.buyerAddress"> Buyer Wallet Address</label>
                 <input type="text" id="buyerAddress" placeholder="0x... (your wallet address)">
             </div>
             
             <div class="input-group">
-                <label data-i18n="dapp.amountToBuy">💰 Amount (DAI) to Buy</label>
+                <label data-i18n="dapp.amountToBuy"> Amount (DAI) to Buy</label>
                 <input type="number" id="buyAmount" placeholder="Enter DAI amount" step="10">
             </div>
             
@@ -1652,10 +1665,10 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
         <!-- Sell FIT -->
         <div class="action-card" id="dappSellOperation">
-            <div class="action-title"><i class="fa-solid fa-chart-line"></i> 🔴 <span data-i18n="dapp.sellFit">Sell FIT</span></div>
+            <div class="action-title"><i class="fa-solid fa-chart-line"></i>  <span data-i18n="dapp.sellFit">Sell FIT</span></div>
             
             <div class="input-group">
-                <label data-i18n="dapp.amountToSell">🪙 Amount (FIT) to Sell</label>
+                <label data-i18n="dapp.amountToSell"> Amount (FIT) to Sell</label>
                 <input type="number" id="sellAmount" placeholder="Enter FIT amount" step="100">
             </div>
             
@@ -1671,7 +1684,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 <div class="dapp-back-row"><a class="dapp-back-btn" href="dapp.html"><i class="fa-solid fa-arrow-left-long"></i><span data-i18n="dapp.backToDapp">Back to DApp</span></a></div>
     <!-- ==================== SECTION 3: GIFT CONTRACT ==================== -->
     <div class="action-card" style="margin-bottom: 25px;">
-        <div class="action-title"><i class="fa-solid fa-gift"></i> <span data-i18n="dapp.giftTitle">🎁 Join Fly Infinity Gift Smart Contract & Participate in $5 Prize Lottery</span></div>
+        <div class="action-title"><i class="fa-solid fa-gift"></i> <span data-i18n="dapp.giftTitle"> Join Fly Infinity Gift Smart Contract & Participate in $5 Prize Lottery</span></div>
         <p style="color:#888; font-size:12px; margin-bottom:15px; text-align:center;">
             <a href="https://bscscan.com/address/0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8#writeContract" target="_blank" style="color: #00C896; text-decoration: none;">
                 <i class="fa-solid fa-arrow-up-right-from-square"></i> <span data-i18n="dapp.viewContract">View Contract on BscScan</span>
@@ -1687,12 +1700,12 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                     <span data-i18n="dapp.joinContract">Join Contract (One-time)</span>
                 </div>
                 <div class="input-group" style="margin-bottom:10px;">
-                    <label style="color: #D4AF37; font-size: 11px;" data-i18n="dapp.ownerAddressJoin">👤 Owner Address to Join</label>
+                    <label style="color: #D4AF37; font-size: 11px;" data-i18n="dapp.ownerAddressJoin"> Owner Address to Join</label>
                     <input type="text" id="joinGiftAddress" placeholder="0x... (address to join)" value="" style="padding: 8px 12px; font-size: 13px;">
                 </div>
                 <p style="color:#888; font-size:10px; margin-bottom:10px;">
                     <span class="highlight" style="color: #D4AF37;" data-i18n="dapp.function">Function:</span> Join_Fly_Infinity_Gift (0x2852174f)<br>
-                    <span style="color: #888; font-size: 9px;" data-i18n="dapp.oneTime">⚠️ One-time process, forever.</span>
+                    <span style="color: #888; font-size: 9px;" data-i18n="dapp.oneTime"> One-time process, forever.</span>
                 </p>
                 <button id="joinGiftBtn" class="action-btn" style="border-color: #D4AF37; color: #D4AF37; padding: 10px; font-size: 14px;" data-i18n="dapp.joinContractBtn">
                     <i class="fa-solid fa-handshake"></i> Join Contract
@@ -1707,12 +1720,12 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                     <span data-i18n="dapp.giftLottery">$5 Gift Lottery</span>
                 </div>
                 <div class="input-group" style="margin-bottom:10px;">
-                    <label style="color: #00C896; font-size: 11px;" data-i18n="dapp.ownerAddressParticipate">👤 Owner Address to Participate</label>
+                    <label style="color: #00C896; font-size: 11px;" data-i18n="dapp.ownerAddressParticipate"> Owner Address to Participate</label>
                     <input type="text" id="freeGiftAddress" placeholder="0x... (address to participate)" value="" style="padding: 8px 12px; font-size: 13px;">
                 </div>
                 <p style="color:#888; font-size:10px; margin-bottom:10px;">
                     <span class="highlight" style="color: #00C896;" data-i18n="dapp.function">Function:</span> Free_Fly_Infinity_Gift (0xb4aecd59)<br>
-                    <span style="color: #888; font-size: 9px;" data-i18n="dapp.winGift">🎁 Win a $5 gift</span>
+                    <span style="color: #888; font-size: 9px;" data-i18n="dapp.winGift"> Win a $5 gift</span>
                 </p>
                 <button id="freeGiftBtn" class="action-btn" style="padding: 10px; font-size: 14px;" data-i18n="dapp.participate">
                     <i class="fa-solid fa-ticket"></i> Participate in Lottery
@@ -1724,7 +1737,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         
         <!-- Gift Contract Info -->
         <div style="margin-top: 15px; background: #1a1a1a; border-radius: 14px; padding: 12px 16px; border-left: 3px solid #D4AF37;">
-            <div style="color:#00C896; font-size:10px; margin-bottom:3px;" data-i18n="dapp.giftContract">📜 Gift Smart Contract</div>
+            <div style="color:#00C896; font-size:10px; margin-bottom:3px;" data-i18n="dapp.giftContract"> Gift Smart Contract</div>
             <div style="font-family:monospace; font-size:11px; color:#D4AF37; word-break:break-all;">0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8</div>
             <div style="color:#888; font-size:9px; margin-top:5px;">
                 <i class="fa-solid fa-circle-info"></i> 
@@ -1775,37 +1788,37 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         </div>
         
         <div class="agreement-body">
-            <p><strong class="gold">📌 Preamble</strong><br><span data-i18n="dapp.agreementP1">By entering the Fly Infinity ecosystem, participants acknowledge their role as strategic investors within a decentralized financial framework. Acquisition of the native digital asset, FIT, is contingent upon the prior purchase of a Fly Infinity ownership share. Upon obtaining this share, participants are granted the right to acquire FIT tokens in varying amounts, ranging from $1 to $100 per transaction, either incrementally or in a single transaction, based on their discretion and investment strategy.</span></p>
+            <p><strong class="gold"> Preamble</strong><br><span data-i18n="dapp.agreementP1">By entering the Fly Infinity ecosystem, participants acknowledge their role as strategic investors within a decentralized financial framework. Acquisition of the native digital asset, FIT, is contingent upon the prior purchase of a Fly Infinity ownership share. Upon obtaining this share, participants are granted the right to acquire FIT tokens in varying amounts, ranging from $1 to $100 per transaction, either incrementally or in a single transaction, based on their discretion and investment strategy.</span></p>
             
             <div class="box-gold">
-                <p><strong class="gold">💎 Ownership Share – Lifetime, Non-Refundable</strong><br><span data-i18n="dapp.agreementP2">The capital contributed toward the acquisition of an ownership share constitutes a non-recoverable commitment. This contribution is not subject to withdrawal or refund under any circumstances. However, this share confers perpetual membership within the network, requiring no further renewal, top-up, or recurring fees throughout the participant's engagement with the ecosystem.</span></p>
+                <p><strong class="gold"> Ownership Share – Lifetime, Non-Refundable</strong><br><span data-i18n="dapp.agreementP2">The capital contributed toward the acquisition of an ownership share constitutes a non-recoverable commitment. This contribution is not subject to withdrawal or refund under any circumstances. However, this share confers perpetual membership within the network, requiring no further renewal, top-up, or recurring fees throughout the participant's engagement with the ecosystem.</span></p>
             </div>
             
             <div class="box-green">
-                <p><strong class="green">💰 FIT Digital Asset – Fully Liquid</strong><br><span data-i18n="dapp.agreementP3">In contrast to the ownership share, any FIT tokens acquired through the platform remain entirely liquid and redeemable at the participant's discretion. There are no restrictions on withdrawal, and participants may convert their FIT holdings to value at any time, without delay or penalty.</span></p>
+                <p><strong class="green"> FIT Digital Asset – Fully Liquid</strong><br><span data-i18n="dapp.agreementP3">In contrast to the ownership share, any FIT tokens acquired through the platform remain entirely liquid and redeemable at the participant's discretion. There are no restrictions on withdrawal, and participants may convert their FIT holdings to value at any time, without delay or penalty.</span></p>
             </div>
             
             <div class="box-gold">
-                <p><strong class="gold">🎁 Gift Allocation – Lottery-Based Rewards</strong><br><span data-i18n="dapp.agreementP4">Each ownership share entitles the participant to a predetermined allocation of lottery-based rewards. Specifically, participants may win up to twenty (20) individual gifts, each valued at $5, through the platform's transparent and automated reward distribution mechanism.</span></p>
+                <p><strong class="gold"> Gift Allocation – Lottery-Based Rewards</strong><br><span data-i18n="dapp.agreementP4">Each ownership share entitles the participant to a predetermined allocation of lottery-based rewards. Specifically, participants may win up to twenty (20) individual gifts, each valued at $5, through the platform's transparent and automated reward distribution mechanism.</span></p>
             </div>
             
             <div class="box-green">
-                <p><strong class="green">🎁 Welcome Bonus – Instant Token Credit</strong><br><span data-i18n="dapp.agreementP5">Upon successful registration and activation of an ownership share, a welcome bonus equivalent to $2 in FIT tokens is instantly and automatically credited to the participant's wallet. This bonus serves as an introductory benefit and is processed at the exact moment of network entry.</span></p>
+                <p><strong class="green"> Welcome Bonus – Instant Token Credit</strong><br><span data-i18n="dapp.agreementP5">Upon successful registration and activation of an ownership share, a welcome bonus equivalent to $2 in FIT tokens is instantly and automatically credited to the participant's wallet. This bonus serves as an introductory benefit and is processed at the exact moment of network entry.</span></p>
             </div>
             
             <div class="box-gold">
-                <p><strong class="gold">🔗 Referral Identifier – Decentralized Invitation System</strong><br><span data-i18n="dapp.agreementP6">Each ownership share generates a unique and immutable referral identifier. This identifier is intrinsically linked to the participant's BNB wallet address, which functions as their official referral code. Through active community expansion and network development, participants are empowered to progressively unlock elevated purchase caps, enabling the acquisition of larger volumes of FIT tokens in subsequent transactions.</span></p>
+                <p><strong class="gold"> Referral Identifier – Decentralized Invitation System</strong><br><span data-i18n="dapp.agreementP6">Each ownership share generates a unique and immutable referral identifier. This identifier is intrinsically linked to the participant's BNB wallet address, which functions as their official referral code. Through active community expansion and network development, participants are empowered to progressively unlock elevated purchase caps, enabling the acquisition of larger volumes of FIT tokens in subsequent transactions.</span></p>
                 <p style="font-size: 12px; color: #888; margin-top: 8px;">
                     📖 <em><span data-i18n="dapp.agreementWhitepaper">For a comprehensive understanding of the tiered purchase structure and referral mechanics, please consult the official</span> <a href="whitepaper.html" style="color: #00C896; text-decoration: none;">White Paper</a>.</em>
                 </p>
             </div>
             
             <div class="box-green">
-                <p><strong class="green">💰 Developer Rewards – Performance-Based Compensation</strong><br><span data-i18n="dapp.agreementP7">In recognition of network growth and community development, the ecosystem allocates monetary rewards in USD to qualifying participants. These rewards are processed and settled on an hourly basis, ensuring timely and transparent compensation for those contributing to the expansion of the Fly Infinity network.</span></p>
+                <p><strong class="green"> Developer Rewards – Performance-Based Compensation</strong><br><span data-i18n="dapp.agreementP7">In recognition of network growth and community development, the ecosystem allocates monetary rewards in USD to qualifying participants. These rewards are processed and settled on an hourly basis, ensuring timely and transparent compensation for those contributing to the expansion of the Fly Infinity network.</span></p>
             </div>
             
             <div class="box-gold">
-                <p><strong class="gold">🔒 Decentralized Infrastructure – Security &amp; Anonymity</strong><br><span data-i18n="dapp.agreementP8">All transactions, interactions, and data exchanges within the Fly Infinity ecosystem are executed through a fully decentralized architecture. Participant assets, subscription records, and personal information are securely stored on the blockchain, ensuring the highest standards of security, transparency, and pseudonymity. No centralized entity has access to or control over user data or funds.</span></p>
+                <p><strong class="gold"> Decentralized Infrastructure – Security &amp; Anonymity</strong><br><span data-i18n="dapp.agreementP8">All transactions, interactions, and data exchanges within the Fly Infinity ecosystem are executed through a fully decentralized architecture. Participant assets, subscription records, and personal information are securely stored on the blockchain, ensuring the highest standards of security, transparency, and pseudonymity. No centralized entity has access to or control over user data or funds.</span></p>
             </div>
         </div>
         
@@ -1902,7 +1915,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             } else {
                 const networkAllowanceEl = document.getElementById("networkAllowanceStatus");
                 if (networkAllowanceEl) networkAllowanceEl.innerHTML = "❌ Not approved";
-                document.getElementById("networkApproveStatus").innerHTML = "⚠️ Need approval";
+                document.getElementById("networkApproveStatus").innerHTML = " Need approval";
             }
             
             let tokenAllowance = await daiContract.allowance(userAddress, FIT_TOKEN_ADDRESS);
@@ -1914,7 +1927,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             } else {
                 const tokenAllowanceEl = document.getElementById("tokenAllowanceStatus");
                 if (tokenAllowanceEl) tokenAllowanceEl.innerHTML = "❌ Not approved";
-                document.getElementById("tokenApproveStatus").innerHTML = "⚠️ Need approval";
+                document.getElementById("tokenApproveStatus").innerHTML = " Need approval";
             }
         } catch(e) { console.error(e); }
     }
@@ -1951,7 +1964,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     
     async function approveNetworkDAI() {
         if (!userAddress) {
-            setStatus("networkApproveStatus", "⚠️ Connect wallet first", "error");
+            setStatus("networkApproveStatus", " Connect wallet first", "error");
             return;
         }
         
@@ -1971,7 +1984,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     
     async function approveTokenDAI() {
         if (!userAddress) {
-            setStatus("tokenApproveStatus", "⚠️ Connect wallet first", "error");
+            setStatus("tokenApproveStatus", " Connect wallet first", "error");
             return;
         }
         
@@ -1995,12 +2008,12 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         let referrer = document.getElementById("referrerAddress").value.trim();
         
         if (!userAddress) {
-            setStatus("ownerStatus", "⚠️ Connect wallet first", "error");
+            setStatus("ownerStatus", " Connect wallet first", "error");
             return;
         }
         
         if (!referrer || !ethers.utils.isAddress(referrer)) {
-            setStatus("ownerStatus", "⚠️ Please enter a valid referrer address", "error");
+            setStatus("ownerStatus", " Please enter a valid referrer address", "error");
             return;
         }
         
@@ -2044,17 +2057,17 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         let amount = parseFloat(document.getElementById("buyAmount").value);
         
         if (!userAddress) {
-            setStatus("buyStatus", "⚠️ Connect wallet first", "error");
+            setStatus("buyStatus", " Connect wallet first", "error");
             return;
         }
         
         if (!buyer || !ethers.utils.isAddress(buyer)) {
-            setStatus("buyStatus", "⚠️ Please enter a valid buyer address", "error");
+            setStatus("buyStatus", " Please enter a valid buyer address", "error");
             return;
         }
         
         if (isNaN(amount) || amount <= 0) {
-            setStatus("buyStatus", "⚠️ Please enter a valid amount", "error");
+            setStatus("buyStatus", " Please enter a valid amount", "error");
             return;
         }
         
@@ -2082,12 +2095,12 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         let amount = parseFloat(document.getElementById("sellAmount").value);
         
         if (!userAddress) {
-            setStatus("sellStatus", "⚠️ Connect wallet first", "error");
+            setStatus("sellStatus", " Connect wallet first", "error");
             return;
         }
         
         if (isNaN(amount) || amount <= 0) {
-            setStatus("sellStatus", "⚠️ Please enter a valid amount", "error");
+            setStatus("sellStatus", " Please enter a valid amount", "error");
             return;
         }
         
@@ -2198,12 +2211,12 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         const walletAddress = document.getElementById("joinGiftAddress").value.trim();
         
         if (!userAddress) {
-            setStatus("joinGiftStatus", "⚠️ Connect wallet first", "error");
+            setStatus("joinGiftStatus", " Connect wallet first", "error");
             return;
         }
         
         if (!walletAddress || !ethers.utils.isAddress(walletAddress)) {
-            setStatus("joinGiftStatus", "⚠️ Please enter a valid owner address", "error");
+            setStatus("joinGiftStatus", " Please enter a valid owner address", "error");
             return;
         }
         
@@ -2232,12 +2245,12 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         const walletAddress = document.getElementById("freeGiftAddress").value.trim();
         
         if (!userAddress) {
-            setStatus("freeGiftStatus", "⚠️ Connect wallet first", "error");
+            setStatus("freeGiftStatus", " Connect wallet first", "error");
             return;
         }
         
         if (!walletAddress || !ethers.utils.isAddress(walletAddress)) {
-            setStatus("freeGiftStatus", "⚠️ Please enter a valid owner address", "error");
+            setStatus("freeGiftStatus", " Please enter a valid owner address", "error");
             return;
         }
         
@@ -2290,7 +2303,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     // ==================== SIGN AGREEMENT FUNCTION ====================
     async function signAgreement() {
         if (!userAddress) {
-            setStatus("agreementStatus", "⚠️ Connect wallet first", "error");
+            setStatus("agreementStatus", " Connect wallet first", "error");
             return;
         }
         
@@ -2342,7 +2355,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     document.getElementById('agreementBtn').addEventListener('click', function(e) {
         e.preventDefault();
         if (!userAddress) {
-            setStatus("agreementStatus", "⚠️ Connect wallet first", "error");
+            setStatus("agreementStatus", " Connect wallet first", "error");
             return;
         }
         openAgreementModal();
