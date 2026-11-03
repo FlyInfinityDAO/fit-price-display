@@ -26,7 +26,7 @@
   async function getWalletConnectProvider(){
     if(walletConnectProvider)return walletConnectProvider;
     const module=await import('https://esm.sh/@walletconnect/ethereum-provider@2.17.0?bundle');
-    const EthereumProvider=module.default;
+    const EthereumProvider=module.EthereumProvider||module.default;
     walletConnectProvider=await EthereumProvider.init({
       projectId:WC_PROJECT_ID,
       chains:[56],
