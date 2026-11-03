@@ -72,6 +72,10 @@
         try { await provider.disconnect(); } catch (error) {
           console.warn('Could not clear previous WalletConnect session:', error);
         }
+        // disconnect emits an event that clears the old global reference;
+        // keep this fresh provider available for the explicit new connection.
+        wcProvider = provider;
+        initPromise = Promise.resolve(provider);
       }
 
       await provider.enable();
@@ -80,6 +84,8 @@
         throw new Error('The wallet approved the connection but returned no account.');
       }
 
+      wcProvider = provider;
+      initPromise = Promise.resolve(provider);
       window.ethereum = provider;
       window.fiWalletConnectActive = true;
       return provider;
