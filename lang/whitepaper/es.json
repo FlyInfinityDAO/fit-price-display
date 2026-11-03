@@ -122,8 +122,8 @@
         "fit": "Fly Infinity",
         "traditional": "Proyectos Tradicionales",
         "row1": "Respaldo de Activos Reales",
-        "row1fit": "✅ DAI",
-        "row1trad": "❌ Promesas de Marketing",
+        "row1fit": "DAI",
+        "row1trad": "Promesas de Marketing",
         "row2": "Precio No Decreciente",
         "row3": "Transparencia Total",
         "row4": "Sin Manipulación de Ballenas",
@@ -131,7 +131,7 @@
         "row6": "Comisiones Transparentes",
         "row6trad": "Poco Claro",
         "row7": "Eficiencia de Red Binaria",
-        "row7fit": "✅ Hasta 50% de Reducción de Acciones"
+        "row7fit": "Hasta 50% de Reducción de Acciones"
       }
     },
     "s10": {
@@ -161,11 +161,11 @@
     },
     "s12": {
       "title": "11. Direcciones de Contratos",
-      "website": "🌐 Sitio Web",
-      "token": "🪙 Contrato de Token FIT",
-      "network": "🌐 Contrato de Red",
-      "gift": "🎁 Contrato de Regalos",
-      "dao": "🏛️ Contrato DAO"
+      "website": "Sitio Web",
+      "token": "Contrato de Token FIT",
+      "network": "Contrato de Red",
+      "gift": "Contrato de Regalos",
+      "dao": "Contrato DAO"
     },
     "s13": {
       "title": "12. Descargo de Responsabilidad",

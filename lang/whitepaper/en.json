@@ -122,8 +122,8 @@
         "fit": "Fly Infinity",
         "traditional": "Traditional Projects",
         "row1": "Real Asset Backing",
-        "row1fit": "✅ DAI",
-        "row1trad": "❌ Marketing Promises",
+        "row1fit": "DAI",
+        "row1trad": "Marketing Promises",
         "row2": "Non-Diminishing Price",
         "row3": "Full Transparency",
         "row4": "Anti-Whale Manipulation",
@@ -131,7 +131,7 @@
         "row6": "Transparent Fees",
         "row6trad": "Unclear",
         "row7": "Binary Network Efficiency",
-        "row7fit": "✅ Up to 50% Share Reduction"
+        "row7fit": "Up to 50% Share Reduction"
       }
     },
     "s10": {
@@ -161,11 +161,11 @@
     },
     "s12": {
       "title": "11. Contract Addresses",
-      "website": "🌐 Website",
-      "token": "🪙 FIT Token Contract",
-      "network": "🌐 Network Contract",
-      "gift": "🎁 Gift Contract",
-      "dao": "🏛️ DAO Contract"
+      "website": "Website",
+      "token": "FIT Token Contract",
+      "network": "Network Contract",
+      "gift": "Gift Contract",
+      "dao": "DAO Contract"
     },
     "s13": {
       "title": "12. Disclaimer",

@@ -122,8 +122,8 @@
         "fit": "Fly Infinity",
         "traditional": "传统项目",
         "row1": "真实资产背书",
-        "row1fit": "✅ DAI",
-        "row1trad": "❌ 营销承诺",
+        "row1fit": "DAI",
+        "row1trad": "营销承诺",
         "row2": "非递减价格",
         "row3": "完全透明",
         "row4": "无巨鲸操纵",
@@ -131,7 +131,7 @@
         "row6": "透明费用",
         "row6trad": "不明确",
         "row7": "二元网络效率",
-        "row7fit": "✅ 高达50%股份减少"
+        "row7fit": "高达50%股份减少"
       }
     },
     "s10": {
@@ -161,11 +161,11 @@
     },
     "s12": {
       "title": "11. 合约地址",
-      "website": "🌐 网站",
-      "token": "🪙 FIT代币合约",
-      "network": "🌐 网络合约",
-      "gift": "🎁 礼品合约",
-      "dao": "🏛️ DAO合约"
+      "website": "网站",
+      "token": "FIT代币合约",
+      "network": "网络合约",
+      "gift": "礼品合约",
+      "dao": "DAO合约"
     },
     "s13": {
       "title": "12. 免责声明",

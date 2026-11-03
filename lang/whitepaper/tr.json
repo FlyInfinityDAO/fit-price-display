@@ -122,8 +122,8 @@
         "fit": "Fly Infinity",
         "traditional": "Geleneksel Projeler",
         "row1": "Gerçek Varlık Desteği",
-        "row1fit": "✅ DAI",
-        "row1trad": "❌ Pazarlama Vaadleri",
+        "row1fit": "DAI",
+        "row1trad": "Pazarlama Vaadleri",
         "row2": "Azalmayan Fiyat",
         "row3": "Tam Şeffaflık",
         "row4": "Balina Manipülasyonu Yok",
@@ -131,7 +131,7 @@
         "row6": "Şeffaf Ücretler",
         "row6trad": "Belirsiz",
         "row7": "İkili Ağ Verimliliği",
-        "row7fit": "✅ %50'ye Varan Hisse Azaltımı"
+        "row7fit": "%50'ye Varan Hisse Azaltımı"
       }
     },
     "s10": {
@@ -161,11 +161,11 @@
     },
     "s12": {
       "title": "11. Sözleşme Adresleri",
-      "website": "🌐 Web Sitesi",
-      "token": "🪙 FIT Token Sözleşmesi",
-      "network": "🌐 Ağ Sözleşmesi",
-      "gift": "🎁 Hediye Sözleşmesi",
-      "dao": "🏛️ DAO Sözleşmesi"
+      "website": "Web Sitesi",
+      "token": "FIT Token Sözleşmesi",
+      "network": "Ağ Sözleşmesi",
+      "gift": "Hediye Sözleşmesi",
+      "dao": "DAO Sözleşmesi"
     },
     "s13": {
       "title": "12. Sorumluluk Reddi",
