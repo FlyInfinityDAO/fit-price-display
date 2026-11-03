@@ -136,3 +136,11 @@ html[dir="rtl"] .fi-wallet-period { text-align:right; }
   .fi-wallet-connect-options { gap:7px; }
   .fi-wallet-connect-options .fi-wallet-connect { padding:9px 7px; font-size:12px; }
 }
+
+
+/* Dual wallet connection options on the four DApp operation pages */
+.dapp-connect-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:100%}
+.dapp-connect-options .connect-btn{width:100%;min-width:0;min-height:48px;padding:11px 10px!important;display:flex;align-items:center;justify-content:center;gap:8px;line-height:1.45;font-size:14px;white-space:normal}
+.dapp-connect-options .dapp-connect-browser{color:#f5e6b0!important;border-color:rgba(212,175,55,.42)!important;background:linear-gradient(135deg,rgba(212,175,55,.14),rgba(212,175,55,.055))!important}
+.dapp-connect-options .connect-btn:disabled{opacity:.55!important;cursor:wait!important}
+@media(max-width:420px){.dapp-connect-options{gap:8px}.dapp-connect-options .connect-btn{padding:10px 7px!important;font-size:12px}}

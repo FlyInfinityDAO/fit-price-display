@@ -134,7 +134,9 @@
         "agreementHeadingWelcome": "🎁 欢迎奖励 – 代币即时到账",
         "agreementHeadingReferral": "🔗 推荐标识 – 去中心化邀请系统",
         "agreementHeadingDeveloper": "💰 开发者奖励 – 基于绩效的报酬",
-        "agreementHeadingInfrastructure": "🔒 去中心化基础设施 – 安全与匿名性"
+        "agreementHeadingInfrastructure": "🔒 去中心化基础设施 – 安全与匿名性",
+        "connectReown": "通过浏览器连接",
+        "connectBrowser": "连接钱包"
     },
     "footer": {
         "tagline": "Fly Infinity — 去中心化。透明。永远上涨。"

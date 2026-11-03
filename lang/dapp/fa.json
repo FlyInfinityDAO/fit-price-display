@@ -134,7 +134,9 @@
         "agreementHeadingWelcome": "🎁 پاداش خوش‌آمدگویی – واریز فوری توکن",
         "agreementHeadingReferral": "🔗 شناسه معرف – سیستم دعوت غیرمتمرکز",
         "agreementHeadingDeveloper": "💰 پاداش توسعه‌دهندگان – جبران خدمات بر اساس عملکرد",
-        "agreementHeadingInfrastructure": "🔒 زیرساخت غیرمتمرکز – امنیت و ناشناس‌بودن"
+        "agreementHeadingInfrastructure": "🔒 زیرساخت غیرمتمرکز – امنیت و ناشناس‌بودن",
+        "connectReown": "اتصال با مرورگر",
+        "connectBrowser": "اتصال با کیف پول"
     },
     "footer": {
         "tagline": "فلای اینفینیتی — غیرمتمرکز. شفاف. همیشه در حال رشد."

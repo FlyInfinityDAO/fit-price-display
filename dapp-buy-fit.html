@@ -1701,7 +1701,10 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     <!-- Wallet Overview -->
     <div class="wallet-card" id="dappWalletOverview"><div class="dapp-wallet-heading" data-i18n="dapp.walletOverview">Wallet Overview</div>
         <div id="walletStatus">
-            <button id="connectBtn" class="connect-btn"><i class="fas fa-wallet"></i> <span data-i18n="dapp.connect">Connect Wallet</span></button>
+            <div class="dapp-connect-options">
+                <button id="connectBtn" class="connect-btn dapp-connect-reown" type="button"><i class="fas fa-globe"></i> <span data-i18n="dapp.connectReown">Connect with browser</span></button>
+                <button id="connectBrowserBtn" class="connect-btn dapp-connect-browser" type="button"><i class="fas fa-wallet"></i> <span data-i18n="dapp.connectBrowser">Connect with wallet</span></button>
+            </div>
             <p style="color:#888; margin-top:12px; font-size:12px;" data-i18n="dapp.walletDesc">MetaMask, Trust Wallet, TokenPocket, or any Web3 wallet</p>
         </div>
         <div id="walletInfo" style="display: none;">
@@ -2005,6 +2008,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 <script>
     // ==================== CONTRACT ADDRESSES ====================
+    const initialBrowserProvider = window.ethereum || null;
     const FIT_TOKEN_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
     const FIT_NETWORK_ADDRESS = "0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B";
     const DAI_TOKEN_ADDRESS = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
@@ -2321,57 +2325,50 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     
     // ==================== WALLET CONNECT ====================
     
-    async function connectWallet() {
+    async function connectWallet(mode = 'reown') {
+        const connectButtons = [document.getElementById("connectBtn"), document.getElementById("connectBrowserBtn")];
+        connectButtons.forEach(button => { if (button) button.disabled = true; });
         try {
-            if (typeof window.fiSelectWalletProvider !== 'function') {
-                throw new Error('Wallet selector is unavailable. Please refresh the page.');
+            let selectedProvider;
+            if (mode === 'browser') {
+                // Directly use the provider injected by the wallet's in-app browser.
+                const root = initialBrowserProvider || (window.fiWalletConnectActive ? null : window.ethereum);
+                selectedProvider = root && Array.isArray(root.providers)
+                    ? root.providers.find(item => item && typeof item.request === 'function') : root;
+                if (!selectedProvider || typeof selectedProvider.request !== 'function') {
+                    throw new Error('No in-app browser wallet was detected. Open this page inside your wallet app.');
+                }
+                await selectedProvider.request({ method: 'eth_requestAccounts' });
+            } else {
+                if (typeof window.fiSelectWalletProvider !== 'function') throw new Error('Wallet selector is unavailable. Please refresh the page.');
+                selectedProvider = await window.fiSelectWalletProvider();
             }
-
-            const selectedProvider = await window.fiSelectWalletProvider();
             if (!selectedProvider || typeof selectedProvider.request !== 'function') {
                 throw new Error('The selected wallet did not provide a valid EIP-1193 provider.');
             }
-
             window.ethereum = selectedProvider;
             await initContracts(selectedProvider);
-
-            // Bind wallet events once per provider. Repeated Connect taps must
-            // not register duplicate listeners or trigger repeated reloads.
+            // Bind wallet events once per provider to avoid duplicate listeners.
             if (window.__fiBoundWalletProvider !== selectedProvider) {
                 window.__fiBoundWalletProvider = selectedProvider;
                 if (typeof selectedProvider.on === 'function') {
-                    selectedProvider.on('accountsChanged', async (accounts) => {
-                        if (!accounts || accounts.length === 0) {
-                            disconnectWallet();
-                            return;
-                        }
-                        try {
-                            await initContracts(selectedProvider);
-                        } catch (error) {
-                            console.error('Wallet account refresh failed:', error);
-                        }
+                    selectedProvider.on('accountsChanged', async accounts => {
+                        if (!accounts || !accounts.length) { disconnectWallet(); return; }
+                        try { await initContracts(selectedProvider); }
+                        catch (error) { console.error('Wallet account refresh failed:', error); }
                     });
-
                     selectedProvider.on('chainChanged', async () => {
-                        try {
-                            // Ethers v5 is configured with network="any", so
-                            // refresh contracts in place instead of reloading
-                            // the page during WalletConnect's app handoff.
-                            await initContracts(selectedProvider);
-                            await checkNetwork();
-                        } catch (error) {
-                            console.error('Wallet network refresh failed:', error);
-                        }
+                        try { await initContracts(selectedProvider); await checkNetwork(); }
+                        catch (error) { console.error('Wallet network refresh failed:', error); }
                     });
-
                     selectedProvider.on('disconnect', () => disconnectWallet());
                 }
             }
         } catch(e) {
             console.error("Wallet connection error:", e);
-            if (e && e.message !== 'Wallet selection cancelled.') {
-                alert("Connection failed: " + (e.message || "Please try again."));
-            }
+            if (e && e.message !== 'Wallet selection cancelled.') alert("Connection failed: " + (e.message || "Please try again."));
+        } finally {
+            connectButtons.forEach(button => { if (button) button.disabled = false; });
         }
     }
 
@@ -2581,7 +2578,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     });
     
     // ===== EVENT LISTENERS =====
-    document.getElementById("connectBtn").addEventListener("click", connectWallet);
+    document.getElementById("connectBtn").addEventListener("click", () => connectWallet('reown'));
+    document.getElementById("connectBrowserBtn").addEventListener("click", () => connectWallet('browser'));
     document.getElementById("disconnectBtn").addEventListener("click", disconnectWallet);
     
     document.getElementById("approveNetworkBtn").addEventListener("click", approveNetworkDAI);

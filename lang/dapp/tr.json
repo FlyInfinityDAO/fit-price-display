@@ -134,7 +134,9 @@
         "agreementHeadingWelcome": "🎁 Hoş Geldin Bonusu – Anında Token Yüklemesi",
         "agreementHeadingReferral": "🔗 Referans Kimliği – Merkeziyetsiz Davet Sistemi",
         "agreementHeadingDeveloper": "💰 Geliştirici Ödülleri – Performansa Dayalı Ödeme",
-        "agreementHeadingInfrastructure": "🔒 Merkeziyetsiz Altyapı – Güvenlik ve Anonimlik"
+        "agreementHeadingInfrastructure": "🔒 Merkeziyetsiz Altyapı – Güvenlik ve Anonimlik",
+        "connectReown": "Tarayıcı ile bağlan",
+        "connectBrowser": "Cüzdan ile bağlan"
     },
     "footer": {
         "tagline": "Fly Infinity — Merkeziyetsiz. Şeffaf. Sonsuza Yükselen."
