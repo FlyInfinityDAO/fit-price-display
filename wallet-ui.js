@@ -180,7 +180,7 @@
     note(optionalFailed?'Some profile fields could not be loaded. Token balance and value were read separately.':'');
   }
   async function refreshExisting(){
-    provider=window.ethereum||null;
+    provider=window.ethereum||walletConnectProvider||null;
     if(!provider){account='';chainId='';renderState();resetMetrics();note(t().noProvider);return;}
     try{const accounts=await provider.request({method:'eth_accounts'});account=accounts&&accounts[0]||'';chainId=await provider.request({method:'eth_chainId'});listen();renderState();if(account)await loadContractData();else{resetMetrics();note('');}}
     catch(e){renderState();note(t().error);}
