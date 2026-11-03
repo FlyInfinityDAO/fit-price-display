@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <script src="lang.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -934,7 +934,77 @@ textarea:focus,
 .footer .footer-links a i{color:#00e6ad!important;filter:drop-shadow(0 0 5px rgba(0,230,173,.32))}
 .footer .footer-links a:hover,.footer .footer-links a:focus-visible,.footer .footer-links a:hover span,.footer .footer-links a:focus-visible span{color:#eafff8!important}
 .footer .footer-links a:hover i,.footer .footer-links a:focus-visible i{color:#a2ffe4!important;filter:drop-shadow(0 0 8px rgba(0,255,190,.9))}
-</style>
+
+        /* ===== FAQ ICON REFINEMENT ===== */
+        .faq-question-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+        .faq-topic-icon {
+            color: #00C896;
+            font-size: 17px;
+            width: 21px;
+            text-align: center;
+            flex: 0 0 21px;
+            filter: drop-shadow(0 0 5px rgba(0, 200, 150, 0.16));
+        }
+        .page-title > i {
+            filter: drop-shadow(0 0 6px rgba(0, 200, 150, 0.18));
+        }
+        .faq-answer .info-box,
+        .faq-answer .step-box,
+        .faq-answer .warning-box {
+            position: relative;
+            padding-left: 42px;
+        }
+        .faq-answer .info-box::before,
+        .faq-answer .step-box::before,
+        .faq-answer .warning-box::before {
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 15px;
+            top: 13px;
+            font-size: 15px;
+        }
+        .faq-answer .info-box::before {
+            content: "\f0eb";
+            color: #D4AF37;
+        }
+        .faq-answer .step-box::before {
+            content: "\f0ae";
+            color: #00C896;
+        }
+        .faq-answer .warning-box::before {
+            content: "\f071";
+            color: #ff5a5f;
+        }
+
+        /* Nested answer panels stay glassy but never receive the main-card neon. */
+        .faq-answer .info-box,
+        .faq-answer .step-box,
+        .faq-answer .warning-box,
+        .faq-answer .info-box:hover,
+        .faq-answer .step-box:hover,
+        .faq-answer .warning-box:hover {
+            border-color: rgba(0, 200, 150, 0.12) !important;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.045) !important;
+            filter: none !important;
+        }
+        .faq-answer .warning-box {
+            border-left-color: rgba(255, 90, 95, 0.42) !important;
+        }
+        .faq-answer .step-box {
+            border-left-color: rgba(212, 175, 55, 0.42) !important;
+        }
+        @media (max-width: 768px) {
+            .faq-question-label { gap: 10px; }
+            .faq-topic-icon { font-size: 15px; }
+        }
+
+    </style>
     <link rel="stylesheet" href="wallet-ui.css">
     <link rel="stylesheet" href="card-hover.css?v=4">
     <script src="card-hover.js?v=1" defer></script>
@@ -965,7 +1035,7 @@ textarea:focus,
                 <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
                 <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
             </span>
-            <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
+            <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-xmark"></i></button>
         </div>
         
         <div class="sidebar-menu">
@@ -1012,14 +1082,14 @@ textarea:focus,
     </div>
 
     <!-- ===== FAQ PAGE CONTENT ===== -->
-    <h1 class="page-title" data-i18n="faq.title"><i class="fas fa-question-circle" style="color: #00C896; margin-right: 12px;"></i>Frequently Asked Questions</h1>
+    <h1 class="page-title" data-i18n="faq.title"><i class="fas fa-circle-question" style="color: #00C896; margin-right: 12px;"></i>Frequently Asked Questions</h1>
     
     <div class="faq-container">
         
         <!-- FAQ 1: Cost of ownership shares -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 <span data-i18n="faq.q1">How much does it cost to buy Fly Infinity ownership shares?</span></span>
+                <span class="faq-question-label"><i class="fas fa-wallet faq-topic-icon" aria-hidden="true"></i><span data-i18n="faq.q1">How much does it cost to buy Fly Infinity ownership shares?</span></span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
@@ -1029,7 +1099,7 @@ textarea:focus,
                     <li data-i18n="faq.a1li2"><span class="highlight">Approximately $1 worth of BNB</span> — for network gas fees</li>
                 </ul>
                 <div class="info-box">
-                    <p data-i18n="faq.a1info">💡 <strong>Important:</strong> Make sure you have enough BNB in your wallet to cover transaction fees on the BNB Smart Chain network.</p>
+                    <p data-i18n="faq.a1info"><strong>Important:</strong> Make sure you have enough BNB in your wallet to cover transaction fees on the BNB Smart Chain network.</p>
                 </div>
                 <p data-i18n="faq.a1p2">Once you have these amounts, follow the steps in the DApp to complete your ownership share purchase.</p>
             </div>
@@ -1038,7 +1108,7 @@ textarea:focus,
         <!-- FAQ 2: How to buy ownership shares? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 <span data-i18n="faq.q2">How do I buy ownership shares?</span></span>
+                <span class="faq-question-label"><i class="fas fa-user-plus faq-topic-icon" aria-hidden="true"></i><span data-i18n="faq.q2">How do I buy ownership shares?</span></span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
@@ -1052,7 +1122,7 @@ textarea:focus,
                 </div>
                 <p data-i18n="faq.a2p2">After registration, you will be recognized as an official <span class="highlight">owner</span> of the Fly Infinity network and can enjoy all its benefits.</p>
                 <div class="info-box">
-                    <p data-i18n="faq.a2info">💡 <strong>Note:</strong> You must have at least <span class="highlight">100 DAI</span> in your wallet to purchase ownership shares.</p>
+                    <p data-i18n="faq.a2info"><strong>Note:</strong> You must have at least <span class="highlight">100 DAI</span> in your wallet to purchase ownership shares.</p>
                 </div>
             </div>
         </div>
@@ -1060,7 +1130,7 @@ textarea:focus,
         <!-- FAQ 3: How to buy FIT? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 <span data-i18n="faq.q3">How do I buy FIT tokens?</span></span>
+                <span class="faq-question-label"><i class="fas fa-coins faq-topic-icon" aria-hidden="true"></i><span data-i18n="faq.q3">How do I buy FIT tokens?</span></span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
@@ -1073,7 +1143,7 @@ textarea:focus,
                 </div>
                 <p data-i18n="faq.a3p2">After confirmation, the equivalent FIT will be sent to your wallet.</p>
                 <div class="info-box">
-                    <p data-i18n="faq.a3info">💡 <strong>Important:</strong> You can only buy <span class="highlight">FIT</span> after purchasing ownership shares.</p>
+                    <p data-i18n="faq.a3info"><strong>Important:</strong> You can only buy <span class="highlight">FIT</span> after purchasing ownership shares.</p>
                 </div>
                 <p style="font-size: 12px; color: #888;" data-i18n="faq.a3fee">Buy fee: <span class="highlight">3%</span></p>
             </div>
@@ -1082,7 +1152,7 @@ textarea:focus,
         <!-- FAQ 4: How to sell FIT? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 <span data-i18n="faq.q4">How do I sell FIT tokens?</span></span>
+                <span class="faq-question-label"><i class="fas fa-arrow-right-arrow-left faq-topic-icon" aria-hidden="true"></i><span data-i18n="faq.q4">How do I sell FIT tokens?</span></span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
@@ -1096,7 +1166,7 @@ textarea:focus,
                 </div>
                 <p data-i18n="faq.a4p2">After confirmation, the <span class="highlight">equivalent DAI</span> will be sent to your wallet.</p>
                 <div class="info-box">
-                    <p data-i18n="faq.a4info">💡 <strong>Note:</strong> Every FIT sale adds a portion of the fee to the <span class="highlight">DAI reserve</span>, increasing the base token price.</p>
+                    <p data-i18n="faq.a4info"><strong>Note:</strong> Every FIT sale adds a portion of the fee to the <span class="highlight">DAI reserve</span>, increasing the base token price.</p>
                 </div>
                 <p style="font-size: 12px; color: #888;" data-i18n="faq.a4fee">Sell fee: <span class="highlight">6%</span></p>
             </div>
@@ -1105,19 +1175,19 @@ textarea:focus,
         <!-- FAQ 5: Can I transfer tokens between wallets? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 <span data-i18n="faq.q5">Can I transfer tokens between wallets?</span></span>
+                <span class="faq-question-label"><i class="fas fa-shuffle faq-topic-icon" aria-hidden="true"></i><span data-i18n="faq.q5">Can I transfer tokens between wallets?</span></span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
                 <p data-i18n="faq.a5p1"><span class="highlight">No</span> — <span class="highlight">FIT</span> tokens <strong>cannot</strong> be transferred between wallets.</p>
                 <p data-i18n="faq.a5p2">This restriction is designed for the following reasons:</p>
                 <ul>
-                    <li data-i18n="faq.a5li1">✅ <strong>Maintain the constantly rising (non-diminishing) price algorithm</strong> — Token transfers could create price volatility and a black market.</li>
-                    <li data-i18n="faq.a5li2">✅ <strong>Prevent black market creation</strong> — All FIT trades must go through the <span class="highlight">smart contract</span> to ensure transparency and security.</li>
-                    <li data-i18n="faq.a5li3">✅ <strong>Full transparency</strong> — All transactions are visible and auditable on the blockchain.</li>
+                    <li data-i18n="faq.a5li1"><strong>Maintain the constantly rising (non-diminishing) price algorithm</strong> — Token transfers could create price volatility and a black market.</li>
+                    <li data-i18n="faq.a5li2"><strong>Prevent black market creation</strong> — All FIT trades must go through the <span class="highlight">smart contract</span> to ensure transparency and security.</li>
+                    <li data-i18n="faq.a5li3"><strong>Full transparency</strong> — All transactions are visible and auditable on the blockchain.</li>
                 </ul>
                 <div class="info-box">
-                    <p data-i18n="faq.a5info">💡 <strong>Conclusion:</strong> You can only trade FIT through the <span class="highlight">smart contract</span>. FIT is non-transferable between wallets.</p>
+                    <p data-i18n="faq.a5info"><strong>Conclusion:</strong> You can only trade FIT through the <span class="highlight">smart contract</span>. FIT is non-transferable between wallets.</p>
                 </div>
                 <p data-i18n="faq.a5p3">The only way to change ownership is to <strong>sell through the contract</strong> and have someone else buy.</p>
             </div>
@@ -1126,7 +1196,7 @@ textarea:focus,
         <!-- FAQ 6: What are the fees? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 <span data-i18n="faq.q6">What are the buy and sell fees?</span></span>
+                <span class="faq-question-label"><i class="fas fa-percent faq-topic-icon" aria-hidden="true"></i><span data-i18n="faq.q6">What are the buy and sell fees?</span></span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
@@ -1137,26 +1207,26 @@ textarea:focus,
                 </ul>
                 <p data-i18n="faq.a6p2">These fees are automatically added to the <span class="highlight">DAI reserve</span>, which increases the base token price.</p>
                 <div class="info-box">
-                    <p data-i18n="faq.a6info">💡 <strong>Key Point:</strong> The more transactions occur, the <span class="highlight">faster</span> the FIT base price grows. This means every buy and sell increases the value of your tokens.</p>
+                    <p data-i18n="faq.a6info"><strong>Key Point:</strong> The more transactions occur, the <span class="highlight">faster</span> the FIT base price grows. This means every buy and sell increases the value of your tokens.</p>
                 </div>
-                <p style="font-size: 12px; color: #888;" data-i18n="faq.a6note">📊 All fees are transparent and viewable on the smart contract.</p>
+                <p style="font-size: 12px; color: #888;" data-i18n="faq.a6note">All fees are transparent and viewable on the smart contract.</p>
             </div>
         </div>
         
         <!-- FAQ 7: Can I change my wallet? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 <span data-i18n="faq.q7">Can I change my wallet?</span></span>
+                <span class="faq-question-label"><i class="fas fa-wallet faq-topic-icon" aria-hidden="true"></i><span data-i18n="faq.q7">Can I change my wallet?</span></span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
                 <p data-i18n="faq.a7p1">Yes, but with one <span class="highlight">important condition</span>:</p>
                 <div class="warning-box">
-                    <p style="color: #ff4444; font-weight: bold;" data-i18n="faq.a7warning">⚠️ You must sell all your FIT before changing your wallet!</p>
+                    <p style="color: #ff4444; font-weight: bold;" data-i18n="faq.a7warning">You must sell all your FIT before changing your wallet!</p>
                 </div>
                 <p data-i18n="faq.a7p2">If you change your wallet without selling first, your tokens will become <strong>inaccessible</strong> and you will lose the ability to sell them.</p>
                 <div class="step-box">
-                    <p><strong data-i18n="faq.a7correct">✅ Correct approach:</strong></p>
+                    <p><strong data-i18n="faq.a7correct">Correct approach:</strong></p>
                     <ol style="margin-left: 20px;">
                         <li data-i18n="faq.a7step1">First, <span class="highlight">sell</span> all your FIT tokens.</li>
                         <li data-i18n="faq.a7step2">Change your wallet.</li>
@@ -1164,7 +1234,7 @@ textarea:focus,
                     </ol>
                 </div>
                 <div class="info-box">
-                    <p data-i18n="faq.a7info">💡 <strong>Reason:</strong> FIT is non-transferable between wallets, so selling and repurchasing is the only way to change ownership.</p>
+                    <p data-i18n="faq.a7info"><strong>Reason:</strong> FIT is non-transferable between wallets, so selling and repurchasing is the only way to change ownership.</p>
                 </div>
             </div>
         </div>
@@ -1172,7 +1242,7 @@ textarea:focus,
         <!-- FAQ 8: What if I lose my recovery phrase? -->
         <div class="faq-item">
             <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>🔹 <span data-i18n="faq.q8">What if I lose my recovery phrase?</span></span>
+                <span class="faq-question-label"><i class="fas fa-key faq-topic-icon" aria-hidden="true"></i><span data-i18n="faq.q8">What if I lose my recovery phrase?</span></span>
                 <span class="faq-icon"><i class="fas fa-chevron-down"></i></span>
             </button>
             <div class="faq-answer">
@@ -1185,7 +1255,7 @@ textarea:focus,
                     <li data-i18n="faq.a8li4">❌ No one else has access to it</li>
                 </ul>
                 <div class="info-box">
-                    <p style="color: #00C896; font-weight: bold;" data-i18n="faq.a8security">✅ Security recommendations:</p>
+                    <p style="color: #00C896; font-weight: bold;" data-i18n="faq.a8security">Security recommendations:</p>
                     <ul>
                         <li data-i18n="faq.a8sec1">Write your recovery phrase on <strong>paper</strong> and store it in a safe place.</li>
                         <li data-i18n="faq.a8sec2">Keep multiple copies in separate secure locations.</li>
@@ -1194,7 +1264,7 @@ textarea:focus,
                     </ul>
                 </div>
                 <div class="warning-box">
-                    <p style="color: #ff4444;" data-i18n="faq.a8warning">⚠️ <strong>Warning:</strong> No support team, including the Fly Infinity team, will ever ask for your recovery phrase. Beware of scammers!</p>
+                    <p style="color: #ff4444;" data-i18n="faq.a8warning"><strong>Warning:</strong> No support team, including the Fly Infinity team, will ever ask for your recovery phrase. Beware of scammers!</p>
                 </div>
             </div>
         </div>
