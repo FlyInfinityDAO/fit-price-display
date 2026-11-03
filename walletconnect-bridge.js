@@ -1,5 +1,5 @@
-/* Fly Infinity — Reown WalletConnect bridge for ethers v5 pages.
-   Uses the required BNB Smart Chain namespace and resets sessions on disconnect. */
+/* Fly Infinity — wallet selection and Reown WalletConnect bridge.
+   Supports EIP-6963 injected wallets and WalletConnect on desktop and mobile. */
 (function () {
   'use strict';
 
@@ -8,6 +8,73 @@
   let wcProvider = null;
   let initPromise = null;
   let connectPromise = null;
+  let selectedInjectedProvider = null;
+  const announcedProviders = new Map();
+
+  // EIP-6963 announcements let users choose between multiple browser extensions.
+  window.addEventListener('eip6963:announceProvider', function (event) {
+    const detail = event && event.detail;
+    if (detail && detail.provider && detail.info) {
+      const key = detail.info.uuid || detail.info.rdns || detail.info.name;
+      if (key) announcedProviders.set(key, detail);
+    }
+  });
+  try { window.dispatchEvent(new Event('eip6963:requestProvider')); } catch (_) {}
+
+  function getInjectedWallets() {
+    const found = [];
+    function add(provider, info) {
+      if (!provider || typeof provider.request !== 'function') return;
+      if (found.some(item => item.provider === provider)) return;
+      found.push({
+        provider: provider,
+        name: (info && info.name) || provider.name || 'Browser wallet'
+      });
+    }
+    announcedProviders.forEach(detail => add(detail.provider, detail.info));
+    const ethereum = window.ethereum;
+    if (ethereum && Array.isArray(ethereum.providers)) {
+      ethereum.providers.forEach(provider => add(provider, provider.providerInfo || provider));
+    }
+    add(ethereum, ethereum && (ethereum.providerInfo || ethereum));
+    return found;
+  }
+
+  async function selectWalletProvider() {
+    // Allow EIP-6963 wallet extensions a short time to announce themselves.
+    try { window.dispatchEvent(new Event('eip6963:requestProvider')); } catch (_) {}
+    await new Promise(resolve => setTimeout(resolve, 350));
+    const injected = getInjectedWallets();
+    if (!injected.length) {
+      selectedInjectedProvider = null;
+      window.ethereum = await connectWithWalletConnect();
+      return window.ethereum;
+    }
+
+    const choices = injected.map(item => item.name);
+    choices.push('WalletConnect (Trust Wallet / TokenPocket / SafePal / QR)');
+    let selected = 0;
+    if (choices.length > 1) {
+      const menu = choices.map((name, index) => (index + 1) + '. ' + name).join('\n');
+      const answer = window.prompt('Choose a wallet to connect:\n\n' + menu + '\n\nEnter the number:');
+      if (answer === null) throw new Error('Wallet selection cancelled.');
+      selected = Number.parseInt(answer, 10) - 1;
+      if (!Number.isInteger(selected) || selected < 0 || selected >= choices.length) {
+        throw new Error('Invalid wallet selection. Please try again.');
+      }
+    }
+
+    if (selected === injected.length) {
+      selectedInjectedProvider = null;
+      window.ethereum = await connectWithWalletConnect();
+      return window.ethereum;
+    }
+    selectedInjectedProvider = injected[selected].provider;
+    window.ethereum = selectedInjectedProvider;
+    await selectedInjectedProvider.request({ method: 'eth_requestAccounts' });
+    window.fiWalletConnectActive = false;
+    return selectedInjectedProvider;
+  }
 
   function clearProvider(provider) {
     if (provider && window.ethereum === provider) {
@@ -47,6 +114,18 @@
     provider.on('accountsChanged', function (accounts) {
       if (!accounts || accounts.length === 0) clearProvider(provider);
     });
+    provider.on('display_uri', function () {
+      console.info('[Fly Infinity WalletConnect] Wallet URI generated.');
+    });
+    provider.on('connect', function (info) {
+      console.info('[Fly Infinity WalletConnect] Connected:', info);
+    });
+    provider.on('session_event', function (event) {
+      console.info('[Fly Infinity WalletConnect] Session event:', event && event.name);
+    });
+    provider.on('error', function (error) {
+      console.error('[Fly Infinity WalletConnect] Provider error:', error);
+    });
     return provider;
   }
 
@@ -66,9 +145,6 @@
       }
 
       let provider = await initPromise;
-
-      // A previous session must not silently bypass the wallet chooser.
-      // Disconnect it, then create a clean provider instance for a fresh pairing.
       if (provider.session) {
         try { await provider.disconnect(); } catch (error) {
           console.warn('Could not clear previous WalletConnect session:', error);
@@ -79,10 +155,23 @@
         initPromise = Promise.resolve(provider);
       }
 
-      await provider.enable();
-      const accounts = await provider.request({ method: 'eth_accounts' });
-      if (!accounts || accounts.length === 0) {
-        throw new Error('The wallet approved the connection but returned no account.');
+      try {
+        await provider.enable();
+        const accounts = await provider.request({ method: 'eth_accounts' });
+        if (!accounts || accounts.length === 0) {
+          throw new Error('The wallet approved the connection but returned no account.');
+        }
+      } catch (error) {
+        const onlineState = typeof navigator !== 'undefined' ? navigator.onLine : 'unknown';
+        console.error('[Fly Infinity WalletConnect] Connection diagnostics:', {
+          online: onlineState,
+          userAgent: navigator && navigator.userAgent,
+          error: error
+        });
+        if (error && /No internet connection detected/i.test(error.message || '')) {
+          error.message += ' (Browser online flag: ' + onlineState + '. Check the wallet app return path and WalletConnect relay connectivity.)';
+        }
+        throw error;
       }
 
       wcProvider = provider;
@@ -111,6 +200,14 @@
     return Promise.resolve();
   }
 
+  function disconnectSelectedWallet() {
+    selectedInjectedProvider = null;
+    if (!window.fiWalletConnectActive) window.fiWalletConnectActive = false;
+    return disconnectWalletConnect();
+  }
+
+  window.fiSelectWalletProvider = selectWalletProvider;
   window.fiConnectWalletConnect = connectWithWalletConnect;
   window.fiDisconnectWalletConnect = disconnectWalletConnect;
+  window.fiDisconnectSelectedWallet = disconnectSelectedWallet;
 })();
