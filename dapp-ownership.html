@@ -2270,7 +2270,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     // ==================== WALLET CONNECT ====================
     
     async function connectWallet() {
-        if (typeof window.ethereum === 'undefined') {
+        const usingWalletConnect = typeof window.ethereum === 'undefined' || window.fiWalletConnectActive === true;
+        if (usingWalletConnect) {
             try {
                 window.ethereum = await window.fiConnectWalletConnect();
             } catch (walletConnectError) {
@@ -2281,7 +2282,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         }
         if (typeof window.ethereum !== 'undefined') {
             try {
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                if (!usingWalletConnect) {
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                }
                 await initContracts(window.ethereum);
                 
                 window.ethereum.on('accountsChanged', async (accounts) => {
@@ -2310,6 +2313,9 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     }
     
     function disconnectWallet() {
+        if (window.fiDisconnectWalletConnect) {
+            window.fiDisconnectWalletConnect();
+        }
         userAddress = null;
         document.getElementById("walletStatus").style.display = "block";
         document.getElementById("walletInfo").style.display = "none";
