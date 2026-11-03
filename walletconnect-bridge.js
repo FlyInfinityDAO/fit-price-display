@@ -8,7 +8,6 @@
   let wcProvider = null;
   let initPromise = null;
   let connectPromise = null;
-  let mobileWarmupPromise = null;
   let selectedInjectedProvider = null;
   const announcedProviders = new Map();
   // Keep the browser's original multi-wallet root separate from the active selection.
@@ -136,8 +135,9 @@
 
     const provider = await EthereumProvider.init({
       projectId: PROJECT_ID,
-      chains: [BSC_CHAIN_ID],
+      optionalChains: [BSC_CHAIN_ID],
       showQrModal: true,
+      qrModalOptions: { enableMobileFullScreen: isMobileBrowser() },
       metadata: metadata()
     });
 
@@ -145,8 +145,11 @@
     provider.on('accountsChanged', function (accounts) {
       if (!accounts || accounts.length === 0) clearProvider(provider);
     });
-    provider.on('display_uri', function () {
-      console.info('[Fly Infinity WalletConnect] Wallet URI generated.');
+    provider.on('display_uri', function (uri) {
+      console.info('[Fly Infinity WalletConnect] Wallet URI event:', {
+        received: typeof uri === 'string' && uri.length > 0,
+        length: typeof uri === 'string' ? uri.length : 0
+      });
     });
     provider.on('connect', function (info) {
       console.info('[Fly Infinity WalletConnect] Connected:', info);
@@ -164,15 +167,6 @@
     if (connectPromise) return connectPromise;
 
     connectPromise = (async function () {
-      if (!initPromise && mobileWarmupPromise) {
-        const warmedProvider = await mobileWarmupPromise;
-        if (warmedProvider) {
-          wcProvider = warmedProvider;
-          initPromise = Promise.resolve(warmedProvider);
-        }
-        mobileWarmupPromise = null;
-      }
-
       if (!initPromise) {
         initPromise = createProvider().then(function (provider) {
           wcProvider = provider;
@@ -210,8 +204,13 @@
       }
 
       try {
-        if (!hasExistingSession) await provider.enable();
-        const accounts = await provider.request({ method: 'eth_accounts' });
+        if (!hasExistingSession) {
+          // Start pairing explicitly with the optional BSC namespace. This
+          // avoids making BSC a hard wallet capability requirement and lets
+          // Reown create the pairing URI before the wallet handoff.
+          await provider.connect({ optionalChains: [BSC_CHAIN_ID] });
+        }
+        const accounts = await provider.request({ method: 'eth_requestAccounts' });
         if (!accounts || accounts.length === 0) {
           throw new Error('The wallet approved the connection but returned no account.');
         }
@@ -262,19 +261,6 @@
     if (!window.fiWalletConnectActive) window.fiWalletConnectActive = false;
     if (wasInjected) return Promise.resolve();
     return disconnectWalletConnect();
-  }
-
-  // Preload the WalletConnect provider on mobile before the user taps Connect.
-  // This avoids delaying the wallet-launch flow while importing the SDK after
-  // the click, which can cause Android browsers to lose transient user activation.
-  if (isMobileBrowser()) {
-    mobileWarmupPromise = createProvider().then(function (provider) {
-      wcProvider = provider;
-      return provider;
-    }).catch(function (error) {
-      console.warn('[Fly Infinity WalletConnect] Mobile pre-initialization failed:', error);
-      return null;
-    });
   }
 
   window.fiSelectWalletProvider = selectWalletProvider;
