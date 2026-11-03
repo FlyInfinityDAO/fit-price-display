@@ -36,7 +36,7 @@
       return value;
     }catch(_){return String(id);}
   };
-  const chainName=id=>normalizeChainId(id)===BSC_CHAIN?t().bsc:(id?\u0060${t().other} (${parseInt(normalizeChainId(id),16)})\u0060:t().unknown);
+  const chainName=id=>normalizeChainId(id)===BSC_CHAIN?t().bsc:(id?t().other+' ('+parseInt(normalizeChainId(id),16)+')':t().unknown);
   const padAddress=a=>a.toLowerCase().replace(/^0x/,'').padStart(64,'0');
   const fromHex=h=>BigInt(h||'0x0');
   const units=v=>Number(v)/1e18;
