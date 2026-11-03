@@ -134,7 +134,9 @@
         "agreementHeadingWelcome": "🎁 Welcome Bonus – Instant Token Credit",
         "agreementHeadingReferral": "🔗 Referral Identifier – Decentralized Invitation System",
         "agreementHeadingDeveloper": "💰 Developer Rewards – Performance-Based Compensation",
-        "agreementHeadingInfrastructure": "🔒 Decentralized Infrastructure – Security & Anonymity"
+        "agreementHeadingInfrastructure": "🔒 Decentralized Infrastructure – Security & Anonymity",
+        "connectReown": "Connect with browser",
+        "connectBrowser": "Connect with wallet"
     },
     "footer": {
         "tagline": "Fly Infinity — Decentralized. Transparent. Forever Rising."

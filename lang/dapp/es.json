@@ -134,7 +134,9 @@
         "agreementHeadingWelcome": "🎁 Bono de bienvenida – Acreditación instantánea de tokens",
         "agreementHeadingReferral": "🔗 Identificador de referido – Sistema descentralizado de invitaciones",
         "agreementHeadingDeveloper": "💰 Recompensas para desarrolladores – Compensación basada en el rendimiento",
-        "agreementHeadingInfrastructure": "🔒 Infraestructura descentralizada – Seguridad y anonimato"
+        "agreementHeadingInfrastructure": "🔒 Infraestructura descentralizada – Seguridad y anonimato",
+        "connectReown": "Conectar con navegador",
+        "connectBrowser": "Conectar con billetera"
     },
     "footer": {
         "tagline": "Fly Infinity — Descentralizado. Transparente. Siempre Subiendo."

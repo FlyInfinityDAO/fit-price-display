@@ -134,7 +134,9 @@
         "agreementHeadingWelcome": "🎁 مكافأة الترحيب – إضافة فورية للرموز",
         "agreementHeadingReferral": "🔗 معرّف الإحالة – نظام دعوة لامركزي",
         "agreementHeadingDeveloper": "💰 مكافآت المطورين – تعويض قائم على الأداء",
-        "agreementHeadingInfrastructure": "🔒 بنية تحتية لامركزية – الأمان وإخفاء الهوية"
+        "agreementHeadingInfrastructure": "🔒 بنية تحتية لامركزية – الأمان وإخفاء الهوية",
+        "connectReown": "الاتصال عبر المتصفح",
+        "connectBrowser": "الاتصال بالمحفظة"
     },
     "footer": {
         "tagline": "Fly Infinity — لا مركزي. شفاف. يرتفع للأبد."
