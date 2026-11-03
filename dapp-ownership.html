@@ -4,1605 +4,306 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Fly Infinity - Fly Infinity Ownership Shares</title>
-    
-    <!-- ===== FAVICON ===== -->
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
-    
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="wallet-ui.css">
     <script src="lang.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            background: #0F0F0F;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding: 20px;
-            min-height: 100vh;
-        }
-        
-        @media (max-width: 768px) {
-            body {
-                padding: 15px;
-            }
-        }
-        
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            width: 100%;
-            height: 100vh;
-            height: 100dvh;
-            background-image:
-                linear-gradient(rgba(15, 15, 15, 0.60), rgba(15, 15, 15, 0.60)),
-                url('background-desktop.png');
-            background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-            pointer-events: none;
-            z-index: 0;
-            transform: translate3d(0, 0, 0);
-            -webkit-transform: translate3d(0, 0, 0);
-            will-change: transform;
-        }
-
-        @media (max-width: 768px) {
-            body::before {
-                background-image:
-                    linear-gradient(rgba(15, 15, 15, 0.60), rgba(15, 15, 15, 0.60)),
-                    url('background-mobile.png');
-                background-size: contain;
-                background-position: center top;
-                background-color: #0F0F0F;
-            }
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* ===== TOP NAV BAR ===== */
-        .top-bar {
-            background: #0F0F0F;
-            backdrop-filter: blur(10px);
-            border-radius: 28px;
-            padding: 12px 25px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(0, 200, 150, 0.2);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            z-index: 100;
-        }
-        
-        .top-bar .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #D4AF37;
-            font-size: 18px;
-            font-weight: bold;
-            text-decoration: none;
-        }
-        
-        .top-bar .logo img {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 2px solid #D4AF37;
-        }
-        
-        .top-bar .logo span {
-            color: #D4AF37;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        
-        .top-bar-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .hamburger {
-            background: transparent;
-            border: 1px solid #00C896;
-            color: #00C896;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .hamburger:hover {
-            background: #00C896;
-            color: #0F0F0F;
-            transform: rotate(90deg);
-        }
-        
-        /* ===== LANGUAGE BUTTON ===== */
-        .lang-btn {
-            background: transparent;
-            border: 1px solid rgba(0, 200, 150, 0.3);
-            color: #D4AF37;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            flex-shrink: 0;
-            position: relative;
-        }
-        
-        .lang-btn:hover {
-            border-color: #00C896;
-            background: rgba(0, 200, 150, 0.1);
-            transform: scale(1.05);
-        }
-        
-        .lang-dropdown {
-            position: fixed;
-            top: 75px;
-            right: 20px;
-            background: #0F0F0F;
-            border: 1px solid rgba(0, 200, 150, 0.3);
-            border-radius: 16px;
-            padding: 8px;
-            min-width: 160px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        
-        .lang-dropdown.open {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        .lang-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            border-radius: 12px;
-            color: #c0d0e8;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        
-        .lang-item:hover {
-            background: rgba(0, 200, 150, 0.08);
-            color: #D4AF37;
-        }
-        
-        .lang-item.active {
-            background: rgba(0, 200, 150, 0.15);
-            color: #D4AF37;
-            border: 1px solid rgba(0, 200, 150, 0.2);
-        }
-        
-        .lang-item .flag {
-            font-size: 18px;
-        }
-        
-        .lang-item .lang-name {
-            font-size: 13px;
-        }
-        
-        @media (max-width: 768px) {
-            .lang-dropdown {
-                top: 65px;
-                right: 10px;
-                min-width: 140px;
-            }
-            .lang-item {
-                padding: 8px 12px;
-                font-size: 12px;
-            }
-            .lang-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 14px;
-            }
-            .top-bar .logo span {
-                font-size: 15px;
-            }
-            .top-bar .logo img {
-                width: 28px;
-                height: 28px;
-            }
-            .hamburger {
-                width: 38px;
-                height: 38px;
-                font-size: 17px;
-            }
-        }
-        
-        /* ===== SIDEBAR ===== */
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            z-index: 999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.4s ease;
-        }
-        
-        .sidebar-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .sidebar {
-            position: fixed;
-            top: 0;
-            right: -400px;
-            width: 380px;
-            max-width: 85vw;
-            height: 100%;
-            background: #0F0F0F;
-            border-left: 2px solid rgba(0, 200, 150, 0.3);
-            z-index: 1000;
-            padding: 30px 25px;
-            transition: right 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .sidebar.open {
-            right: 0;
-        }
-        
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(0, 200, 150, 0.2);
-            margin-bottom: 25px;
-        }
-        
-        .sidebar-header .logo-text {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #D4AF37;
-            font-size: 18px;
-            font-weight: bold;
-        }
-        
-        .sidebar-header .logo-text img {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            border: 2px solid #D4AF37;
-        }
-        
-        .sidebar-header .close-btn {
-            background: transparent;
-            border: none;
-            color: #ff4444;
-            font-size: 28px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        
-        .sidebar-header .close-btn:hover {
-            transform: rotate(90deg);
-        }
-        
-        .sidebar-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            flex: 1;
-        }
-        
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 14px 20px;
-            border-radius: 16px;
-            color: #c0d0e8;
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-        }
-        
-        .sidebar-menu a i {
-            width: 24px;
-            font-size: 18px;
-            color: #00C896;
-        }
-        
-        .sidebar-menu a:hover {
-            background: rgba(0, 200, 150, 0.08);
-            border-color: rgba(0, 200, 150, 0.3);
-            transform: translateX(-5px);
-        }
-        
-        .sidebar-menu a.active {
-            background: rgba(0, 200, 150, 0.15);
-            border-color: #00C896;
-            color: #D4AF37;
-        }
-        
-        .sidebar-menu a.active i {
-            color: #D4AF37;
-        }
-        
-        .sidebar-footer {
-            margin-top: auto;
-            padding-top: 20px;
-            border-top: 1px solid rgba(0, 200, 150, 0.2);
-            text-align: center;
-            font-size: 10px;
-            color: #666;
-        }
-        
-        .sidebar-footer a {
-            color: #00C896;
-            text-decoration: none;
-        }
-        
-        .wallet-card {
-            background: #0F0F0F;
-            backdrop-filter: blur(10px);
-            border-radius: 28px;
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(0, 200, 150, 0.2);
-            text-align: center;
-        }
-        
-        .connect-btn {
-            background: linear-gradient(135deg, #00C896, #008a6a);
-            border: none;
-            color: white;
-            padding: 14px 32px;
-            border-radius: 48px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .connect-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 200, 150, 0.3);
-        }
-        
-        .wallet-info {
-            background: #1a1a1a;
-            border-radius: 20px;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        
-        .wallet-address {
-            font-family: monospace;
-            color: #D4AF37;
-            font-size: 14px;
-        }
-        
-        .wallet-balance {
-            color: #00C896;
-            font-weight: bold;
-        }
-        
-        .action-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: 25px;
-            margin-bottom: 25px;
-        }
-        
-        .action-card {
-            background: #0F0F0F;
-            backdrop-filter: blur(10px);
-            border-radius: 28px;
-            padding: 25px;
-            border: 1px solid rgba(0, 200, 150, 0.2);
-            transition: all 0.3s ease;
-        }
-        
-        .action-card:hover {
-            border-color: #00C896;
-            transform: translateY(-3px);
-        }
-        
-        .action-title {
-            font-size: 18px;
-            color: #D4AF37;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .step-badge {
-            display: inline-block;
-            background: #00C896;
-            color: #0F0F0F;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            margin-right: 10px;
-        }
-        
-        .input-group {
-            margin-bottom: 15px;
-        }
-        
-        .input-group label {
-            display: block;
-            color: #00C896;
-            font-size: 12px;
-            margin-bottom: 8px;
-        }
-        
-        .input-group input {
-            width: 100%;
-            background: #1a1a1a;
-            border: 1px solid #2a3a55;
-            color: #D4AF37;
-            padding: 12px 15px;
-            border-radius: 16px;
-            font-size: 14px;
-        }
-        
-        .input-group input:focus {
-            outline: none;
-            border-color: #00C896;
-        }
-        
-        .action-btn {
-            width: 100%;
-            background: transparent;
-            border: 1px solid #00C896;
-            color: #00C896;
-            padding: 12px;
-            border-radius: 40px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 5px;
-        }
-        
-        .action-btn:hover {
-            background: #00C896;
-            color: #0F0F0F;
-            transform: translateY(-2px);
-        }
-        
-        .action-btn.danger {
-            border-color: #D4AF37;
-            color: #D4AF37;
-        }
-        
-        .action-btn.danger:hover {
-            background: #D4AF37;
-            color: #0F0F0F;
-        }
-        
-        .action-btn.warning {
-            border-color: #f3ba2f;
-            color: #f3ba2f;
-        }
-        
-        .status-text {
-            margin-top: 10px;
-            font-size: 12px;
-            color: #888;
-            text-align: center;
-        }
-        
-        .status-text.success {
-            color: #00C896;
-        }
-        
-        .status-text.error {
-            color: #D4AF37;
-        }
-        
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            background: #1a1a1a;
-            border-radius: 16px;
-            padding: 12px;
-            margin-bottom: 10px;
-        }
-        
-        .info-label {
-            color: #888;
-            font-size: 12px;
-        }
-        
-        .info-value {
-            color: #D4AF37;
-            font-weight: bold;
-        }
-        
-        /* ===== FOOTER ===== */
-        .footer {
-            text-align: center;
-            font-size: 10px;
-            color: #666;
-            margin-top: 30px;
-            border-top: 1px solid rgba(0, 200, 150, 0.15);
-            padding-top: 20px;
-        }
-        
-        .footer a {
-            color: #00C896;
-            text-decoration: none;
-        }
-        
-        .footer .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            font-size: 12px;
-            margin-bottom: 12px;
-        }
-        
-        .footer .footer-links span {
-            color: #444;
-        }
-        
-        .footer .footer-tagline {
-            color: #888;
-            font-size: 11px;
-            margin: 0;
-            text-align: center;
-        }
-        
-        .footer .footer-tagline .gold {
-            color: #D4AF37;
-        }
-        
-        /* ===== AGREEMENT MODAL ===== */
-        .agreement-modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(8px);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .agreement-modal-overlay.active {
-            display: flex;
-        }
-        
-        .agreement-modal-content {
-            background: #0F0F0F;
-            max-width: 700px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            border-radius: 28px;
-            border: 1px solid rgba(0, 200, 150, 0.4);
-            padding: 35px 30px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
-            position: relative;
-        }
-        
-        .agreement-modal-content::-webkit-scrollbar {
-            width: 4px;
-        }
-        
-        .agreement-modal-content::-webkit-scrollbar-track {
-            background: #1a1a1a;
-            border-radius: 10px;
-        }
-        
-        .agreement-modal-content::-webkit-scrollbar-thumb {
-            background: #00C896;
-            border-radius: 10px;
-        }
-        
-        .agreement-modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            border-bottom: 1px solid rgba(0, 200, 150, 0.2);
-            padding-bottom: 15px;
-        }
-        
-        .agreement-modal-header h2 {
-            color: #D4AF37;
-            margin: 0;
-            font-size: 22px;
-        }
-        
-        .agreement-modal-header h2 i {
-            color: #00C896;
-            margin-right: 12px;
-        }
-        
-        .agreement-modal-close {
-            background: transparent;
-            border: none;
-            color: #ff4444;
-            font-size: 28px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        
-        .agreement-modal-close:hover {
-            transform: rotate(90deg);
-        }
-        
-        .agreement-body {
-            color: #c0d0e8;
-            line-height: 1.9;
-            font-size: 14px;
-        }
-        
-        .agreement-body p {
-            margin-bottom: 18px;
-        }
-        
-        .agreement-body .gold {
-            color: #D4AF37;
-        }
-        
-        .agreement-body .green {
-            color: #00C896;
-        }
-        
-        .agreement-body .box-gold {
-            background: rgba(212, 175, 55, 0.06);
-            border-left: 3px solid #D4AF37;
-            padding: 14px 18px;
-            border-radius: 12px;
-            margin-bottom: 18px;
-        }
-        
-        .agreement-body .box-green {
-            background: rgba(0, 200, 150, 0.06);
-            border-left: 3px solid #00C896;
-            padding: 14px 18px;
-            border-radius: 12px;
-            margin-bottom: 18px;
-        }
-        
-        .agreement-modal-footer {
-            display: flex;
-            justify-content: center;
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(0, 200, 150, 0.2);
-        }
-        
-        .agreement-modal-footer .btn-close-agreement {
-            background: linear-gradient(135deg, #00C896, #008a6a);
-            border: none;
-            color: white;
-            padding: 12px 40px;
-            border-radius: 40px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .agreement-modal-footer .btn-close-agreement:hover {
-            transform: scale(1.02);
-            box-shadow: 0 10px 25px rgba(0, 200, 150, 0.3);
-        }
-        
-        .agreement-modal-note {
-            text-align: center;
-            color: #666;
-            font-size: 10px;
-            margin-top: 15px;
-        }
-        
-        @media (max-width: 768px) {
-            .wallet-info {
-                flex-direction: column;
-                text-align: center;
-            }
-            .action-grid {
-                grid-template-columns: 1fr;
-            }
-            .sidebar {
-                width: 85vw;
-                right: -85vw;
-            }
-            .agreement-modal-content {
-                padding: 20px 16px;
-            }
-            .agreement-modal-header h2 {
-                font-size: 18px;
-            }
-            .agreement-body {
-                font-size: 13px;
-            }
-        }
-    
-
-        /* ===== FLY INFINITY GLASS THEME - SITE WIDE ===== */
-        .sidebar {
-            background: rgba(8, 18, 17, 0.66) !important;
-            -webkit-backdrop-filter: blur(26px) saturate(155%);
-            backdrop-filter: blur(26px) saturate(155%);
-            border-left: 1px solid rgba(0, 235, 178, 0.78) !important;
-            box-shadow: -12px 0 38px rgba(0,0,0,.34), -2px 0 24px rgba(0,220,165,.24), inset 1px 0 0 rgba(255,255,255,.09);
-        }
-        .sidebar-menu a {
-            background: rgba(255,255,255,.035);
-            border: 1px solid rgba(0,220,165,.20);
-            -webkit-backdrop-filter: blur(12px);
-            backdrop-filter: blur(12px);
-            transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
-        }
-        .sidebar-menu a:hover, .sidebar-menu a.active {
-            background: rgba(0,200,150,.17);
-            border-color: rgba(0,245,185,.86);
-            box-shadow: 0 0 14px rgba(0,220,165,.28), 0 0 26px rgba(0,200,150,.13), inset 0 1px 0 rgba(255,255,255,.10);
-        }
-        .lang-dropdown {
-            background: rgba(8,18,17,.68) !important;
-            -webkit-backdrop-filter: blur(25px) saturate(155%);
-            backdrop-filter: blur(25px) saturate(155%);
-            border: 1px solid rgba(0,235,178,.78) !important;
-            box-shadow: 0 18px 44px rgba(0,0,0,.44), 0 0 22px rgba(0,220,165,.24), inset 0 1px 0 rgba(255,255,255,.10) !important;
-        }
-        .lang-item {
-            border-radius: 10px;
-            transition: background .2s ease, box-shadow .2s ease;
-        }
-        .lang-item:hover, .lang-item.active {
-            background: rgba(0,200,150,.16);
-            box-shadow: 0 0 12px rgba(0,220,165,.18);
-        }
-        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-            .sidebar, .lang-dropdown { background-color: rgba(10,18,17,.92) !important; }
-        }
-        @media (max-width: 768px) {
-            .sidebar { -webkit-backdrop-filter: blur(22px) saturate(145%); backdrop-filter: blur(22px) saturate(145%); }
-            .lang-dropdown { -webkit-backdrop-filter: blur(20px) saturate(145%); backdrop-filter: blur(20px) saturate(145%); }
-        }
-
-        /* ===== GLASS CARDS + BRIGHTER NEON ===== */
-        .wallet-card, .action-card, .agreement-body .box-gold, .agreement-body .box-green {
-            background-color: rgba(13, 22, 21, 0.38) !important;
-            -webkit-backdrop-filter: blur(21px) saturate(150%);
-            backdrop-filter: blur(21px) saturate(150%);
-            border-color: rgba(0, 225, 170, 0.66) !important;
-            box-shadow: 0 18px 42px rgba(0,0,0,.32), 0 0 18px rgba(0,220,165,.24), 0 0 34px rgba(0,200,150,.12), inset 0 1px 0 rgba(255,255,255,.11) !important;
-            transition: border-color .28s ease, box-shadow .28s ease, background-color .28s ease;
-        }
-        .wallet-card, .action-card, .agreement-body .box-gold, .agreement-body .box-green:hover {
-            border-color: rgba(0, 245, 185, 0.92) !important;
-            box-shadow: 0 20px 46px rgba(0,0,0,.36), 0 0 25px rgba(0,230,175,.36), 0 0 44px rgba(0,200,150,.18), inset 0 1px 0 rgba(255,255,255,.14) !important;
-        }
-        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-            .wallet-card, .action-card, .agreement-body .box-gold, .agreement-body .box-green { background-color: rgba(13,22,21,.88) !important; }
-        }
-        @media (max-width: 768px) {
-            .wallet-card, .action-card, .agreement-body .box-gold, .agreement-body .box-green { -webkit-backdrop-filter: blur(17px) saturate(140%); backdrop-filter: blur(17px) saturate(140%); }
-        }
-
-    
-/* ===== FLY INFINITY: CLEAR GLASS / MINIMAL NEON REFINEMENT ===== */
-:root {
-  --fi-glass-bg: rgba(10, 20, 19, 0.22);
-  --fi-glass-border: rgba(0, 200, 150, 0.20);
-  --fi-glass-highlight: rgba(255, 255, 255, 0.075);
-  --fi-glass-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
-}
-
-/* Main content panels and nested information cards */
-.card,
-.stat-card,
-.stat-card-wide,
-.price-stat-card,
-.result-box,
-.fee-box,
-.purchase-box,
-.chart-card,
-.privacy-card,
-.faq-item,
-.warning-card,
-.link-card,
-.source-card,
-.wallet-card,
-.action-card,
-.section-card,
-.comparison-box,
-.feature-item,
-.step-item,
-.number-item,
-.cta-section,
-.info-box,
-.warning-box,
-.step-box,
-.formula-box,
-.quote-box,
-.contract-box,
-.audit-section,
-.score-section,
-.score-circle,
-.table-wrap,
-.price-info-bar,
-.history-controls,
-.purchase-row,
-.fee-breakdown,
-.input-group,
-.input-grid,
-.result-card,
-.stats-grid > *,
-.results-grid > *,
-.summary-badges > * {
-  background-color: var(--fi-glass-bg) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(125%);
-  backdrop-filter: blur(18px) saturate(125%);
-  border-color: var(--fi-glass-border) !important;
-  box-shadow: var(--fi-glass-shadow), inset 0 1px 0 var(--fi-glass-highlight) !important;
-  transition: background-color .22s ease, border-color .22s ease, box-shadow .22s ease;
-}
-
-/* Catch other similarly named content panels that were not covered above */
-div[class*="card"],
-section[class*="card"],
-div[class*="panel"],
-section[class*="panel"],
-div[class*="result"],
-div[class*="stat"],
-div[class*="feature"],
-div[class*="step"],
-div[class*="number-item"],
-div[class*="info-box"],
-div[class*="warning-box"] {
-  background-color: var(--fi-glass-bg);
-  -webkit-backdrop-filter: blur(18px) saturate(125%);
-  backdrop-filter: blur(18px) saturate(125%);
-  border-color: var(--fi-glass-border);
-  box-shadow: var(--fi-glass-shadow), inset 0 1px 0 var(--fi-glass-highlight);
-}
-
-/* Form controls: make every editable field visibly glassy, including Manual Profit Simulator */
-input,
-select,
-textarea,
-.input-group input,
-.input-group select,
-.input-group textarea,
-.token-selector,
-input[type="number"],
-input[type="text"],
-input[type="email"],
-input[type="search"] {
-  background: rgba(255, 255, 255, 0.055) !important;
-  color: inherit;
-  border: 1px solid rgba(0, 200, 150, 0.25) !important;
-  -webkit-backdrop-filter: blur(14px) saturate(125%);
-  backdrop-filter: blur(14px) saturate(125%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
-}
-
-input:focus,
-select:focus,
-textarea:focus,
-.input-group input:focus {
-  outline: none;
-  border-color: rgba(0, 200, 150, 0.42) !important;
-  box-shadow: 0 0 0 2px rgba(0, 200, 150, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-}
-
-/* Sidebar and language menu: transparent glass, restrained edge */
-.sidebar,
-.lang-dropdown {
-  background: rgba(8, 18, 17, 0.43) !important;
-  -webkit-backdrop-filter: blur(28px) saturate(130%) !important;
-  backdrop-filter: blur(28px) saturate(130%) !important;
-  border-color: rgba(0, 200, 150, 0.24) !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.07) !important;
-}
-.sidebar-menu a {
-  background: rgba(255, 255, 255, 0.025) !important;
-  border-color: rgba(0, 200, 150, 0.12) !important;
-  box-shadow: none !important;
-  -webkit-backdrop-filter: blur(12px);
-  backdrop-filter: blur(12px);
-}
-.sidebar-menu a:hover,
-.sidebar-menu a.active,
-.lang-item:hover,
-.lang-item.active {
-  background: rgba(0, 200, 150, 0.075) !important;
-  border-color: rgba(0, 200, 150, 0.28) !important;
-  box-shadow: 0 0 7px rgba(0, 200, 150, 0.055) !important;
-}
-
-/* Keep the FIT identity accents without bright neon halos */
-.card:hover,
-.stat-card:hover,
-.stat-card-wide:hover,
-.price-stat-card:hover,
-.result-box:hover,
-.fee-box:hover,
-.purchase-box:hover,
-.chart-card:hover,
-.section-card:hover,
-.feature-item:hover,
-.step-item:hover,
-.number-item:hover,
-.faq-item:hover,
-.warning-card:hover {
-  border-color: rgba(0, 200, 150, 0.28) !important;
-  box-shadow: var(--fi-glass-shadow), inset 0 1px 0 var(--fi-glass-highlight) !important;
-}
-
-/* Preserve readability where backdrop-filter is unavailable */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .sidebar, .lang-dropdown,
-  .card, .stat-card, .stat-card-wide, .price-stat-card, .result-box,
-  .fee-box, .purchase-box, .chart-card, .privacy-card, .faq-item,
-  .warning-card, .link-card, .source-card, .wallet-card, .action-card,
-  .section-card, .comparison-box, .feature-item, .step-item, .number-item,
-  .cta-section, .info-box, .warning-box, .step-box, .formula-box,
-  .quote-box, .contract-box, .audit-section, .score-section, .score-circle,
-  .table-wrap, .price-info-bar, .history-controls, .purchase-row,
-  .fee-breakdown, .input-group, .input-grid, .result-card {
-    background-color: rgba(12, 20, 19, 0.82) !important;
-  }
-}
-@media (max-width: 768px) {
-  .sidebar, .lang-dropdown,
-  .card, .stat-card, .stat-card-wide, .price-stat-card, .result-box,
-  .fee-box, .purchase-box, .chart-card, .privacy-card, .faq-item,
-  .warning-card, .link-card, .source-card, .wallet-card, .action-card,
-  .section-card, .comparison-box, .feature-item, .step-item, .number-item,
-  .cta-section, .info-box, .warning-box, .step-box, .formula-box,
-  .quote-box, .contract-box, .audit-section, .score-section, .score-circle,
-  .table-wrap, .price-info-bar, .history-controls, .purchase-row,
-  .fee-breakdown, .input-group, .input-grid, .result-card {
-    -webkit-backdrop-filter: blur(16px) saturate(120%);
-    backdrop-filter: blur(16px) saturate(120%);
-  }
-}
-
-
-        /* ===== FLY INFINITY NAVIGATION REFRESH ===== */
-        .sidebar-menu a {
-            min-height: 48px;
-            padding: 12px 16px;
-            gap: 13px;
-            background: rgba(255,255,255,0.025);
-            border: 1px solid rgba(212,175,55,0.10);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.025);
-        }
-        .sidebar-menu a i {
-            width: 25px;
-            min-width: 25px;
-            height: 25px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            background: rgba(0,200,150,0.10);
-            color: #00C896;
-            font-size: 14px;
-            transition: background .25s ease, color .25s ease, transform .25s ease;
-        }
-        .sidebar-menu a:hover i {
-            background: rgba(212,175,55,0.15);
-            color: #D4AF37;
-            transform: scale(1.06);
-        }
-        .sidebar-menu a.active i {
-            background: rgba(212,175,55,0.16);
-            color: #D4AF37;
-        }
-        .sidebar-footer {
-            padding: 18px 10px 4px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            line-height: 1.5;
-        }
-        .sidebar-footer .sidebar-footer-brand {
-            color: #D4AF37;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: .08em;
-        }
-        .sidebar-footer .sidebar-footer-tagline {
-            color: #aebdb8;
-            font-size: 10px;
-            letter-spacing: .015em;
-            text-align: center;
-        }
-        .footer .footer-links {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 9px;
-            row-gap: 10px;
-            flex-wrap: wrap;
-            font-size: 12px;
-            margin: 0 auto 16px;
-            max-width: 1100px;
-        }
-        .footer .footer-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            min-height: 36px;
-            padding: 8px 12px;
-            border: 1px solid rgba(0,200,150,.22);
-            border-radius: 12px;
-            color: #c7d8d2;
-            background: linear-gradient(135deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
-            -webkit-backdrop-filter: blur(12px);
-            backdrop-filter: blur(12px);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 5px 16px rgba(0,0,0,.16);
-            text-decoration: none;
-            transition: transform .22s ease, border-color .22s ease, background .22s ease, color .22s ease;
-            white-space: nowrap;
-        }
-        .footer .footer-links a i {
-            color: #00C896;
-            font-size: 12px;
-            transition: color .22s ease;
-        }
-        .footer .footer-links a:hover {
-            color: #D4AF37;
-            border-color: rgba(212,175,55,.55);
-            background: linear-gradient(135deg, rgba(212,175,55,.13), rgba(0,200,150,.07));
-            transform: translateY(-2px);
-        }
+        body { background: #0F0F0F; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; min-height: 100vh; }
+        @media (max-width: 768px) { body { padding: 15px; } }
+        body::before { content: ""; position: fixed; inset: 0; width: 100%; height: 100vh; height: 100dvh; background-image: linear-gradient(rgba(15, 15, 15, 0.60), rgba(15, 15, 15, 0.60)), url('background-desktop.png'); background-size: cover; background-position: center center; background-repeat: no-repeat; pointer-events: none; z-index: 0; transform: translate3d(0, 0, 0); -webkit-transform: translate3d(0, 0, 0); will-change: transform; }
+        @media (max-width: 768px) { body::before { background-image: linear-gradient(rgba(15, 15, 15, 0.60), rgba(15, 15, 15, 0.60)), url('background-mobile.png'); background-size: contain; background-position: center top; background-color: #0F0F0F; } }
+        .container { max-width: 1400px; margin: 0 auto; position: relative; z-index: 1; }
+        .top-bar { background: #0F0F0F; backdrop-filter: blur(10px); border-radius: 28px; padding: 12px 25px; margin-bottom: 25px; border: 1px solid rgba(0, 200, 150, 0.2); display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 100; }
+        .top-bar .logo { display: flex; align-items: center; gap: 10px; color: #D4AF37; font-size: 18px; font-weight: bold; text-decoration: none; }
+        .top-bar .logo img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37; }
+        .top-bar .logo span { color: #D4AF37; font-size: 18px; font-weight: bold; }
+        .top-bar-right { display: flex; align-items: center; gap: 12px; }
+        .hamburger { background: transparent; border: 1px solid #00C896; color: #00C896; width: 44px; height: 44px; border-radius: 50%; font-size: 20px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
+        .hamburger:hover { background: #00C896; color: #0F0F0F; transform: rotate(90deg); }
+        .lang-btn { background: transparent; border: 1px solid rgba(0, 200, 150, 0.3); color: #D4AF37; width: 36px; height: 36px; border-radius: 50%; font-size: 16px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; padding: 0; flex-shrink: 0; position: relative; }
+        .lang-btn:hover { border-color: #00C896; background: rgba(0, 200, 150, 0.1); transform: scale(1.05); }
+        .lang-dropdown { position: fixed; top: 75px; right: 20px; background: #0F0F0F; border: 1px solid rgba(0, 200, 150, 0.3); border-radius: 16px; padding: 8px; min-width: 160px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); z-index: 2000; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; backdrop-filter: blur(10px); }
+        .lang-dropdown.open { opacity: 1; visibility: visible; transform: translateY(0); }
+        .lang-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; color: #c0d0e8; text-decoration: none; font-size: 13px; font-weight: 500; transition: all 0.2s ease; cursor: pointer; }
+        .lang-item:hover { background: rgba(0, 200, 150, 0.08); color: #D4AF37; }
+        .lang-item.active { background: rgba(0, 200, 150, 0.15); color: #D4AF37; border: 1px solid rgba(0, 200, 150, 0.2); }
+        .lang-item .flag { font-size: 18px; }
+        .lang-item .lang-name { font-size: 13px; }
+        @media (max-width: 768px) { .lang-dropdown { top: 65px; right: 10px; min-width: 140px; } .lang-item { padding: 8px 12px; font-size: 12px; } .lang-btn { width: 32px; height: 32px; font-size: 14px; } .top-bar .logo span { font-size: 15px; } .top-bar .logo img { width: 28px; height: 28px; } .hamburger { width: 38px; height: 38px; font-size: 17px; } }
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 999; opacity: 0; visibility: hidden; transition: all 0.4s ease; }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        .sidebar { position: fixed; top: 0; right: -400px; width: 380px; max-width: 85vw; height: 100%; background: #0F0F0F; border-left: 2px solid rgba(0, 200, 150, 0.3); z-index: 1000; padding: 30px 25px; transition: right 0.4s cubic-bezier(0.22, 1, 0.36, 1); overflow-y: auto; display: flex; flex-direction: column; }
+        .sidebar.open { right: 0; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid rgba(0, 200, 150, 0.2); margin-bottom: 25px; }
+        .sidebar-header .logo-text { display: flex; align-items: center; gap: 10px; color: #D4AF37; font-size: 18px; font-weight: bold; }
+        .sidebar-header .logo-text img { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37; }
+        .sidebar-header .close-btn { background: transparent; border: none; color: #ff4444; font-size: 28px; cursor: pointer; transition: transform 0.3s ease; }
+        .sidebar-header .close-btn:hover { transform: rotate(90deg); }
+        .sidebar-menu { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .sidebar-menu a { display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-radius: 16px; color: #c0d0e8; text-decoration: none; font-size: 15px; font-weight: 500; transition: all 0.3s ease; border: 1px solid transparent; }
+        .sidebar-menu a i { width: 24px; font-size: 18px; color: #00C896; }
+        .sidebar-menu a:hover { background: rgba(0, 200, 150, 0.08); border-color: rgba(0, 200, 150, 0.3); transform: translateX(-5px); }
+        .sidebar-menu a.active { background: rgba(0, 200, 150, 0.15); border-color: #00C896; color: #D4AF37; }
+        .sidebar-menu a.active i { color: #D4AF37; }
+        .sidebar-footer { margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(0, 200, 150, 0.2); text-align: center; font-size: 10px; color: #666; }
+        .sidebar-footer a { color: #00C896; text-decoration: none; }
+        .wallet-card { background: #0F0F0F; backdrop-filter: blur(10px); border-radius: 28px; padding: 25px; margin-bottom: 25px; border: 1px solid rgba(0, 200, 150, 0.2); text-align: center; }
+        .connect-btn { background: linear-gradient(135deg, #00C896, #008a6a); border: none; color: white; padding: 14px 32px; border-radius: 48px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
+        .connect-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0, 200, 150, 0.3); }
+        .wallet-info { background: #1a1a1a; border-radius: 20px; padding: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .wallet-address { font-family: monospace; color: #D4AF37; font-size: 14px; }
+        .wallet-balance { color: #00C896; font-weight: bold; }
+        .action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 25px; margin-bottom: 25px; }
+        .action-card { background: #0F0F0F; backdrop-filter: blur(10px); border-radius: 28px; padding: 25px; border: 1px solid rgba(0, 200, 150, 0.2); transition: all 0.3s ease; }
+        .action-card:hover { border-color: #00C896; transform: translateY(-3px); }
+        .action-title { font-size: 18px; color: #D4AF37; margin-bottom: 20px; text-align: center; }
+        .step-badge { display: inline-block; background: #00C896; color: #0F0F0F; padding: 2px 10px; border-radius: 20px; font-size: 11px; margin-right: 10px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; color: #00C896; font-size: 12px; margin-bottom: 8px; }
+        .input-group input { width: 100%; background: #1a1a1a; border: 1px solid #2a3a55; color: #D4AF37; padding: 12px 15px; border-radius: 16px; font-size: 14px; }
+        .input-group input:focus { outline: none; border-color: #00C896; }
+        .action-btn { width: 100%; background: transparent; border: 1px solid #00C896; color: #00C896; padding: 12px; border-radius: 40px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; margin-top: 5px; }
+        .action-btn:hover { background: #00C896; color: #0F0F0F; transform: translateY(-2px); }
+        .action-btn.danger { border-color: #D4AF37; color: #D4AF37; }
+        .action-btn.danger:hover { background: #D4AF37; color: #0F0F0F; }
+        .action-btn.warning { border-color: #f3ba2f; color: #f3ba2f; }
+        .status-text { margin-top: 10px; font-size: 12px; color: #888; text-align: center; }
+        .status-text.success { color: #00C896; }
+        .status-text.error { color: #D4AF37; }
+        .info-row { display: flex; justify-content: space-between; background: #1a1a1a; border-radius: 16px; padding: 12px; margin-bottom: 10px; }
+        .info-label { color: #888; font-size: 12px; }
+        .info-value { color: #D4AF37; font-weight: bold; }
+        .footer { text-align: center; font-size: 10px; color: #666; margin-top: 30px; border-top: 1px solid rgba(0, 200, 150, 0.15); padding-top: 20px; }
+        .footer a { color: #00C896; text-decoration: none; }
+        .footer .footer-links { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; font-size: 12px; margin-bottom: 12px; }
+        .footer .footer-links span { color: #444; }
+        .footer .footer-tagline { color: #888; font-size: 11px; margin: 0; text-align: center; }
+        .footer .footer-tagline .gold { color: #D4AF37; }
+        .agreement-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+        .agreement-modal-overlay.active { display: flex; }
+        .agreement-modal-content { background: #0F0F0F; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; border-radius: 28px; border: 1px solid rgba(0, 200, 150, 0.4); padding: 35px 30px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8); position: relative; }
+        .agreement-modal-content::-webkit-scrollbar { width: 4px; }
+        .agreement-modal-content::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 10px; }
+        .agreement-modal-content::-webkit-scrollbar-thumb { background: #00C896; border-radius: 10px; }
+        .agreement-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid rgba(0, 200, 150, 0.2); padding-bottom: 15px; }
+        .agreement-modal-header h2 { color: #D4AF37; margin: 0; font-size: 22px; }
+        .agreement-modal-header h2 i { color: #00C896; margin-right: 12px; }
+        .agreement-modal-close { background: transparent; border: none; color: #ff4444; font-size: 28px; cursor: pointer; transition: transform 0.3s ease; }
+        .agreement-modal-close:hover { transform: rotate(90deg); }
+        .agreement-body { color: #c0d0e8; line-height: 1.9; font-size: 14px; }
+        .agreement-body p { margin-bottom: 18px; }
+        .agreement-body .gold { color: #D4AF37; }
+        .agreement-body .green { color: #00C896; }
+        .agreement-body .box-gold { background: rgba(212, 175, 55, 0.06); border-left: 3px solid #D4AF37; padding: 14px 18px; border-radius: 12px; margin-bottom: 18px; }
+        .agreement-body .box-green { background: rgba(0, 200, 150, 0.06); border-left: 3px solid #00C896; padding: 14px 18px; border-radius: 12px; margin-bottom: 18px; }
+        .agreement-modal-footer { display: flex; justify-content: center; margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(0, 200, 150, 0.2); }
+        .agreement-modal-footer .btn-close-agreement { background: linear-gradient(135deg, #00C896, #008a6a); border: none; color: white; padding: 12px 40px; border-radius: 40px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
+        .agreement-modal-footer .btn-close-agreement:hover { transform: scale(1.02); box-shadow: 0 10px 25px rgba(0, 200, 150, 0.3); }
+        .agreement-modal-note { text-align: center; color: #666; font-size: 10px; margin-top: 15px; }
+        @media (max-width: 768px) { .wallet-info { flex-direction: column; text-align: center; } .action-grid { grid-template-columns: 1fr; } .sidebar { width: 85vw; right: -85vw; } .agreement-modal-content { padding: 20px 16px; } .agreement-modal-header h2 { font-size: 18px; } .agreement-body { font-size: 13px; } }
+        .sidebar { background: rgba(8, 18, 17, 0.66) !important; -webkit-backdrop-filter: blur(26px) saturate(155%); backdrop-filter: blur(26px) saturate(155%); border-left: 1px solid rgba(0, 235, 178, 0.78) !important; box-shadow: -12px 0 38px rgba(0,0,0,.34), -2px 0 24px rgba(0,220,165,.24), inset 1px 0 0 rgba(255,255,255,.09); }
+        .sidebar-menu a { background: rgba(255,255,255,.035); border: 1px solid rgba(0,220,165,.20); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); transition: background .25s ease, border-color .25s ease, box-shadow .25s ease; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(0,200,150,.17); border-color: rgba(0,245,185,.86); box-shadow: 0 0 14px rgba(0,220,165,.28), 0 0 26px rgba(0,200,150,.13), inset 0 1px 0 rgba(255,255,255,.10); }
+        .lang-dropdown { background: rgba(8,18,17,.68) !important; -webkit-backdrop-filter: blur(25px) saturate(155%); backdrop-filter: blur(25px) saturate(155%); border: 1px solid rgba(0,235,178,.78) !important; box-shadow: 0 18px 44px rgba(0,0,0,.44), 0 0 22px rgba(0,220,165,.24), inset 0 1px 0 rgba(255,255,255,.10) !important; }
+        .lang-item { border-radius: 10px; transition: background .2s ease, box-shadow .2s ease; }
+        .lang-item:hover, .lang-item.active { background: rgba(0,200,150,.16); box-shadow: 0 0 12px rgba(0,220,165,.18); }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .sidebar, .lang-dropdown { background-color: rgba(10,18,17,.92) !important; } }
+        @media (max-width: 768px) { .sidebar { -webkit-backdrop-filter: blur(22px) saturate(145%); backdrop-filter: blur(22px) saturate(145%); } .lang-dropdown { -webkit-backdrop-filter: blur(20px) saturate(145%); backdrop-filter: blur(20px) saturate(145%); } }
+        .wallet-card, .action-card, .agreement-body .box-gold, .agreement-body .box-green { background-color: rgba(13, 22, 21, 0.38) !important; -webkit-backdrop-filter: blur(21px) saturate(150%); backdrop-filter: blur(21px) saturate(150%); border-color: rgba(0, 225, 170, 0.66) !important; box-shadow: 0 18px 42px rgba(0,0,0,.32), 0 0 18px rgba(0,220,165,.24), 0 0 34px rgba(0,200,150,.12), inset 0 1px 0 rgba(255,255,255,.11) !important; transition: border-color .28s ease, box-shadow .28s ease, background-color .28s ease; }
+        .wallet-card, .action-card, .agreement-body .box-gold, .agreement-body .box-green:hover { border-color: rgba(0, 245, 185, 0.92) !important; box-shadow: 0 20px 46px rgba(0,0,0,.36), 0 0 25px rgba(0,230,175,.36), 0 0 44px rgba(0,200,150,.18), inset 0 1px 0 rgba(255,255,255,.14) !important; }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .wallet-card, .action-card, .agreement-body .box-gold, .agreement-body .box-green { background-color: rgba(13,22,21,.88) !important; } }
+        @media (max-width: 768px) { .wallet-card, .action-card, .agreement-body .box-gold, .agreement-body .box-green { -webkit-backdrop-filter: blur(17px) saturate(140%); backdrop-filter: blur(17px) saturate(140%); } }
+        :root { --fi-glass-bg: rgba(10, 20, 19, 0.22); --fi-glass-border: rgba(0, 200, 150, 0.20); --fi-glass-highlight: rgba(255, 255, 255, 0.075); --fi-glass-shadow: 0 8px 24px rgba(0, 0, 0, 0.16); }
+        .card, .stat-card, .stat-card-wide, .price-stat-card, .result-box, .fee-box, .purchase-box, .chart-card, .privacy-card, .faq-item, .warning-card, .link-card, .source-card, .wallet-card, .action-card, .section-card, .comparison-box, .feature-item, .step-item, .number-item, .cta-section, .info-box, .warning-box, .step-box, .formula-box, .quote-box, .contract-box, .audit-section, .score-section, .score-circle, .table-wrap, .price-info-bar, .history-controls, .purchase-row, .fee-breakdown, .input-group, .input-grid, .result-card, .stats-grid > *, .results-grid > *, .summary-badges > * { background-color: var(--fi-glass-bg) !important; -webkit-backdrop-filter: blur(18px) saturate(125%); backdrop-filter: blur(18px) saturate(125%); border-color: var(--fi-glass-border) !important; box-shadow: var(--fi-glass-shadow), inset 0 1px 0 var(--fi-glass-highlight) !important; transition: background-color .22s ease, border-color .22s ease, box-shadow .22s ease; }
+        div[class*="card"], section[class*="card"], div[class*="panel"], section[class*="panel"], div[class*="result"], div[class*="stat"], div[class*="feature"], div[class*="step"], div[class*="number-item"], div[class*="info-box"], div[class*="warning-box"] { background-color: var(--fi-glass-bg); -webkit-backdrop-filter: blur(18px) saturate(125%); backdrop-filter: blur(18px) saturate(125%); border-color: var(--fi-glass-border); box-shadow: var(--fi-glass-shadow), inset 0 1px 0 var(--fi-glass-highlight); }
+        input, select, textarea, .input-group input, .input-group select, .input-group textarea, .token-selector, input[type="number"], input[type="text"], input[type="email"], input[type="search"] { background: rgba(255, 255, 255, 0.055) !important; color: inherit; border: 1px solid rgba(0, 200, 150, 0.25) !important; -webkit-backdrop-filter: blur(14px) saturate(125%); backdrop-filter: blur(14px) saturate(125%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07) !important; }
+        input:focus, select:focus, textarea:focus, .input-group input:focus { outline: none; border-color: rgba(0, 200, 150, 0.42) !important; box-shadow: 0 0 0 2px rgba(0, 200, 150, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important; }
+        .sidebar, .lang-dropdown { background: rgba(8, 18, 17, 0.43) !important; -webkit-backdrop-filter: blur(28px) saturate(130%) !important; backdrop-filter: blur(28px) saturate(130%) !important; border-color: rgba(0, 200, 150, 0.24) !important; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.07) !important; }
+        .sidebar-menu a { background: rgba(255, 255, 255, 0.025) !important; border-color: rgba(0, 200, 150, 0.12) !important; box-shadow: none !important; -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+        .sidebar-menu a:hover, .sidebar-menu a.active, .lang-item:hover, .lang-item.active { background: rgba(0, 200, 150, 0.075) !important; border-color: rgba(0, 200, 150, 0.28) !important; box-shadow: 0 0 7px rgba(0, 200, 150, 0.055) !important; }
+        .card:hover, .stat-card:hover, .stat-card-wide:hover, .price-stat-card:hover, .result-box:hover, .fee-box:hover, .purchase-box:hover, .chart-card:hover, .section-card:hover, .feature-item:hover, .step-item:hover, .number-item:hover, .faq-item:hover, .warning-card:hover { border-color: rgba(0, 200, 150, 0.28) !important; box-shadow: var(--fi-glass-shadow), inset 0 1px 0 var(--fi-glass-highlight) !important; }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) { .sidebar, .lang-dropdown, .card, .stat-card, .stat-card-wide, .price-stat-card, .result-box, .fee-box, .purchase-box, .chart-card, .privacy-card, .faq-item, .warning-card, .link-card, .source-card, .wallet-card, .action-card, .section-card, .comparison-box, .feature-item, .step-item, .number-item, .cta-section, .info-box, .warning-box, .step-box, .formula-box, .quote-box, .contract-box, .audit-section, .score-section, .score-circle, .table-wrap, .price-info-bar, .history-controls, .purchase-row, .fee-breakdown, .input-group, .input-grid, .result-card { background-color: rgba(12, 20, 19, 0.82) !important; } }
+        @media (max-width: 768px) { .sidebar, .lang-dropdown, .card, .stat-card, .stat-card-wide, .price-stat-card, .result-box, .fee-box, .purchase-box, .chart-card, .privacy-card, .faq-item, .warning-card, .link-card, .source-card, .wallet-card, .action-card, .section-card, .comparison-box, .feature-item, .step-item, .number-item, .cta-section, .info-box, .warning-box, .step-box, .formula-box, .quote-box, .contract-box, .audit-section, .score-section, .score-circle, .table-wrap, .price-info-bar, .history-controls, .purchase-row, .fee-breakdown, .input-group, .input-grid, .result-card { -webkit-backdrop-filter: blur(16px) saturate(120%); backdrop-filter: blur(16px) saturate(120%); } }
+        .sidebar-menu a { min-height: 48px; padding: 12px 16px; gap: 13px; background: rgba(255,255,255,0.025); border: 1px solid rgba(212,175,55,0.10); box-shadow: inset 0 1px 0 rgba(255,255,255,0.025); }
+        .sidebar-menu a i { width: 25px; min-width: 25px; height: 25px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; background: rgba(0,200,150,0.10); color: #00C896; font-size: 14px; transition: background .25s ease, color .25s ease, transform .25s ease; }
+        .sidebar-menu a:hover i { background: rgba(212,175,55,0.15); color: #D4AF37; transform: scale(1.06); }
+        .sidebar-menu a.active i { background: rgba(212,175,55,0.16); color: #D4AF37; }
+        .sidebar-footer { padding: 18px 10px 4px; display: flex; flex-direction: column; align-items: center; gap: 5px; line-height: 1.5; }
+        .sidebar-footer .sidebar-footer-brand { color: #D4AF37; font-size: 12px; font-weight: 700; letter-spacing: .08em; }
+        .sidebar-footer .sidebar-footer-tagline { color: #aebdb8; font-size: 10px; letter-spacing: .015em; text-align: center; }
+        .footer .footer-links { display: flex; justify-content: center; align-items: center; gap: 9px; row-gap: 10px; flex-wrap: wrap; font-size: 12px; margin: 0 auto 16px; max-width: 1100px; }
+        .footer .footer-links a { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 36px; padding: 8px 12px; border: 1px solid rgba(0,200,150,.22); border-radius: 12px; color: #c7d8d2; background: linear-gradient(135deg, rgba(255,255,255,.075), rgba(255,255,255,.025)); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 5px 16px rgba(0,0,0,.16); text-decoration: none; transition: transform .22s ease, border-color .22s ease, background .22s ease, color .22s ease; white-space: nowrap; }
+        .footer .footer-links a i { color: #00C896; font-size: 12px; transition: color .22s ease; }
+        .footer .footer-links a:hover { color: #D4AF37; border-color: rgba(212,175,55,.55); background: linear-gradient(135deg, rgba(212,175,55,.13), rgba(0,200,150,.07)); transform: translateY(-2px); }
         .footer .footer-links a:hover i { color: #D4AF37; }
         .footer .footer-links > span { display: none; }
-        .footer .footer-tagline {
-            line-height: 1.7;
-            letter-spacing: .02em;
-        }
-        @media (max-width: 600px) {
-            .footer .footer-links { gap: 7px; row-gap: 8px; }
-            .footer .footer-links a {
-                min-height: 34px;
-                padding: 7px 9px;
-                gap: 6px;
-                font-size: 11px;
-                border-radius: 10px;
-            }
-            .sidebar-footer .sidebar-footer-tagline { font-size: 9px; }
-        }
-    
-
-        /* ===== FLY INFINITY FOOTER COLOR REFINEMENT ===== */
-        .footer .footer-links a {
-            color: #D4AF37 !important;
-            border: 1px solid rgba(0,200,150,.48) !important;
-            background: linear-gradient(135deg, rgba(0,200,150,.24), rgba(0,200,150,.09)) !important;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 5px 16px rgba(0,0,0,.18), 0 0 12px rgba(0,200,150,.07) !important;
-        }
+        .footer .footer-tagline { line-height: 1.7; letter-spacing: .02em; }
+        @media (max-width: 600px) { .footer .footer-links { gap: 7px; row-gap: 8px; } .footer .footer-links a { min-height: 34px; padding: 7px 9px; gap: 6px; font-size: 11px; border-radius: 10px; } .sidebar-footer .sidebar-footer-tagline { font-size: 9px; } }
+        .footer .footer-links a { color: #D4AF37 !important; border: 1px solid rgba(0,200,150,.48) !important; background: linear-gradient(135deg, rgba(0,200,150,.24), rgba(0,200,150,.09)) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 5px 16px rgba(0,0,0,.18), 0 0 12px rgba(0,200,150,.07) !important; }
         .footer .footer-links a span { color: #D4AF37 !important; }
         .footer .footer-links a i { color: #D4AF37 !important; }
-        .footer .footer-links a:hover {
-            color: #D4AF37 !important;
-            border-color: rgba(212,175,55,.72) !important;
-            background: linear-gradient(135deg, rgba(0,200,150,.30), rgba(212,175,55,.12)) !important;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 7px 20px rgba(0,0,0,.22), 0 0 15px rgba(0,200,150,.12) !important;
-        }
+        .footer .footer-links a:hover { color: #D4AF37 !important; border-color: rgba(212,175,55,.72) !important; background: linear-gradient(135deg, rgba(0,200,150,.30), rgba(212,175,55,.12)) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 7px 20px rgba(0,0,0,.22), 0 0 15px rgba(0,200,150,.12) !important; }
         .footer .footer-links a:hover i { color: #D4AF37 !important; }
         .footer .footer-links a:focus-visible { outline: 2px solid #D4AF37; outline-offset: 3px; }
-        
-    /* ===== MATCH FOOTER TYPOGRAPHY TO DASHBOARD ACTION BUTTONS ===== */
-.footer .footer-links a,.footer .footer-links a span{color:#70f5cf!important}
-.footer .footer-links a i{color:#00e6ad!important;filter:drop-shadow(0 0 5px rgba(0,230,173,.32))}
-.footer .footer-links a:hover,.footer .footer-links a:focus-visible,.footer .footer-links a:hover span,.footer .footer-links a:focus-visible span{color:#eafff8!important}
-.footer .footer-links a:hover i,.footer .footer-links a:focus-visible i{color:#a2ffe4!important;filter:drop-shadow(0 0 8px rgba(0,255,190,.9))}
-
-/* ===== DAPP OPERATIONS HUB / SEPARATE OPERATION VIEWS ===== */
-.dapp-hub{margin:10px 0 26px}.dapp-hub-heading{text-align:center;max-width:850px;margin:0 auto 25px}.dapp-eyebrow{display:inline-flex;align-items:center;gap:8px;color:#00C896;font-size:11px;font-weight:800;letter-spacing:.16em;margin-bottom:12px}.dapp-hub-heading h1{color:#D4AF37;font-size:clamp(24px,4vw,36px);margin-bottom:12px}.dapp-hub-heading p{color:#c0d0e8;font-size:14px;line-height:1.9}.dapp-operation-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.dapp-operation-card{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;gap:13px;min-height:235px;padding:26px;text-decoration:none;border:1px solid rgba(0,200,150,.26);border-radius:25px;background:linear-gradient(145deg,rgba(18,34,30,.60),rgba(8,14,14,.48));-webkit-backdrop-filter:blur(22px) saturate(140%);backdrop-filter:blur(22px) saturate(140%);box-shadow:0 12px 32px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.08);transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease}.dapp-operation-card:before{content:"";position:absolute;z-index:-1;width:190px;height:190px;right:-65px;top:-90px;border-radius:50%;background:radial-gradient(circle,rgba(0,200,150,.19),transparent 68%);transition:transform .4s ease}.dapp-operation-card:hover{transform:translateY(-6px);border-color:rgba(0,235,178,.72);box-shadow:0 18px 42px rgba(0,0,0,.3),0 0 22px rgba(0,200,150,.14),inset 0 1px 0 rgba(255,255,255,.12)}.dapp-operation-card:hover:before{transform:scale(1.45)}.dapp-card-icon{width:54px;height:54px;display:grid;place-items:center;border-radius:17px;color:#00C896;font-size:23px;background:rgba(0,200,150,.10);border:1px solid rgba(0,200,150,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}.dapp-card-title{font-size:18px;font-weight:800;line-height:1.4;color:#D4AF37}.dapp-card-desc{color:#c0d0e8;font-size:13px;line-height:1.8;flex:1}.dapp-card-action{display:flex;align-items:center;justify-content:space-between;color:#70f5cf;font-size:12px;font-weight:700;padding-top:12px;border-top:1px solid rgba(0,200,150,.13)}.dapp-card-action i{transition:transform .25s ease}.dapp-operation-card:hover .dapp-card-action i{transform:translateX(-4px)}.dapp-wallet-heading{color:#D4AF37;font-size:17px;font-weight:800;margin-bottom:16px;text-align:left}.dapp-back-row{margin:0 0 18px}.dapp-back-btn{display:inline-flex;align-items:center;gap:9px;padding:11px 18px;border-radius:30px;text-decoration:none;color:#70f5cf;border:1px solid rgba(0,200,150,.32);background:rgba(0,200,150,.07);font-size:13px;font-weight:700;transition:all .2s ease}.dapp-back-btn:hover{background:rgba(0,200,150,.15);border-color:#00C896;transform:translateY(-2px)}.dapp-operation-view{margin-bottom:25px}body[data-dapp-view="home"] .dapp-operation-view{display:none!important}body[data-dapp-view="ownership"] #dappHub,body[data-dapp-view="buy"] #dappHub,body[data-dapp-view="sell"] #dappHub,body[data-dapp-view="gift"] #dappHub{display:none}body[data-dapp-view="ownership"] #dappTokenOperations,body[data-dapp-view="ownership"] #dappGiftOperation{display:none!important}body[data-dapp-view="buy"] #dappOwnershipOperation,body[data-dapp-view="buy"] #dappSellOperation,body[data-dapp-view="buy"] #dappGiftOperation{display:none!important}body[data-dapp-view="sell"] #dappOwnershipOperation,body[data-dapp-view="sell"] #dappBuyOperation,body[data-dapp-view="sell"] #dappGiftOperation{display:none!important}body[data-dapp-view="gift"] #dappOwnershipOperation,body[data-dapp-view="gift"] #dappTokenOperations{display:none!important}@media(max-width:760px){.dapp-operation-grid{grid-template-columns:1fr;gap:14px}.dapp-operation-card{min-height:205px;padding:21px}.dapp-hub-heading p{font-size:13px}.dapp-wallet-heading{text-align:center}}
-
-
-/* ===== FLY INFINITY DAPP — GLASS FINISH / SOFT NEON ===== */
-:root{
-  --dapp-glass:rgba(10,19,18,.48);
-  --dapp-glass-soft:rgba(255,255,255,.035);
-  --dapp-line:rgba(0,200,150,.22);
-  --dapp-line-gold:rgba(212,175,55,.24);
-  --dapp-mint:#00C896;
-  --dapp-gold:#D4AF37;
-  --dapp-copy:#c0d0e8;
-  --dapp-shadow:0 16px 42px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.075);
-}
-
-/* Wallet overview: disconnected and connected states */
-#dappWalletOverview,.wallet-card{
-  position:relative;overflow:hidden;
-  background:linear-gradient(145deg,rgba(13,25,23,.60),rgba(7,13,13,.44))!important;
-  border:1px solid var(--dapp-line)!important;
-  border-radius:24px!important;
-  -webkit-backdrop-filter:blur(22px) saturate(135%)!important;
-  backdrop-filter:blur(22px) saturate(135%)!important;
-  box-shadow:var(--dapp-shadow)!important;
-}
-#dappWalletOverview:before{
-  content:"";position:absolute;inset:0 0 auto;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);
-  pointer-events:none;
-}
-.dapp-wallet-heading{
-  display:flex;align-items:center;gap:10px;
-  color:var(--dapp-gold)!important;font-size:16px!important;font-weight:800;
-  letter-spacing:.02em;margin-bottom:18px!important;
-}
-.dapp-wallet-heading:before{
-  content:"";width:8px;height:8px;flex:0 0 8px;border-radius:50%;
-  background:var(--dapp-mint);box-shadow:0 0 9px rgba(0,200,150,.30);
-}
-#walletStatus{color:var(--dapp-copy);font-size:13px}
-#walletInfo{margin-top:14px}
-.wallet-info{
-  gap:12px!important;padding:16px!important;
-  background:rgba(255,255,255,.035)!important;
-  border:1px solid rgba(255,255,255,.075)!important;border-radius:18px!important;
-  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
-}
-.wallet-info>div{display:flex;align-items:center;gap:9px;color:var(--dapp-copy);font-size:13px}
-.wallet-info>div>i{width:30px;height:30px;display:grid;place-items:center;flex:0 0 30px;border-radius:10px;color:var(--dapp-mint);background:rgba(0,200,150,.075);border:1px solid rgba(0,200,150,.14)}
-.wallet-address{color:var(--dapp-gold)!important;overflow-wrap:anywhere}
-.wallet-balance{color:#f0f5f2!important;font-variant-numeric:tabular-nums}
-#disconnectBtn{min-height:38px!important;border-radius:12px!important}
-
-/* Operation panels and nested step cards */
-.action-card{
-  position:relative;overflow:hidden;
-  background:linear-gradient(145deg,rgba(13,24,23,.60),rgba(7,13,13,.48))!important;
-  border:1px solid var(--dapp-line)!important;border-radius:24px!important;
-  box-shadow:var(--dapp-shadow)!important;
-  -webkit-backdrop-filter:blur(21px) saturate(135%)!important;
-  backdrop-filter:blur(21px) saturate(135%)!important;
-  transition:border-color .25s ease,transform .25s ease,box-shadow .25s ease!important;
-}
-.action-card:hover{
-  transform:translateY(-2px);
-  border-color:rgba(0,200,150,.34)!important;
-  box-shadow:0 18px 44px rgba(0,0,0,.27),0 0 12px rgba(0,200,150,.055),inset 0 1px 0 rgba(255,255,255,.08)!important;
-}
-.action-title{
-  display:flex;align-items:center;justify-content:center;gap:11px;
-  color:var(--dapp-gold)!important;font-size:18px!important;font-weight:800;
-  line-height:1.5;padding-bottom:15px;margin-bottom:18px!important;
-  border-bottom:1px solid rgba(255,255,255,.075);
-}
-.action-title>i{
-  width:39px;height:39px;display:inline-grid;place-items:center;flex:0 0 39px;
-  border-radius:13px;color:var(--dapp-mint)!important;font-size:16px;
-  background:linear-gradient(145deg,rgba(0,200,150,.13),rgba(0,200,150,.045));
-  border:1px solid rgba(0,200,150,.20);
-  box-shadow:0 0 12px rgba(0,200,150,.055),inset 0 1px 0 rgba(255,255,255,.09);
-}
-.action-card>div[style*="display: grid"]{gap:14px!important}
-.action-card div[style*="background: #1a1a1a"]{
-  background:rgba(255,255,255,.035)!important;
-  border:1px solid rgba(255,255,255,.075)!important;
-  border-inline-start:2px solid rgba(0,200,150,.30)!important;
-  border-radius:17px!important;
-  -webkit-backdrop-filter:blur(15px) saturate(125%);
-  backdrop-filter:blur(15px) saturate(125%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.055)!important;
-}
-.action-card div[style*="background: #1a1a1a"]>div:first-child{
-  font-weight:750!important;letter-spacing:.01em;
-}
-.step-badge{
-  display:inline-flex!important;align-items:center;justify-content:center;
-  min-width:27px;height:27px;padding:0 8px!important;margin-inline-end:8px!important;
-  border-radius:9px!important;color:#eafff8!important;
-  background:rgba(0,200,150,.14)!important;
-  border:1px solid rgba(0,200,150,.28)!important;
-  font-size:11px!important;font-weight:800!important;
-  box-shadow:0 0 8px rgba(0,200,150,.06)!important;
-}
-
-/* Inputs and estimates */
-.input-group{margin-bottom:17px!important}
-.input-group label{
-  display:flex;align-items:center;gap:7px;
-  color:#b8d8ce!important;font-size:12px!important;font-weight:650;
-  margin-bottom:8px!important;line-height:1.65;
-}
-.input-group input,.action-card input[type="text"],.action-card input[type="number"]{
-  width:100%;min-height:47px;padding:12px 15px!important;
-  color:#f1f7f4!important;background:rgba(255,255,255,.045)!important;
-  border:1px solid rgba(0,200,150,.19)!important;border-radius:13px!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.055)!important;
-  transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
-}
-.input-group input::placeholder{color:rgba(192,208,232,.43)!important}
-.input-group input:hover{border-color:rgba(0,200,150,.30)!important}
-.input-group input:focus{
-  outline:none!important;background:rgba(0,200,150,.045)!important;
-  border-color:rgba(0,200,150,.48)!important;
-  box-shadow:0 0 0 3px rgba(0,200,150,.065),inset 0 1px 0 rgba(255,255,255,.06)!important;
-}
-.info-row{
-  align-items:center;gap:14px;padding:14px 15px!important;margin:14px 0!important;
-  background:rgba(255,255,255,.035)!important;
-  border:1px solid rgba(255,255,255,.075)!important;border-radius:14px!important;
-}
-.info-label{color:rgba(192,208,232,.72)!important;font-size:12px!important}
-.info-value{color:var(--dapp-gold)!important;font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
-
-/* Buttons: understated glow, clear hierarchy */
-.connect-btn,.action-btn,.btn-close-agreement,.dapp-back-btn{
-  position:relative;isolation:isolate;overflow:hidden;
-  border-radius:13px!important;font-weight:750!important;
-  transition:transform .22s ease,border-color .22s ease,background .22s ease,box-shadow .22s ease!important;
-}
-.connect-btn,.action-btn{
-  min-height:46px;padding:12px 18px!important;
-  color:#dffff5!important;
-  background:linear-gradient(135deg,rgba(0,200,150,.17),rgba(0,200,150,.075))!important;
-  border:1px solid rgba(0,200,150,.34)!important;
-  box-shadow:0 5px 16px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.08)!important;
-}
-.connect-btn:hover,.action-btn:hover{
-  transform:translateY(-1px);
-  background:linear-gradient(135deg,rgba(0,200,150,.23),rgba(0,200,150,.10))!important;
-  border-color:rgba(0,200,150,.54)!important;
-  box-shadow:0 7px 19px rgba(0,0,0,.18),0 0 10px rgba(0,200,150,.075),inset 0 1px 0 rgba(255,255,255,.10)!important;
-}
-.action-btn.warning{
-  color:#f3df9b!important;background:rgba(212,175,55,.075)!important;
-  border-color:rgba(212,175,55,.34)!important;
-}
-.action-btn.warning:hover{background:rgba(212,175,55,.12)!important;border-color:rgba(212,175,55,.52)!important;box-shadow:0 0 10px rgba(212,175,55,.07)!important}
-.action-btn.danger{
-  color:#f2c7b9!important;background:rgba(202,105,79,.075)!important;
-  border-color:rgba(202,105,79,.30)!important;
-}
-.action-btn.danger:hover{background:rgba(202,105,79,.12)!important;border-color:rgba(202,105,79,.48)!important;box-shadow:0 0 10px rgba(202,105,79,.06)!important}
-.action-btn:disabled,.connect-btn:disabled{opacity:.48!important;cursor:not-allowed!important;transform:none!important;box-shadow:none!important}
-.action-btn i,.connect-btn i,.dapp-back-btn i{margin-inline-end:7px;color:inherit}
-
-/* Transaction, approval and connection feedback */
-.status-text{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  min-height:29px;margin-top:10px!important;padding:6px 10px;
-  color:rgba(192,208,232,.68)!important;font-size:11px!important;line-height:1.55;
-  background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.055);
-  border-radius:10px;overflow-wrap:anywhere;
-}
-.status-text.success{color:#8be8c9!important;background:rgba(0,200,150,.055);border-color:rgba(0,200,150,.16)}
-.status-text.error{color:#f0c48a!important;background:rgba(212,175,55,.055);border-color:rgba(212,175,55,.15)}
-#networkAllowanceStatus,#tokenAllowanceStatus{font-variant-numeric:tabular-nums}
-
-/* Agreement / roadmap modal */
-.agreement-modal-overlay{
-  background:rgba(0,0,0,.70)!important;
-  -webkit-backdrop-filter:blur(12px) saturate(115%)!important;
-  backdrop-filter:blur(12px) saturate(115%)!important;
-  padding:clamp(12px,3vw,26px)!important;
-}
-.agreement-modal-content{
-  max-width:760px!important;max-height:min(88vh,900px)!important;
-  padding:clamp(20px,3vw,34px)!important;border-radius:24px!important;
-  background:linear-gradient(145deg,rgba(13,24,23,.94),rgba(7,13,13,.91))!important;
-  border:1px solid rgba(0,200,150,.25)!important;
-  box-shadow:0 28px 90px rgba(0,0,0,.58),0 0 18px rgba(0,200,150,.055),inset 0 1px 0 rgba(255,255,255,.08)!important;
-  -webkit-backdrop-filter:blur(26px) saturate(135%)!important;
-  backdrop-filter:blur(26px) saturate(135%)!important;
-}
-.agreement-modal-header{
-  align-items:center;padding-bottom:17px!important;margin-bottom:20px!important;
-  border-bottom:1px solid rgba(255,255,255,.08)!important;
-}
-.agreement-modal-header h2{
-  display:flex;align-items:center;gap:11px;
-  color:var(--dapp-gold)!important;font-size:clamp(17px,2.5vw,21px)!important;
-}
-.agreement-modal-header h2 i{
-  width:37px;height:37px;display:inline-grid;place-items:center;margin:0!important;
-  border-radius:12px;color:var(--dapp-mint)!important;
-  background:rgba(0,200,150,.09);border:1px solid rgba(0,200,150,.17);
-}
-.agreement-modal-close{
-  width:36px;height:36px;display:grid;place-items:center;
-  border:1px solid rgba(255,255,255,.10)!important;border-radius:11px;
-  background:rgba(255,255,255,.04)!important;color:#c7d4d0!important;
-  font-size:19px!important;
-}
-.agreement-modal-close:hover{color:#fff!important;background:rgba(255,255,255,.08)!important;transform:rotate(90deg)}
-.agreement-body{color:var(--dapp-copy)!important;font-size:13px!important;line-height:1.9!important}
-.agreement-body>p,.agreement-body .box-gold,.agreement-body .box-green{
-  padding:15px 17px!important;margin:0 0 12px!important;
-  border-radius:15px!important;background:rgba(255,255,255,.032)!important;
-  border:1px solid rgba(255,255,255,.07)!important;
-  border-inline-start:2px solid rgba(0,200,150,.27)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.045)!important;
-}
-.agreement-body .box-gold{border-inline-start-color:rgba(212,175,55,.38)!important}
-.agreement-body .box-green{border-inline-start-color:rgba(0,200,150,.38)!important}
-.agreement-body .gold{color:#e0c56f!important}
-.agreement-body .green{color:#71d9b7!important}
-.agreement-modal-footer{
-  padding-top:18px!important;margin-top:18px!important;border-top:1px solid rgba(255,255,255,.075)!important;
-}
-.agreement-modal-footer .btn-close-agreement{
-  min-height:45px;padding:11px 25px!important;
-  color:#eafff8!important;background:rgba(0,200,150,.13)!important;
-  border:1px solid rgba(0,200,150,.35)!important;font-size:14px!important;
-  box-shadow:0 5px 16px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.08)!important;
-}
-.agreement-modal-footer .btn-close-agreement:hover{
-  transform:translateY(-1px);background:rgba(0,200,150,.19)!important;
-  box-shadow:0 0 12px rgba(0,200,150,.08)!important;
-}
-.agreement-modal-note{color:rgba(192,208,232,.48)!important;font-size:10px!important}
-
-/* Consistent return control and interactive focus */
-.dapp-back-btn{
-  background:rgba(0,200,150,.055)!important;border-color:rgba(0,200,150,.20)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.055)!important;
-}
-.dapp-back-btn:hover{box-shadow:0 0 10px rgba(0,200,150,.07)!important}
-button:focus-visible,a:focus-visible,input:focus-visible{
-  outline:2px solid rgba(212,175,55,.72)!important;outline-offset:3px!important;
-}
-.action-card a{color:#71d9b7}
-.action-card a:hover{color:#b8f5df}
-
-/* Responsive spacing and reduced motion */
-@media(max-width:768px){
-  #dappWalletOverview,.wallet-card,.action-card{border-radius:19px!important}
-  .wallet-card,.action-card{padding:19px!important}
-  .action-grid{grid-template-columns:minmax(0,1fr)!important;gap:15px!important}
-  .action-title{font-size:16px!important;gap:9px;padding-bottom:13px}
-  .action-title>i{width:35px;height:35px;flex-basis:35px;border-radius:11px}
-  .info-row{align-items:flex-start;flex-direction:column;gap:6px}
-  .agreement-modal-content{max-height:90dvh!important;border-radius:19px!important}
-  .agreement-body>p,.agreement-body .box-gold,.agreement-body .box-green{padding:13px!important}
-}
-@media(prefers-reduced-motion:reduce){
-  .action-card,.action-btn,.connect-btn,.dapp-back-btn,.agreement-modal-close{transition:none!important}
-  .action-card:hover,.action-btn:hover,.connect-btn:hover,.dapp-back-btn:hover{transform:none!important}
-}
-
-    
-/* ===== OWNERSHIP PURCHASE GUIDE — BALANCED GLASS / SOFT NEON ===== */
-.ownership-guide-card{
-  position:relative;isolation:isolate;overflow:hidden;
-  margin:0 0 25px;padding:clamp(20px,3vw,29px);
-  border:1px solid rgba(0,200,150,.23);border-radius:24px;
-  background:linear-gradient(135deg,rgba(12,27,23,.66),rgba(12,17,19,.58) 55%,rgba(28,23,12,.40));
-  -webkit-backdrop-filter:blur(24px) saturate(130%);backdrop-filter:blur(24px) saturate(130%);
-  box-shadow:0 14px 36px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.085);
-}
-.ownership-guide-card:before{
-  content:"";position:absolute;z-index:-1;inset:0 7% auto;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(0,200,150,.38),rgba(212,175,55,.42),transparent);
-  pointer-events:none;
-}
-.ownership-guide-card:after{
-  content:"";position:absolute;z-index:-1;width:230px;height:230px;right:-115px;top:-145px;
-  border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.075),transparent 68%);
-  pointer-events:none;
-}
-.ownership-guide-heading{display:flex;align-items:center;gap:14px;margin-bottom:22px}
-.ownership-guide-icon{
-  width:49px;height:49px;flex:0 0 49px;display:grid;place-items:center;
-  color:#65dabb;font-size:19px;border-radius:15px;
-  background:linear-gradient(145deg,rgba(0,200,150,.14),rgba(255,255,255,.035));
-  border:1px solid rgba(0,200,150,.24);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 4px 14px rgba(0,0,0,.12);
-}
-.ownership-guide-heading h2{margin:0 0 5px;color:#D4AF37;font-size:clamp(15px,2vw,18px);font-weight:800;line-height:1.5}
-.ownership-guide-heading p{margin:0;color:rgba(192,208,232,.72);font-size:12px;line-height:1.7}
-.ownership-guide-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.ownership-guide-step{
-  position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:13px;
-  min-height:164px;padding:19px;border-radius:18px;
-  background:linear-gradient(145deg,rgba(255,255,255,.052),rgba(255,255,255,.018));
-  border:1px solid rgba(255,255,255,.085);
-  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.065),0 7px 20px rgba(0,0,0,.10);
-  transition:border-color .22s ease,background .22s ease,transform .22s ease;
-}
-.ownership-guide-step:hover{transform:translateY(-2px);background:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.025))}
-.ownership-guide-step.guide-green{border-inline-start:2px solid rgba(0,200,150,.52)}
-.ownership-guide-step.guide-gold{border-inline-start:2px solid rgba(212,175,55,.58)}
-.ownership-guide-number{position:absolute;top:14px;inset-inline-end:16px;color:rgba(220,225,218,.42);font-size:11px;font-weight:850;letter-spacing:.12em}
-.ownership-guide-step-icon{width:37px;height:37px;display:grid;place-items:center;border-radius:12px;font-size:14px}
-.guide-green .ownership-guide-step-icon{color:#70dfbd;background:rgba(0,200,150,.10);border:1px solid rgba(0,200,150,.23)}
-.guide-gold .ownership-guide-step-icon{color:#e4cb7e;background:rgba(212,175,55,.095);border:1px solid rgba(212,175,55,.25)}
-.ownership-guide-step p{margin:0;color:#d0dad5;font-size:12px;line-height:1.95}
-.ownership-guide-congrats{
-  position:relative;display:flex;align-items:center;gap:13px;margin-top:16px;padding:16px 18px;
-  border-radius:16px;
-  background:linear-gradient(100deg,rgba(0,200,150,.085),rgba(255,255,255,.025) 52%,rgba(212,175,55,.085));
-  border:1px solid rgba(212,175,55,.24);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 7px 20px rgba(0,0,0,.10);
-}
-.ownership-guide-congrats>i{flex:0 0 auto;color:#D4AF37;font-size:19px}
-.ownership-guide-congrats p{margin:0;color:#e5d79f;font-size:13px;font-weight:750;line-height:1.85}
-@media(max-width:760px){
-  .ownership-guide-card{padding:18px;border-radius:20px}
-  .ownership-guide-steps{grid-template-columns:1fr;gap:11px}
-  .ownership-guide-step{min-height:0;padding:16px}
-  .ownership-guide-congrats{align-items:flex-start;padding:14px}
-}
-@media(prefers-reduced-motion:reduce){.ownership-guide-step{transition:none}.ownership-guide-step:hover{transform:none}}
-
-
-        /* ===== CONTRACT REFERENCE: glass panel and separate explorer link ===== */
-        .contract-bscscan-row {
-            text-align: center;
-            margin: 0 0 15px;
-            font-size: 12px;
-        }
-        .contract-bscscan-link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            color: #00C896;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color .2s ease, text-shadow .2s ease;
-        }
-        .contract-bscscan-link:hover {
-            color: #D4AF37;
-            text-shadow: 0 0 10px rgba(212,175,55,.18);
-        }
-        .contract-reference-card {
-            margin-top: 15px;
-            padding: 14px 17px;
-            border: 1px solid rgba(212,175,55,.24);
-            border-left: 3px solid #D4AF37;
-            border-radius: 16px;
-            background: linear-gradient(135deg, rgba(34,34,34,.76), rgba(15,15,15,.82));
-            -webkit-backdrop-filter: blur(18px);
-            backdrop-filter: blur(18px);
-            box-shadow: 0 10px 28px rgba(0,0,0,.2);
-        }
-        .contract-reference-title {
-            color: #00C896;
-            font-size: 11px;
-            font-weight: 700;
-            margin-bottom: 7px;
-        }
-        .contract-reference-address {
-            color: #D4AF37;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-            font-size: 12px;
-            line-height: 1.7;
-            overflow-wrap: anywhere;
-        }
-        .contract-reference-flow {
-            color: #c0d0e8;
-            font-size: 10px;
-            line-height: 1.8;
-            margin-top: 7px;
-        }
-
-    
-/* ===== DAPP OPERATION PAGES: MATCHED GLASS TRANSPARENCY ===== */
-.top-bar {
-  background: rgba(10,18,17,.42) !important;
-  -webkit-backdrop-filter: blur(18px) saturate(125%) !important;
-  backdrop-filter: blur(18px) saturate(125%) !important;
-}
-.sidebar, .lang-dropdown {
-  background: rgba(8,18,17,.72) !important;
-  -webkit-backdrop-filter: blur(22px) saturate(125%) !important;
-  backdrop-filter: blur(22px) saturate(125%) !important;
-}
-.wallet-card, #dappWalletOverview {
-  background: linear-gradient(145deg, rgba(13,25,23,.43), rgba(7,13,13,.31)) !important;
-  border-color: rgba(0,200,150,.20) !important;
-}
-.action-card {
-  background: linear-gradient(145deg, rgba(13,24,23,.43), rgba(7,13,13,.31)) !important;
-  border-color: rgba(0,200,150,.19) !important;
-}
-.wallet-info, .info-row,
-.action-card div[style*="background: #1a1a1a"] {
-  background: rgba(255,255,255,.028) !important;
-}
-.step-badge { background: rgba(0,200,150,.11) !important; }
-.input-group input, .action-card input[type="text"], .action-card input[type="number"] {
-  background: rgba(255,255,255,.035) !important;
-}
-.dapp-back-btn { background: rgba(0,200,150,.045) !important; }
-.dapp-back-btn:hover { background: rgba(0,200,150,.11) !important; }
-.agreement-modal-overlay { background: rgba(0,0,0,.66) !important; }
-.agreement-modal-content {
-  background: linear-gradient(145deg, rgba(13,24,23,.86), rgba(7,13,13,.82)) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(125%) !important;
-  backdrop-filter: blur(24px) saturate(125%) !important;
-}
-.agreement-body > p,
-.agreement-body .box-gold,
-.agreement-body .box-green {
-  background: rgba(255,255,255,.026) !important;
-}
-.buy-guide-card, .ownership-guide-card, .sell-guide-card {
-  background: linear-gradient(135deg, rgba(12,27,23,.43), rgba(9,16,17,.34) 58%, rgba(28,23,12,.23)) !important;
-}
-.buy-guide-step, .ownership-guide-step, .sell-guide-step {
-  background: linear-gradient(145deg, rgba(255,255,255,.038), rgba(255,255,255,.012)) !important;
-}
-.buy-guide-step:hover, .ownership-guide-step:hover, .sell-guide-step:hover {
-  background: linear-gradient(145deg, rgba(255,255,255,.052), rgba(255,255,255,.018)) !important;
-}
-.buy-guide-congrats, .ownership-guide-congrats, .sell-guide-congrats {
-  background: linear-gradient(100deg, rgba(0,200,150,.055), rgba(255,255,255,.015) 52%, rgba(212,175,55,.05)) !important;
-}
-.contract-reference-card {
-  background: linear-gradient(135deg, rgba(34,34,34,.46), rgba(15,15,15,.50)) !important;
-}
-.status-text { background: rgba(255,255,255,.018) !important; }
-.status-text.success { background: rgba(0,200,150,.04) !important; }
-.status-text.error { background: rgba(212,175,55,.04) !important; }
-
-</style>
+        .footer .footer-links a, .footer .footer-links a span { color: #70f5cf !important; }
+        .footer .footer-links a i { color: #00e6ad !important; filter: drop-shadow(0 0 5px rgba(0,230,173,.32)); }
+        .footer .footer-links a:hover, .footer .footer-links a:focus-visible, .footer .footer-links a:hover span, .footer .footer-links a:focus-visible span { color: #eafff8 !important; }
+        .footer .footer-links a:hover i, .footer .footer-links a:focus-visible i { color: #a2ffe4 !important; filter: drop-shadow(0 0 8px rgba(0,255,190,.9)); }
+        .dapp-hub { margin: 10px 0 26px; }
+        .dapp-hub-heading { text-align: center; max-width: 850px; margin: 0 auto 25px; }
+        .dapp-eyebrow { display: inline-flex; align-items: center; gap: 8px; color: #00C896; font-size: 11px; font-weight: 800; letter-spacing: .16em; margin-bottom: 12px; }
+        .dapp-hub-heading h1 { color: #D4AF37; font-size: clamp(24px,4vw,36px); margin-bottom: 12px; }
+        .dapp-hub-heading p { color: #c0d0e8; font-size: 14px; line-height: 1.9; }
+        .dapp-operation-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; }
+        .dapp-operation-card { position: relative; isolation: isolate; overflow: hidden; display: flex; flex-direction: column; gap: 13px; min-height: 235px; padding: 26px; text-decoration: none; border: 1px solid rgba(0,200,150,.26); border-radius: 25px; background: linear-gradient(145deg,rgba(18,34,30,.60),rgba(8,14,14,.48)); -webkit-backdrop-filter: blur(22px) saturate(140%); backdrop-filter: blur(22px) saturate(140%); box-shadow: 0 12px 32px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.08); transition: transform .3s ease,border-color .3s ease,box-shadow .3s ease; }
+        .dapp-operation-card:before { content: ""; position: absolute; z-index: -1; width: 190px; height: 190px; right: -65px; top: -90px; border-radius: 50%; background: radial-gradient(circle,rgba(0,200,150,.19),transparent 68%); transition: transform .4s ease; }
+        .dapp-operation-card:hover { transform: translateY(-6px); border-color: rgba(0,235,178,.72); box-shadow: 0 18px 42px rgba(0,0,0,.3),0 0 22px rgba(0,200,150,.14),inset 0 1px 0 rgba(255,255,255,.12); }
+        .dapp-operation-card:hover:before { transform: scale(1.45); }
+        .dapp-card-icon { width: 54px; height: 54px; display: grid; place-items: center; border-radius: 17px; color: #00C896; font-size: 23px; background: rgba(0,200,150,.10); border: 1px solid rgba(0,200,150,.24); box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
+        .dapp-card-title { font-size: 18px; font-weight: 800; line-height: 1.4; color: #D4AF37; }
+        .dapp-card-desc { color: #c0d0e8; font-size: 13px; line-height: 1.8; flex: 1; }
+        .dapp-card-action { display: flex; align-items: center; justify-content: space-between; color: #70f5cf; font-size: 12px; font-weight: 700; padding-top: 12px; border-top: 1px solid rgba(0,200,150,.13); }
+        .dapp-card-action i { transition: transform .25s ease; }
+        .dapp-operation-card:hover .dapp-card-action i { transform: translateX(-4px); }
+        .dapp-wallet-heading { color: #D4AF37; font-size: 17px; font-weight: 800; margin-bottom: 16px; text-align: left; }
+        .dapp-back-row { margin: 0 0 18px; }
+        .dapp-back-btn { display: inline-flex; align-items: center; gap: 9px; padding: 11px 18px; border-radius: 30px; text-decoration: none; color: #70f5cf; border: 1px solid rgba(0,200,150,.32); background: rgba(0,200,150,.07); font-size: 13px; font-weight: 700; transition: all .2s ease; }
+        .dapp-back-btn:hover { background: rgba(0,200,150,.15); border-color: #00C896; transform: translateY(-2px); }
+        .dapp-operation-view { margin-bottom: 25px; }
+        body[data-dapp-view="home"] .dapp-operation-view { display: none !important; }
+        body[data-dapp-view="ownership"] #dappHub, body[data-dapp-view="buy"] #dappHub, body[data-dapp-view="sell"] #dappHub, body[data-dapp-view="gift"] #dappHub { display: none; }
+        body[data-dapp-view="ownership"] #dappTokenOperations, body[data-dapp-view="ownership"] #dappGiftOperation { display: none !important; }
+        body[data-dapp-view="buy"] #dappOwnershipOperation, body[data-dapp-view="buy"] #dappSellOperation, body[data-dapp-view="buy"] #dappGiftOperation { display: none !important; }
+        body[data-dapp-view="sell"] #dappOwnershipOperation, body[data-dapp-view="sell"] #dappBuyOperation, body[data-dapp-view="sell"] #dappGiftOperation { display: none !important; }
+        body[data-dapp-view="gift"] #dappOwnershipOperation, body[data-dapp-view="gift"] #dappTokenOperations { display: none !important; }
+        @media (max-width:760px) { .dapp-operation-grid { grid-template-columns: 1fr; gap: 14px; } .dapp-operation-card { min-height: 205px; padding: 21px; } .dapp-hub-heading p { font-size: 13px; } .dapp-wallet-heading { text-align: center; } }
+        :root { --dapp-glass: rgba(10,19,18,.48); --dapp-glass-soft: rgba(255,255,255,.035); --dapp-line: rgba(0,200,150,.22); --dapp-line-gold: rgba(212,175,55,.24); --dapp-mint: #00C896; --dapp-gold: #D4AF37; --dapp-copy: #c0d0e8; --dapp-shadow: 0 16px 42px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.075); }
+        #dappWalletOverview, .wallet-card { position: relative; overflow: hidden; background: linear-gradient(145deg,rgba(13,25,23,.60),rgba(7,13,13,.44)) !important; border: 1px solid var(--dapp-line) !important; border-radius: 24px !important; -webkit-backdrop-filter: blur(22px) saturate(135%) !important; backdrop-filter: blur(22px) saturate(135%) !important; box-shadow: var(--dapp-shadow) !important; }
+        #dappWalletOverview:before { content: ""; position: absolute; inset: 0 0 auto; height: 1px; background: linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent); pointer-events: none; }
+        .dapp-wallet-heading { display: flex; align-items: center; gap: 10px; color: var(--dapp-gold) !important; font-size: 16px !important; font-weight: 800; letter-spacing: .02em; margin-bottom: 18px !important; }
+        .dapp-wallet-heading:before { content: ""; width: 8px; height: 8px; flex: 0 0 8px; border-radius: 50%; background: var(--dapp-mint); box-shadow: 0 0 9px rgba(0,200,150,.30); }
+        #walletStatus { color: var(--dapp-copy); font-size: 13px; }
+        #walletInfo { margin-top: 14px; }
+        .wallet-info { gap: 12px !important; padding: 16px !important; background: rgba(255,255,255,.035) !important; border: 1px solid rgba(255,255,255,.075) !important; border-radius: 18px !important; -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+        .wallet-info > div { display: flex; align-items: center; gap: 9px; color: var(--dapp-copy); font-size: 13px; }
+        .wallet-info > div > i { width: 30px; height: 30px; display: grid; place-items: center; flex: 0 0 30px; border-radius: 10px; color: var(--dapp-mint); background: rgba(0,200,150,.075); border: 1px solid rgba(0,200,150,.14); }
+        .wallet-address { color: var(--dapp-gold) !important; overflow-wrap: anywhere; }
+        .wallet-balance { color: #f0f5f2 !important; font-variant-numeric: tabular-nums; }
+        #disconnectBtn { min-height: 38px !important; border-radius: 12px !important; }
+        .action-card { position: relative; overflow: hidden; background: linear-gradient(145deg,rgba(13,24,23,.60),rgba(7,13,13,.48)) !important; border: 1px solid var(--dapp-line) !important; border-radius: 24px !important; box-shadow: var(--dapp-shadow) !important; -webkit-backdrop-filter: blur(21px) saturate(135%) !important; backdrop-filter: blur(21px) saturate(135%) !important; transition: border-color .25s ease,transform .25s ease,box-shadow .25s ease !important; }
+        .action-card:hover { transform: translateY(-2px); border-color: rgba(0,200,150,.34) !important; box-shadow: 0 18px 44px rgba(0,0,0,.27),0 0 12px rgba(0,200,150,.055),inset 0 1px 0 rgba(255,255,255,.08) !important; }
+        .action-title { display: flex; align-items: center; justify-content: center; gap: 11px; color: var(--dapp-gold) !important; font-size: 18px !important; font-weight: 800; line-height: 1.5; padding-bottom: 15px; margin-bottom: 18px !important; border-bottom: 1px solid rgba(255,255,255,.075); }
+        .action-title > i { width: 39px; height: 39px; display: inline-grid; place-items: center; flex: 0 0 39px; border-radius: 13px; color: var(--dapp-mint) !important; font-size: 16px; background: linear-gradient(145deg,rgba(0,200,150,.13),rgba(0,200,150,.045)); border: 1px solid rgba(0,200,150,.20); box-shadow: 0 0 12px rgba(0,200,150,.055),inset 0 1px 0 rgba(255,255,255,.09); }
+        .action-card > div[style*="display: grid"] { gap: 14px !important; }
+        .action-card div[style*="background: #1a1a1a"] { background: rgba(255,255,255,.035) !important; border: 1px solid rgba(255,255,255,.075) !important; border-inline-start: 2px solid rgba(0,200,150,.30) !important; border-radius: 17px !important; -webkit-backdrop-filter: blur(15px) saturate(125%); backdrop-filter: blur(15px) saturate(125%); box-shadow: inset 0 1px 0 rgba(255,255,255,.055) !important; }
+        .action-card div[style*="background: #1a1a1a"] > div:first-child { font-weight: 750 !important; letter-spacing: .01em; }
+        .step-badge { display: inline-flex !important; align-items: center; justify-content: center; min-width: 27px; height: 27px; padding: 0 8px !important; margin-inline-end: 8px !important; border-radius: 9px !important; color: #eafff8 !important; background: rgba(0,200,150,.14) !important; border: 1px solid rgba(0,200,150,.28) !important; font-size: 11px !important; font-weight: 800 !important; box-shadow: 0 0 8px rgba(0,200,150,.06) !important; }
+        .input-group { margin-bottom: 17px !important; }
+        .input-group label { display: flex; align-items: center; gap: 7px; color: #b8d8ce !important; font-size: 12px !important; font-weight: 650; margin-bottom: 8px !important; line-height: 1.65; }
+        .input-group input, .action-card input[type="text"], .action-card input[type="number"] { width: 100%; min-height: 47px; padding: 12px 15px !important; color: #f1f7f4 !important; background: rgba(255,255,255,.045) !important; border: 1px solid rgba(0,200,150,.19) !important; border-radius: 13px !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.055) !important; transition: border-color .2s ease,box-shadow .2s ease,background .2s ease; }
+        .input-group input::placeholder { color: rgba(192,208,232,.43) !important; }
+        .input-group input:hover { border-color: rgba(0,200,150,.30) !important; }
+        .input-group input:focus { outline: none !important; background: rgba(0,200,150,.045) !important; border-color: rgba(0,200,150,.48) !important; box-shadow: 0 0 0 3px rgba(0,200,150,.065),inset 0 1px 0 rgba(255,255,255,.06) !important; }
+        .info-row { align-items: center; gap: 14px; padding: 14px 15px !important; margin: 14px 0 !important; background: rgba(255,255,255,.035) !important; border: 1px solid rgba(255,255,255,.075) !important; border-radius: 14px !important; }
+        .info-label { color: rgba(192,208,232,.72) !important; font-size: 12px !important; }
+        .info-value { color: var(--dapp-gold) !important; font-size: 14px; font-weight: 800; font-variant-numeric: tabular-nums; }
+        .connect-btn, .action-btn, .btn-close-agreement, .dapp-back-btn { position: relative; isolation: isolate; overflow: hidden; border-radius: 13px !important; font-weight: 750 !important; transition: transform .22s ease,border-color .22s ease,background .22s ease,box-shadow .22s ease !important; }
+        .connect-btn, .action-btn { min-height: 46px; padding: 12px 18px !important; color: #dffff5 !important; background: linear-gradient(135deg,rgba(0,200,150,.17),rgba(0,200,150,.075)) !important; border: 1px solid rgba(0,200,150,.34) !important; box-shadow: 0 5px 16px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.08) !important; }
+        .connect-btn:hover, .action-btn:hover { transform: translateY(-1px); background: linear-gradient(135deg,rgba(0,200,150,.23),rgba(0,200,150,.10)) !important; border-color: rgba(0,200,150,.54) !important; box-shadow: 0 7px 19px rgba(0,0,0,.18),0 0 10px rgba(0,200,150,.075),inset 0 1px 0 rgba(255,255,255,.10) !important; }
+        .action-btn.warning { color: #f3df9b !important; background: rgba(212,175,55,.075) !important; border-color: rgba(212,175,55,.34) !important; }
+        .action-btn.warning:hover { background: rgba(212,175,55,.12) !important; border-color: rgba(212,175,55,.52) !important; box-shadow: 0 0 10px rgba(212,175,55,.07) !important; }
+        .action-btn.danger { color: #f2c7b9 !important; background: rgba(202,105,79,.075) !important; border-color: rgba(202,105,79,.30) !important; }
+        .action-btn.danger:hover { background: rgba(202,105,79,.12) !important; border-color: rgba(202,105,79,.48) !important; box-shadow: 0 0 10px rgba(202,105,79,.06) !important; }
+        .action-btn:disabled, .connect-btn:disabled { opacity: .48 !important; cursor: not-allowed !important; transform: none !important; box-shadow: none !important; }
+        .action-btn i, .connect-btn i, .dapp-back-btn i { margin-inline-end: 7px; color: inherit; }
+        .status-text { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 29px; margin-top: 10px !important; padding: 6px 10px; color: rgba(192,208,232,.68) !important; font-size: 11px !important; line-height: 1.55; background: rgba(255,255,255,.025); border: 1px solid rgba(255,255,255,.055); border-radius: 10px; overflow-wrap: anywhere; }
+        .status-text.success { color: #8be8c9 !important; background: rgba(0,200,150,.055); border-color: rgba(0,200,150,.16); }
+        .status-text.error { color: #f0c48a !important; background: rgba(212,175,55,.055); border-color: rgba(212,175,55,.15); }
+        #networkAllowanceStatus, #tokenAllowanceStatus { font-variant-numeric: tabular-nums; }
+        .agreement-modal-overlay { background: rgba(0,0,0,.70) !important; -webkit-backdrop-filter: blur(12px) saturate(115%) !important; backdrop-filter: blur(12px) saturate(115%) !important; padding: clamp(12px,3vw,26px) !important; }
+        .agreement-modal-content { max-width: 760px !important; max-height: min(88vh,900px) !important; padding: clamp(20px,3vw,34px) !important; border-radius: 24px !important; background: linear-gradient(145deg,rgba(13,24,23,.94),rgba(7,13,13,.91)) !important; border: 1px solid rgba(0,200,150,.25) !important; box-shadow: 0 28px 90px rgba(0,0,0,.58),0 0 18px rgba(0,200,150,.055),inset 0 1px 0 rgba(255,255,255,.08) !important; -webkit-backdrop-filter: blur(26px) saturate(135%) !important; backdrop-filter: blur(26px) saturate(135%) !important; }
+        .agreement-modal-header { align-items: center; padding-bottom: 17px !important; margin-bottom: 20px !important; border-bottom: 1px solid rgba(255,255,255,.08) !important; }
+        .agreement-modal-header h2 { display: flex; align-items: center; gap: 11px; color: var(--dapp-gold) !important; font-size: clamp(17px,2.5vw,21px) !important; }
+        .agreement-modal-header h2 i { width: 37px; height: 37px; display: inline-grid; place-items: center; margin: 0 !important; border-radius: 12px; color: var(--dapp-mint) !important; background: rgba(0,200,150,.09); border: 1px solid rgba(0,200,150,.17); }
+        .agreement-modal-close { width: 36px; height: 36px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.10) !important; border-radius: 11px; background: rgba(255,255,255,.04) !important; color: #c7d4d0 !important; font-size: 19px !important; }
+        .agreement-modal-close:hover { color: #fff !important; background: rgba(255,255,255,.08) !important; transform: rotate(90deg); }
+        .agreement-body { color: var(--dapp-copy) !important; font-size: 13px !important; line-height: 1.9 !important; }
+        .agreement-body > p, .agreement-body .box-gold, .agreement-body .box-green { padding: 15px 17px !important; margin: 0 0 12px !important; border-radius: 15px !important; background: rgba(255,255,255,.032) !important; border: 1px solid rgba(255,255,255,.07) !important; border-inline-start: 2px solid rgba(0,200,150,.27) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.045) !important; }
+        .agreement-body .box-gold { border-inline-start-color: rgba(212,175,55,.38) !important; }
+        .agreement-body .box-green { border-inline-start-color: rgba(0,200,150,.38) !important; }
+        .agreement-body .gold { color: #e0c56f !important; }
+        .agreement-body .green { color: #71d9b7 !important; }
+        .agreement-modal-footer { padding-top: 18px !important; margin-top: 18px !important; border-top: 1px solid rgba(255,255,255,.075) !important; }
+        .agreement-modal-footer .btn-close-agreement { min-height: 45px; padding: 11px 25px !important; color: #eafff8 !important; background: rgba(0,200,150,.13) !important; border: 1px solid rgba(0,200,150,.35) !important; font-size: 14px !important; box-shadow: 0 5px 16px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.08) !important; }
+        .agreement-modal-footer .btn-close-agreement:hover { transform: translateY(-1px); background: rgba(0,200,150,.19) !important; box-shadow: 0 0 12px rgba(0,200,150,.08) !important; }
+        .agreement-modal-note { color: rgba(192,208,232,.48) !important; font-size: 10px !important; }
+        .dapp-back-btn { background: rgba(0,200,150,.055) !important; border-color: rgba(0,200,150,.20) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.055) !important; }
+        .dapp-back-btn:hover { box-shadow: 0 0 10px rgba(0,200,150,.07) !important; }
+        button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid rgba(212,175,55,.72) !important; outline-offset: 3px !important; }
+        .action-card a { color: #71d9b7; }
+        .action-card a:hover { color: #b8f5df; }
+        @media (max-width: 768px) { #dappWalletOverview, .wallet-card, .action-card { border-radius: 19px !important; } .wallet-card, .action-card { padding: 19px !important; } .action-grid { grid-template-columns: minmax(0,1fr) !important; gap: 15px !important; } .action-title { font-size: 16px !important; gap: 9px; padding-bottom: 13px; } .action-title > i { width: 35px; height: 35px; flex-basis: 35px; border-radius: 11px; } .info-row { align-items: flex-start; flex-direction: column; gap: 6px; } .agreement-modal-content { max-height: 90dvh !important; border-radius: 19px !important; } .agreement-body > p, .agreement-body .box-gold, .agreement-body .box-green { padding: 13px !important; } }
+        @media (prefers-reduced-motion: reduce) { .action-card, .action-btn, .connect-btn, .dapp-back-btn, .agreement-modal-close { transition: none !important; } .action-card:hover, .action-btn:hover, .connect-btn:hover, .dapp-back-btn:hover { transform: none !important; } }
+        .ownership-guide-card { position: relative; isolation: isolate; overflow: hidden; margin: 0 0 25px; padding: clamp(20px,3vw,29px); border: 1px solid rgba(0,200,150,.23); border-radius: 24px; background: linear-gradient(135deg,rgba(12,27,23,.66),rgba(12,17,19,.58) 55%,rgba(28,23,12,.40)); -webkit-backdrop-filter: blur(24px) saturate(130%); backdrop-filter: blur(24px) saturate(130%); box-shadow: 0 14px 36px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.085); }
+        .ownership-guide-card:before { content: ""; position: absolute; z-index: -1; inset: 0 7% auto; height: 1px; background: linear-gradient(90deg,transparent,rgba(0,200,150,.38),rgba(212,175,55,.42),transparent); pointer-events: none; }
+        .ownership-guide-card:after { content: ""; position: absolute; z-index: -1; width: 230px; height: 230px; right: -115px; top: -145px; border-radius: 50%; background: radial-gradient(circle,rgba(212,175,55,.075),transparent 68%); pointer-events: none; }
+        .ownership-guide-heading { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+        .ownership-guide-icon { width: 49px; height: 49px; flex: 0 0 49px; display: grid; place-items: center; color: #65dabb; font-size: 19px; border-radius: 15px; background: linear-gradient(145deg,rgba(0,200,150,.14),rgba(255,255,255,.035)); border: 1px solid rgba(0,200,150,.24); box-shadow: inset 0 1px 0 rgba(255,255,255,.10),0 4px 14px rgba(0,0,0,.12); }
+        .ownership-guide-heading h2 { margin: 0 0 5px; color: #D4AF37; font-size: clamp(15px,2vw,18px); font-weight: 800; line-height: 1.5; }
+        .ownership-guide-heading p { margin: 0; color: rgba(192,208,232,.72); font-size: 12px; line-height: 1.7; }
+        .ownership-guide-steps { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
+        .ownership-guide-step { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 13px; min-height: 164px; padding: 19px; border-radius: 18px; background: linear-gradient(145deg,rgba(255,255,255,.052),rgba(255,255,255,.018)); border: 1px solid rgba(255,255,255,.085); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: inset 0 1px 0 rgba(255,255,255,.065),0 7px 20px rgba(0,0,0,.10); transition: border-color .22s ease,background .22s ease,transform .22s ease; }
+        .ownership-guide-step:hover { transform: translateY(-2px); background: linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.025)); }
+        .ownership-guide-step.guide-green { border-inline-start: 2px solid rgba(0,200,150,.52); }
+        .ownership-guide-step.guide-gold { border-inline-start: 2px solid rgba(212,175,55,.58); }
+        .ownership-guide-number { position: absolute; top: 14px; inset-inline-end: 16px; color: rgba(220,225,218,.42); font-size: 11px; font-weight: 850; letter-spacing: .12em; }
+        .ownership-guide-step-icon { width: 37px; height: 37px; display: grid; place-items: center; border-radius: 12px; font-size: 14px; }
+        .guide-green .ownership-guide-step-icon { color: #70dfbd; background: rgba(0,200,150,.10); border: 1px solid rgba(0,200,150,.23); }
+        .guide-gold .ownership-guide-step-icon { color: #e4cb7e; background: rgba(212,175,55,.095); border: 1px solid rgba(212,175,55,.25); }
+        .ownership-guide-step p { margin: 0; color: #d0dad5; font-size: 12px; line-height: 1.95; }
+        .ownership-guide-congrats { position: relative; display: flex; align-items: center; gap: 13px; margin-top: 16px; padding: 16px 18px; border-radius: 16px; background: linear-gradient(100deg,rgba(0,200,150,.085),rgba(255,255,255,.025) 52%,rgba(212,175,55,.085)); border: 1px solid rgba(212,175,55,.24); box-shadow: inset 0 1px 0 rgba(255,255,255,.07),0 7px 20px rgba(0,0,0,.10); }
+        .ownership-guide-congrats > i { flex: 0 0 auto; color: #D4AF37; font-size: 19px; }
+        .ownership-guide-congrats p { margin: 0; color: #e5d79f; font-size: 13px; font-weight: 750; line-height: 1.85; }
+        @media (max-width: 760px) { .ownership-guide-card { padding: 18px; border-radius: 20px; } .ownership-guide-steps { grid-template-columns: 1fr; gap: 11px; } .ownership-guide-step { min-height: 0; padding: 16px; } .ownership-guide-congrats { align-items: flex-start; padding: 14px; } }
+        @media (prefers-reduced-motion: reduce) { .ownership-guide-step { transition: none; } .ownership-guide-step:hover { transform: none; } }
+        .contract-bscscan-row { text-align: center; margin: 0 0 15px; font-size: 12px; }
+        .contract-bscscan-link { display: inline-flex; align-items: center; justify-content: center; gap: 8px; color: #00C896; text-decoration: none; font-weight: 600; transition: color .2s ease,text-shadow .2s ease; }
+        .contract-bscscan-link:hover { color: #D4AF37; text-shadow: 0 0 10px rgba(212,175,55,.18); }
+        .contract-reference-card { margin-top: 15px; padding: 14px 17px; border: 1px solid rgba(212,175,55,.24); border-left: 3px solid #D4AF37; border-radius: 16px; background: linear-gradient(135deg,rgba(34,34,34,.76),rgba(15,15,15,.82)); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); box-shadow: 0 10px 28px rgba(0,0,0,.2); }
+        .contract-reference-title { color: #00C896; font-size: 11px; font-weight: 700; margin-bottom: 7px; }
+        .contract-reference-address { color: #D4AF37; font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size: 12px; line-height: 1.7; overflow-wrap: anywhere; }
+        .contract-reference-flow { color: #c0d0e8; font-size: 10px; line-height: 1.8; margin-top: 7px; }
+        .top-bar { background: rgba(10,18,17,.42) !important; -webkit-backdrop-filter: blur(18px) saturate(125%) !important; backdrop-filter: blur(18px) saturate(125%) !important; }
+        .sidebar, .lang-dropdown { background: rgba(8,18,17,.72) !important; -webkit-backdrop-filter: blur(22px) saturate(125%) !important; backdrop-filter: blur(22px) saturate(125%) !important; }
+        .wallet-card, #dappWalletOverview { background: linear-gradient(145deg,rgba(13,25,23,.43),rgba(7,13,13,.31)) !important; border-color: rgba(0,200,150,.20) !important; }
+        .action-card { background: linear-gradient(145deg,rgba(13,24,23,.43),rgba(7,13,13,.31)) !important; border-color: rgba(0,200,150,.19) !important; }
+        .wallet-info, .info-row, .action-card div[style*="background: #1a1a1a"] { background: rgba(255,255,255,.028) !important; }
+        .step-badge { background: rgba(0,200,150,.11) !important; }
+        .input-group input, .action-card input[type="text"], .action-card input[type="number"] { background: rgba(255,255,255,.035) !important; }
+        .dapp-back-btn { background: rgba(0,200,150,.045) !important; }
+        .dapp-back-btn:hover { background: rgba(0,200,150,.11) !important; }
+        .agreement-modal-overlay { background: rgba(0,0,0,.66) !important; }
+        .agreement-modal-content { background: linear-gradient(145deg,rgba(13,24,23,.86),rgba(7,13,13,.82)) !important; -webkit-backdrop-filter: blur(24px) saturate(125%) !important; backdrop-filter: blur(24px) saturate(125%) !important; }
+        .agreement-body > p, .agreement-body .box-gold, .agreement-body .box-green { background: rgba(255,255,255,.026) !important; }
+        .buy-guide-card, .ownership-guide-card, .sell-guide-card { background: linear-gradient(135deg,rgba(12,27,23,.43),rgba(9,16,17,.34) 58%,rgba(28,23,12,.23)) !important; }
+        .buy-guide-step, .ownership-guide-step, .sell-guide-step { background: linear-gradient(145deg,rgba(255,255,255,.038),rgba(255,255,255,.012)) !important; }
+        .buy-guide-step:hover, .ownership-guide-step:hover, .sell-guide-step:hover { background: linear-gradient(145deg,rgba(255,255,255,.052),rgba(255,255,255,.018)) !important; }
+        .buy-guide-congrats, .ownership-guide-congrats, .sell-guide-congrats { background: linear-gradient(100deg,rgba(0,200,150,.055),rgba(255,255,255,.015) 52%,rgba(212,175,55,.05)) !important; }
+        .contract-reference-card { background: linear-gradient(135deg,rgba(34,34,34,.46),rgba(15,15,15,.50)) !important; }
+        .status-text { background: rgba(255,255,255,.018) !important; }
+        .status-text.success { background: rgba(0,200,150,.04) !important; }
+        .status-text.error { background: rgba(212,175,55,.04) !important; }
+    </style>
     <link rel="stylesheet" href="wallet-ui.css">
     <link rel="stylesheet" href="card-hover.css?v=4">
     <script src="card-hover.js?v=1" defer></script>
 </head>
 <body data-dapp-view="ownership">
 <div class="container">
-    
-    <!-- ===== TOP NAV BAR ===== -->
     <div class="top-bar">
         <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
             <img src="logo.png" alt="Fly Infinity DAO" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #D4AF37;">
@@ -1614,11 +315,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             </button>
         </div>
     </div>
-
-    <!-- ===== SIDEBAR OVERLAY ===== -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <!-- ===== SIDEBAR ===== -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <span class="logo-text" style="display: flex; align-items: center; gap: 10px;">
@@ -1627,7 +324,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             </span>
             <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
         </div>
-        
         <div class="sidebar-menu">
             <a href="index.html">
                 <i class="fas fa-gauge-high" aria-hidden="true"></i> <span data-i18n="nav.dashboard">Dashboard</span>
@@ -1666,25 +362,21 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                 <i class="fas fa-clipboard-check" aria-hidden="true"></i> <span data-i18n="nav.audit">Security Audit</span>
             </a>
         </div>
-        
         <div class="sidebar-footer"><span class="sidebar-footer-brand">Fly Infinity DAO</span><span class="sidebar-footer-tagline">Decentralized. Transparent. Forever Rising.</span></div>
     </div>
-
-    <!-- DAPP OPERATIONS HUB -->
     <section class="dapp-hub" id="dappHub">
       <div class="dapp-hub-heading">
         <span class="dapp-eyebrow"><i class="fas fa-cubes"></i> FLY INFINITY DAPP</span>
         <h1 data-i18n="dapp.hubTitle">Fly Infinity Operations</h1>
-        <p data-i18n="dapp.hubIntro">از طریق گزینه های زیر میتوانید عملیات خرید اشتراک مالکیت و خرید فیت یا فروش فیت و یا شرکت در قرعه کشی را انجام دهید</p>
+        <p data-i18n="dapp.hubIntro">From the options below, you can buy ownership shares, buy FIT, sell FIT, or participate in the lottery.</p>
       </div>
       <div class="dapp-operation-grid">
-        <a class="dapp-operation-card ownership" href="dapp-ownership.html"><span class="dapp-card-icon"><i class="fas fa-gem"></i></span><span class="dapp-card-title" data-i18n="dapp.hubOwnershipTitle">Buy Fly Infinity Ownership Shares</span><span class="dapp-card-desc" data-i18n="dapp.hubOwnershipDesc">اشتراک مالکیت فلای اینفینیتی را بخرید و سهامدار اکوسیستم شوید. با خرید اشتراک معادل 2$ فیت رایگان بعنوان هدیه ورود دریافت میکنید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
-        <a class="dapp-operation-card buy" href="dapp-buy-fit.html"><span class="dapp-card-icon"><i class="fas fa-cart-shopping"></i></span><span class="dapp-card-title" data-i18n="dapp.hubBuyTitle">Buy FIT</span><span class="dapp-card-desc" data-i18n="dapp.hubBuyDesc">میتوانید توکن فیت خود بصورت آنی با پرداخت دای خرید کنید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
-        <a class="dapp-operation-card sell" href="dapp-sell-fit.html"><span class="dapp-card-icon"><i class="fas fa-arrow-trend-up"></i></span><span class="dapp-card-title" data-i18n="dapp.hubSellTitle">Sell FIT</span><span class="dapp-card-desc" data-i18n="dapp.hubSellDesc">میتوانید توکن فیت خود را بدون هیچ محدودیتی در کسری از ثانیه تمام نقد کنید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
-        <a class="dapp-operation-card gift" href="dapp-gift.html"><span class="dapp-card-icon"><i class="fas fa-gift"></i></span><span class="dapp-card-title">Fly Infinity Gift</span><span class="dapp-card-desc" data-i18n="dapp.hubGiftDesc">اگر فقط یک سرمایه گذار هستید میتوانید در جوایز 5 دلاری شرکت کنید و تا سقف مشخصی از این جوایز بهرهمند شوید</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
+        <a class="dapp-operation-card ownership" href="dapp-ownership.html"><span class="dapp-card-icon"><i class="fas fa-gem"></i></span><span class="dapp-card-title" data-i18n="dapp.hubOwnershipTitle">Buy Fly Infinity Ownership Shares</span><span class="dapp-card-desc" data-i18n="dapp.hubOwnershipDesc">Buy Fly Infinity ownership shares and become a stakeholder in the ecosystem. With each share purchase, you receive $2 in FIT as a welcome gift.</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
+        <a class="dapp-operation-card buy" href="dapp-buy-fit.html"><span class="dapp-card-icon"><i class="fas fa-cart-shopping"></i></span><span class="dapp-card-title" data-i18n="dapp.hubBuyTitle">Buy FIT</span><span class="dapp-card-desc" data-i18n="dapp.hubBuyDesc">You can buy your FIT tokens instantly by paying DAI.</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
+        <a class="dapp-operation-card sell" href="dapp-sell-fit.html"><span class="dapp-card-icon"><i class="fas fa-arrow-trend-up"></i></span><span class="dapp-card-title" data-i18n="dapp.hubSellTitle">Sell FIT</span><span class="dapp-card-desc" data-i18n="dapp.hubSellDesc">You can cash out your FIT tokens in a fraction of a second without any restrictions.</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
+        <a class="dapp-operation-card gift" href="dapp-gift.html"><span class="dapp-card-icon"><i class="fas fa-gift"></i></span><span class="dapp-card-title">Fly Infinity Gift</span><span class="dapp-card-desc" data-i18n="dapp.hubGiftDesc">If you are only an investor, you can participate in $5 rewards and benefit from them up to a certain limit.</span><span class="dapp-card-action"><span data-i18n="dapp.openOperation">Open operation</span><i class="fas fa-arrow-right"></i></span></a>
       </div>
     </section>
-    <!-- Wallet Overview -->
     <div class="wallet-card" id="dappWalletOverview"><div class="dapp-wallet-heading" data-i18n="dapp.walletOverview">Wallet Overview</div>
         <div id="walletStatus">
             <button id="connectBtn" class="connect-btn"><i class="fas fa-wallet"></i> <span data-i18n="dapp.connect">Connect Wallet</span></button>
@@ -1699,8 +391,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             </div>
         </div>
     </div>
-
-    <!-- Ownership purchase guide -->
     <section class="ownership-guide-card" aria-labelledby="ownershipGuideTitle">
       <div class="ownership-guide-heading">
         <span class="ownership-guide-icon"><i class="fas fa-route"></i></span>
@@ -1731,12 +421,10 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         <p data-i18n="dapp.ownershipGuideCongrats">Congratulations! You are now one of the shareholders of the Fly Infinity ecosystem.</p>
       </div>
     </section>
-
     <section class="dapp-operation-view" id="dappOwnershipOperation">
 <div class="dapp-back-row"><a class="dapp-back-btn" href="dapp.html"><i class="fas fa-arrow-left"></i><span data-i18n="dapp.backToDapp">Back to DApp</span></a></div>
-    <!-- ==================== SECTION 1: REGISTER IN NETWORK ==================== -->
     <div class="action-card" style="margin-bottom: 25px;">
-        <div class="action-title"><i class="fas fa-charging-station"></i> <span data-i18n="dapp.buyShares">💎 Buy Fly Infinity Ownership Shares</span></div>
+        <div class="action-title"><i class="fas fa-charging-station"></i> <span data-i18n="dapp.buyShares">Buy Fly Infinity Ownership Shares</span></div>
         <p class="contract-bscscan-row">
             <a class="contract-bscscan-link" href="https://bscscan.com/address/0x7f1cb4fce7cb3b6c612c4a7dd123d3865640dc1b#code" target="_blank" rel="noopener noreferrer">
                 <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
@@ -1744,17 +432,13 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             </a>
         </p>
         <p style="color:#888; font-size:12px; margin-bottom:15px; text-align:center;" data-i18n="dapp.followSteps">Follow these 3 steps to become a network owner</p>
-        
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
-            <!-- Step 1 -->
             <div style="background: #1a1a1a; border-radius: 20px; padding: 20px; border-left: 3px solid #00C896;">
                 <div style="color:#00C896; font-size:14px; margin-bottom:10px;"><span class="step-badge">1</span> <span data-i18n="dapp.step1">Approve DAI</span></div>
                 <p style="color:#888; font-size:11px; margin-bottom:15px;" data-i18n="dapp.step1desc">Allow Fly Infinity Network contract to spend DAI</p>
                 <button id="approveNetworkBtn" class="action-btn" style="margin-top:0;" data-i18n="dapp.approveDai">Approve DAI</button>
                 <div id="networkApproveStatus" class="status-text" data-i18n="dapp.notApproved">Not approved</div>
             </div>
-            
-            <!-- Step 2 -->
             <div style="background: #1a1a1a; border-radius: 20px; padding: 20px; border-left: 3px solid #D4AF37;">
                 <div style="color:#D4AF37; font-size:14px; margin-bottom:10px;"><span class="step-badge">2</span> <span data-i18n="dapp.step2">Agreement Road Map</span></div>
                 <p style="color:#888; font-size:11px; margin-bottom:15px;" data-i18n="dapp.step2desc">Read and accept the network agreement</p>
@@ -1763,12 +447,10 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                 </button>
                 <div id="agreementStatus" class="status-text" data-i18n="dapp.pending">Pending</div>
             </div>
-            
-            <!-- Step 3 -->
             <div style="background: #1a1a1a; border-radius: 20px; padding: 20px; border-left: 3px solid #00C896;">
                 <div style="color:#00C896; font-size:14px; margin-bottom:10px;"><span class="step-badge">3</span> <span data-i18n="dapp.step3">Become Owner</span></div>
                 <div class="input-group" style="margin-bottom:15px;">
-                    <label data-i18n="dapp.referrerAddress">👤 Referrer Address (Applicant)</label>
+                    <label data-i18n="dapp.referrerAddress">Referrer Address (Applicant)</label>
                     <input type="text" id="referrerAddress" placeholder="0x..." value="">
                 </div>
                 <button id="becomeOwnerBtn" class="action-btn" data-i18n="dapp.becomeOwner">Become Owner</button>
@@ -1776,129 +458,104 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             </div>
         </div>
         <div class="contract-reference-card">
-            <div class="contract-reference-title" data-i18n="dapp.networkContract">📜 Fly Infinity Network Smart Contract</div>
+            <div class="contract-reference-title" data-i18n="dapp.networkContract">Fly Infinity Network Smart Contract</div>
             <div class="contract-reference-address">0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B</div>
-            <div class="contract-reference-flow" data-i18n="dapp.ownershipContractFlow">Step 1: Approve DAI → Step 2: Review and accept the agreement → Step 3: Complete ownership registration.</div>
+            <div class="contract-reference-flow" data-i18n="dapp.ownershipContractFlow">Step 1: Approve DAI -> Step 2: Review and accept the agreement -> Step 3: Complete ownership registration.</div>
         </div>
     </div>
-
 </section>
-
     <section class="dapp-operation-view" id="dappTokenOperations">
 <div class="dapp-back-row"><a class="dapp-back-btn" href="dapp.html"><i class="fas fa-arrow-left"></i><span data-i18n="dapp.backToDapp">Back to DApp</span></a></div>
-    <!-- ==================== SECTION 2: BUY & SELL TOKEN ==================== -->
     <div class="action-grid">
-        <!-- Buy FIT -->
         <div class="action-card" id="dappBuyOperation">
-            <div class="action-title"><i class="fas fa-shopping-cart"></i> 🟢 <span data-i18n="dapp.buyFit">Buy FIT</span></div>
+            <div class="action-title"><i class="fas fa-shopping-cart"></i> <span data-i18n="dapp.buyFit">Buy FIT</span></div>
             <p style="color:#888; font-size:11px; margin-bottom:15px;" data-i18n="dapp.buyDesc">Allow Fly Infinity Token contract to spend DAI, then buy</p>
-            
             <div class="input-group">
                 <button id="approveTokenBtn" class="action-btn" style="margin-top:0;" data-i18n="dapp.approveDai">Approve DAI</button>
                 <div id="tokenApproveStatus" class="status-text" data-i18n="dapp.notApproved">Not approved</div>
             </div>
-            
             <div class="input-group">
-                <label data-i18n="dapp.buyerAddress">👤 Buyer Wallet Address</label>
+                <label data-i18n="dapp.buyerAddress">Buyer Wallet Address</label>
                 <input type="text" id="buyerAddress" placeholder="0x... (your wallet address)">
             </div>
-            
             <div class="input-group">
-                <label data-i18n="dapp.amountToBuy">💰 Amount (DAI) to Buy</label>
+                <label data-i18n="dapp.amountToBuy">Amount (DAI) to Buy</label>
                 <input type="number" id="buyAmount" placeholder="Enter DAI amount" step="10">
             </div>
-            
             <div class="info-row"><span class="info-label" data-i18n="dapp.youReceive">You will receive</span><span class="info-value" id="buyEstimate">— FIT</span></div>
             <button id="buyBtn" class="action-btn"><i class="fas fa-arrow-down"></i> <span data-i18n="dapp.buyFit">Buy FIT</span></button>
             <div id="buyStatus" class="status-text">—</div>
         </div>
-
-        <!-- Sell FIT -->
         <div class="action-card" id="dappSellOperation">
-            <div class="action-title"><i class="fas fa-chart-line"></i> 🔴 <span data-i18n="dapp.sellFit">Sell FIT</span></div>
-            
+            <div class="action-title"><i class="fas fa-chart-line"></i> <span data-i18n="dapp.sellFit">Sell FIT</span></div>
             <div class="input-group">
-                <label data-i18n="dapp.amountToSell">🪙 Amount (FIT) to Sell</label>
+                <label data-i18n="dapp.amountToSell">Amount (FIT) to Sell</label>
                 <input type="number" id="sellAmount" placeholder="Enter FIT amount" step="100">
             </div>
-            
             <div class="info-row"><span class="info-label" data-i18n="dapp.youReceive">You will receive</span><span class="info-value" id="sellEstimate">— DAI</span></div>
             <button id="sellBtn" class="action-btn danger"><i class="fas fa-arrow-up"></i> <span data-i18n="dapp.sellFit">Sell FIT</span></button>
             <div id="sellStatus" class="status-text">—</div>
         </div>
     </div>
-
 </section>
-
     <section class="dapp-operation-view" id="dappGiftOperation">
 <div class="dapp-back-row"><a class="dapp-back-btn" href="dapp.html"><i class="fas fa-arrow-left"></i><span data-i18n="dapp.backToDapp">Back to DApp</span></a></div>
-    <!-- ==================== SECTION 3: GIFT CONTRACT ==================== -->
     <div class="action-card" style="margin-bottom: 25px;">
-        <div class="action-title"><i class="fas fa-gift"></i> <span data-i18n="dapp.giftTitle">🎁 Join Fly Infinity Gift Smart Contract & Participate in $5 Prize Lottery</span></div>
+        <div class="action-title"><i class="fas fa-gift"></i> <span data-i18n="dapp.giftTitle">Join Fly Infinity Gift Smart Contract & Participate in $5 Prize Lottery</span></div>
         <p style="color:#888; font-size:12px; margin-bottom:15px; text-align:center;">
             <a href="https://bscscan.com/address/0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8#writeContract" target="_blank" style="color: #00C896; text-decoration: none;">
                 <i class="fas fa-external-link-alt"></i> <span data-i18n="dapp.viewContract">View Contract on BscScan</span>
             </a>
         </p>
-        
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
-            
-            <!-- Join Gift Contract -->
             <div style="background: #1a1a1a; border-radius: 16px; padding: 16px; border-left: 3px solid #D4AF37;">
                 <div style="color:#D4AF37; font-size:13px; margin-bottom:8px;">
                     <span class="step-badge" style="background: #D4AF37; color: #0F0F0F; font-size: 10px; padding: 1px 8px;">1</span> 
                     <span data-i18n="dapp.joinContract">Join Contract (One-time)</span>
                 </div>
                 <div class="input-group" style="margin-bottom:10px;">
-                    <label style="color: #D4AF37; font-size: 11px;" data-i18n="dapp.ownerAddressJoin">👤 Owner Address to Join</label>
+                    <label style="color: #D4AF37; font-size: 11px;" data-i18n="dapp.ownerAddressJoin">Owner Address to Join</label>
                     <input type="text" id="joinGiftAddress" placeholder="0x... (address to join)" value="" style="padding: 8px 12px; font-size: 13px;">
                 </div>
                 <p style="color:#888; font-size:10px; margin-bottom:10px;">
                     <span class="highlight" style="color: #D4AF37;" data-i18n="dapp.function">Function:</span> Join_Fly_Infinity_Gift (0x2852174f)<br>
-                    <span style="color: #888; font-size: 9px;" data-i18n="dapp.oneTime">⚠️ One-time process, forever.</span>
+                    <span style="color: #888; font-size: 9px;" data-i18n="dapp.oneTime">One-time process, forever.</span>
                 </p>
                 <button id="joinGiftBtn" class="action-btn" style="border-color: #D4AF37; color: #D4AF37; padding: 10px; font-size: 14px;" data-i18n="dapp.joinContractBtn">
                     <i class="fas fa-handshake"></i> Join Contract
                 </button>
                 <div id="joinGiftStatus" class="status-text" style="font-size: 11px;" data-i18n="dapp.notJoined">Not joined</div>
             </div>
-            
-            <!-- Free Gift Lottery -->
             <div style="background: #1a1a1a; border-radius: 16px; padding: 16px; border-left: 3px solid #00C896;">
                 <div style="color:#00C896; font-size:13px; margin-bottom:8px;">
                     <span class="step-badge" style="font-size: 10px; padding: 1px 8px;">2</span> 
                     <span data-i18n="dapp.giftLottery">$5 Gift Lottery</span>
                 </div>
                 <div class="input-group" style="margin-bottom:10px;">
-                    <label style="color: #00C896; font-size: 11px;" data-i18n="dapp.ownerAddressParticipate">👤 Owner Address to Participate</label>
+                    <label style="color: #00C896; font-size: 11px;" data-i18n="dapp.ownerAddressParticipate">Owner Address to Participate</label>
                     <input type="text" id="freeGiftAddress" placeholder="0x... (address to participate)" value="" style="padding: 8px 12px; font-size: 13px;">
                 </div>
                 <p style="color:#888; font-size:10px; margin-bottom:10px;">
                     <span class="highlight" style="color: #00C896;" data-i18n="dapp.function">Function:</span> Free_Fly_Infinity_Gift (0xb4aecd59)<br>
-                    <span style="color: #888; font-size: 9px;" data-i18n="dapp.winGift">🎁 Win a $5 gift</span>
+                    <span style="color: #888; font-size: 9px;" data-i18n="dapp.winGift">Win a $5 gift</span>
                 </p>
                 <button id="freeGiftBtn" class="action-btn" style="padding: 10px; font-size: 14px;" data-i18n="dapp.participate">
                     <i class="fas fa-ticket-alt"></i> Participate in Lottery
                 </button>
                 <div id="freeGiftStatus" class="status-text" style="font-size: 11px;" data-i18n="dapp.notParticipated">Not participated</div>
             </div>
-            
         </div>
-        
-        <!-- Gift Contract Info -->
         <div style="margin-top: 15px; background: #1a1a1a; border-radius: 14px; padding: 12px 16px; border-left: 3px solid #D4AF37;">
-            <div style="color:#00C896; font-size:10px; margin-bottom:3px;" data-i18n="dapp.giftContract">📜 Gift Smart Contract</div>
+            <div style="color:#00C896; font-size:10px; margin-bottom:3px;" data-i18n="dapp.giftContract">Gift Smart Contract</div>
             <div style="font-family:monospace; font-size:11px; color:#D4AF37; word-break:break-all;">0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8</div>
             <div style="color:#888; font-size:9px; margin-top:5px;">
                 <i class="fas fa-info-circle"></i> 
-                <span style="color: #c0d0e8;" data-i18n="dapp.step1Label">Step 1:</span> <span data-i18n="dapp.joinOneTime">Join (one-time)</span> → 
+                <span style="color: #c0d0e8;" data-i18n="dapp.step1Label">Step 1:</span> <span data-i18n="dapp.joinOneTime">Join (one-time)</span> -> 
                 <span style="color: #c0d0e8;" data-i18n="dapp.step2Label">Step 2:</span> <span data-i18n="dapp.participateLottery">Participate in lottery</span>
             </div>
         </div>
     </div>
-
 </section>
-
     <div class="footer">
         <div class="footer-links">
             <a href="index.html"><i class="fas fa-gauge-high" aria-hidden="true"></i> <span data-i18n="nav.dashboard">Dashboard</span></a>
@@ -1927,61 +584,48 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         </div>
         <p class="footer-tagline" data-i18n-html="footer.tagline"></p>
     </div>
-
-
-<!-- ===== AGREEMENT MODAL - FULLY TRANSLATED ===== -->
 <div class="agreement-modal-overlay" id="agreementModal">
     <div class="agreement-modal-content">
         <div class="agreement-modal-header">
             <h2><i class="fas fa-file-signature"></i><span data-i18n="dapp.agreementTitle">Agreement Road Map</span></h2>
             <button class="agreement-modal-close" id="closeAgreementModalBtn"><i class="fas fa-times"></i></button>
         </div>
-        
         <div class="agreement-body">
-            <p><strong class="gold">📌 Preamble</strong><br><span data-i18n="dapp.agreementP1">By entering the Fly Infinity ecosystem, participants acknowledge their role as strategic investors within a decentralized financial framework. Acquisition of the native digital asset, FIT, is contingent upon the prior purchase of a Fly Infinity ownership share. Upon obtaining this share, participants are granted the right to acquire FIT tokens in varying amounts, ranging from $1 to $100 per transaction, either incrementally or in a single transaction, based on their discretion and investment strategy.</span></p>
-            
+            <p><strong class="gold">Preamble</strong><br><span data-i18n="dapp.agreementP1">By entering the Fly Infinity ecosystem, participants acknowledge their role as strategic investors within a decentralized financial framework. Acquisition of the native digital asset, FIT, is contingent upon the prior purchase of a Fly Infinity ownership share. Upon obtaining this share, participants are granted the right to acquire FIT tokens in varying amounts, ranging from $1 to $100 per transaction, either incrementally or in a single transaction, based on their discretion and investment strategy.</span></p>
             <div class="box-gold">
-                <p><strong class="gold">💎 Ownership Share – Lifetime, Non-Refundable</strong><br><span data-i18n="dapp.agreementP2">The capital contributed toward the acquisition of an ownership share constitutes a non-recoverable commitment. This contribution is not subject to withdrawal or refund under any circumstances. However, this share confers perpetual membership within the network, requiring no further renewal, top-up, or recurring fees throughout the participant's engagement with the ecosystem.</span></p>
+                <p><strong class="gold">Ownership Share - Lifetime, Non-Refundable</strong><br><span data-i18n="dapp.agreementP2">The capital contributed toward the acquisition of an ownership share constitutes a non-recoverable commitment. This contribution is not subject to withdrawal or refund under any circumstances. However, this share confers perpetual membership within the network, requiring no further renewal, top-up, or recurring fees throughout the participant's engagement with the ecosystem.</span></p>
             </div>
-            
             <div class="box-green">
-                <p><strong class="green">💰 FIT Digital Asset – Fully Liquid</strong><br><span data-i18n="dapp.agreementP3">In contrast to the ownership share, any FIT tokens acquired through the platform remain entirely liquid and redeemable at the participant's discretion. There are no restrictions on withdrawal, and participants may convert their FIT holdings to value at any time, without delay or penalty.</span></p>
+                <p><strong class="green">FIT Digital Asset - Fully Liquid</strong><br><span data-i18n="dapp.agreementP3">In contrast to the ownership share, any FIT tokens acquired through the platform remain entirely liquid and redeemable at the participant's discretion. There are no restrictions on withdrawal, and participants may convert their FIT holdings to value at any time, without delay or penalty.</span></p>
             </div>
-            
             <div class="box-gold">
-                <p><strong class="gold">🎁 Gift Allocation – Lottery-Based Rewards</strong><br><span data-i18n="dapp.agreementP4">Each ownership share entitles the participant to a predetermined allocation of lottery-based rewards. Specifically, participants may win up to twenty (20) individual gifts, each valued at $5, through the platform's transparent and automated reward distribution mechanism.</span></p>
+                <p><strong class="gold">Gift Allocation - Lottery-Based Rewards</strong><br><span data-i18n="dapp.agreementP4">Each ownership share entitles the participant to a predetermined allocation of lottery-based rewards. Specifically, participants may win up to twenty (20) individual gifts, each valued at $5, through the platform's transparent and automated reward distribution mechanism.</span></p>
             </div>
-            
             <div class="box-green">
-                <p><strong class="green">🎁 Welcome Bonus – Instant Token Credit</strong><br><span data-i18n="dapp.agreementP5">Upon successful registration and activation of an ownership share, a welcome bonus equivalent to $2 in FIT tokens is instantly and automatically credited to the participant's wallet. This bonus serves as an introductory benefit and is processed at the exact moment of network entry.</span></p>
+                <p><strong class="green">Welcome Bonus - Instant Token Credit</strong><br><span data-i18n="dapp.agreementP5">Upon successful registration and activation of an ownership share, a welcome bonus equivalent to $2 in FIT tokens is instantly and automatically credited to the participant's wallet. This bonus serves as an introductory benefit and is processed at the exact moment of network entry.</span></p>
             </div>
-            
             <div class="box-gold">
-                <p><strong class="gold">🔗 Referral Identifier – Decentralized Invitation System</strong><br><span data-i18n="dapp.agreementP6">Each ownership share generates a unique and immutable referral identifier. This identifier is intrinsically linked to the participant's BNB wallet address, which functions as their official referral code. Through active community expansion and network development, participants are empowered to progressively unlock elevated purchase caps, enabling the acquisition of larger volumes of FIT tokens in subsequent transactions.</span></p>
+                <p><strong class="gold">Referral Identifier - Decentralized Invitation System</strong><br><span data-i18n="dapp.agreementP6">Each ownership share generates a unique and immutable referral identifier. This identifier is intrinsically linked to the participant's BNB wallet address, which functions as their official referral code. Through active community expansion and network development, participants are empowered to progressively unlock elevated purchase caps, enabling the acquisition of larger volumes of FIT tokens in subsequent transactions.</span></p>
                 <p style="font-size: 12px; color: #888; margin-top: 8px;">
-                    📖 <em><span data-i18n="dapp.agreementWhitepaper">For a comprehensive understanding of the tiered purchase structure and referral mechanics, please consult the official</span> <a href="whitepaper.html" style="color: #00C896; text-decoration: none;">White Paper</a>.</em>
+                    <em><span data-i18n="dapp.agreementWhitepaper">For a comprehensive understanding of the tiered purchase structure and referral mechanics, please consult the official</span> <a href="whitepaper.html" style="color: #00C896; text-decoration: none;">White Paper</a>.</em>
                 </p>
             </div>
-            
             <div class="box-green">
-                <p><strong class="green">💰 Developer Rewards – Performance-Based Compensation</strong><br><span data-i18n="dapp.agreementP7">In recognition of network growth and community development, the ecosystem allocates monetary rewards in USD to qualifying participants. These rewards are processed and settled on an hourly basis, ensuring timely and transparent compensation for those contributing to the expansion of the Fly Infinity network.</span></p>
+                <p><strong class="green">Developer Rewards - Performance-Based Compensation</strong><br><span data-i18n="dapp.agreementP7">In recognition of network growth and community development, the ecosystem allocates monetary rewards in USD to qualifying participants. These rewards are processed and settled on an hourly basis, ensuring timely and transparent compensation for those contributing to the expansion of the Fly Infinity network.</span></p>
             </div>
-            
             <div class="box-gold">
-                <p><strong class="gold">🔒 Decentralized Infrastructure – Security &amp; Anonymity</strong><br><span data-i18n="dapp.agreementP8">All transactions, interactions, and data exchanges within the Fly Infinity ecosystem are executed through a fully decentralized architecture. Participant assets, subscription records, and personal information are securely stored on the blockchain, ensuring the highest standards of security, transparency, and pseudonymity. No centralized entity has access to or control over user data or funds.</span></p>
+                <p><strong class="gold">Decentralized Infrastructure - Security &amp; Anonymity</strong><br><span data-i18n="dapp.agreementP8">All transactions, interactions, and data exchanges within the Fly Infinity ecosystem are executed through a fully decentralized architecture. Participant assets, subscription records, and personal information are securely stored on the blockchain, ensuring the highest standards of security, transparency, and pseudonymity. No centralized entity has access to or control over user data or funds.</span></p>
             </div>
         </div>
-        
         <div class="agreement-modal-footer">
             <button class="btn-close-agreement" id="closeAgreementBtn"><i class="fas fa-check-circle"></i> <span data-i18n="dapp.understandClose">I Understand &amp; Close</span></button>
         </div>
-        
         <p class="agreement-modal-note" data-i18n="dapp.agreeTerms">By continuing, you agree to the terms outlined above.</p>
     </div>
 </div>
+<script type="module">
+    import { openConnectModal, getSigner, modal } from './wallet-connect.js';
 
-<script>
-    // ==================== CONTRACT ADDRESSES ====================
     const FIT_TOKEN_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
     const FIT_NETWORK_ADDRESS = "0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B";
     const DAI_TOKEN_ADDRESS = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
@@ -2009,28 +653,67 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     let fitTokenContract, fitNetworkContract, daiContract;
     let userAddress = null;
     let currentPrice = 0;
-    
-    async function initContracts(web3Provider) {
-        provider = new ethers.providers.Web3Provider(web3Provider);
-        signer = provider.getSigner();
-        fitTokenContract = new ethers.Contract(FIT_TOKEN_ADDRESS, FIT_TOKEN_ABI, signer);
-        fitNetworkContract = new ethers.Contract(FIT_NETWORK_ADDRESS, FIT_NETWORK_ABI, signer);
-        daiContract = new ethers.Contract(DAI_TOKEN_ADDRESS, DAI_ABI, signer);
-        userAddress = await signer.getAddress();
-        
+
+    window.connectWallet = function() {
+        openConnectModal();
+    };
+
+    window.disconnectWallet = function() {
+        modal.disconnect();
+    };
+
+    async function initContractsWithSigner() {
+        if (!signer) return false;
+        try {
+            provider = signer.provider;
+            fitTokenContract = new ethers.Contract(FIT_TOKEN_ADDRESS, FIT_TOKEN_ABI, signer);
+            fitNetworkContract = new ethers.Contract(FIT_NETWORK_ADDRESS, FIT_NETWORK_ABI, signer);
+            daiContract = new ethers.Contract(DAI_TOKEN_ADDRESS, DAI_ABI, signer);
+            return true;
+        } catch (e) {
+            console.error("Error initializing contracts:", e);
+            return false;
+        }
+    }
+
+    window.addEventListener('walletStateChanged', async (e) => {
+        if (e.detail.isConnected && e.detail.address) {
+            userAddress = e.detail.address;
+            signer = await getSigner();
+            if (!signer) {
+                setTimeout(async () => {
+                    signer = await getSigner();
+                    if (signer) {
+                        await initContractsWithSigner();
+                        updateUI();
+                    }
+                }, 500);
+                return;
+            }
+            const initialized = await initContractsWithSigner();
+            if (initialized) {
+                updateUI();
+            }
+        } else {
+            userAddress = null;
+            signer = null;
+            provider = null;
+            fitTokenContract = null;
+            fitNetworkContract = null;
+            daiContract = null;
+            document.getElementById("walletStatus").style.display = "block";
+            document.getElementById("walletInfo").style.display = "none";
+        }
+    });
+
+    async function updateUI() {
         document.getElementById("buyerAddress").value = userAddress;
-        // Referrer address must be entered manually by the user.
-        
         document.getElementById("walletAddress").innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
         document.getElementById("walletStatus").style.display = "none";
         document.getElementById("walletInfo").style.display = "block";
-        
         await loadBalances();
         await loadPrice();
         await checkAllAllowances();
-        
-        document.getElementById("buyAmount").addEventListener("input", updateBuyEstimate);
-        document.getElementById("sellAmount").addEventListener("input", updateSellEstimate);
     }
     
     async function loadBalances() {
@@ -2064,7 +747,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                 if (document.getElementById("networkAllowanceStatus")) document.getElementById("networkAllowanceStatus").innerHTML = "❌ Not approved";
                 document.getElementById("networkApproveStatus").innerHTML = "⚠️ Need approval";
             }
-            
             let tokenAllowance = await daiContract.allowance(userAddress, FIT_TOKEN_ADDRESS);
             let tokenAllowanceNum = parseFloat(ethers.utils.formatEther(tokenAllowance));
             if (tokenAllowanceNum >= 1000) {
@@ -2105,68 +787,56 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         if (type === "error") el.classList.add("error");
     }
     
-    // ==================== APPROVE FUNCTIONS ====================
-    
     async function approveNetworkDAI() {
-        if (!userAddress) {
-            setStatus("networkApproveStatus", "⚠️ Connect wallet first", "error");
+        if (!userAddress || !daiContract) {
+            setStatus("networkApproveStatus", "Connect wallet first", "error");
             return;
         }
-        
         try {
-            setStatus("networkApproveStatus", "⏳ Approving...", "");
+            setStatus("networkApproveStatus", "Approving...", "");
             let amount = ethers.utils.parseEther("100");
             const tx = await daiContract.approve(FIT_NETWORK_ADDRESS, amount);
-            setStatus("networkApproveStatus", "⏳ Waiting for confirmation...", "");
+            setStatus("networkApproveStatus", "Waiting for confirmation...", "");
             await tx.wait();
-            setStatus("networkApproveStatus", "✅ Approved DAI for Network!", "success");
+            setStatus("networkApproveStatus", "Approved DAI for Network!", "success");
             await checkAllAllowances();
         } catch(e) {
             console.error("Approve Network Error:", e);
-            setStatus("networkApproveStatus", "❌ Error: " + e.message, "error");
+            setStatus("networkApproveStatus", "Error: " + e.message, "error");
         }
     }
     
     async function approveTokenDAI() {
-        if (!userAddress) {
-            setStatus("tokenApproveStatus", "⚠️ Connect wallet first", "error");
+        if (!userAddress || !daiContract) {
+            setStatus("tokenApproveStatus", "Connect wallet first", "error");
             return;
         }
-        
         try {
-            setStatus("tokenApproveStatus", "⏳ Approving...", "");
+            setStatus("tokenApproveStatus", "Approving...", "");
             let amount = ethers.utils.parseEther("1000");
             const tx = await daiContract.approve(FIT_TOKEN_ADDRESS, amount);
-            setStatus("tokenApproveStatus", "⏳ Waiting for confirmation...", "");
+            setStatus("tokenApproveStatus", "Waiting for confirmation...", "");
             await tx.wait();
-            setStatus("tokenApproveStatus", "✅ Approved DAI for Token!", "success");
+            setStatus("tokenApproveStatus", "Approved DAI for Token!", "success");
             await checkAllAllowances();
         } catch(e) {
             console.error("Approve Token Error:", e);
-            setStatus("tokenApproveStatus", "❌ Error: " + e.message, "error");
+            setStatus("tokenApproveStatus", "Error: " + e.message, "error");
         }
     }
     
-    // ==================== REGISTER FUNCTIONS ====================
-    
     async function becomeOwner() {
         let referrer = document.getElementById("referrerAddress").value.trim();
-        
-        if (!userAddress) {
-            setStatus("ownerStatus", "⚠️ Connect wallet first", "error");
+        if (!userAddress || !fitNetworkContract) {
+            setStatus("ownerStatus", "Connect wallet first", "error");
             return;
         }
-        
         if (!referrer || !ethers.utils.isAddress(referrer)) {
-            setStatus("ownerStatus", "⚠️ Please enter a valid referrer address", "error");
+            setStatus("ownerStatus", "Please enter a valid referrer address", "error");
             return;
         }
-        
-        // ❌ Connected wallet compatibility check removed - now you can register for any address
-        
         try {
-            setStatus("ownerStatus", "⏳ Registering...", "");
-            
+            setStatus("ownerStatus", "Registering...", "");
             let gasEstimate;
             try {
                 gasEstimate = await fitNetworkContract.estimateGas.BeCome_Owner(referrer);
@@ -2175,154 +845,86 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                 console.log("Gas estimation failed, using manual gas limit");
                 gasEstimate = 500000;
             }
-            
-            const tx = await fitNetworkContract.BeCome_Owner(referrer, {
-                gasLimit: gasEstimate
-            });
-            
-            setStatus("ownerStatus", "⏳ Waiting for confirmation...", "");
+            const tx = await fitNetworkContract.BeCome_Owner(referrer, { gasLimit: gasEstimate });
+            setStatus("ownerStatus", "Waiting for confirmation...", "");
             await tx.wait();
-            setStatus("ownerStatus", "✅ Successfully registered as Owner!", "success");
+            setStatus("ownerStatus", "Successfully registered as Owner!", "success");
         } catch(e) {
             console.error("Become Owner Error:", e);
             if (e.message.includes("Just Wallet")) {
-                setStatus("ownerStatus", "❌ This function can only be called from a standard wallet (EOA). Please use MetaMask, Trust Wallet, or TokenPocket.", "error");
+                setStatus("ownerStatus", "This function can only be called from a standard wallet (EOA). Please use MetaMask, Trust Wallet, or TokenPocket.", "error");
             } else if (e.message.includes("execution reverted")) {
-                setStatus("ownerStatus", "❌ Transaction reverted. Please check requirements: Referrer must exist, you must have signed agreement, etc.", "error");
+                setStatus("ownerStatus", "Transaction reverted. Please check requirements: Referrer must exist, you must have signed agreement, etc.", "error");
             } else {
-                setStatus("ownerStatus", "❌ Error: " + e.message, "error");
+                setStatus("ownerStatus", "Error: " + e.message, "error");
             }
         }
     }
     
-    // ==================== BUY/SELL FUNCTIONS ====================
-    
     async function buyFIT() {
         let buyer = document.getElementById("buyerAddress").value.trim();
         let amount = parseFloat(document.getElementById("buyAmount").value);
-        
-        if (!userAddress) {
-            setStatus("buyStatus", "⚠️ Connect wallet first", "error");
+        if (!userAddress || !fitTokenContract) {
+            setStatus("buyStatus", "Connect wallet first", "error");
             return;
         }
-        
         if (!buyer || !ethers.utils.isAddress(buyer)) {
-            setStatus("buyStatus", "⚠️ Please enter a valid buyer address", "error");
+            setStatus("buyStatus", "Please enter a valid buyer address", "error");
             return;
         }
-        
         if (isNaN(amount) || amount <= 0) {
-            setStatus("buyStatus", "⚠️ Please enter a valid amount", "error");
+            setStatus("buyStatus", "Please enter a valid amount", "error");
             return;
         }
-        
-        // ❌ Connected wallet compatibility check removed - now you can make purchases for any address
-        
         let amountWei = ethers.utils.parseEther(amount.toString());
-        
         try {
-            setStatus("buyStatus", "⏳ Buying...", "");
+            setStatus("buyStatus", "Buying...", "");
             const tx = await fitTokenContract.Buy(buyer, amountWei);
-            setStatus("buyStatus", "⏳ Waiting for confirmation...", "");
+            setStatus("buyStatus", "Waiting for confirmation...", "");
             await tx.wait();
-            setStatus("buyStatus", "✅ Purchase successful!", "success");
+            setStatus("buyStatus", "Purchase successful!", "success");
             await loadBalances();
             await loadPrice();
             document.getElementById("buyAmount").value = "";
             updateBuyEstimate();
         } catch(e) {
             console.error("Buy Error:", e);
-            setStatus("buyStatus", "❌ Error: " + e.message, "error");
+            setStatus("buyStatus", "Error: " + e.message, "error");
         }
     }
     
     async function sellFIT() {
         let amount = parseFloat(document.getElementById("sellAmount").value);
-        
-        if (!userAddress) {
-            setStatus("sellStatus", "⚠️ Connect wallet first", "error");
+        if (!userAddress || !fitTokenContract) {
+            setStatus("sellStatus", "Connect wallet first", "error");
             return;
         }
-        
         if (isNaN(amount) || amount <= 0) {
-            setStatus("sellStatus", "⚠️ Please enter a valid amount", "error");
+            setStatus("sellStatus", "Please enter a valid amount", "error");
             return;
         }
-        
         let amountWei = ethers.utils.parseEther(amount.toString());
-        
         try {
-            setStatus("sellStatus", "⏳ Selling...", "");
+            setStatus("sellStatus", "Selling...", "");
             const tx = await fitTokenContract.Sell(amountWei);
-            setStatus("sellStatus", "⏳ Waiting for confirmation...", "");
+            setStatus("sellStatus", "Waiting for confirmation...", "");
             await tx.wait();
-            setStatus("sellStatus", "✅ Sale successful!", "success");
+            setStatus("sellStatus", "Sale successful!", "success");
             await loadBalances();
             await loadPrice();
             document.getElementById("sellAmount").value = "";
             updateSellEstimate();
         } catch(e) {
             console.error("Sell Error:", e);
-            setStatus("sellStatus", "❌ Error: " + e.message, "error");
+            setStatus("sellStatus", "Error: " + e.message, "error");
         }
     }
     
-    // ==================== WALLET CONNECT ====================
-    
-    async function connectWallet() {
-        if (typeof window.ethereum !== 'undefined') {
-            try {
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
-                await initContracts(window.ethereum);
-                
-                window.ethereum.on('accountsChanged', async (accounts) => {
-                    if (accounts.length === 0) {
-                        disconnectWallet();
-                    } else {
-                        userAddress = accounts[0];
-                        document.getElementById("walletAddress").innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
-                        document.getElementById("buyerAddress").value = userAddress;
-                        // Referrer address must be entered manually by the user.
-                        await loadBalances();
-                        await checkAllAllowances();
-                    }
-                });
-                
-                window.ethereum.on('chainChanged', () => {
-                    window.location.reload();
-                });
-                
-            } catch(e) {
-                alert("Connection failed: " + e.message);
-            }
-        } else {
-            alert("Please install MetaMask, Trust Wallet, or TokenPocket!");
-        }
-    }
-    
-    function disconnectWallet() {
-        userAddress = null;
-        document.getElementById("walletStatus").style.display = "block";
-        document.getElementById("walletInfo").style.display = "none";
-    }
-    
-    async function checkNetwork() {
-        if (window.ethereum) {
-            const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-            if (chainId !== '0x38') {
-                alert("Please switch to BNB Smart Chain (BSC) Mainnet in your wallet.");
-            }
-        }
-    }
-    
-    // ==================== GIFT CONTRACT FUNCTIONS ====================
     const GIFT_CONTRACT_ADDRESS = "0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8";
-    
     const GIFT_ABI = [
         {"constant":false,"inputs":[{"name":"Owner_10_0","type":"address"}],"name":"Join_Fly_Infinity_Gift","outputs":[],"type":"function"},
         {"constant":false,"inputs":[{"name":"Owner_10_0","type":"address"}],"name":"Free_Fly_Infinity_Gift","outputs":[],"type":"function"}
     ];
-    
     let giftContract = null;
     
     async function initGiftContract() {
@@ -2336,73 +938,60 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     
     async function joinGiftContract() {
         const walletAddress = document.getElementById("joinGiftAddress").value.trim();
-        
         if (!userAddress) {
-            setStatus("joinGiftStatus", "⚠️ Connect wallet first", "error");
+            setStatus("joinGiftStatus", "Connect wallet first", "error");
             return;
         }
-        
         if (!walletAddress || !ethers.utils.isAddress(walletAddress)) {
-            setStatus("joinGiftStatus", "⚠️ Please enter a valid owner address", "error");
+            setStatus("joinGiftStatus", "Please enter a valid owner address", "error");
             return;
         }
-        
         try {
             const initialized = await initGiftContract();
             if (!initialized) return;
-            
-            setStatus("joinGiftStatus", "⏳ Joining contract for address: " + walletAddress.substring(0,8)+"...", "");
-            
+            setStatus("joinGiftStatus", "Joining contract for address: " + walletAddress.substring(0,8)+"...", "");
             const tx = await giftContract.Join_Fly_Infinity_Gift(walletAddress);
-            setStatus("joinGiftStatus", "⏳ Waiting for confirmation...", "");
-            
+            setStatus("joinGiftStatus", "Waiting for confirmation...", "");
             await tx.wait();
-            setStatus("joinGiftStatus", "✅ Successfully joined the gift contract for " + walletAddress.substring(0,8)+"...!", "success");
+            setStatus("joinGiftStatus", "Successfully joined the gift contract for " + walletAddress.substring(0,8)+"...!", "success");
         } catch(e) {
             console.error("Join Gift Error:", e);
             if (e.message.includes("execution reverted")) {
-                setStatus("joinGiftStatus", "❌ Address may already be joined or conditions not met.", "error");
+                setStatus("joinGiftStatus", "Address may already be joined or conditions not met.", "error");
             } else {
-                setStatus("joinGiftStatus", "❌ Error: " + e.message, "error");
+                setStatus("joinGiftStatus", "Error: " + e.message, "error");
             }
         }
     }
     
     async function freeGift() {
         const walletAddress = document.getElementById("freeGiftAddress").value.trim();
-        
         if (!userAddress) {
-            setStatus("freeGiftStatus", "⚠️ Connect wallet first", "error");
+            setStatus("freeGiftStatus", "Connect wallet first", "error");
             return;
         }
-        
         if (!walletAddress || !ethers.utils.isAddress(walletAddress)) {
-            setStatus("freeGiftStatus", "⚠️ Please enter a valid owner address", "error");
+            setStatus("freeGiftStatus", "Please enter a valid owner address", "error");
             return;
         }
-        
         try {
             const initialized = await initGiftContract();
             if (!initialized) return;
-            
-            setStatus("freeGiftStatus", "⏳ Participating in lottery for address: " + walletAddress.substring(0,8)+"...", "");
-            
+            setStatus("freeGiftStatus", "Participating in lottery for address: " + walletAddress.substring(0,8)+"...", "");
             const tx = await giftContract.Free_Fly_Infinity_Gift(walletAddress);
-            setStatus("freeGiftStatus", "⏳ Waiting for confirmation...", "");
-            
+            setStatus("freeGiftStatus", "Waiting for confirmation...", "");
             await tx.wait();
-            setStatus("freeGiftStatus", "✅ Successfully participated in lottery for " + walletAddress.substring(0,8)+"...!", "success");
+            setStatus("freeGiftStatus", "Successfully participated in lottery for " + walletAddress.substring(0,8)+"...!", "success");
         } catch(e) {
             console.error("Free Gift Error:", e);
             if (e.message.includes("execution reverted")) {
-                setStatus("freeGiftStatus", "❌ Address must join first or already participated.", "error");
+                setStatus("freeGiftStatus", "Address must join first or already participated.", "error");
             } else {
-                setStatus("freeGiftStatus", "❌ Error: " + e.message, "error");
+                setStatus("freeGiftStatus", "Error: " + e.message, "error");
             }
         }
     }
     
-    // ==================== AGREEMENT MODAL FUNCTIONS ====================
     const agreementModal = document.getElementById('agreementModal');
     const closeAgreementModalBtn = document.getElementById('closeAgreementModalBtn');
     const closeAgreementBtn = document.getElementById('closeAgreementBtn');
@@ -2427,16 +1016,13 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         closeAgreementModalFn();
     }
     
-    // ==================== SIGN AGREEMENT FUNCTION ====================
     async function signAgreement() {
-        if (!userAddress) {
-            setStatus("agreementStatus", "⚠️ Connect wallet first", "error");
+        if (!userAddress || !fitNetworkContract) {
+            setStatus("agreementStatus", "Connect wallet first", "error");
             return;
         }
-        
         try {
-            setStatus("agreementStatus", "⏳ Signing agreement...", "");
-            
+            setStatus("agreementStatus", "Signing agreement...", "");
             let gasEstimate;
             try {
                 gasEstimate = await fitNetworkContract.estimateGas.Agreement_Road_Map();
@@ -2445,19 +1031,15 @@ button:focus-visible,a:focus-visible,input:focus-visible{
                 console.log("Gas estimation failed, using manual gas limit");
                 gasEstimate = 200000;
             }
-            
             try {
-                const tx = await fitNetworkContract.Agreement_Road_Map({
-                    gasLimit: gasEstimate
-                });
-                
-                setStatus("agreementStatus", "⏳ Waiting for confirmation...", "");
+                const tx = await fitNetworkContract.Agreement_Road_Map({ gasLimit: gasEstimate });
+                setStatus("agreementStatus", "Waiting for confirmation...", "");
                 await tx.wait();
-                setStatus("agreementStatus", "✅ Agreement signed successfully!", "success");
+                setStatus("agreementStatus", "Agreement signed successfully!", "success");
             } catch(txError) {
                 const errorMsg = txError.message || "";
                 if (errorMsg.includes("You Did Before") || errorMsg.includes("already signed")) {
-                    setStatus("agreementStatus", "✅ You have already signed the agreement!", "success");
+                    setStatus("agreementStatus", "You have already signed the agreement!", "success");
                 } else {
                     throw txError;
                 }
@@ -2465,24 +1047,22 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         } catch(e) {
             console.error("Agreement Error:", e);
             const errorMsg = e.message || "";
-            
             if (errorMsg.includes("Just Wallet")) {
-                setStatus("agreementStatus", "❌ This function can only be called from a standard wallet (EOA). Please use MetaMask, Trust Wallet, or TokenPocket.", "error");
+                setStatus("agreementStatus", "This function can only be called from a standard wallet (EOA). Please use MetaMask, Trust Wallet, or TokenPocket.", "error");
             } else if (errorMsg.includes("execution reverted")) {
-                setStatus("agreementStatus", "❌ Transaction failed. You may have already signed the agreement or conditions not met.", "error");
+                setStatus("agreementStatus", "Transaction failed. You may have already signed the agreement or conditions not met.", "error");
             } else if (errorMsg.includes("already signed")) {
-                setStatus("agreementStatus", "✅ You have already signed the agreement!", "success");
+                setStatus("agreementStatus", "You have already signed the agreement!", "success");
             } else {
-                setStatus("agreementStatus", "❌ Error: " + errorMsg, "error");
+                setStatus("agreementStatus", "Error: " + errorMsg, "error");
             }
         }
     }
     
-    // Event listener for Agreement button
     document.getElementById('agreementBtn').addEventListener('click', function(e) {
         e.preventDefault();
         if (!userAddress) {
-            setStatus("agreementStatus", "⚠️ Connect wallet first", "error");
+            setStatus("agreementStatus", "Connect wallet first", "error");
             return;
         }
         openAgreementModal();
@@ -2503,53 +1083,39 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         }
     });
     
-    // ===== EVENT LISTENERS =====
-    document.getElementById("connectBtn").addEventListener("click", connectWallet);
-    document.getElementById("disconnectBtn").addEventListener("click", disconnectWallet);
-    
+    document.getElementById("connectBtn").addEventListener("click", window.connectWallet);
+    document.getElementById("disconnectBtn").addEventListener("click", window.disconnectWallet);
     document.getElementById("approveNetworkBtn").addEventListener("click", approveNetworkDAI);
     document.getElementById("becomeOwnerBtn").addEventListener("click", becomeOwner);
-    
     document.getElementById("approveTokenBtn").addEventListener("click", approveTokenDAI);
     document.getElementById("buyBtn").addEventListener("click", buyFIT);
     document.getElementById("sellBtn").addEventListener("click", sellFIT);
-    
     document.getElementById("joinGiftBtn").addEventListener("click", joinGiftContract);
     document.getElementById("freeGiftBtn").addEventListener("click", freeGift);
-    
-    checkNetwork();
 </script>
-
-<!-- ===== SIDEBAR SCRIPT ===== -->
 <script>
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const closeSidebarBtn = document.getElementById('closeSidebarBtn');
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebarOverlay');
-
     function openSidebar() {
         sidebar.classList.add('open');
         overlay.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
-
     function closeSidebar() {
         sidebar.classList.remove('open');
         overlay.classList.remove('active');
         document.body.style.overflow = '';
     }
-
     hamburgerBtn.addEventListener('click', openSidebar);
     closeSidebarBtn.addEventListener('click', closeSidebar);
     overlay.addEventListener('click', closeSidebar);
-
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeSidebar();
         }
     });
 </script>
-
-    <script src="wallet-ui.js"></script>
 </body>
 </html>
