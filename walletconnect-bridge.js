@@ -65,15 +65,16 @@
         });
       }
 
-      const provider = await initPromise;
+      let provider = await initPromise;
 
       // A previous session must not silently bypass the wallet chooser.
+      // Disconnect it, then create a clean provider instance for a fresh pairing.
       if (provider.session) {
         try { await provider.disconnect(); } catch (error) {
           console.warn('Could not clear previous WalletConnect session:', error);
         }
-        // disconnect emits an event that clears the old global reference;
-        // keep this fresh provider available for the explicit new connection.
+        clearProvider(provider);
+        provider = await createProvider();
         wcProvider = provider;
         initPromise = Promise.resolve(provider);
       }
