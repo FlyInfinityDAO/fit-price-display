@@ -32,7 +32,7 @@
       if(typeof id==='number'||typeof id==='bigint')return '0x'+BigInt(id).toString(16);
       const value=String(id).trim();
       if(/^0x[0-9a-f]+$/i.test(value))return '0x'+BigInt(value).toString(16);
-      if(/^\\d+$/.test(value))return '0x'+BigInt(value).toString(16);
+      if(/^\d+$/.test(value))return '0x'+BigInt(value).toString(16);
       return value;
     }catch(_){return String(id);}
   };
