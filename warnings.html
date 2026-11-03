@@ -429,6 +429,13 @@
             font-size: 15px;
         }
         
+        .warning-content li { display: flex; align-items: flex-start; gap: 10px; list-style: none; }
+        .warning-content ul { margin-left: 0; padding-left: 0; }
+        .warning-inline-icon { width: 18px; min-width: 18px; margin-top: 5px; text-align: center; color: #D4AF37; font-size: 14px; }
+        .warning-inline-icon--green { color: #00C896; }
+        .warning-inline-icon--yellow { color: #D4AF37; }
+        .warning-inline-icon--red { color: #ff5a5f; }
+        .warning-solution strong { display: inline-flex; align-items: center; gap: 7px; }
         .warning-content p {
             margin-bottom: 15px;
         }
@@ -988,7 +995,7 @@ textarea:focus,
             <div class="warning-content">
                 <p data-i18n="warnings.wallet.text">If you intend to perform a wallet change operation, you must sell your tokens first. Otherwise, your tokens will lose their transferability and you will not be able to sell them afterward.</p>
                 <div class="warning-solution">
-                    <strong data-i18n="warnings.wallet.solutionTitle">🔧 Solution:</strong><br>
+                    <strong><i class="fas fa-circle-check warning-inline-icon warning-inline-icon--green" aria-hidden="true"></i><span data-i18n="warnings.wallet.solutionTitle">Solution:</span></strong><br>
                     <span data-i18n="warnings.wallet.solutionText">First, sell all your FIT tokens → Then change your wallet → Finally, buy FIT again in your new wallet.</span>
                 </div>
             </div>
@@ -1003,10 +1010,10 @@ textarea:focus,
             <div class="warning-content">
                 <p data-i18n="warnings.recovery.text">Recovery phrases (seed phrases) cannot be changed or reset. Keep them safe!</p>
                 <ul>
-                    <li data-i18n="warnings.recovery.li1">✅ Write them down physically on paper</li>
-                    <li data-i18n="warnings.recovery.li2">✅ Store multiple copies in secure, separate locations</li>
-                    <li data-i18n="warnings.recovery.li3">✅ Never store them digitally (screenshots, cloud, email)</li>
-                    <li data-i18n="warnings.recovery.li4">❌ Never share them with anyone, including "support" teams</li>
+                    <li><i class="fas fa-file-pen warning-inline-icon warning-inline-icon--green" aria-hidden="true"></i><span data-i18n="warnings.recovery.li1">Write them down physically on paper</span></li>
+                    <li><i class="fas fa-copy warning-inline-icon warning-inline-icon--green" aria-hidden="true"></i><span data-i18n="warnings.recovery.li2">Store multiple copies in secure, separate locations</span></li>
+                    <li><i class="fas fa-ban warning-inline-icon warning-inline-icon--yellow" aria-hidden="true"></i><span data-i18n="warnings.recovery.li3">Never store them digitally (screenshots, cloud, email)</span></li>
+                    <li><i class="fas fa-shield-halved warning-inline-icon warning-inline-icon--red" aria-hidden="true"></i><span data-i18n="warnings.recovery.li4">Never share them with anyone, including "support" teams</span></li>
                 </ul>
             </div>
         </div>
@@ -1020,10 +1027,10 @@ textarea:focus,
             <div class="warning-content">
                 <p data-i18n="warnings.blockchain.text">Blockchain is a decentralized system with no central authority. Once a transaction is confirmed, it is permanently recorded on the blockchain and <strong>cannot be reversed, modified, or deleted</strong> by anyone.</p>
                 <ul>
-                    <li data-i18n="warnings.blockchain.li1">🔒 Always double-check wallet addresses before sending</li>
-                    <li data-i18n="warnings.blockchain.li2">🔒 Verify transaction amounts carefully</li>
-                    <li data-i18n="warnings.blockchain.li3">🔒 Be cautious of scams and phishing attempts</li>
-                    <li data-i18n="warnings.blockchain.li4">🔒 No one can "reverse" or "cancel" your transaction</li>
+                    <li><i class="fas fa-wallet warning-inline-icon" aria-hidden="true"></i><span data-i18n="warnings.blockchain.li1">Always double-check wallet addresses before sending</span></li>
+                    <li><i class="fas fa-coins warning-inline-icon" aria-hidden="true"></i><span data-i18n="warnings.blockchain.li2">Verify transaction amounts carefully</span></li>
+                    <li><i class="fas fa-user-shield warning-inline-icon" aria-hidden="true"></i><span data-i18n="warnings.blockchain.li3">Be cautious of scams and phishing attempts</span></li>
+                    <li><i class="fas fa-lock warning-inline-icon" aria-hidden="true"></i><span data-i18n="warnings.blockchain.li4">No one can "reverse" or "cancel" your transaction</span></li>
                 </ul>
             </div>
         </div>
