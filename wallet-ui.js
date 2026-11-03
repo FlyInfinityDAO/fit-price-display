@@ -24,7 +24,19 @@
   const lang=()=>{const l=(document.documentElement.lang||'en').slice(0,2);return words[l]?l:'en';};
   const t=()=>words[lang()];
   const short=a=>a?a.slice(0,6)+'…'+a.slice(-4):'—';
-  const chainName=id=>id===BSC_CHAIN?t().bsc:(id?`${t().other} (${parseInt(id,16)})`:t().unknown);
+  // Normalize standard 0x-prefixed hex IDs and mobile providers that return
+  // the decimal chain ID as an unprefixed string (for example, "56").
+  const normalizeChainId=id=>{
+    if(id===null||id===undefined||id==='')return '';
+    try{
+      if(typeof id==='number'||typeof id==='bigint')return '0x'+BigInt(id).toString(16);
+      const value=String(id).trim();
+      if(/^0x[0-9a-f]+$/i.test(value))return '0x'+BigInt(value).toString(16);
+      if(/^\d+$/.test(value))return '0x'+BigInt(value).toString(16);
+      return value;
+    }catch(_){return String(id);}
+  };
+  const chainName=id=>normalizeChainId(id)===BSC_CHAIN?t().bsc:(id?t().other+' ('+parseInt(normalizeChainId(id),16)+')':t().unknown);
   const padAddress=a=>a.toLowerCase().replace(/^0x/,'').padStart(64,'0');
   const fromHex=h=>BigInt(h||'0x0');
   const units=v=>Number(v)/1e18;
@@ -167,7 +179,7 @@
   async function refreshExisting(){
     provider=window.ethereum||null;
     if(!provider){account='';chainId='';renderState();resetMetrics();note('');return;}
-    try{const accounts=await provider.request({method:'eth_accounts'});account=accounts&&accounts[0]||'';chainId=await provider.request({method:'eth_chainId'});console.info('[Fly Infinity Wallet Panel] Wallet chain diagnostic:',{source:'refresh',rawChainId:chainId,parsedChainId:Number.parseInt(chainId,16),isBsc:chainId===BSC_CHAIN,providerName:provider.name||provider.constructor&&provider.constructor.name||'unknown'});listen();renderState();if(account)await loadContractData();else{resetMetrics();note('');}}
+    try{const accounts=await provider.request({method:'eth_accounts'});account=accounts&&accounts[0]||'';chainId=normalizeChainId(await provider.request({method:'eth_chainId'}));console.info('[Fly Infinity Wallet Panel] Wallet chain diagnostic:',{source:'refresh',rawChainId:chainId,parsedChainId:Number.parseInt(chainId,16),isBsc:chainId===BSC_CHAIN,providerName:provider.name||provider.constructor&&provider.constructor.name||'unknown'});listen();renderState();if(account)await loadContractData();else{resetMetrics();note('');}}
     catch(e){renderState();note(t().error);}
   }
   // Load the same shared wallet selector used by the four DApp pages.
@@ -209,7 +221,7 @@
       provider=selectedProvider;
       window.ethereum=selectedProvider;
       account=accounts[0];
-      chainId=selectedChainId;
+      chainId=normalizeChainId(selectedChainId);
       listen();renderState();await loadContractData();
     }catch(e){
       console.error('[Fly Infinity Wallet Panel] Connection error:',e);
@@ -224,7 +236,7 @@
     provider.__fiWalletPanelBound=true;
     if(provider.on){
       provider.on('accountsChanged',async a=>{account=a&&a[0]||'';renderState();if(account)await loadContractData();else{resetMetrics();note(t().statusOff);}});
-      provider.on('chainChanged',async id=>{chainId=id;console.info('[Fly Infinity Wallet Panel] Wallet chain diagnostic:',{source:'chainChanged',rawChainId:id,parsedChainId:Number.parseInt(id,16),isBsc:id===BSC_CHAIN});renderState();if(account)await loadContractData();});
+      provider.on('chainChanged',async id=>{chainId=normalizeChainId(id);console.info('[Fly Infinity Wallet Panel] Wallet chain diagnostic:',{source:'chainChanged',rawChainId:id,parsedChainId:Number.parseInt(id,16),isBsc:id===BSC_CHAIN});renderState();if(account)await loadContractData();});
       provider.on('disconnect',()=>{account='';chainId='';resetMetrics();renderState();note(t().statusOff);});
     }
   }
