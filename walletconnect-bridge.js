@@ -8,6 +8,7 @@
   let wcProvider = null;
   let initPromise = null;
   let connectPromise = null;
+  let mobileWarmupPromise = null;
   let selectedInjectedProvider = null;
   const announcedProviders = new Map();
   // Keep the browser's original multi-wallet root separate from the active selection.
@@ -156,6 +157,15 @@
     if (connectPromise) return connectPromise;
 
     connectPromise = (async function () {
+      if (!initPromise && mobileWarmupPromise) {
+        const warmedProvider = await mobileWarmupPromise;
+        if (warmedProvider) {
+          wcProvider = warmedProvider;
+          initPromise = Promise.resolve(warmedProvider);
+        }
+        mobileWarmupPromise = null;
+      }
+
       if (!initPromise) {
         initPromise = createProvider().then(function (provider) {
           wcProvider = provider;
@@ -235,12 +245,10 @@
   // This avoids delaying the wallet-launch flow while importing the SDK after
   // the click, which can cause Android browsers to lose transient user activation.
   if (isMobileBrowser()) {
-    initPromise = createProvider().then(function (provider) {
+    mobileWarmupPromise = createProvider().then(function (provider) {
       wcProvider = provider;
       return provider;
     }).catch(function (error) {
-      initPromise = null;
-      wcProvider = null;
       console.warn('[Fly Infinity WalletConnect] Mobile pre-initialization failed:', error);
       return null;
     });
