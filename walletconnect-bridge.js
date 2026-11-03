@@ -8,6 +8,7 @@
   let wcProvider = null;
   let initPromise = null;
   let connectPromise = null;
+  let iosWarmupPromise = null;
   let selectedInjectedProvider = null;
   const announcedProviders = new Map();
   // Keep the browser's original multi-wallet root separate from the active selection.
@@ -167,6 +168,17 @@
     if (connectPromise) return connectPromise;
 
     connectPromise = (async function () {
+      // Preserve the existing iOS pre-initialization path. Android initializes
+      // on demand so its first pairing starts from a clean Reown modal state.
+      if (isIOSBrowser() && !initPromise && iosWarmupPromise) {
+        const warmedProvider = await iosWarmupPromise;
+        if (warmedProvider) {
+          wcProvider = warmedProvider;
+          initPromise = Promise.resolve(warmedProvider);
+        }
+        iosWarmupPromise = null;
+      }
+
       if (!initPromise) {
         initPromise = createProvider().then(function (provider) {
           wcProvider = provider;
@@ -261,6 +273,18 @@
     if (!window.fiWalletConnectActive) window.fiWalletConnectActive = false;
     if (wasInjected) return Promise.resolve();
     return disconnectWalletConnect();
+  }
+
+  // Keep the previously working iOS warmup; Android deliberately does not
+  // preload because its Reown pairing flow is started only after user action.
+  if (isIOSBrowser()) {
+    iosWarmupPromise = createProvider().then(function (provider) {
+      wcProvider = provider;
+      return provider;
+    }).catch(function (error) {
+      console.warn('[Fly Infinity WalletConnect] iOS pre-initialization failed:', error);
+      return null;
+    });
   }
 
   window.fiSelectWalletProvider = selectWalletProvider;
