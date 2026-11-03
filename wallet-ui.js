@@ -21,6 +21,21 @@
   };
   const icon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M3 9h18"></path><path d="M16 14h2"></path></svg>';
   let provider=null, account='', chainId='', currentBalance=0, currentPrice=0, historyRows=[];
+  const WC_PROJECT_ID='2e312445cba4a41a1aab5f01552c5668';
+  let walletConnectProvider=null;
+  async function getWalletConnectProvider(){
+    if(walletConnectProvider)return walletConnectProvider;
+    const module=await import('https://esm.sh/@walletconnect/ethereum-provider@2.17.0?bundle');
+    const EthereumProvider=module.default;
+    walletConnectProvider=await EthereumProvider.init({
+      projectId:WC_PROJECT_ID,
+      chains:[56],
+      showQrModal:true,
+      metadata:{name:'Fly Infinity',description:'Fly Infinity read-only wallet overview',url:location.origin,icons:[new URL('logo.png',location.href).href]}
+    });
+    walletConnectProvider.on('display_uri',()=>{});
+    return walletConnectProvider;
+  }
   const lang=()=>{const l=(document.documentElement.lang||'en').slice(0,2);return words[l]?l:'en';};
   const t=()=>words[lang()];
   const short=a=>a?a.slice(0,6)+'…'+a.slice(-4):'—';
@@ -171,12 +186,27 @@
     catch(e){renderState();note(t().error);}
   }
   async function connect(){
-    provider=window.ethereum||null;
-    if(!provider){note(t().noProvider);return;}
     const b=document.getElementById('fiWalletConnect');b.disabled=true;note(t().connecting);
-    try{const accounts=await provider.request({method:'eth_requestAccounts'});account=accounts&&accounts[0]||'';chainId=await provider.request({method:'eth_chainId'});listen();renderState();await loadContractData();}
-    catch(e){note(e&&e.code===4001?t().rejected:t().error);}
-    finally{b.disabled=false;}
+    try{
+      // Prefer an injected wallet (including in-app mobile browsers); otherwise
+      // open WalletConnect so Safari/Chrome mobile can pair with a wallet app.
+      provider=window.ethereum||null;
+      if(!provider)provider=await getWalletConnectProvider();
+      let accounts=[];
+      if(provider===walletConnectProvider){
+        if(!provider.accounts||!provider.accounts.length)await provider.connect();
+        accounts=provider.accounts||await provider.request({method:'eth_accounts'});
+      }else{
+        accounts=await provider.request({method:'eth_requestAccounts'});
+      }
+      account=accounts&&accounts[0]||'';
+      chainId=await provider.request({method:'eth_chainId'});
+      listen();renderState();
+      if(account)await loadContractData();
+    }catch(e){
+      if(e&&e.code===4001)note(t().rejected);
+      else {console.warn('Wallet connection unavailable:',e);note(t().error+' '+(e&&e.message?e.message.slice(0,100):''));}
+    }finally{b.disabled=false;}
   }
   function disconnectLocal(){account='';resetMetrics();renderState();note(t().localDisconnect);}
   function listen(){
