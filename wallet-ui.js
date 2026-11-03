@@ -20,6 +20,7 @@
     pt:{wallet:'Carteira',title:'Visão geral da carteira',statusOff:'Não conectada',statusOn:'Conectada',connect:'Conectar carteira',connectReown:'Conectar com Reown',connectBrowser:'Conectar carteira',disconnect:'Desconectar',account:'Endereço da carteira',network:'Rede',noProvider:'Nenhuma carteira de navegador compatível foi detectada.',connecting:'Aguardando aprovação…',rejected:'A solicitação foi recusada.',error:'Não foi possível conectar. Tente novamente.',localDisconnect:'A conta exibida foi limpa. Para revogar o acesso, gerencie os sites conectados na carteira.',close:'Fechar',unknown:'Rede desconhecida',bsc:'BNB Smart Chain',other:'Rede',balance:'Saldo FIT',usdValue:'Valor do FIT em dólares',usd7:'Valor do FIT há 7 dias',usd30:'Valor do FIT há 30 dias',historyBasis:'Calculado com o saldo FIT atual e o preço histórico; não representa o saldo real da carteira nessas datas.',compareLabel:'Valor do lucro do período',period24h:'Há 24 horas',period7d:'Há 7 dias',period30d:'Há 30 dias',period6m:'Há 6 meses',period1y:'Há 1 ano',compareValue:'Diferença no valor do FIT',compareHistoryNote:'Não há preço histórico disponível para esta data. O histórico é diário, então 24 horas usa o registro diário anterior.',historyUnavailable:'Não há dados históricos para este período',purchased:'Comprado',allowed:'Limite permitido',remaining:'Restante',smallerSide:'Pontos da rede',left:'Esquerda',right:'Direita',loading:'Carregando dados do contrato…',readError:'Não foi possível ler os dados do contrato. Verifique a BNB Smart Chain.',wrongNetwork:'Mude sua carteira para BNB Smart Chain para ver os dados do FIT.',notAvailable:'—'}
   };
   const icon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M3 9h18"></path><path d="M16 14h2"></path></svg>';
+  const initialBrowserProvider=window.ethereum||null;
   let provider=null, account='', chainId='', currentBalance=0, currentPrice=0, historyRows=[], selectorLoadPromise=null;
   const lang=()=>{const l=(document.documentElement.lang||'en').slice(0,2);return words[l]?l:'en';};
   const t=()=>words[lang()];
@@ -209,10 +210,22 @@
     buttons.forEach(button=>{if(button)button.disabled=true;});
     note(t().connecting);
     try{
-      await ensureWalletSelector();
-      const selectedProvider=mode==='browser'
-        ? await window.fiConnectBrowserWallet()
-        : await window.fiSelectWalletProvider();
+      let selectedProvider;
+      if(mode==='browser'){
+        // Use only the provider injected by the wallet's own in-app browser.
+        // This route does not load or initialize Reown / WalletConnect.
+        const root=initialBrowserProvider||(window.fiWalletConnectActive?null:window.ethereum);
+        selectedProvider=root&&Array.isArray(root.providers)
+          ? root.providers.find(item=>item&&typeof item.request==='function')
+          : root;
+        if(!selectedProvider||typeof selectedProvider.request!=='function'){
+          throw new Error('No in-app browser wallet was detected. Open this site inside your wallet app.');
+        }
+        await selectedProvider.request({method:'eth_requestAccounts'});
+      }else{
+        await ensureWalletSelector();
+        selectedProvider=await window.fiSelectWalletProvider();
+      }
       if(!selectedProvider||typeof selectedProvider.request!=='function'){
         throw new Error('The selected wallet did not provide a valid EIP-1193 provider.');
       }
