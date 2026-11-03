@@ -2005,7 +2005,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     let currentPrice = 0;
     
     async function initContracts(web3Provider) {
-        provider = new ethers.providers.Web3Provider(web3Provider);
+        provider = new ethers.providers.Web3Provider(web3Provider, "any");
         signer = provider.getSigner();
         fitTokenContract = new ethers.Contract(FIT_TOKEN_ADDRESS, FIT_TOKEN_ABI, signer);
         fitNetworkContract = new ethers.Contract(FIT_NETWORK_ADDRESS, FIT_NETWORK_ABI, signer);
@@ -2023,8 +2023,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         await loadPrice();
         await checkAllAllowances();
         
-        document.getElementById("buyAmount").addEventListener("input", updateBuyEstimate);
-        document.getElementById("sellAmount").addEventListener("input", updateSellEstimate);
+        document.getElementById("buyAmount").oninput = updateBuyEstimate;
+        document.getElementById("sellAmount").oninput = updateSellEstimate;
     }
     
     async function loadBalances() {
@@ -2270,24 +2270,55 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     
     async function connectWallet() {
         try {
-            if (typeof window.fiSelectWalletProvider !== 'function') throw new Error('Wallet selector is unavailable. Please refresh the page.');
-            window.ethereum = await window.fiSelectWalletProvider();
-            await initContracts(window.ethereum);
-            window.ethereum.on('accountsChanged', async (accounts) => {
-                if (!accounts || accounts.length === 0) disconnectWallet();
-                else {
-                    userAddress = accounts[0];
-                    document.getElementById("walletAddress").innerHTML = userAddress.substring(0,8)+"..."+userAddress.substring(38);
-                    document.getElementById("buyerAddress").value = userAddress;
-                    document.getElementById("referrerAddress").value = userAddress;
-                    await loadBalances();
-                    await checkAllAllowances();
+            if (typeof window.fiSelectWalletProvider !== 'function') {
+                throw new Error('Wallet selector is unavailable. Please refresh the page.');
+            }
+
+            const selectedProvider = await window.fiSelectWalletProvider();
+            if (!selectedProvider || typeof selectedProvider.request !== 'function') {
+                throw new Error('The selected wallet did not provide a valid EIP-1193 provider.');
+            }
+
+            window.ethereum = selectedProvider;
+            await initContracts(selectedProvider);
+
+            // Bind wallet events once per provider. Repeated Connect taps must
+            // not register duplicate listeners or trigger repeated reloads.
+            if (window.__fiBoundWalletProvider !== selectedProvider) {
+                window.__fiBoundWalletProvider = selectedProvider;
+                if (typeof selectedProvider.on === 'function') {
+                    selectedProvider.on('accountsChanged', async (accounts) => {
+                        if (!accounts || accounts.length === 0) {
+                            disconnectWallet();
+                            return;
+                        }
+                        try {
+                            await initContracts(selectedProvider);
+                        } catch (error) {
+                            console.error('Wallet account refresh failed:', error);
+                        }
+                    });
+
+                    selectedProvider.on('chainChanged', async () => {
+                        try {
+                            // Ethers v5 is configured with network="any", so
+                            // refresh contracts in place instead of reloading
+                            // the page during WalletConnect's app handoff.
+                            await initContracts(selectedProvider);
+                            await checkNetwork();
+                        } catch (error) {
+                            console.error('Wallet network refresh failed:', error);
+                        }
+                    });
+
+                    selectedProvider.on('disconnect', () => disconnectWallet());
                 }
-            });
-            window.ethereum.on('chainChanged', () => window.location.reload());
+            }
         } catch(e) {
             console.error("Wallet connection error:", e);
-            if (e && e.message !== 'Wallet selection cancelled.') alert("Connection failed: " + (e.message || "Please try again."));
+            if (e && e.message !== 'Wallet selection cancelled.') {
+                alert("Connection failed: " + (e.message || "Please try again."));
+            }
         }
     }
 
