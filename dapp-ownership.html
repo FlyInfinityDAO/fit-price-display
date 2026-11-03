@@ -1830,74 +1830,8 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
 </section>
 
-    <section class="dapp-operation-view" id="dappGiftOperation">
-<div class="dapp-back-row"><a class="dapp-back-btn" href="dapp.html"><i class="fas fa-arrow-left"></i><span data-i18n="dapp.backToDapp">Back to DApp</span></a></div>
-    <!-- ==================== SECTION 3: GIFT CONTRACT ==================== -->
-    <div class="action-card" style="margin-bottom: 25px;">
-        <div class="action-title"><i class="fas fa-gift"></i> <span data-i18n="dapp.giftTitle">🎁 Join Fly Infinity Gift Smart Contract & Participate in $5 Prize Lottery</span></div>
-        <p style="color:#888; font-size:12px; margin-bottom:15px; text-align:center;">
-            <a href="https://bscscan.com/address/0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8#writeContract" target="_blank" style="color: #00C896; text-decoration: none;">
-                <i class="fas fa-external-link-alt"></i> <span data-i18n="dapp.viewContract">View Contract on BscScan</span>
-            </a>
-        </p>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
-            
-            <!-- Join Gift Contract -->
-            <div style="background: #1a1a1a; border-radius: 16px; padding: 16px; border-left: 3px solid #D4AF37;">
-                <div style="color:#D4AF37; font-size:13px; margin-bottom:8px;">
-                    <span class="step-badge" style="background: #D4AF37; color: #0F0F0F; font-size: 10px; padding: 1px 8px;">1</span> 
-                    <span data-i18n="dapp.joinContract">Join Contract (One-time)</span>
-                </div>
-                <div class="input-group" style="margin-bottom:10px;">
-                    <label style="color: #D4AF37; font-size: 11px;" data-i18n="dapp.ownerAddressJoin">👤 Owner Address to Join</label>
-                    <input type="text" id="joinGiftAddress" placeholder="0x... (address to join)" value="" style="padding: 8px 12px; font-size: 13px;">
-                </div>
-                <p style="color:#888; font-size:10px; margin-bottom:10px;">
-                    <span class="highlight" style="color: #D4AF37;" data-i18n="dapp.function">Function:</span> Join_Fly_Infinity_Gift (0x2852174f)<br>
-                    <span style="color: #888; font-size: 9px;" data-i18n="dapp.oneTime">⚠️ One-time process, forever.</span>
-                </p>
-                <button id="joinGiftBtn" class="action-btn" style="border-color: #D4AF37; color: #D4AF37; padding: 10px; font-size: 14px;" data-i18n="dapp.joinContractBtn">
-                    <i class="fas fa-handshake"></i> Join Contract
-                </button>
-                <div id="joinGiftStatus" class="status-text" style="font-size: 11px;" data-i18n="dapp.notJoined">Not joined</div>
-            </div>
-            
-            <!-- Free Gift Lottery -->
-            <div style="background: #1a1a1a; border-radius: 16px; padding: 16px; border-left: 3px solid #00C896;">
-                <div style="color:#00C896; font-size:13px; margin-bottom:8px;">
-                    <span class="step-badge" style="font-size: 10px; padding: 1px 8px;">2</span> 
-                    <span data-i18n="dapp.giftLottery">$5 Gift Lottery</span>
-                </div>
-                <div class="input-group" style="margin-bottom:10px;">
-                    <label style="color: #00C896; font-size: 11px;" data-i18n="dapp.ownerAddressParticipate">👤 Owner Address to Participate</label>
-                    <input type="text" id="freeGiftAddress" placeholder="0x... (address to participate)" value="" style="padding: 8px 12px; font-size: 13px;">
-                </div>
-                <p style="color:#888; font-size:10px; margin-bottom:10px;">
-                    <span class="highlight" style="color: #00C896;" data-i18n="dapp.function">Function:</span> Free_Fly_Infinity_Gift (0xb4aecd59)<br>
-                    <span style="color: #888; font-size: 9px;" data-i18n="dapp.winGift">🎁 Win a $5 gift</span>
-                </p>
-                <button id="freeGiftBtn" class="action-btn" style="padding: 10px; font-size: 14px;" data-i18n="dapp.participate">
-                    <i class="fas fa-ticket-alt"></i> Participate in Lottery
-                </button>
-                <div id="freeGiftStatus" class="status-text" style="font-size: 11px;" data-i18n="dapp.notParticipated">Not participated</div>
-            </div>
-            
-        </div>
-        
-        <!-- Gift Contract Info -->
-        <div style="margin-top: 15px; background: #1a1a1a; border-radius: 14px; padding: 12px 16px; border-left: 3px solid #D4AF37;">
-            <div style="color:#00C896; font-size:10px; margin-bottom:3px;" data-i18n="dapp.giftContract">📜 Gift Smart Contract</div>
-            <div style="font-family:monospace; font-size:11px; color:#D4AF37; word-break:break-all;">0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8</div>
-            <div style="color:#888; font-size:9px; margin-top:5px;">
-                <i class="fas fa-info-circle"></i> 
-                <span style="color: #c0d0e8;" data-i18n="dapp.step1Label">Step 1:</span> <span data-i18n="dapp.joinOneTime">Join (one-time)</span> → 
-                <span style="color: #c0d0e8;" data-i18n="dapp.step2Label">Step 2:</span> <span data-i18n="dapp.participateLottery">Participate in lottery</span>
-            </div>
-        </div>
-    </div>
+    <!-- Gift/lottery transaction interface removed from this page. -->
 
-</section>
 
     <div class="footer">
         <div class="footer-links">
@@ -2315,92 +2249,7 @@ button:focus-visible,a:focus-visible,input:focus-visible{
         }
     }
     
-    // ==================== GIFT CONTRACT FUNCTIONS ====================
-    const GIFT_CONTRACT_ADDRESS = "0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8";
-    
-    const GIFT_ABI = [
-        {"constant":false,"inputs":[{"name":"Owner_10_0","type":"address"}],"name":"Join_Fly_Infinity_Gift","outputs":[],"type":"function"},
-        {"constant":false,"inputs":[{"name":"Owner_10_0","type":"address"}],"name":"Free_Fly_Infinity_Gift","outputs":[],"type":"function"}
-    ];
-    
-    let giftContract = null;
-    
-    async function initGiftContract() {
-        if (!signer) {
-            alert("Please connect your wallet first!");
-            return false;
-        }
-        giftContract = new ethers.Contract(GIFT_CONTRACT_ADDRESS, GIFT_ABI, signer);
-        return true;
-    }
-    
-    async function joinGiftContract() {
-        const walletAddress = document.getElementById("joinGiftAddress").value.trim();
-        
-        if (!userAddress) {
-            setStatus("joinGiftStatus", "⚠️ Connect wallet first", "error");
-            return;
-        }
-        
-        if (!walletAddress || !ethers.utils.isAddress(walletAddress)) {
-            setStatus("joinGiftStatus", "⚠️ Please enter a valid owner address", "error");
-            return;
-        }
-        
-        try {
-            const initialized = await initGiftContract();
-            if (!initialized) return;
-            
-            setStatus("joinGiftStatus", "⏳ Joining contract for address: " + walletAddress.substring(0,8)+"...", "");
-            
-            const tx = await giftContract.Join_Fly_Infinity_Gift(walletAddress);
-            setStatus("joinGiftStatus", "⏳ Waiting for confirmation...", "");
-            
-            await tx.wait();
-            setStatus("joinGiftStatus", "✅ Successfully joined the gift contract for " + walletAddress.substring(0,8)+"...!", "success");
-        } catch(e) {
-            console.error("Join Gift Error:", e);
-            if (e.message.includes("execution reverted")) {
-                setStatus("joinGiftStatus", "❌ Address may already be joined or conditions not met.", "error");
-            } else {
-                setStatus("joinGiftStatus", "❌ Error: " + e.message, "error");
-            }
-        }
-    }
-    
-    async function freeGift() {
-        const walletAddress = document.getElementById("freeGiftAddress").value.trim();
-        
-        if (!userAddress) {
-            setStatus("freeGiftStatus", "⚠️ Connect wallet first", "error");
-            return;
-        }
-        
-        if (!walletAddress || !ethers.utils.isAddress(walletAddress)) {
-            setStatus("freeGiftStatus", "⚠️ Please enter a valid owner address", "error");
-            return;
-        }
-        
-        try {
-            const initialized = await initGiftContract();
-            if (!initialized) return;
-            
-            setStatus("freeGiftStatus", "⏳ Participating in lottery for address: " + walletAddress.substring(0,8)+"...", "");
-            
-            const tx = await giftContract.Free_Fly_Infinity_Gift(walletAddress);
-            setStatus("freeGiftStatus", "⏳ Waiting for confirmation...", "");
-            
-            await tx.wait();
-            setStatus("freeGiftStatus", "✅ Successfully participated in lottery for " + walletAddress.substring(0,8)+"...!", "success");
-        } catch(e) {
-            console.error("Free Gift Error:", e);
-            if (e.message.includes("execution reverted")) {
-                setStatus("freeGiftStatus", "❌ Address must join first or already participated.", "error");
-            } else {
-                setStatus("freeGiftStatus", "❌ Error: " + e.message, "error");
-            }
-        }
-    }
+    // Gift/lottery contract actions are intentionally not exposed on this page.
     
     // ==================== AGREEMENT MODAL FUNCTIONS ====================
     const agreementModal = document.getElementById('agreementModal');
@@ -2513,10 +2362,6 @@ button:focus-visible,a:focus-visible,input:focus-visible{
     document.getElementById("approveTokenBtn").addEventListener("click", approveTokenDAI);
     document.getElementById("buyBtn").addEventListener("click", buyFIT);
     document.getElementById("sellBtn").addEventListener("click", sellFIT);
-    
-    document.getElementById("joinGiftBtn").addEventListener("click", joinGiftContract);
-    document.getElementById("freeGiftBtn").addEventListener("click", freeGift);
-    
     checkNetwork();
 </script>
 
