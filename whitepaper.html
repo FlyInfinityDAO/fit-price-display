@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <script src="lang.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1022,6 +1022,25 @@ textarea:focus,
 .footer .footer-links a i{color:#00e6ad!important;filter:drop-shadow(0 0 5px rgba(0,230,173,.32))}
 .footer .footer-links a:hover,.footer .footer-links a:focus-visible,.footer .footer-links a:hover span,.footer .footer-links a:focus-visible span{color:#eafff8!important}
 .footer .footer-links a:hover i,.footer .footer-links a:focus-visible i{color:#a2ffe4!important;filter:drop-shadow(0 0 8px rgba(0,255,190,.9))}
+/* ===== WHITE PAPER: MATCH WHAT IS FIT GLASS THEME ===== */
+:root{--fi-glass-bg:rgba(10,20,19,.22);--fi-glass-border:rgba(0,200,150,.20);--fi-glass-highlight:rgba(255,255,255,.075);--fi-glass-shadow:0 8px 24px rgba(0,0,0,.16)}
+.wp-content{background:var(--fi-glass-bg)!important;-webkit-backdrop-filter:blur(18px) saturate(125%)!important;backdrop-filter:blur(18px) saturate(125%)!important;border:1px solid var(--fi-glass-border)!important;box-shadow:var(--fi-glass-shadow),inset 0 1px 0 var(--fi-glass-highlight)!important}
+.wp-content h2{color:#D4AF37;border-left-color:#00C896}.wp-content h3{color:#00C896}.wp-content h4{color:#D4AF37}
+.wp-content p,.wp-content ul,.wp-content table td{color:#c7d8d2}.wp-content .highlight{color:#00C896}.wp-content .gold{color:#D4AF37}
+.wp-content .formula-box,.wp-content .info-box,.wp-content .quote-box,.wp-content .contract-box,.wp-content .table-wrap{background:rgba(10,20,19,.22)!important;-webkit-backdrop-filter:blur(18px) saturate(125%)!important;backdrop-filter:blur(18px) saturate(125%)!important;border:1px solid rgba(0,200,150,.20)!important;border-radius:18px;box-shadow:0 8px 24px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.075)!important}
+.wp-content .formula-box{border-left:3px solid rgba(212,175,55,.62)!important;color:#D4AF37}.wp-content .info-box{border-left:3px solid rgba(0,200,150,.62)!important}.wp-content .quote-box{border-left:3px solid rgba(212,175,55,.62)!important;color:#D4AF37}.wp-content .contract-box{border-left:3px solid rgba(0,200,150,.62)!important}
+.wp-content table th{background:rgba(0,200,150,.09);color:#D4AF37;border-color:rgba(0,200,150,.18)}.wp-content table td{border-color:rgba(0,200,150,.12)}.wp-content table tr:hover td{background:rgba(0,200,150,.045)}
+.wp-content .contract-label{color:#D4AF37}.wp-content .contract-address{color:#70f5cf}.wp-content .contract-address a{color:#00C896!important}.wp-content .contract-row{border-bottom-color:rgba(255,255,255,.07)!important}
+.wp-content .table-cross{color:#D4AF37;font-size:14px}.wp-content table .highlight i{color:#00C896}
+[data-i18n="wp.s9.table.row1fit"]::before{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#00C896;font-size:.92em}
+[data-i18n="wp.s9.table.row1trad"]::before{content:"\f00d";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#D4AF37;font-size:.92em}
+[data-i18n="wp.s9.table.row7fit"]::before{content:"\f00c";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#00C896;font-size:.92em}
+[data-i18n="wp.s12.website"]::before{content:"\f0ac";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#00C896;font-size:.92em}
+[data-i18n="wp.s12.token"]::before{content:"\f1b2";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#D4AF37;font-size:.92em}
+[data-i18n="wp.s12.network"]::before{content:"\f0e8";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#00C896;font-size:.92em}
+[data-i18n="wp.s12.gift"]::before{content:"\f06b";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#D4AF37;font-size:.92em}
+[data-i18n="wp.s12.dao"]::before{content:"\f0e3";font-family:"Font Awesome 6 Free";font-weight:900;display:inline-block;margin-inline-end:9px;color:#00C896;font-size:.92em}
+@media(max-width:768px){.wp-content{padding:20px}.wp-content .formula-box,.wp-content .info-box,.wp-content .quote-box,.wp-content .contract-box,.wp-content .table-wrap{border-radius:15px}.wp-content .contract-row{gap:8px}}
 </style>
     <link rel="stylesheet" href="wallet-ui.css">
     <link rel="stylesheet" href="card-hover.css?v=4">
@@ -1308,23 +1327,23 @@ textarea:focus,
                     </tr>
                     <tr>
                         <td data-i18n="wp.s9.table.row2">Non-Diminishing Price</td>
-                        <td><span class="highlight">✅</span></td>
-                        <td>❌</td>
+                        <td><span class="highlight"><i class="fas fa-check-circle" aria-hidden="true"></i></span></td>
+                        <td><i class="fas fa-times-circle table-cross" aria-hidden="true"></i></td>
                     </tr>
                     <tr>
                         <td data-i18n="wp.s9.table.row3">Full Transparency</td>
-                        <td><span class="highlight">✅</span></td>
-                        <td>❌</td>
+                        <td><span class="highlight"><i class="fas fa-check-circle" aria-hidden="true"></i></span></td>
+                        <td><i class="fas fa-times-circle table-cross" aria-hidden="true"></i></td>
                     </tr>
                     <tr>
                         <td data-i18n="wp.s9.table.row4">Anti-Whale Manipulation</td>
-                        <td><span class="highlight">✅</span></td>
-                        <td>❌</td>
+                        <td><span class="highlight"><i class="fas fa-check-circle" aria-hidden="true"></i></span></td>
+                        <td><i class="fas fa-times-circle table-cross" aria-hidden="true"></i></td>
                     </tr>
                     <tr>
                         <td data-i18n="wp.s9.table.row5">DAO Governance</td>
-                        <td><span class="highlight">✅</span></td>
-                        <td>❌</td>
+                        <td><span class="highlight"><i class="fas fa-check-circle" aria-hidden="true"></i></span></td>
+                        <td><i class="fas fa-times-circle table-cross" aria-hidden="true"></i></td>
                     </tr>
                     <tr>
                         <td data-i18n="wp.s9.table.row6">Transparent Fees</td>
