@@ -167,7 +167,7 @@
   async function refreshExisting(){
     provider=window.ethereum||null;
     if(!provider){account='';chainId='';renderState();resetMetrics();note('');return;}
-    try{const accounts=await provider.request({method:'eth_accounts'});account=accounts&&accounts[0]||'';chainId=await provider.request({method:'eth_chainId'});listen();renderState();if(account)await loadContractData();else{resetMetrics();note('');}}
+    try{const accounts=await provider.request({method:'eth_accounts'});account=accounts&&accounts[0]||'';chainId=await provider.request({method:'eth_chainId'});console.info('[Fly Infinity Wallet Panel] Wallet chain diagnostic:',{source:'refresh',rawChainId:chainId,parsedChainId:Number.parseInt(chainId,16),isBsc:chainId===BSC_CHAIN,providerName:provider.name||provider.constructor&&provider.constructor.name||'unknown'});listen();renderState();if(account)await loadContractData();else{resetMetrics();note('');}}
     catch(e){renderState();note(t().error);}
   }
   // Load the same shared wallet selector used by the four DApp pages.
@@ -205,6 +205,7 @@
         throw new Error('The wallet connection returned no account.');
       }
       const selectedChainId=await selectedProvider.request({method:'eth_chainId'});
+      console.info('[Fly Infinity Wallet Panel] Wallet chain diagnostic:',{source:'connect',rawChainId:selectedChainId,parsedChainId:Number.parseInt(selectedChainId,16),isBsc:selectedChainId===BSC_CHAIN,providerName:selectedProvider.name||selectedProvider.constructor&&selectedProvider.constructor.name||'unknown'});
       provider=selectedProvider;
       window.ethereum=selectedProvider;
       account=accounts[0];
@@ -223,7 +224,7 @@
     provider.__fiWalletPanelBound=true;
     if(provider.on){
       provider.on('accountsChanged',async a=>{account=a&&a[0]||'';renderState();if(account)await loadContractData();else{resetMetrics();note(t().statusOff);}});
-      provider.on('chainChanged',async id=>{chainId=id;renderState();if(account)await loadContractData();});
+      provider.on('chainChanged',async id=>{chainId=id;console.info('[Fly Infinity Wallet Panel] Wallet chain diagnostic:',{source:'chainChanged',rawChainId:id,parsedChainId:Number.parseInt(id,16),isBsc:id===BSC_CHAIN});renderState();if(account)await loadContractData();});
       provider.on('disconnect',()=>{account='';chainId='';resetMetrics();renderState();note(t().statusOff);});
     }
   }
