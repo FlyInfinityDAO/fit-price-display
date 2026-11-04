@@ -1,0 +1,1 @@
+{"name":"fly-ai-worker","version":"1.0.0","private":true,"type":"module","scripts":{"dev":"wrangler dev","deploy":"wrangler deploy"},"dependencies":{"ethers":"^6.13.5"},"devDependencies":{"wrangler":"^3.99.0"}}
