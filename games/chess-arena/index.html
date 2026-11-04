@@ -36,7 +36,42 @@
         <span class="ready-dot"></span>
       </div>
       <div id="deniedPanel" class="denied-panel" hidden></div>
+      <section id="roomsPanel" class="rooms-panel" hidden>
+        <div class="eyebrow">ONLINE PLAY</div>
+        <h3>Play a friend</h3>
+        <button id="createRoomBtn" class="secondary-btn" type="button">Create private room</button>
+        <div class="join-row">
+          <input id="roomCodeInput" maxlength="6" autocomplete="off" placeholder="ROOM CODE" aria-label="Room code">
+          <button id="joinRoomBtn" class="secondary-btn" type="button">Join</button>
+        </div>
+        <div id="roomStatus" class="room-status" role="status" aria-live="polite">Create a room and share its code with your opponent.</div>
+      </section>
     </section>
+
+    <section id="gamePanel" class="game-panel" hidden>
+      <header class="game-header">
+        <div><div class="eyebrow">PRIVATE MATCH</div><strong>ROOM <span id="activeRoomCode">------</span></strong></div>
+        <button id="copyRoomBtn" class="small-btn" type="button">Copy code</button>
+      </header>
+      <div class="player-bar">
+        <div><small>BLACK</small><strong id="blackPlayer">Waiting…</strong></div>
+        <time id="blackClock">10:00</time>
+      </div>
+      <div id="chessBoard" class="chess-board" aria-label="Chess board"></div>
+      <div class="player-bar">
+        <div><small>WHITE</small><strong id="whitePlayer">You</strong></div>
+        <time id="whiteClock">10:00</time>
+      </div>
+      <div id="gameStatus" class="game-status">Waiting for opponent…</div>
+      <div class="game-controls">
+        <button id="offerDrawBtn" class="small-btn" type="button">Offer draw</button>
+        <button id="acceptDrawBtn" class="small-btn" type="button" hidden>Accept draw</button>
+        <button id="declineDrawBtn" class="small-btn" type="button" hidden>Decline</button>
+        <button id="resignBtn" class="small-btn danger-btn" type="button">Resign</button>
+      </div>
+      <div id="gameMessage" class="room-status" role="status" aria-live="polite"></div>
+    </section>
+
     <section class="features">
       <article><span>♟</span><strong>1 vs 1</strong><small>Live online chess</small></article>
       <article><span>◷</span><strong>Rated games</strong><small>Free player rating</small></article>
