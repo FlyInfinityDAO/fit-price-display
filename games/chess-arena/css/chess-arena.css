@@ -1,0 +1,28 @@
+:root{color-scheme:dark;--bg:#0b1110;--panel:rgba(12,25,22,.88);--line:rgba(0,200,150,.27);--mint:#00c896;--gold:#d4af37;--muted:#aab8b3;--text:#f4f7f5;--danger:#ff7777}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Segoe UI,Tahoma,sans-serif;color:var(--text);background:var(--bg)}
+body{min-height:100vh;background:radial-gradient(ellipse at 50% 0,rgba(0,200,150,.13),transparent 48%),linear-gradient(145deg,#0b1110,#101917 55%,#080d0c);padding:22px}
+.arena{width:min(100%,980px);margin:auto;position:relative}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 0 30px}
+.brand{display:flex;gap:11px;align-items:center;color:#f5f7f6;text-decoration:none;font-weight:900;letter-spacing:1.1px;font-size:14px}
+.brand small{display:block;color:var(--gold);font-size:9px;letter-spacing:2.8px;margin-top:3px}
+.brand-mark{width:39px;height:39px;border:1px solid var(--gold);border-radius:12px;display:grid;place-items:center;color:var(--gold);font-size:23px}
+.network{font-size:10px;letter-spacing:1.5px;color:#c2d0ca;border:1px solid var(--line);border-radius:30px;padding:10px 14px}
+.network i,.ready-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--mint);margin-right:7px;box-shadow:0 0 12px var(--mint)}
+.hero{text-align:center;padding:24px 0 30px}.eyebrow{font-size:10px;font-weight:800;letter-spacing:2.5px;color:var(--mint)}
+h1{font-size:clamp(42px,8vw,76px);line-height:1;margin:13px 0;background:linear-gradient(90deg,var(--gold),#f3e6a5 45%,var(--mint));color:transparent;background-clip:text}
+.hero p{color:var(--muted);font-size:15px;margin:0}
+.access-card{max-width:640px;margin:0 auto;padding:30px;border:1px solid var(--line);border-radius:22px;background:var(--panel);box-shadow:0 22px 70px #0008,inset 0 1px #ffffff0b;backdrop-filter:blur(14px)}
+.card-heading{display:flex;justify-content:space-between;align-items:center}h2{font-size:25px;margin:7px 0 0}.lock-icon{font-size:32px;color:var(--gold)}
+.intro{color:var(--muted);font-size:14px;line-height:1.7;margin:17px 0 22px}
+.primary-btn{width:100%;border:0;border-radius:12px;padding:15px 20px;background:linear-gradient(100deg,#00a77e,var(--mint));color:#03130e;font-size:15px;font-weight:900;cursor:pointer;transition:filter .2s,transform .2s}
+.primary-btn:hover{filter:brightness(1.1);transform:translateY(-1px)}.primary-btn:disabled{opacity:.55;cursor:wait;transform:none}
+.status{font-size:12px;color:var(--muted);min-height:36px;padding:12px 2px 8px}
+.checks{border-top:1px solid #ffffff16;margin-top:7px}.check-row{display:flex;align-items:center;gap:13px;padding:15px 0;border-bottom:1px solid #ffffff12}
+.check-symbol{font-size:10px;color:var(--gold);font-weight:900;border:1px solid #d4af3755;border-radius:8px;padding:8px}
+.check-row div{flex:1}.check-row strong,.check-row small{display:block}.check-row strong{font-size:13px}.check-row small{font-size:11px;color:var(--muted);margin-top:5px}.mark{color:#82918b;font-size:17px}
+.eligible-panel,.denied-panel{margin-top:18px;padding:14px;border-radius:12px;font-size:13px}.eligible-panel{border:1px solid #00c89666;background:#00c89612;display:flex;align-items:center;justify-content:space-between}.eligible-panel small{display:block;color:var(--muted);line-height:1.5;margin-top:5px}.denied-panel{border:1px solid #ff777766;background:#ff777710;color:#ffc0c0;line-height:1.6}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin:24px auto;max-width:640px}.features article{text-align:center;border:1px solid #ffffff16;background:#ffffff06;border-radius:15px;padding:17px 9px}.features article span{display:block;color:var(--gold);font-size:23px;margin-bottom:8px}.features strong,.features small{display:block}.features strong{font-size:12px}.features small{font-size:10px;color:var(--muted);margin-top:5px}
+footer{text-align:center;color:#81908a;font-size:10px;padding:12px 0 25px}footer span{color:var(--gold);padding:0 5px}
+[hidden]{display:none!important}
+@media(max-width:560px){body{padding:14px}.topbar{padding-bottom:18px}.network{font-size:8px;padding:9px}.access-card{padding:22px 18px;border-radius:18px}.hero{padding:22px 0 25px}.features{gap:8px}.features article{padding:14px 5px}footer{line-height:1.8}}
+html[dir=rtl] body{text-align:right}html[dir=rtl] .network i{margin:0 0 0 7px}html[dir=rtl] .check-row{text-align:right}

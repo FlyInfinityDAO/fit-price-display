@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b1110">
+  <title>Chess Arena | Fly Infinity</title>
+  <link rel="stylesheet" href="./css/chess-arena.css">
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="../../walletconnect-bridge.js"></script>
+</head>
+<body>
+  <main class="arena">
+    <header class="topbar">
+      <a class="brand" href="../../index.html" aria-label="Fly Infinity home"><span class="brand-mark">F</span><span>FLY INFINITY <small>GAMES</small></span></a>
+      <div class="network"><i></i> BNB SMART CHAIN</div>
+    </header>
+
+    <section class="hero">
+      <div class="eyebrow">FLY INFINITY GAMES</div>
+      <h1>Chess <span>Arena</span></h1>
+      <p>Think ahead. Play with the Network.</p>
+    </section>
+
+    <section class="access-card" aria-labelledby="access-title">
+      <div class="card-heading">
+        <div><div class="eyebrow">PLAYER ACCESS</div><h2 id="access-title">Connect to enter</h2></div>
+        <span class="lock-icon" aria-hidden="true">♜</span>
+      </div>
+      <p class="intro">Chess Arena is reserved for verified Fly Infinity Network owners holding at least 1 FIT.</p>
+
+      <button id="connectBtn" class="primary-btn" type="button">Connect Wallet</button>
+      <div id="status" class="status" role="status" aria-live="polite">Your wallet has not been connected.</div>
+
+      <div class="checks">
+        <div class="check-row"><span class="check-symbol">01</span><div><strong>Network membership</strong><small id="ownerStatus">Waiting for wallet connection</small></div><b id="ownerMark" class="mark">—</b></div>
+        <div class="check-row"><span class="check-symbol">02</span><div><strong>Minimum FIT balance</strong><small id="fitStatus">At least 1 FIT required</small></div><b id="fitMark" class="mark">—</b></div>
+      </div>
+
+      <div id="eligiblePanel" class="eligible-panel" hidden>
+        <div><strong>Access requirements met</strong><small>Wallet checks passed. Online matchmaking will be enabled after the game service is connected.</small></div>
+        <span class="ready-dot"></span>
+      </div>
+      <div id="deniedPanel" class="denied-panel" hidden></div>
+    </section>
+
+    <section class="features">
+      <article><span>♟</span><strong>1 vs 1</strong><small>Live online chess</small></article>
+      <article><span>◷</span><strong>Rated games</strong><small>Free player rating</small></article>
+      <article><span>⌘</span><strong>Private rooms</strong><small>Invite by room code</small></article>
+    </section>
+    <footer>Fly Infinity Chess Arena <span>•</span> No entry fee. No token transfer. No financial rewards.</footer>
+  </main>
+  <script src="./js/chess-arena.js"></script>
+</body>
+</html>
