@@ -15,7 +15,9 @@ No FIT is spent, transferred, staked, or locked. There is no entry fee or financ
 
 ## Current implementation status
 
-The initial isolated frontend shell and FIT balance precheck are in place. The browser check is **not a security boundary**. The game API must independently verify a signed wallet challenge and re-check the FIT balance before matchmaking and room entry. Do not enable live matchmaking until server-side verification is deployed.
+The isolated frontend includes wallet connection, a local balance display, and a signed login flow to the separate Chess Arena API. The server independently verifies the wallet signature and FIT balance, then issues a short-lived session. The browser-only balance check does not grant access.
+
+The API URL defaults to `https://fly-chess-arena-api.flyinfinityplatform.workers.dev`. To override it, define `window.CHESS_ARENA_API_URL` before loading `chess-arena.js`.
 
 ## Planned service architecture
 
