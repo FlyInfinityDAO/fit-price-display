@@ -1,0 +1,14 @@
+name = "fly-chess-arena-api"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+FRONTEND_ORIGIN = "https://flyinfinitydao.github.io"
+BSC_RPC_URL = "https://bsc-dataseed.binance.org/"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "fly-chess-arena-db"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+migrations_dir = "migrations"
