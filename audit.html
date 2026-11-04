@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <script src="lang.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1116,7 +1116,120 @@ textarea:focus,
 .footer .footer-links a i{color:#00e6ad!important;filter:drop-shadow(0 0 5px rgba(0,230,173,.32))}
 .footer .footer-links a:hover,.footer .footer-links a:focus-visible,.footer .footer-links a:hover span,.footer .footer-links a:focus-visible span{color:#eafff8!important}
 .footer .footer-links a:hover i,.footer .footer-links a:focus-visible i{color:#a2ffe4!important;filter:drop-shadow(0 0 8px rgba(0,255,190,.9))}
-</style>
+
+        /* ===== MODERN GLASS SYSTEM ===== */
+        .top-bar,
+        .lang-dropdown,
+        .sidebar,
+        .audit-section,
+        .audit-section .code-block,
+        .audit-section .info-box,
+        .audit-table th,
+        .badge,
+        .score-section,
+        .audit-status-banner {
+            background: rgba(12, 22, 24, 0.42);
+            -webkit-backdrop-filter: blur(26px) saturate(175%);
+            backdrop-filter: blur(26px) saturate(175%);
+            border-color: rgba(0, 200, 150, 0.24);
+            box-shadow: 0 18px 42px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+        }
+
+        .top-bar { background: rgba(12, 22, 24, 0.34); }
+        .lang-dropdown { background: rgba(10, 20, 22, 0.58); }
+        .sidebar { background: rgba(10, 20, 22, 0.68); }
+        .audit-section { background: rgba(12, 22, 24, 0.38); }
+        .audit-section .code-block { background: rgba(20, 30, 32, 0.48); border-color: rgba(212, 175, 55, 0.55); }
+        .audit-section .info-box { background: rgba(0, 200, 150, 0.075); border: 1px solid rgba(0, 200, 150, 0.20); border-left: 4px solid #00C896; }
+        .audit-section .info-box.gold { background: rgba(212, 175, 55, 0.075); border-left-color: #D4AF37; }
+        .audit-section .info-box.danger { background: rgba(255, 68, 68, 0.075); border-left-color: #ff4444; }
+        .sidebar-menu a.active { background: rgba(0, 200, 150, 0.12); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+        .lang-item.active { background: rgba(0, 200, 150, 0.12); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+        .audit-table th { background: rgba(22, 34, 36, 0.58); }
+        .audit-table td { background: rgba(12, 22, 24, 0.16); }
+        .badge { background: rgba(0, 200, 150, 0.075); }
+        .badge.gold { background: rgba(212, 175, 55, 0.075); }
+        .badge.danger { background: rgba(255, 68, 68, 0.075); }
+        .score-section { background: rgba(18, 30, 31, 0.48); }
+        .score-circle {
+            background: linear-gradient(135deg, rgba(0, 200, 150, 0.72), rgba(0, 138, 106, 0.48));
+            border: 1px solid rgba(170, 255, 230, 0.35);
+            -webkit-backdrop-filter: blur(18px) saturate(160%);
+            backdrop-filter: blur(18px) saturate(160%);
+        }
+        .audit-status-banner {
+            background: rgba(0, 200, 150, 0.09);
+            border-color: rgba(0, 200, 150, 0.62);
+        }
+
+        /* Modern, language-independent section and status icons */
+        .audit-section h2[data-i18n] { display: flex; align-items: center; gap: 11px; }
+        .audit-section h2[data-i18n]::before {
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: #00C896;
+            font-size: 0.9em;
+            min-width: 1.15em;
+            text-align: center;
+        }
+        h2[data-i18n="audit.summaryTitle"]::before { content: "\f0f6"; }
+        h2[data-i18n="audit.filesTitle"]::before { content: "\f07c"; }
+        h2[data-i18n="audit.webTitle"]::before { content: "\f0ac"; }
+        h2[data-i18n="audit.contractTitle"]::before { content: "\f15b"; }
+        h2[data-i18n="audit.daoTitle"]::before { content: "\f0e8"; }
+        h2[data-i18n="audit.summaryTableTitle"]::before { content: "\f080"; }
+        h2[data-i18n="audit.verdictTitle"]::before { content: "\f24e"; }
+
+        .audit-section h4[data-i18n="audit.webA1Title"]::before,
+        .audit-section h4[data-i18n="audit.webA6Title"]::before,
+        .audit-section h4[data-i18n="audit.contractA3Title"]::before,
+        .audit-section h4[data-i18n="audit.contractA4Title"]::before,
+        .audit-section h4[data-i18n="audit.daoA1Title"]::before,
+        h4[data-i18n="audit.verdictText"]::before {
+            content: "\f058";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: #00C896;
+            margin-right: 9px;
+        }
+        .audit-section h4[data-i18n="audit.webA2Title"]::before,
+        .audit-section h4[data-i18n="audit.webA3Title"]::before,
+        .audit-section h4[data-i18n="audit.webA4Title"]::before,
+        .audit-section h4[data-i18n="audit.webA5Title"]::before,
+        .audit-section h4[data-i18n="audit.contractA1Title"]::before,
+        .audit-section h4[data-i18n="audit.contractA2Title"]::before {
+            content: "\f057";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: #ff6b6b;
+            margin-right: 9px;
+        }
+        .audit-table td.pass::before {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            margin-right: 6px;
+            color: #00C896;
+        }
+        .audit-table td.fail::before {
+            content: "\f00d";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            margin-right: 6px;
+            color: #ff6b6b;
+        }
+        .score-value[data-i18n="audit.scoreStatus"]::before,
+        .score-value[data-i18n="audit.verdictStatus"]::before {
+            content: "\f058";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            margin-right: 8px;
+        }
+        @media (max-width: 768px) {
+            .top-bar, .audit-section, .score-section { -webkit-backdrop-filter: blur(20px) saturate(165%); backdrop-filter: blur(20px) saturate(165%); }
+        }
+
+    </style>
     <link rel="stylesheet" href="wallet-ui.css">
     <link rel="stylesheet" href="card-hover.css?v=4">
     <script src="card-hover.js?v=1" defer></script>
@@ -1132,7 +1245,7 @@ textarea:focus,
         </a>
         <div class="top-bar-right">
             <button class="hamburger" id="hamburgerBtn">
-                <i class="fas fa-bars"></i>
+                <i class="fa-solid fa-bars"></i>
             </button>
         </div>
     </div>
@@ -1147,46 +1260,46 @@ textarea:focus,
                 <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
                 <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
             </span>
-            <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
+            <button class="close-btn" id="closeSidebarBtn"><i class="fa-solid fa-xmark"></i></button>
         </div>
         
         <div class="sidebar-menu">
             <a href="index.html">
-                <i class="fas fa-gauge-high" aria-hidden="true"></i> <span data-i18n="nav.dashboard">Dashboard</span>
+                <i class="fa-solid fa-gauge-high" aria-hidden="true"></i> <span data-i18n="nav.dashboard">Dashboard</span>
             </a>
             <!-- ===== What is FIT? added  ===== -->
             <a href="what-is-fit.html">
-                <i class="fas fa-circle-info" aria-hidden="true"></i> <span data-i18n="nav.whatisfit">What is FIT?</span>
+                <i class="fa-solid fa-circle-info" aria-hidden="true"></i> <span data-i18n="nav.whatisfit">What is FIT?</span>
             </a>
             <a href="compare.html">
-                <i class="fas fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="nav.comparison">Comparison</span>
+                <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="nav.comparison">Comparison</span>
             </a>
             <a href="dapp.html">
-                <i class="fas fa-cubes" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span>
+                <i class="fa-solid fa-cubes" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span>
             </a>
             <a href="profit-simulator.html">
-                <i class="fas fa-calculator" aria-hidden="true"></i> <span data-i18n="nav.profitCalculator">Profit Calculator</span>
+                <i class="fa-solid fa-calculator" aria-hidden="true"></i> <span data-i18n="nav.profitCalculator">Profit Calculator</span>
             </a>
             <a href="next-projects.html">
-                <i class="fas fa-rocket" aria-hidden="true"></i> <span data-i18n="nav.nextProjects">Upcoming Projects</span>
+                <i class="fa-solid fa-rocket" aria-hidden="true"></i> <span data-i18n="nav.nextProjects">Upcoming Projects</span>
             </a>
             <a href="transactions.html">
-                <i class="fas fa-arrow-right-arrow-left" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span>
+                <i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span>
             </a>
             <a href="privacy.html">
-                <i class="fas fa-user-shield" aria-hidden="true"></i> <span data-i18n="nav.privacy">Privacy</span>
+                <i class="fa-solid fa-user-shield" aria-hidden="true"></i> <span data-i18n="nav.privacy">Privacy</span>
             </a>
             <a href="warnings.html">
-                <i class="fas fa-triangle-exclamation" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span>
+                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span>
             </a>
             <a href="faq.html">
-                <i class="fas fa-comments" aria-hidden="true"></i> <span data-i18n="nav.faq">FAQ</span>
+                <i class="fa-solid fa-comments" aria-hidden="true"></i> <span data-i18n="nav.faq">FAQ</span>
             </a>
             <a href="whitepaper.html">
-                <i class="fas fa-book-open" aria-hidden="true"></i> <span data-i18n="nav.whitepaper">White Paper</span>
+                <i class="fa-solid fa-book-open" aria-hidden="true"></i> <span data-i18n="nav.whitepaper">White Paper</span>
             </a>
             <a href="audit.html" class="active">
-                <i class="fas fa-shield-halved" aria-hidden="true"></i> <span data-i18n="nav.audit">Security Audit</span>
+                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> <span data-i18n="nav.audit">Security Audit</span>
             </a>
         </div>
         
@@ -1197,33 +1310,33 @@ textarea:focus,
     
     <!-- Status Banner -->
     <div class="audit-status-banner">
-        <div class="status-icon"><i class="fas fa-check-circle"></i></div>
-        <div class="status-title" data-i18n="audit.statusTitle">✅ SECURITY AUDIT PASSED</div>
+        <div class="status-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <div class="status-title" data-i18n="audit.statusTitle"> SECURITY AUDIT PASSED</div>
         <div class="status-subtitle" data-i18n="audit.statusSubtitle">Comprehensive Security Audit of Fly Infinity DAO Ecosystem</div>
         <div class="status-date" data-i18n="audit.statusDate">Date: June 21, 2026 | Version: 2.0 | Status: FINAL APPROVED</div>
     </div>
 
     <!-- Title -->
-    <h1 class="page-title" data-i18n="audit.title"><i class="fas fa-shield-halved"></i>Comprehensive Security Audit Report</h1>
+    <h1 class="page-title" data-i18n="audit.title"><i class="fa-solid fa-shield-halved"></i>Comprehensive Security Audit Report</h1>
 
     <!-- Executive Summary -->
     <div class="audit-section">
-        <h2 data-i18n="audit.summaryTitle">📋 Executive Summary</h2>
+        <h2 data-i18n="audit.summaryTitle"> Executive Summary</h2>
         <p data-i18n="audit.summaryText1">After a complete review of <span class="highlight">all provided files</span> including smart contract codes, front-end files, and auxiliary files, a <span class="highlight">comprehensive security audit</span> has been conducted on the <span class="gold">Fly Infinity DAO</span> ecosystem.</p>
         <p data-i18n="audit.summaryText2">The audit evaluated the ecosystem from two main perspectives: <span class="highlight">Website Security (Front-End)</span> and <span class="highlight">Smart Contract Security</span>. All files have been reviewed line by line.</p>
         
         <div class="badge-container">
-            <span class="badge"><i class="fas fa-check-circle"></i> <span data-i18n="audit.badgeOverall">Overall Security:</span> <span class="gold">10/10</span></span>
-            <span class="badge gold"><i class="fas fa-infinity"></i> <span data-i18n="audit.badgeNonDiminishing">Non-Diminishing Price</span></span>
-            <span class="badge"><i class="fas fa-users"></i> <span data-i18n="audit.badgeDAO">DAO Governance</span></span>
-            <span class="badge gold"><i class="fas fa-file-contract"></i> <span data-i18n="audit.badgeOpenSource">Open Source</span></span>
+            <span class="badge"><i class="fa-solid fa-circle-check"></i> <span data-i18n="audit.badgeOverall">Overall Security:</span> <span class="gold">10/10</span></span>
+            <span class="badge gold"><i class="fa-solid fa-infinity"></i> <span data-i18n="audit.badgeNonDiminishing">Non-Diminishing Price</span></span>
+            <span class="badge"><i class="fa-solid fa-users"></i> <span data-i18n="audit.badgeDAO">DAO Governance</span></span>
+            <span class="badge gold"><i class="fa-solid fa-file-contract"></i> <span data-i18n="audit.badgeOpenSource">Open Source</span></span>
         </div>
         
         <div class="score-section">
             <div class="score-circle">10/10</div>
             <div class="score-details">
                 <div><span class="score-label" data-i18n="audit.scoreOverall">Overall Security Score</span></div>
-                <div><span class="score-value" data-i18n="audit.scoreStatus">✅ FULLY SECURE - FINAL APPROVED</span></div>
+                <div><span class="score-value" data-i18n="audit.scoreStatus"> FULLY SECURE - FINAL APPROVED</span></div>
                 <div><span class="score-label" data-i18n="audit.scoreAudit">Audit Date: June 21, 2026</span></div>
                 <div><span class="score-label" data-i18n="audit.scoreVersion">Report Version: 2.0 (Comprehensive)</span></div>
             </div>
@@ -1232,7 +1345,7 @@ textarea:focus,
 
     <!-- Files Reviewed -->
     <div class="audit-section">
-        <h2 data-i18n="audit.filesTitle">📁 Files Reviewed</h2>
+        <h2 data-i18n="audit.filesTitle"> Files Reviewed</h2>
         <p data-i18n="audit.filesText">The following files have been received, reviewed, and analyzed in full:</p>
         <div class="table-wrap">
             <table class="audit-table">
@@ -1245,23 +1358,23 @@ textarea:focus,
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>1</td><td>Fly_Infinity_Token.sol</td><td data-i18n="audit.filesTableTypeSC">Smart Contract</td><td class="pass">✅</td></tr>
-                    <tr><td>2</td><td>Fly_Infinity_Network.sol</td><td data-i18n="audit.filesTableTypeSC">Smart Contract</td><td class="pass">✅</td></tr>
-                    <tr><td>3</td><td>Fly_Infinity_Gift.sol</td><td data-i18n="audit.filesTableTypeSC">Smart Contract</td><td class="pass">✅</td></tr>
-                    <tr><td>4</td><td>Fly_Infinity_DAO.sol</td><td data-i18n="audit.filesTableTypeSC">Smart Contract</td><td class="pass">✅</td></tr>
-                    <tr><td>5</td><td>index.html</td><td data-i18n="audit.filesTableTypeFE">Front-End</td><td class="pass">✅</td></tr>
-                    <tr><td>6</td><td>dapp.html</td><td data-i18n="audit.filesTableTypeFE">Front-End</td><td class="pass">✅</td></tr>
-                    <tr><td>7</td><td>compare.html</td><td data-i18n="audit.filesTableTypeFE">Front-End</td><td class="pass">✅</td></tr>
-                    <tr><td>8</td><td>transactions.html</td><td data-i18n="audit.filesTableTypeFE">Front-End</td><td class="pass">✅</td></tr>
-                    <tr><td>9</td><td>privacy.html</td><td data-i18n="audit.filesTableTypeFE">Front-End</td><td class="pass">✅</td></tr>
-                    <tr><td>10</td><td>warnings.html</td><td data-i18n="audit.filesTableTypeFE">Front-End</td><td class="pass">✅</td></tr>
-                    <tr><td>11</td><td>faq.html</td><td data-i18n="audit.filesTableTypeFE">Front-End</td><td class="pass">✅</td></tr>
-                    <tr><td>12</td><td>whitepaper.html</td><td data-i18n="audit.filesTableTypeFE">Front-End</td><td class="pass">✅</td></tr>
-<tr><td>14</td><td>lang.js</td><td data-i18n="audit.filesTableTypeLM">Language Manager</td><td class="pass">✅</td></tr>
-                    <tr><td>15</td><td>update-cache.js</td><td data-i18n="audit.filesTableTypeSS">Server Script</td><td class="pass">✅</td></tr>
-                    <tr><td>16</td><td>update-price.js</td><td data-i18n="audit.filesTableTypeSS">Server Script</td><td class="pass">✅</td></tr>
-                    <tr><td>17</td><td>price-history.json</td><td data-i18n="audit.filesTableTypeData">Data</td><td class="pass">✅</td></tr>
-                    <tr><td>18</td><td>crypto-cache.json</td><td data-i18n="audit.filesTableTypeData">Data</td><td class="pass">✅</td></tr>
+                    <tr><td>1</td><td>Fly_Infinity_Token.sol</td><td data-i18n="audit.filesTableTypeSC">Smart Contract</td><td class="pass"></td></tr>
+                    <tr><td>2</td><td>Fly_Infinity_Network.sol</td><td data-i18n="audit.filesTableTypeSC">Smart Contract</td><td class="pass"></td></tr>
+                    <tr><td>3</td><td>Fly_Infinity_Gift.sol</td><td data-i18n="audit.filesTableTypeSC">Smart Contract</td><td class="pass"></td></tr>
+                    <tr><td>4</td><td>Fly_Infinity_DAO.sol</td><td data-i18n="audit.filesTableTypeSC">Smart Contract</td><td class="pass"></td></tr>
+                    <tr><td>5</td><td>index.html</td><td data-i18n="audit.filesTableTypeFE">Front-End</td><td class="pass"></td></tr>
+                    <tr><td>6</td><td>dapp.html</td><td data-i18n="audit.filesTableTypeFE">Front-End</td><td class="pass"></td></tr>
+                    <tr><td>7</td><td>compare.html</td><td data-i18n="audit.filesTableTypeFE">Front-End</td><td class="pass"></td></tr>
+                    <tr><td>8</td><td>transactions.html</td><td data-i18n="audit.filesTableTypeFE">Front-End</td><td class="pass"></td></tr>
+                    <tr><td>9</td><td>privacy.html</td><td data-i18n="audit.filesTableTypeFE">Front-End</td><td class="pass"></td></tr>
+                    <tr><td>10</td><td>warnings.html</td><td data-i18n="audit.filesTableTypeFE">Front-End</td><td class="pass"></td></tr>
+                    <tr><td>11</td><td>faq.html</td><td data-i18n="audit.filesTableTypeFE">Front-End</td><td class="pass"></td></tr>
+                    <tr><td>12</td><td>whitepaper.html</td><td data-i18n="audit.filesTableTypeFE">Front-End</td><td class="pass"></td></tr>
+<tr><td>14</td><td>lang.js</td><td data-i18n="audit.filesTableTypeLM">Language Manager</td><td class="pass"></td></tr>
+                    <tr><td>15</td><td>update-cache.js</td><td data-i18n="audit.filesTableTypeSS">Server Script</td><td class="pass"></td></tr>
+                    <tr><td>16</td><td>update-price.js</td><td data-i18n="audit.filesTableTypeSS">Server Script</td><td class="pass"></td></tr>
+                    <tr><td>17</td><td>price-history.json</td><td data-i18n="audit.filesTableTypeData">Data</td><td class="pass"></td></tr>
+                    <tr><td>18</td><td>crypto-cache.json</td><td data-i18n="audit.filesTableTypeData">Data</td><td class="pass"></td></tr>
                 </tbody>
             </table>
         </div>
@@ -1269,11 +1382,11 @@ textarea:focus,
 
     <!-- Website Security -->
     <div class="audit-section">
-        <h2 data-i18n="audit.webTitle">🌐 Website Security (Front-End)</h2>
+        <h2 data-i18n="audit.webTitle"> Website Security (Front-End)</h2>
         
         <h3 data-i18n="audit.webQ1">1. Is the website generally secure?</h3>
         <div class="info-box">
-            <h4 data-i18n="audit.webA1Title">✅ YES — High Security Level</h4>
+            <h4 data-i18n="audit.webA1Title"> YES — High Security Level</h4>
             <p data-i18n="audit.webA1_1">The site is hosted on <span class="highlight">GitHub Pages</span> which uses <span class="highlight">HTTPS</span> by default, encrypting all communication between user browser and server.</p>
             <p data-i18n="audit.webA1_2">Review of <span class="highlight">dapp.html</span> shows no <span class="highlight">fetch</span> or <span class="highlight">XMLHttpRequest</span> requests to external servers for transaction processing.</p>
             <div class="code-block">
@@ -1285,7 +1398,7 @@ textarea:focus,
 
         <h3 data-i18n="audit.webQ2">2. Does the site have access to my wallet?</h3>
         <div class="info-box gold">
-            <h4 data-i18n="audit.webA2Title">❌ NO — The site never has direct access to your wallet</h4>
+            <h4 data-i18n="audit.webA2Title"> NO — The site never has direct access to your wallet</h4>
             <p data-i18n="audit.webA2_1">Wallet connection uses the standard <span class="highlight">eth_requestAccounts</span> method which only provides the <span class="highlight">public address</span> and <span class="highlight">never has access to private keys</span>.</p>
             <div class="code-block">
                 <span class="comment">// From dapp.html</span>
@@ -1300,27 +1413,27 @@ textarea:focus,
 
         <h3 data-i18n="audit.webQ3">3. Can the site endanger my assets?</h3>
         <div class="info-box">
-            <h4 data-i18n="audit.webA3Title">❌ NO — No risk to user assets</h4>
+            <h4 data-i18n="audit.webA3Title"> NO — No risk to user assets</h4>
             <p data-i18n="audit.webA3_1">Review shows the only functions for interacting with the contract are: <span class="highlight">approveNetworkDAI</span>, <span class="highlight">approveTokenDAI</span>, <span class="highlight">becomeOwner</span>, <span class="highlight">buyFIT</span>, <span class="highlight">sellFIT</span>, <span class="highlight">joinGiftContract</span>, and <span class="highlight">freeGift</span>.</p>
             <p data-i18n="audit.webA3_2"><span class="highlight">No function exists for automatic token transfers.</span> Every transaction requires manual user confirmation in the wallet.</p>
         </div>
 
         <h3 data-i18n="audit.webQ4">4. Is my recovery phrase at risk?</h3>
         <div class="info-box gold">
-            <h4 data-i18n="audit.webA4Title">❌ NO — Recovery phrase is never stored or requested</h4>
+            <h4 data-i18n="audit.webA4Title"> NO — Recovery phrase is never stored or requested</h4>
             <p data-i18n="audit.webA4_1">Review of all HTML files shows <span class="highlight">no input field</span> for recovery phrase (Seed Phrase/Mnemonic).</p>
             <p data-i18n="audit.webA4_2">Only language settings are stored in <span class="highlight">localStorage</span>. No sensitive information is ever stored.</p>
         </div>
 
         <h3 data-i18n="audit.webQ5">5. Are there hidden buttons or functions?</h3>
         <div class="info-box">
-            <h4 data-i18n="audit.webA5Title">❌ NO — No hidden or backdoor functions exist</h4>
+            <h4 data-i18n="audit.webA5Title"> NO — No hidden or backdoor functions exist</h4>
             <p data-i18n="audit.webA5_1">All buttons have clear, transparent functionality. <span class="highlight">All functions require user confirmation</span> in the wallet.</p>
         </div>
 
         <h3 data-i18n="audit.webQ6">6. Does the site store my information?</h3>
         <div class="info-box gold">
-            <h4 data-i18n="audit.webA6Title">✅ Only non-sensitive information is stored</h4>
+            <h4 data-i18n="audit.webA6Title"> Only non-sensitive information is stored</h4>
             <p data-i18n="audit.webA6_1">Items stored: <span class="highlight">Language settings</span> and <span class="highlight">calculation history</span> only.</p>
             <p data-i18n="audit.webA6_2">Items <span class="danger">NOT</span> stored: Wallet address, wallet balance, transaction history, private keys, recovery phrase.</p>
         </div>
@@ -1328,11 +1441,11 @@ textarea:focus,
 
     <!-- Smart Contract Security -->
     <div class="audit-section">
-        <h2 data-i18n="audit.contractTitle">🔗 Smart Contract Security</h2>
+        <h2 data-i18n="audit.contractTitle"> Smart Contract Security</h2>
         
         <h3 data-i18n="audit.contractQ1">1. Can DAI liquidity be drained from the contract?</h3>
         <div class="info-box">
-            <h4 data-i18n="audit.contractA1Title">❌ NO — No liquidity drain access exists</h4>
+            <h4 data-i18n="audit.contractA1Title"> NO — No liquidity drain access exists</h4>
             <p data-i18n="audit.contractA1_1">Review of <span class="highlight">Fly_Infinity_Token.sol</span> shows the <span class="highlight">transfer</span>, <span class="highlight">transferFrom</span>, and <span class="highlight">approve</span> functions are <span class="danger">DISABLED</span>.</p>
             <div class="code-block">
                 <span class="comment">// From Fly_Infinity_Token.sol</span>
@@ -1351,7 +1464,7 @@ textarea:focus,
 
         <h3 data-i18n="audit.contractQ2">2. Can Founder withdraw user funds?</h3>
         <div class="info-box gold">
-            <h4 data-i18n="audit.contractA2Title">❌ NO — Founder has no access to user assets</h4>
+            <h4 data-i18n="audit.contractA2Title"> NO — Founder has no access to user assets</h4>
             <p data-i18n="audit.contractA2_1"><span class="highlight">No modifier named <span class="danger">onlyFounder</span> or <span class="danger">onlyOwner</span> exists</span> in the token contract.</p>
             <div class="code-block">
                 <span class="comment">// From Fly_Infinity_Token.sol - No onlyFounder modifier found</span>
@@ -1365,7 +1478,7 @@ textarea:focus,
 
         <h3 data-i18n="audit.contractQ3">3. Can the price decrease?</h3>
         <div class="info-box">
-            <h4 data-i18n="audit.contractA3Title">✅ Price <span class="gold">NEVER</span> decreases (Non-Diminishing)</h4>
+            <h4 data-i18n="audit.contractA3Title"> Price <span class="gold">NEVER</span> decreases (Non-Diminishing)</h4>
             <p data-i18n="audit.contractA3_1">The price formula is:</p>
             <div class="code-block">
                 <span class="comment">// From Fly_Infinity_Token.sol</span>
@@ -1376,8 +1489,8 @@ textarea:focus,
             </div>
             <p data-i18n="audit.contractA3_2"><span class="highlight">Mathematical proof</span> shows price increases on both <span class="highlight">BUY</span> and <span class="highlight">SELL</span> transactions:</p>
             <ul>
-                <li data-i18n="audit.contractA3_li1">Buy: New price = (R + m) / (S + 0.97m/P) > P ✅</li>
-                <li data-i18n="audit.contractA3_li2">Sell: New price = (R - 0.94P) / (S - 1) > P ✅</li>
+                <li data-i18n="audit.contractA3_li1">Buy: New price = (R + m) / (S + 0.97m/P) > P </li>
+                <li data-i18n="audit.contractA3_li2">Sell: New price = (R - 0.94P) / (S - 1) > P </li>
                 <li data-i18n="audit.contractA3_li3">Buy Fee (3%): Increases reserve → price increases</li>
                 <li data-i18n="audit.contractA3_li4">Sell Fee (6%): Increases reserve → price increases</li>
             </ul>
@@ -1385,7 +1498,7 @@ textarea:focus,
 
         <h3 data-i18n="audit.contractQ4">4. Are there purchase limits?</h3>
         <div class="info-box gold">
-            <h4 data-i18n="audit.contractA4Title">✅ Yes — Anti-Whale Security Mechanism</h4>
+            <h4 data-i18n="audit.contractA4Title"> Yes — Anti-Whale Security Mechanism</h4>
             <p data-i18n="audit.contractA4_1">Purchase limits are calculated based on network activity:</p>
             <div class="code-block">
                 <span class="comment">// From Fly_Infinity_Token.sol</span>
@@ -1408,11 +1521,11 @@ textarea:focus,
 
     <!-- DAO Governance -->
     <div class="audit-section">
-        <h2 data-i18n="audit.daoTitle">🏛️ DAO Governance Analysis</h2>
+        <h2 data-i18n="audit.daoTitle"> DAO Governance Analysis</h2>
         
         <h3 data-i18n="audit.daoQ1">How does the DAO voting system work?</h3>
         <div class="info-box">
-            <h4 data-i18n="audit.daoA1Title">✅ Complete Decentralized Voting Process</h4>
+            <h4 data-i18n="audit.daoA1Title"> Complete Decentralized Voting Process</h4>
             <p data-i18n="audit.daoA1_1">The DAO system implements a <span class="highlight">3-day voting period</span> for network members to decide on major changes.</p>
             <div class="code-block">
                 <span class="comment">// From Fly_Infinity_DAO.sol</span>
@@ -1486,7 +1599,7 @@ textarea:focus,
 
     <!-- Security Summary Table -->
     <div class="audit-section">
-        <h2 data-i18n="audit.summaryTableTitle">📊 Security Summary</h2>
+        <h2 data-i18n="audit.summaryTableTitle"> Security Summary</h2>
         <div class="table-wrap">
             <table class="audit-table">
                 <thead>
@@ -1497,21 +1610,21 @@ textarea:focus,
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>1</td><td data-i18n="audit.summaryTableRow1">Overall Website Security</td><td class="pass" data-i18n="audit.summaryTableRow1Status">✅ Secure</td></tr>
-                    <tr><td>2</td><td data-i18n="audit.summaryTableRow2">Wallet Access</td><td class="pass" data-i18n="audit.summaryTableRow2Status">✅ No Access</td></tr>
-                    <tr><td>3</td><td data-i18n="audit.summaryTableRow3">Asset Risk</td><td class="pass" data-i18n="audit.summaryTableRow3Status">✅ No Risk</td></tr>
-                    <tr><td>4</td><td data-i18n="audit.summaryTableRow4">Recovery Phrase Risk</td><td class="pass" data-i18n="audit.summaryTableRow4Status">✅ No Risk</td></tr>
-                    <tr><td>5</td><td data-i18n="audit.summaryTableRow5">Hidden Functions</td><td class="pass" data-i18n="audit.summaryTableRow5Status">✅ None Found</td></tr>
-                    <tr><td>6</td><td data-i18n="audit.summaryTableRow6">Information Storage</td><td class="pass" data-i18n="audit.summaryTableRow6Status">✅ Non-sensitive Only</td></tr>
-                    <tr><td>7</td><td data-i18n="audit.summaryTableRow7">DAI Liquidity Drain</td><td class="pass" data-i18n="audit.summaryTableRow7Status">✅ Not Possible</td></tr>
-                    <tr><td>8</td><td data-i18n="audit.summaryTableRow8">Founder Withdrawal</td><td class="pass" data-i18n="audit.summaryTableRow8Status">✅ Not Possible</td></tr>
-                    <tr><td>9</td><td data-i18n="audit.summaryTableRow9">Price Decrease</td><td class="pass" data-i18n="audit.summaryTableRow9Status">✅ Never Decreases</td></tr>
-                    <tr><td>10</td><td data-i18n="audit.summaryTableRow10">Reentrancy Protection</td><td class="pass" data-i18n="audit.summaryTableRow10Status">✅ Implemented</td></tr>
-                    <tr><td>11</td><td data-i18n="audit.summaryTableRow11">Contract Protection</td><td class="pass" data-i18n="audit.summaryTableRow11Status">✅ Implemented</td></tr>
-                    <tr><td>12</td><td data-i18n="audit.summaryTableRow12">Zero Address Protection</td><td class="pass" data-i18n="audit.summaryTableRow12Status">✅ Implemented</td></tr>
-                    <tr><td>13</td><td data-i18n="audit.summaryTableRow13">DAO System</td><td class="pass" data-i18n="audit.summaryTableRow13Status">✅ Fully Functional</td></tr>
-                    <tr><td>14</td><td data-i18n="audit.summaryTableRow14">Purchase Limits</td><td class="pass" data-i18n="audit.summaryTableRow14Status">✅ Step-based</td></tr>
-                    <tr><td>15</td><td data-i18n="audit.summaryTableRow15">Wallet Change</td><td class="pass" data-i18n="audit.summaryTableRow15Status">✅ Limited Changes</td></tr>
+                    <tr><td>1</td><td data-i18n="audit.summaryTableRow1">Overall Website Security</td><td class="pass" data-i18n="audit.summaryTableRow1Status"> Secure</td></tr>
+                    <tr><td>2</td><td data-i18n="audit.summaryTableRow2">Wallet Access</td><td class="pass" data-i18n="audit.summaryTableRow2Status"> No Access</td></tr>
+                    <tr><td>3</td><td data-i18n="audit.summaryTableRow3">Asset Risk</td><td class="pass" data-i18n="audit.summaryTableRow3Status"> No Risk</td></tr>
+                    <tr><td>4</td><td data-i18n="audit.summaryTableRow4">Recovery Phrase Risk</td><td class="pass" data-i18n="audit.summaryTableRow4Status"> No Risk</td></tr>
+                    <tr><td>5</td><td data-i18n="audit.summaryTableRow5">Hidden Functions</td><td class="pass" data-i18n="audit.summaryTableRow5Status"> None Found</td></tr>
+                    <tr><td>6</td><td data-i18n="audit.summaryTableRow6">Information Storage</td><td class="pass" data-i18n="audit.summaryTableRow6Status"> Non-sensitive Only</td></tr>
+                    <tr><td>7</td><td data-i18n="audit.summaryTableRow7">DAI Liquidity Drain</td><td class="pass" data-i18n="audit.summaryTableRow7Status"> Not Possible</td></tr>
+                    <tr><td>8</td><td data-i18n="audit.summaryTableRow8">Founder Withdrawal</td><td class="pass" data-i18n="audit.summaryTableRow8Status"> Not Possible</td></tr>
+                    <tr><td>9</td><td data-i18n="audit.summaryTableRow9">Price Decrease</td><td class="pass" data-i18n="audit.summaryTableRow9Status"> Never Decreases</td></tr>
+                    <tr><td>10</td><td data-i18n="audit.summaryTableRow10">Reentrancy Protection</td><td class="pass" data-i18n="audit.summaryTableRow10Status"> Implemented</td></tr>
+                    <tr><td>11</td><td data-i18n="audit.summaryTableRow11">Contract Protection</td><td class="pass" data-i18n="audit.summaryTableRow11Status"> Implemented</td></tr>
+                    <tr><td>12</td><td data-i18n="audit.summaryTableRow12">Zero Address Protection</td><td class="pass" data-i18n="audit.summaryTableRow12Status"> Implemented</td></tr>
+                    <tr><td>13</td><td data-i18n="audit.summaryTableRow13">DAO System</td><td class="pass" data-i18n="audit.summaryTableRow13Status"> Fully Functional</td></tr>
+                    <tr><td>14</td><td data-i18n="audit.summaryTableRow14">Purchase Limits</td><td class="pass" data-i18n="audit.summaryTableRow14Status"> Step-based</td></tr>
+                    <tr><td>15</td><td data-i18n="audit.summaryTableRow15">Wallet Change</td><td class="pass" data-i18n="audit.summaryTableRow15Status"> Limited Changes</td></tr>
                 </tbody>
             </table>
         </div>
@@ -1519,31 +1632,31 @@ textarea:focus,
 
     <!-- Final Verdict -->
     <div class="audit-section">
-        <h2 data-i18n="audit.verdictTitle">⚖️ Final Verdict</h2>
+        <h2 data-i18n="audit.verdictTitle"> Final Verdict</h2>
         <div class="info-box gold">
-            <h4 style="color: #D4AF37; font-size: 24px; text-align: center;" data-i18n="audit.verdictText">✅ Fly Infinity DAO is a completely secure, decentralized, and transparent ecosystem.</h4>
+            <h4 style="color: #D4AF37; font-size: 24px; text-align: center;" data-i18n="audit.verdictText"> Fly Infinity DAO is a completely secure, decentralized, and transparent ecosystem.</h4>
         </div>
         
         <div class="badge-container">
-            <span class="badge"><i class="fas fa-check-circle"></i> <span data-i18n="audit.verdictBadge1">Complete Decentralized Architecture</span></span>
-            <span class="badge gold"><i class="fas fa-code"></i> <span data-i18n="audit.verdictBadge2">Audited Open Source Code</span></span>
-            <span class="badge"><i class="fas fa-chart-line"></i> <span data-i18n="audit.verdictBadge3">Non-Manipulable Price</span></span>
-            <span class="badge gold"><i class="fas fa-users"></i> <span data-i18n="audit.verdictBadge4">Strong DAO Governance</span></span>
-            <span class="badge"><i class="fas fa-shield-halved"></i> <span data-i18n="audit.verdictBadge5">No Single Point of Failure</span></span>
+            <span class="badge"><i class="fa-solid fa-circle-check"></i> <span data-i18n="audit.verdictBadge1">Complete Decentralized Architecture</span></span>
+            <span class="badge gold"><i class="fa-solid fa-code"></i> <span data-i18n="audit.verdictBadge2">Audited Open Source Code</span></span>
+            <span class="badge"><i class="fa-solid fa-chart-line"></i> <span data-i18n="audit.verdictBadge3">Non-Manipulable Price</span></span>
+            <span class="badge gold"><i class="fa-solid fa-users"></i> <span data-i18n="audit.verdictBadge4">Strong DAO Governance</span></span>
+            <span class="badge"><i class="fa-solid fa-shield-halved"></i> <span data-i18n="audit.verdictBadge5">No Single Point of Failure</span></span>
         </div>
         
         <div class="score-section">
             <div class="score-circle">10/10</div>
             <div class="score-details">
                 <div><span class="score-label" data-i18n="audit.verdictScore">Final Security Score</span></div>
-                <div><span class="score-value" style="color: #00C896; font-size: 20px;" data-i18n="audit.verdictStatus">✅ FULLY SECURE</span></div>
+                <div><span class="score-value" style="color: #00C896; font-size: 20px;" data-i18n="audit.verdictStatus"> FULLY SECURE</span></div>
                 <div><span class="score-label" data-i18n="audit.verdictDate">Audit Completed: June 21, 2026</span></div>
             </div>
         </div>
         
         <div style="text-align: center; padding: 10px; border-top: 1px solid rgba(0, 200, 150, 0.2); margin-top: 15px;">
             <p style="font-size: 16px; color: #00C896; font-weight: bold;">
-                <i class="fas fa-infinity" style="color: #D4AF37;"></i>
+                <i class="fa-solid fa-infinity" style="color: #D4AF37;"></i>
                 <span data-i18n="audit.footerTagline">Fly Infinity — Decentralized. Transparent. Forever Rising.</span>
             </p>
         </div>
@@ -1552,30 +1665,30 @@ textarea:focus,
     <!-- ===== FOOTER ===== -->
     <div class="footer">
         <div class="footer-links">
-            <a href="index.html"><i class="fas fa-gauge-high" aria-hidden="true"></i> <span data-i18n="nav.dashboard">Dashboard</span></a>
+            <a href="index.html"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i> <span data-i18n="nav.dashboard">Dashboard</span></a>
             <span>|</span>
             <!-- ===== link What is FIT? Added to footer ===== -->
-            <a href="what-is-fit.html"><i class="fas fa-circle-info" aria-hidden="true"></i> <span data-i18n="nav.whatisfit">What is FIT?</span></a>
+            <a href="what-is-fit.html"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> <span data-i18n="nav.whatisfit">What is FIT?</span></a>
             <span>|</span>
-            <a href="compare.html"><i class="fas fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="nav.comparison">Comparison</span></a>
+            <a href="compare.html"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="nav.comparison">Comparison</span></a>
             <span>|</span>
-            <a href="dapp.html"><i class="fas fa-cubes" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span></a>
+            <a href="dapp.html"><i class="fa-solid fa-cubes" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span></a>
             <span>|</span>
-            <a href="profit-simulator.html"><i class="fas fa-calculator" aria-hidden="true"></i> <span data-i18n="nav.profitCalculator">Profit Calculator</span></a>
+            <a href="profit-simulator.html"><i class="fa-solid fa-calculator" aria-hidden="true"></i> <span data-i18n="nav.profitCalculator">Profit Calculator</span></a>
             <span>|</span>
-            <a href="next-projects.html"><i class="fas fa-rocket" aria-hidden="true"></i> <span data-i18n="nav.nextProjects">Upcoming Projects</span></a>
+            <a href="next-projects.html"><i class="fa-solid fa-rocket" aria-hidden="true"></i> <span data-i18n="nav.nextProjects">Upcoming Projects</span></a>
             <span>|</span>
-            <a href="transactions.html"><i class="fas fa-arrow-right-arrow-left" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span></a>
+            <a href="transactions.html"><i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span></a>
             <span>|</span>
-            <a href="privacy.html"><i class="fas fa-user-shield" aria-hidden="true"></i> <span data-i18n="nav.privacy">Privacy</span></a>
+            <a href="privacy.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> <span data-i18n="nav.privacy">Privacy</span></a>
             <span>|</span>
-            <a href="warnings.html"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span></a>
+            <a href="warnings.html"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span></a>
             <span>|</span>
-            <a href="faq.html"><i class="fas fa-comments" aria-hidden="true"></i> <span data-i18n="nav.faq">FAQ</span></a>
+            <a href="faq.html"><i class="fa-solid fa-comments" aria-hidden="true"></i> <span data-i18n="nav.faq">FAQ</span></a>
             <span>|</span>
-            <a href="whitepaper.html"><i class="fas fa-book-open" aria-hidden="true"></i> <span data-i18n="nav.whitepaper">White Paper</span></a>
+            <a href="whitepaper.html"><i class="fa-solid fa-book-open" aria-hidden="true"></i> <span data-i18n="nav.whitepaper">White Paper</span></a>
             <span>|</span>
-            <a href="audit.html"><i class="fas fa-clipboard-check" aria-hidden="true"></i> <span data-i18n="nav.audit">Security Audit</span></a>
+            <a href="audit.html"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> <span data-i18n="nav.audit">Security Audit</span></a>
         </div>
         <p class="footer-tagline" data-i18n="footer.tagline">
             Fly Infinity — <span class="gold">Decentralized. Transparent. Forever Rising.</span>
