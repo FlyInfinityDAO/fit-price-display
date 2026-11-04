@@ -2,18 +2,20 @@
 
 An isolated game module under `games/chess-arena/`. It does not modify the existing dashboard or the Fly AI application.
 
-## Entry requirements
+## Single entry requirement
 
-A wallet must satisfy **both** requirements on BNB Smart Chain (chain ID 56):
+The connected wallet must hold **at least 1 FIT** on BNB Smart Chain (chain ID 56):
 
-1. `Owner_Exists(walletAddress) === true` on Fly Infinity Network contract `0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B`.
-2. FIT Token `balanceOf(walletAddress) >= 1e18` (at least 1 FIT; token decimals: 18), token contract `0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa`.
+- FIT Token contract: `0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa`
+- Check: `balanceOf(walletAddress) >= 10^18` (18 decimals)
 
-No FIT is spent, transferred, staked, or locked. There is no entry fee or financial prize.
+This is the **only eligibility condition**. Network contract registration / `Owner_Exists` is not checked and is not required.
+
+No FIT is spent, transferred, staked, or locked. There is no entry fee or financial prize. BNB Smart Chain is used because FIT balance is read from the FIT token contract deployed there.
 
 ## Current implementation status
 
-The initial isolated frontend shell and wallet/on-chain preflight checks are in place. The browser checks are **not a security boundary**. They must be repeated by the game API after a signed nonce challenge, and before room entry / matchmaking. Do not enable live matchmaking until server-side signature verification and on-chain eligibility checks are deployed.
+The initial isolated frontend shell and FIT balance precheck are in place. The browser check is **not a security boundary**. The game API must independently verify a signed wallet challenge and re-check the FIT balance before matchmaking and room entry. Do not enable live matchmaking until server-side verification is deployed.
 
 ## Planned service architecture
 
