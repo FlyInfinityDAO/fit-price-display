@@ -1,0 +1,29 @@
+name: Chess Arena checks
+
+on:
+  push:
+    branches:
+      - feature/chess-arena-games
+    paths:
+      - "games/chess-arena/**"
+      - ".github/workflows/chess-arena-check.yml"
+  pull_request:
+    paths:
+      - "games/chess-arena/**"
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Chess Arena dependencies
+        working-directory: games/chess-arena/worker
+        run: npm install
+      - name: Check JavaScript syntax
+        working-directory: games/chess-arena/worker
+        run: npm run check

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
+    "check": "node --check src/index.js && node --check src/rooms-api.js && node --check src/room.js && node --check ../js/chess-arena.js",
     "deploy": "wrangler deploy"
   },
   "dependencies": {
