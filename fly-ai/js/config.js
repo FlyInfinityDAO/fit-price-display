@@ -1,5 +1,5 @@
 /* Public frontend configuration. This file must never contain API secrets. */
 window.FLY_AI_CONFIG = Object.freeze({
-  // Set this to the deployed Cloudflare Worker origin, e.g. https://fly-ai-api.<account>.workers.dev
-  apiBase: ''
+  // Cloudflare Worker production API origin. Never place API keys in frontend code.
+  apiBase: 'https://fly-ai-api.flyinfinityplatform.workers.dev'
 });
