@@ -1,4 +1,5 @@
 import { getAddress, isAddress, verifyMessage } from "ethers";
+import { handleRoomApi } from "./rooms-api.js";
 
 const FIT_TOKEN = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
 const BSC_CHAIN_ID = 56;
@@ -240,9 +241,20 @@ export default {
       try { return await handleSession(request, env).then(r => withHeaders(r, headers)); }
       catch (error) { return json({ ok: false, error: error.message || "Session check failed." }, 500, headers); }
     }
+    try {
+      const roomResponse = await handleRoomApi(request, env);
+      if (roomResponse) {
+        if (roomResponse.status === 101) return roomResponse;
+        return withHeaders(roomResponse, headers);
+      }
+    } catch (error) {
+      return json({ ok: false, error: error.message || "Room request failed." }, 500, headers);
+    }
     return json({ ok: false, error: "Not found." }, 404, headers);
   }
 };
+
+export { ChessRoom } from "./room.js";
 
 function withHeaders(response, headers) {
   const merged = new Headers(response.headers);
