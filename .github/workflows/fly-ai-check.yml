@@ -1,0 +1,35 @@
+name: Fly AI validation
+on:
+  pull_request:
+    paths:
+      - 'fly-ai/**'
+      - 'backend/**'
+      - '.github/workflows/fly-ai-check.yml'
+  push:
+    branches: [feat/fly-ai-v1]
+    paths:
+      - 'fly-ai/**'
+      - 'backend/**'
+      - '.github/workflows/fly-ai-check.yml'
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check frontend JavaScript syntax
+        run: |
+          node --check fly-ai/js/app.js
+          node --check fly-ai/js/i18n.js
+          node --check fly-ai/js/config.js
+          node --check walletconnect-bridge.js
+      - name: Install Worker dependencies
+        working-directory: backend
+        run: npm install
+      - name: Check Worker JavaScript syntax
+        working-directory: backend
+        run: |
+          node --check src/index.js
+          node --check src/ai-provider.js
