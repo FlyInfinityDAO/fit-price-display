@@ -1143,6 +1143,8 @@ textarea:focus,
         .audit-section .info-box { background: rgba(0, 200, 150, 0.075); border: 1px solid rgba(0, 200, 150, 0.20); border-left: 4px solid #00C896; }
         .audit-section .info-box.gold { background: rgba(212, 175, 55, 0.075); border-left-color: #D4AF37; }
         .audit-section .info-box.danger { background: rgba(255, 68, 68, 0.075); border-left-color: #ff4444; }
+        .sidebar-menu a.active { background: rgba(0, 200, 150, 0.12); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+        .lang-item.active { background: rgba(0, 200, 150, 0.12); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
         .audit-table th { background: rgba(22, 34, 36, 0.58); }
         .audit-table td { background: rgba(12, 22, 24, 0.16); }
         .badge { background: rgba(0, 200, 150, 0.075); }
@@ -1170,13 +1172,14 @@ textarea:focus,
             min-width: 1.15em;
             text-align: center;
         }
-        h2[data-i18n="audit.summaryTitle"]::before { content: "\\f0f6"; }
-        h2[data-i18n="audit.filesTitle"]::before { content: "\\f07c"; }
-        h2[data-i18n="audit.webTitle"]::before { content: "\\f0ac"; }
-        h2[data-i18n="audit.contractTitle"]::before { content: "\\f15b"; }
-        h2[data-i18n="audit.daoTitle"]::before { content: "\\f0e8"; }
-        h2[data-i18n="audit.summaryTableTitle"]::before { content: "\\f080"; }
-        h2[data-i18n="audit.verdictTitle"]::before { content: "\\f24e"; }
+        h2[data-i18n="audit.summaryTitle"]::before { content: "\f0f6"; }
+        h2[data-i18n="audit.filesTitle"]::before { content: "\f07c"; }
+        h2[data-i18n="audit.webTitle"]::before { content: "\f0ac"; }
+        h2[data-i18n="audit.contractTitle"]::before { content: "\f15b"; }
+        h2[data-i18n="audit.contractTitle"]::before { content: "\f15b"; }
+        h2[data-i18n="audit.daoTitle"]::before { content: "\f0e8"; }
+        h2[data-i18n="audit.summaryTableTitle"]::before { content: "\f080"; }
+        h2[data-i18n="audit.verdictTitle"]::before { content: "\f24e"; }
 
         .audit-section h4[data-i18n^="audit.webA"],
         .audit-section h4[data-i18n^="audit.contractA"],
@@ -1186,7 +1189,7 @@ textarea:focus,
         .audit-section h4[data-i18n="audit.contractA3Title"]::before,
         .audit-section h4[data-i18n="audit.contractA4Title"]::before,
         .audit-section h4[data-i18n="audit.daoA1Title"]::before {
-            content: "\\f058";
+            content: "\f058";
             font-family: "Font Awesome 6 Free";
             font-weight: 900;
             color: #00C896;
@@ -1198,21 +1201,21 @@ textarea:focus,
         .audit-section h4[data-i18n="audit.webA5Title"]::before,
         .audit-section h4[data-i18n="audit.contractA1Title"]::before,
         .audit-section h4[data-i18n="audit.contractA2Title"]::before {
-            content: "\\f057";
+            content: "\f057";
             font-family: "Font Awesome 6 Free";
             font-weight: 900;
             color: #ff6b6b;
             margin-right: 9px;
         }
         .audit-table td.pass::before {
-            content: "\\f00c";
+            content: "\f00c";
             font-family: "Font Awesome 6 Free";
             font-weight: 900;
             margin-right: 6px;
             color: #00C896;
         }
         .audit-table td.fail::before {
-            content: "\\f00d";
+            content: "\f00d";
             font-family: "Font Awesome 6 Free";
             font-weight: 900;
             margin-right: 6px;
