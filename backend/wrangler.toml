@@ -6,7 +6,7 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB"
 database_name = "fly-ai-db"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "be1d9f7e-09b9-42ae-818d-94eb50faede0"
 
 [vars]
 CHAIN_ID = "56"
