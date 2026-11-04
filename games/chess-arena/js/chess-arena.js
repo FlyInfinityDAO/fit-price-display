@@ -1,10 +1,7 @@
 (function () {
   'use strict';
 
-  const FIT_ADDRESS = '0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa';
   const BSC_CHAIN_ID = 56;
-  const MIN_FIT = ethers.utils.parseUnits('1', 18);
-  const FIT_ABI = ['function balanceOf(address account) view returns (uint256)'];
   const API_BASE = (window.CHESS_ARENA_API_URL || 'https://fly-chess-arena-api.flyinfinityplatform.workers.dev').replace(/\/$/, '');
   const $ = id => document.getElementById(id);
   const connectBtn = $('connectBtn');
@@ -95,18 +92,7 @@
       }
       const signer = provider.getSigner();
       const address = await signer.getAddress();
-      const readProvider = new ethers.providers.JsonRpcProvider('https://bsc-dataseed.binance.org/');
-      const fitContract = new ethers.Contract(FIT_ADDRESS, FIT_ABI, readProvider);
-      status('Wallet connected: ' + address.slice(0, 6) + '…' + address.slice(-4) + '. Checking FIT balance…');
-      const balance = await fitContract.balanceOf(address);
-      const formatted = ethers.utils.formatUnits(balance, 18);
-      setFitCheck(balance.gte(MIN_FIT), formatted + ' FIT · Minimum required: 1 FIT');
-      if (balance.lt(MIN_FIT)) {
-        showDenied('Access denied: this wallet must hold at least 1 FIT.');
-        return;
-      }
-
-      status('FIT balance is sufficient. Requesting a free wallet signature…');
+      status('Wallet connected: ' + address.slice(0, 6) + '…' + address.slice(-4) + '. Requesting a free wallet signature…');
       connectBtn.textContent = 'Sign secure login…';
       const challenge = await api('/api/auth/challenge', { address });
       const signature = await signer.signMessage(challenge.message);

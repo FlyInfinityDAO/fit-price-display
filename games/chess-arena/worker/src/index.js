@@ -48,6 +48,11 @@ async function signSession(payload, secret) {
   return input + "." + base64url(new Uint8Array(signature));
 }
 
+function decodeBase64Url(value) {
+  const normalized = value.replace(/-/g, "+").replace(/_/g, "/");
+  return atob(normalized + "=".repeat((4 - normalized.length % 4) % 4));
+}
+
 async function verifySession(token, secret) {
   const parts = token.split(".");
   if (parts.length !== 3) return null;
@@ -55,10 +60,10 @@ async function verifySession(token, secret) {
   const key = await crypto.subtle.importKey(
     "raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["verify"]
   );
-  const signature = Uint8Array.from(atob(parts[2].replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0));
+  const signature = Uint8Array.from(decodeBase64Url(parts[2]), c => c.charCodeAt(0));
   const valid = await crypto.subtle.verify("HMAC", key, signature, new TextEncoder().encode(input));
   if (!valid) return null;
-  const payloadText = atob(parts[1].replace(/-/g, "+").replace(/_/g, "/"));
+  const payloadText = decodeBase64Url(parts[1]);
   const payload = JSON.parse(payloadText);
   if (!payload.exp || payload.exp <= Math.floor(Date.now() / 1000)) return null;
   return payload;
