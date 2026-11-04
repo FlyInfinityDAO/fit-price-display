@@ -10,7 +10,7 @@ BSC_RPC_URL = "https://bsc-dataseed.binance.org/"
 [[d1_databases]]
 binding = "DB"
 database_name = "fly-chess-arena-db"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "eae175c6-d221-48b8-ba54-3b784475b192"
 migrations_dir = "migrations"
 
 [[durable_objects.bindings]]
