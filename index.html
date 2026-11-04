@@ -12,7 +12,7 @@
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <script src="lang.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1267,7 +1267,31 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
     .token-contract-panel { background: rgba(10, 20, 19, 0.82) !important; }
 }
 
-</style>
+
+        /* ===== Modern dashboard label icons ===== */
+        [data-i18n="dashboard.chain"]::before,
+        [data-i18n="dashboard.statistics"]::before,
+        [data-i18n="dashboard.contract"]::before,
+        [data-i18n="dashboard.formula"]::before,
+        [data-i18n="dashboard.chartTitle"]::before,
+        [data-i18n="dashboard.historicalTitle"]::before,
+        [data-i18n="dashboard.comparisonDesc"]::before {
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            display: inline-block;
+            margin-inline-end: 7px;
+            color: #00C896;
+            text-shadow: 0 0 10px rgba(0, 200, 150, .28);
+        }
+        [data-i18n="dashboard.chain"]::before { content: "\\f3ed"; }
+        [data-i18n="dashboard.statistics"]::before { content: "\\f201"; }
+        [data-i18n="dashboard.contract"]::before { content: "\\f56b"; }
+        [data-i18n="dashboard.formula"]::before { content: "\\f1ec"; }
+        [data-i18n="dashboard.chartTitle"]::before { content: "\\f201"; }
+        [data-i18n="dashboard.historicalTitle"]::before { content: "\\f073"; }
+        [data-i18n="dashboard.comparisonDesc"]::before { content: "\\f00a"; }
+
+    </style>
 
     <style>
     /* ===== QUICK LINKS: EMERALD GLASS + HOVER NEON ===== */
@@ -1499,7 +1523,7 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
         </div>
         <div class="top-bar-right">
             <button class="hamburger" id="hamburgerBtn">
-                <i class="fas fa-bars"></i>
+                <i class="fa-solid fa-bars"></i>
             </button>
         </div>
     </div>
@@ -1513,11 +1537,11 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
         </div>
         <div class="mission-slogan" data-i18n="mission.slogan">Raise yourself to help your mankind</div>
         <div class="mission-pillars">
-            <div class="mission-pillar"><i class="fas fa-users" aria-hidden="true"></i><div data-i18n="mission.peopleTop">From People,</div><span data-i18n="mission.peopleBottom">For People</span></div>
-            <div class="mission-pillar"><i class="fas fa-shield-alt" aria-hidden="true"></i><div data-i18n="mission.ownershipTop">Ownership</div><span data-i18n="mission.ownershipBottom">For People</span></div>
-            <div class="mission-pillar"><i class="fas fa-landmark" aria-hidden="true"></i><div data-i18n="mission.governanceTop">Governance</div><span data-i18n="mission.governanceBottom">By People</span></div>
-            <div class="mission-pillar"><i class="fas fa-chart-line" aria-hidden="true"></i><div data-i18n="mission.developmentTop">Development</div><span data-i18n="mission.developmentBottom">With People</span></div>
-            <div class="mission-pillar"><i class="fas fa-trophy" aria-hidden="true"></i><div data-i18n="mission.profitsTop">All Profits</div><span data-i18n="mission.profitsBottom">For People</span></div>
+            <div class="mission-pillar"><i class="fa-solid fa-users" aria-hidden="true"></i><div data-i18n="mission.peopleTop">From People,</div><span data-i18n="mission.peopleBottom">For People</span></div>
+            <div class="mission-pillar"><i class="fa-solid fa-shield-alt" aria-hidden="true"></i><div data-i18n="mission.ownershipTop">Ownership</div><span data-i18n="mission.ownershipBottom">For People</span></div>
+            <div class="mission-pillar"><i class="fa-solid fa-landmark" aria-hidden="true"></i><div data-i18n="mission.governanceTop">Governance</div><span data-i18n="mission.governanceBottom">By People</span></div>
+            <div class="mission-pillar"><i class="fa-solid fa-chart-line" aria-hidden="true"></i><div data-i18n="mission.developmentTop">Development</div><span data-i18n="mission.developmentBottom">With People</span></div>
+            <div class="mission-pillar"><i class="fa-solid fa-trophy" aria-hidden="true"></i><div data-i18n="mission.profitsTop">All Profits</div><span data-i18n="mission.profitsBottom">For People</span></div>
         </div>
     </section>
 
@@ -1531,45 +1555,45 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
                 <img src="logo.png" alt="Fly Infinity DAO" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #D4AF37;">
                 <span style="color: #D4AF37; font-size: 18px; font-weight: bold;" data-i18n="header.title">Fly Infinity DAO</span>
             </span>
-            <button class="close-btn" id="closeSidebarBtn"><i class="fas fa-times"></i></button>
+            <button class="close-btn" id="closeSidebarBtn"><i class="fa-solid fa-times"></i></button>
         </div>
         
         <div class="sidebar-menu">
             <a href="index.html" class="active">
-                <i class="fas fa-gauge-high" aria-hidden="true"></i> <span data-i18n="nav.dashboard">Dashboard</span>
+                <i class="fa-solid fa-gauge-high" aria-hidden="true"></i> <span data-i18n="nav.dashboard">Dashboard</span>
             </a>
             <a href="what-is-fit.html">
-                <i class="fas fa-circle-info" aria-hidden="true"></i> <span data-i18n="nav.whatisfit">What is FIT?</span>
+                <i class="fa-solid fa-circle-info" aria-hidden="true"></i> <span data-i18n="nav.whatisfit">What is FIT?</span>
             </a>
             <a href="compare.html">
-                <i class="fas fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="nav.comparison">Comparison</span>
+                <i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="nav.comparison">Comparison</span>
             </a>
             <a href="dapp.html">
-                <i class="fas fa-cubes" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span>
+                <i class="fa-solid fa-cubes" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span>
             </a>
             <a href="profit-simulator.html">
-                <i class="fas fa-calculator" aria-hidden="true"></i> <span data-i18n="nav.profitCalculator">Profit Calculator</span>
+                <i class="fa-solid fa-calculator" aria-hidden="true"></i> <span data-i18n="nav.profitCalculator">Profit Calculator</span>
             </a>
             <a href="next-projects.html">
-                <i class="fas fa-rocket" aria-hidden="true"></i> <span data-i18n="nav.nextProjects">Upcoming Projects</span>
+                <i class="fa-solid fa-rocket" aria-hidden="true"></i> <span data-i18n="nav.nextProjects">Upcoming Projects</span>
             </a>
             <a href="transactions.html">
-                <i class="fas fa-arrow-right-arrow-left" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span>
+                <i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span>
             </a>
             <a href="privacy.html">
-                <i class="fas fa-user-shield" aria-hidden="true"></i> <span data-i18n="nav.privacy">Privacy</span>
+                <i class="fa-solid fa-user-shield" aria-hidden="true"></i> <span data-i18n="nav.privacy">Privacy</span>
             </a>
             <a href="warnings.html">
-                <i class="fas fa-triangle-exclamation" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span>
+                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span>
             </a>
             <a href="faq.html">
-                <i class="fas fa-comments" aria-hidden="true"></i> <span data-i18n="nav.faq">FAQ</span>
+                <i class="fa-solid fa-comments" aria-hidden="true"></i> <span data-i18n="nav.faq">FAQ</span>
             </a>
             <a href="whitepaper.html">
-                <i class="fas fa-book-open" aria-hidden="true"></i> <span data-i18n="nav.whitepaper">White Paper</span>
+                <i class="fa-solid fa-book-open" aria-hidden="true"></i> <span data-i18n="nav.whitepaper">White Paper</span>
             </a>
             <a href="audit.html">
-                <i class="fas fa-clipboard-check" aria-hidden="true"></i> <span data-i18n="nav.audit">Security Audit</span>
+                <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> <span data-i18n="nav.audit">Security Audit</span>
             </a>
         </div>
         
@@ -1584,16 +1608,16 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
                 <img src="logo.png" alt="FIT Logo" class="token-logo" onerror="this.style.display='none'">
                 <h1 data-i18n="dashboard.title">Fly Infinity Token (FIT)</h1>
             </div>
-            <div style="background: #D4AF37; color: #0F0F0F; padding: 4px 12px; border-radius: 30px; font-size: 11px; display: inline-block;" data-i18n="dashboard.chain">🛡️ BNB Smart Chain (BSC) Mainnet</div>
+            <div style="background: #D4AF37; color: #0F0F0F; padding: 4px 12px; border-radius: 30px; font-size: 11px; display: inline-block;" data-i18n="dashboard.chain"> BNB Smart Chain (BSC) Mainnet</div>
             <div style="margin: 20px 0 10px 0; color: #00C896;" data-i18n="dashboard.currentPrice">Current Price</div>
             <div class="live-price" id="fit-price">—</div>
             <div class="usd-price" id="usd-price">≈ $— </div>
-            <button class="refresh-btn" id="refreshBtn"><i class="fas fa-sync-alt"></i> <span data-i18n="btn.refresh">Refresh Price</span></button>
+            <button class="refresh-btn" id="refreshBtn"><i class="fa-solid fa-arrows-rotate"></i> <span data-i18n="btn.refresh">Refresh Price</span></button>
         </div>
         
         <!-- Second box: Token Statistics -->
         <div class="card">
-            <div style="font-size:18px; margin-bottom:15px; text-align:center; color: #D4AF37;" data-i18n="dashboard.statistics"><i class="fas fa-chart-line"></i> Token Statistics</div>
+            <div style="font-size:18px; margin-bottom:15px; text-align:center; color: #D4AF37;" data-i18n="dashboard.statistics"><i class="fa-solid fa-chart-line"></i> Token Statistics</div>
             <div class="stats-grid">
                 <div class="stat-card"><div class="stat-value" id="totalSupply">—</div><div class="stat-label" data-i18n="dashboard.totalSupply">Total Supply</div></div>
                 <div class="stat-card"><div class="stat-value" id="daiBalance">—</div><div class="stat-label" data-i18n="dashboard.reserve">$ Reserve</div></div>
@@ -1605,9 +1629,9 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
                 </div>
             </div>
             <div class="token-contract-panel" style="margin-top:15px; border-radius:16px; padding:12px;">
-                <div style="color:#00C896; font-size:11px;" data-i18n="dashboard.contract">📜 Contract Address</div>
+                <div style="color:#00C896; font-size:11px;" data-i18n="dashboard.contract"> Contract Address</div>
                 <div style="font-family:monospace; font-size:12px; color:#D4AF37; word-break:break-all;">0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa</div>
-                <div style="color:#00C896; font-size:11px; margin-top:8px;" data-i18n="dashboard.formula">💰 Pricing Formula</div>
+                <div style="color:#00C896; font-size:11px; margin-top:8px;" data-i18n="dashboard.formula"> Pricing Formula</div>
                 <div style="font-size:12px; color:#D4AF37;" data-i18n="dashboard.formulaText">Price = Reserve / Total Supply</div>
             </div>
         </div>
@@ -1615,25 +1639,25 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
 <!-- Action Buttons -->
     <div class="action-buttons" aria-label="Fly Infinity quick links">
         <a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" rel="noopener noreferrer" class="action-btn action-btn-glass">
-            <i class="fas fa-file-contract" aria-hidden="true"></i><span>BscScan</span>
+            <i class="fa-solid fa-file-contract" aria-hidden="true"></i><span>BscScan</span>
         </a>
         <a href="dapp.html" class="action-btn action-btn-glass">
-            <i class="fas fa-rocket" aria-hidden="true"></i><span data-i18n="nav.dapp">Buy Ownership Shares &amp; FIT</span>
+            <i class="fa-solid fa-rocket" aria-hidden="true"></i><span data-i18n="nav.dapp">Buy Ownership Shares &amp; FIT</span>
         </a>
         <a href="https://github.com/FlyInfinityDAO/Fly-Infinity-Token/blob/main/FIT%20-%20White%20Paper.pdf" target="_blank" rel="noopener noreferrer" class="action-btn action-btn-glass">
-            <i class="fas fa-file-pdf" aria-hidden="true"></i><span data-i18n="nav.whitepaper">White Paper</span>
+            <i class="fa-solid fa-file-pdf" aria-hidden="true"></i><span data-i18n="nav.whitepaper">White Paper</span>
         </a>
     </div>
 
     <!-- ===== CHART ===== -->
     <div class="card chart-card">
         <canvas id="priceChart"></canvas>
-        <p style="color:#888; text-align:center; margin-top:8px; font-size:11px;" data-i18n="dashboard.chartTitle">📈 Daily price chart ($ per FIT)</p>
+        <p style="color:#888; text-align:center; margin-top:8px; font-size:11px;" data-i18n="dashboard.chartTitle"> Daily price chart ($ per FIT)</p>
     </div>
 
     <!-- Historical Price Changes -->
     <div class="card">
-        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="dashboard.historicalTitle"><i class="fas fa-calendar-alt"></i> Historical Price Changes</div>
+        <div style="font-size:18px; text-align:center; margin-bottom:15px; color: #D4AF37;" data-i18n="dashboard.historicalTitle"><i class="fa-solid fa-calendar-days"></i> Historical Price Changes</div>
         <div class="price-stats-grid" id="priceStatsGrid">
             <div class="price-stat-card"><div class="price-stat-label" data-i18n="dashboard.price24h">24h Ago</div><div class="price-stat-value" id="price1d">—</div><div class="price-stat-change" id="change1d">—</div></div>
             <div class="price-stat-card"><div class="price-stat-label" data-i18n="dashboard.price7d">7 Days Ago</div><div class="price-stat-value" id="price7d">—</div><div class="price-stat-change" id="change7d">—</div></div>
@@ -1648,11 +1672,11 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
     <!-- Comparison Button -->
     <div class="card" style="text-align: center;">
         <a href="compare.html" class="comparison-btn" style="display: inline-flex; align-items: center; gap: 12px; background: transparent; border: 1px solid #00C896; color: #00C896; padding: 14px 32px; border-radius: 50px; font-size: 16px; font-weight: bold; text-decoration: none; transition: all 0.3s ease;">
-            <i class="fas fa-chart-line"></i> <span data-i18n="dashboard.comparisonBtn">Comparison With Other Crypto</span>
-            <i class="fas fa-arrow-right"></i>
+            <i class="fa-solid fa-chart-line"></i> <span data-i18n="dashboard.comparisonBtn">Comparison With Other Crypto</span>
+            <i class="fa-solid fa-arrow-right"></i>
         </a>
         <p style="color: #888; font-size: 11px; margin-top: 12px;" data-i18n="dashboard.comparisonDesc">
-            <i class="fas fa-chart-simple"></i> Compare FIT price with Bitcoin, Ethereum, BNB and other cryptocurrencies
+            <i class="fa-solid fa-chart-simple"></i> Compare FIT price with Bitcoin, Ethereum, BNB and other cryptocurrencies
         </p>
     </div>
     
@@ -1675,14 +1699,14 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
           <circle cx="400" cy="250" r="8" fill="#D4AF37"/><circle cx="190" cy="125" r="5" fill="#00C896"/><circle cx="610" cy="125" r="5" fill="#00C896"/><circle cx="190" cy="375" r="5" fill="#D4AF37"/><circle cx="610" cy="375" r="5" fill="#D4AF37"/>
         </svg>
         <div class="fi-eco-core"><div class="core-aura"></div><img src="logo.png" alt="Fly Infinity" onerror="this.style.display='none'"><strong>FLY<br>INFINITY</strong><span data-i18n="eco.core">CONNECTED BY DESIGN</span></div>
-        <article class="fi-eco-node node-network"><div class="node-icon"><i class="fas fa-network-wired"></i><span class="icon-ring"></span></div><h3 data-i18n="eco.networkTitle">Network</h3><p data-i18n="eco.networkText">The development layer that connects participants, activity and the wider platform.</p><small data-i18n="eco.networkTag">FOUNDATION</small></article>
-        <article class="fi-eco-node node-fit"><div class="node-icon"><i class="fas fa-coins"></i><span class="icon-ring"></span></div><h3 data-i18n="eco.fitTitle">FIT Token</h3><p data-i18n="eco.fitText">A DAI-reserve-backed token model with an on-chain price calculated from reserve and supply.</p><small data-i18n="eco.fitTag">TOKEN ECONOMY</small></article>
-        <article class="fi-eco-node node-gift"><div class="node-icon"><i class="fas fa-gift"></i><span class="icon-ring"></span></div><h3 data-i18n="eco.giftTitle">Gift</h3><p data-i18n="eco.giftText">A dedicated ecosystem component designed for community gifting and distribution features.</p><small data-i18n="eco.giftTag">COMMUNITY LAYER</small></article>
-        <article class="fi-eco-node node-dao"><div class="node-icon"><i class="fas fa-landmark"></i><span class="icon-ring"></span></div><h3 data-i18n="eco.daoTitle">DAO</h3><p data-i18n="eco.daoText">The governance component for proposals and networker voting, according to the deployed contract rules.</p><small data-i18n="eco.daoTag">GOVERNANCE</small></article>
+        <article class="fi-eco-node node-network"><div class="node-icon"><i class="fa-solid fa-network-wired"></i><span class="icon-ring"></span></div><h3 data-i18n="eco.networkTitle">Network</h3><p data-i18n="eco.networkText">The development layer that connects participants, activity and the wider platform.</p><small data-i18n="eco.networkTag">FOUNDATION</small></article>
+        <article class="fi-eco-node node-fit"><div class="node-icon"><i class="fa-solid fa-coins"></i><span class="icon-ring"></span></div><h3 data-i18n="eco.fitTitle">FIT Token</h3><p data-i18n="eco.fitText">A DAI-reserve-backed token model with an on-chain price calculated from reserve and supply.</p><small data-i18n="eco.fitTag">TOKEN ECONOMY</small></article>
+        <article class="fi-eco-node node-gift"><div class="node-icon"><i class="fa-solid fa-gift"></i><span class="icon-ring"></span></div><h3 data-i18n="eco.giftTitle">Gift</h3><p data-i18n="eco.giftText">A dedicated ecosystem component designed for community gifting and distribution features.</p><small data-i18n="eco.giftTag">COMMUNITY LAYER</small></article>
+        <article class="fi-eco-node node-dao"><div class="node-icon"><i class="fa-solid fa-landmark"></i><span class="icon-ring"></span></div><h3 data-i18n="eco.daoTitle">DAO</h3><p data-i18n="eco.daoText">The governance component for proposals and networker voting, according to the deployed contract rules.</p><small data-i18n="eco.daoTag">GOVERNANCE</small></article>
       </div>
       <div class="fi-eco-explainer-grid">
-        <article class="fi-eco-info"><div class="info-symbol"><i class="fas fa-vault"></i></div><div><h3 data-i18n="eco.reserveTitle">How the FIT price is calculated</h3><p data-i18n="eco.reserveText">The displayed on-chain price is calculated as the DAI reserve held by the FIT token contract divided by the current FIT total supply. This is a contract formula, not a promise of future market value or guaranteed returns.</p><div class="fi-formula">FIT Price = DAI Reserve <span>÷</span> FIT Total Supply</div></div></article>
-        <article class="fi-eco-info"><div class="info-symbol gold"><i class="fas fa-arrows-rotate"></i></div><div><h3 data-i18n="eco.flowTitle">A connected platform</h3><p data-i18n="eco.flowText">Network, FIT, Gift and DAO are presented as connected parts of the Fly Infinity platform. Each component has a distinct role while contributing to the wider ecosystem.</p><div class="fi-flow"><span>NETWORK</span><b>↔</b><span>FIT</span><b>↔</b><span>GIFT</span><b>↔</b><span>DAO</span></div></div></article>
+        <article class="fi-eco-info"><div class="info-symbol"><i class="fa-solid fa-vault"></i></div><div><h3 data-i18n="eco.reserveTitle">How the FIT price is calculated</h3><p data-i18n="eco.reserveText">The displayed on-chain price is calculated as the DAI reserve held by the FIT token contract divided by the current FIT total supply. This is a contract formula, not a promise of future market value or guaranteed returns.</p><div class="fi-formula">FIT Price = DAI Reserve <span>÷</span> FIT Total Supply</div></div></article>
+        <article class="fi-eco-info"><div class="info-symbol gold"><i class="fa-solid fa-arrows-rotate"></i></div><div><h3 data-i18n="eco.flowTitle">A connected platform</h3><p data-i18n="eco.flowText">Network, FIT, Gift and DAO are presented as connected parts of the Fly Infinity platform. Each component has a distinct role while contributing to the wider ecosystem.</p><div class="fi-flow"><span>NETWORK</span><b></b><span>FIT</span><b></b><span>GIFT</span><b></b><span>DAO</span></div></div></article>
       </div>
       <p class="fi-eco-footnote" data-i18n="eco.note">Information describes the platform design and currently deployed contract logic. It is not financial advice or a guarantee of price performance.</p>
     </section>
@@ -1690,29 +1714,29 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
     <!-- ===== FOOTER ===== -->
     <div class="footer">
         <div class="footer-links">
-            <a href="index.html"><i class="fas fa-gauge-high" aria-hidden="true"></i> <span data-i18n="nav.dashboard">Dashboard</span></a>
+            <a href="index.html"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i> <span data-i18n="nav.dashboard">Dashboard</span></a>
             <span>|</span>
-            <a href="what-is-fit.html"><i class="fas fa-circle-info" aria-hidden="true"></i> <span data-i18n="nav.whatisfit">What is FIT?</span></a>
+            <a href="what-is-fit.html"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> <span data-i18n="nav.whatisfit">What is FIT?</span></a>
             <span>|</span>
-            <a href="compare.html"><i class="fas fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="nav.comparison">Comparison</span></a>
+            <a href="compare.html"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i> <span data-i18n="nav.comparison">Comparison</span></a>
             <span>|</span>
-            <a href="dapp.html"><i class="fas fa-cubes" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span></a>
+            <a href="dapp.html"><i class="fa-solid fa-cubes" aria-hidden="true"></i> <span data-i18n="nav.dapp">DApp</span></a>
             <span>|</span>
-            <a href="profit-simulator.html"><i class="fas fa-calculator" aria-hidden="true"></i> <span data-i18n="nav.profitCalculator">Profit Calculator</span></a>
+            <a href="profit-simulator.html"><i class="fa-solid fa-calculator" aria-hidden="true"></i> <span data-i18n="nav.profitCalculator">Profit Calculator</span></a>
             <span>|</span>
-            <a href="next-projects.html"><i class="fas fa-rocket" aria-hidden="true"></i> <span data-i18n="nav.nextProjects">Upcoming Projects</span></a>
+            <a href="next-projects.html"><i class="fa-solid fa-rocket" aria-hidden="true"></i> <span data-i18n="nav.nextProjects">Upcoming Projects</span></a>
             <span>|</span>
-            <a href="transactions.html"><i class="fas fa-arrow-right-arrow-left" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span></a>
+            <a href="transactions.html"><i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i> <span data-i18n="nav.transactions">Transactions</span></a>
             <span>|</span>
-            <a href="privacy.html"><i class="fas fa-user-shield" aria-hidden="true"></i> <span data-i18n="nav.privacy">Privacy</span></a>
+            <a href="privacy.html"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> <span data-i18n="nav.privacy">Privacy</span></a>
             <span>|</span>
-            <a href="warnings.html"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span></a>
+            <a href="warnings.html"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> <span data-i18n="nav.warnings">Warnings</span></a>
             <span>|</span>
-            <a href="faq.html"><i class="fas fa-comments" aria-hidden="true"></i> <span data-i18n="nav.faq">FAQ</span></a>
+            <a href="faq.html"><i class="fa-solid fa-comments" aria-hidden="true"></i> <span data-i18n="nav.faq">FAQ</span></a>
             <span>|</span>
-            <a href="whitepaper.html"><i class="fas fa-book-open" aria-hidden="true"></i> <span data-i18n="nav.whitepaper">White Paper</span></a>
+            <a href="whitepaper.html"><i class="fa-solid fa-book-open" aria-hidden="true"></i> <span data-i18n="nav.whitepaper">White Paper</span></a>
             <span>|</span>
-            <a href="audit.html"><i class="fas fa-clipboard-check" aria-hidden="true"></i> <span data-i18n="nav.audit">Security Audit</span></a>
+            <a href="audit.html"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> <span data-i18n="nav.audit">Security Audit</span></a>
         </div>
         <p class="footer-tagline" data-i18n-html="footer.tagline"></p>
     </div>
@@ -1776,13 +1800,13 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
             const airdropPerOwner = 2;
             const totalAirdrops = newOwners * airdropPerOwner;
             
-            console.log(`👥 Total Owners (All): ${totalOwnersNumber}`);
-            console.log(`👥 New Owners (Since Launch): ${newOwners}`);
-            console.log(`🎁 Total Airdrops: $${totalAirdrops.toFixed(2)}`);
+            console.log(` Total Owners (All): ${totalOwnersNumber}`);
+            console.log(` New Owners (Since Launch): ${newOwners}`);
+            console.log(` Total Airdrops: $${totalAirdrops.toFixed(2)}`);
             
             return totalAirdrops;
         } catch (error) {
-            console.error('❌ Error fetching All_Owner_Number:', error);
+            console.error(' Error fetching All_Owner_Number:', error);
             return 0;
         }
     }
@@ -1796,7 +1820,7 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
                 return data.totalVolume || 0;
             }
         } catch(e) {
-            console.log('⚠️ Could not load trading-volume.json');
+            console.log(' Could not load trading-volume.json');
         }
         // Fallback: Calculate from contract (if any)
         try {
@@ -1826,7 +1850,7 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
                 
                 chartLabels = records.map(r => r.date);
                 chartPrices = records.map(r => r.price);
-                console.log(`✅ Chart: ${chartLabels.length} records loaded from JSON`);
+                console.log(` Chart: ${chartLabels.length} records loaded from JSON`);
                 
                 historicalStats.current = records[records.length - 1].price;
                 
@@ -1854,12 +1878,12 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
                 historicalStats.days365 = getPriceAtDate(365);
                 historicalStats.initial = records[0]?.price || null;
                 
-                console.log("✅ Historical stats from JSON:", historicalStats);
+                console.log(" Historical stats from JSON:", historicalStats);
             }
             updateStats();
             drawChart();
         } catch(e) {
-            console.log("⚠️ Could not load JSON, using fallback data");
+            console.log(" Could not load JSON, using fallback data");
             useFallbackData();
         }
     }
