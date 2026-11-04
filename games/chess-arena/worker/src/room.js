@@ -37,6 +37,7 @@ export class ChessRoom {
       pgn: game.pgn,
       turn: game.turn,
       remainingMs: remaining,
+      turnStartedAt: game.turnStartedAt,
       result: game.result,
       reason: game.reason,
       drawOffer: game.drawOffer,
