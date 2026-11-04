@@ -1,6 +1,6 @@
 # Fly Infinity Chess Arena
 
-An isolated game module under `games/chess-arena/`. It does not modify the existing dashboard or the Fly AI application.
+An isolated game module under `games/chess-arena/`. Existing dashboard pages and the Fly AI application remain untouched.
 
 ## Single entry requirement
 
@@ -9,24 +9,33 @@ The connected wallet must hold **at least 1 FIT** on BNB Smart Chain (chain ID 5
 - FIT Token contract: `0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa`
 - Check: `balanceOf(walletAddress) >= 10^18` (18 decimals)
 
-This is the **only eligibility condition**. Network contract registration / `Owner_Exists` is not checked and is not required.
+This is the **only eligibility condition**. Network contract registration and `Owner_Exists` are not checked.
 
-No FIT is spent, transferred, staked, or locked. There is no entry fee or financial prize. BNB Smart Chain is used because FIT balance is read from the FIT token contract deployed there.
+No FIT is spent, transferred, staked, or locked. There is no entry fee or financial prize.
 
-## Current implementation status
+## Implemented in this branch
 
-The isolated frontend includes wallet connection, a local balance display, and a signed login flow to the separate Chess Arena API. The server independently verifies the wallet signature and FIT balance, then issues a short-lived session. The browser-only balance check does not grant access.
+- Standalone responsive Chess Arena page.
+- Wallet connection through the site's existing wallet bridge.
+- Signed wallet login; the signature is not a transaction or token approval.
+- Server-side FIT balance verification and short-lived session.
+- FIT balance is rechecked before room actions and WebSocket connection.
+- Private 1v1 rooms with six-character invitation codes.
+- Live WebSocket room connection.
+- Server-authoritative chess move validation using `chess.js`.
+- 10-minute clock per player, checkmate/draw detection, resignation, and draw offers.
+- Isolated Cloudflare Worker, D1 database migrations, and SQLite-backed Durable Object room state.
 
-The API URL defaults to `https://fly-chess-arena-api.flyinfinityplatform.workers.dev`. To override it, define `window.CHESS_ARENA_API_URL` before loading `chess-arena.js`.
+## Deployment status
 
-## Planned service architecture
+The code is committed on `feature/chess-arena-games`, but the new Worker has **not** been deployed. Before it can be used, create the dedicated D1 database, put its ID in `worker/wrangler.toml`, set the `SESSION_SECRET`, apply migrations, and deploy from `games/chess-arena/worker/`. Follow `worker/README.md`.
 
-- Separate Chess Arena Cloudflare Worker; do not change the existing Fly AI Worker.
-- Durable Objects for authoritative real-time rooms and WebSocket sessions.
-- Separate game database for profiles, match history, and ratings.
-- Server-authoritative chess legality, clocks, results, reconnect handling, and rating updates.
-- Standard chess rules, private invite rooms, public matchmaking, and a free leaderboard.
+The frontend currently expects the Worker at `https://fly-chess-arena-api.flyinfinityplatform.workers.dev`. It can be overridden by defining `window.CHESS_ARENA_API_URL` before loading `chess-arena.js`.
+
+## Not implemented yet
+
+Public matchmaking, player profiles, ELO/rating history, leaderboard, tournaments, and full integration with the site's eight-language interface are later steps. Do not merge this branch into `main` or present the game as production-ready until deployment and end-to-end tests are complete.
 
 ## Local preview
 
-Open `index.html` through a local static server or the GitHub Pages path. The page uses the existing root `walletconnect-bridge.js` and ethers v5 CDN. WalletConnect and injected-wallet selection therefore follow the site's existing bridge.
+Open `index.html` through a local static server. The page uses the existing root `walletconnect-bridge.js` and ethers v5 CDN.
