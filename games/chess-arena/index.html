@@ -45,6 +45,19 @@
           <button id="joinRoomBtn" class="secondary-btn" type="button">Join</button>
         </div>
         <div id="roomStatus" class="room-status" role="status" aria-live="polite">Create a room and share its code with your opponent.</div>
+        <div class="cpu-panel">
+          <div class="eyebrow">SOLO PLAY</div>
+          <h3>Play against CPU</h3>
+          <div class="cpu-options">
+            <label>Difficulty
+              <select id="cpuDifficulty"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option></select>
+            </label>
+            <label>Play as
+              <select id="cpuColor"><option value="w" selected>White</option><option value="b">Black</option></select>
+            </label>
+          </div>
+          <button id="createCpuBtn" class="secondary-btn" type="button">Start solo game</button>
+        </div>
       </section>
     </section>
 
@@ -79,6 +92,6 @@
     </section>
     <footer>Fly Infinity Chess Arena <span>•</span> No entry fee. No token transfer. No financial rewards.</footer>
   </main>
-  <script src="./js/chess-arena.js?v=eb05d907"></script>
+  <script src="./js/chess-arena.js?v=cpu-20261105"></script>
 </body>
 </html>
