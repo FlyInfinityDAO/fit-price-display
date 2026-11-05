@@ -72,3 +72,36 @@
 
 /* Keep gated game sections hidden even when layout styles define display. */
 .mode-grid[hidden],.game-panel[hidden]{display:none!important}
+
+/* Backgammon player records mirror Chess Arena. */
+.final-result-panel,.stats-panel{width:100%;margin:18px 0 0;padding:19px;border:1px solid rgba(0,200,150,.25);border-radius:20px;background:rgba(10,20,19,.28);box-shadow:0 12px 32px #0005}
+.final-result-panel h3,.stats-panel h2{margin:6px 0 8px;font-size:21px}
+.final-result-panel p{margin:0 0 12px;color:var(--muted);font-size:12px}
+.final-score-row{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 0;border-top:1px solid rgba(255,255,255,.09)}
+.final-score-row span,.stats-grid small{font-size:10px;color:var(--muted);font-weight:900;letter-spacing:.12em}
+.final-score-row strong{font-size:11px;overflow-wrap:anywhere}
+.final-score-row b{color:#70f5cf;font-size:12px;white-space:nowrap}
+.stats-wallet{margin:8px 0 15px;color:var(--muted);font-size:11px;overflow-wrap:anywhere}
+.stats-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.stats-grid>div{padding:14px;border:1px solid rgba(0,200,150,.17);border-radius:15px;background:rgba(255,255,255,.025)}
+.stats-grid small,.stats-grid strong{display:block}
+.stats-grid strong{margin-top:6px;color:#70f5cf;font-size:clamp(20px,2.5vw,27px);font-variant-numeric:tabular-nums}
+.leaderboard-heading{margin-top:22px}
+.stats-leaderboard{display:grid;gap:8px;margin-top:10px}
+.leaderboard-row{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 13px;border:1px solid rgba(0,200,150,.12);border-radius:12px;background:rgba(255,255,255,.025);font-size:11px}
+.leaderboard-row>span{color:var(--gold);font-weight:900}.leaderboard-row strong{overflow-wrap:anywhere}.leaderboard-row b{color:#70f5cf;white-space:nowrap}
+body.fi-rtl .stats-leaderboard,body.fi-rtl .final-score-row,body.fi-rtl .stats-grid{text-align:right}
+@media(max-width:560px){.stats-grid{gap:7px}.stats-grid>div{padding:10px}.final-result-panel,.stats-panel{padding:14px}}
+/* Larger, high-contrast checkers on narrow Android screens. */
+.piece.white{background:radial-gradient(circle at 32% 26%,#fffef2 0%,#f2e6c4 58%,#c5a65e 100%);border:2px solid #fff2c5;box-shadow:0 2px 5px #000a,inset 0 1px 2px #fff}
+.piece.black{background:radial-gradient(circle at 32% 26%,#79d9ff 0%,#1766b6 48%,#082b63 100%);border:2px solid #b7e9ff;box-shadow:0 2px 6px #000b,inset 0 1px 2px #d9f6ff}
+.white-checker{background:radial-gradient(circle at 32% 26%,#fffef2,#c5a65e);border:2px solid #fff2c5}
+.black-checker{background:radial-gradient(circle at 32% 26%,#79d9ff,#082b63);border:2px solid #b7e9ff}
+.legend-black{background:#1766b6;border:1px solid #b7e9ff}
+@media(max-width:700px){
+ .board-top,.board-bottom{height:clamp(108px,30vw,150px)}
+ .piece{width:min(100%,30px);margin-top:-3px}
+ .bar-zone .piece{width:26px;margin:0 0 -6px}
+ .piece.count:after{font-size:10px;color:#fff;text-shadow:0 1px 3px #001}
+ .checker{width:27px;height:27px}
+}
