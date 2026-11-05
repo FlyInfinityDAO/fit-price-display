@@ -115,6 +115,20 @@ try {
   });
   assert.ok(mobileLayout.documentWidth <= mobileLayout.viewportWidth + 1,
     "Mobile page must not overflow horizontally: " + JSON.stringify(mobileLayout));
+  const checkerStyle = await page.locator(".piece.white").first().evaluate(el => {
+    const style = getComputedStyle(el), rect = el.getBoundingClientRect();
+    return { width: rect.width, height: rect.height, background: style.backgroundImage, border: style.borderTopColor };
+  });
+  const darkCheckerStyle = await page.locator(".piece.black").first().evaluate(el => {
+    const style = getComputedStyle(el);
+    return { background: style.backgroundImage, border: style.borderTopColor };
+  });
+  assert.ok(checkerStyle.width >= 21 && checkerStyle.height >= 21,
+    "Android-sized checkers should be at least 21px: " + JSON.stringify(checkerStyle));
+  assert.notEqual(checkerStyle.background, darkCheckerStyle.background,
+    "White and blue checkers must have distinct fills");
+  assert.notEqual(checkerStyle.border, darkCheckerStyle.border,
+    "White and blue checkers must have distinct borders");
   assert.ok(mobileLayout.boardWidth > 0 && mobileLayout.boardLeft >= -1 && mobileLayout.boardRight <= mobileLayout.viewportWidth + 1,
     "Backgammon board must fit the mobile viewport: " + JSON.stringify(mobileLayout));
 
@@ -125,6 +139,8 @@ try {
     rtlVerified: ["fa", "ar"],
     preAuthGameGate: "passed; modes and board stay hidden before verification; direct event attempts cannot bypass the gate",
     postAuthUnlock: "passed with mocked provider and server verification; CPU mode unlocks without real wallet activity",
+    playerStats: "profile totals and leaderboard render only after verified wallet access",
+    androidCheckers: "checker size and contrasting white/blue styles verified at 390px viewport",
     walletButtons: "handlers verified with a safe stub; no wallet connection/signature/transaction",
     pageErrors,
     failedRequests
