@@ -29,7 +29,8 @@ test("private room waits for a second distinct wallet", async () => {
   assert.equal(created.status, 200);
   assert.equal((await storage.get("game")).status, "waiting");
   const sameWallet = await room.fetch(request("/join", "POST", "white-wallet"));
-  assert.equal(sameWallet.status, 400);
+  assert.equal(sameWallet.status, 200);
+  assert.equal((await storage.get("game")).status, "waiting");
   const joined = await room.fetch(request("/join", "POST", "black-wallet"));
   assert.equal(joined.status, 200);
   assert.equal((await storage.get("game")).status, "active");
