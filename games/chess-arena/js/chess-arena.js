@@ -65,6 +65,27 @@
     if (!response.ok || data.ok !== true) throw new Error(data.error || 'Chess Arena API request failed (' + response.status + ').');
     return data;
   }
+  // WalletConnect can leave a signing request pending if the wallet app
+  // approves it but the response never reaches the browser. Bound the wait
+  // and report the exact stage instead of leaving the UI stuck indefinitely.
+  async function requestWalletSignature(signer, message) {
+    let timeoutId;
+    const signing = signer.signMessage(message);
+    const timeout = new Promise((_, reject) => {
+      timeoutId = setTimeout(() => {
+        reject(new Error(
+          'Wallet signature timed out after 120 seconds. The wallet did not return its response to this browser. ' +
+          'Do not approve another signature yet; reload Chess Arena and reconnect before retrying.'
+        ));
+      }, 120000);
+    });
+    try {
+      return await Promise.race([signing, timeout]);
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
   async function getWalletProvider() {
     if (typeof window.fiSelectWalletProvider === 'function') return await window.fiSelectWalletProvider();
     if (window.ethereum) {
@@ -95,7 +116,7 @@
       status('Wallet connected: ' + address.slice(0, 6) + '…' + address.slice(-4) + '. Requesting a free wallet signature…');
       connectBtn.textContent = 'Sign secure login…';
       const challenge = await api('/api/auth/challenge', { address });
-      const signature = await signer.signMessage(challenge.message);
+      const signature = await requestWalletSignature(signer, challenge.message);
       status('Signature received. Server is independently checking your FIT balance…');
       connectBtn.textContent = 'Verifying on server…';
       const verified = await api('/api/auth/verify', { address, nonce: challenge.nonce, signature });
