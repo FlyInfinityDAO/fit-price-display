@@ -12,7 +12,7 @@ test("starting position has fifteen checkers per side", () => {
 
 test("a point occupied by two opposing checkers is blocked", () => {
   const p = position(); p.points[10] = 1; p.points[9] = -2;
-  const moves = legalTurnSequences(p, "w", [1, 2]).flatMap(s => s.moves);
+  const moves = legalTurnSequences(p, "w", [1, 2]).map(s => s.moves[0]);
   assert.equal(moves.some(m => m.from === 10 && m.to === 9), false);
 });
 
@@ -39,7 +39,7 @@ test("doubles allow four moves when all four are playable", () => {
 });
 
 test("when only one die can be played, the higher die is required", () => {
-  const p = position(); p.points[2] = 1; p.off.w = 14; p.points[1] = -2;
+  const p = position(); p.points[2] = 1; p.points[10] = 1; p.points[1] = -2; p.points[8] = -2; p.points[9] = -2;
   const seqs = legalTurnSequences(p, "w", [1, 2]);
   assert.ok(seqs.length > 0);
   assert.ok(seqs.every(s => s.moves.length === 1 && s.moves[0].die === 2));
@@ -53,11 +53,11 @@ test("both dice are used when a two-move sequence is possible", () => {
 
 test("oversized bear-off is forbidden while a checker remains farther from the exit", () => {
   const p = position(); p.points[1] = 1; p.points[3] = 1; p.off.w = 13;
-  const moves = legalTurnSequences(p, "w", [6, 5]).flatMap(s => s.moves);
+  const moves = legalTurnSequences(p, "w", [6, 5]).map(s => s.moves[0]);
   assert.equal(moves.some(m => m.from === 1 && m.to === "off"), false);
 });
 
 test("a player wins after bearing off all fifteen checkers", () => {
-  const p = position(); p.off.w = 15;
-  assert.deepEqual(winner(p), { side: "w", multiplier: 1 });
+  const p = position(); p.off.w = 15; p.points[12] = -15;
+  assert.deepEqual(winner(p), { side: "w", multiplier: 2 });
 });
