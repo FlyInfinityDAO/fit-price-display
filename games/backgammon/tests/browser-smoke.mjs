@@ -32,6 +32,7 @@ try {
   // No game modes or board may be exposed before wallet verification.
   assert.equal(await page.locator("#mode-grid").isVisible(), false, "CPU/practice choices must stay hidden before wallet verification");
   assert.equal(await page.locator("#game-panel").isVisible(), false, "The board must stay hidden before wallet verification");
+  assert.equal(await page.locator("#statsPanel").isVisible(), false, "Player records stay private before wallet verification");
   await page.locator("#practiceBtn").dispatchEvent("click");
   await page.locator("#cpuStartBtn").dispatchEvent("click");
   assert.equal(await page.locator("#game-panel").isVisible(), false, "Direct event dispatch must not bypass the access gate");
@@ -74,6 +75,8 @@ try {
       removeListener() {}
     });
   });
+  await page.route("**/api/backgammon/stats/me", route => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, stats: { points: 6, rank: 2, games: 3, wins: 2, losses: 1, draws: 0 } }) }));
+  await page.route("**/api/backgammon/stats/leaderboard", route => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, leaderboard: [{ wallet_address: "0x1111111111111111111111111111111111111111", points: 6 }] }) }));
   await page.route("**/api/auth/challenge", route => route.fulfill({
     status: 200, contentType: "application/json",
     body: JSON.stringify({ ok: true, nonce: "playwright-nonce", message: "Playwright test challenge" })
@@ -89,6 +92,10 @@ try {
   await page.locator("#connectBrowserBtn").click();
   await page.locator("#mode-grid").waitFor({ state: "visible", timeout: 10000 });
   assert.equal(await page.locator("#eligiblePanel").isVisible(), true, "Successful server verification should unlock access");
+  assert.equal(await page.locator("#statsPanel").isVisible(), true, "Verified players should see their records");
+  assert.equal(await page.locator("#statsPoints").innerText(), "6");
+  assert.equal(await page.locator("#statsRank").innerText(), "#2");
+  assert.equal(await page.locator("#statsLeaderboard .leaderboard-row").count(), 1);
   assert.equal(await page.locator("#game-panel").isVisible(), false, "The board should remain hidden until a game mode is selected");
   await page.locator("#cpuStartBtn").click();
   await page.locator("#game-panel").waitFor({ state: "visible" });
