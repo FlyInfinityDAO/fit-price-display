@@ -49,7 +49,7 @@
     lastStatsRoom = null;
     $('eligiblePanel').hidden = true;
     $('deniedPanel').hidden = true;
-    setFitCheck(false, 'At least 1 FIT required');
+    setFitCheck(false, t('fitRequired'));
   }
   function showDenied(message) {
     $('deniedPanel').textContent = message;
@@ -67,7 +67,7 @@
       cache: 'no-store'
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok || data.ok !== true) throw new Error(data.error || 'Chess Arena API request failed (' + response.status + ').');
+    if (!response.ok || data.ok !== true) throw new Error(data.error || t('apiFailed',{status:response.status}));
     return data;
   }
   async function loadStats() {
@@ -100,10 +100,10 @@
         row.append(rank, wallet, points);
         list.appendChild(row);
       });
-      if (!list.children.length) list.textContent = 'No ranked games yet.';
+      if (!list.children.length) list.textContent = t('noRankedGames');
     } catch (error) {
       console.warn('[Chess Arena stats]', error);
-      $('statsLeaderboard').textContent = 'Stats could not be loaded. Please reconnect and try again.';
+      $('statsLeaderboard').textContent = t('statsError');
     }
   }
   // WalletConnect can leave a signing request pending if the wallet app
@@ -115,8 +115,7 @@
     const timeout = new Promise((_, reject) => {
       timeoutId = setTimeout(() => {
         reject(new Error(
-          'Wallet signature timed out after 120 seconds. The wallet did not return its response to this browser. ' +
-          'Do not approve another signature yet; reload Chess Arena and reconnect before retrying.'
+          t('walletTimeout')
         ));
       }, 120000);
     });
@@ -137,13 +136,13 @@
         await window.ethereum.request({ method: 'eth_requestAccounts' });
         return window.ethereum;
       }
-      throw new Error('No compatible wallet found. Please open the page in a wallet browser or install a wallet.');
+      throw new Error(t('noWallet'));
     }
 
     // Secondary method: injected provider only, intended for a wallet's own
     // built-in browser (for example TokenPocket DApp browser).
     if (!window.ethereum || typeof window.ethereum.request !== 'function') {
-      throw new Error('کیف پولی در این مرورگر پیدا نشد. بازی را از داخل مرورگر خود کیف پول باز کنید.');
+      throw new Error(t('noInjectedWallet'));
     }
     await window.ethereum.request({ method: 'eth_requestAccounts' });
     window.fiWalletConnectActive = false;
@@ -155,7 +154,7 @@
     buttons.forEach(button => { button.disabled = true; });
     const activeButton = method === 'browser' ? connectBrowserBtn : connectWalletBtn;
     const originalLabel = activeButton.textContent;
-    activeButton.textContent = 'Connecting…';
+    activeButton.textContent = t('connecting');
     resetChecks();
     try {
       activeProvider = await getWalletProvider(method);
@@ -165,33 +164,33 @@
         try {
           await activeProvider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x38' }] });
         } catch (switchError) {
-          if (switchError.code === 4902) throw new Error('Please add BNB Smart Chain to your wallet, then try again.');
-          throw new Error('Switch your wallet to BNB Smart Chain (chain ID 56).');
+          if (switchError.code === 4902) throw new Error(t('addBsc'));
+          throw new Error(t('switchBsc'));
         }
       }
       const signer = provider.getSigner();
       const address = await signer.getAddress();
-      status('Wallet connected: ' + address.slice(0, 6) + '…' + address.slice(-4) + '. Requesting a free wallet signature…');
-      activeButton.textContent = 'Sign secure login…';
+      status(t('walletConnected',{address:address.slice(0,6)+'…'+address.slice(-4)}));
+      activeButton.textContent = t('signing');
       const challenge = await api('/api/auth/challenge', { address });
       const signature = await requestWalletSignature(signer, challenge.message);
-      status('Signature received. Server is independently checking your FIT balance…');
-      activeButton.textContent = 'Verifying on server…';
+      status(t('signatureReceived'));
+      activeButton.textContent = t('verifying');
       const verified = await api('/api/auth/verify', { address, nonce: challenge.nonce, signature });
 
       sessionToken = verified.sessionToken;
       currentWallet = verified.wallet.toLowerCase();
-      setFitCheck(true, ethers.utils.formatUnits(verified.fitBalanceWei, 18) + ' FIT · Verified by server');
+      setFitCheck(true, ethers.utils.formatUnits(verified.fitBalanceWei, 18) + ' FIT · '+t('serverVerified'));
       $('eligiblePanel').hidden = false;
-      $('eligiblePanel').querySelector('strong').textContent = 'Server verification successful';
-      $('eligiblePanel').querySelector('small').textContent = 'Your wallet passed the only entry requirement. No token transfer or transaction was requested.';
+      $('eligiblePanel').querySelector('strong').textContent = t('serverVerified');
+      $('eligiblePanel').querySelector('small').textContent = t('verifiedNote');
       $('roomsPanel').hidden = false;
       await loadStats();
-      status('Access verified. You can now create or join a private room.');
+      status(t('accessVerified'));
       window.dispatchEvent(new CustomEvent('chess-arena:authenticated', { detail: { wallet: verified.wallet, expiresAt: verified.expiresAt } }));
     } catch (error) {
       console.error('[Chess Arena]', error);
-      showDenied(error && error.message ? error.message : 'Wallet verification failed.');
+      showDenied(error && error.message ? error.message : t('noWalletVerification'));
     } finally {
       buttons.forEach(button => { button.disabled = false; });
       activeButton.textContent = originalLabel;
@@ -202,7 +201,7 @@
     if (!sessionToken) return;
     const button = $("createCpuBtn");
     button.disabled = true;
-    $("roomStatus").textContent = "Starting your CPU match…";
+    $("roomStatus").textContent = t('startingCpu');
     try {
       const result = await api("/api/rooms/cpu", {
         difficulty: $("cpuDifficulty").value,
@@ -219,7 +218,7 @@
   async function createRoom() {
     if (!sessionToken) return;
     $('createRoomBtn').disabled = true;
-    $('roomStatus').textContent = 'Creating a private room…';
+    $('roomStatus').textContent = t('creatingRoom');
     try {
       const result = await api('/api/rooms/create', {}, sessionToken);
       await enterRoom(result.roomCode);
@@ -234,7 +233,7 @@
     if (!sessionToken) return;
     const code = $('roomCodeInput').value.trim().toUpperCase();
     $('joinRoomBtn').disabled = true;
-    $('roomStatus').textContent = 'Joining room…';
+    $('roomStatus').textContent = t('joiningRoom');
     try {
       const result = await api('/api/rooms/join', { roomCode: code }, sessionToken);
       await enterRoom(result.room.roomCode || code);
@@ -248,15 +247,15 @@
   async function enterRoom(code) {
     activeRoomCode = code;
     $('activeRoomCode').textContent = code;
-    $('roomStatus').textContent = 'Preparing secure real-time connection…';
+    $('roomStatus').textContent = t('preparingConnection');
     $('gamePanel').hidden = false;
     $('finalResultPanel').hidden = true;
     const ticket = await api('/api/rooms/' + code + '/ticket', {}, sessionToken);
     roomSocket = new WebSocket(ticket.socketUrl);
     roomSocket.addEventListener('open', () => {
       console.info('[Chess Arena WS] open', { roomCode: code });
-      $('roomStatus').textContent = 'Real-time connection established. Loading game…';
-      $('gameMessage').textContent = 'Connected. Waiting for the server game state…';
+      $('roomStatus').textContent = t('connectedLoading');
+      $('gameMessage').textContent = t('connectedWaiting');
     });
     roomSocket.addEventListener('message', event => {
       let payload;
@@ -271,7 +270,7 @@
         status: payload.game?.status || null
       });
       if (payload.type === 'error') {
-        $('gameMessage').textContent = payload.error || 'The game server reported an error.';
+        $('gameMessage').textContent = payload.error || t('serverError');
         return;
       }
       if (payload.game) renderGame(payload.game, payload.type);
@@ -282,14 +281,12 @@
         reason: event.reason || '(no reason supplied)',
         wasClean: event.wasClean
       });
-      $('roomStatus').textContent = 'Real-time connection closed (code ' + event.code + ').';
-      $('gameMessage').textContent = 'Connection closed. Code: ' + event.code +
-        '. Reason: ' + (event.reason || 'not supplied') +
-        '. Clean close: ' + (event.wasClean ? 'yes' : 'no') + '.';
+      $('roomStatus').textContent = t('connectionClosed',{code:event.code});
+      $('gameMessage').textContent = t('connectionClosedDetail',{code:event.code,reason:event.reason||'not supplied',clean:event.wasClean?'yes':'no'});
     });
     roomSocket.addEventListener('error', event => {
       console.error('[Chess Arena WS] error', event);
-      $('gameMessage').textContent = 'Real-time connection error. See browser console for the WebSocket diagnostic details.';
+      $('gameMessage').textContent = t('connectionError');
     });
     $('gamePanel').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
@@ -334,24 +331,24 @@
     myColor = currentWallet === (game.players.white || '').toLowerCase() ? 'w' :
       currentWallet === (game.players.black || '').toLowerCase() ? 'b' : null;
     $('activeRoomCode').textContent = game.roomCode || activeRoomCode;
-    $('whitePlayer').textContent = game.players.white === 'cpu' ? 'CPU (' + (game.difficulty || 'medium') + ')' : game.players.white ? shortWallet(game.players.white) + (myColor === 'w' ? ' (YOU)' : '') : 'Waiting…';
-    $('blackPlayer').textContent = game.players.black === 'cpu' ? 'CPU (' + (game.difficulty || 'medium') + ')' : game.players.black ? shortWallet(game.players.black) + (myColor === 'b' ? ' (YOU)' : '') : 'Waiting for opponent…';
+    $('whitePlayer').textContent = game.players.white === 'cpu' ? t('cpu')+' ('+t(game.difficulty||'medium')+')' : game.players.white ? shortWallet(game.players.white) + (myColor === 'w' ? ' ('+t('you').toUpperCase()+')' : '') : t('waiting');
+    $('blackPlayer').textContent = game.players.black === 'cpu' ? t('cpu')+' ('+t(game.difficulty||'medium')+')' : game.players.black ? shortWallet(game.players.black) + (myColor === 'b' ? ' ('+t('you').toUpperCase()+')' : '') : t('opponentWaiting');
     const cpuMatch = game.mode === 'cpu';
     $('offerDrawBtn').hidden = cpuMatch;
-    $('activeRoomCode').textContent = cpuMatch ? 'CPU MATCH' : (game.roomCode || activeRoomCode);
-    $('gameTypeLabel').textContent = cpuMatch ? 'SOLO MATCH · VS CPU' : 'PRIVATE MATCH';
-    if (cpuMatch) $('roomStatus').textContent = 'Solo match connected. The CPU is ready to play.';
+    $('activeRoomCode').textContent = cpuMatch ? t('soloPlay') : (game.roomCode || activeRoomCode);
+    $('gameTypeLabel').textContent = cpuMatch ? t('soloPlay')+' · VS '+t('cpu') : t('privateMatch');
+    if (cpuMatch) $('roomStatus').textContent = t('cpuReady');
     $('copyRoomBtn').hidden = cpuMatch;
-    $('gameStatus').textContent = game.status === 'waiting' ? 'Waiting for opponent to join…' :
+    $('gameStatus').textContent = game.status === 'waiting' ? t('waitingJoin') :
       game.status === 'finished' ? finishText(game) :
-      (game.turn === myColor ? 'Your turn' : 'Opponent’s turn');
+      (game.turn === myColor ? t('yourTurn') : t('opponentTurn'));
     $('acceptDrawBtn').hidden = !game.drawOffer || game.drawOffer.toLowerCase() === currentWallet;
     $('declineDrawBtn').hidden = !game.drawOffer || game.drawOffer.toLowerCase() === currentWallet;
     $('offerDrawBtn').disabled = game.status !== 'active' || cpuMatch;
     $('resignBtn').disabled = game.status !== 'active';
-    $('gameMessage').textContent = eventType === 'draw_offer' ? 'Your opponent offered a draw.' :
-      eventType === 'draw_declined' ? 'Draw offer declined.' :
-      eventType === 'finished' ? 'Game finished: ' + reasonLabel(game.reason) : '';
+    $('gameMessage').textContent = eventType === 'draw_offer' ? t('drawOfferReceived') :
+      eventType === 'draw_declined' ? t('drawDeclined') :
+      eventType === 'finished' ? t('gameFinishedMsg',{reason:reasonLabel(game.reason)}) : '';
     if (game.status === 'finished') {
       renderFinalResult(game);
       const roomKey = game.roomCode || activeRoomCode;
@@ -369,20 +366,20 @@
   }
   function reasonLabel(reason) {
     return ({
-      checkmate: 'Checkmate',
-      resignation: 'Opponent resigned',
-      timeout: 'Time expired',
-      agreement: 'Draw by agreement',
-      stalemate: 'Stalemate',
-      draw: 'Draw'
-    })[reason] || reason || 'Game finished';
+      checkmate: t('checkmate'),
+      resignation: t('opponentResigned'),
+      timeout: t('timeExpired'),
+      agreement: t('drawAgreement'),
+      stalemate: t('stalemate'),
+      draw: t('draw')
+    })[reason] || reason || t('gameFinished');
   }
   function renderFinalResult(game) {
     const whitePoints = game.result === 'draw' ? 1 : game.result === 'w' ? 3 : 0;
     const blackPoints = game.result === 'draw' ? 1 : game.result === 'b' ? 3 : 0;
     $('finalResultPanel').hidden = false;
-    $('finalResultTitle').textContent = game.result === 'draw' ? 'Draw game' :
-      game.result === myColor ? 'You won!' : 'You lost';
+    $('finalResultTitle').textContent = game.result === 'draw' ? t('drawGame') :
+      game.result === myColor ? t('youWon') : t('youLost');
     $('finalResultReason').textContent = reasonLabel(game.reason);
     $('finalWhiteWallet').textContent = game.players.white === 'cpu' ? 'CPU' : game.players.white || '—';
     $('finalBlackWallet').textContent = game.players.black === 'cpu' ? 'CPU' : game.players.black || '—';
@@ -391,7 +388,7 @@
   }
   function finishText(game) {
     if (game.result === 'draw') return 'Draw · ' + reasonLabel(game.reason);
-    const winner = game.result === 'w' ? 'White wins' : 'Black wins';
+    const winner = game.result === 'w' ? t('whiteWins') : t('blackWins');
     return winner + ' · ' + reasonLabel(game.reason);
   }
   function updateClocks() {
@@ -443,23 +440,23 @@
     if (!activeRoomCode) return;
     try {
       await navigator.clipboard.writeText(activeRoomCode);
-      $('gameMessage').textContent = 'Room code copied.';
+      $('gameMessage').textContent = t('roomCopied');
     } catch {
-      $('gameMessage').textContent = 'Room code: ' + activeRoomCode;
+      $('gameMessage').textContent = t('roomCodeIs',{code:activeRoomCode});
     }
   });
   $('offerDrawBtn').addEventListener('click', () => roomSocket?.readyState === WebSocket.OPEN && roomSocket.send(JSON.stringify({ type: 'offer_draw' })));
   $('acceptDrawBtn').addEventListener('click', () => roomSocket?.readyState === WebSocket.OPEN && roomSocket.send(JSON.stringify({ type: 'accept_draw' })));
   $('declineDrawBtn').addEventListener('click', () => roomSocket?.readyState === WebSocket.OPEN && roomSocket.send(JSON.stringify({ type: 'decline_draw' })));
   $('resignBtn').addEventListener('click', () => {
-    if (roomSocket?.readyState === WebSocket.OPEN && confirm('Are you sure you want to resign this game?')) roomSocket.send(JSON.stringify({ type: 'resign' }));
+    if (roomSocket?.readyState === WebSocket.OPEN && confirm(t('confirmResign'))) roomSocket.send(JSON.stringify({ type: 'resign' }));
   });
 
   connectBrowserBtn.addEventListener('click', () => connectAndCheck('browser'));
   connectWalletBtn.addEventListener('click', () => connectAndCheck('wallet'));
   const walletChanged = () => {
     resetChecks();
-    status('Wallet or network changed. Please verify again.');
+    status(t('walletChanged'));
   };
   if (window.ethereum && window.ethereum.on) {
     window.ethereum.on('accountsChanged', walletChanged);
