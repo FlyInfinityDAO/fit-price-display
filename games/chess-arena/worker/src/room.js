@@ -1,6 +1,61 @@
 import { Chess } from "chess.js";
 
 const INITIAL_CLOCK_MS = 10 * 60 * 1000;
+const PIECE_VALUE = { p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000 };
+function evaluatePosition(chess, perspective) {
+  if (chess.isCheckmate()) return chess.turn() === perspective ? -100000 : 100000;
+  if (chess.isDraw()) return 0;
+  let score = 0;
+  for (const row of chess.board()) for (const piece of row) {
+    if (!piece) continue;
+    const value = PIECE_VALUE[piece.type] || 0;
+    score += piece.color === perspective ? value : -value;
+  }
+  if (chess.isCheck()) score += chess.turn() === perspective ? -35 : 35;
+  return score;
+}
+function chooseCpuMove(chess, difficulty) {
+  const moves = chess.moves({ verbose: true });
+  if (!moves.length) return null;
+  if (difficulty === "easy") return moves[Math.floor(Math.random() * moves.length)];
+  if (difficulty === "medium") {
+    let best = -Infinity, choices = [];
+    for (const move of moves) {
+      chess.move(move);
+      const score = evaluatePosition(chess, chess.turn() === "w" ? "b" : "w");
+      chess.undo();
+      if (score > best) { best = score; choices = [move]; }
+      else if (score === best) choices.push(move);
+    }
+    return choices[Math.floor(Math.random() * choices.length)];
+  }
+  const rootSide = chess.turn();
+  function search(depth, alpha, beta) {
+    if (depth === 0 || chess.isGameOver()) return evaluatePosition(chess, rootSide) * (chess.turn() === rootSide ? 1 : -1);
+    const legal = chess.moves({ verbose: true });
+    if (!legal.length) return evaluatePosition(chess, rootSide);
+    let best = -Infinity;
+    for (const move of legal) {
+      chess.move(move);
+      const score = -search(depth - 1, -beta, -alpha);
+      chess.undo();
+      if (score > best) best = score;
+      if (score > alpha) alpha = score;
+      if (alpha >= beta) break;
+    }
+    return best;
+  }
+  let best = -Infinity, choices = [];
+  for (const move of moves) {
+    chess.move(move);
+    const score = -search(2, -Infinity, Infinity);
+    chess.undo();
+    if (score > best) { best = score; choices = [move]; }
+    else if (score === best) choices.push(move);
+  }
+  return choices[Math.floor(Math.random() * choices.length)];
+}
+
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -41,6 +96,8 @@ export class ChessRoom {
       result: game.result,
       reason: game.reason,
       drawOffer: game.drawOffer,
+      mode: game.mode || "friend",
+      difficulty: game.difficulty || null,
       serverTime: Date.now()
     };
   }
@@ -60,28 +117,46 @@ export class ChessRoom {
       const existing = await this.readGame();
       if (existing) return json({ ok: false, error: "Room code collision." }, 409);
       if (!wallet) return json({ ok: false, error: "Wallet missing." }, 400);
+      const mode = url.searchParams.get("mode") === "cpu" ? "cpu" : "friend";
+      const difficulty = ["easy", "medium", "hard"].includes(url.searchParams.get("difficulty")) ? url.searchParams.get("difficulty") : "medium";
+      const playerColor = url.searchParams.get("color") === "b" ? "b" : "w";
       const game = {
         code: url.searchParams.get("code") || "",
-        players: { white: wallet, black: null },
-        status: "waiting",
+        players: mode === "cpu"
+          ? (playerColor === "w" ? { white: wallet, black: "cpu" } : { white: "cpu", black: wallet })
+          : { white: wallet, black: null },
+        mode,
+        difficulty: mode === "cpu" ? difficulty : null,
+        status: mode === "cpu" ? "active" : "waiting",
         fen: new Chess().fen(),
         pgn: "",
         turn: "w",
         remainingMs: { w: INITIAL_CLOCK_MS, b: INITIAL_CLOCK_MS },
-        turnStartedAt: null,
+        turnStartedAt: mode === "cpu" ? Date.now() : null,
         result: null,
         reason: null,
         drawOffer: null,
         createdAt: Date.now()
       };
+      if (mode === "cpu" && playerColor === "b") {
+        const chess = new Chess(game.fen);
+        const cpuMove = chooseCpuMove(chess, difficulty);
+        if (cpuMove) {
+          chess.move(cpuMove);
+          game.fen = chess.fen();
+          game.pgn = chess.pgn();
+          game.turn = chess.turn();
+        }
+      }
       await this.saveGame(game);
+      if (game.status === "active") await this.ctx.storage.setAlarm(game.turnStartedAt + game.remainingMs[game.turn]);
       return json({ ok: true, room: await this.snapshot(game), timeControl: "10+0" });
     }
 
     if (request.method === "POST" && url.pathname === "/join") {
       const game = await this.readGame();
       if (!game) return json({ ok: false, error: "Room not found." }, 404);
-      if (game.status !== "waiting" || game.players.black) return json({ ok: false, error: "This room is no longer available." }, 409);
+      if (game.mode === "cpu" || game.status !== "waiting" || game.players.black) return json({ ok: false, error: "This room is no longer available." }, 409);
       if (!wallet || wallet === game.players.white) return json({ ok: false, error: "A different wallet is required to join." }, 400);
       game.players.black = wallet;
       game.status = "active";
@@ -241,6 +316,27 @@ export class ChessRoom {
       await this.ctx.storage.setAlarm(now + game.remainingMs[game.turn]);
     }
 
+    if (game.status === "active" && game.mode === "cpu" && game.players[game.turn === "w" ? "white" : "black"] === "cpu") {
+      const cpuSide = game.turn;
+      const cpuChess = new Chess(game.fen);
+      const cpuMove = chooseCpuMove(cpuChess, game.difficulty || "medium");
+      if (cpuMove) {
+        cpuChess.move(cpuMove);
+        game.fen = cpuChess.fen();
+        game.pgn = cpuChess.pgn();
+        game.turn = cpuChess.turn();
+        game.turnStartedAt = Date.now();
+        if (cpuChess.isCheckmate()) {
+          game.status = "finished"; game.result = cpuSide; game.reason = "checkmate"; game.turnStartedAt = null;
+          await this.ctx.storage.deleteAlarm();
+        } else if (cpuChess.isDraw()) {
+          game.status = "finished"; game.result = "draw"; game.reason = cpuChess.isStalemate() ? "stalemate" : "draw"; game.turnStartedAt = null;
+          await this.ctx.storage.deleteAlarm();
+        } else {
+          await this.ctx.storage.setAlarm(game.turnStartedAt + game.remainingMs[game.turn]);
+        }
+      }
+    }
     await this.saveGame(game);
     await this.broadcast(game, game.status === "finished" ? "finished" : "move");
   }
