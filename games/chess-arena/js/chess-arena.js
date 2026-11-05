@@ -194,7 +194,7 @@
     const ticket = await api('/api/rooms/' + code + '/ticket', {}, sessionToken);
     roomSocket = new WebSocket(ticket.socketUrl);
     roomSocket.addEventListener('open', () => {
-      $('roomStatus').textContent = 'Connected to room ' + code + '. Share this code with your opponent.';
+      $('roomStatus').textContent = currentGame && currentGame.mode === 'cpu' ? 'Connected to your solo match.' : 'Connected to room ' + code + '. Share this code with your opponent.';
       $('gameMessage').textContent = 'Live connection established.';
     });
     roomSocket.addEventListener('message', event => {
@@ -260,6 +260,8 @@
     const cpuMatch = game.mode === 'cpu';
     $('offerDrawBtn').hidden = cpuMatch;
     $('activeRoomCode').textContent = cpuMatch ? 'CPU MATCH' : (game.roomCode || activeRoomCode);
+    $('gameTypeLabel').textContent = cpuMatch ? 'SOLO MATCH · VS CPU' : 'PRIVATE MATCH';
+    $('copyRoomBtn').hidden = cpuMatch;
     $('gameStatus').textContent = game.status === 'waiting' ? 'Waiting for opponent to join…' :
       game.status === 'finished' ? finishText(game) :
       (game.turn === myColor ? 'Your turn' : 'Opponent’s turn');
