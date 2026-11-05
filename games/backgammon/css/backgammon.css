@@ -31,3 +31,41 @@
 .danger-btn{border-color:#ff777766;color:#ffaaaa}
 .game-heading-actions{justify-content:flex-end}
 @media(max-width:600px){.wallet-connect-options button{min-width:100%}.join-row button{min-width:110px}}
+
+
+/* Chess Arena-style wallet access card */
+.access-card{
+ width:min(100%,860px);margin:0 auto 18px;padding:26px;
+ border:1px solid rgba(0,200,150,.32);border-radius:26px;
+ background:rgba(10,20,19,.48);-webkit-backdrop-filter:blur(20px) saturate(145%);backdrop-filter:blur(20px) saturate(145%);
+ box-shadow:0 14px 36px rgba(0,0,0,.25),0 0 18px rgba(0,220,165,.09),inset 0 1px 0 rgba(255,255,255,.09);
+}
+.access-card .card-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:12px}
+.access-card .card-heading h2{margin:5px 0 0;font-size:clamp(21px,2.4vw,27px);font-weight:850}
+.access-card .lock-icon{width:48px;height:48px;display:grid;place-items:center;border:1px solid rgba(212,175,55,.35);border-radius:16px;background:rgba(212,175,55,.07);color:var(--gold);font-size:27px}
+.access-card .intro{max-width:720px;margin:0;color:#c7d8d2;font-size:13px;line-height:1.75}
+.access-card .wallet-connect-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0 12px}
+.access-card .wallet-connect-options button{min-height:48px}
+.access-card .wallet-option-btn{border-color:rgba(212,175,55,.48);background:linear-gradient(105deg,rgba(212,175,55,.14),rgba(0,200,150,.07));color:#f2df9c}
+.access-card .wallet-option-btn:hover{border-color:rgba(212,175,55,.8);background:rgba(212,175,55,.13)}
+.access-card .status{margin-top:12px;color:var(--muted);font-size:12px;line-height:1.7;overflow-wrap:anywhere}
+.access-card .checks{margin-top:18px;padding:13px 15px;border:1px solid rgba(0,200,150,.16);border-radius:15px;background:rgba(255,255,255,.025)}
+.access-card .check-row{display:flex;align-items:center;gap:12px}
+.access-card .check-symbol{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;border:1px solid rgba(212,175,55,.34);border-radius:11px;color:var(--gold);font-size:11px;font-weight:900}
+.access-card .check-row strong,.access-card .check-row small{display:block}
+.access-card .check-row strong{font-size:12px}
+.access-card .check-row small{margin-top:2px;color:var(--muted);font-size:11px}
+.access-card .mark{margin-inline-start:auto;color:var(--muted);font-size:20px}
+.access-card .eligible-panel,.access-card .denied-panel{margin-top:13px;padding:13px 15px;border-radius:14px;font-size:12px}
+.access-card .eligible-panel{display:flex;justify-content:space-between;align-items:center;gap:12px;border:1px solid rgba(0,200,150,.35);background:rgba(0,200,150,.07)}
+.access-card .eligible-panel strong,.access-card .eligible-panel small{display:block}
+.access-card .eligible-panel small{margin-top:3px;color:var(--muted)}
+.access-card .ready-dot{width:10px;height:10px;flex:0 0 10px;border-radius:50%;background:var(--mint);box-shadow:0 0 12px var(--mint)}
+.access-card .denied-panel{border:1px solid rgba(255,110,110,.35);background:rgba(255,80,80,.07);color:#ffc0c0;line-height:1.7;overflow-wrap:anywhere}
+.access-card .rooms-panel{margin-top:22px;padding-top:20px;border-top:1px solid rgba(0,200,150,.18)}
+.access-card .rooms-panel h3{font-size:19px;margin:6px 0 8px}
+.access-card .rooms-panel>.primary-btn{width:100%;margin:4px 0}
+.access-card [hidden]{display:none!important}
+.mode-grid{grid-template-columns:1fr}
+@media(max-width:768px){.access-card{padding:19px;border-radius:22px}}
+@media(max-width:560px){.access-card{padding:15px}.access-card .wallet-connect-options{grid-template-columns:1fr;gap:9px}.access-card .wallet-connect-options button{min-height:46px}}
