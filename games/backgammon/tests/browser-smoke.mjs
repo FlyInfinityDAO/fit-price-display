@@ -74,7 +74,36 @@ try {
       on() {},
       removeListener() {}
     });
+    class MockSocket extends EventTarget {
+      constructor(url) {
+        super(); this.url = url; this.readyState = 0;
+        queueMicrotask(() => {
+          this.readyState = 1;
+          this.dispatchEvent(new Event("open"));
+          this.dispatchEvent(new MessageEvent("message", { data: JSON.stringify({
+            type: "state",
+            game: {
+              roomCode: "CPU234", mode: "cpu", difficulty: "medium",
+              players: { white: address, black: "cpu" }, status: "active",
+              position: { points: [-2,0,0,0,0,5,0,3,0,0,0,-5,5,0,0,0,-3,0,-5,0,0,0,0,2], bar: { w: 0, b: 0 }, off: { w: 0, b: 0 } },
+              turn: "w", dice: null, legalMoves: [], movesLeft: 0,
+              result: null, multiplier: 0, reason: null, drawOffer: null
+            }
+          }) }));
+        });
+      }
+      send() {}
+      close() { this.readyState = 3; this.dispatchEvent(new Event("close")); }
+    }
+    MockSocket.OPEN = 1;
+    window.WebSocket = MockSocket;
   });
+  await page.route("**/api/backgammon/rooms/cpu", route => route.fulfill({
+    status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, roomCode: "CPU234" })
+  }));
+  await page.route("**/api/backgammon/rooms/CPU234/ticket", route => route.fulfill({
+    status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, socketUrl: "wss://mock.test/CPU234" })
+  }));
   await page.route("**/api/backgammon/stats/me", route => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, stats: { points: 6, rank: 2, games: 3, wins: 2, losses: 1, draws: 0 } }) }));
   await page.route("**/api/backgammon/stats/leaderboard", route => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, leaderboard: [{ wallet_address: "0x1111111111111111111111111111111111111111", points: 6 }] }) }));
   await page.route("**/api/auth/challenge", route => route.fulfill({
@@ -100,6 +129,7 @@ try {
   await page.locator("#cpuStartBtn").click();
   await page.locator("#game-panel").waitFor({ state: "visible" });
   await page.locator("#rollBtn").waitFor({ state: "visible" });
+  assert.equal(await page.locator("#blackPlayer b").innerText(), "CPU", "CPU opponent should be identified in the player bar");
 
   // Verify the mobile board fits the 390px viewport without horizontal page overflow.
   const mobileLayout = await page.evaluate(() => {
