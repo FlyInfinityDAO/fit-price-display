@@ -1,0 +1,63 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { initialPosition, legalTurnSequences, winner } from "../js/backgammon-engine.js";
+
+const position = () => ({ points: Array(24).fill(0), bar: { w: 0, b: 0 }, off: { w: 0, b: 0 } });
+
+test("starting position has fifteen checkers per side", () => {
+  const p = initialPosition();
+  assert.equal(p.points.reduce((n, x) => n + Math.max(0, x), 0), 15);
+  assert.equal(p.points.reduce((n, x) => n + Math.max(0, -x), 0), 15);
+});
+
+test("a point occupied by two opposing checkers is blocked", () => {
+  const p = position(); p.points[10] = 1; p.points[9] = -2;
+  const moves = legalTurnSequences(p, "w", [1, 2]).flatMap(s => s.moves);
+  assert.equal(moves.some(m => m.from === 10 && m.to === 9), false);
+});
+
+test("hitting a single opposing checker sends it to the bar", () => {
+  const p = position(); p.points[5] = 1; p.points[3] = -1;
+  const seq = legalTurnSequences(p, "w", [2, 6]).find(s => s.moves[0]?.from === 5 && s.moves[0]?.to === 3);
+  assert.ok(seq);
+  assert.equal(seq.moves[0].hit, true);
+  assert.equal(seq.position.bar.b, 1);
+});
+
+test("a checker on the bar has priority over all other checkers", () => {
+  const p = position(); p.bar.w = 1; p.points[5] = 1; p.points[23] = -2;
+  const moves = legalTurnSequences(p, "w", [1, 2]).flatMap(s => s.moves);
+  assert.ok(moves.length > 0);
+  assert.ok(moves.every(m => m.from === "bar"));
+  assert.ok(moves.every(m => m.die === 2));
+});
+
+test("doubles allow four moves when all four are playable", () => {
+  const p = position(); p.points[10] = 4;
+  const seqs = legalTurnSequences(p, "w", [1, 1]);
+  assert.ok(seqs.some(s => s.moves.length === 4));
+});
+
+test("when only one die can be played, the higher die is required", () => {
+  const p = position(); p.points[2] = 1; p.off.w = 14; p.points[1] = -2;
+  const seqs = legalTurnSequences(p, "w", [1, 2]);
+  assert.ok(seqs.length > 0);
+  assert.ok(seqs.every(s => s.moves.length === 1 && s.moves[0].die === 2));
+});
+
+test("both dice are used when a two-move sequence is possible", () => {
+  const p = position(); p.points[10] = 1;
+  const seqs = legalTurnSequences(p, "w", [1, 2]);
+  assert.ok(seqs.some(s => s.moves.length === 2));
+});
+
+test("oversized bear-off is forbidden while a checker remains farther from the exit", () => {
+  const p = position(); p.points[1] = 1; p.points[3] = 1; p.off.w = 13;
+  const moves = legalTurnSequences(p, "w", [6, 5]).flatMap(s => s.moves);
+  assert.equal(moves.some(m => m.from === 1 && m.to === "off"), false);
+});
+
+test("a player wins after bearing off all fifteen checkers", () => {
+  const p = position(); p.off.w = 15;
+  assert.deepEqual(winner(p), { side: "w", multiplier: 1 });
+});
