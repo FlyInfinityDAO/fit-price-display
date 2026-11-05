@@ -1,4 +1,5 @@
-// Deterministic regression suite for the backgammon rules engine and CPU integration.\nimport test from "node:test";
+// Deterministic regression suite for the backgammon rules engine and CPU integration.
+import test from "node:test";
 import assert from "node:assert/strict";
 import { initialPosition, legalTurnSequences, winner, pipCount } from "../js/backgammon-engine.js";
 
