@@ -1,4 +1,41 @@
-import { initialPosition, legalTurnSequences, rollDice, winner, clonePosition } from "../../../backgammon/js/backgammon-engine.js";
+import { initialPosition, legalTurnSequences, rollDice, winner, clonePosition, pipCount } from "../../../backgammon/js/backgammon-engine.js";
+
+function evaluateForBlack(position) {
+  let score = (pipCount(position, "w") - pipCount(position, "b")) * 0.7 +
+    (position.off.b - position.off.w) * 32 + (position.bar.w - position.bar.b) * 28;
+  for (let i = 0; i < 24; i++) {
+    const count = position.points[i];
+    if (count < 0) {
+      const pieces = -count;
+      score += pieces === 1 ? -11 : pieces * 2.2;
+      if (i >= 18) score += pieces * 1.2;
+    } else if (count > 0) score += count === 1 ? 10 : -count * 1.1;
+  }
+  return score;
+}
+function chooseCpuSequence(sequences, difficulty) {
+  if (difficulty === "easy") return sequences[Math.floor(Math.random() * sequences.length)];
+  let best = null, bestScore = -Infinity;
+  for (const sequence of sequences) {
+    let score = evaluateForBlack(sequence.position) +
+      sequence.moves.reduce((total, move) => total + (move.hit ? 7 : 0), 0);
+    if (difficulty === "hard") {
+      let total = 0, weightTotal = 0;
+      for (let a = 1; a <= 6; a++) for (let b = a; b <= 6; b++) {
+        const weight = a === b ? 1 : 2;
+        const replies = legalTurnSequences(sequence.position, "w", [a, b]);
+        const replyScore = replies.length
+          ? Math.min(...replies.map(reply => evaluateForBlack(reply.position)))
+          : evaluateForBlack(sequence.position);
+        total += replyScore * weight;
+        weightTotal += weight;
+      }
+      score = total / weightTotal;
+    }
+    if (score > bestScore) { bestScore = score; best = sequence; }
+  }
+  return best || sequences[0];
+}
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -48,7 +85,7 @@ export class BackgammonRoom {
         const points = outcome === "draw" ? 1 : outcome === "win" ? 3 : 0;
         statements.push(this.env.DB.prepare(
           "INSERT OR IGNORE INTO backgammon_player_results (room_code, wallet_address, outcome, reason, points, multiplier, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)"
-        ).bind(game.code, wallet.toLowerCase(), outcome, game.reason || "unknown", points, game.multiplier || 1, createdAt));
+        ).bind(game.code, wallet.toLowerCase(), outcome, game.reason || "unknown", points, game.multiplier ?? 1, createdAt));
       }
       if (statements.length) await this.env.DB.batch(statements);
       game.statsRecorded = true;
@@ -57,10 +94,34 @@ export class BackgammonRoom {
     await this.ctx.storage.put("game", game);
   }
 
+  async playCpuTurn(game) {
+    const dice = rollDice();
+    const options = legalTurnSequences(game.position, "b", dice);
+    if (!options.length || !options[0].moves.length) {
+      game.turn = "w";
+      game.dice = null;
+      game.sequenceOptions = [];
+      return;
+    }
+    const chosen = chooseCpuSequence(options, game.difficulty || "medium");
+    game.position = clonePosition(chosen.position);
+    game.dice = null;
+    game.sequenceOptions = [];
+    const win = winner(game.position);
+    if (win) {
+      game.status = "finished";
+      game.result = win.side;
+      game.multiplier = win.multiplier;
+      game.reason = "bear_off";
+    } else game.turn = "w";
+  }
+
   snapshot(game) {
     return {
       roomCode: game.code,
       players: game.players,
+      mode: game.mode || "friend",
+      difficulty: game.difficulty || null,
       status: game.status,
       position: game.position,
       turn: game.turn,
@@ -89,10 +150,13 @@ export class BackgammonRoom {
     if (request.method === "POST" && url.pathname === "/create") {
       if (await this.readGame()) return json({ ok: false, error: "Room code collision." }, 409);
       if (!wallet) return json({ ok: false, error: "Wallet missing." }, 400);
+      const mode = url.searchParams.get("mode") === "cpu" ? "cpu" : "friend";
+      const difficulty = ["easy", "medium", "hard"].includes(url.searchParams.get("difficulty")) ? url.searchParams.get("difficulty") : "medium";
       const game = {
         code: url.searchParams.get("code") || "",
-        players: { white: wallet, black: null },
-        status: "waiting",
+        players: mode === "cpu" ? { white: wallet, black: "cpu" } : { white: wallet, black: null },
+        mode, difficulty: mode === "cpu" ? difficulty : null,
+        status: mode === "cpu" ? "active" : "waiting",
         position: initialPosition(),
         turn: "w",
         dice: null,
@@ -111,6 +175,7 @@ export class BackgammonRoom {
       const game = await this.readGame();
       if (!game) return json({ ok: false, error: "Room not found." }, 404);
       if (!wallet) return json({ ok: false, error: "Wallet missing." }, 400);
+      if (game.mode === "cpu") return json({ ok: false, error: "CPU rooms cannot be joined by another wallet." }, 409);
       if (wallet === game.players.white || wallet === game.players.black) return json({ ok: true, room: this.snapshot(game) });
       if (game.status !== "waiting" || game.players.black) return json({ ok: false, error: "This room is no longer available." }, 409);
       game.players.black = wallet;
@@ -225,8 +290,9 @@ export class BackgammonRoom {
         game.dice = null;
         game.sequenceOptions = [];
         game.turn = opponent;
+        if (game.mode === "cpu" && opponent === "b") await this.playCpuTurn(game);
         await this.saveGame(game);
-        await this.broadcast(game, "turn_passed");
+        await this.broadcast(game, game.status === "finished" ? "finished" : "turn_passed");
         return;
       }
       await this.saveGame(game);
@@ -267,8 +333,9 @@ export class BackgammonRoom {
       game.dice = null;
       game.sequenceOptions = [];
       game.turn = opponent;
+      if (game.mode === "cpu" && opponent === "b") await this.playCpuTurn(game);
       await this.saveGame(game);
-      await this.broadcast(game, "turn");
+      await this.broadcast(game, game.status === "finished" ? "finished" : "turn");
       return;
     }
 
