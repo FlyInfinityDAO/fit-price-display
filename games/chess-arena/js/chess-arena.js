@@ -462,5 +462,9 @@
     window.ethereum.on('accountsChanged', walletChanged);
     window.ethereum.on('chainChanged', walletChanged);
   }
+  document.addEventListener('fi-language-updated', () => {
+    if (currentGame) renderGame(currentGame);
+    if (sessionToken) loadStats();
+  });
   resetChecks();
 })();
