@@ -140,6 +140,28 @@ export async function handleRoomApi(request, env) {
     return json({ ok: true, leaderboard: leaderboard.results || [] });
   }
 
+  if (request.method === "GET" && (path === "/api/backgammon/stats/me" || path === "/api/backgammon/stats/leaderboard")) {
+    const auth = await authorize(request, env);
+    if (auth.response) return auth.response;
+    await env.DB.prepare(
+      "CREATE TABLE IF NOT EXISTS backgammon_player_results (room_code TEXT NOT NULL, wallet_address TEXT NOT NULL, outcome TEXT NOT NULL, reason TEXT NOT NULL, points INTEGER NOT NULL, multiplier INTEGER NOT NULL DEFAULT 1, created_at INTEGER NOT NULL, PRIMARY KEY (room_code, wallet_address))"
+    ).run();
+    if (path === "/api/backgammon/stats/me") {
+      const row = await env.DB.prepare(
+        "SELECT wallet_address, COUNT(*) AS games, COALESCE(SUM(points), 0) AS points, SUM(CASE WHEN outcome = 'win' THEN 1 ELSE 0 END) AS wins, SUM(CASE WHEN outcome = 'loss' THEN 1 ELSE 0 END) AS losses, SUM(CASE WHEN outcome = 'draw' THEN 1 ELSE 0 END) AS draws FROM backgammon_player_results WHERE wallet_address = ? GROUP BY wallet_address"
+      ).bind(auth.wallet.toLowerCase()).first();
+      const totals = row || { wallet_address: auth.wallet.toLowerCase(), games: 0, points: 0, wins: 0, losses: 0, draws: 0 };
+      const rank = await env.DB.prepare(
+        "WITH totals AS (SELECT wallet_address, SUM(points) AS points FROM backgammon_player_results GROUP BY wallet_address) SELECT COUNT(*) + 1 AS rank FROM totals WHERE points > ?"
+      ).bind(totals.points).first();
+      return json({ ok: true, stats: { ...totals, rank: rank?.rank || 1 } });
+    }
+    const leaderboard = await env.DB.prepare(
+      "SELECT wallet_address, COUNT(*) AS games, SUM(points) AS points, SUM(CASE WHEN outcome = 'win' THEN 1 ELSE 0 END) AS wins, SUM(CASE WHEN outcome = 'loss' THEN 1 ELSE 0 END) AS losses, SUM(CASE WHEN outcome = 'draw' THEN 1 ELSE 0 END) AS draws FROM backgammon_player_results GROUP BY wallet_address ORDER BY points DESC, wins DESC, games DESC LIMIT 20"
+    ).all();
+    return json({ ok: true, leaderboard: leaderboard.results || [] });
+  }
+
   if (request.method === "POST" && path === "/api/rooms/create") {
     const auth = await authorize(request, env);
     if (auth.response) return auth.response;
