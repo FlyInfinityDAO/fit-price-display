@@ -11,6 +11,9 @@ A separate Cloudflare Worker, isolated from Fly AI and its database.
 - Private room creation and joining by six-character code.
 - Durable Object room state with authoritative chess.js move validation, 10-minute clocks, checkmate/draw/resignation, draw offers, and WebSocket broadcasts.
 - Single-use 30-second WebSocket tickets.
+- Server-authoritative backgammon dice, legal move validation, resign/draw handling, and CPU opponents.
+- Wallet-based backgammon records for completed online and CPU matches, with player totals, ranks, and a top-20 leaderboard.
+- Backgammon match points mirror Chess Arena: 3 for a win, 1 for a draw, 0 for a loss; practice boards are not ranked.
 - No Network registration check, FIT transfer, approval, or transaction.
 
 ## Deploy setup
@@ -58,9 +61,13 @@ npx wrangler deploy
 - `GET /api/rooms/{code}` — authenticated room snapshot
 - `POST /api/rooms/{code}/ticket` — bearer session; issues a one-use WebSocket ticket
 - `GET /api/rooms/{code}/ws?ticket=...` — consumes ticket and upgrades to WebSocket
+- `POST /api/backgammon/rooms/cpu` — bearer session; JSON `{ "difficulty": "easy|medium|hard" }`
+- `POST /api/backgammon/rooms/create` and `POST /api/backgammon/rooms/join` — backgammon private rooms
+- `POST /api/backgammon/rooms/{code}/ticket` and `GET /api/backgammon/rooms/{code}/ws?ticket=...` — authenticated backgammon WebSocket
+- `GET /api/backgammon/stats/me` and `GET /api/backgammon/stats/leaderboard` — player record and top-20 rankings
 
 The frontend signs only a login message. It never approves or transfers FIT. The only eligibility rule is holding at least 1 FIT.
 
 ## Not yet included
 
-Public matchmaking, player profiles, ELO/rating history, leaderboard, tournament support, and full frontend chessboard/room controls are not included yet. The live room service must be deployed and tested before presenting the game as production-ready.
+Public matchmaking, ELO/rating history, tournament support, and full chess tournament controls are not included yet. The live room service must be deployed and tested before presenting the game as production-ready.
