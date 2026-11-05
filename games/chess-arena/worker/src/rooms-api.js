@@ -128,6 +128,24 @@ export async function handleRoomApi(request, env) {
     return json({ ok: false, error: "Could not allocate a room. Please try again." }, 503);
   }
 
+  if (request.method === "POST" && path === "/api/rooms/cpu") {
+    const auth = await authorize(request, env);
+    if (auth.response) return auth.response;
+    const body = await request.json().catch(() => ({}));
+    const difficulty = ["easy", "medium", "hard"].includes(body.difficulty) ? body.difficulty : "medium";
+    const color = body.color === "b" ? "b" : "w";
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const code = makeRoomCode();
+      const stub = await roomStub(env, code);
+      const response = await internalRequest(stub, "/create?code=" + code + "&mode=cpu&difficulty=" + difficulty + "&color=" + color, auth.wallet, {});
+      if (response.status === 409) continue;
+      const data = await response.json();
+      if (!response.ok || data.ok !== true) return json(data, response.status);
+      return json({ ...data, roomCode: code });
+    }
+    return json({ ok: false, error: "Could not allocate a CPU game. Please try again." }, 503);
+  }
+
   if (request.method === "POST" && path === "/api/rooms/join") {
     const auth = await authorize(request, env);
     if (auth.response) return auth.response;
