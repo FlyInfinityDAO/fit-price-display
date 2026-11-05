@@ -27,3 +27,6 @@ jobs:
       - name: Check JavaScript syntax
         working-directory: games/chess-arena/worker
         run: npm run check
+      - name: Build Worker bundle without deploying
+        working-directory: games/chess-arena/worker
+        run: npx wrangler deploy --dry-run --outdir /tmp/fly-chess-arena-worker
