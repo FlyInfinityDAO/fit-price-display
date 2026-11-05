@@ -11,8 +11,8 @@ es:{dashboard:"Panel",title:"Backgammon Fly Infinity",tagline:"Lanza los dados. 
 pt:{dashboard:"Painel",title:"Gamão Fly Infinity",tagline:"Lance os dados. Planeje cada jogada.",online:"JOGO ONLINE",twoPlayers:"Jogue com um amigo",onlineDesc:"Crie uma sala privada e convide outro jogador. Assinatura gratuita; sem transação.",comingSoon:"Em breve",solo:"JOGO SOLO",cpu:"Jogue contra o computador",cpuDesc:"Escolha a dificuldade e comece uma partida contra o computador.",startCpu:"Jogar contra CPU",cpuThinking:"O computador está pensando…",easy:"Fácil",medium:"Médio",hard:"Difícil",practice:"Praticar tabuleiro",boardLabel:"TABULEIRO · PRÉVIA DAS REGRAS",practiceTitle:"Prática de gamão",newGame:"Novo jogo",white:"Brancas",black:"Pretas",whiteTurn:"Vez das brancas",blackTurn:"Vez das pretas",bar:"BARRA",whiteHome:"CASA BRANCAS",blackHome:"CASA PRETAS",roll:"Lançar dados",remaining:"JOGADAS RESTANTES",rollPrompt:"Lance os dados para começar.",whiteCheckers:"Peças brancas",blackCheckers:"Peças pretas",tapHint:"Selecione uma peça e depois um destino destacado.",noRewards:"Sem taxa de entrada ou transferência de tokens.",selectSource:"Selecione uma das suas peças.",selectDestination:"Escolha um destino destacado.",noMoves:"Sem jogadas legais. Passe a vez.",turn:"Vez de {side}.",won:"{side} venceu!",selectMove:"Escolha uma jogada válida para a peça.",invalid:"Jogada inválida.",rollFirst:"Lance os dados primeiro."}};
 
 const O={
-en:{accessVerified:"Access verified",connected:"Connected",connectBrowser:"Connect with browser",connectWallet:"Connect wallet",walletNotConnected:"Connect a BNB Smart Chain wallet to play online. A free signature is required; no transaction.",connecting:"Connecting wallet…",signing:"Approve the free signature in your wallet…",verifying:"Verifying FIT balance…",fitRequired:"At least 1 FIT required",connectOnline:"PLAYER ACCESS · ONLINE MATCH",createRoom:"Create private room",roomCode:"ROOM CODE",join:"Join room",roomShare:"Create a room and share its six-character code.",waitingOpponent:"Waiting for your opponent to join…",yourTurn:"Your turn · roll the dice",opponentTurn:"Opponent's turn",roomCopied:"Room code copied.",connectionClosed:"Connection closed. Refresh or reconnect.",drawOffer:"Offer draw",acceptDraw:"Accept draw",declineDraw:"Decline",resign:"Resign",confirmResign:"Are you sure you want to resign?",drawOfferReceived:"Your opponent offered a draw.",drawDeclined:"Draw offer declined.",youWon:"You won!",youLost:"You lost.",drawGame:"The game is a draw.",youWonByBearOff:"You won by bearing off all your checkers!",youLostByBearOff:"Your opponent bore off all checkers. You lost.",opponentResigned:"Your opponent resigned. You win!",youResigned:"You resigned. Your opponent wins.",finished:"Game finished",rollToBegin:"Roll the dice to begin.",serverError:"Server error.",walletChanged:"Wallet changed. Reconnect to continue.",copyCode:"Copy code",onlineRoom:"ONLINE PRIVATE ROOM",leavePractice:"Practice board"},
-fa:{connectBrowser:"اتصال با مرورگر",connectWallet:"اتصال کیف پول",walletNotConnected:"برای بازی آنلاین کیف پول BNB Smart Chain را متصل کنید. فقط امضای رایگان لازم است و تراکنشی انجام نمی‌شود.",connecting:"در حال اتصال کیف پول…",signing:"امضای رایگان را در کیف پول تأیید کنید…",verifying:"در حال بررسی موجودی FIT…",fitRequired:"حداقل ۱ FIT لازم است",connectOnline:"دسترسی بازیکن · مسابقه آنلاین",createRoom:"ساخت اتاق خصوصی",roomCode:"کد اتاق",join:"ورود به اتاق",roomShare:"اتاق بسازید و کد شش‌کاراکتری را برای حریف بفرستید.",waitingOpponent:"منتظر ورود حریف…",yourTurn:"نوبت شماست · تاس بریزید",opponentTurn:"نوبت حریف",roomCopied:"کد اتاق کپی شد.",connectionClosed:"اتصال قطع شد. صفحه را تازه‌سازی یا دوباره متصل کنید.",drawOffer:"پیشنهاد مساوی",acceptDraw:"قبول مساوی",decline:"رد کردن",resign:"تسلیم",confirmResign:"از تسلیم شدن مطمئن هستید؟",drawOfferReceived:"حریف پیشنهاد مساوی داده است.",drawDeclined:"پیشنهاد مساوی رد شد.",youWon:"شما برنده شدید!",youLost:"شما باختید.",drawGame:"بازی مساوی شد.",youWonByBearOff:"با خارج کردن تمام مهره‌ها برنده شدید!",youLostByBearOff:"حریف تمام مهره‌هایش را خارج کرد؛ شما باختید.",opponentResigned:"حریف تسلیم شد؛ شما برنده شدید!",youResigned:"شما تسلیم شدید؛ حریف برنده شد.",finished:"بازی تمام شد",rollToBegin:"برای شروع تاس بریزید.",serverError:"خطای سرور.",walletChanged:"کیف پول تغییر کرد. برای ادامه دوباره متصل شوید.",copyCode:"کپی کد",onlineRoom:"اتاق خصوصی آنلاین",leavePractice:"صفحه تمرین"},
+en:{playerAccess:"PLAYER ACCESS",connectToEnter:"Connect to enter",accessIntro:"Backgammon Arena is open to wallets holding at least 1 FIT on BNB Smart Chain. A free signature verifies your wallet; no transaction is requested.",minimumBalance:"Minimum FIT balance",serverVerified:"Server verification successful",verifiedNote:"Your wallet has passed the FIT balance check.",noWallet:"No compatible wallet was found. Open this page in a wallet browser or install a browser wallet.",noInjectedWallet:"No injected wallet was found. Open the page in your wallet\u2019s built-in browser.",addBsc:"Add BNB Smart Chain to your wallet first.",switchBsc:"Please switch your wallet to BNB Smart Chain.",walletTimeout:"Wallet signature timed out. Reconnect and try again.",walletConnected:"Wallet connected: {address}",signatureReceived:"Free signature received. Verifying your wallet…",noWalletVerification:"Wallet verification could not be completed.",accessVerified:"Access verified",connected:"Connected",connectBrowser:"Connect with browser",connectWallet:"Connect wallet",walletNotConnected:"Connect a BNB Smart Chain wallet to play online. A free signature is required; no transaction.",connecting:"Connecting wallet…",signing:"Approve the free signature in your wallet…",verifying:"Verifying FIT balance…",fitRequired:"At least 1 FIT required",connectOnline:"PLAYER ACCESS · ONLINE MATCH",createRoom:"Create private room",roomCode:"ROOM CODE",join:"Join room",roomShare:"Create a room and share its six-character code.",waitingOpponent:"Waiting for your opponent to join…",yourTurn:"Your turn · roll the dice",opponentTurn:"Opponent's turn",roomCopied:"Room code copied.",connectionClosed:"Connection closed. Refresh or reconnect.",drawOffer:"Offer draw",acceptDraw:"Accept draw",declineDraw:"Decline",resign:"Resign",confirmResign:"Are you sure you want to resign?",drawOfferReceived:"Your opponent offered a draw.",drawDeclined:"Draw offer declined.",youWon:"You won!",youLost:"You lost.",drawGame:"The game is a draw.",youWonByBearOff:"You won by bearing off all your checkers!",youLostByBearOff:"Your opponent bore off all checkers. You lost.",opponentResigned:"Your opponent resigned. You win!",youResigned:"You resigned. Your opponent wins.",finished:"Game finished",rollToBegin:"Roll the dice to begin.",serverError:"Server error.",walletChanged:"Wallet changed. Reconnect to continue.",copyCode:"Copy code",onlineRoom:"ONLINE PRIVATE ROOM",leavePractice:"Practice board"},
+fa:{playerAccess:"دسترسی بازیکن",connectToEnter:"برای ورود کیف پول را متصل کنید",accessIntro:"بازی آنلاین تخته‌نرد برای کیف پول‌هایی با حداقل ۱ FIT روی شبکه BNB Smart Chain فعال است. فقط امضای رایگان لازم است و هیچ تراکنشی انجام نمی‌شود.",minimumBalance:"حداقل موجودی FIT",serverVerified:"تأیید سرور موفق بود",verifiedNote:"موجودی FIT کیف پول شما تأیید شده است.",noWallet:"کیف پول سازگار پیدا نشد. صفحه را در مرورگر کیف پول باز کنید یا یک کیف پول مرورگری نصب کنید.",noInjectedWallet:"کیف پول مرورگری پیدا نشد. صفحه را در مرورگر داخلی کیف پول باز کنید.",addBsc:"ابتدا شبکه BNB Smart Chain را به کیف پول اضافه کنید.",switchBsc:"لطفاً شبکه کیف پول را به BNB Smart Chain تغییر دهید.",walletTimeout:"مهلت امضای کیف پول تمام شد. دوباره متصل شوید و تلاش کنید.",walletConnected:"کیف پول متصل شد: {address}",signatureReceived:"امضای رایگان دریافت شد؛ در حال تأیید کیف پول…",noWalletVerification:"تأیید کیف پول انجام نشد.",connectBrowser:"اتصال با مرورگر",connectWallet:"اتصال کیف پول",walletNotConnected:"برای بازی آنلاین کیف پول BNB Smart Chain را متصل کنید. فقط امضای رایگان لازم است و تراکنشی انجام نمی‌شود.",connecting:"در حال اتصال کیف پول…",signing:"امضای رایگان را در کیف پول تأیید کنید…",verifying:"در حال بررسی موجودی FIT…",fitRequired:"حداقل ۱ FIT لازم است",connectOnline:"دسترسی بازیکن · مسابقه آنلاین",createRoom:"ساخت اتاق خصوصی",roomCode:"کد اتاق",join:"ورود به اتاق",roomShare:"اتاق بسازید و کد شش‌کاراکتری را برای حریف بفرستید.",waitingOpponent:"منتظر ورود حریف…",yourTurn:"نوبت شماست · تاس بریزید",opponentTurn:"نوبت حریف",roomCopied:"کد اتاق کپی شد.",connectionClosed:"اتصال قطع شد. صفحه را تازه‌سازی یا دوباره متصل کنید.",drawOffer:"پیشنهاد مساوی",acceptDraw:"قبول مساوی",decline:"رد کردن",resign:"تسلیم",confirmResign:"از تسلیم شدن مطمئن هستید؟",drawOfferReceived:"حریف پیشنهاد مساوی داده است.",drawDeclined:"پیشنهاد مساوی رد شد.",youWon:"شما برنده شدید!",youLost:"شما باختید.",drawGame:"بازی مساوی شد.",youWonByBearOff:"با خارج کردن تمام مهره‌ها برنده شدید!",youLostByBearOff:"حریف تمام مهره‌هایش را خارج کرد؛ شما باختید.",opponentResigned:"حریف تسلیم شد؛ شما برنده شدید!",youResigned:"شما تسلیم شدید؛ حریف برنده شد.",finished:"بازی تمام شد",rollToBegin:"برای شروع تاس بریزید.",serverError:"خطای سرور.",walletChanged:"کیف پول تغییر کرد. برای ادامه دوباره متصل شوید.",copyCode:"کپی کد",onlineRoom:"اتاق خصوصی آنلاین",leavePractice:"صفحه تمرین"},
 ar:{connectBrowser:"الاتصال عبر المتصفح",connectWallet:"ربط المحفظة",walletNotConnected:"اربط محفظة BNB Smart Chain للعب عبر الإنترنت. يلزم توقيع مجاني فقط ولا توجد معاملة.",connecting:"جارٍ ربط المحفظة…",signing:"وافق على التوقيع المجاني في محفظتك…",verifying:"جارٍ التحقق من رصيد FIT…",fitRequired:"يلزم 1 FIT على الأقل",connectOnline:"دخول اللاعب · مباراة عبر الإنترنت",createRoom:"إنشاء غرفة خاصة",roomCode:"رمز الغرفة",join:"انضمام",roomShare:"أنشئ غرفة وشارك رمزها المكون من ستة أحرف.",waitingOpponent:"بانتظار انضمام خصمك…",yourTurn:"دورك · ارمِ النرد",opponentTurn:"دور الخصم",roomCopied:"تم نسخ رمز الغرفة.",connectionClosed:"انقطع الاتصال. حدّث الصفحة أو أعد الاتصال.",drawOffer:"اقتراح التعادل",acceptDraw:"قبول التعادل",decline:"رفض",resign:"استسلام",confirmResign:"هل أنت متأكد أنك تريد الاستسلام؟",drawOfferReceived:"عرض خصمك التعادل.",drawDeclined:"تم رفض عرض التعادل.",youWon:"لقد فزت!",youLost:"لقد خسرت.",drawGame:"انتهت المباراة بالتعادل.",youWonByBearOff:"فزت بإخراج جميع قطعك!",youLostByBearOff:"أخرج خصمك جميع قطعه. لقد خسرت.",opponentResigned:"استسلم خصمك. أنت الفائز!",youResigned:"استسلمت. خصمك هو الفائز.",finished:"انتهت المباراة",rollToBegin:"ارمِ النرد للبدء.",serverError:"خطأ في الخادم.",walletChanged:"تغيرت المحفظة. أعد الاتصال للمتابعة.",copyCode:"نسخ الرمز",onlineRoom:"غرفة خاصة عبر الإنترنت",leavePractice:"لوحة التدريب"},
 tr:{connectBrowser:"Tarayıcıyla bağlan",connectWallet:"Cüzdanı bağla",walletNotConnected:"Çevrim içi oynamak için BNB Smart Chain cüzdanını bağla. Ücretsiz imza gerekir; işlem yapılmaz.",connecting:"Cüzdan bağlanıyor…",signing:"Cüzdanında ücretsiz imzayı onayla…",verifying:"FIT bakiyesi doğrulanıyor…",fitRequired:"En az 1 FIT gerekli",connectOnline:"OYUNCU ERİŞİMİ · ÇEVRİM İÇİ MAÇ",createRoom:"Özel oda oluştur",roomCode:"ODA KODU",join:"Odaya katıl",roomShare:"Oda oluştur ve altı karakterli kodu rakibinle paylaş.",waitingOpponent:"Rakibin katılması bekleniyor…",yourTurn:"Senin sıran · zar at",opponentTurn:"Rakibin sırası",roomCopied:"Oda kodu kopyalandı.",connectionClosed:"Bağlantı kapandı. Yenile veya yeniden bağlan.",drawOffer:"Beraberlik teklif et",acceptDraw:"Beraberliği kabul et",decline:"Reddet",resign:"Pes et",confirmResign:"Pes etmek istediğinden emin misin?",drawOfferReceived:"Rakibin beraberlik teklif etti.",drawDeclined:"Beraberlik teklifi reddedildi.",youWon:"Kazandın!",youLost:"Kaybettin.",drawGame:"Oyun berabere.",youWonByBearOff:"Tüm pullarını toplayarak kazandın!",youLostByBearOff:"Rakibin tüm pullarını topladı. Kaybettin.",opponentResigned:"Rakibin pes etti. Kazandın!",youResigned:"Pes ettin. Rakibin kazandı.",finished:"Oyun bitti",rollToBegin:"Başlamak için zar at.",serverError:"Sunucu hatası.",walletChanged:"Cüzdan değişti. Devam etmek için yeniden bağlan.",copyCode:"Kodu kopyala",onlineRoom:"ÇEVRİM İÇİ ÖZEL ODA",leavePractice:"Tahtayı dene"},
 ru:{connectBrowser:"Подключить через браузер",connectWallet:"Подключить кошелёк",walletNotConnected:"Для онлайн-игры подключите кошелёк BNB Smart Chain. Нужна бесплатная подпись; транзакций нет.",connecting:"Подключение кошелька…",signing:"Подтвердите бесплатную подпись в кошельке…",verifying:"Проверка баланса FIT…",fitRequired:"Требуется минимум 1 FIT",connectOnline:"ДОСТУП ИГРОКА · ОНЛАЙН-МАТЧ",createRoom:"Создать приватную комнату",roomCode:"КОД КОМНАТЫ",join:"Войти",roomShare:"Создайте комнату и отправьте сопернику код из шести символов.",waitingOpponent:"Ожидание соперника…",yourTurn:"Ваш ход · бросьте кости",opponentTurn:"Ход соперника",roomCopied:"Код комнаты скопирован.",connectionClosed:"Соединение закрыто. Обновите страницу или подключитесь снова.",drawOffer:"Предложить ничью",acceptDraw:"Принять ничью",decline:"Отклонить",resign:"Сдаться",confirmResign:"Вы уверены, что хотите сдаться?",drawOfferReceived:"Соперник предложил ничью.",drawDeclined:"Предложение ничьей отклонено.",youWon:"Вы победили!",youLost:"Вы проиграли.",drawGame:"Ничья.",youWonByBearOff:"Вы победили, сняв все свои шашки!",youLostByBearOff:"Соперник снял все шашки. Вы проиграли.",opponentResigned:"Соперник сдался. Вы победили!",youResigned:"Вы сдались. Победил соперник.",finished:"Игра завершена",rollToBegin:"Бросьте кости, чтобы начать.",serverError:"Ошибка сервера.",walletChanged:"Кошелёк изменён. Подключитесь снова.",copyCode:"Копировать код",onlineRoom:"ОНЛАЙН-КОМНАТА",leavePractice:"Пробная доска"},
@@ -29,7 +29,7 @@ let gameMode="practice",cpuBusy=false,cpuTimer=null;
 // Initialize after state declarations because setLang() calls render().
 setLang(lang);
 $("languageSelect").addEventListener("change",e=>setLang(e.target.value));
-let sessionToken=null,currentWallet=null,activeRoomCode=null,roomSocket=null,mySide=null,remoteLegalMoves=[],remoteMovesLeft=0,remotePending=false;
+let activeProvider=null,sessionToken=null,currentWallet=null,activeRoomCode=null,roomSocket=null,mySide=null,remoteLegalMoves=[],remoteMovesLeft=0,remotePending=false;
 const sideName=s=>t(s==="w"?"white":"black");
 function setStatus(message,mode="info"){const el=$("gameStatus");el.className="game-status status-"+mode;el.innerHTML='<span class="status-icon" aria-hidden="true"></span><span class="status-copy"></span>';el.querySelector(".status-copy").textContent=message;}
 function reset(){if(passTimer!==null){clearTimeout(passTimer);passTimer=null;}if(cpuTimer!==null){clearTimeout(cpuTimer);cpuTimer=null;}cpuBusy=false;remoteLegalMoves=[];remoteMovesLeft=0;remotePending=false;position=initialPosition();side="w";dice=null;selected=null;sequenceOptions=[];chosenMoves=[];finished=false;$("dieOne").textContent="–";$("dieTwo").textContent="–";$("movesLeft").textContent="—";$("whiteOff").textContent="0 / 15";$("blackOff").textContent="0 / 15";$("rollBtn").disabled=false;setStatus(t("rollPrompt"),"ready");render();}
@@ -96,24 +96,71 @@ $("rollBtn").addEventListener("click",roll);$("resetBtn").addEventListener("clic
 const API_BASE=(window.CHESS_ARENA_API_URL||"https://fly-chess-arena-api.flyinfinityplatform.workers.dev").replace(/\/$/,"");
 const api=async(path,body)=>{const response=await fetch(API_BASE+path,{method:body?"POST":"GET",headers:{...(body?{"Content-Type":"application/json"}:{}),...(sessionToken?{Authorization:"Bearer "+sessionToken}:{})},body:body?JSON.stringify(body):undefined,cache:"no-store"});const data=await response.json().catch(()=>({}));if(!response.ok||data.ok!==true)throw new Error(data.error||"Request failed ("+response.status+")");return data;};
 function onlineStatus(message,isError=false){$("onlineStatus").textContent=message;$("onlineStatus").classList.toggle("error",isError);}
+async function requestWalletSignature(signer,message){
+ let timeoutId;
+ const signing=signer.signMessage(message);
+ const timeout=new Promise((_,reject)=>{timeoutId=setTimeout(()=>reject(new Error(t("walletTimeout"))),120000);});
+ try{return await Promise.race([signing,timeout]);}finally{clearTimeout(timeoutId);}
+}
+async function getWalletProvider(method){
+ if(method==="browser"){
+  if(typeof window.fiSelectWalletProvider==="function")return await window.fiSelectWalletProvider();
+  if(window.ethereum&&typeof window.ethereum.request==="function"){await window.ethereum.request({method:"eth_requestAccounts"});return window.ethereum;}
+  throw new Error(t("noWallet"));
+ }
+ if(!window.ethereum||typeof window.ethereum.request!=="function")throw new Error(t("noInjectedWallet"));
+ await window.ethereum.request({method:"eth_requestAccounts"});
+ window.fiWalletConnectActive=false;
+ return window.ethereum;
+}
 async function connectOnline(method){
- const buttons=[$("connectBrowserBtn"),$("connectWalletBtn")];buttons.forEach(b=>b.disabled=true);
+ const buttons=[$("connectBrowserBtn"),$("connectWalletBtn")];
+ const activeButton=method==="browser"?$("connectBrowserBtn"):$("connectWalletBtn");
+ const originalLabel=activeButton.textContent;
+ buttons.forEach(b=>b.disabled=true);
+ activeButton.textContent=t("connecting");
+ $("onlineActions").hidden=true;
+ $("eligiblePanel").hidden=true;
+ $("deniedPanel").hidden=true;
+ $("fitStatus").textContent=t("fitRequired");
+ $("fitMark").textContent="—";
+ $("fitMark").style.color="";
+ sessionToken=null;currentWallet=null;activeProvider=null;
  try{
-  let provider;
-  if(method==="browser"&&typeof window.fiSelectWalletProvider==="function")provider=await window.fiSelectWalletProvider();
-  else if(window.ethereum&&typeof window.ethereum.request==="function"){await window.ethereum.request({method:"eth_requestAccounts"});provider=window.ethereum;}
-  else throw new Error("No compatible wallet was found.");
-  const web3=new ethers.providers.Web3Provider(provider,"any");let network=await web3.getNetwork();
-  if(network.chainId!==56){try{await provider.request({method:"wallet_switchEthereumChain",params:[{chainId:"0x38"}]});}catch(e){if(e.code===4902)throw new Error("Add BNB Smart Chain to your wallet first.");throw new Error("Please switch your wallet to BNB Smart Chain.");}}
-  const signer=web3.getSigner(),address=await signer.getAddress();
-  onlineStatus(t("signing"));const challenge=await api("/api/auth/challenge",{address});
-  const signature=await signer.signMessage(challenge.message);
-  onlineStatus(t("verifying"));const verified=await api("/api/auth/verify",{address,nonce:challenge.nonce,signature});
-  sessionToken=verified.sessionToken;currentWallet=verified.wallet.toLowerCase();
-  $("onlineActions").hidden=false;$("walletConnectOptions").hidden=true;
+  activeProvider=await getWalletProvider(method);
+  const web3=new ethers.providers.Web3Provider(activeProvider,"any");
+  const network=await web3.getNetwork();
+  if(network.chainId!==56){
+   try{await activeProvider.request({method:"wallet_switchEthereumChain",params:[{chainId:"0x38"}]});}
+   catch(error){if(error.code===4902)throw new Error(t("addBsc"));throw new Error(t("switchBsc"));}
+  }
+  const signer=web3.getSigner();
+  const address=await signer.getAddress();
+  onlineStatus(t("walletConnected",{address:address.slice(0,6)+"…"+address.slice(-4)}));
+  activeButton.textContent=t("signing");
+  const challenge=await api("/api/auth/challenge",{address});
+  const signature=await requestWalletSignature(signer,challenge.message);
+  onlineStatus(t("signatureReceived"));
+  activeButton.textContent=t("verifying");
+  const verified=await api("/api/auth/verify",{address,nonce:challenge.nonce,signature});
+  sessionToken=verified.sessionToken;
+  currentWallet=verified.wallet.toLowerCase();
+  $("fitStatus").textContent=ethers.utils.formatUnits(verified.fitBalanceWei,18)+" FIT · "+t("serverVerified");
+  $("fitMark").textContent="✓";
+  $("fitMark").style.color="#00c896";
+  $("eligiblePanel").hidden=false;
+  $("onlineActions").hidden=false;
+  $("walletConnectOptions").hidden=true;
   onlineStatus(t("accessVerified")+" · "+currentWallet.slice(0,6)+"…"+currentWallet.slice(-4));
- }catch(error){onlineStatus(error.message||t("serverError"),true);}
- finally{buttons.forEach(b=>b.disabled=false);}
+ }catch(error){
+  console.error("[Backgammon wallet]",error);
+  $("deniedPanel").textContent=error&&error.message?error.message:t("noWalletVerification");
+  $("deniedPanel").hidden=false;
+  onlineStatus(error&&error.message?error.message:t("noWalletVerification"),true);
+ }finally{
+  buttons.forEach(b=>b.disabled=false);
+  activeButton.textContent=originalLabel;
+ }
 }
 function closeOnlineRoom(){
  if(roomSocket){roomSocket.close();roomSocket=null;}
