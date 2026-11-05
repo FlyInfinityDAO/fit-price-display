@@ -319,3 +319,33 @@ test("server-created CPU backgammon rooms are single-player and run the CPU turn
   assert.equal(game.turn, "w", "The server should complete the CPU reply before returning control to the player");
   assert.equal(game.dice, null);
 });
+
+test("CPU game records the human wallet but never creates a CPU leaderboard entry", async () => {
+  const saved = [];
+  const db = {
+    prepare(sql) {
+      return {
+        sql, values: [],
+        bind(...values) { this.values = values; return this; },
+        run: async () => ({ success: true })
+      };
+    },
+    batch: async statements => { saved.push(...statements.map(statement => ({ sql: statement.sql, values: statement.values }))); }
+  };
+  const values = new Map();
+  const ctx = {
+    storage: {
+      get: async key => values.get(key),
+      put: async (key, value) => values.set(key, structuredClone(value))
+    },
+    getWebSockets: () => []
+  };
+  const room = new BackgammonRoom(ctx, { DB: db });
+  const game = {
+    code: "CPU234", mode: "cpu", players: { white: "0xplayer", black: "cpu" },
+    status: "finished", result: "w", reason: "bear_off", multiplier: 1
+  };
+  await room.saveGame(game);
+  assert.equal(saved.length, 1);
+  assert.deepEqual(saved[0].values.slice(0, 5), ["CPU234", "0xplayer", "win", "bear_off", 3]);
+});
