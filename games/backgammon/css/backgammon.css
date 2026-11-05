@@ -105,3 +105,6 @@ body.fi-rtl .stats-leaderboard,body.fi-rtl .final-score-row,body.fi-rtl .stats-g
  .piece.count:after{font-size:10px;color:#fff;text-shadow:0 1px 3px #001}
  .checker{width:27px;height:27px}
 }
+
+/* Stretch the checker stack to the full point width on mobile. */
+.point>.stack{align-self:stretch;width:100%!important;min-width:100%!important}
