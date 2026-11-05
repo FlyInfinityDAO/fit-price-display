@@ -257,6 +257,25 @@ export async function handleRoomApi(request, env) {
   }
 
 
+  if (request.method === "POST" && path === "/api/backgammon/rooms/cpu") {
+    const auth = await authorize(request, env);
+    if (auth.response) return auth.response;
+    const body = await request.json().catch(() => ({}));
+    const difficulty = ["easy", "medium", "hard"].includes(body.difficulty) ? body.difficulty : "medium";
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const code = makeRoomCode();
+      const stub = env.BACKGAMMON_ROOMS.get(env.BACKGAMMON_ROOMS.idFromName(code));
+      const response = await stub.fetch("https://backgammon-room.internal/create?code=" + code + "&mode=cpu&difficulty=" + difficulty, {
+        method: "POST", headers: { "x-backgammon-wallet": auth.wallet.toLowerCase() }
+      });
+      if (response.status === 409) continue;
+      const data = await response.json();
+      if (!response.ok || data.ok !== true) return json(data, response.status);
+      return json({ ...data, roomCode: code });
+    }
+    return json({ ok: false, error: "Could not allocate a CPU game. Please try again." }, 503);
+  }
+
   if (request.method === "POST" && path === "/api/backgammon/rooms/create") {
     const auth = await authorize(request, env);
     if (auth.response) return auth.response;
