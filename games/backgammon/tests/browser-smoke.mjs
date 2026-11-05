@@ -147,7 +147,7 @@ try {
     "Mobile page must not overflow horizontally: " + JSON.stringify(mobileLayout));
   const checkerStyle = await page.locator(".piece.white").first().evaluate(el => {
     const style = getComputedStyle(el), rect = el.getBoundingClientRect();
-    return { width: rect.width, height: rect.height, background: style.backgroundImage, border: style.borderTopColor };
+    return { width: rect.width, height: rect.height, pointWidth: el.parentElement.parentElement.getBoundingClientRect().width, stackWidth: el.parentElement.getBoundingClientRect().width, boardWidth: document.querySelector(".board-frame").getBoundingClientRect().width, background: style.backgroundImage, border: style.borderTopColor };
   });
   const darkCheckerStyle = await page.locator(".piece.black").first().evaluate(el => {
     const style = getComputedStyle(el);
