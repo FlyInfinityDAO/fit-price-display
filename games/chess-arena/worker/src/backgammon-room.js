@@ -47,6 +47,7 @@ export class BackgammonRoom {
       turn: game.turn,
       dice: game.dice,
       legalMoves: game.sequenceOptions.map(seq => seq.moves[0]).filter(Boolean),
+      movesLeft: Math.max(0, ...game.sequenceOptions.map(seq => seq.moves.length)),
       result: game.result,
       multiplier: game.multiplier,
       reason: game.reason,
