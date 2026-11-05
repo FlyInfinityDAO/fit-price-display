@@ -268,6 +268,7 @@ export default {
 };
 
 export { ChessRoom } from "./room.js";
+export { BackgammonRoom } from "./backgammon-room.js";
 
 function withHeaders(response, headers) {
   const merged = new Headers(response.headers);
