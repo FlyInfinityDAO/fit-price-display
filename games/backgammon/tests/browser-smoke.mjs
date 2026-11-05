@@ -55,7 +55,7 @@ try {
   assert.equal(await page.locator("#game-panel").isVisible(), false, "Failed verification must not reveal the board");
   await page.locator("#connectWalletBtn").click();
   await page.locator("#onlineStatus").waitFor({ state: "visible", timeout: 5000 });
-  assert.match(await page.locator("#onlineStatus").innerText(), /No injected wallet was found\\./);
+  assert.match(await page.locator("#onlineStatus").innerText(), /No injected wallet was found\./);
 
   // Simulate a successful wallet provider and server response. No real wallet,
   // user signature, blockchain request, or transaction is used in this test.
