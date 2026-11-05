@@ -108,3 +108,6 @@ body.fi-rtl .stats-leaderboard,body.fi-rtl .final-score-row,body.fi-rtl .stats-g
 
 /* Stretch the checker stack to the full point width on mobile. */
 .point>.stack{align-self:stretch;width:100%!important;min-width:100%!important}
+
+/* Reset native button padding/borders so the checker stack fills each point. */
+.point{padding:0!important;border:0!important;background:transparent;color:inherit}
