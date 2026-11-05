@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { BackgammonRoom } from "../../chess-arena/worker/src/backgammon-room.js";
+import { legalTurnSequences } from "../js/backgammon-engine.js";
 
 function makeRoom() {
   const values = new Map();
@@ -74,4 +75,47 @@ test("a room participant can rejoin an active room after reconnecting", async ()
   const rejoined = await room.fetch(request("/join", "POST", "white-wallet"));
   assert.equal(rejoined.status, 200);
   assert.equal((await storage.get("game")).status, "active");
+});
+
+
+test("bearing off the final checker ends the online game and broadcasts the winner", async () => {
+  const sent = [];
+  const values = new Map();
+  const ctx = {
+    storage: {
+      get: async key => values.get(key),
+      put: async (key, value) => values.set(key, structuredClone(value))
+    },
+    getWebSockets: () => [{ send: message => sent.push(JSON.parse(message)) }]
+  };
+  const room = new BackgammonRoom(ctx);
+  await room.fetch(request("/create?code=ABC234", "POST", "white-wallet"));
+  await room.fetch(request("/join", "POST", "black-wallet"));
+
+  const position = {
+    points: Array(24).fill(0),
+    bar: { w: 0, b: 0 },
+    off: { w: 14, b: 0 }
+  };
+  position.points[1] = 1;
+  position.points[23] = -15;
+  const dice = [2, 2];
+  const game = await values.get("game");
+  game.position = position;
+  game.turn = "w";
+  game.dice = dice;
+  game.sequenceOptions = legalTurnSequences(position, "w", dice);
+  await values.set("game", game);
+
+  await room.webSocketMessage(whiteSocket, JSON.stringify({ type: "move", from: 1, to: "off" }));
+
+  const finished = await values.get("game");
+  assert.equal(finished.status, "finished");
+  assert.equal(finished.result, "w");
+  assert.equal(finished.reason, "bear_off");
+  assert.equal(finished.position.off.w, 15);
+  assert.equal(finished.multiplier, 2);
+  assert.equal(sent.at(-1).type, "finished");
+  assert.equal(sent.at(-1).game.result, "w");
+  assert.equal(sent.at(-1).game.status, "finished");
 });
