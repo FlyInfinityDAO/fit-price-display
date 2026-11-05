@@ -11,7 +11,7 @@ test("bar checkers must enter before other checkers move", () => {
   const p = initialPosition(); p.bar.w = 1;
   const seq = legalTurnSequences(p,"w",[1,2]);
   assert.ok(seq.length);
-  assert.ok(seq.every(s=>s.moves.every(m=>m.from==="bar")));
+  assert.ok(seq.every(s=>s.moves[0]?.from==="bar"));
 });
 test("doubles provide up to four moves", () => {
   const p = initialPosition();
