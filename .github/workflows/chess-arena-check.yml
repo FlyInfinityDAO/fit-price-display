@@ -6,6 +6,7 @@ on:
       - feature/chess-arena-games
     paths:
       - "games/chess-arena/**"
+      - "games/backgammon/**"
       - ".github/workflows/chess-arena-check.yml"
   pull_request:
     paths:
