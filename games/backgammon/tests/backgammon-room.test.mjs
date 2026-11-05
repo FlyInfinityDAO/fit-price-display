@@ -193,3 +193,68 @@ test("accepting a draw finishes the game as a draw and clears pending state", as
   assert.equal(sent.at(-1).type, "finished");
   assert.equal(sent.at(-1).game.result, "draw");
 });
+
+
+test("room broadcasts the joined state to both connected players", async () => {
+  const received = { white: [], black: [] };
+  const sockets = [
+    { send: message => received.white.push(JSON.parse(message)) },
+    { send: message => received.black.push(JSON.parse(message)) }
+  ];
+  const values = new Map();
+  const ctx = {
+    storage: {
+      get: async key => values.get(key),
+      put: async (key, value) => values.set(key, structuredClone(value))
+    },
+    getWebSockets: () => sockets
+  };
+  const room = new BackgammonRoom(ctx);
+  await room.fetch(request("/create?code=ABC234", "POST", "white-wallet"));
+  await room.fetch(request("/join", "POST", "black-wallet"));
+  for (const side of ["white", "black"]) {
+    assert.equal(received[side].at(-1).type, "joined");
+    assert.equal(received[side].at(-1).game.status, "active");
+    assert.equal(received[side].at(-1).game.players.white, "white-wallet");
+    assert.equal(received[side].at(-1).game.players.black, "black-wallet");
+  }
+});
+
+test("snapshot and player checks reject wallets that are not room members", async () => {
+  const { room } = makeRoom();
+  await room.fetch(request("/create?code=ABC234", "POST", "white-wallet"));
+  await room.fetch(request("/join", "POST", "black-wallet"));
+  const snapshot = await room.fetch(request("/snapshot", "GET", "intruder-wallet"));
+  assert.equal(snapshot.status, 403);
+  const check = await room.fetch(request("/check-player", "GET", "intruder-wallet"));
+  assert.equal(check.status, 403);
+  const valid = await room.fetch(request("/snapshot", "GET", "white-wallet"));
+  assert.equal(valid.status, 200);
+  assert.equal((await valid.json()).room.status, "active");
+});
+
+test("the opponent cannot decline or accept their own draw offer", async () => {
+  const { room, storage } = makeRoom();
+  await room.fetch(request("/create?code=ABC234", "POST", "white-wallet"));
+  await room.fetch(request("/join", "POST", "black-wallet"));
+  await room.webSocketMessage(whiteSocket, JSON.stringify({ type: "offer_draw" }));
+  await room.webSocketMessage(whiteSocket, JSON.stringify({ type: "accept_draw" }));
+  let game = await storage.get("game");
+  assert.equal(game.status, "active");
+  assert.equal(game.drawOffer, "white-wallet");
+  await room.webSocketMessage(blackSocket, JSON.stringify({ type: "decline_draw" }));
+  game = await storage.get("game");
+  assert.equal(game.status, "active");
+  assert.equal(game.drawOffer, null);
+});
+
+test("an invalid or oversized websocket message cannot change the game", async () => {
+  const { room, storage } = makeRoom();
+  await room.fetch(request("/create?code=ABC234", "POST", "white-wallet"));
+  await room.fetch(request("/join", "POST", "black-wallet"));
+  const before = await storage.get("game");
+  await room.webSocketMessage(whiteSocket, "{not-json");
+  await room.webSocketMessage(whiteSocket, "x".repeat(2049));
+  const after = await storage.get("game");
+  assert.deepEqual(after, before);
+});
