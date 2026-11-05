@@ -21,6 +21,13 @@ try {
   const response = await page.goto(baseURL, { waitUntil: "networkidle" });
   assert.equal(response?.status(), 200, "Backgammon page must load successfully");
   await page.locator("#languageSelect").waitFor();
+  await page.locator(".access-card").waitFor({ state: "visible" });
+  assert.equal(await page.locator("#access-title").innerText(), "Connect to enter",
+    "Wallet access card should use the chess-style access heading");
+  assert.equal(await page.locator("#connectBrowserBtn").isVisible(), true,
+    "Browser wallet button should be visible");
+  assert.equal(await page.locator("#connectWalletBtn").isVisible(), true,
+    "WalletConnect / injected wallet button should be visible");
 
   // Exercise all eight languages and verify both document language and RTL direction.
   const expected = { en: "ltr", fa: "rtl", ar: "rtl", tr: "ltr", ru: "ltr", zh: "ltr", es: "ltr", pt: "ltr" };
@@ -58,6 +65,7 @@ try {
   // Verify both wallet buttons execute their handlers without opening a real wallet.
   await page.locator("#connectBrowserBtn").click();
   await page.getByText("PLAYWRIGHT_WALLET_STUB", { exact: false }).waitFor({ timeout: 5000 });
+  assert.equal(await page.locator("#deniedPanel").isVisible(), true, "Wallet errors should be shown in the access card");
   await page.locator("#connectWalletBtn").click();
   await page.getByText("No compatible wallet was found.", { exact: false }).waitFor({ timeout: 5000 });
 
