@@ -4,12 +4,18 @@ set -euo pipefail
 # Cloudflare Pages build for the standalone Chess Arena site.
 # Run from the repository root; publish only the game frontend and its shared wallet bridge.
 rm -rf dist
-mkdir -p dist/games/chess-arena/css dist/games/chess-arena/js
+mkdir -p dist/games/chess-arena/css dist/games/chess-arena/js dist/games/backgammon/css dist/games/backgammon/js
 
 cp games/chess-arena/index.html dist/games/chess-arena/index.html
 cp games/chess-arena/css/chess-arena.css dist/games/chess-arena/css/chess-arena.css
 cp games/chess-arena/js/chess-arena.js dist/games/chess-arena/js/chess-arena.js
 cp games/chess-arena/js/language.js dist/games/chess-arena/js/language.js
+
+# Publish the standalone Backgammon Arena frontend and its local rules engine.
+cp games/backgammon/index.html dist/games/backgammon/index.html
+cp games/backgammon/css/backgammon.css dist/games/backgammon/css/backgammon.css
+cp games/backgammon/js/backgammon.js dist/games/backgammon/js/backgammon.js
+cp games/backgammon/js/backgammon-engine.js dist/games/backgammon/js/backgammon-engine.js
 # Reuse the exact brand assets from the main Fly Infinity website.
 cp logo.png background-desktop.png background-mobile.png dist/
 cp walletconnect-bridge.js dist/walletconnect-bridge.js
@@ -31,4 +37,6 @@ cat > dist/index.html <<'HTML'
 HTML
 
 test -s dist/games/chess-arena/index.html
+test -s dist/games/backgammon/index.html
+test -s dist/games/backgammon/js/backgammon-engine.js
 test -s dist/walletconnect-bridge.js
