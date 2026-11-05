@@ -381,13 +381,13 @@
     $('finalResultTitle').textContent = game.result === 'draw' ? t('drawGame') :
       game.result === myColor ? t('youWon') : t('youLost');
     $('finalResultReason').textContent = reasonLabel(game.reason);
-    $('finalWhiteWallet').textContent = game.players.white === 'cpu' ? 'CPU' : game.players.white || '—';
-    $('finalBlackWallet').textContent = game.players.black === 'cpu' ? 'CPU' : game.players.black || '—';
+    $('finalWhiteWallet').textContent = game.players.white === 'cpu' ? t('cpu') : game.players.white || '—';
+    $('finalBlackWallet').textContent = game.players.black === 'cpu' ? t('cpu') : game.players.black || '—';
     $('finalWhitePoints').textContent = '+' + whitePoints + ' FIGS';
     $('finalBlackPoints').textContent = '+' + blackPoints + ' FIGS';
   }
   function finishText(game) {
-    if (game.result === 'draw') return 'Draw · ' + reasonLabel(game.reason);
+    if (game.result === 'draw') return t('draw') + ' · ' + reasonLabel(game.reason);
     const winner = game.result === 'w' ? t('whiteWins') : t('blackWins');
     return winner + ' · ' + reasonLabel(game.reason);
   }
