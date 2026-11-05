@@ -64,10 +64,12 @@ try {
 
   // Verify both wallet buttons execute their handlers without opening a real wallet.
   await page.locator("#connectBrowserBtn").click();
-  await page.getByText("PLAYWRIGHT_WALLET_STUB", { exact: false }).waitFor({ timeout: 5000 });
+  await page.locator("#onlineStatus").waitFor({ state: "visible", timeout: 5000 });
+  assert.match(await page.locator("#onlineStatus").innerText(), /PLAYWRIGHT_WALLET_STUB/);
   assert.equal(await page.locator("#deniedPanel").isVisible(), true, "Wallet errors should be shown in the access card");
   await page.locator("#connectWalletBtn").click();
-  await page.getByText("No compatible wallet was found.", { exact: false }).waitFor({ timeout: 5000 });
+  await page.locator("#onlineStatus").waitFor({ state: "visible", timeout: 5000 });
+  assert.match(await page.locator("#onlineStatus").innerText(), /No injected wallet was found\./);
 
   assert.deepEqual(pageErrors, [], "No uncaught JavaScript exceptions should occur");
   console.log(JSON.stringify({
