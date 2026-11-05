@@ -91,8 +91,9 @@ export class BackgammonRoom {
     if (request.method === "POST" && url.pathname === "/join") {
       const game = await this.readGame();
       if (!game) return json({ ok: false, error: "Room not found." }, 404);
+      if (!wallet) return json({ ok: false, error: "Wallet missing." }, 400);
+      if (wallet === game.players.white || wallet === game.players.black) return json({ ok: true, room: this.snapshot(game) });
       if (game.status !== "waiting" || game.players.black) return json({ ok: false, error: "This room is no longer available." }, 409);
-      if (!wallet || wallet === game.players.white) return json({ ok: false, error: "A different wallet is required to join." }, 400);
       game.players.black = wallet;
       game.status = "active";
       await this.saveGame(game);
