@@ -44,6 +44,9 @@
     currentWallet = null;
     closeRoom();
     $('roomsPanel').hidden = true;
+    $('statsPanel').hidden = true;
+    $('finalResultPanel').hidden = true;
+    lastStatsRoom = null;
     $('eligiblePanel').hidden = true;
     $('deniedPanel').hidden = true;
     setFitCheck(false, 'At least 1 FIT required');
@@ -247,6 +250,7 @@
     $('activeRoomCode').textContent = code;
     $('roomStatus').textContent = 'Preparing secure real-time connection…';
     $('gamePanel').hidden = false;
+    $('finalResultPanel').hidden = true;
     const ticket = await api('/api/rooms/' + code + '/ticket', {}, sessionToken);
     roomSocket = new WebSocket(ticket.socketUrl);
     roomSocket.addEventListener('open', () => {
