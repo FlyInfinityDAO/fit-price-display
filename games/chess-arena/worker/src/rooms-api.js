@@ -1,5 +1,13 @@
 import { getAddress, isAddress } from "ethers";
 
+function isAllowedFrontendOrigin(origin, env) {
+  return new Set(
+    [env.FRONTEND_ORIGIN, ...(env.FRONTEND_ORIGINS || "").split(",")]
+      .map(value => (value || "").trim())
+      .filter(Boolean)
+  ).has(origin);
+}
+
 const FIT_TOKEN = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
 const MIN_FIT_WEI = 10n ** 18n;
 const BSC_CHAIN_ID = 56;
@@ -151,7 +159,7 @@ export async function handleRoomApi(request, env) {
   const socketMatch = path.match(/^\/api\/rooms\/([A-HJ-NP-Z2-9]{6})\/ws$/);
   if (request.method === "GET" && socketMatch && request.headers.get("Upgrade")?.toLowerCase() === "websocket") {
     const origin = request.headers.get("Origin");
-    if (origin !== env.FRONTEND_ORIGIN) return json({ ok: false, error: "Origin not allowed." }, 403);
+    if (!isAllowedFrontendOrigin(origin, env)) return json({ ok: false, error: "Origin not allowed." }, 403);
     const code = socketMatch[1];
     const ticket = url.searchParams.get("ticket") || "";
     if (!/^[a-f0-9]{32}$/.test(ticket)) return json({ ok: false, error: "WebSocket ticket is invalid." }, 401);
