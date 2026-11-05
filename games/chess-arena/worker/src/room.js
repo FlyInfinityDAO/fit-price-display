@@ -75,6 +75,24 @@ export class ChessRoom {
   }
 
   async saveGame(game) {
+    if (game.status === "finished" && !game.statsRecorded) {
+      await this.env.DB.prepare(
+        "CREATE TABLE IF NOT EXISTS chess_player_results (room_code TEXT NOT NULL, wallet_address TEXT NOT NULL, outcome TEXT NOT NULL, reason TEXT NOT NULL, points INTEGER NOT NULL, created_at INTEGER NOT NULL, PRIMARY KEY (room_code, wallet_address))"
+      ).run();
+      const createdAt = Math.floor(Date.now() / 1000);
+      const statements = [];
+      for (const [side, wallet] of [["w", game.players.white], ["b", game.players.black]]) {
+        if (!wallet || wallet === "cpu") continue;
+        const outcome = game.result === "draw" ? "draw" : game.result === side ? "win" : "loss";
+        const points = outcome === "draw" ? 1 : outcome === "win" ? 3 : 0;
+        statements.push(this.env.DB.prepare(
+          "INSERT OR IGNORE INTO chess_player_results (room_code, wallet_address, outcome, reason, points, created_at) VALUES (?, ?, ?, ?, ?, ?)"
+        ).bind(game.code, wallet.toLowerCase(), outcome, game.reason || "unknown", points, createdAt));
+      }
+      if (statements.length) await this.env.DB.batch(statements);
+      game.statsRecorded = true;
+      game.finishedAt = Date.now();
+    }
     await this.ctx.storage.put("game", game);
   }
 
