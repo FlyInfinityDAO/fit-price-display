@@ -88,21 +88,22 @@
   }
 
   async function getWalletProvider(method) {
+    // Primary method: preserve the original, previously tested wallet flow.
     if (method === 'browser') {
-      // Reown modal: connect with a wallet app or QR code from any browser.
-      if (typeof window.fiConnectWalletConnect === 'function') {
-        return await window.fiConnectWalletConnect();
-      }
       if (typeof window.fiSelectWalletProvider === 'function') {
         return await window.fiSelectWalletProvider();
       }
-      throw new Error('Reown wallet connection is unavailable. Please refresh the page and try again.');
+      if (window.ethereum && typeof window.ethereum.request === 'function') {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        return window.ethereum;
+      }
+      throw new Error('No compatible wallet found. Please open the page in a wallet browser or install a wallet.');
     }
 
-    // Direct injected connection: use the wallet provided by this browser,
-    // including a wallet app's built-in browser or a desktop wallet extension.
+    // Secondary method: injected provider only, intended for a wallet's own
+    // built-in browser (for example TokenPocket DApp browser).
     if (!window.ethereum || typeof window.ethereum.request !== 'function') {
-      throw new Error('No wallet detected in this browser. Open Chess Arena inside your wallet app browser or enable a wallet browser extension, then try Connect with Wallet.');
+      throw new Error('کیف پولی در این مرورگر پیدا نشد. بازی را از داخل مرورگر خود کیف پول باز کنید.');
     }
     await window.ethereum.request({ method: 'eth_requestAccounts' });
     window.fiWalletConnectActive = false;
