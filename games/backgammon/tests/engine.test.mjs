@@ -26,7 +26,7 @@ test("hitting a single opposing checker sends it to the bar", () => {
 
 test("a checker on the bar has priority over all other checkers", () => {
   const p = position(); p.bar.w = 1; p.points[5] = 1; p.points[23] = -2;
-  const moves = legalTurnSequences(p, "w", [1, 2]).flatMap(s => s.moves);
+  const moves = legalTurnSequences(p, "w", [1, 2]).map(s => s.moves[0]);
   assert.ok(moves.length > 0);
   assert.ok(moves.every(m => m.from === "bar"));
   assert.ok(moves.every(m => m.die === 2));
