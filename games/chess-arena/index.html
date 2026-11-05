@@ -83,6 +83,29 @@
         <button id="resignBtn" class="small-btn danger-btn" type="button">Resign</button>
       </div>
       <div id="gameMessage" class="room-status" role="status" aria-live="polite"></div>
+      <section id="finalResultPanel" class="final-result-panel" hidden aria-live="polite">
+        <div class="eyebrow">FINAL RESULT</div>
+        <h3 id="finalResultTitle">Game finished</h3>
+        <p id="finalResultReason"></p>
+        <div class="final-score-row"><span>WHITE</span><strong id="finalWhiteWallet">—</strong><b id="finalWhitePoints">0 pts</b></div>
+        <div class="final-score-row"><span>BLACK</span><strong id="finalBlackWallet">—</strong><b id="finalBlackPoints">0 pts</b></div>
+      </section>
+    </section>
+
+    <section id="statsPanel" class="stats-panel" hidden>
+      <div class="eyebrow">WALLET PLAYER PROFILE</div>
+      <h2>Your Chess Arena stats</h2>
+      <div id="statsWallet" class="stats-wallet">—</div>
+      <div class="stats-grid">
+        <div><small>TOTAL POINTS</small><strong id="statsPoints">0</strong></div>
+        <div><small>RANK</small><strong id="statsRank">—</strong></div>
+        <div><small>GAMES</small><strong id="statsGames">0</strong></div>
+        <div><small>WINS</small><strong id="statsWins">0</strong></div>
+        <div><small>LOSSES</small><strong id="statsLosses">0</strong></div>
+        <div><small>DRAWS</small><strong id="statsDraws">0</strong></div>
+      </div>
+      <div class="eyebrow leaderboard-heading">TOP PLAYERS</div>
+      <div id="statsLeaderboard" class="stats-leaderboard">No ranked games yet.</div>
     </section>
 
     <section class="features">
@@ -92,6 +115,6 @@
     </section>
     <footer>Fly Infinity Chess Arena <span>•</span> No entry fee. No token transfer. No financial rewards.</footer>
   </main>
-  <script src="./js/chess-arena.js?v=wallet-methods-restored-20261105"></script>
+  <script src="./js/chess-arena.js?v=wallet-stats-20261105"></script>
 </body>
 </html>
