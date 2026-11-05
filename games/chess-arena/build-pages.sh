@@ -9,6 +9,7 @@ mkdir -p dist/games/chess-arena/css dist/games/chess-arena/js
 cp games/chess-arena/index.html dist/games/chess-arena/index.html
 cp games/chess-arena/css/chess-arena.css dist/games/chess-arena/css/chess-arena.css
 cp games/chess-arena/js/chess-arena.js dist/games/chess-arena/js/chess-arena.js
+cp games/chess-arena/js/language.js dist/games/chess-arena/js/language.js
 # Reuse the exact brand assets from the main Fly Infinity website.
 cp logo.png background-desktop.png background-mobile.png dist/
 cp walletconnect-bridge.js dist/walletconnect-bridge.js
