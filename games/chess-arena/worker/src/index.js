@@ -15,9 +15,17 @@ function json(data, status = 200, headers = {}) {
   });
 }
 
+function allowedFrontendOrigins(env) {
+  return new Set(
+    [env.FRONTEND_ORIGIN, ...(env.FRONTEND_ORIGINS || "").split(",")]
+      .map(value => (value || "").trim())
+      .filter(Boolean)
+  );
+}
+
 function corsHeaders(request, env) {
   const origin = request.headers.get("Origin");
-  if (!origin || origin !== env.FRONTEND_ORIGIN) return {};
+  if (!origin || !allowedFrontendOrigins(env).has(origin)) return {};
   return {
     "access-control-allow-origin": origin,
     "access-control-allow-methods": "GET, POST, OPTIONS",
@@ -109,7 +117,7 @@ async function handleChallenge(request, env) {
   const nonce = crypto.randomUUID().replace(/-/g, "");
   const now = Math.floor(Date.now() / 1000);
   const expiresAt = now + NONCE_TTL_SECONDS;
-  const origin = env.FRONTEND_ORIGIN;
+  const origin = request.headers.get("Origin") || env.FRONTEND_ORIGIN;
   const domain = new URL(origin).host;
   const message = [
     "Fly Infinity Chess Arena wants you to sign in with your BNB Smart Chain wallet:",
@@ -230,7 +238,7 @@ export default {
       if (!headers["access-control-allow-origin"]) return new Response(null, { status: 403 });
       return new Response(null, { status: 204, headers });
     }
-    if (origin && origin !== env.FRONTEND_ORIGIN) return json({ ok: false, error: "Origin not allowed." }, 403);
+    if (origin && !allowedFrontendOrigins(env).has(origin)) return json({ ok: false, error: "Origin not allowed." }, 403);
     if (request.method === "GET" && new URL(request.url).pathname === "/api/health") {
       return json({ ok: true, service: "Fly Chess Arena API", version: "0.1.0" }, 200, headers);
     }
