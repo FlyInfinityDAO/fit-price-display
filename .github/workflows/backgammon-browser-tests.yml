@@ -38,3 +38,23 @@ jobs:
           exit 1
       - name: Run browser smoke tests
         run: node games/backgammon/tests/browser-smoke.mjs
+
+  production-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Test live Cloudflare Pages deployment
+        env:
+          BACKGAMMON_TEST_URL: https://fly-chess-arena.pages.dev/games/backgammon/
+        run: node games/backgammon/tests/browser-smoke.mjs
