@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -14,115 +14,117 @@
 <body>
   <main class="arena">
     <header class="topbar">
-      <a class="brand" href="https://flyinfinitydao.github.io/" aria-label="Fly Infinity dashboard">
+      <a class="brand" href="https://flyinfinitydao.github.io/" aria-label="Fly Infinity dashboard" data-i18n-aria="dashboard">
         <img src="../../logo.png" alt="" class="brand-logo">
-        <span class="brand-name">FLY INFINITY <small>GAMES</small></span>
+        <span class="brand-name">FLY INFINITY <small data-i18n="games">GAMES</small></span>
       </a>
       <div class="topbar-actions">
+        <label class="language-control"><span class="sr-only" data-i18n="language">Language</span><select id="languageSelect" aria-label="Language"><option value="en">🇬🇧 English</option><option value="fa">🇮🇷 فارسی</option><option value="ar">🇮🇶 العربية</option><option value="tr">🇹🇷 Türkçe</option><option value="ru">🇷🇺 Русский</option><option value="zh">🇨🇳 中文</option><option value="es">🇪🇸 Español</option><option value="pt">🇵🇹 Português</option></select></label>
         <div class="network"><i></i> BNB SMART CHAIN</div>
-        <a class="dashboard-link" href="https://flyinfinitydao.github.io/"><span aria-hidden="true">←</span> Dashboard</a>
+        <a class="dashboard-link" href="https://flyinfinitydao.github.io/"><span aria-hidden="true">←</span> <span data-i18n="dashboard">Dashboard</span></a>
       </div>
     </header>
     <section class="hero">
-      <div class="eyebrow">FLY INFINITY GAMES</div>
-      <h1>Chess <span>Arena</span></h1>
-      <p>Think ahead. Play your next move.</p>
+      <div class="eyebrow" data-i18n="brandGames">FLY INFINITY GAMES</div>
+      <h1><span data-i18n="chess">Chess</span> <span data-i18n="arena">Arena</span></h1>
+      <p data-i18n="tagline">Think ahead. Play your next move.</p>
     </section>
     <section class="access-card" aria-labelledby="access-title">
       <div class="card-heading">
-        <div><div class="eyebrow">PLAYER ACCESS</div><h2 id="access-title">Connect to enter</h2></div>
+        <div><div class="eyebrow" data-i18n="playerAccess">PLAYER ACCESS</div><h2 id="access-title" data-i18n="connectToEnter">Connect to enter</h2></div>
         <span class="lock-icon" aria-hidden="true">♜</span>
       </div>
-      <p class="intro">Chess Arena is open to any wallet holding at least 1 FIT on BNB Smart Chain. A free signature verifies your wallet; no transaction is requested.</p>
-      <div class="wallet-connect-options" aria-label="Wallet connection methods"><button id="connectBrowserBtn" class="primary-btn" type="button">اتصال با مرورگر</button><button id="connectWalletBtn" class="secondary-btn wallet-option-btn" type="button">اتصال با کیف پول</button></div>
-      <div id="status" class="status" role="status" aria-live="polite">Your wallet has not been connected.</div>
+      <p class="intro" data-i18n="intro">Chess Arena is open to any wallet holding at least 1 FIT on BNB Smart Chain. A free signature verifies your wallet; no transaction is requested.</p>
+      <div class="wallet-connect-options" aria-label="Wallet connection methods"><button id="connectBrowserBtn" class="primary-btn" type="button" data-i18n="connectBrowser">Connect with browser</button><button id="connectWalletBtn" class="secondary-btn wallet-option-btn" type="button" data-i18n="connectWallet">Connect wallet</button></div>
+      <div id="status" class="status" role="status" aria-live="polite" data-i18n="walletNotConnected">Your wallet has not been connected.</div>
       <div class="checks">
-        <div class="check-row"><span class="check-symbol">01</span><div><strong>Minimum FIT balance</strong><small id="fitStatus">At least 1 FIT required</small></div><b id="fitMark" class="mark">—</b></div>
+        <div class="check-row"><span class="check-symbol">01</span><div><strong data-i18n="minimumBalance">Minimum FIT balance</strong><small id="fitStatus" data-i18n="fitRequired">At least 1 FIT required</small></div><b id="fitMark" class="mark">—</b></div>
       </div>
       <div id="eligiblePanel" class="eligible-panel" hidden>
-        <div><strong>Server verification successful</strong><small>Your wallet has passed the FIT balance check.</small></div>
+        <div><strong data-i18n="serverVerified">Server verification successful</strong><small data-i18n="passedBalance">Your wallet has passed the FIT balance check.</small></div>
         <span class="ready-dot"></span>
       </div>
       <div id="deniedPanel" class="denied-panel" hidden></div>
       <section id="roomsPanel" class="rooms-panel" hidden>
-        <div class="eyebrow">ONLINE PLAY</div>
-        <h3>Play a friend</h3>
-        <button id="createRoomBtn" class="secondary-btn" type="button">Create private room</button>
+        <div class="eyebrow" data-i18n="onlinePlay">ONLINE PLAY</div>
+        <h3 data-i18n="playFriend">Play a friend</h3>
+        <button id="createRoomBtn" class="secondary-btn" type="button" data-i18n="createRoom">Create private room</button>
         <div class="join-row">
-          <input id="roomCodeInput" maxlength="6" autocomplete="off" placeholder="ROOM CODE" aria-label="Room code">
-          <button id="joinRoomBtn" class="secondary-btn" type="button">Join</button>
+          <input id="roomCodeInput" maxlength="6" autocomplete="off" placeholder="ROOM CODE" data-i18n-placeholder="roomCode" aria-label="Room code">
+          <button id="joinRoomBtn" class="secondary-btn" type="button" data-i18n="join">Join</button>
         </div>
-        <div id="roomStatus" class="room-status" role="status" aria-live="polite">Create a room and share its code with your opponent.</div>
+        <div id="roomStatus" class="room-status" role="status" aria-live="polite" data-i18n="roomShare">Create a room and share its code with your opponent.</div>
         <div class="cpu-panel">
-          <div class="eyebrow">SOLO PLAY</div>
-          <h3>Play against CPU</h3>
+          <div class="eyebrow" data-i18n="soloPlay">SOLO PLAY</div>
+          <h3 data-i18n="playCpu">Play against CPU</h3>
           <div class="cpu-options">
-            <label>Difficulty
-              <select id="cpuDifficulty"><option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option></select>
+            <label><span data-i18n="difficulty">Difficulty</span>
+              <select id="cpuDifficulty"><option value="easy" data-i18n="easy">Easy</option><option value="medium" selected data-i18n="medium">Medium</option><option value="hard" data-i18n="hard">Hard</option></select>
             </label>
-            <label>Play as
-              <select id="cpuColor"><option value="w" selected>White</option><option value="b">Black</option></select>
+            <label><span data-i18n="playAs">Play as</span>
+              <select id="cpuColor"><option value="w" selected data-i18n="white">White</option><option value="b" data-i18n="black">Black</option></select>
             </label>
           </div>
-          <button id="createCpuBtn" class="secondary-btn" type="button">Start solo game</button>
+          <button id="createCpuBtn" class="secondary-btn" type="button" data-i18n="startSolo">Start solo game</button>
         </div>
       </section>
     </section>
 
     <section id="gamePanel" class="game-panel" hidden>
       <header class="game-header">
-        <div><div id="gameTypeLabel" class="eyebrow">PRIVATE MATCH</div><strong>ROOM <span id="activeRoomCode">------</span></strong></div>
-        <button id="copyRoomBtn" class="small-btn" type="button">Copy code</button>
+        <div><div id="gameTypeLabel" class="eyebrow" data-i18n="privateMatch">PRIVATE MATCH</div><strong><span data-i18n="room">ROOM</span> <span id="activeRoomCode">------</span></strong></div>
+        <button id="copyRoomBtn" class="small-btn" type="button" data-i18n="copyCode">Copy code</button>
       </header>
       <div class="player-bar">
-        <div><small>BLACK</small><strong id="blackPlayer">Waiting…</strong></div>
+        <div><small data-i18n="black">BLACK</small><strong id="blackPlayer">Waiting…</strong></div>
         <time id="blackClock">10:00</time>
       </div>
       <div id="chessBoard" class="chess-board" aria-label="Chess board"></div>
       <div class="player-bar">
-        <div><small>WHITE</small><strong id="whitePlayer">You</strong></div>
+        <div><small data-i18n="white">WHITE</small><strong id="whitePlayer" data-i18n="you">You</strong></div>
         <time id="whiteClock">10:00</time>
       </div>
-      <div id="gameStatus" class="game-status">Waiting for opponent…</div>
+      <div id="gameStatus" class="game-status" data-i18n="waitingOpponent">Waiting for opponent…</div>
       <div class="game-controls">
-        <button id="offerDrawBtn" class="small-btn" type="button">Offer draw</button>
-        <button id="acceptDrawBtn" class="small-btn" type="button" hidden>Accept draw</button>
-        <button id="declineDrawBtn" class="small-btn" type="button" hidden>Decline</button>
-        <button id="resignBtn" class="small-btn danger-btn" type="button">Resign</button>
+        <button id="offerDrawBtn" class="small-btn" type="button" data-i18n="offerDraw">Offer draw</button>
+        <button id="acceptDrawBtn" class="small-btn" type="button" hidden data-i18n="acceptDraw">Accept draw</button>
+        <button id="declineDrawBtn" class="small-btn" type="button" hidden data-i18n="decline">Decline</button>
+        <button id="resignBtn" class="small-btn danger-btn" type="button" data-i18n="resign">Resign</button>
       </div>
       <div id="gameMessage" class="room-status" role="status" aria-live="polite"></div>
       <section id="finalResultPanel" class="final-result-panel" hidden aria-live="polite">
-        <div class="eyebrow">FINAL RESULT</div>
-        <h3 id="finalResultTitle">Game finished</h3>
+        <div class="eyebrow" data-i18n="finalResult">FINAL RESULT</div>
+        <h3 id="finalResultTitle" data-i18n="gameFinished">Game finished</h3>
         <p id="finalResultReason"></p>
-        <div class="final-score-row"><span>WHITE</span><strong id="finalWhiteWallet">—</strong><b id="finalWhitePoints">0 FIGS</b></div>
-        <div class="final-score-row"><span>BLACK</span><strong id="finalBlackWallet">—</strong><b id="finalBlackPoints">0 FIGS</b></div>
+        <div class="final-score-row"><span data-i18n="white">WHITE</span><strong id="finalWhiteWallet">—</strong><b id="finalWhitePoints">0 FIGS</b></div>
+        <div class="final-score-row"><span data-i18n="black">BLACK</span><strong id="finalBlackWallet">—</strong><b id="finalBlackPoints">0 FIGS</b></div>
       </section>
     </section>
 
     <section id="statsPanel" class="stats-panel" hidden>
-      <div class="eyebrow">WALLET PLAYER PROFILE</div>
-      <h2>Your Chess Arena stats</h2>
+      <div class="eyebrow" data-i18n="walletProfile">WALLET PLAYER PROFILE</div>
+      <h2 data-i18n="yourStats">Your Chess Arena stats</h2>
       <div id="statsWallet" class="stats-wallet">—</div>
       <div class="stats-grid">
-        <div><small>TOTAL POINTS</small><strong id="statsPoints">0</strong></div>
-        <div><small>RANK</small><strong id="statsRank">—</strong></div>
+        <div><small data-i18n="totalFigs">TOTAL FIGS</small><strong id="statsPoints">0</strong></div>
+        <div><small data-i18n="rank">RANK</small><strong id="statsRank">—</strong></div>
         <div><small>GAMES</small><strong id="statsGames">0</strong></div>
-        <div><small>WINS</small><strong id="statsWins">0</strong></div>
-        <div><small>LOSSES</small><strong id="statsLosses">0</strong></div>
-        <div><small>DRAWS</small><strong id="statsDraws">0</strong></div>
+        <div><small data-i18n="wins">WINS</small><strong id="statsWins">0</strong></div>
+        <div><small data-i18n="losses">LOSSES</small><strong id="statsLosses">0</strong></div>
+        <div><small data-i18n="draws">DRAWS</small><strong id="statsDraws">0</strong></div>
       </div>
-      <div class="eyebrow leaderboard-heading">TOP PLAYERS</div>
-      <div id="statsLeaderboard" class="stats-leaderboard">No ranked games yet.</div>
+      <div class="eyebrow leaderboard-heading" data-i18n="topPlayers">TOP PLAYERS</div>
+      <div id="statsLeaderboard" class="stats-leaderboard" data-i18n="noRankedGames">No ranked games yet.</div>
     </section>
 
     <section class="features">
       <article><span>♟</span><strong>1 vs 1</strong><small>Live online chess</small></article>
-      <article><span>◷</span><strong>Timed matches</strong><small>10-minute games</small></article>
-      <article><span>⌘</span><strong>Private rooms</strong><small>Invite by room code</small></article>
+      <article><span>◷</span><strong data-i18n="timedMatches">Timed matches</strong><small data-i18n="tenMinuteGames">10-minute games</small></article>
+      <article><span>⌘</span><strong data-i18n="privateRooms">Private rooms</strong><small data-i18n="inviteCode">Invite by room code</small></article>
     </section>
-    <footer>Fly Infinity Chess Arena <span>•</span> No entry fee. No token transfer. No financial rewards.</footer>
+    <footer><span data-i18n="footerBrand">Fly Infinity Chess Arena</span> <span>•</span> <span data-i18n="footerNotice">No entry fee. No token transfer. No financial rewards.</span></footer>
   </main>
-  <script src="./js/chess-arena.js?v=wallet-figs-20261105"></script>
+  <script src="./js/language.js?v=fi-languages-20261105"></script>
+  <script src="./js/chess-arena.js?v=fi-languages-20261105"></script>
 </body>
 </html>
