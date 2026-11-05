@@ -1,6 +1,6 @@
 // Deterministic regression suite for the backgammon rules engine and CPU integration.\nimport test from "node:test";
 import assert from "node:assert/strict";
-import { initialPosition, legalTurnSequences, winner } from "../js/backgammon-engine.js";
+import { initialPosition, legalTurnSequences, winner, pipCount } from "../js/backgammon-engine.js";
 
 const position = () => ({ points: Array(24).fill(0), bar: { w: 0, b: 0 }, off: { w: 0, b: 0 } });
 
@@ -100,4 +100,10 @@ test("a backgammon is scored when the loser remains in the winner's home board",
 test("a single win is scored if the loser has borne off at least one checker", () => {
   const p = position(); p.off.w = 15; p.off.b = 1; p.points[12] = -14;
   assert.deepEqual(winner(p), { side: "w", multiplier: 1 });
+});
+
+test("pip counts include checkers on the bar and mirror both directions", () => {
+  const p = position(); p.points[0] = 1; p.points[23] = -1; p.bar.w = 1; p.bar.b = 2;
+  assert.equal(pipCount(p, "w"), 26);
+  assert.equal(pipCount(p, "b"), 51);
 });
