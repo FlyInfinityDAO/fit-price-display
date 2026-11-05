@@ -31,7 +31,17 @@ npx wrangler secret put SESSION_SECRET
 
 Use a random secret of at least 32 characters. Never commit it to GitHub. Confirm `FRONTEND_ORIGIN` is the exact origin serving the site, without a trailing slash. A reliable BSC RPC can be set in `BSC_RPC_URL`.
 
-Deploy after the database ID and secret are configured:
+### Git-connected Cloudflare Builds
+
+The Cloudflare Worker build is configured with this directory as its root. Its Deploy command applies the checked-in D1 migrations remotely before deploying the Worker:
+
+```bash
+npx wrangler d1 migrations apply fly-chess-arena-db --remote && npx wrangler deploy
+```
+
+Keep the `SESSION_SECRET` configured as a Cloudflare Worker secret; do not add it to repository files or build variables.
+
+For a manual deployment outside the Git-connected build, deploy after the database migrations and secret are configured:
 
 ```bash
 npx wrangler deploy
