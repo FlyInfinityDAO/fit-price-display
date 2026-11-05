@@ -139,6 +139,24 @@
     }
   }
 
+  async function createCpuGame() {
+    if (!sessionToken) return;
+    const button = $("createCpuBtn");
+    button.disabled = true;
+    $("roomStatus").textContent = "Starting your CPU match…";
+    try {
+      const result = await api("/api/rooms/cpu", {
+        difficulty: $("cpuDifficulty").value,
+        color: $("cpuColor").value
+      }, sessionToken);
+      await enterRoom(result.roomCode);
+    } catch (error) {
+      $("roomStatus").textContent = error.message;
+    } finally {
+      button.disabled = false;
+    }
+  }
+
   async function createRoom() {
     if (!sessionToken) return;
     $('createRoomBtn').disabled = true;
@@ -237,14 +255,17 @@
     myColor = currentWallet === (game.players.white || '').toLowerCase() ? 'w' :
       currentWallet === (game.players.black || '').toLowerCase() ? 'b' : null;
     $('activeRoomCode').textContent = game.roomCode || activeRoomCode;
-    $('whitePlayer').textContent = game.players.white ? shortWallet(game.players.white) + (myColor === 'w' ? ' (YOU)' : '') : 'Waiting…';
-    $('blackPlayer').textContent = game.players.black ? shortWallet(game.players.black) + (myColor === 'b' ? ' (YOU)' : '') : 'Waiting for opponent…';
+    $('whitePlayer').textContent = game.players.white === 'cpu' ? 'CPU (' + (game.difficulty || 'medium') + ')' : game.players.white ? shortWallet(game.players.white) + (myColor === 'w' ? ' (YOU)' : '') : 'Waiting…';
+    $('blackPlayer').textContent = game.players.black === 'cpu' ? 'CPU (' + (game.difficulty || 'medium') + ')' : game.players.black ? shortWallet(game.players.black) + (myColor === 'b' ? ' (YOU)' : '') : 'Waiting for opponent…';
+    const cpuMatch = game.mode === 'cpu';
+    $('offerDrawBtn').hidden = cpuMatch;
+    $('activeRoomCode').textContent = cpuMatch ? 'CPU MATCH' : (game.roomCode || activeRoomCode);
     $('gameStatus').textContent = game.status === 'waiting' ? 'Waiting for opponent to join…' :
       game.status === 'finished' ? finishText(game) :
       (game.turn === myColor ? 'Your turn' : 'Opponent’s turn');
     $('acceptDrawBtn').hidden = !game.drawOffer || game.drawOffer.toLowerCase() === currentWallet;
     $('declineDrawBtn').hidden = !game.drawOffer || game.drawOffer.toLowerCase() === currentWallet;
-    $('offerDrawBtn').disabled = game.status !== 'active';
+    $('offerDrawBtn').disabled = game.status !== 'active' || cpuMatch;
     $('resignBtn').disabled = game.status !== 'active';
     $('gameMessage').textContent = eventType === 'draw_offer' ? 'Your opponent offered a draw.' :
       eventType === 'draw_declined' ? 'Draw offer declined.' :
@@ -301,6 +322,7 @@
   });
 
   $('createRoomBtn').addEventListener('click', createRoom);
+  $('createCpuBtn').addEventListener('click', createCpuGame);
   $('joinRoomBtn').addEventListener('click', joinRoom);
   $('roomCodeInput').addEventListener('input', () => {
     $('roomCodeInput').value = $('roomCodeInput').value.toUpperCase().replace(/[^A-HJ-NP-Z2-9]/g, '').slice(0,6);
