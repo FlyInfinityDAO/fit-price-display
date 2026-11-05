@@ -18,6 +18,14 @@ migrations_dir = "migrations"
 name = "CHESS_ROOMS"
 class_name = "ChessRoom"
 
+[[durable_objects.bindings]]
+name = "BACKGAMMON_ROOMS"
+class_name = "BackgammonRoom"
+
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["ChessRoom"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["BackgammonRoom"]
