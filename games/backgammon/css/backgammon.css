@@ -69,3 +69,6 @@
 .mode-grid{grid-template-columns:1fr}
 @media(max-width:768px){.access-card{padding:19px;border-radius:22px}}
 @media(max-width:560px){.access-card{padding:15px}.access-card .wallet-connect-options{grid-template-columns:1fr;gap:9px}.access-card .wallet-connect-options button{min-height:46px}}
+
+/* Keep gated game sections hidden even when layout styles define display. */
+.mode-grid[hidden],.game-panel[hidden]{display:none!important}
