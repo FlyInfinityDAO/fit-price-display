@@ -1,7 +1,7 @@
 // Pure, deterministic backgammon rules engine. Board points are indexed 0..23.
 // Positive checkers (white) move toward 0; negative checkers (black) move toward 23.
 export const START_POSITION = Object.freeze({
-  points: Object.freeze([ -2,0,0,0,0,0,0,0,0,0,0,-5,5,0,0,0,0,3,0,0,0,0,0,2 ]),
+  points: Object.freeze([ -2,0,0,0,0,5,0,3,0,0,0,-5,5,0,0,0,-3,0,-5,0,0,0,0,2 ]),
   bar: Object.freeze({ w: 0, b: 0 }),
   off: Object.freeze({ w: 0, b: 0 })
 });
