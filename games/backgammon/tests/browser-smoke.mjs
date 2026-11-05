@@ -38,6 +38,23 @@ try {
   await page.locator("#cpuStartBtn").click();
   await page.locator("#rollBtn").waitFor({ state: "visible" });
 
+  // Verify the mobile board fits the 390px viewport without horizontal page overflow.
+  const mobileLayout = await page.evaluate(() => {
+    const board = document.querySelector(".board-frame");
+    const rect = board.getBoundingClientRect();
+    return {
+      viewportWidth: document.documentElement.clientWidth,
+      documentWidth: document.documentElement.scrollWidth,
+      boardLeft: rect.left,
+      boardRight: rect.right,
+      boardWidth: rect.width
+    };
+  });
+  assert.ok(mobileLayout.documentWidth <= mobileLayout.viewportWidth + 1,
+    "Mobile page must not overflow horizontally: " + JSON.stringify(mobileLayout));
+  assert.ok(mobileLayout.boardLeft >= -1 && mobileLayout.boardRight <= mobileLayout.viewportWidth + 1,
+    "Backgammon board must fit the mobile viewport: " + JSON.stringify(mobileLayout));
+
   // Verify both wallet buttons execute their handlers without opening a real wallet.
   await page.locator("#connectBrowserBtn").click();
   await page.getByText("PLAYWRIGHT_WALLET_STUB", { exact: false }).waitFor({ timeout: 5000 });
