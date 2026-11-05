@@ -72,7 +72,7 @@ test("black re-enters from the bar on the mirrored entry point", () => {
 
 test("black can bear off exactly from its home board", () => {
   const p = position(); p.points[22] = -1; p.off.b = 14;
-  const seqs = legalTurnSequences(p, "b", [2, 1]);
+  const seqs = legalTurnSequences(p, "b", [2, 2]);
   assert.ok(seqs.some(s => s.moves.some(m => m.from === 22 && m.to === "off" && m.die === 2)));
 });
 
