@@ -89,20 +89,24 @@
 
   async function getWalletProvider(method) {
     if (method === 'browser') {
-      if (!window.ethereum || typeof window.ethereum.request !== 'function') {
-        throw new Error('No browser wallet detected. Open Chess Arena inside your wallet browser or install/enable a wallet extension, then try Connect with Browser.');
+      // Reown modal: connect with a wallet app or QR code from any browser.
+      if (typeof window.fiConnectWalletConnect === 'function') {
+        return await window.fiConnectWalletConnect();
       }
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-      window.fiWalletConnectActive = false;
-      return window.ethereum;
+      if (typeof window.fiSelectWalletProvider === 'function') {
+        return await window.fiSelectWalletProvider();
+      }
+      throw new Error('Reown wallet connection is unavailable. Please refresh the page and try again.');
     }
-    if (typeof window.fiConnectWalletConnect === 'function') {
-      return await window.fiConnectWalletConnect();
+
+    // Direct injected connection: use the wallet provided by this browser,
+    // including a wallet app's built-in browser or a desktop wallet extension.
+    if (!window.ethereum || typeof window.ethereum.request !== 'function') {
+      throw new Error('No wallet detected in this browser. Open Chess Arena inside your wallet app browser or enable a wallet browser extension, then try Connect with Wallet.');
     }
-    if (typeof window.fiSelectWalletProvider === 'function') {
-      return await window.fiSelectWalletProvider();
-    }
-    throw new Error('Wallet connection is unavailable. Please refresh the page and try again.');
+    await window.ethereum.request({ method: 'eth_requestAccounts' });
+    window.fiWalletConnectActive = false;
+    return window.ethereum;
   }
 
   async function connectAndCheck(method) {
