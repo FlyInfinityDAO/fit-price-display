@@ -119,3 +119,77 @@ test("bearing off the final checker ends the online game and broadcasts the winn
   assert.equal(sent.at(-1).game.result, "w");
   assert.equal(sent.at(-1).game.status, "finished");
 });
+
+
+test("resignation finishes the game, awards the opponent, and blocks later actions", async () => {
+  const sent = [];
+  const values = new Map();
+  const ctx = {
+    storage: {
+      get: async key => values.get(key),
+      put: async (key, value) => values.set(key, structuredClone(value))
+    },
+    getWebSockets: () => [{ send: message => sent.push(JSON.parse(message)) }]
+  };
+  const room = new BackgammonRoom(ctx);
+  await room.fetch(request("/create?code=ABC234", "POST", "white-wallet"));
+  await room.fetch(request("/join", "POST", "black-wallet"));
+
+  await room.webSocketMessage(whiteSocket, JSON.stringify({ type: "resign" }));
+  let game = await values.get("game");
+  assert.equal(game.status, "finished");
+  assert.equal(game.result, "b");
+  assert.equal(game.reason, "resignation");
+  assert.equal(sent.at(-1).type, "finished");
+
+  await room.webSocketMessage(blackSocket, JSON.stringify({ type: "roll" }));
+  game = await values.get("game");
+  assert.equal(game.dice, null);
+  assert.equal(game.status, "finished");
+});
+
+test("a draw offer can be declined without ending the game", async () => {
+  const values = new Map();
+  const ctx = {
+    storage: {
+      get: async key => values.get(key),
+      put: async (key, value) => values.set(key, structuredClone(value))
+    },
+    getWebSockets: () => []
+  };
+  const room = new BackgammonRoom(ctx);
+  await room.fetch(request("/create?code=ABC234", "POST", "white-wallet"));
+  await room.fetch(request("/join", "POST", "black-wallet"));
+
+  await room.webSocketMessage(whiteSocket, JSON.stringify({ type: "offer_draw" }));
+  assert.equal((await values.get("game")).drawOffer, "white-wallet");
+  await room.webSocketMessage(blackSocket, JSON.stringify({ type: "decline_draw" }));
+  const game = await values.get("game");
+  assert.equal(game.status, "active");
+  assert.equal(game.drawOffer, null);
+});
+
+test("accepting a draw finishes the game as a draw and clears pending state", async () => {
+  const sent = [];
+  const values = new Map();
+  const ctx = {
+    storage: {
+      get: async key => values.get(key),
+      put: async (key, value) => values.set(key, structuredClone(value))
+    },
+    getWebSockets: () => [{ send: message => sent.push(JSON.parse(message)) }]
+  };
+  const room = new BackgammonRoom(ctx);
+  await room.fetch(request("/create?code=ABC234", "POST", "white-wallet"));
+  await room.fetch(request("/join", "POST", "black-wallet"));
+
+  await room.webSocketMessage(whiteSocket, JSON.stringify({ type: "offer_draw" }));
+  await room.webSocketMessage(blackSocket, JSON.stringify({ type: "accept_draw" }));
+  const game = await values.get("game");
+  assert.equal(game.status, "finished");
+  assert.equal(game.result, "draw");
+  assert.equal(game.reason, "agreement");
+  assert.equal(game.drawOffer, null);
+  assert.equal(sent.at(-1).type, "finished");
+  assert.equal(sent.at(-1).game.result, "draw");
+});
