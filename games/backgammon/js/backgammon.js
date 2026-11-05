@@ -154,11 +154,13 @@ async function connectOnline(method){
   $("eligiblePanel").hidden=false;
   $("onlineActions").hidden=false;
   $("walletConnectOptions").hidden=true;
+  showGameChoices();
   onlineStatus(t("accessVerified")+" · "+currentWallet.slice(0,6)+"…"+currentWallet.slice(-4));
  }catch(error){
   console.error("[Backgammon wallet]",error);
   $("deniedPanel").textContent=error&&error.message?error.message:t("noWalletVerification");
   $("deniedPanel").hidden=false;
+  $("mode-grid").hidden=true;$("game-panel").hidden=true;
   onlineStatus(error&&error.message?error.message:t("noWalletVerification"),true);
  }finally{
   buttons.forEach(b=>b.disabled=false);
