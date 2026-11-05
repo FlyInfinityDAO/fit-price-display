@@ -294,3 +294,28 @@ test("completed online backgammon games persist one ranked result per wallet exa
   await room.saveGame(game);
   assert.equal(saved.length, 2, "Saving a finished room again must not duplicate player records");
 });
+
+test("server-created CPU backgammon rooms are single-player and run the CPU turn server-side", async () => {
+  const { room, storage } = makeRoom();
+  const created = await room.fetch(request("/create?code=CPU234&mode=cpu&difficulty=easy", "POST", "white-wallet"));
+  assert.equal(created.status, 200);
+  let game = await storage.get("game");
+  assert.equal(game.mode, "cpu");
+  assert.equal(game.status, "active");
+  assert.equal(game.players.black, "cpu");
+  const intruderJoin = await room.fetch(request("/join", "POST", "other-wallet"));
+  assert.equal(intruderJoin.status, 409);
+  await room.webSocketMessage(whiteSocket, JSON.stringify({ type: "roll" }));
+  game = await storage.get("game");
+  assert.ok(game.dice);
+  let guard = 0;
+  while (game.status === "active" && game.turn === "w" && game.dice && guard++ < 4) {
+    const move = game.sequenceOptions[0]?.moves[0];
+    assert.ok(move, "A legal white move should be available");
+    await room.webSocketMessage(whiteSocket, JSON.stringify({ type: "move", from: move.from, to: move.to }));
+    game = await storage.get("game");
+  }
+  assert.equal(game.status, "active");
+  assert.equal(game.turn, "w", "The server should complete the CPU reply before returning control to the player");
+  assert.equal(game.dice, null);
+});
