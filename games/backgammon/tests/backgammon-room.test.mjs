@@ -65,3 +65,12 @@ test("the server rejects moves submitted by the player whose turn it is not", as
   assert.equal(game.dice, null);
   assert.equal(game.turn, "w");
 });
+
+test("a room participant can rejoin an active room after reconnecting", async () => {
+  const { room, storage } = makeRoom();
+  await room.fetch(request("/create?code=ABC234", "POST", "white-wallet"));
+  await room.fetch(request("/join", "POST", "black-wallet"));
+  const rejoined = await room.fetch(request("/join", "POST", "white-wallet"));
+  assert.equal(rejoined.status, 200);
+  assert.equal((await storage.get("game")).status, "active");
+});
