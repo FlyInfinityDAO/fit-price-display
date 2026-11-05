@@ -102,10 +102,14 @@ async function roomStub(env, code) {
   return env.CHESS_ROOMS.get(id);
 }
 
-async function internalRequest(stub, path, wallet, body) {
+async function internalRequest(stub, path, wallet, body, extraHeaders = {}) {
   return stub.fetch("https://chess-room.internal" + path, {
     method: body ? "POST" : "GET",
-    headers: { ...(wallet ? { "x-chess-wallet": wallet } : {}), ...(body ? { "content-type": "application/json" } : {}) },
+    headers: {
+      ...(wallet ? { "x-chess-wallet": wallet } : {}),
+      ...(body ? { "content-type": "application/json" } : {}),
+      ...extraHeaders
+    },
     body: body ? JSON.stringify(body) : undefined
   });
 }
@@ -194,7 +198,10 @@ export async function handleRoomApi(request, env) {
     const wallet = getAddress(row.wallet_address);
     const balance = await getFitBalance(env, wallet);
     if (balance < MIN_FIT_WEI) return json({ ok: false, error: "At least 1 FIT is required to join this game." }, 403);
-    return internalRequest(await roomStub(env, code), "/ws", wallet);
+    // Forward the WebSocket upgrade to the Durable Object. Without this
+    // header the room sees a normal GET and rejects the handshake (426),
+    // which surfaces in browsers as an abnormal close (1006).
+    return internalRequest(await roomStub(env, code), "/ws", wallet, null, { "Upgrade": "websocket" });
   }
 
   const snapshotMatch = path.match(/^\/api\/rooms\/([A-HJ-NP-Z2-9]{6})$/);
