@@ -16,6 +16,7 @@
   let myColor = null;
   let selectedSquare = null;
   let clockTimer = null;
+  let lastStatsRoom = null;
 
   function status(message, isError) {
     $('status').textContent = message;
@@ -65,6 +66,42 @@
     const data = await response.json().catch(() => ({}));
     if (!response.ok || data.ok !== true) throw new Error(data.error || 'Chess Arena API request failed (' + response.status + ').');
     return data;
+  }
+  async function loadStats() {
+    if (!sessionToken) return;
+    $('statsPanel').hidden = false;
+    $('statsWallet').textContent = currentWallet || '—';
+    try {
+      const [profile, board] = await Promise.all([
+        api('/api/stats/me', null, sessionToken),
+        api('/api/stats/leaderboard', null, sessionToken)
+      ]);
+      const stats = profile.stats || {};
+      $('statsPoints').textContent = stats.points || 0;
+      $('statsRank').textContent = '#' + (stats.rank || 1);
+      $('statsGames').textContent = stats.games || 0;
+      $('statsWins').textContent = stats.wins || 0;
+      $('statsLosses').textContent = stats.losses || 0;
+      $('statsDraws').textContent = stats.draws || 0;
+      const list = $('statsLeaderboard');
+      list.textContent = '';
+      (board.leaderboard || []).forEach((player, index) => {
+        const row = document.createElement('div');
+        row.className = 'leaderboard-row';
+        const rank = document.createElement('span');
+        rank.textContent = '#' + (index + 1);
+        const wallet = document.createElement('strong');
+        wallet.textContent = shortWallet(player.wallet_address);
+        const points = document.createElement('b');
+        points.textContent = (player.points || 0) + ' pts';
+        row.append(rank, wallet, points);
+        list.appendChild(row);
+      });
+      if (!list.children.length) list.textContent = 'No ranked games yet.';
+    } catch (error) {
+      console.warn('[Chess Arena stats]', error);
+      $('statsLeaderboard').textContent = 'Stats could not be loaded. Please reconnect and try again.';
+    }
   }
   // WalletConnect can leave a signing request pending if the wallet app
   // approves it but the response never reaches the browser. Bound the wait
@@ -146,6 +183,7 @@
       $('eligiblePanel').querySelector('strong').textContent = 'Server verification successful';
       $('eligiblePanel').querySelector('small').textContent = 'Your wallet passed the only entry requirement. No token transfer or transaction was requested.';
       $('roomsPanel').hidden = false;
+      await loadStats();
       status('Access verified. You can now create or join a private room.');
       window.dispatchEvent(new CustomEvent('chess-arena:authenticated', { detail: { wallet: verified.wallet, expiresAt: verified.expiresAt } }));
     } catch (error) {
@@ -309,7 +347,15 @@
     $('resignBtn').disabled = game.status !== 'active';
     $('gameMessage').textContent = eventType === 'draw_offer' ? 'Your opponent offered a draw.' :
       eventType === 'draw_declined' ? 'Draw offer declined.' :
-      eventType === 'finished' ? 'Game finished: ' + game.reason : '';
+      eventType === 'finished' ? 'Game finished: ' + reasonLabel(game.reason) : '';
+    if (game.status === 'finished') {
+      renderFinalResult(game);
+      const roomKey = game.roomCode || activeRoomCode;
+      if (roomKey && lastStatsRoom !== roomKey) {
+        lastStatsRoom = roomKey;
+        loadStats();
+      }
+    }
     renderBoard();
     updateClocks();
     if (!clockTimer) clockTimer = setInterval(updateClocks, 1000);
@@ -317,10 +363,32 @@
   function shortWallet(wallet) {
     return wallet ? wallet.slice(0,6) + '…' + wallet.slice(-4) : '—';
   }
+  function reasonLabel(reason) {
+    return ({
+      checkmate: 'Checkmate',
+      resignation: 'Opponent resigned',
+      timeout: 'Time expired',
+      agreement: 'Draw by agreement',
+      stalemate: 'Stalemate',
+      draw: 'Draw'
+    })[reason] || reason || 'Game finished';
+  }
+  function renderFinalResult(game) {
+    const whitePoints = game.result === 'draw' ? 1 : game.result === 'w' ? 3 : 0;
+    const blackPoints = game.result === 'draw' ? 1 : game.result === 'b' ? 3 : 0;
+    $('finalResultPanel').hidden = false;
+    $('finalResultTitle').textContent = game.result === 'draw' ? 'Draw game' :
+      game.result === myColor ? 'You won!' : 'You lost';
+    $('finalResultReason').textContent = reasonLabel(game.reason);
+    $('finalWhiteWallet').textContent = game.players.white === 'cpu' ? 'CPU' : game.players.white || '—';
+    $('finalBlackWallet').textContent = game.players.black === 'cpu' ? 'CPU' : game.players.black || '—';
+    $('finalWhitePoints').textContent = '+' + whitePoints + ' pts';
+    $('finalBlackPoints').textContent = '+' + blackPoints + ' pts';
+  }
   function finishText(game) {
-    if (game.result === 'draw') return 'Draw · ' + game.reason;
+    if (game.result === 'draw') return 'Draw · ' + reasonLabel(game.reason);
     const winner = game.result === 'w' ? 'White wins' : 'Black wins';
-    return winner + ' · ' + game.reason;
+    return winner + ' · ' + reasonLabel(game.reason);
   }
   function updateClocks() {
     if (!currentGame) return;
