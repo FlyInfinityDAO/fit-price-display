@@ -29,6 +29,13 @@ try {
   assert.equal(await page.locator("#connectWalletBtn").isVisible(), true,
     "WalletConnect / injected wallet button should be visible");
 
+  // No game modes or board may be exposed before wallet verification.
+  assert.equal(await page.locator("#mode-grid").isVisible(), false, "CPU/practice choices must stay hidden before wallet verification");
+  assert.equal(await page.locator("#game-panel").isVisible(), false, "The board must stay hidden before wallet verification");
+  await page.locator("#practiceBtn").dispatchEvent("click");
+  await page.locator("#cpuStartBtn").dispatchEvent("click");
+  assert.equal(await page.locator("#game-panel").isVisible(), false, "Direct event dispatch must not bypass the access gate");
+
   // Exercise all eight languages and verify both document language and RTL direction.
   const expected = { en: "ltr", fa: "rtl", ar: "rtl", tr: "ltr", ru: "ltr", zh: "ltr", es: "ltr", pt: "ltr" };
   for (const [language, direction] of Object.entries(expected)) {
@@ -76,7 +83,7 @@ try {
     ok: true,
     testedLanguages: Object.keys(expected),
     rtlVerified: ["fa", "ar"],
-    practiceAndCpuControls: "passed",
+    preAuthGameGate: "passed; mode selection and board remain hidden, including direct event attempts",
     walletButtons: "handlers verified with a safe stub; no wallet connection/signature/transaction",
     pageErrors,
     failedRequests
