@@ -96,7 +96,7 @@
         const wallet = document.createElement('strong');
         wallet.textContent = shortWallet(player.wallet_address);
         const points = document.createElement('b');
-        points.textContent = (player.points || 0) + ' pts';
+        points.textContent = (player.points || 0) + ' FIGS';
         row.append(rank, wallet, points);
         list.appendChild(row);
       });
@@ -386,8 +386,8 @@
     $('finalResultReason').textContent = reasonLabel(game.reason);
     $('finalWhiteWallet').textContent = game.players.white === 'cpu' ? 'CPU' : game.players.white || '—';
     $('finalBlackWallet').textContent = game.players.black === 'cpu' ? 'CPU' : game.players.black || '—';
-    $('finalWhitePoints').textContent = '+' + whitePoints + ' pts';
-    $('finalBlackPoints').textContent = '+' + blackPoints + ' pts';
+    $('finalWhitePoints').textContent = '+' + whitePoints + ' FIGS';
+    $('finalBlackPoints').textContent = '+' + blackPoints + ' FIGS';
   }
   function finishText(game) {
     if (game.result === 'draw') return 'Draw · ' + reasonLabel(game.reason);
