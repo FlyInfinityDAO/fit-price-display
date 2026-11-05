@@ -24,7 +24,7 @@ pt:{connectBrowser:"Conectar pelo navegador",connectWallet:"Conectar carteira",w
 let lang=localStorage.getItem("fit_lang")||((navigator.language||"en").slice(0,2));if(!L[lang])lang="en";
 const t=(k,v={})=>(L[lang][k]||L.en[k]||O[lang]?.[k]||O.en[k]||k).replace(/\{(\w+)\}/g,(_,x)=>v[x]??"");
 function setLang(v){lang=L[v]?v:"en";localStorage.setItem("fit_lang",lang);document.documentElement.lang=lang;document.documentElement.dir=["fa","ar"].includes(lang)?"rtl":"ltr";document.body.classList.toggle("fi-rtl",["fa","ar"].includes(lang));$("languageSelect").value=lang;document.querySelectorAll("[data-i]").forEach(n=>n.textContent=t(n.dataset.i));document.querySelectorAll("[data-i-placeholder]").forEach(n=>n.placeholder=t(n.dataset.iPlaceholder));render();}
-$("languageSelect").value=lang;$("languageSelect").addEventListener("change",e=>setLang(e.target.value));
+setLang(lang);$("languageSelect").addEventListener("change",e=>setLang(e.target.value));
 let position,side,dice,selected,sequenceOptions,chosenMoves,finished,passTimer=null;
 let gameMode="practice",cpuBusy=false,cpuTimer=null;
 let sessionToken=null,currentWallet=null,activeRoomCode=null,roomSocket=null,mySide=null,remoteLegalMoves=[],remoteMovesLeft=0,remotePending=false;
