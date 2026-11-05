@@ -61,3 +61,43 @@ test("a player wins after bearing off all fifteen checkers", () => {
   const p = position(); p.off.w = 15; p.points[12] = -15;
   assert.deepEqual(winner(p), { side: "w", multiplier: 2 });
 });
+
+test("black re-enters from the bar on the mirrored entry point", () => {
+  const p = position(); p.bar.b = 1; p.points[0] = 1;
+  const seqs = legalTurnSequences(p, "b", [1, 3]);
+  assert.ok(seqs.length > 0);
+  assert.ok(seqs.every(s => s.moves[0]?.from === "bar"));
+  assert.ok(seqs.some(s => s.moves[0]?.to === 2 && s.moves[0]?.die === 3));
+});
+
+test("black can bear off exactly from its home board", () => {
+  const p = position(); p.points[22] = -1; p.off.b = 14;
+  const seqs = legalTurnSequences(p, "b", [2, 4]);
+  assert.ok(seqs.some(s => s.moves.some(m => m.from === 22 && m.to === "off" && m.die === 2)));
+});
+
+test("black cannot overshoot while a checker remains farther from the exit", () => {
+  const p = position(); p.points[22] = -1; p.points[20] = -1; p.off.b = 13;
+  const moves = legalTurnSequences(p, "b", [6, 5]).map(s => s.moves[0]);
+  assert.equal(moves.some(m => m.from === 22 && m.to === "off"), false);
+});
+
+test("a gammon is scored when the loser has borne off no checkers", () => {
+  const p = position(); p.off.w = 15; p.points[12] = -15;
+  assert.deepEqual(winner(p), { side: "w", multiplier: 2 });
+});
+
+test("a backgammon is scored when the loser has a checker on the bar", () => {
+  const p = position(); p.off.w = 15; p.bar.b = 1; p.points[12] = -14;
+  assert.deepEqual(winner(p), { side: "w", multiplier: 3 });
+});
+
+test("a backgammon is scored when the loser remains in the winner's home board", () => {
+  const p = position(); p.off.w = 15; p.points[2] = -1; p.points[12] = -14;
+  assert.deepEqual(winner(p), { side: "w", multiplier: 3 });
+});
+
+test("a single win is scored if the loser has borne off at least one checker", () => {
+  const p = position(); p.off.w = 15; p.off.b = 1; p.points[12] = -14;
+  assert.deepEqual(winner(p), { side: "w", multiplier: 1 });
+});
