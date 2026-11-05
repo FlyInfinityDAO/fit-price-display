@@ -3,8 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0b1110">
-  <title>Chess Arena | Fly Infinity</title>
+  <meta name="theme-color" content="#0F0F0F">
+  <title>Chess Arena | Fly Infinity Games</title>
+  <link rel="icon" type="image/png" href="../../logo.png">
+  <link rel="apple-touch-icon" href="../../logo.png">
   <link rel="stylesheet" href="./css/chess-arena.css?v=wallet-figs-20261105">
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="../../walletconnect-bridge.js"></script>
@@ -12,8 +14,14 @@
 <body>
   <main class="arena">
     <header class="topbar">
-      <a class="brand" href="../../index.html" aria-label="Fly Infinity home"><span class="brand-mark">F</span><span>FLY INFINITY <small>GAMES</small></span></a>
-      <div class="network"><i></i> BNB SMART CHAIN</div>
+      <a class="brand" href="https://flyinfinitydao.github.io/" aria-label="Fly Infinity dashboard">
+        <img src="../../logo.png" alt="" class="brand-logo">
+        <span class="brand-name">FLY INFINITY <small>GAMES</small></span>
+      </a>
+      <div class="topbar-actions">
+        <div class="network"><i></i> BNB SMART CHAIN</div>
+        <a class="dashboard-link" href="https://flyinfinitydao.github.io/"><span aria-hidden="true">←</span> Dashboard</a>
+      </div>
     </header>
     <section class="hero">
       <div class="eyebrow">FLY INFINITY GAMES</div>
@@ -88,7 +96,7 @@
         <h3 id="finalResultTitle">Game finished</h3>
         <p id="finalResultReason"></p>
         <div class="final-score-row"><span>WHITE</span><strong id="finalWhiteWallet">—</strong><b id="finalWhitePoints">0 FIGS</b></div>
-        <div class="final-score-row"><span>BLACK</span><strong id="finalBlackWallet">—</strong><b id="finalBlackPoints">0 pts</b></div>
+        <div class="final-score-row"><span>BLACK</span><strong id="finalBlackWallet">—</strong><b id="finalBlackPoints">0 FIGS</b></div>
       </section>
     </section>
 
