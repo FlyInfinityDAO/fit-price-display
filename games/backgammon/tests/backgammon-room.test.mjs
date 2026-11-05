@@ -258,3 +258,39 @@ test("an invalid or oversized websocket message cannot change the game", async (
   const after = await storage.get("game");
   assert.deepEqual(after, before);
 });
+
+test("completed online backgammon games persist one ranked result per wallet exactly once", async () => {
+  const saved = [];
+  const db = {
+    prepare(sql) {
+      return {
+        sql, values: [],
+        bind(...values) { this.values = values; return this; },
+        run: async () => ({ success: true })
+      };
+    },
+    batch: async statements => { saved.push(...statements.map(statement => ({ sql: statement.sql, values: statement.values }))); }
+  };
+  const values = new Map();
+  const ctx = {
+    storage: {
+      get: async key => values.get(key),
+      put: async (key, value) => values.set(key, structuredClone(value))
+    },
+    getWebSockets: () => []
+  };
+  const room = new BackgammonRoom(ctx, { DB: db });
+  const game = {
+    code: "ABC234", players: { white: "0xwhite", black: "0xblack" },
+    status: "finished", result: "w", reason: "bear_off", multiplier: 2
+  };
+  await room.saveGame(game);
+  assert.equal(saved.length, 2);
+  assert.deepEqual(saved.map(row => row.values.slice(0, 5)), [
+    ["ABC234", "0xwhite", "win", "bear_off", 3],
+    ["ABC234", "0xblack", "loss", "bear_off", 0]
+  ]);
+  assert.equal(game.statsRecorded, true);
+  await room.saveGame(game);
+  assert.equal(saved.length, 2, "Saving a finished room again must not duplicate player records");
+});
