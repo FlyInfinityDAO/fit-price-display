@@ -4,7 +4,8 @@
   const BSC_CHAIN_ID = 56;
   const API_BASE = (window.CHESS_ARENA_API_URL || 'https://fly-chess-arena-api.flyinfinityplatform.workers.dev').replace(/\/$/, '');
   const $ = id => document.getElementById(id);
-  const connectBtn = $('connectBtn');
+  const connectBrowserBtn = $('connectBrowserBtn');
+  const connectWalletBtn = $('connectWalletBtn');
 
   let activeProvider = null;
   let sessionToken = null;
@@ -86,21 +87,33 @@
     }
   }
 
-  async function getWalletProvider() {
-    if (typeof window.fiSelectWalletProvider === 'function') return await window.fiSelectWalletProvider();
-    if (window.ethereum) {
+  async function getWalletProvider(method) {
+    if (method === 'browser') {
+      if (!window.ethereum || typeof window.ethereum.request !== 'function') {
+        throw new Error('No browser wallet detected. Open Chess Arena inside your wallet browser or install/enable a wallet extension, then try Connect with Browser.');
+      }
       await window.ethereum.request({ method: 'eth_requestAccounts' });
+      window.fiWalletConnectActive = false;
       return window.ethereum;
     }
-    throw new Error('No compatible wallet found. Please open the page in a wallet browser or install a wallet.');
+    if (typeof window.fiConnectWalletConnect === 'function') {
+      return await window.fiConnectWalletConnect();
+    }
+    if (typeof window.fiSelectWalletProvider === 'function') {
+      return await window.fiSelectWalletProvider();
+    }
+    throw new Error('Wallet connection is unavailable. Please refresh the page and try again.');
   }
 
-  async function connectAndCheck() {
-    connectBtn.disabled = true;
-    connectBtn.textContent = 'Checking FIT balance…';
+  async function connectAndCheck(method) {
+    const buttons = [connectBrowserBtn, connectWalletBtn];
+    buttons.forEach(button => { button.disabled = true; });
+    const activeButton = method === 'browser' ? connectBrowserBtn : connectWalletBtn;
+    const originalLabel = activeButton.textContent;
+    activeButton.textContent = 'Connecting…';
     resetChecks();
     try {
-      activeProvider = await getWalletProvider();
+      activeProvider = await getWalletProvider(method);
       const provider = new ethers.providers.Web3Provider(activeProvider, 'any');
       const network = await provider.getNetwork();
       if (network.chainId !== BSC_CHAIN_ID) {
@@ -114,11 +127,11 @@
       const signer = provider.getSigner();
       const address = await signer.getAddress();
       status('Wallet connected: ' + address.slice(0, 6) + '…' + address.slice(-4) + '. Requesting a free wallet signature…');
-      connectBtn.textContent = 'Sign secure login…';
+      activeButton.textContent = 'Sign secure login…';
       const challenge = await api('/api/auth/challenge', { address });
       const signature = await requestWalletSignature(signer, challenge.message);
       status('Signature received. Server is independently checking your FIT balance…');
-      connectBtn.textContent = 'Verifying on server…';
+      activeButton.textContent = 'Verifying on server…';
       const verified = await api('/api/auth/verify', { address, nonce: challenge.nonce, signature });
 
       sessionToken = verified.sessionToken;
@@ -134,8 +147,8 @@
       console.error('[Chess Arena]', error);
       showDenied(error && error.message ? error.message : 'Wallet verification failed.');
     } finally {
-      connectBtn.disabled = false;
-      connectBtn.textContent = 'Reconnect / Check Again';
+      buttons.forEach(button => { button.disabled = false; });
+      activeButton.textContent = originalLabel;
     }
   }
 
@@ -365,7 +378,8 @@
     if (roomSocket?.readyState === WebSocket.OPEN && confirm('Are you sure you want to resign this game?')) roomSocket.send(JSON.stringify({ type: 'resign' }));
   });
 
-  connectBtn.addEventListener('click', connectAndCheck);
+  connectBrowserBtn.addEventListener('click', () => connectAndCheck('browser'));
+  connectWalletBtn.addEventListener('click', () => connectAndCheck('wallet'));
   const walletChanged = () => {
     resetChecks();
     status('Wallet or network changed. Please verify again.');
