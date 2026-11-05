@@ -194,23 +194,42 @@
     const ticket = await api('/api/rooms/' + code + '/ticket', {}, sessionToken);
     roomSocket = new WebSocket(ticket.socketUrl);
     roomSocket.addEventListener('open', () => {
-      $('roomStatus').textContent = currentGame && currentGame.mode === 'cpu' ? 'Connected to your solo match.' : 'Connected to room ' + code + '. Share this code with your opponent.';
-      $('gameMessage').textContent = 'Live connection established.';
+      console.info('[Chess Arena WS] open', { roomCode: code });
+      $('roomStatus').textContent = 'Real-time connection established. Loading game…';
+      $('gameMessage').textContent = 'Connected. Waiting for the server game state…';
     });
     roomSocket.addEventListener('message', event => {
       let payload;
-      try { payload = JSON.parse(event.data); } catch { return; }
+      try { payload = JSON.parse(event.data); } catch (error) {
+        console.warn('[Chess Arena WS] received non-JSON message');
+        return;
+      }
+      console.info('[Chess Arena WS] message', {
+        type: payload.type || 'unknown',
+        hasGame: Boolean(payload.game),
+        mode: payload.game?.mode || null,
+        status: payload.game?.status || null
+      });
       if (payload.type === 'error') {
-        $('gameMessage').textContent = payload.error;
+        $('gameMessage').textContent = payload.error || 'The game server reported an error.';
         return;
       }
       if (payload.game) renderGame(payload.game, payload.type);
     });
-    roomSocket.addEventListener('close', () => {
-      $('gameMessage').textContent = 'Connection closed. Reconnect by verifying your wallet and entering the room code again.';
+    roomSocket.addEventListener('close', event => {
+      console.warn('[Chess Arena WS] closed', {
+        code: event.code,
+        reason: event.reason || '(no reason supplied)',
+        wasClean: event.wasClean
+      });
+      $('roomStatus').textContent = 'Real-time connection closed (code ' + event.code + ').';
+      $('gameMessage').textContent = 'Connection closed. Code: ' + event.code +
+        '. Reason: ' + (event.reason || 'not supplied') +
+        '. Clean close: ' + (event.wasClean ? 'yes' : 'no') + '.';
     });
-    roomSocket.addEventListener('error', () => {
-      $('gameMessage').textContent = 'Real-time connection failed. Check that the Chess Arena Worker is deployed.';
+    roomSocket.addEventListener('error', event => {
+      console.error('[Chess Arena WS] error', event);
+      $('gameMessage').textContent = 'Real-time connection error. See browser console for the WebSocket diagnostic details.';
     });
     $('gamePanel').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
