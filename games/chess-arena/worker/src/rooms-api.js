@@ -234,5 +234,92 @@ export async function handleRoomApi(request, env) {
     return new Response(response.body, { status: response.status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
   }
 
+
+  if (request.method === "POST" && path === "/api/backgammon/rooms/create") {
+    const auth = await authorize(request, env);
+    if (auth.response) return auth.response;
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const code = makeRoomCode();
+      const stub = env.BACKGAMMON_ROOMS.get(env.BACKGAMMON_ROOMS.idFromName(code));
+      const response = await stub.fetch("https://backgammon-room.internal/create?code=" + code, {
+        method: "POST", headers: { "x-backgammon-wallet": auth.wallet.toLowerCase() }
+      });
+      if (response.status === 409) continue;
+      const data = await response.json();
+      if (!response.ok || data.ok !== true) return json(data, response.status);
+      return json({ ...data, roomCode: code });
+    }
+    return json({ ok: false, error: "Could not allocate a backgammon room. Please try again." }, 503);
+  }
+
+  if (request.method === "POST" && path === "/api/backgammon/rooms/join") {
+    const auth = await authorize(request, env);
+    if (auth.response) return auth.response;
+    const body = await request.json().catch(() => ({}));
+    if (!validRoomCode(body.roomCode)) return json({ ok: false, error: "Enter a valid six-character room code." }, 400);
+    const code = body.roomCode.toUpperCase();
+    const stub = env.BACKGAMMON_ROOMS.get(env.BACKGAMMON_ROOMS.idFromName(code));
+    const response = await stub.fetch("https://backgammon-room.internal/join", {
+      method: "POST", headers: { "x-backgammon-wallet": auth.wallet.toLowerCase() }
+    });
+    return new Response(response.body, { status: response.status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
+  }
+
+  const bgTicketMatch = path.match(/^\/api\/backgammon\/rooms\/([A-HJ-NP-Z2-9]{6})\/ticket$/);
+  if (request.method === "POST" && bgTicketMatch) {
+    const auth = await authorize(request, env);
+    if (auth.response) return auth.response;
+    const code = bgTicketMatch[1];
+    const stub = env.BACKGAMMON_ROOMS.get(env.BACKGAMMON_ROOMS.idFromName(code));
+    const memberResponse = await stub.fetch("https://backgammon-room.internal/check-player", {
+      headers: { "x-backgammon-wallet": auth.wallet.toLowerCase() }
+    });
+    if (!memberResponse.ok) return new Response(memberResponse.body, { status: memberResponse.status, headers: { "content-type": "application/json" } });
+    const ticket = crypto.randomUUID().replace(/-/g, "");
+    const now = Math.floor(Date.now() / 1000);
+    await env.DB.prepare(
+      "INSERT INTO websocket_tickets (ticket, room_code, wallet_address, expires_at, used, created_at) VALUES (?, ?, ?, ?, 0, ?)"
+    ).bind(ticket, "BG" + code, auth.wallet.toLowerCase(), now + 30, now).run();
+    const wsUrl = new URL("/api/backgammon/rooms/" + code + "/ws?ticket=" + ticket, request.url);
+    wsUrl.protocol = wsUrl.protocol === "https:" ? "wss:" : "ws:";
+    return json({ ok: true, ticket, socketUrl: wsUrl.toString(), expiresAt: now + 30 });
+  }
+
+  const bgSocketMatch = path.match(/^\/api\/backgammon\/rooms\/([A-HJ-NP-Z2-9]{6})\/ws$/);
+  if (request.method === "GET" && bgSocketMatch && request.headers.get("Upgrade")?.toLowerCase() === "websocket") {
+    const origin = request.headers.get("Origin");
+    if (!isAllowedFrontendOrigin(origin, env)) return json({ ok: false, error: "Origin not allowed." }, 403);
+    const code = bgSocketMatch[1];
+    const ticket = url.searchParams.get("ticket") || "";
+    if (!/^[a-f0-9]{32}$/.test(ticket)) return json({ ok: false, error: "WebSocket ticket is invalid." }, 401);
+    const now = Math.floor(Date.now() / 1000);
+    const row = await env.DB.prepare(
+      "SELECT wallet_address, expires_at, used FROM websocket_tickets WHERE ticket = ? AND room_code = ?"
+    ).bind(ticket, "BG" + code).first();
+    if (!row || row.used !== 0 || row.expires_at <= now) return json({ ok: false, error: "WebSocket ticket expired. Request a new one." }, 401);
+    const consumed = await env.DB.prepare(
+      "UPDATE websocket_tickets SET used = 1 WHERE ticket = ? AND room_code = ? AND used = 0 AND expires_at > ?"
+    ).bind(ticket, "BG" + code, now).run();
+    if (!consumed.meta || consumed.meta.changes !== 1) return json({ ok: false, error: "WebSocket ticket has already been used." }, 409);
+    const wallet = getAddress(row.wallet_address);
+    const balance = await getFitBalance(env, wallet);
+    if (balance < MIN_FIT_WEI) return json({ ok: false, error: "At least 1 FIT is required to join this game." }, 403);
+    const stub = env.BACKGAMMON_ROOMS.get(env.BACKGAMMON_ROOMS.idFromName(code));
+    return stub.fetch("https://backgammon-room.internal/ws", {
+      headers: { "x-backgammon-wallet": wallet.toLowerCase(), "Upgrade": "websocket" }
+    });
+  }
+
+  const bgSnapshotMatch = path.match(/^\/api\/backgammon\/rooms\/([A-HJ-NP-Z2-9]{6})$/);
+  if (request.method === "GET" && bgSnapshotMatch) {
+    const auth = await authorize(request, env);
+    if (auth.response) return auth.response;
+    const stub = env.BACKGAMMON_ROOMS.get(env.BACKGAMMON_ROOMS.idFromName(bgSnapshotMatch[1]));
+    const response = await stub.fetch("https://backgammon-room.internal/snapshot", {
+      headers: { "x-backgammon-wallet": auth.wallet.toLowerCase() }
+    });
+    return new Response(response.body, { status: response.status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
+  }
+
   return null;
 }
