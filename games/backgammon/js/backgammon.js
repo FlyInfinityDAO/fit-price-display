@@ -13,7 +13,8 @@ let lang=localStorage.getItem("fit_lang")||((navigator.language||"en").slice(0,2
 const t=(k,v={})=>(L[lang][k]||L.en[k]||k).replace(/\{(\w+)\}/g,(_,x)=>v[x]??"");
 function setLang(v){lang=L[v]?v:"en";localStorage.setItem("fit_lang",lang);document.documentElement.lang=lang;document.documentElement.dir=["fa","ar"].includes(lang)?"rtl":"ltr";document.body.classList.toggle("fi-rtl",["fa","ar"].includes(lang));$("languageSelect").value=lang;document.querySelectorAll("[data-i]").forEach(n=>n.textContent=t(n.dataset.i));render();}
 $("languageSelect").value=lang;$("languageSelect").addEventListener("change",e=>setLang(e.target.value));
-let position,side,dice,selected,sequenceOptions,chosenMoves,finished,passTimer=null;\nlet gameMode="practice",cpuBusy=false,cpuTimer=null;
+let position,side,dice,selected,sequenceOptions,chosenMoves,finished,passTimer=null;
+let gameMode="practice",cpuBusy=false,cpuTimer=null;
 const sideName=s=>t(s==="w"?"white":"black");
 function setStatus(message,mode="info"){const el=$("gameStatus");el.className="game-status status-"+mode;el.innerHTML='<span class="status-icon" aria-hidden="true"></span><span class="status-copy"></span>';el.querySelector(".status-copy").textContent=message;}
 function reset(){if(passTimer!==null){clearTimeout(passTimer);passTimer=null;}if(cpuTimer!==null){clearTimeout(cpuTimer);cpuTimer=null;}cpuBusy=false;position=initialPosition();side="w";dice=null;selected=null;sequenceOptions=[];chosenMoves=[];finished=false;$("dieOne").textContent="–";$("dieTwo").textContent="–";$("movesLeft").textContent="—";$("whiteOff").textContent="0 / 15";$("blackOff").textContent="0 / 15";$("rollBtn").disabled=false;setStatus(t("rollPrompt"),"ready");render();}
@@ -75,4 +76,5 @@ function cpuPlayTurn(){
   };
   cpuTimer=setTimeout(()=>{cpuTimer=null;step();},700);
 }
-\n$("rollBtn").addEventListener("click",roll);$("resetBtn").addEventListener("click",reset);$("practiceBtn").addEventListener("click",()=>{gameMode="practice";reset();$("game-panel").scrollIntoView({behavior:"smooth"});});$("cpuStartBtn").addEventListener("click",()=>{gameMode="cpu";reset();setStatus(t("turn",{side:sideName(side)}),"turn");$("game-panel").scrollIntoView({behavior:"smooth"});});setLang(lang);reset();
+
+$("rollBtn").addEventListener("click",roll);$("resetBtn").addEventListener("click",reset);$("practiceBtn").addEventListener("click",()=>{gameMode="practice";reset();$("game-panel").scrollIntoView({behavior:"smooth"});});$("cpuStartBtn").addEventListener("click",()=>{gameMode="cpu";reset();setStatus(t("turn",{side:sideName(side)}),"turn");$("game-panel").scrollIntoView({behavior:"smooth"});});setLang(lang);reset();
