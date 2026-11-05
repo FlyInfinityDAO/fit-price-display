@@ -261,6 +261,7 @@
     $('offerDrawBtn').hidden = cpuMatch;
     $('activeRoomCode').textContent = cpuMatch ? 'CPU MATCH' : (game.roomCode || activeRoomCode);
     $('gameTypeLabel').textContent = cpuMatch ? 'SOLO MATCH · VS CPU' : 'PRIVATE MATCH';
+    if (cpuMatch) $('roomStatus').textContent = 'Solo match connected. The CPU is ready to play.';
     $('copyRoomBtn').hidden = cpuMatch;
     $('gameStatus').textContent = game.status === 'waiting' ? 'Waiting for opponent to join…' :
       game.status === 'finished' ? finishText(game) :
