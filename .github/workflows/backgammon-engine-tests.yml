@@ -24,4 +24,4 @@ jobs:
       - name: Run deterministic rules tests
         run: |
           node --experimental-default-type=module --check games/backgammon/js/backgammon.js
-          node --experimental-default-type=module --test games/backgammon/tests/engine.test.mjs
+          node --experimental-default-type=module --test games/backgammon/tests/engine.test.mjs games/backgammon/tests/backgammon-room.test.mjs
