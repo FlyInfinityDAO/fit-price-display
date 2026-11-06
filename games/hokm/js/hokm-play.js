@@ -87,7 +87,7 @@ function chooseCpuTrump(){
 function updateTrumpOptions(){
  const picker=$("hokmTrumpPicker");
  picker.hidden=false;$("hokmTrumpTitle").textContent=tr("choose");
- picker.querySelectorAll("[data-suit]").forEach(b=>{const suit=b.dataset.suit;b.querySelector("span").textContent=suitName(suit);b.disabled=!game.hands[0].some(c=>c.suit===suit)});
+ picker.querySelectorAll("[data-suit]").forEach(b=>{const suit=b.dataset.suit;b.querySelector("span").textContent=suitName(suit);b.disabled=false});
 }
 function beginRound(hakem){
  game=H.startRound(match,{humanSeat:0,hakem});
