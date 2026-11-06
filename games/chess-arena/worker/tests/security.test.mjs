@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { enforceRateLimit, getFitBalance, rpcJson } from "../src/security.js";
+import { cleanupExpiredRecords, enforceRateLimit, getFitBalance, rpcJson } from "../src/security.js";
 
 function rateLimitDb() {
   const rows = new Map();
@@ -57,4 +57,23 @@ test("balance read uses chain validation before querying FIT balance", async t =
   const balance = await getFitBalance({ BSC_RPC_URL: "https://rpc.test" }, "0x0000000000000000000000000000000000000001");
   assert.equal(balance, 10n ** 18n);
   assert.deepEqual(calls, ["eth_chainId", "eth_call"]);
+});
+
+test("expired security records are cleaned in bounded batches", async () => {
+  const statements = [];
+  const env = {
+    DB: {
+      prepare(sql) {
+        statements.push(sql);
+        return { bind: (...args) => ({ run: async () => ({ meta: { changes: args.length ? 2 : 0 } }) }) };
+      }
+    }
+  };
+  const removed = await cleanupExpiredRecords(env, 200000);
+  assert.equal(removed, 6);
+  assert.equal(statements.length, 4);
+  assert.match(statements[1], /wallet_nonces/);
+  assert.match(statements[2], /websocket_tickets/);
+  assert.match(statements[3], /api_rate_limits/);
+  assert.ok(statements.slice(1).every(sql => /LIMIT 1000/.test(sql)));
 });
