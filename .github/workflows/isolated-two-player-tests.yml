@@ -1,0 +1,62 @@
+name: Isolated Two-Player Playwright Tests
+
+on:
+  push:
+    branches: [test/isolated-two-player]
+    paths:
+      - 'games/chess-arena/**'
+      - 'games/backgammon/**'
+      - '.github/workflows/isolated-two-player-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: isolated-two-player-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  authoritative-two-player-simulations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install chess Worker dependencies
+        working-directory: games/chess-arena/worker
+        run: npm install
+      - name: Simulate two independent chess players through the authoritative room
+        working-directory: games/chess-arena/worker
+        run: node --test tests/online-match.integration.test.mjs
+      - name: Simulate two independent backgammon players through the authoritative room
+        run: node --test games/backgammon/tests/online-match.integration.test.mjs
+      - name: Verify security and Worker syntax without deployment
+        working-directory: games/chess-arena/worker
+        run: |
+          npm run check
+          npm run test:security
+          npx wrangler deploy --dry-run --outdir /tmp/fly-infinity-isolated-worker
+
+  isolated-browser-wallet-and-ui:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Verify chess browser UI with safe wallet stubs
+        env:
+          CHESS_TEST_URL: https://flyinfinitydao.github.io/fit-price-display/games/chess-arena/
+        run: node games/chess-arena/tests/browser-smoke.mjs
+      - name: Verify backgammon browser UI with safe wallet and API stubs
+        env:
+          BACKGAMMON_TEST_URL: https://flyinfinitydao.github.io/fit-price-display/games/backgammon/
+        run: node games/backgammon/tests/browser-smoke.mjs
