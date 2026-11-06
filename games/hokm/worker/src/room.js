@@ -53,6 +53,7 @@ export class HokmRoom extends DurableObject {
         trump: game.trump,
         ownHand: game.hands[seat] || [],
         handCounts: game.hands.map(hand => hand.length),
+        tricksWon: game.tricksWon,
         trick: game.trick,
         lastTrick: room.lastTrick || [],
         teamTricks: game.teamTricks,
@@ -108,9 +109,12 @@ export class HokmRoom extends DurableObject {
     const current = room.players.find(p => p.wallet === wallet);
     if (current) {
       if (current.connected) return json({ ok: false, error: "This wallet is already in the room" }, 409);
+      const matchPlayer = room.match?.players.find(p => p.seat === current.seat);
+      if (matchPlayer?.connectionStatus === "replaced") return json({ ok: false, error: "Reconnect window expired; this seat is now controlled by CPU" }, 409);
+      const deadline = matchPlayer?.reconnectDeadlineAt || current.reconnectUntil;
+      if (deadline && Date.now() >= deadline) return json({ ok: false, error: "Reconnect window expired" }, 409);
       current.tier = tier;
       current.connected = false;
-      current.reconnectUntil = Date.now() + 30000;
       await this.saveRoom(room);
       return json({ ok: true, code: room.code, seat: current.seat, status: room.status, reconnect: true });
     }
@@ -142,6 +146,10 @@ export class HokmRoom extends DurableObject {
     delete room.tickets[ticket];
     const player = room.players.find(p => p.wallet === claim.wallet && p.seat === claim.seat);
     if (!player) return json({ ok: false, error: "Room seat is no longer available" }, 403);
+    const matchPlayer = room.match?.players.find(p => p.seat === player.seat);
+    if (matchPlayer?.connectionStatus === "replaced") return json({ ok: false, error: "Reconnect window expired; this seat is now controlled by CPU" }, 409);
+    const deadline = matchPlayer?.reconnectDeadlineAt || player.reconnectUntil;
+    if (deadline && Date.now() >= deadline) return json({ ok: false, error: "Reconnect window expired" }, 409);
     const pair = new WebSocketPair();
     const [client, server] = Object.values(pair);
     this.ctx.acceptWebSocket(server);
@@ -149,7 +157,6 @@ export class HokmRoom extends DurableObject {
     player.connected = true;
     delete player.reconnectUntil;
     if (room.match) {
-      const matchPlayer = room.match.players.find(p => p.seat === player.seat);
       if (matchPlayer) {
         matchPlayer.connectionStatus = "connected";
         delete matchPlayer.disconnectedAt;
@@ -158,6 +165,7 @@ export class HokmRoom extends DurableObject {
     }
     await this.maybeStart(room);
     await this.saveRoom(room);
+    await this.scheduleAlarm(room);
     this.broadcast(room);
     return new Response(null, { status: 101, webSocket: client });
   }
@@ -186,10 +194,25 @@ export class HokmRoom extends DurableObject {
     const game = room.match.round;
     if (game.phase === "playing") {
       H.startTurnClock(game);
-      this.ctx.storage.setAlarm(game.turnDeadlineAt);
     } else {
-      this.ctx.storage.deleteAlarm();
+      room.trumpDeadlineAt = Date.now() + TURN_TIMEOUT_MS;
     }
+    this.scheduleAlarm(room);
+  }
+  async scheduleAlarm(room) {
+    const times = [];
+    const game = room.match?.round;
+    if (room.status === "round-break" && room.nextRoundAt) times.push(room.nextRoundAt);
+    if (room.lastTrickClearAt) times.push(room.lastTrickClearAt);
+    if (room.trumpDeadlineAt) times.push(room.trumpDeadlineAt);
+    if (game?.phase === "playing" && Number.isFinite(game.turnDeadlineAt)) times.push(game.turnDeadlineAt);
+    for (const p of room.players) {
+      const mp = room.match?.players.find(x => x.seat === p.seat);
+      const deadline = mp?.connectionStatus === "disconnected" ? mp.reconnectDeadlineAt : (!room.match ? p.reconnectUntil : null);
+      if (deadline) times.push(deadline);
+    }
+    if (times.length) await this.ctx.storage.setAlarm(Math.min(...times));
+    else await this.ctx.storage.deleteAlarm();
   }
   async webSocketMessage(ws, message) {
     const attachment = ws.deserializeAttachment() || {};
@@ -213,8 +236,9 @@ export class HokmRoom extends DurableObject {
         const game = room.match?.round;
         if (room.status !== "playing" || !game || game.phase !== "choose-trump" || game.hakem !== player.seat) throw new Error("It is not your turn to choose trump");
         H.chooseTrump(game, data.suit);
+        delete room.trumpDeadlineAt;
         H.startTurnClock(game);
-        await this.ctx.storage.setAlarm(game.turnDeadlineAt);
+        await this.scheduleAlarm(room);
       } else if (data.type === "play_card") {
         if (room.status !== "playing" || room.lastTrick?.length) throw new Error("Please wait for the current trick to finish");
         const game = room.match?.round;
@@ -223,11 +247,13 @@ export class HokmRoom extends DurableObject {
         await this.applyResult(room, result);
       } else if (data.type === "leave") {
         player.connected = false;
+        player.reconnectUntil = Date.now() + 30000;
         if (room.match) H.markPlayerDisconnected(room.match, player.seat);
       } else {
         throw new Error("Unknown game action");
       }
       await this.saveRoom(room);
+      await this.scheduleAlarm(room);
       this.broadcast(room);
     } catch (error) {
       this.send(ws, { type: "error", error: error.message || "Action rejected" });
@@ -239,48 +265,74 @@ export class HokmRoom extends DurableObject {
       const round = H.finishRound(room.match, game, result.roundWinner);
       room.roundWinner = result.roundWinner;
       room.status = round.matchFinished ? "finished" : "round-break";
-      if (!round.matchFinished) await this.ctx.storage.setAlarm(Date.now() + 1800);
-      else await this.ctx.storage.deleteAlarm();
+      if (!round.matchFinished) room.nextRoundAt = Date.now() + 1800;
+      else delete room.nextRoundAt;
+      await this.scheduleAlarm(room);
       return;
     }
     if (result.completed) {
       room.lastTrick = result.trick || [];
-      await this.ctx.storage.setAlarm(Date.now() + 900);
-    } else if (Number.isFinite(game.turnDeadlineAt)) {
-      await this.ctx.storage.setAlarm(game.turnDeadlineAt);
+      room.lastTrickClearAt = Date.now() + 900;
     }
+    await this.scheduleAlarm(room);
   }
   async alarm() {
     const room = await this.loadRoom();
     if (!room) return;
     const now = Date.now();
-    if (room.status === "round-break" && room.match && !room.match.finished) {
-      const hakem = room.match.roundsPlayed % 4;
-      this.startRound(room, hakem);
-      await this.saveRoom(room);
-      this.broadcast(room);
-      return;
+    let changed = false;
+    if (room.match) {
+      const replaced = H.expireDisconnectedPlayers(room.match, now);
+      if (replaced.length) {
+        for (const seat of replaced) {
+          const player = room.players.find(p => p.seat === seat);
+          if (player) { player.connected = false; player.replaced = true; }
+        }
+        changed = true;
+      }
+    } else {
+      const remaining = room.players.filter(p => p.connected || !p.reconnectUntil || p.reconnectUntil > now);
+      if (remaining.length !== room.players.length) {
+        room.players = remaining;
+        changed = true;
+      }
     }
-    if (room.lastTrick?.length) {
+    if (room.status === "round-break" && room.match && !room.match.finished && room.nextRoundAt && now >= room.nextRoundAt) {
+      const hakem = room.match.roundsPlayed % 4;
+      delete room.nextRoundAt;
+      this.startRound(room, hakem);
+      changed = true;
+    }
+    if (room.lastTrickClearAt && now >= room.lastTrickClearAt) {
       room.lastTrick = [];
-      const game = room.match?.round;
-      if (game && Number.isFinite(game.turnDeadlineAt)) await this.ctx.storage.setAlarm(game.turnDeadlineAt);
-      await this.saveRoom(room);
-      this.broadcast(room);
-      return;
+      delete room.lastTrickClearAt;
+      changed = true;
     }
     const game = room.match?.round;
-    if (room.status !== "playing" || !game || game.phase !== "playing" || !Number.isFinite(game.turnDeadlineAt) || now < game.turnDeadlineAt) return;
-    try {
-      const result = H.resolveTurnTimeout(game, { now, difficulty: "normal" });
-      await this.applyResult(room, result);
-      await this.saveRoom(room);
-      this.broadcast(room);
-    } catch (error) {
-      room.error = error.message || "Turn timeout failed";
-      await this.saveRoom(room);
-      this.broadcast(room);
+    if (room.status === "playing" && game?.phase === "choose-trump" && room.trumpDeadlineAt && now >= room.trumpDeadlineAt) {
+      const hand = game.hands[game.hakem] || [];
+      const scores = H.SUITS.map(suit => ({
+        suit,
+        score: hand.filter(card => card.suit === suit).reduce((sum, card) => sum + (card.rank === "A" ? 5 : card.rank === "K" ? 3 : card.rank === "Q" ? 2 : card.rank === "J" ? 1 : 0) + 3, 0)
+      })).sort((a, b) => b.score - a.score);
+      H.chooseTrump(game, scores[0]?.suit || H.SUITS[0]);
+      delete room.trumpDeadlineAt;
+      H.startTurnClock(game);
+      changed = true;
     }
+    if (room.status === "playing" && game?.phase === "playing" && Number.isFinite(game.turnDeadlineAt) && now >= game.turnDeadlineAt) {
+      try {
+        const result = H.resolveTurnTimeout(game, { now, difficulty: "normal" });
+        await this.applyResult(room, result);
+        changed = true;
+      } catch (error) {
+        room.error = error.message || "Turn timeout failed";
+        changed = true;
+      }
+    }
+    await this.saveRoom(room);
+    await this.scheduleAlarm(room);
+    if (changed) this.broadcast(room);
   }
   async webSocketClose(ws) {
     const attachment = ws.deserializeAttachment() || {};
@@ -288,10 +340,12 @@ export class HokmRoom extends DurableObject {
     const player = room?.players.find(p => p.wallet === cleanWallet(attachment.wallet) && p.seat === attachment.seat);
     if (!player) return;
     player.connected = false;
+    player.reconnectUntil = Date.now() + 30000;
     if (room.match) {
       try { H.markPlayerDisconnected(room.match, player.seat); } catch {}
     }
     await this.saveRoom(room);
+    await this.scheduleAlarm(room);
     this.broadcast(room);
   }
 }
