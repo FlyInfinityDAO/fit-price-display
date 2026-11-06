@@ -1,0 +1,38 @@
+name: Hokm Stage 1 Checks
+on:
+  push:
+    branches: [feature/hokm-four-player]
+    paths:
+      - "games/hokm/**"
+      - ".github/workflows/hokm-stage1-checks.yml"
+  pull_request:
+    branches: [feature/chess-arena-games]
+    paths:
+      - "games/hokm/**"
+      - ".github/workflows/hokm-stage1-checks.yml"
+permissions:
+  contents: read
+jobs:
+  hokm-static-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate JavaScript
+        run: node --check games/hokm/js/hokm.js
+      - name: Validate page structure and language coverage
+        run: |
+          test -s games/hokm/index.html
+          test -s games/hokm/css/hokm.css
+          test -s games/hokm/js/hokm.js
+          for lang in en fa ar tr ru zh es pt; do grep -q "value=\"$lang\"" games/hokm/index.html; done
+          for seat in north south east west; do grep -q "seat-$seat" games/hokm/index.html; done
+          grep -q 'background:#64152f' games/hokm/css/hokm.css
+          grep -q 'musicVolume' games/hokm/js/hokm.js
+          grep -q 'dealDemoBtn' games/hokm/js/hokm.js
+          grep -q 'collectDemoBtn' games/hokm/js/hokm.js
+      - name: Validate CSS braces
+        run: |
+          node -e "const fs=require('fs');const s=fs.readFileSync('games/hokm/css/hokm.css','utf8');if((s.match(/{/g)||[]).length!==(s.match(/}/g)||[]).length)process.exit(1)"
