@@ -88,6 +88,56 @@ function seatMap(mode="solo",humanSeat=0){
  if(mode!=="solo")return [0,1,2,3].map(seat=>({seat,kind:"human",team:seat%2}));
  return [0,1,2,3].map(seat=>({seat,kind:seat===humanSeat?"human":"cpu",team:seat%2}));
 }
-const api={SUITS,RANKS,TEAMS,makeDeck,shuffle,tierForBalance,resolveAccessPolicy,createMatch,startRound,createGame,chooseTrump,legalCards,cardStrength,trickWinner,finishRound,playCard,chooseCpuCard,seatMap};
+
+const TURN_TIMEOUT_MS=15000,RECONNECT_GRACE_MS=30000;
+function startTurnClock(game,now=Date.now()){
+ if(game.phase!=="playing"||game.finished)throw new Error("Game is not accepting turns");
+ game.turnStartedAt=now;game.turnDeadlineAt=now+TURN_TIMEOUT_MS;
+ return {startedAt:game.turnStartedAt,deadlineAt:game.turnDeadlineAt,timeoutMs:TURN_TIMEOUT_MS};
+}
+function playCardWithClock(game,player,cardId,now=Date.now()){
+ if(!Number.isFinite(game.turnDeadlineAt))startTurnClock(game,now);
+ if(now>=game.turnDeadlineAt)return resolveTurnTimeout(game,{now});
+ const result=playCard(game,player,cardId);
+ if(!game.finished)startTurnClock(game,now);
+ else {delete game.turnStartedAt;delete game.turnDeadlineAt}
+ return {...result,automatic:false};
+}
+function resolveTurnTimeout(game,{now=Date.now(),difficulty="normal",rng=Math.random}={}){
+ if(game.phase!=="playing"||game.finished)throw new Error("Game is not accepting turns");
+ if(!Number.isFinite(game.turnDeadlineAt))throw new Error("Turn clock has not started");
+ if(now<game.turnDeadlineAt)throw new Error("Turn deadline has not expired");
+ const player=game.currentPlayer,card=chooseCpuCard(game,player,difficulty,rng);
+ const result=playCard(game,player,card.id);
+ if(!game.finished)startTurnClock(game,now);
+ else {delete game.turnStartedAt;delete game.turnDeadlineAt}
+ return {...result,automatic:true,automaticPlayer:player,automaticCardId:card.id};
+}
+function markPlayerDisconnected(match,seat,now=Date.now()){
+ const player=match.players.find(p=>p.seat===seat&&p.kind!=="cpu");
+ if(!player)throw new Error("Human player seat not found");
+ if(player.connectionStatus==="replaced")return {status:"replaced",seat};
+ player.connectionStatus="disconnected";player.disconnectedAt=now;player.reconnectDeadlineAt=now+RECONNECT_GRACE_MS;
+ return {status:"disconnected",seat,deadlineAt:player.reconnectDeadlineAt,graceMs:RECONNECT_GRACE_MS};
+}
+function reconnectPlayer(match,seat,now=Date.now()){
+ const player=match.players.find(p=>p.seat===seat);
+ if(!player||player.connectionStatus==="replaced"||player.kind==="cpu")return {reconnected:false,reason:"seat-unavailable"};
+ if(player.connectionStatus!=="disconnected")return {reconnected:false,reason:"not-disconnected"};
+ if(now>player.reconnectDeadlineAt)return {reconnected:false,reason:"grace-expired"};
+ player.connectionStatus="connected";delete player.disconnectedAt;delete player.reconnectDeadlineAt;
+ return {reconnected:true,seat,kind:"human"};
+}
+function expireDisconnectedPlayers(match,now=Date.now()){
+ const replaced=[];
+ for(const player of match.players){
+  if(player.kind==="cpu"||player.connectionStatus!=="disconnected"||now<player.reconnectDeadlineAt)continue;
+  player.kind="cpu";player.connectionStatus="replaced";player.replacedAt=now;
+  delete player.disconnectedAt;delete player.reconnectDeadlineAt;replaced.push(player.seat);
+ }
+ return replaced;
+}
+
+const api={SUITS,RANKS,TEAMS,TURN_TIMEOUT_MS,RECONNECT_GRACE_MS,makeDeck,shuffle,tierForBalance,resolveAccessPolicy,createMatch,startRound,createGame,chooseTrump,legalCards,cardStrength,trickWinner,finishRound,playCard,playCardWithClock,startTurnClock,resolveTurnTimeout,markPlayerDisconnected,reconnectPlayer,expireDisconnectedPlayers,chooseCpuCard,seatMap};
 if(typeof module!=="undefined"&&module.exports)module.exports=api;root.HokmEngine=api;
 })(typeof globalThis!=="undefined"?globalThis:this);
