@@ -170,7 +170,7 @@
     connectPromise = (async function () {
       // Preserve the existing iOS pre-initialization path. Android initializes
       // on demand so its first pairing starts from a clean Reown modal state.
-      if (isIOSBrowser() && !initPromise && iosWarmupPromise) {
+      if (!initPromise && iosWarmupPromise) {
         const warmedProvider = await iosWarmupPromise;
         if (warmedProvider) {
           wcProvider = warmedProvider;
@@ -196,7 +196,7 @@
       // Keep a valid WalletConnect session on Android and desktop. Recreating
       // it on every tap discards the pairing and can break the mobile return flow.
       // Preserve the existing iOS reconnect path to avoid changing its working UX.
-      if (provider.session && !isIOSBrowser()) {
+      if (provider.session) {
         try {
           const existingAccounts = await provider.request({ method: 'eth_accounts' });
           hasExistingSession = Array.isArray(existingAccounts) && existingAccounts.length > 0;
@@ -210,19 +210,9 @@
           console.warn('Could not clear stale WalletConnect session:', error);
         }
 
-        if (isIOSBrowser()) {
-          // Keep the previously working iOS reconnect behavior unchanged.
-          clearProvider(provider);
-          provider = await createProvider();
-        } else {
-          // disconnect() emits the provider's disconnect event, which clears
-          // the shared references. Reuse this initialized instance instead of
-          // calling EthereumProvider.init() again for the same page lifecycle.
-          // This avoids repeatedly creating WalletConnect Core instances.
-          wcProvider = provider;
-          initPromise = Promise.resolve(provider);
-        }
-
+        // disconnect() may clear shared references through its event. Reuse
+        // the initialized instance on every platform instead of creating a
+        // second WalletConnect Core while the user is connecting.
         wcProvider = provider;
         initPromise = Promise.resolve(provider);
       }
@@ -257,9 +247,8 @@
       window.fiWalletConnectActive = true;
       return provider;
     })().catch(function (error) {
-      // Keep Android/desktop provider state after a user rejection so a retry
-      // can reuse the initialized provider. Retain the historical iOS cleanup.
-      if (isIOSBrowser() && wcProvider) clearProvider(wcProvider);
+      // Keep the initialized provider after cancellation on every platform
+      // so the next tap can retry without reloading the WalletConnect SDK.
       throw error;
     }).finally(function () {
       connectPromise = null;
@@ -287,17 +276,17 @@
     return disconnectWalletConnect();
   }
 
-  // Keep the previously working iOS warmup; Android deliberately does not
-  // preload because its Reown pairing flow is started only after user action.
-  if (isIOSBrowser()) {
-    iosWarmupPromise = createProvider().then(function (provider) {
-      wcProvider = provider;
-      return provider;
-    }).catch(function (error) {
-      console.warn('[Fly Infinity WalletConnect] iOS pre-initialization failed:', error);
-      return null;
-    });
-  }
+  // Initialize Reown while the page loads on every device. This avoids
+  // delaying the first mobile modal until after an asynchronous SDK import.
+  // The modal itself still opens only after the user presses the button.
+  iosWarmupPromise = createProvider().then(function (provider) {
+    wcProvider = provider;
+    initPromise = Promise.resolve(provider);
+    return provider;
+  }).catch(function (error) {
+    console.warn('[Fly Infinity WalletConnect] Pre-initialization failed:', error);
+    return null;
+  });
 
   window.fiSelectWalletProvider = selectWalletProvider;
   window.fiConnectWalletConnect = connectWithWalletConnect;
