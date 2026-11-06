@@ -52,7 +52,7 @@ function renderSeats(){
  for(let seat=0;seat<4;seat++){
   const node=document.querySelector(seatElements(seat).chip);if(!node)continue;
   const small=node.querySelector("small"),em=node.querySelector("em");
-  if(small){small.textContent=seat===0?(game&&game.currentPlayer===0?tr("yourTurn"):tr("yourHand")):((game&&game.currentPlayer===seat)?tr("thinking"):tr("opponent")||"CPU");}
+  if(small){small.textContent=seat===0?(game&&game.currentPlayer===0?tr("yourTurn"):tr("yourHand")):((game&&game.currentPlayer===seat)?tr("thinking"):"CPU");}
   if(em)em.textContent=String(counts[seat]||0);
   node.classList.toggle("active",!!game&&!game.finished&&game.currentPlayer===seat);
  }
