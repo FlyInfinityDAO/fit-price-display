@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "check": "node --check src/index.js && node --check src/rooms-api.js && node --check src/room.js && node --check src/backgammon-room.js && node --check ../js/chess-arena.js",
+    "check": "node --check src/index.js && node --check src/rooms-api.js && node --check src/security.js && node --check src/room.js && node --check src/backgammon-room.js && node --check ../js/chess-arena.js",
+    "test:security": "node --test tests/security.test.mjs",
     "deploy": "wrangler deploy"
   },
   "dependencies": {
