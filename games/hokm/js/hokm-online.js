@@ -154,7 +154,7 @@ function renderState(s){
   const nodes=[...document.querySelectorAll(".trick-cards .played-card")];
   nodes.forEach(n=>{n.classList.add("empty");n.classList.remove("red","black");n.textContent="·"});
   const entries=(game.lastTrick&&game.lastTrick.length?game.lastTrick:game.trick)||[];
-  entries.forEach(entry=>{const visual=displaySeat(entry.player),node=nodes[visual];if(node){node.classList.remove("empty");node.classList.toggle("red",["♥","♦"].includes(entry.card.suit));node.textContent=entry.card.rank+entry.card.suit}});
+  entries.forEach(entry=>{const visual=displaySeat(entry.player),node=nodes[visual];if(node){node.classList.remove("empty");node.classList.toggle("red",["♥","♦"].includes(entry.card.suit));node.classList.toggle("black",!["♥","♦"].includes(entry.card.suit));node.textContent=entry.card.rank+entry.card.suit}});
   const trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent=game.trump||"—";
   const hakem=document.getElementById("tableHakem"),hakemActual=game.hakem, hakemVisual=displaySeat(hakemActual),hakemChip=document.querySelector(seatEls(hakemVisual).chip+" b");if(hakem)hakem.textContent=hakemChip?hakemChip.textContent:(players.find(p=>p.seat===hakemActual)?.cpu?"CPU":"Seat "+(hakemActual+1));
   const score=document.querySelectorAll(".game-bottom .team-score b");
