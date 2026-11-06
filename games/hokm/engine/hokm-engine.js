@@ -124,6 +124,7 @@ function markPlayerDisconnected(match,seat,now=Date.now()){
  const player=match.players.find(p=>p.seat===seat&&p.kind!=="cpu");
  if(!player)throw new Error("Human player seat not found");
  if(player.connectionStatus==="replaced")return {status:"replaced",seat};
+ if(player.connectionStatus==="disconnected"&&Number.isFinite(player.reconnectDeadlineAt))return {status:"disconnected",seat,deadlineAt:player.reconnectDeadlineAt,graceMs:RECONNECT_GRACE_MS};
  player.connectionStatus="disconnected";player.disconnectedAt=now;player.reconnectDeadlineAt=now+RECONNECT_GRACE_MS;
  return {status:"disconnected",seat,deadlineAt:player.reconnectDeadlineAt,graceMs:RECONNECT_GRACE_MS};
 }
