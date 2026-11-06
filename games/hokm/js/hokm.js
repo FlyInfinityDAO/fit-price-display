@@ -62,16 +62,16 @@ async function connectHokm(method){
   activeProvider=await walletProvider(method);
   const accounts=await activeProvider.request({method:"eth_accounts"});
   if(!accounts?.[0])throw new Error(msg("noWallet"));
-  let chain=await activeProvider.request({method:"eth_chainId"});
+  let chain=String(await activeProvider.request({method:"eth_chainId"})).toLowerCase();
   if(chain!=="0x38"){
    try{await activeProvider.request({method:"wallet_switchEthereumChain",params:[{chainId:"0x38"}]})}
    catch(e){throw new Error(e.code===4902?"BNB Smart Chain is not added to this wallet.":msg("wrongChain"))}
-   chain=await activeProvider.request({method:"eth_chainId"});
+   chain=String(await activeProvider.request({method:"eth_chainId"})).toLowerCase();
    if(chain!=="0x38")throw new Error(msg("wrongChain"));
   }
-  const address=accounts[0],challenge=await api("/api/auth/challenge",{address});
+  const address=accounts[0],provider=new ethers.providers.Web3Provider(activeProvider,"any"),signer=provider.getSigner(),challenge=await api("/api/auth/challenge",{address});
   setAccessStatus(msg("signing"));
-  const signature=await signWithTimeout({signMessage:message=>activeProvider.request({method:"personal_sign",params:[message,address]})},challenge.message);
+  const signature=await signWithTimeout(signer,challenge.message);
   setAccessStatus(msg("verifying"));
   const verified=await api("/api/auth/verify",{address,nonce:challenge.nonce,signature});
   sessionToken=verified.sessionToken;currentWallet=verified.wallet;
