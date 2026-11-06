@@ -124,7 +124,7 @@ function reconnectPlayer(match,seat,now=Date.now()){
  const player=match.players.find(p=>p.seat===seat);
  if(!player||player.connectionStatus==="replaced"||player.kind==="cpu")return {reconnected:false,reason:"seat-unavailable"};
  if(player.connectionStatus!=="disconnected")return {reconnected:false,reason:"not-disconnected"};
- if(now>player.reconnectDeadlineAt)return {reconnected:false,reason:"grace-expired"};
+ if(now>=player.reconnectDeadlineAt)return {reconnected:false,reason:"grace-expired"};
  player.connectionStatus="connected";delete player.disconnectedAt;delete player.reconnectDeadlineAt;
  return {reconnected:true,seat,kind:"human"};
 }
