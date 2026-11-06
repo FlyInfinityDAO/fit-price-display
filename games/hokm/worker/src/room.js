@@ -14,7 +14,8 @@ const publicPlayer = (p, viewer) => ({
   wallet: p.wallet.slice(0, 6) + "…" + p.wallet.slice(-4),
   you: p.wallet === viewer,
   tier: p.tier,
-  connected: !!p.connected
+  connected: !!p.connected,
+  cpu: !!p.replaced
 });
 
 export class HokmRoom extends DurableObject {
