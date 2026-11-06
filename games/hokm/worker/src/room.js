@@ -320,7 +320,7 @@ export class HokmRoom extends DurableObject {
         this.queueCpuTurn(room);
       } else if (data.type === "leave") {
         player.connected = false;
-        player.reconnectUntil = Date.now() + 30000;
+        player.reconnectUntil = Date.now() + H.RECONNECT_GRACE_MS;
         if (room.match) H.markPlayerDisconnected(room.match, player.seat);
       } else {
         throw new Error("Unknown game action");
