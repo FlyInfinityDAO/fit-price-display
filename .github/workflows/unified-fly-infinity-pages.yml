@@ -1,0 +1,55 @@
+name: Unified Fly Infinity Pages
+
+on:
+  push:
+    branches: [feature/chess-arena-games]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout unified site
+        uses: actions/checkout@v4
+      - name: Prepare GitHub Pages site
+        run: |
+          mkdir -p _site
+          rsync -a ./ _site/ \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='_site' \
+            --exclude='node_modules' \
+            --exclude='backend' \
+            --exclude='games/chess-arena/worker/node_modules' \
+            --exclude='**/tests' \
+            --exclude='**/.wrangler' \
+            --exclude='**/.dev.vars'
+          touch _site/.nojekyll
+          test -s _site/index.html
+          test -s _site/fly-ai/index.html
+          test -s _site/games/chess-arena/index.html
+          test -s _site/games/backgammon/index.html
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy unified site
+        id: deployment
+        uses: actions/deploy-pages@v4
