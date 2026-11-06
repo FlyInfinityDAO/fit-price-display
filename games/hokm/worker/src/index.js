@@ -1,3 +1,4 @@
+export { HokmRoom } from "./room.js";
 import {getAddress,isAddress,verifyMessage} from "ethers";
 import {enforceRateLimit,cleanupExpiredRecords,getFitBalance} from "./security.js";
 const CHAIN_ID=56,MIN_FIT=10n**18n,TIER2_FIT=10n**19n,NONCE_TTL=300,SESSION_TTL=1800;
@@ -91,7 +92,7 @@ export default {
     const ticket=url.searchParams.get("ticket")||"";
     if(!ticket||ticket.length>128)return json({ok:false,error:"A one-time connection ticket is required"},401,headers);
     const stub=env.HOKM_ROOMS.get(env.HOKM_ROOMS.idFromName(wsMatch[1]));
-    return await stub.fetch(new Request("https://hokm-room.internal/ws?ticket="+encodeURIComponent(ticket),request));
+    return await stub.fetch(request);
    }
    return json({ok:false,error:"Not found"},404,headers);
   }catch(error){return json({ok:false,error:error.message||"Request failed"},500,headers)}
