@@ -26,7 +26,7 @@ $("musicVolume").addEventListener("input",e=>{$("volumeValue").textContent=e.tar
 $("dealDemoBtn").addEventListener("click",()=>{cardFx("deal");$("tableMessage").textContent=lang==="fa"?"صدای پخش کارت‌ها":"Card dealing sound preview"});
 $("collectDemoBtn").addEventListener("click",()=>{cardFx("collect");$("tableMessage").textContent=lang==="fa"?"صدای جمع کردن کارت‌ها":"Card collection sound preview"});
 
-const API_BASE=(window.HOKM_API_URL||"https://fly-hokm-api.YOUR-SUBDOMAIN.workers.dev").replace(/\/$/,"");
+const API_BASE=(window.HOKM_API_URL||"https://fly-hokm-api.flyinfinityplatform.workers.dev").replace(/\/$/,"");
 let activeProvider=null,sessionToken=null,currentWallet=null;
 const accessMessages={
  en:{connecting:"Connecting wallet…",signing:"Please approve the free signature in your wallet…",verifying:"Verifying FIT balance on BNB Smart Chain…",ready:"Access verified · ",denied:"Access denied: ",wrongChain:"Please switch to BNB Smart Chain.",noWallet:"No compatible wallet found. Open this page in your wallet browser or use Connect wallet.",api:"Hokm authentication service is not configured or unavailable.",timeout:"Wallet signature timed out. Please try again."},
