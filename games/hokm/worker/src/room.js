@@ -262,6 +262,8 @@ export class HokmRoom extends DurableObject {
   async applyResult(room, result) {
     const game = room.match.round;
     if (result.roundWinner !== undefined) {
+      room.lastTrick = result.trick || [];
+      room.lastTrickClearAt = Date.now() + 1200;
       const round = H.finishRound(room.match, game, result.roundWinner);
       room.roundWinner = result.roundWinner;
       room.status = round.matchFinished ? "finished" : "round-break";
