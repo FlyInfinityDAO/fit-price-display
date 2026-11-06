@@ -11,7 +11,7 @@ BSC_RPC_URL = "https://bsc-dataseed.binance.org/"
 [[d1_databases]]
 binding = "DB"
 database_name = "fly-hokm-db"
-database_id = "REPLACE_WITH_HOKM_D1_DATABASE_ID"
+database_id = "0f82c3fb-95f7-42d5-a2ca-9861d63b8948"
 migrations_dir = "migrations"
 
 [triggers]
