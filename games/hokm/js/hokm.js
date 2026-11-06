@@ -27,7 +27,7 @@ $("dealDemoBtn").addEventListener("click",()=>{cardFx("deal");$("tableMessage").
 $("collectDemoBtn").addEventListener("click",()=>{cardFx("collect");$("tableMessage").textContent=lang==="fa"?"صدای جمع کردن کارت‌ها":"Card collection sound preview"});
 
 const API_BASE=(window.HOKM_API_URL||"https://fly-hokm-api.flyinfinityplatform.workers.dev").replace(/\/$/,"");
-let activeProvider=null,sessionToken=null,currentWallet=null;
+let activeProvider=null,sessionToken=null,currentWallet=null,watchedWalletProvider=null;
 const accessMessages={
  en:{connecting:"Connecting wallet…",signing:"Please approve the free signature in your wallet…",verifying:"Verifying FIT balance on BNB Smart Chain…",ready:"Access verified · ",denied:"Access denied: ",wrongChain:"Please switch to BNB Smart Chain.",noWallet:"No compatible wallet found. Open this page in your wallet browser or use Connect wallet.",api:"Hokm authentication service is not configured or unavailable.",timeout:"Wallet signature timed out. Please try again."},
  fa:{connecting:"در حال اتصال کیف پول…",signing:"لطفاً امضای رایگان را در کیف پول تأیید کنید…",verifying:"در حال بررسی موجودی FIT روی BNB Smart Chain…",ready:"دسترسی تأیید شد · ",denied:"عدم دسترسی: ",wrongChain:"لطفاً شبکه را به BNB Smart Chain تغییر دهید.",noWallet:"کیف پول سازگار پیدا نشد. صفحه را در مرورگر کیف پول باز کنید یا روش اتصال کیف پول را امتحان کنید.",api:"سرویس احراز هویت حکم هنوز راه‌اندازی نشده یا در دسترس نیست.",timeout:"زمان امضای کیف پول تمام شد. دوباره تلاش کنید."}
@@ -75,6 +75,7 @@ async function connectHokm(method){
   setAccessStatus(msg("verifying"));
   const verified=await api("/api/auth/verify",{address,nonce:challenge.nonce,signature});
   sessionToken=verified.sessionToken;currentWallet=verified.wallet;
+  watchWalletProvider(activeProvider);
   const fit=(Number(verified.fitBalanceWei)/1e18).toLocaleString(undefined,{maximumFractionDigits:4});
   setAccessStatus(msg("ready")+currentWallet.slice(0,6)+"…"+currentWallet.slice(-4)+" · "+fit+" FIT · Tier "+verified.tier);
   $("connectBrowserBtn").textContent=tr("connectBrowser");$("connectWalletBtn").textContent=tr("connectWallet");
@@ -87,8 +88,33 @@ async function connectHokm(method){
 }
 $("connectBrowserBtn").addEventListener("click",()=>connectHokm("browser"));
 $("connectWalletBtn").addEventListener("click",()=>connectHokm("wallet"));
-function walletChanged(){sessionToken=null;currentWallet=null;setAccessStatus(tr("notConnected"))}
-if(window.ethereum?.on){window.ethereum.on("accountsChanged",walletChanged);window.ethereum.on("chainChanged",walletChanged)}
+function walletChanged(){
+ sessionToken=null;currentWallet=null;
+ setAccessStatus(tr("notConnected"));
+ window.dispatchEvent(new CustomEvent("hokm:access-revoked"));
+}
+function watchWalletProvider(provider){
+ if(!provider||typeof provider.on!=="function")return;
+ if(watchedWalletProvider&&watchedWalletProvider!==provider){
+  if(typeof watchedWalletProvider.removeListener==="function"){
+   watchedWalletProvider.removeListener("accountsChanged",walletChanged);
+   watchedWalletProvider.removeListener("chainChanged",walletChanged);
+  }else if(typeof watchedWalletProvider.off==="function"){
+   watchedWalletProvider.off("accountsChanged",walletChanged);
+   watchedWalletProvider.off("chainChanged",walletChanged);
+  }
+ }
+ watchedWalletProvider=provider;
+ if(typeof provider.removeListener==="function"){
+  provider.removeListener("accountsChanged",walletChanged);
+  provider.removeListener("chainChanged",walletChanged);
+ }else if(typeof provider.off==="function"){
+  provider.off("accountsChanged",walletChanged);
+  provider.off("chainChanged",walletChanged);
+ }
+ provider.on("accountsChanged",walletChanged);
+ provider.on("chainChanged",walletChanged);
+}
 applyLang();
 let selectedCpuDifficulty="normal";
 $("cpuDifficulty")?.addEventListener("change",e=>{selectedCpuDifficulty=["easy","normal","hard"].includes(e.target.value)?e.target.value:"normal";window.hokmCpuDifficulty=selectedCpuDifficulty;});
