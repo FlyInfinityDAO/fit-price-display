@@ -230,3 +230,88 @@ footer{padding:16px 12px 20px;color:rgba(199,216,210,.72);letter-spacing:.025em}
  .dashboard-link{font-size:9px;padding:6px 8px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+
+/* Player profile refinement — presentation only; wallet and game controls are untouched. */
+.stats-panel{
+ position:relative;isolation:isolate;overflow:hidden;
+ border:1px solid rgba(0,200,150,.34);
+ border-radius:24px;
+ background:linear-gradient(145deg,rgba(12,27,23,.72),rgba(8,14,13,.68));
+ box-shadow:0 16px 38px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.07),0 0 22px rgba(0,200,150,.055);
+}
+.stats-panel:before{
+ content:"";position:absolute;z-index:-1;inset:0 0 auto;height:3px;
+ background:linear-gradient(90deg,transparent,#00C896 22%,#D4AF37 50%,#00C896 78%,transparent);
+ opacity:.9;
+}
+.stats-panel>.eyebrow:first-child{
+ display:flex;align-items:center;gap:9px;
+ color:#70f5cf;font-size:10px;letter-spacing:.19em;
+}
+.stats-panel>.eyebrow:first-child:before{
+ content:"";display:inline-block;width:7px;height:7px;border-radius:50%;
+ background:#00C896;box-shadow:0 0 12px rgba(0,200,150,.8);
+}
+.stats-panel h2{margin:9px 0 7px;font-size:clamp(21px,2.8vw,27px);font-weight:900;letter-spacing:.01em}
+.stats-wallet{
+ display:inline-flex;max-width:100%;align-items:center;
+ margin:3px 0 17px;padding:7px 11px;
+ border:1px solid rgba(0,200,150,.2);border-radius:10px;
+ background:rgba(0,200,150,.055);color:#c3d8d0;
+ font-family:ui-monospace,SFMono-Regular,Consolas,monospace;
+ font-size:11px;line-height:1.5;overflow-wrap:anywhere;
+}
+.stats-scope{display:block;margin:-8px 0 15px;color:var(--muted);font-size:11px;line-height:1.6}
+.stats-grid{gap:10px}
+.stats-grid>div{
+ position:relative;overflow:hidden;min-width:0;
+ padding:14px 15px;border:1px solid rgba(0,200,150,.16);
+ border-radius:16px;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.012));
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.045);
+ transition:border-color .18s ease,transform .18s ease,background .18s ease;
+}
+.stats-grid>div:before{
+ content:"";position:absolute;left:0;right:0;top:0;height:2px;
+ background:linear-gradient(90deg,rgba(0,200,150,.05),rgba(0,200,150,.55),rgba(212,175,55,.28));
+}
+.stats-grid>div:nth-child(1),.stats-grid>div:nth-child(2){
+ border-color:rgba(212,175,55,.28);
+ background:linear-gradient(145deg,rgba(212,175,55,.09),rgba(255,255,255,.015));
+}
+.stats-grid>div:nth-child(1):before,.stats-grid>div:nth-child(2):before{
+ background:linear-gradient(90deg,transparent,rgba(212,175,55,.85),transparent);
+}
+.stats-grid small{display:block;font-size:9px;letter-spacing:.13em;line-height:1.45}
+.stats-grid strong{margin-top:8px;font-size:clamp(22px,3vw,30px);font-weight:900;line-height:1.1}
+.stats-grid>div:nth-child(4) strong{color:#70f5cf}
+.stats-grid>div:nth-child(5) strong{color:#ff9b91}
+.stats-grid>div:nth-child(6) strong{color:#e7c96e}
+.leaderboard-heading{display:flex;align-items:center;gap:9px;margin-top:24px}
+.leaderboard-heading:before{content:"";width:19px;height:1px;background:var(--fi-gold,#D4AF37)}
+.stats-leaderboard{gap:8px}
+.leaderboard-row{
+ min-height:46px;padding:10px 13px;
+ border:1px solid rgba(0,200,150,.13);border-radius:13px;
+ background:linear-gradient(100deg,rgba(255,255,255,.035),rgba(255,255,255,.012));
+ transition:border-color .18s ease,background .18s ease;
+}
+.leaderboard-row:first-child{border-color:rgba(212,175,55,.28);background:linear-gradient(100deg,rgba(212,175,55,.09),rgba(255,255,255,.015))}
+.leaderboard-row>span{font-variant-numeric:tabular-nums}
+.leaderboard-row b{font-variant-numeric:tabular-nums}
+@media(hover:hover){
+ .stats-grid>div:hover{transform:translateY(-2px);border-color:rgba(0,225,170,.42);background:rgba(0,200,150,.055)}
+ .leaderboard-row:hover{border-color:rgba(0,200,150,.34);background:rgba(0,200,150,.045)}
+}
+@media(max-width:560px){
+ .stats-panel{border-radius:21px}
+ .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .stats-grid>div{padding:12px}
+ .stats-grid small{font-size:8px}
+ .stats-grid strong{font-size:24px}
+ .stats-wallet{font-size:10px;padding:6px 9px}
+ .leaderboard-row{grid-template-columns:30px minmax(0,1fr) auto;gap:8px;padding:9px 10px;font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+ .stats-grid>div,.leaderboard-row{transition:none}
+}
