@@ -77,7 +77,7 @@ export class HokmRoom extends DurableObject {
     if (request.method === "POST" && url.pathname === "/create") return this.create(request);
     if (request.method === "POST" && url.pathname === "/join") return this.join(request);
     if (request.method === "POST" && url.pathname === "/ticket") return this.issueTicket(request);
-    if (request.method === "GET" && url.pathname === "/ws") return this.connect(request);
+    if (request.method === "GET" && (url.pathname === "/ws" || url.pathname.endsWith("/ws"))) return this.connect(request);
     return json({ ok: false, error: "Not found" }, 404);
   }
   async create(request) {
