@@ -168,8 +168,7 @@
     if (connectPromise) return connectPromise;
 
     connectPromise = (async function () {
-      // Preserve the existing iOS pre-initialization path. Android initializes
-      // on demand so its first pairing starts from a clean Reown modal state.
+      // Reuse the provider initialized during page load on every platform.
       if (!initPromise && iosWarmupPromise) {
         const warmedProvider = await iosWarmupPromise;
         if (warmedProvider) {
@@ -193,9 +192,8 @@
       let provider = await initPromise;
       let hasExistingSession = false;
 
-      // Keep a valid WalletConnect session on Android and desktop. Recreating
-      // it on every tap discards the pairing and can break the mobile return flow.
-      // Preserve the existing iOS reconnect path to avoid changing its working UX.
+      // Reuse a valid session on every platform; only clear it when it has no
+      // active accounts, then pair again through the same provider instance.
       if (provider.session) {
         try {
           const existingAccounts = await provider.request({ method: 'eth_accounts' });
