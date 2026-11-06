@@ -101,6 +101,7 @@ function scheduleReconnect(){
    openSocket(ticket.ticket);
   }catch(error){
    status((error.message||t("connectionLost"))+" · "+t("connectionLost"),true);
+   reconnecting=false;
    if(!/not found|expired|replaced|seat is no longer/i.test(error.message||""))scheduleReconnect();
   }finally{reconnecting=false}
  },delay);
