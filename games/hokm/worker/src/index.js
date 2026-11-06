@@ -63,7 +63,8 @@ export default {
   if(request.method==="GET"&&path==="/api/health")return json({ok:true,service:"Fly Hokm API",version:"0.1.0"},200,headers);
   const configs={"POST /api/auth/challenge":["auth-challenge",20,600],"POST /api/auth/verify":["auth-verify",30,600],"GET /api/auth/session":["auth-session",60,60]};
   const dynamicTicket=request.method==="POST"&&/^\/api\/rooms\/[A-HJ-NP-Z2-9]{6}\/ticket$/.test(path);
-  const config=configs[request.method+" "+path]||(request.method==="POST"&&path==="/api/rooms"?["room-create",20,600]:dynamicTicket?["room-ticket",80,60]:null);
+  const dynamicCpu=request.method==="POST"&&/^\/api\/rooms\/[A-HJ-NP-Z2-9]{6}\/cpu$/.test(path);
+  const config=configs[request.method+" "+path]||(request.method==="POST"&&path==="/api/rooms"?["room-create",20,600]:dynamicTicket?["room-ticket",80,60]:dynamicCpu?["room-cpu",20,600]:null);
   if(config){try{const limit=await enforceRateLimit(request,env,...config);if(!limit.allowed)return json({ok:false,error:"Too many requests. Please wait and retry."},429,{"retry-after":String(limit.retryAfter),...headers})}catch{return json({ok:false,error:"Security service temporarily unavailable"},503,{"retry-after":"5",...headers})}}
   try{
    if(request.method==="POST"&&path==="/api/auth/challenge")return withHeaders(await challenge(request,env),headers);
@@ -78,6 +79,14 @@ export default {
     if(!/^[A-HJ-NP-Z2-9]{6}$/.test(code))return json({ok:false,error:"Invalid room code"},400,headers);
     const id=env.HOKM_ROOMS.idFromName(code),stub=env.HOKM_ROOMS.get(id);
     const response=await stub.fetch("https://hokm-room.internal/"+action+"?code="+code,{method:"POST",headers:{"x-player-wallet":player.wallet,"x-player-tier":String(player.tier)}});
+    return withHeaders(response,headers);
+   }
+   const cpuMatch=path.match(/^\/api\/rooms\/([A-HJ-NP-Z2-9]{6})\/cpu$/);
+   if(request.method==="POST"&&cpuMatch){
+    const player=await verifiedPlayer(request,env);if(player instanceof Response)return withHeaders(player,headers);
+    let body;try{body=await request.json()}catch{return json({ok:false,error:"Invalid JSON body"},400,headers)}
+    const stub=env.HOKM_ROOMS.get(env.HOKM_ROOMS.idFromName(cpuMatch[1]));
+    const response=await stub.fetch("https://hokm-room.internal/cpu",{method:"POST",headers:{"x-player-wallet":player.wallet,"content-type":"application/json"},body:JSON.stringify(body)});
     return withHeaders(response,headers);
    }
    const ticketMatch=path.match(/^\/api\/rooms\/([A-HJ-NP-Z2-9]{6})\/ticket$/);
