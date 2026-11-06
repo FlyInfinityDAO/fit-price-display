@@ -28,7 +28,7 @@ test("bearing off requires all checkers in home and no bar checkers", () => {
   assert.equal(allInHome(p,"w"),false);
 });
 test("winner is recognized after all fifteen checkers bear off", () => {
-  const p = initialPosition(); p.off.w=15;
+  const p = initialPosition(); p.off.w=15; p.off.b=1;
   assert.deepEqual(winner(p),{side:"w",multiplier:1});
 });
 test("dice are within standard range", () => {
