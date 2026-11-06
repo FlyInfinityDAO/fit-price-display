@@ -2,6 +2,10 @@ name: Publish Hokm on GitHub Pages
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/hokm-publish-once"
 
 permissions:
   contents: read
@@ -46,6 +50,7 @@ jobs:
           test -f hokm-source/games/hokm/index.html || { echo "::error::Hokm page was not found on feature/hokm-four-player."; exit 1; }
           test -f hokm-source/games/hokm/engine/hokm-engine.js || { echo "::error::Hokm engine is missing."; exit 1; }
           test -f hokm-source/games/hokm/js/hokm.js || { echo "::error::Hokm frontend script is missing."; exit 1; }
+          test -f hokm-source/games/hokm/js/hokm-wallet-bridge.js || { echo "::error::Hokm wallet bridge is missing."; exit 1; }
 
           if [ -e site/games/hokm ]; then
             echo "::error::games/hokm already exists on main. Stop to avoid overwriting existing content."
@@ -57,6 +62,7 @@ jobs:
 
           node --check site/games/hokm/engine/hokm-engine.js
           node --check site/games/hokm/js/hokm.js
+          node --check site/games/hokm/js/hokm-wallet-bridge.js
 
           test -f site/games/hokm/css/hokm.css
           test -f site/games/hokm/worker/src/index.js
