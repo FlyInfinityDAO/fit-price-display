@@ -120,6 +120,7 @@ test("chess room rejects wrong-turn and non-member socket moves without changing
   await room.fetch(makeRequest("/create?code=SIMCH2", "POST", "0xwhite-test-wallet"));
   await room.fetch(makeRequest("/join", "POST", "0xblack-test-wallet"));
   const initial = await values.get("game");
+  const initialFen = initial.fen;
 
   await room.webSocketMessage(sockets[1], JSON.stringify({ type: "move", from: "e7", to: "e5" }));
   assert.equal((await values.get("game")).fen, initial.fen);
@@ -130,6 +131,6 @@ test("chess room rejects wrong-turn and non-member socket moves without changing
   assert.ok(received.intruder.some(message => message.type === "error" && message.error === "This game is not active for your wallet."));
 
   await room.webSocketMessage(sockets[0], JSON.stringify({ type: "move", from: "f2", to: "f3" }));
-  assert.notEqual((await values.get("game")).fen, initial.fen);
+  assert.notEqual((await values.get("game")).fen, initialFen);
   assert.equal((await values.get("game")).turn, "b");
 });
