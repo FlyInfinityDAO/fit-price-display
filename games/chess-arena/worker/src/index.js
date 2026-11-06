@@ -158,9 +158,6 @@ async function handleVerify(request, env) {
     }, 403);
   }
 
-  if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32) {
-    return json({ ok: false, error: "Chess Arena session signing is not configured." }, 503);
-  }
   const issuedAt = now;
   const token = await signSession({
     sub: wallet,
