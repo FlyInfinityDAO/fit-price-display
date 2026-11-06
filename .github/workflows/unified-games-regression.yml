@@ -1,0 +1,87 @@
+name: Unified Games Regression Tests
+
+on:
+  push:
+    branches: [feature/chess-arena-games]
+    paths:
+      - 'games/chess-arena/**'
+      - 'games/backgammon/**'
+      - '.github/workflows/unified-games-regression.yml'
+  pull_request:
+    paths:
+      - 'games/chess-arena/**'
+      - 'games/backgammon/**'
+      - '.github/workflows/unified-games-regression.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rules-and-room-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Test backgammon rules and authoritative room behavior
+        run: |
+          node --test games/backgammon/js/backgammon-engine.test.js
+          node --test games/backgammon/tests/engine.test.mjs
+          node --test games/backgammon/tests/backgammon-room.test.mjs
+
+  chess-worker-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: games/chess-arena/worker/package-lock.json
+      - name: Install worker dependencies
+        working-directory: games/chess-arena/worker
+        run: npm install
+      - name: Check worker and chess client syntax
+        working-directory: games/chess-arena/worker
+        run: npm run check
+      - name: Build Worker bundle without deploying
+        working-directory: games/chess-arena/worker
+        run: npx wrangler deploy --dry-run --outdir /tmp/fly-chess-arena-worker
+
+  live-pages-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright Chromium
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Test live chess page on unified GitHub Pages
+        env:
+          CHESS_TEST_URL: https://flyinfinitydao.github.io/fit-price-display/games/chess-arena/
+        run: node games/chess-arena/tests/browser-smoke.mjs
+      - name: Test live backgammon page on unified GitHub Pages
+        env:
+          BACKGAMMON_TEST_URL: https://flyinfinitydao.github.io/fit-price-display/games/backgammon/
+        run: node games/backgammon/tests/browser-smoke.mjs
+
+  live-worker-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Test Worker health and unauthenticated stats protection
+        env:
+          BACKGAMMON_WORKER_URL: https://fly-chess-arena-api.flyinfinityplatform.workers.dev
+        run: node games/backgammon/tests/worker-api-smoke.mjs
