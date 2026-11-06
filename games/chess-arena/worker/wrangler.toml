@@ -29,3 +29,6 @@ new_sqlite_classes = ["ChessRoom"]
 [[migrations]]
 tag = "v2"
 new_sqlite_classes = ["BackgammonRoom"]
+
+[triggers]
+crons = ["17 * * * *"]
