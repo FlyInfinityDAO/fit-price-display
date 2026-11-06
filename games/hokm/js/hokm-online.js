@@ -152,10 +152,11 @@ function renderState(s){
    }
   }
   const nodes=[...document.querySelectorAll(".trick-cards .played-card")];
-  nodes.forEach(n=>{n.classList.add("empty");n.classList.remove("red");n.textContent="·"});
+  nodes.forEach(n=>{n.classList.add("empty");n.classList.remove("red","black");n.textContent="·"});
   const entries=(game.lastTrick&&game.lastTrick.length?game.lastTrick:game.trick)||[];
   entries.forEach(entry=>{const visual=displaySeat(entry.player),node=nodes[visual];if(node){node.classList.remove("empty");node.classList.toggle("red",["♥","♦"].includes(entry.card.suit));node.textContent=entry.card.rank+entry.card.suit}});
-  const trump=document.querySelector(".trump-pill b");if(trump)trump.textContent=game.trump||"—";
+  const trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent=game.trump||"—";
+  const hakem=document.getElementById("tableHakem"),hakemActual=game.hakem, hakemVisual=displaySeat(hakemActual),hakemChip=document.querySelector(seatEls(hakemVisual).chip+" b");if(hakem)hakem.textContent=hakemChip?hakemChip.textContent:(players.find(p=>p.seat===hakemActual)?.cpu?"CPU":"Seat "+(hakemActual+1));
   const score=document.querySelectorAll(".game-bottom .team-score b");
   if(score.length&&s.match){score[0].textContent=s.match.matchPoints[0];score[1].textContent=s.match.matchPoints[1]}
   const round=document.querySelector(".round-info b");if(round&&s.match){const completed=s.status==="round-break"||s.status==="finished";round.textContent=(s.match.roundsPlayed+(completed?0:1))+" / "+s.match.maxRounds;}
@@ -171,8 +172,8 @@ function renderState(s){
   stopCountdown();
   document.querySelectorAll(".hand").forEach(hand=>{hand.replaceChildren(...Array.from({length:13},()=>{const back=document.createElement("span");back.className="hokm-card-back";return back}))});
   document.querySelectorAll(".player-chip em").forEach(el=>el.textContent="0");
-  document.querySelectorAll(".trick-cards .played-card").forEach(el=>{el.classList.add("empty");el.classList.remove("red");el.textContent="·"});
-  const trump=document.querySelector(".trump-pill b");if(trump)trump.textContent="—";
+  document.querySelectorAll(".trick-cards .played-card").forEach(el=>{el.classList.add("empty");el.classList.remove("red","black");el.textContent="·"});
+  const trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent="—";const hakem=document.getElementById("tableHakem");if(hakem)hakem.textContent="—";
   document.querySelectorAll(".game-bottom .team-score b").forEach(el=>el.textContent="0");
   const round=document.querySelector(".round-info b");if(round)round.textContent="—";
  }
