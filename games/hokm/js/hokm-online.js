@@ -3,17 +3,19 @@
 const API=(window.HOKM_API_URL||"https://fly-hokm-api.flyinfinityplatform.workers.dev").replace(/\/$/,"");
 const $=id=>document.getElementById(id);
 const words={
- en:{title:"ONLINE FOUR-PLAYER TABLE",create:"Create private room",code:"Room code",join:"Join room",copy:"Copy invite code",waiting:"Waiting for players",connected:"Connected",yourTurn:"Your turn",opponent:"Waiting for opponent",choose:"Choose trump",round:"Round",won:"Your team won this round",lost:"Opponents won this round",finished:"Match finished",need:"Connect and verify your wallet to use online rooms.",copyOk:"Room code copied.",copied:"Copied",seat:"Seat",start:"Waiting for all four players",error:"Online room error",creating:"Creating a private room…",joining:"Joining the room…",invalidCode:"Enter a valid 6-character room code.",room:"Room",connectionLost:"Connection lost. Rejoin with the same wallet and room code.",wsFail:"WebSocket connection failed. Please retry.",roomInactive:"Room connection is not active.",copyFallback:"Select and copy the room code.",chooseBy:"Player {seat} is choosing trump…",seconds:"s",walletVerified:"Wallet verified · online rooms unlocked.",cpu:"CPU",addTwoCpu:"Add CPUs to seats 3 & 4",addLastCpu:"Add CPU to seat 4",addingCpu:"Adding CPU players…",cpuAdded:"CPU players added.",partner:"Partner",you:"You",openSeat:"Open seat",disconnected:"Disconnected"},
- fa:{title:"بازی آنلاین چهار‌نفره",create:"ساخت اتاق خصوصی",code:"کد اتاق",join:"ورود به اتاق",copy:"کپی کد دعوت",waiting:"در انتظار بازیکنان",connected:"متصل",yourTurn:"نوبت شماست",opponent:"در انتظار حرکت حریف",choose:"انتخاب خال حکم",round:"دست",won:"تیم شما این دست را برد",lost:"تیم مقابل این دست را برد",finished:"مسابقه تمام شد",need:"برای استفاده از اتاق آنلاین، کیف پول را متصل و احراز کنید.",copyOk:"کد اتاق کپی شد.",copied:"کپی شد",seat:"جایگاه",start:"در انتظار اتصال هر چهار بازیکن",error:"خطای اتاق آنلاین",creating:"در حال ساخت اتاق خصوصی…",joining:"در حال ورود به اتاق…",invalidCode:"کد معتبر ۶ کاراکتری وارد کنید.",room:"اتاق",connectionLost:"ارتباط قطع شد. با همان کیف پول و کد اتاق دوباره وارد شوید.",wsFail:"اتصال آنلاین برقرار نشد؛ دوباره تلاش کنید.",roomInactive:"اتصال اتاق فعال نیست.",copyFallback:"کد اتاق را انتخاب و کپی کنید.",chooseBy:"بازیکن {seat} در حال انتخاب حکم است…",seconds:"ثانیه",walletVerified:"کیف پول تأیید شد · اتاق آنلاین فعال است.",cpu:"هوش مصنوعی",addTwoCpu:"افزودن دو هوش مصنوعی برای جایگاه‌های سوم و چهارم",addLastCpu:"افزودن هوش مصنوعی فقط برای جایگاه چهارم",addingCpu:"در حال افزودن بازیکنان هوش مصنوعی…",cpuAdded:"بازیکنان هوش مصنوعی اضافه شدند.",partner:"هم‌تیمی",you:"شما",openSeat:"جایگاه خالی",disconnected:"قطع اتصال"},
+ en:{title:"ONLINE FOUR-PLAYER TABLE",create:"Create private room",code:"Room code",join:"Join room",copy:"Copy invite code",waiting:"Waiting for players",connected:"Connected",yourTurn:"Your turn",opponent:"Waiting for opponent",choose:"Choose Hokm suit",round:"Round",won:"Your team won this round",lost:"Opponents won this round",finished:"Match finished",need:"Connect and verify your wallet to use online rooms.",copyOk:"Room code copied.",copied:"Copied",seat:"Seat",start:"Waiting for all four players",error:"Online room error",creating:"Creating a private room…",joining:"Joining the room…",invalidCode:"Enter a valid 6-character room code.",room:"Room",connectionLost:"Connection lost. Rejoin with the same wallet and room code.",wsFail:"WebSocket connection failed. Please retry.",roomInactive:"Room connection is not active.",copyFallback:"Select and copy the room code.",chooseBy:"Player {seat} is choosing the Hokm suit…",seconds:"s",walletVerified:"Wallet verified · online rooms unlocked.",cpu:"CPU",addTwoCpu:"Add CPUs to seats 3 & 4",addLastCpu:"Add CPU to seat 4",addingCpu:"Adding CPU players…",cpuAdded:"CPU players added.",partner:"Partner",you:"You",openSeat:"Open seat",disconnected:"Disconnected"},
+ fa:{title:"بازی آنلاین چهار‌نفره",create:"ساخت اتاق خصوصی",code:"کد اتاق",join:"ورود به اتاق",copy:"کپی کد دعوت",waiting:"در انتظار بازیکنان",connected:"متصل",yourTurn:"نوبت شماست",opponent:"در انتظار حرکت حریف",choose:"انتخاب خال حکم",round:"دست",won:"تیم شما این دست را برد",lost:"تیم مقابل این دست را برد",finished:"مسابقه تمام شد",need:"برای استفاده از اتاق آنلاین، کیف پول را متصل و احراز کنید.",copyOk:"کد اتاق کپی شد.",copied:"کپی شد",seat:"جایگاه",start:"در انتظار اتصال هر چهار بازیکن",error:"خطای اتاق آنلاین",creating:"در حال ساخت اتاق خصوصی…",joining:"در حال ورود به اتاق…",invalidCode:"کد معتبر ۶ کاراکتری وارد کنید.",room:"اتاق",connectionLost:"ارتباط قطع شد. با همان کیف پول و کد اتاق دوباره وارد شوید.",wsFail:"اتصال آنلاین برقرار نشد؛ دوباره تلاش کنید.",roomInactive:"اتصال اتاق فعال نیست.",copyFallback:"کد اتاق را انتخاب و کپی کنید.",chooseBy:"بازیکن {seat} در حال انتخاب خال حکم است…",seconds:"ثانیه",walletVerified:"کیف پول تأیید شد · اتاق آنلاین فعال است.",cpu:"هوش مصنوعی",addTwoCpu:"افزودن دو هوش مصنوعی برای جایگاه‌های سوم و چهارم",addLastCpu:"افزودن هوش مصنوعی فقط برای جایگاه چهارم",addingCpu:"در حال افزودن بازیکنان هوش مصنوعی…",cpuAdded:"بازیکنان هوش مصنوعی اضافه شدند.",partner:"هم‌تیمی",you:"شما",openSeat:"جایگاه خالی",disconnected:"قطع اتصال"},
  ar:{title:"طاولة لأربعة لاعبين عبر الإنترنت",create:"إنشاء غرفة خاصة",code:"رمز الغرفة",join:"انضم إلى الغرفة",copy:"نسخ رمز الدعوة",waiting:"بانتظار اللاعبين",connected:"متصل",yourTurn:"دورك",opponent:"بانتظار الخصم",choose:"اختر الحكم",round:"الجولة",won:"فاز فريقك بهذه الجولة",lost:"فاز الفريق الآخر",finished:"انتهت المباراة",need:"اربط محفظتك وتحقق منها لاستخدام الغرف عبر الإنترنت.",copyOk:"تم نسخ رمز الغرفة.",copied:"تم النسخ",seat:"المقعد",start:"بانتظار اتصال اللاعبين الأربعة",error:"خطأ في الغرفة",creating:"جارٍ إنشاء غرفة خاصة…",joining:"جارٍ دخول الغرفة…",invalidCode:"أدخل رمز غرفة صالحاً من 6 أحرف.",room:"الغرفة",connectionLost:"انقطع الاتصال. أعد الدخول بالمحفظة ورمز الغرفة نفسيهما.",wsFail:"فشل اتصال WebSocket. حاول مجدداً.",roomInactive:"اتصال الغرفة غير نشط.",copyFallback:"حدد رمز الغرفة وانسخه.",chooseBy:"اللاعب {seat} يختار الحكم…",seconds:"ث",walletVerified:"تم التحقق من المحفظة · الغرف متاحة.",cpu:"الكمبيوتر",addTwoCpu:"إضافة الكمبيوتر للمقعدين الثالث والرابع",addLastCpu:"إضافة الكمبيوتر للمقعد الرابع فقط",addingCpu:"جارٍ إضافة لاعبي الكمبيوتر…",cpuAdded:"تمت إضافة لاعبي الكمبيوتر.",partner:"شريك",you:"أنت",openSeat:"مقعد فارغ",disconnected:"غير متصل"},
- tr:{title:"ÇEVRİMİÇİ DÖRT OYUNCULU MASA",create:"Özel oda oluştur",code:"Oda kodu",join:"Odaya katıl",copy:"Davet kodunu kopyala",waiting:"Oyuncular bekleniyor",connected:"Bağlandı",yourTurn:"Senin sıran",opponent:"Rakip bekleniyor",choose:"Kozu seç",round:"El",won:"Takımın bu eli kazandı",lost:"Rakip takım bu eli kazandı",finished:"Maç tamamlandı",need:"Çevrimiçi odalar için cüzdanını bağla ve doğrula.",copyOk:"Oda kodu kopyalandı.",copied:"Kopyalandı",seat:"Koltuk",start:"Dört oyuncunun bağlanması bekleniyor",error:"Çevrimiçi oda hatası",creating:"Özel oda oluşturuluyor…",joining:"Odaya katılınıyor…",invalidCode:"Geçerli 6 karakterli oda kodunu gir.",room:"Oda",connectionLost:"Bağlantı kesildi. Aynı cüzdan ve oda koduyla yeniden katıl.",wsFail:"WebSocket bağlantısı kurulamadı. Yeniden dene.",roomInactive:"Oda bağlantısı etkin değil.",copyFallback:"Oda kodunu seçip kopyala.",chooseBy:"{seat}. oyuncu kozu seçiyor…",seconds:"sn",walletVerified:"Cüzdan doğrulandı · çevrimiçi odalar açık.",cpu:"CPU",addTwoCpu:"CPU toevoegen aan plaatsen 3 en 4",addLastCpu:"CPU toevoegen aan plaats 4",addingCpu:"CPU-spelers toevoegen…",cpuAdded:"CPU-spelers toegevoegd.",partner:"Takım arkadaşı",you:"Sen",openSeat:"Boş koltuk",disconnected:"Bağlantı kesildi"},
- ru:{title:"ОНЛАЙН-СТОЛ НА ЧЕТВЕРЫХ",create:"Создать приватную комнату",code:"Код комнаты",join:"Войти в комнату",copy:"Скопировать код приглашения",waiting:"Ожидание игроков",connected:"Подключён",yourTurn:"Ваш ход",opponent:"Ожидание соперника",choose:"Выберите козырь",round:"Раунд",won:"Ваша команда выиграла раунд",lost:"Другая команда выиграла раунд",finished:"Матч завершён",need:"Подключите и подтвердите кошелёк для онлайн-комнат.",copyOk:"Код комнаты скопирован.",copied:"Скопировано",seat:"Место",start:"Ожидание подключения всех четырёх игроков",error:"Ошибка онлайн-комнаты",creating:"Создание приватной комнаты…",joining:"Вход в комнату…",invalidCode:"Введите корректный код из 6 символов.",room:"Комната",connectionLost:"Связь потеряна. Войдите снова с тем же кошельком и кодом.",wsFail:"Не удалось подключиться по WebSocket. Повторите попытку.",roomInactive:"Соединение с комнатой неактивно.",copyFallback:"Выделите и скопируйте код комнаты.",chooseBy:"Игрок {seat} выбирает козырь…",seconds:"сек",walletVerified:"Кошелёк подтверждён · онлайн-комнаты доступны.",cpu:"Компьютер",addTwoCpu:"Добавить компьютеры на места 3 и 4",addLastCpu:"Добавить компьютер только на место 4",addingCpu:"Добавление компьютерных игроков…",cpuAdded:"Компьютерные игроки добавлены.",partner:"Партнёр",you:"Вы",openSeat:"Свободное место",disconnected:"Не подключён"},
+ tr:{title:"ÇEVRİMİÇİ DÖRT OYUNCULU MASA",create:"Özel oda oluştur",code:"Oda kodu",join:"Odaya katıl",copy:"Davet kodunu kopyala",waiting:"Oyuncular bekleniyor",connected:"Bağlandı",yourTurn:"Senin sıran",opponent:"Rakip bekleniyor",choose:"Hokm rengini seç",round:"El",won:"Takımın bu eli kazandı",lost:"Rakip takım bu eli kazandı",finished:"Maç tamamlandı",need:"Çevrimiçi odalar için cüzdanını bağla ve doğrula.",copyOk:"Oda kodu kopyalandı.",copied:"Kopyalandı",seat:"Koltuk",start:"Dört oyuncunun bağlanması bekleniyor",error:"Çevrimiçi oda hatası",creating:"Özel oda oluşturuluyor…",joining:"Odaya katılınıyor…",invalidCode:"Geçerli 6 karakterli oda kodunu gir.",room:"Oda",connectionLost:"Bağlantı kesildi. Aynı cüzdan ve oda koduyla yeniden katıl.",wsFail:"WebSocket bağlantısı kurulamadı. Yeniden dene.",roomInactive:"Oda bağlantısı etkin değil.",copyFallback:"Oda kodunu seçip kopyala.",chooseBy:"{seat}. oyuncu Hokm rengini seçiyor…",seconds:"sn",walletVerified:"Cüzdan doğrulandı · çevrimiçi odalar açık.",cpu:"CPU",addTwoCpu:"CPU toevoegen aan plaatsen 3 en 4",addLastCpu:"CPU toevoegen aan plaats 4",addingCpu:"CPU-spelers toevoegen…",cpuAdded:"CPU-spelers toegevoegd.",partner:"Takım arkadaşı",you:"Sen",openSeat:"Boş koltuk",disconnected:"Bağlantı kesildi"},
+ ru:{title:"ОНЛАЙН-СТОЛ НА ЧЕТВЕРЫХ",create:"Создать приватную комнату",code:"Код комнаты",join:"Войти в комнату",copy:"Скопировать код приглашения",waiting:"Ожидание игроков",connected:"Подключён",yourTurn:"Ваш ход",opponent:"Ожидание соперника",choose:"Выберите масть хокма",round:"Раунд",won:"Ваша команда выиграла раунд",lost:"Другая команда выиграла раунд",finished:"Матч завершён",need:"Подключите и подтвердите кошелёк для онлайн-комнат.",copyOk:"Код комнаты скопирован.",copied:"Скопировано",seat:"Место",start:"Ожидание подключения всех четырёх игроков",error:"Ошибка онлайн-комнаты",creating:"Создание приватной комнаты…",joining:"Вход в комнату…",invalidCode:"Введите корректный код из 6 символов.",room:"Комната",connectionLost:"Связь потеряна. Войдите снова с тем же кошельком и кодом.",wsFail:"Не удалось подключиться по WebSocket. Повторите попытку.",roomInactive:"Соединение с комнатой неактивно.",copyFallback:"Выделите и скопируйте код комнаты.",chooseBy:"Игрок {seat} выбирает масть хокма…",seconds:"сек",walletVerified:"Кошелёк подтверждён · онлайн-комнаты доступны.",cpu:"Компьютер",addTwoCpu:"Добавить компьютеры на места 3 и 4",addLastCpu:"Добавить компьютер только на место 4",addingCpu:"Добавление компьютерных игроков…",cpuAdded:"Компьютерные игроки добавлены.",partner:"Партнёр",you:"Вы",openSeat:"Свободное место",disconnected:"Не подключён"},
  zh:{title:"四人在线牌桌",create:"创建私人房间",code:"房间代码",join:"加入房间",copy:"复制邀请代码",waiting:"等待玩家",connected:"已连接",yourTurn:"轮到你",opponent:"等待对手",choose:"选择主牌",round:"局",won:"你的队伍赢得本局",lost:"对方队伍赢得本局",finished:"比赛结束",need:"连接并验证钱包后即可使用在线房间。",copyOk:"房间代码已复制。",copied:"已复制",seat:"座位",start:"等待四位玩家全部连接",error:"在线房间错误",creating:"正在创建私人房间…",joining:"正在加入房间…",invalidCode:"请输入有效的六位房间代码。",room:"房间",connectionLost:"连接已断开。请使用相同钱包和房间代码重新加入。",wsFail:"WebSocket 连接失败，请重试。",roomInactive:"房间连接未激活。",copyFallback:"请选择并复制房间代码。",chooseBy:"玩家 {seat} 正在选择主牌…",seconds:"秒",walletVerified:"钱包已验证 · 在线房间已解锁。",cpu:"电脑",addTwoCpu:"为第 3 和第 4 个座位添加电脑",addLastCpu:"仅为第 4 个座位添加电脑",addingCpu:"正在添加电脑玩家…",cpuAdded:"电脑玩家已添加。",partner:"队友",you:"你",openSeat:"空位",disconnected:"已断开"},
- es:{title:"MESA EN LÍNEA PARA CUATRO",create:"Crear sala privada",code:"Código de sala",join:"Unirse a la sala",copy:"Copiar código de invitación",waiting:"Esperando jugadores",connected:"Conectado",yourTurn:"Tu turno",opponent:"Esperando al rival",choose:"Elegir triunfo",round:"Ronda",won:"Tu equipo ganó esta ronda",lost:"El otro equipo ganó esta ronda",finished:"Partida terminada",need:"Conecta y verifica tu cartera para usar salas en línea.",copyOk:"Código copiado.",copied:"Copiado",seat:"Asiento",start:"Esperando a los cuatro jugadores",error:"Error de sala en línea",creating:"Creando sala privada…",joining:"Entrando en la sala…",invalidCode:"Introduce un código válido de 6 caracteres.",room:"Sala",connectionLost:"Conexión perdida. Vuelve a entrar con la misma cartera y código.",wsFail:"Falló la conexión WebSocket. Inténtalo de nuevo.",roomInactive:"La conexión de la sala no está activa.",copyFallback:"Selecciona y copia el código de la sala.",chooseBy:"El jugador {seat} está eligiendo triunfo…",seconds:"s",walletVerified:"Cartera verificada · salas en línea desbloqueadas.",cpu:"CPU",addTwoCpu:"Añadir CPU a los asientos 3 y 4",addLastCpu:"Añadir CPU solo al asiento 4",addingCpu:"Añadiendo jugadores CPU…",cpuAdded:"Jugadores CPU añadidos.",partner:"Compañero",you:"Tú",openSeat:"Asiento libre",disconnected:"Desconectado"},
+ es:{title:"MESA EN LÍNEA PARA CUATRO",create:"Crear sala privada",code:"Código de sala",join:"Unirse a la sala",copy:"Copiar código de invitación",waiting:"Esperando jugadores",connected:"Conectado",yourTurn:"Tu turno",opponent:"Esperando al rival",choose:"Elegir palo de Hokm",round:"Ronda",won:"Tu equipo ganó esta ronda",lost:"El otro equipo ganó esta ronda",finished:"Partida terminada",need:"Conecta y verifica tu cartera para usar salas en línea.",copyOk:"Código copiado.",copied:"Copiado",seat:"Asiento",start:"Esperando a los cuatro jugadores",error:"Error de sala en línea",creating:"Creando sala privada…",joining:"Entrando en la sala…",invalidCode:"Introduce un código válido de 6 caracteres.",room:"Sala",connectionLost:"Conexión perdida. Vuelve a entrar con la misma cartera y código.",wsFail:"Falló la conexión WebSocket. Inténtalo de nuevo.",roomInactive:"La conexión de la sala no está activa.",copyFallback:"Selecciona y copia el código de la sala.",chooseBy:"El jugador {seat} está eligiendo el palo de Hokm…",seconds:"s",walletVerified:"Cartera verificada · salas en línea desbloqueadas.",cpu:"CPU",addTwoCpu:"Añadir CPU a los asientos 3 y 4",addLastCpu:"Añadir CPU solo al asiento 4",addingCpu:"Añadiendo jugadores CPU…",cpuAdded:"Jugadores CPU añadidos.",partner:"Compañero",you:"Tú",openSeat:"Asiento libre",disconnected:"Desconectado"},
  pt:{title:"MESA ONLINE PARA QUATRO",create:"Criar sala privada",code:"Código da sala",join:"Entrar na sala",copy:"Copiar código de convite",waiting:"Aguardando jogadores",connected:"Conectado",yourTurn:"Sua vez",opponent:"Aguardando adversário",choose:"Escolher trunfo",round:"Rodada",won:"Sua equipe venceu esta rodada",lost:"A outra equipe venceu esta rodada",finished:"Partida encerrada",need:"Conecte e verifique sua carteira para usar salas online.",copyOk:"Código da sala copiado.",copied:"Copiado",seat:"Assento",start:"Aguardando os quatro jogadores",addTwoCpu:"Adicionar CPUs aos lugares 3 e 4",addLastCpu:"Adicionar CPU apenas ao lugar 4",addingCpu:"Adicionando jogadores CPU…",cpuAdded:"Jogadores CPU adicionados.",error:"Erro na sala online"}
 };
 const t=k=>(words[$("languageSelect")?.value]||words.en)[k]||words.en[k]||k;
+const ROOM_SESSION_KEY="hokmFlyInfinityRoom";
 let auth=null, socket=null, roomCode="", ownSeat=-1, lastState=null, timer=null, connecting=false, intentionalClose=false;
+let reconnectTimer=null,reconnectAttempt=0,reconnecting=false;
 function ensurePanel(){
  if($("hokmOnlinePanel"))return;
  const settings=document.querySelector(".match-settings");
@@ -51,6 +53,7 @@ async function request(path,body){
 async function createOrJoin(action){
  if(connecting)return;
  if(!auth?.sessionToken){status(t("need"),true);return}
+ if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null}
  if(socket){intentionalClose=true;socket.close();socket=null}
  stopCountdown();lastState=null;
  if(action==="join"){
@@ -62,7 +65,7 @@ async function createOrJoin(action){
  try{
   status(t(action==="create"?"creating":"joining"));
   const result=await request("/api/rooms",{action,code:roomCode||undefined});
-  roomCode=result.code;ownSeat=result.seat;
+  roomCode=result.code;ownSeat=result.seat;sessionStorage.setItem(ROOM_SESSION_KEY,roomCode);reconnectAttempt=0;
   $("hokmRoomInvite").hidden=false;$("hokmRoomCode").textContent=roomCode;
   $("hokmGameControls").hidden=true;
   status(t("room")+" "+roomCode+" · "+t("seat")+" "+(ownSeat+1)+" · "+t("waiting")+"…");
@@ -73,18 +76,49 @@ async function createOrJoin(action){
 }
 function openSocket(ticket){
  intentionalClose=false;
+ if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null}
  const wsUrl=API.replace(/^https:/,"wss:").replace(/^http:/,"ws:")+"/api/rooms/"+roomCode+"/ws?ticket="+encodeURIComponent(ticket);
- socket=new WebSocket(wsUrl);
- socket.addEventListener("open",()=>status(t("room")+" "+roomCode+" · "+t("connected")));
- socket.addEventListener("message",event=>{
+ const ws=new WebSocket(wsUrl);socket=ws;
+ ws.addEventListener("open",()=>{if(socket!==ws)return;reconnectAttempt=0;status(t("room")+" "+roomCode+" · "+t("connected"))});
+ ws.addEventListener("message",event=>{
   let data;try{data=JSON.parse(event.data)}catch{return}
   if(data.type==="state"){lastState=data.state;ownSeat=data.state.seat;renderState(data.state)}
   else if(data.type==="error")status(data.error,true);
  });
- socket.addEventListener("close",()=>{
-  if(!intentionalClose)status(t("connectionLost"),true);
+ ws.addEventListener("close",()=>{
+  if(socket===ws)socket=null;
+  if(!intentionalClose&&socket===null){status(t("connectionLost"));scheduleReconnect()}
  });
- socket.addEventListener("error",()=>status("WebSocket connection failed. Check the API deployment.",true));
+ ws.addEventListener("error",()=>{if(socket===ws)status(t("wsFail"),true)});
+}
+function scheduleReconnect(){
+ if(intentionalClose||!auth?.sessionToken||!roomCode||reconnectTimer||reconnecting)return;
+ const delay=Math.min(1000*Math.pow(2,reconnectAttempt++),10000);
+ reconnectTimer=setTimeout(async()=>{
+  reconnectTimer=null;reconnecting=true;
+  try{
+   const ticket=await request("/api/rooms/"+roomCode+"/ticket",{});
+   openSocket(ticket.ticket);
+  }catch(error){
+   status((error.message||t("connectionLost"))+" · "+t("connectionLost"),true);
+   if(!/not found|expired|replaced|seat is no longer/i.test(error.message||""))scheduleReconnect();
+  }finally{reconnecting=false}
+ },delay);
+}
+async function resumeSavedRoom(){
+ if(connecting||socket||!auth?.sessionToken)return;
+ const saved=sessionStorage.getItem(ROOM_SESSION_KEY)||"";
+ if(!/^[A-HJ-NP-Z2-9]{6}$/.test(saved))return;
+ roomCode=saved;connecting=true;
+ try{
+  $("hokmRoomInvite").hidden=false;$("hokmRoomCode").textContent=roomCode;$("hokmGameControls").hidden=true;
+  status(t("joining")+" · "+roomCode);
+  const ticket=await request("/api/rooms/"+roomCode+"/ticket",{});
+  openSocket(ticket.ticket);
+ }catch(error){
+  status(error.message||t("connectionLost"),true);
+  if(/not found|expired|replaced|seat is no longer/i.test(error.message||""))sessionStorage.removeItem(ROOM_SESSION_KEY);
+ }finally{connecting=false}
 }
 function send(payload){
  if(!socket||socket.readyState!==WebSocket.OPEN){status(t("roomInactive"),true);return}
@@ -185,14 +219,14 @@ function startCountdown(deadline){
 }
 function stopCountdown(){if(timer)clearInterval(timer);timer=null}
 function reset(){
- intentionalClose=true;if(socket){socket.close();socket=null}
- stopCountdown();lastState=null;roomCode="";ownSeat=-1;auth=null;
+ intentionalClose=true;if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null}if(socket){socket.close();socket=null}
+ sessionStorage.removeItem(ROOM_SESSION_KEY);stopCountdown();lastState=null;roomCode="";ownSeat=-1;auth=null;
  if($("hokmOnlinePanel")){$("hokmOnlinePanel").hidden=true;$("hokmRoomInvite").hidden=true;$("hokmCpuControls").hidden=true;$("hokmOnlineTrump").hidden=true;status(t("need"))}
 }
 function activate(d){
  auth=d||null;
  ensurePanel();
- if($("hokmOnlinePanel")){$("hokmOnlinePanel").hidden=!auth?.sessionToken;translatePanel();if(auth?.sessionToken)status(t("walletVerified"));}
+ if($("hokmOnlinePanel")){$("hokmOnlinePanel").hidden=!auth?.sessionToken;translatePanel();if(auth?.sessionToken){status(t("walletVerified"));resumeSavedRoom();}}
 }
 window.addEventListener("hokm:authenticated",e=>activate(e.detail||{}));
 window.addEventListener("hokm:access-revoked",reset);
