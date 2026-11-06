@@ -27,7 +27,7 @@ function createGame({mode="solo",humanSeat=0,hakem=0,rng=Math.random}={}){
 }
 function startRound(match,{humanSeat=0,hakem=0,rng=Math.random}={}){
  if(match.finished||match.roundsPlayed>=match.maxRounds)throw new Error("Match has reached its round limit");
- match.round=createGame({mode:match.mode,humanSeat,hakem});
+ match.round=createGame({mode:match.mode,humanSeat,hakem,rng});
  match.roundNo=match.roundsPlayed+1;
  return match.round;
 }
