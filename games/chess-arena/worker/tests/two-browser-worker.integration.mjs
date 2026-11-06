@@ -148,7 +148,7 @@ try {
   await sendSocket(whitePage, { type: "move", from: "e2", to: "e4" });
   const chessBroadcast = await blackSawChessMove;
   assert.equal(chessBroadcast.game.turn, "b");
-  assert.match(chessBroadcast.game.fen, / e6 /);
+  assert.equal(chessBroadcast.game.fen.split(" ")[1], "b");
 
   // Backgammon: the same two independent browser contexts join a distinct room
   // and both observe the authoritative server's dice-roll broadcast.
