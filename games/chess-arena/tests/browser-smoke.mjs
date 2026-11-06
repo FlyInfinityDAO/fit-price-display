@@ -12,7 +12,7 @@ try {
   const response = await page.goto(baseURL, { waitUntil: "domcontentloaded", timeout: 30000 });
   assert.equal(response?.status(), 200, "Chess page should return HTTP 200");
   await page.locator("#languageSelect").waitFor();
-  await page.locator("#chessBoard").waitFor();
+  await page.locator("#chessBoard").waitFor({ state: "attached" });
   await page.locator("#connectBrowserBtn").waitFor();
   assert.equal(await page.locator("#gamePanel").isVisible(), false, "Board must remain hidden before wallet verification");
   assert.equal(await page.locator("#roomsPanel").isVisible(), false, "Room controls must remain hidden before wallet verification");
