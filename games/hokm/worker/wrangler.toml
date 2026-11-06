@@ -5,7 +5,7 @@ compatibility_flags = ["nodejs_compat"]
 
 [vars]
 FRONTEND_ORIGIN = "https://flyinfinitydao.github.io"
-FRONTEND_ORIGINS = "https://flyinfinitydao.github.io"
+FRONTEND_ORIGINS = "https://flyinfinitydao.github.io,https://hokm-preview.fly-hokm-preview.pages.dev"
 BSC_RPC_URL = "https://bsc-dataseed.binance.org/"
 
 [[d1_databases]]
