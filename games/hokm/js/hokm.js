@@ -61,6 +61,48 @@ async function signWithTimeout(signer,message){
  try{return await Promise.race([signer.signMessage(message),new Promise((_,reject)=>{timeoutId=setTimeout(()=>reject(new Error(msg("timeout"))),120000)})])}
  finally{clearTimeout(timeoutId)}
 }
+function normalizeChainId(value){
+ if(typeof value==="number")return value;
+ const raw=String(value??"").trim();
+ if(/^0x[0-9a-f]+$/i.test(raw))return Number.parseInt(raw,16);
+ if(/^\\d+$/.test(raw))return Number.parseInt(raw,10);
+ return NaN;
+}
+const wait=(ms)=>new Promise(resolve=>setTimeout(resolve,ms));
+async function readWalletChainId(provider){
+ let lastValue=null;
+ for(let attempt=0;attempt<8;attempt++){
+  lastValue=await provider.request({method:"eth_chainId"});
+  const chainId=normalizeChainId(lastValue);
+  if(Number.isFinite(chainId))return chainId;
+  await wait(250);
+ }
+ return normalizeChainId(lastValue);
+}
+async function ensureBscNetwork(provider){
+ let chainId=await readWalletChainId(provider);
+ if(chainId===56)return;
+ try{
+  await provider.request({method:"wallet_switchEthereumChain",params:[{chainId:"0x38"}]});
+ }catch(error){
+  if(error.code===4902){
+   await provider.request({method:"wallet_addEthereumChain",params:[{chainId:"0x38",chainName:"BNB Smart Chain",nativeCurrency:{name:"BNB",symbol:"BNB",decimals:18},rpcUrls:["https://bsc-dataseed.binance.org/"],blockExplorerUrls:["https://bscscan.com/"]}]});
+   await provider.request({method:"wallet_switchEthereumChain",params:[{chainId:"0x38"}]});
+  }else{
+   console.warn("[Hokm wallet] Network switch request failed:",{code:error.code,message:error.message});
+   throw new Error(msg("wrongChain"));
+  }
+ }
+ // WalletConnect mobile handoff can resolve before the provider reports the
+ // new chain. Poll the authenticated provider instead of checking only once.
+ for(let attempt=0;attempt<16;attempt++){
+  chainId=await readWalletChainId(provider);
+  if(chainId===56)return;
+  await wait(350);
+ }
+ console.warn("[Hokm wallet] BSC was requested but provider still reports another chain:",chainId);
+ throw new Error(msg("wrongChain"));
+}
 async function connectHokm(method){
  const buttons=[$("connectBrowserBtn"),$("connectWalletBtn")];
  buttons.forEach(b=>b.disabled=true);setAccessStatus(msg("connecting"));
@@ -68,13 +110,7 @@ async function connectHokm(method){
   activeProvider=await walletProvider(method);
   const accounts=await activeProvider.request({method:"eth_accounts"});
   if(!accounts?.[0])throw new Error(msg("noWallet"));
-  let chain=String(await activeProvider.request({method:"eth_chainId"})).toLowerCase();
-  if(chain!=="0x38"){
-   try{await activeProvider.request({method:"wallet_switchEthereumChain",params:[{chainId:"0x38"}]})}
-   catch(e){throw new Error(e.code===4902?"BNB Smart Chain is not added to this wallet.":msg("wrongChain"))}
-   chain=String(await activeProvider.request({method:"eth_chainId"})).toLowerCase();
-   if(chain!=="0x38")throw new Error(msg("wrongChain"));
-  }
+  await ensureBscNetwork(activeProvider);
   const address=accounts[0],provider=new ethers.providers.Web3Provider(activeProvider,"any"),signer=provider.getSigner(),challenge=await api("/api/auth/challenge",{address});
   setAccessStatus(msg("signing"));
   const signature=await signWithTimeout(signer,challenge.message);
