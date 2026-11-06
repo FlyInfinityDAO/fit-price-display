@@ -64,17 +64,18 @@ function decodeBase64Url(value) {
 async function verifySession(token, secret) {
   const parts = token.split(".");
   if (parts.length !== 3) return null;
-  const input = parts[0] + "." + parts[1];
-  const key = await crypto.subtle.importKey(
-    "raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["verify"]
-  );
-  const signature = Uint8Array.from(decodeBase64Url(parts[2]), c => c.charCodeAt(0));
-  const valid = await crypto.subtle.verify("HMAC", key, signature, new TextEncoder().encode(input));
-  if (!valid) return null;
-  const payloadText = decodeBase64Url(parts[1]);
-  const payload = JSON.parse(payloadText);
-  if (!payload.exp || payload.exp <= Math.floor(Date.now() / 1000)) return null;
-  return payload;
+  try {
+    const input = parts[0] + "." + parts[1];
+    const key = await crypto.subtle.importKey(
+      "raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["verify"]
+    );
+    const signature = Uint8Array.from(decodeBase64Url(parts[2]), c => c.charCodeAt(0));
+    const valid = await crypto.subtle.verify("HMAC", key, signature, new TextEncoder().encode(input));
+    if (!valid) return null;
+    const payload = JSON.parse(decodeBase64Url(parts[1]));
+    if (!payload.exp || payload.exp <= Math.floor(Date.now() / 1000)) return null;
+    return payload;
+  } catch { return null; }
 }
 
 async function handleChallenge(request, env) {
@@ -145,7 +146,7 @@ async function handleVerify(request, env) {
   }
   const consumed = await env.DB.prepare(
     "UPDATE wallet_nonces SET used = 1 WHERE nonce = ? AND wallet_address = ? AND used = 0 AND expires_at > ?"
-  ).bind(body.nonce, wallet.toLowerCase(), now).run();
+  ).bind(body.nonce, wallet.toLowerCase(), Math.floor(Date.now() / 1000)).run();
   if (!consumed.meta || consumed.meta.changes !== 1) {
     return json({ ok: false, error: "Challenge has already been used. Request a new one." }, 409);
   }
@@ -158,7 +159,7 @@ async function handleVerify(request, env) {
     }, 403);
   }
 
-  const issuedAt = now;
+  const issuedAt = Math.floor(Date.now() / 1000);
   const token = await signSession({
     sub: wallet,
     chainId: BSC_CHAIN_ID,
