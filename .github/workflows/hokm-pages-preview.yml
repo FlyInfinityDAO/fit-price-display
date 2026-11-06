@@ -82,7 +82,7 @@ jobs:
           set -euo pipefail
           curl --silent --show-error --fail --retry 8 --retry-delay 5 "$PREVIEW_URL/games/hokm/" -o /tmp/hokm.html
           grep -q 'Hokm Fly Infinity' /tmp/hokm.html
-          headers="$(curl --silent --show-error --dump-header - --output /dev/null --request OPTIONS \
+          headers="$(curl --silent --show-error --retry 8 --retry-all-errors --retry-delay 3 --dump-header - --output /dev/null --request OPTIONS \
             --header "Origin: $PREVIEW_URL" \
             --header "Access-Control-Request-Method: POST" \
             --header "Access-Control-Request-Headers: content-type" \
