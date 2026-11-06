@@ -29,8 +29,14 @@ $("collectDemoBtn").addEventListener("click",()=>{cardFx("collect");$("tableMess
 const API_BASE=(window.HOKM_API_URL||"https://fly-hokm-api.flyinfinityplatform.workers.dev").replace(/\/$/,"");
 let activeProvider=null,sessionToken=null,currentWallet=null,watchedWalletProvider=null;
 const accessMessages={
- en:{connecting:"Connecting wallet…",signing:"Please approve the free signature in your wallet…",verifying:"Verifying FIT balance on BNB Smart Chain…",ready:"Access verified · ",denied:"Access denied: ",wrongChain:"Please switch to BNB Smart Chain.",noWallet:"No compatible wallet found. Open this page in your wallet browser or use Connect wallet.",api:"Hokm authentication service is not configured or unavailable.",timeout:"Wallet signature timed out. Please try again."},
- fa:{connecting:"در حال اتصال کیف پول…",signing:"لطفاً امضای رایگان را در کیف پول تأیید کنید…",verifying:"در حال بررسی موجودی FIT روی BNB Smart Chain…",ready:"دسترسی تأیید شد · ",denied:"عدم دسترسی: ",wrongChain:"لطفاً شبکه را به BNB Smart Chain تغییر دهید.",noWallet:"کیف پول سازگار پیدا نشد. صفحه را در مرورگر کیف پول باز کنید یا روش اتصال کیف پول را امتحان کنید.",api:"سرویس احراز هویت حکم هنوز راه‌اندازی نشده یا در دسترس نیست.",timeout:"زمان امضای کیف پول تمام شد. دوباره تلاش کنید."}
+ en:{connecting:"Connecting wallet…",signing:"Please approve the free signature in your wallet…",verifying:"Verifying FIT balance on BNB Smart Chain…",ready:"Access verified · ",denied:"Access denied: ",wrongChain:"Please switch to BNB Smart Chain.",noWallet:"No compatible wallet found. Open this page in your wallet browser or use Connect wallet.",noInjectedWallet:"No injected wallet was detected. Open this page in your wallet’s built-in browser.",api:"Hokm authentication service is not configured or unavailable.",timeout:"Wallet signature timed out. Please try again."},
+ fa:{connecting:"در حال اتصال کیف پول…",signing:"لطفاً امضای رایگان را در کیف پول تأیید کنید…",verifying:"در حال بررسی موجودی FIT روی BNB Smart Chain…",ready:"دسترسی تأیید شد · ",denied:"عدم دسترسی: ",wrongChain:"لطفاً شبکه را به BNB Smart Chain تغییر دهید.",noWallet:"کیف پول سازگار پیدا نشد. صفحه را در مرورگر کیف پول باز کنید یا روش اتصال کیف پول را امتحان کنید.",noInjectedWallet:"کیف پول مرورگری پیدا نشد. صفحه را از مرورگر داخلی کیف پول باز کنید.",api:"سرویس احراز هویت حکم هنوز راه‌اندازی نشده یا در دسترس نیست.",timeout:"زمان امضای کیف پول تمام شد. دوباره تلاش کنید."},
+ ar:{noInjectedWallet:"لم يتم العثور على محفظة مدمجة. افتح الصفحة في المتصفح الداخلي لمحفظتك."},
+ tr:{noInjectedWallet:"Tarayıcıya gömülü cüzdan bulunamadı. Sayfayı cüzdanınızın yerleşik tarayıcısında açın."},
+ ru:{noInjectedWallet:"Встроенный кошелёк не найден. Откройте страницу во встроенном браузере кошелька."},
+ zh:{noInjectedWallet:"未检测到内置钱包。请在钱包的内置浏览器中打开此页面。"},
+ es:{noInjectedWallet:"No se detectó una cartera integrada. Abre esta página en el navegador integrado de tu cartera."},
+ pt:{noInjectedWallet:"Nenhuma carteira integrada foi detectada. Abra esta página no navegador interno da sua carteira."}
 };
 const msg=k=>accessMessages[lang]?.[k]||accessMessages.en[k];
 function setAccessStatus(text,error=false){$("accessStatus").textContent=text;$("accessStatus").style.color=error?"#ff9999":""}
@@ -46,7 +52,7 @@ async function walletProvider(method){
   if(window.ethereum?.request){await window.ethereum.request({method:"eth_requestAccounts"});return window.ethereum}
   throw new Error(msg("noWallet"));
  }
- if(!window.ethereum?.request)throw new Error(msg("noWallet"));
+ if(!window.ethereum?.request)throw new Error(msg("noInjectedWallet"));
  await window.ethereum.request({method:"eth_requestAccounts"});
  return window.ethereum;
 }
