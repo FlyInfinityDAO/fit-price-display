@@ -66,3 +66,5 @@
 .hokm-online-trump button{width:55px;height:48px;border:1px solid #d7b86688;border-radius:10px;background:#521329;color:#f7e9cd;font-size:25px;font-weight:900;cursor:pointer}
 .hokm-online-trump button[data-online-suit="♥"],.hokm-online-trump button[data-online-suit="♦"]{color:#ff9cae}
 @media(max-width:650px){.hokm-online-actions{grid-template-columns:1fr 1fr}.hokm-room-entry{grid-column:1/-1;grid-row:2}.hokm-online-actions #hokmJoinRoom{grid-column:2}.hokm-online-actions #hokmCreateRoom{grid-column:1}.hokm-room-invite{flex-wrap:wrap}}
+
+.hokm-online-trump[hidden],.hokm-room-invite[hidden],.hokm-online-panel[hidden],.hokm-game-controls[hidden],.hokm-trump-picker[hidden],.hokm-turn-clock[hidden]{display:none!important}
