@@ -190,8 +190,8 @@ async function handleSession(request, env) {
   let balance;
   try {
     balance = await getFitBalance(env, getAddress(session.sub));
-  } catch (error) {
-    return json({ ok: false, error: error.message || "On-chain verification failed." }, 503);
+  } catch {
+    return json({ ok: false, error: "BSC RPC is temporarily unavailable. Please retry shortly." }, 503, { "retry-after": "5" });
   }
   if (balance < MIN_FIT_WEI) {
     return json({ ok: false, error: "At least 1 FIT is required. Access has been revoked.", balanceWei: balance.toString() }, 403);
