@@ -1,3 +1,4 @@
+// Host-authorized CPU seat endpoint is deployed with this Worker version.
 export { HokmRoom } from "./room.js";
 import {getAddress,isAddress,verifyMessage} from "ethers";
 import {enforceRateLimit,cleanupExpiredRecords,getFitBalance} from "./security.js";
