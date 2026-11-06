@@ -97,7 +97,7 @@ function beginRound(hakem){
  $("hokmNextBtn").hidden=true;$("hokmRestartBtn").hidden=true;$("hokmStartBtn").hidden=true;
  $("hokmTrumpPicker").hidden=true;
  cardFxSafe("deal");render();
- if(hakem===0){setStatus(tr("selectTrump"));setMessage(tr("selectTrump"));updateTrumpOptions();return}
+ if(game.hakem===0){setStatus(tr("selectTrump"));setMessage(tr("selectTrump"));updateTrumpOptions();return}
  setStatus(tr("cpuTrump"));setMessage(tr("cpuTrump"));
  turnTimer=setTimeout(()=>{if(!game||game.phase!=="choose-trump")return;const suit=chooseCpuTrump();H.chooseTrump(game,suit);cardFxSafe("deal");render();setStatus(tr("playing"));setMessage(tr("playing"));advance();},700);
 }
