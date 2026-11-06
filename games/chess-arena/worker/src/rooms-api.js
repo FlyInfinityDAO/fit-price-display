@@ -219,7 +219,7 @@ export async function handleRoomApi(request, env) {
     if (balance < MIN_FIT_WEI) return json({ ok: false, error: "At least 1 FIT is required to join this game." }, 403);
     const consumed = await env.DB.prepare(
       "UPDATE websocket_tickets SET used = 1 WHERE ticket = ? AND room_code = ? AND used = 0 AND expires_at > ?"
-    ).bind(ticket, code, now).run();
+    ).bind(ticket, code, Math.floor(Date.now() / 1000)).run();
     if (!consumed.meta || consumed.meta.changes !== 1) return json({ ok: false, error: "WebSocket ticket has already been used." }, 409);
     // Forward the WebSocket upgrade to the Durable Object. Without this
     // header the room sees a normal GET and rejects the handshake (426),
@@ -324,7 +324,7 @@ export async function handleRoomApi(request, env) {
     if (balance < MIN_FIT_WEI) return json({ ok: false, error: "At least 1 FIT is required to join this game." }, 403);
     const consumed = await env.DB.prepare(
       "UPDATE websocket_tickets SET used = 1 WHERE ticket = ? AND room_code = ? AND used = 0 AND expires_at > ?"
-    ).bind(ticket, "BG" + code, now).run();
+    ).bind(ticket, "BG" + code, Math.floor(Date.now() / 1000)).run();
     if (!consumed.meta || consumed.meta.changes !== 1) return json({ ok: false, error: "WebSocket ticket has already been used." }, 409);
     const stub = env.BACKGAMMON_ROOMS.get(env.BACKGAMMON_ROOMS.idFromName(code));
     return stub.fetch("https://backgammon-room.internal/ws", {
