@@ -1,16 +1,17 @@
 const encoder = new TextEncoder();
-let rateLimitTablePromise;
+const rateLimitTablePromises = new WeakMap();
 
 async function ensureRateLimitTable(env) {
-  if (!rateLimitTablePromise) {
-    rateLimitTablePromise = env.DB.prepare(
+  if (!rateLimitTablePromises.has(env)) {
+    const pending = env.DB.prepare(
       "CREATE TABLE IF NOT EXISTS api_rate_limits (bucket_key TEXT PRIMARY KEY, window_start INTEGER NOT NULL, hits INTEGER NOT NULL, expires_at INTEGER NOT NULL)"
     ).run().catch(error => {
-      rateLimitTablePromise = null;
+      rateLimitTablePromises.delete(env);
       throw error;
     });
+    rateLimitTablePromises.set(env, pending);
   }
-  return rateLimitTablePromise;
+  return rateLimitTablePromises.get(env);
 }
 
 function toHex(bytes) {
