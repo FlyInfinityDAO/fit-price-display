@@ -49,84 +49,69 @@ async function api(path,body,token){
 async function walletProvider(method){
  if(method==="browser"){
   if(typeof window.fiSelectWalletProvider==="function")return await window.fiSelectWalletProvider();
-  if(window.ethereum?.request){await window.ethereum.request({method:"eth_requestAccounts"});return window.ethereum}
+  if(window.ethereum&&typeof window.ethereum.request==="function"){
+   await window.ethereum.request({method:"eth_requestAccounts"});
+   return window.ethereum;
+  }
   throw new Error(msg("noWallet"));
  }
- if(!window.ethereum?.request)throw new Error(msg("noInjectedWallet"));
+ if(!window.ethereum||typeof window.ethereum.request!=="function")throw new Error(msg("noInjectedWallet"));
  await window.ethereum.request({method:"eth_requestAccounts"});
+ window.fiWalletConnectActive=false;
  return window.ethereum;
 }
 async function signWithTimeout(signer,message){
  let timeoutId;
- try{return await Promise.race([signer.signMessage(message),new Promise((_,reject)=>{timeoutId=setTimeout(()=>reject(new Error(msg("timeout"))),120000)})])}
- finally{clearTimeout(timeoutId)}
-}
-function normalizeChainId(value){
- if(typeof value==="number")return value;
- const raw=String(value??"").trim();
- if(/^0x[0-9a-f]+$/i.test(raw))return Number.parseInt(raw,16);
- if(/^\\d+$/.test(raw))return Number.parseInt(raw,10);
- return NaN;
-}
-const wait=(ms)=>new Promise(resolve=>setTimeout(resolve,ms));
-async function readWalletChainId(provider){
- let lastValue=null;
- for(let attempt=0;attempt<8;attempt++){
-  lastValue=await provider.request({method:"eth_chainId"});
-  const chainId=normalizeChainId(lastValue);
-  if(Number.isFinite(chainId))return chainId;
-  await wait(250);
- }
- return normalizeChainId(lastValue);
-}
-async function ensureBscNetwork(provider){
- let chainId=await readWalletChainId(provider);
- if(chainId===56)return;
- try{
-  await provider.request({method:"wallet_switchEthereumChain",params:[{chainId:"0x38"}]});
- }catch(error){
-  if(error.code===4902){
-   await provider.request({method:"wallet_addEthereumChain",params:[{chainId:"0x38",chainName:"BNB Smart Chain",nativeCurrency:{name:"BNB",symbol:"BNB",decimals:18},rpcUrls:["https://bsc-dataseed.binance.org/"],blockExplorerUrls:["https://bscscan.com/"]}]});
-   await provider.request({method:"wallet_switchEthereumChain",params:[{chainId:"0x38"}]});
-  }else{
-   console.warn("[Hokm wallet] Network switch request failed:",{code:error.code,message:error.message});
-   throw new Error(msg("wrongChain"));
-  }
- }
- // WalletConnect mobile handoff can resolve before the provider reports the
- // new chain. Poll the authenticated provider instead of checking only once.
- for(let attempt=0;attempt<16;attempt++){
-  chainId=await readWalletChainId(provider);
-  if(chainId===56)return;
-  await wait(350);
- }
- console.warn("[Hokm wallet] BSC was requested but provider still reports another chain:",chainId);
- throw new Error(msg("wrongChain"));
+ const signing=signer.signMessage(message);
+ const timeout=new Promise((_,reject)=>{timeoutId=setTimeout(()=>reject(new Error(msg("timeout"))),120000)});
+ try{return await Promise.race([signing,timeout])}finally{clearTimeout(timeoutId)}
 }
 async function connectHokm(method){
- const buttons=[$("connectBrowserBtn"),$("connectWalletBtn")];
- buttons.forEach(b=>b.disabled=true);setAccessStatus(msg("connecting"));
+ const browserButton=$("connectBrowserBtn"),walletButton=$("connectWalletBtn");
+ const buttons=[browserButton,walletButton];
+ const activeButton=method==="browser"?browserButton:walletButton;
+ const originalLabel=activeButton.textContent;
+ buttons.forEach(button=>button.disabled=true);
+ activeButton.textContent=msg("connecting");
+ setAccessStatus(msg("connecting"));
+ sessionToken=null;currentWallet=null;
  try{
   activeProvider=await walletProvider(method);
-  const accounts=await activeProvider.request({method:"eth_accounts"});
-  if(!accounts?.[0])throw new Error(msg("noWallet"));
-  await ensureBscNetwork(activeProvider);
-  const address=accounts[0],provider=new ethers.providers.Web3Provider(activeProvider,"any"),signer=provider.getSigner(),challenge=await api("/api/auth/challenge",{address});
+  const provider=new ethers.providers.Web3Provider(activeProvider,"any");
+  const network=await provider.getNetwork();
+  if(network.chainId!==56){
+   try{
+    await activeProvider.request({method:"wallet_switchEthereumChain",params:[{chainId:"0x38"}]});
+   }catch(switchError){
+    if(switchError.code===4902)throw new Error(msg("addBsc"));
+    throw new Error(msg("wrongChain"));
+   }
+  }
+  const signer=provider.getSigner();
+  const address=await signer.getAddress();
+  setAccessStatus(msg("walletConnected")+address.slice(0,6)+"…"+address.slice(-4));
+  activeButton.textContent=msg("signing");
   setAccessStatus(msg("signing"));
+  const challenge=await api("/api/auth/challenge",{address});
   const signature=await signWithTimeout(signer,challenge.message);
   setAccessStatus(msg("verifying"));
+  activeButton.textContent=msg("verifying");
   const verified=await api("/api/auth/verify",{address,nonce:challenge.nonce,signature});
-  sessionToken=verified.sessionToken;currentWallet=verified.wallet;
+  sessionToken=verified.sessionToken;
+  currentWallet=verified.wallet.toLowerCase();
   watchWalletProvider(activeProvider);
-  const fit=(Number(verified.fitBalanceWei)/1e18).toLocaleString(undefined,{maximumFractionDigits:4});
+  const fit=Number(ethers.utils.formatUnits(verified.fitBalanceWei,18)).toLocaleString(undefined,{maximumFractionDigits:4});
   setAccessStatus(msg("ready")+currentWallet.slice(0,6)+"…"+currentWallet.slice(-4)+" · "+fit+" FIT · Tier "+verified.tier);
-  $("connectBrowserBtn").textContent=tr("connectBrowser");$("connectWalletBtn").textContent=tr("connectWallet");
   window.dispatchEvent(new CustomEvent("hokm:authenticated",{detail:{wallet:currentWallet,tier:verified.tier,expiresAt:verified.expiresAt,sessionToken}}));
  }catch(error){
   console.error("[Hokm wallet]",error);
-  setAccessStatus(msg("denied")+(error.message||msg("api")),true);
-  sessionToken=null;currentWallet=null;
- }finally{buttons.forEach(b=>b.disabled=false)}
+  setAccessStatus(msg("denied")+(error&&error.message?error.message:msg("api")),true);
+  sessionToken=null;currentWallet=null;activeProvider=null;
+ }finally{
+  buttons.forEach(button=>button.disabled=false);
+  browserButton.textContent=tr("connectBrowser");
+  walletButton.textContent=tr("connectWallet");
+ }
 }
 $("connectBrowserBtn").addEventListener("click",()=>connectHokm("browser"));
 $("connectWalletBtn").addEventListener("click",()=>connectHokm("wallet"));
