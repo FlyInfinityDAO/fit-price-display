@@ -100,7 +100,8 @@ async function connectHokm(method){
   watchWalletProvider(activeProvider);
   const fit=Number(ethers.utils.formatUnits(verified.fitBalanceWei,18)).toLocaleString(undefined,{maximumFractionDigits:4});
   setAccessStatus(msg("ready")+currentWallet.slice(0,6)+"…"+currentWallet.slice(-4)+" · "+fit+" FIT · Tier "+verified.tier);
-  window.dispatchEvent(new CustomEvent("hokm:authenticated",{detail:{wallet:currentWallet,tier:verified.tier,expiresAt:verified.expiresAt,sessionToken}}));
+  window.hokmAuthState={wallet:currentWallet,tier:verified.tier,expiresAt:verified.expiresAt,sessionToken};
+   window.dispatchEvent(new CustomEvent("hokm:authenticated",{detail:window.hokmAuthState}));
  }catch(error){
   console.error("[Hokm wallet]",error);
   setAccessStatus(msg("denied")+(error&&error.message?error.message:msg("api")),true);
@@ -114,7 +115,7 @@ async function connectHokm(method){
 $("connectBrowserBtn").addEventListener("click",()=>connectHokm("browser"));
 $("connectWalletBtn").addEventListener("click",()=>connectHokm("wallet"));
 function walletChanged(){
- sessionToken=null;currentWallet=null;
+ sessionToken=null;currentWallet=null;window.hokmAuthState=null;
  setAccessStatus(tr("notConnected"));
  window.dispatchEvent(new CustomEvent("hokm:access-revoked"));
 }
