@@ -26,7 +26,7 @@ function rateLimitDb() {
 }
 
 test("rate limiter allows requests up to the configured limit and resets each window", async () => {
-  const env = { DB: rateLimitDb() };
+  const env = { DB: rateLimitDb(), SESSION_SECRET: "test-only-session-secret-that-is-long-enough" };
   const request = new Request("https://example.test/api/auth/challenge", { headers: { "CF-Connecting-IP": "192.0.2.10" } });
   assert.equal((await enforceRateLimit(request, env, "challenge", 2, 60, 120)).allowed, true);
   assert.equal((await enforceRateLimit(request, env, "challenge", 2, 60, 121)).allowed, true);
@@ -34,6 +34,8 @@ test("rate limiter allows requests up to the configured limit and resets each wi
   assert.equal(blocked.allowed, false);
   assert.equal(blocked.retryAfter, 58);
   assert.equal((await enforceRateLimit(request, env, "challenge", 2, 60, 180)).allowed, true);
+  const otherIp = new Request("https://example.test/api/auth/challenge", { headers: { "CF-Connecting-IP": "192.0.2.11" } });
+  assert.equal((await enforceRateLimit(otherIp, env, "challenge", 2, 60, 180)).allowed, true);
 });
 
 test("RPC errors are normalized and balance reads require BNB Smart Chain", async t => {
