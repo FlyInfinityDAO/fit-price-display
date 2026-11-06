@@ -181,6 +181,13 @@ export class HokmRoom extends DurableObject {
     server.serializeAttachment({ wallet: claim.wallet, seat: claim.seat });
     player.connected = true;
     delete player.reconnectUntil;
+    for (const existing of this.ctx.getWebSockets()) {
+      if (existing === server) continue;
+      const old = existing.deserializeAttachment() || {};
+      if (cleanWallet(old.wallet) === claim.wallet && old.seat === claim.seat) {
+        try { existing.close(4001, "Reconnected on another client"); } catch {}
+      }
+    }
     if (room.match) {
       if (matchPlayer) {
         matchPlayer.connectionStatus = "connected";
@@ -206,7 +213,7 @@ export class HokmRoom extends DurableObject {
       room.status = "playing";
       room.lastTrick = [];
       room.roundWinner = null;
-      await this.startRound(room, 0);
+      await this.startRound(room);
     } catch (error) {
       room.status = "waiting";
       room.error = error.message || "Unable to start match";
@@ -366,7 +373,7 @@ export class HokmRoom extends DurableObject {
       }
     }
     if (room.status === "round-break" && room.match && !room.match.finished && room.nextRoundAt && now >= room.nextRoundAt) {
-      const hakem = room.match.roundsPlayed % 4;
+      const hakem = (room.match.round.hakem + 1) % 4;
       delete room.nextRoundAt;
       await this.startRound(room, hakem);
       changed = true;
@@ -414,8 +421,14 @@ export class HokmRoom extends DurableObject {
     const room = await this.loadRoom();
     const player = room?.players.find(p => p.wallet === cleanWallet(attachment.wallet) && p.seat === attachment.seat);
     if (!player) return;
+    const anotherLiveSocket = this.ctx.getWebSockets().some(other => {
+      if (other === ws || other.readyState !== WebSocket.OPEN) return false;
+      const current = other.deserializeAttachment() || {};
+      return cleanWallet(current.wallet) === cleanWallet(attachment.wallet) && current.seat === attachment.seat;
+    });
+    if (anotherLiveSocket) return;
     player.connected = false;
-    player.reconnectUntil = Date.now() + 30000;
+    player.reconnectUntil = Date.now() + H.RECONNECT_GRACE_MS;
     if (room.match) {
       try { H.markPlayerDisconnected(room.match, player.seat); } catch {}
     }
