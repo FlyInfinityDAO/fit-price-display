@@ -11,11 +11,11 @@ const json = (data, status = 200) => new Response(JSON.stringify(data), {
 const cleanWallet = value => typeof value === "string" ? value.toLowerCase() : "";
 const publicPlayer = (p, viewer) => ({
   seat: p.seat,
-  wallet: p.wallet.slice(0, 6) + "…" + p.wallet.slice(-4),
+  wallet: p.kind === "cpu" ? null : p.wallet.slice(0, 6) + "…" + p.wallet.slice(-4),
   you: p.wallet === viewer,
   tier: p.tier,
   connected: !!p.connected,
-  cpu: !!p.replaced
+  cpu: p.kind === "cpu" || !!p.replaced
 });
 
 export class HokmRoom extends DurableObject {
@@ -77,6 +77,7 @@ export class HokmRoom extends DurableObject {
   async fetch(request) {
     const url = new URL(request.url);
     if (request.method === "POST" && url.pathname === "/create") return this.create(request);
+    if (request.method === "POST" && url.pathname === "/cpu") return this.addCpuSeats(request);
     if (request.method === "POST" && url.pathname === "/join") return this.join(request);
     if (request.method === "POST" && url.pathname === "/ticket") return this.issueTicket(request);
     if (request.method === "GET" && (url.pathname === "/ws" || url.pathname.endsWith("/ws"))) return this.connect(request);
@@ -93,7 +94,7 @@ export class HokmRoom extends DurableObject {
     const code = new URL(request.url).searchParams.get("code") || "";
     const room = {
       code, status: "waiting", createdAt: Date.now(), updatedAt: Date.now(),
-      players: [{ wallet, seat: 0, tier, connected: false, joinedAt: Date.now() }],
+      players: [{ wallet, seat: 0, tier, kind: "human", connected: false, joinedAt: Date.now() }],
       tickets: {}, match: null, lastTrick: [], roundWinner: null
     };
     await this.saveRoom(room);
@@ -122,9 +123,32 @@ export class HokmRoom extends DurableObject {
     if (room.status !== "waiting" || room.players.length >= 4) return json({ ok: false, error: "Room is full or already started" }, 409);
     const used = new Set(room.players.map(p => p.seat));
     const seat = [0, 1, 2, 3].find(s => !used.has(s));
-    room.players.push({ wallet, seat, tier, connected: false, joinedAt: Date.now() });
+    room.players.push({ wallet, seat, tier, kind: "human", connected: false, joinedAt: Date.now() });
     await this.saveRoom(room);
     return json({ ok: true, code: room.code, seat, status: room.status, reconnect: false });
+  }
+  async addCpuSeats(request) {
+    const wallet = cleanWallet(request.headers.get("x-player-wallet"));
+    let body;
+    try { body = await request.json(); } catch { return json({ ok: false, error: "Invalid JSON body" }, 400); }
+    const seats = body?.seats;
+    if (!Array.isArray(seats) || !([2, 3].every((s, i) => seats.length === 2 && seats[i] === s) && seats.length === 2) && !(seats.length === 1 && seats[0] === 3)) {
+      return json({ ok: false, error: "Choose CPU seats 3 and 4, or seat 4 only" }, 400);
+    }
+    const room = await this.loadRoom();
+    if (!room || room.status !== "waiting") return json({ ok: false, error: "CPU seats can only be added before the match starts" }, 409);
+    const owner = room.players.find(p => p.seat === 0 && p.kind !== "cpu");
+    if (!owner || owner.wallet !== wallet) return json({ ok: false, error: "Only the room creator can add CPU players" }, 403);
+    const occupied = new Set(room.players.map(p => p.seat));
+    if (seats.some(seat => occupied.has(seat))) return json({ ok: false, error: "One or more selected seats are already occupied" }, 409);
+    for (const seat of seats) {
+      room.players.push({ wallet: "cpu-seat-" + seat, seat, tier: 0, kind: "cpu", connected: true, replaced: true, joinedAt: Date.now() });
+    }
+    await this.maybeStart(room);
+    await this.saveRoom(room);
+    await this.scheduleAlarm(room);
+    this.broadcast(room);
+    return json({ ok: true, code: room.code, cpuSeats: seats, status: room.status });
   }
   async issueTicket(request) {
     const wallet = cleanWallet(request.headers.get("x-player-wallet"));
@@ -171,12 +195,13 @@ export class HokmRoom extends DurableObject {
     return new Response(null, { status: 101, webSocket: client });
   }
   async maybeStart(room) {
-    if (room.status !== "waiting" || room.players.length !== 4 || !room.players.every(p => p.connected)) return;
+    if (room.status !== "waiting" || room.players.length !== 4 || !room.players.filter(p => p.kind !== "cpu").every(p => p.connected)) return;
     try {
       room.match = H.createMatch({
         mode: "online",
-        players: room.players.map(p => ({ seat: p.seat, kind: "human", balance: p.tier >= 2 ? 10 : 1, wallet: p.wallet, connectionStatus: "connected" })),
-        difficulty: "normal"
+        players: room.players.map(p => ({ seat: p.seat, kind: p.kind || "human", balance: p.kind === "cpu" ? 0 : (p.tier >= 2 ? 10 : 1), wallet: p.wallet, connectionStatus: p.kind === "cpu" ? "replaced" : "connected" })),
+        difficulty: "normal",
+        allowCpuSeats: true
       });
       room.status = "playing";
       room.lastTrick = [];
@@ -195,10 +220,47 @@ export class HokmRoom extends DurableObject {
     const game = room.match.round;
     if (game.phase === "playing") {
       H.startTurnClock(game);
+      this.queueCpuTurn(room);
+    } else if (room.match.players.find(p => p.seat === game.hakem)?.kind === "cpu") {
+      room.cpuTurnAt = Date.now() + 650;
+      delete room.trumpDeadlineAt;
     } else {
       room.trumpDeadlineAt = Date.now() + TURN_TIMEOUT_MS;
     }
     await this.scheduleAlarm(room);
+  }
+  queueCpuTurn(room) {
+    const game = room.match?.round;
+    if (room.status !== "playing" || !game) { delete room.cpuTurnAt; return; }
+    const cpuSeat = game.phase === "choose-trump" ? game.hakem : game.currentPlayer;
+    const cpu = room.match.players.find(p => p.seat === cpuSeat)?.kind === "cpu";
+    if (cpu) {
+      delete room.trumpDeadlineAt;
+      room.cpuTurnAt ||= Date.now() + 650;
+    } else {
+      delete room.cpuTurnAt;
+    }
+  }
+  async playCpuTurn(room, now) {
+    const game = room.match?.round;
+    if (!game || room.status !== "playing") return;
+    if (game.phase === "choose-trump") {
+      const hand = game.hands[game.hakem] || [];
+      const scores = H.SUITS.map(suit => ({
+        suit,
+        score: hand.filter(card => card.suit === suit).reduce((sum, card) => sum + (card.rank === "A" ? 5 : card.rank === "K" ? 3 : card.rank === "Q" ? 2 : card.rank === "J" ? 1 : 0) + 3, 0)
+      })).sort((a, b) => b.score - a.score);
+      H.chooseTrump(game, scores[0]?.suit || H.SUITS[0]);
+      H.startTurnClock(game, now);
+    } else if (game.phase === "playing") {
+      const seat = game.currentPlayer;
+      const card = H.chooseCpuCard(game, seat, room.match.difficulty || "normal");
+      const result = H.playCard(game, seat, card.id);
+      if (!game.finished) H.startTurnClock(game, now);
+      else { delete game.turnStartedAt; delete game.turnDeadlineAt; }
+      await this.applyResult(room, result);
+    }
+    this.queueCpuTurn(room);
   }
   async scheduleAlarm(room) {
     const times = [];
@@ -206,6 +268,7 @@ export class HokmRoom extends DurableObject {
     if (room.status === "round-break" && room.nextRoundAt) times.push(room.nextRoundAt);
     if (room.lastTrickClearAt) times.push(room.lastTrickClearAt);
     if (room.trumpDeadlineAt) times.push(room.trumpDeadlineAt);
+    if (room.cpuTurnAt) times.push(room.cpuTurnAt);
     if (game?.phase === "playing" && Number.isFinite(game.turnDeadlineAt)) times.push(game.turnDeadlineAt);
     for (const p of room.players) {
       const mp = room.match?.players.find(x => x.seat === p.seat);
@@ -239,6 +302,7 @@ export class HokmRoom extends DurableObject {
         H.chooseTrump(game, data.suit);
         delete room.trumpDeadlineAt;
         H.startTurnClock(game);
+        this.queueCpuTurn(room);
         await this.scheduleAlarm(room);
       } else if (data.type === "play_card") {
         if (room.status !== "playing" || room.lastTrick?.length) throw new Error("Please wait for the current trick to finish");
@@ -246,6 +310,7 @@ export class HokmRoom extends DurableObject {
         if (!game || game.currentPlayer !== player.seat) throw new Error("It is not your turn");
         const result = H.playCardWithClock(game, player.seat, String(data.cardId || ""));
         await this.applyResult(room, result);
+        this.queueCpuTurn(room);
       } else if (data.type === "leave") {
         player.connected = false;
         player.reconnectUntil = Date.now() + 30000;
@@ -312,6 +377,11 @@ export class HokmRoom extends DurableObject {
       changed = true;
     }
     const game = room.match?.round;
+    if (room.status === "playing" && room.cpuTurnAt && now >= room.cpuTurnAt) {
+      delete room.cpuTurnAt;
+      try { await this.playCpuTurn(room, now); changed = true; }
+      catch (error) { room.error = error.message || "CPU turn failed"; changed = true; }
+    }
     if (room.status === "playing" && game?.phase === "choose-trump" && room.trumpDeadlineAt && now >= room.trumpDeadlineAt) {
       const hand = game.hands[game.hakem] || [];
       const scores = H.SUITS.map(suit => ({
@@ -321,12 +391,14 @@ export class HokmRoom extends DurableObject {
       H.chooseTrump(game, scores[0]?.suit || H.SUITS[0]);
       delete room.trumpDeadlineAt;
       H.startTurnClock(game);
+      this.queueCpuTurn(room);
       changed = true;
     }
     if (room.status === "playing" && game?.phase === "playing" && Number.isFinite(game.turnDeadlineAt) && now >= game.turnDeadlineAt) {
       try {
         const result = H.resolveTurnTimeout(game, { now, difficulty: "normal" });
         await this.applyResult(room, result);
+        this.queueCpuTurn(room);
         changed = true;
       } catch (error) {
         room.error = error.message || "Turn timeout failed";
