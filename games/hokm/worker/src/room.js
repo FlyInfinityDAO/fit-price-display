@@ -180,13 +180,13 @@ export class HokmRoom extends DurableObject {
       room.status = "playing";
       room.lastTrick = [];
       room.roundWinner = null;
-      this.startRound(room, 0);
+      await this.startRound(room, 0);
     } catch (error) {
       room.status = "waiting";
       room.error = error.message || "Unable to start match";
     }
   }
-  startRound(room, hakem) {
+  async startRound(room, hakem) {
     H.startRound(room.match, { humanSeat: 0, hakem });
     room.lastTrick = [];
     room.roundWinner = null;
@@ -197,7 +197,7 @@ export class HokmRoom extends DurableObject {
     } else {
       room.trumpDeadlineAt = Date.now() + TURN_TIMEOUT_MS;
     }
-    this.scheduleAlarm(room);
+    await this.scheduleAlarm(room);
   }
   async scheduleAlarm(room) {
     const times = [];
@@ -300,7 +300,7 @@ export class HokmRoom extends DurableObject {
     if (room.status === "round-break" && room.match && !room.match.finished && room.nextRoundAt && now >= room.nextRoundAt) {
       const hakem = room.match.roundsPlayed % 4;
       delete room.nextRoundAt;
-      this.startRound(room, hakem);
+      await this.startRound(room, hakem);
       changed = true;
     }
     if (room.lastTrickClearAt && now >= room.lastTrickClearAt) {
