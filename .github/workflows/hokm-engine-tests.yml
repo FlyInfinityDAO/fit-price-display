@@ -19,5 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Run Hokm rules and solo-seat tests
+      - name: Validate Hokm browser client
+        run: node --check games/hokm/js/hokm.js
+      - name: Run Hokm rules, CPU and access-tier tests
         run: node --test games/hokm/tests/hokm-engine.test.cjs
