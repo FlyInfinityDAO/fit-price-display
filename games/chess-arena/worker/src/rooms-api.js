@@ -1,4 +1,5 @@
 import { getAddress, isAddress } from "ethers";
+import { getFitBalance } from "./security.js";
 
 function isAllowedFrontendOrigin(origin, env) {
   return new Set(
@@ -11,7 +12,6 @@ function isAllowedFrontendOrigin(origin, env) {
 const FIT_TOKEN = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
 const MIN_FIT_WEI = 10n ** 18n;
 const BSC_CHAIN_ID = 56;
-const BALANCE_OF_SELECTOR = "70a08231";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -47,39 +47,17 @@ async function verifySession(token, secret) {
   return payload;
 }
 
-async function getFitBalance(env, wallet) {
-  const rpcUrl = env.BSC_RPC_URL || "https://bsc-dataseed.binance.org/";
-  const padded = wallet.slice(2).toLowerCase().padStart(64, "0");
-  const [chainResponse, balanceResponse] = await Promise.all([
-    fetch(rpcUrl, {
-      method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_chainId", params: [] })
-    }),
-    fetch(rpcUrl, {
-      method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        jsonrpc: "2.0", id: 2, method: "eth_call",
-        params: [{ to: FIT_TOKEN, data: "0x" + BALANCE_OF_SELECTOR + padded }, "latest"]
-      })
-    })
-  ]);
-  if (!chainResponse.ok || !balanceResponse.ok) throw new Error("BSC RPC is unavailable.");
-  const chain = await chainResponse.json();
-  const result = await balanceResponse.json();
-  if (Number.parseInt(chain.result, 16) !== BSC_CHAIN_ID) throw new Error("Configured RPC is not BNB Smart Chain.");
-  if (result.error || typeof result.result !== "string" || !/^0x[0-9a-fA-F]+$/.test(result.result)) {
-    throw new Error("FIT token balance could not be verified.");
-  }
-  return BigInt(result.result);
-}
-
 async function authorize(request, env) {
   const header = request.headers.get("Authorization") || "";
   const token = header.startsWith("Bearer ") ? header.slice(7) : "";
   const session = await verifySession(token, env.SESSION_SECRET);
   if (!session) return { response: json({ ok: false, error: "Wallet session is invalid or expired. Reconnect your wallet." }, 401) };
   const wallet = getAddress(session.sub);
-  const balance = await getFitBalance(env, wallet);
+  let balance;
+  try { balance = await getFitBalance(env, wallet); }
+  catch {
+    return { response: json({ ok: false, error: "BSC RPC is temporarily unavailable. Please retry shortly." }, 503) };
+  }
   if (balance < MIN_FIT_WEI) {
     return { response: json({ ok: false, error: "At least 1 FIT is required to enter or continue a game.", balanceWei: balance.toString() }, 403) };
   }
@@ -234,14 +212,15 @@ export async function handleRoomApi(request, env) {
       "SELECT wallet_address, expires_at, used FROM websocket_tickets WHERE ticket = ? AND room_code = ?"
     ).bind(ticket, code).first();
     if (!row || row.used !== 0 || row.expires_at <= now) return json({ ok: false, error: "WebSocket ticket expired. Request a new one." }, 401);
+    const wallet = getAddress(row.wallet_address);
+    let balance;
+    try { balance = await getFitBalance(env, wallet); }
+    catch { return json({ ok: false, error: "BSC RPC is temporarily unavailable. Please retry shortly." }, 503); }
+    if (balance < MIN_FIT_WEI) return json({ ok: false, error: "At least 1 FIT is required to join this game." }, 403);
     const consumed = await env.DB.prepare(
       "UPDATE websocket_tickets SET used = 1 WHERE ticket = ? AND room_code = ? AND used = 0 AND expires_at > ?"
     ).bind(ticket, code, now).run();
     if (!consumed.meta || consumed.meta.changes !== 1) return json({ ok: false, error: "WebSocket ticket has already been used." }, 409);
-
-    const wallet = getAddress(row.wallet_address);
-    const balance = await getFitBalance(env, wallet);
-    if (balance < MIN_FIT_WEI) return json({ ok: false, error: "At least 1 FIT is required to join this game." }, 403);
     // Forward the WebSocket upgrade to the Durable Object. Without this
     // header the room sees a normal GET and rejects the handshake (426),
     // which surfaces in browsers as an abnormal close (1006).
@@ -338,13 +317,15 @@ export async function handleRoomApi(request, env) {
       "SELECT wallet_address, expires_at, used FROM websocket_tickets WHERE ticket = ? AND room_code = ?"
     ).bind(ticket, "BG" + code).first();
     if (!row || row.used !== 0 || row.expires_at <= now) return json({ ok: false, error: "WebSocket ticket expired. Request a new one." }, 401);
+    const wallet = getAddress(row.wallet_address);
+    let balance;
+    try { balance = await getFitBalance(env, wallet); }
+    catch { return json({ ok: false, error: "BSC RPC is temporarily unavailable. Please retry shortly." }, 503); }
+    if (balance < MIN_FIT_WEI) return json({ ok: false, error: "At least 1 FIT is required to join this game." }, 403);
     const consumed = await env.DB.prepare(
       "UPDATE websocket_tickets SET used = 1 WHERE ticket = ? AND room_code = ? AND used = 0 AND expires_at > ?"
     ).bind(ticket, "BG" + code, now).run();
     if (!consumed.meta || consumed.meta.changes !== 1) return json({ ok: false, error: "WebSocket ticket has already been used." }, 409);
-    const wallet = getAddress(row.wallet_address);
-    const balance = await getFitBalance(env, wallet);
-    if (balance < MIN_FIT_WEI) return json({ ok: false, error: "At least 1 FIT is required to join this game." }, 403);
     const stub = env.BACKGAMMON_ROOMS.get(env.BACKGAMMON_ROOMS.idFromName(code));
     return stub.fetch("https://backgammon-room.internal/ws", {
       headers: { "x-backgammon-wallet": wallet.toLowerCase(), "Upgrade": "websocket" }
