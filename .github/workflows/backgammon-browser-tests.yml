@@ -1,4 +1,4 @@
-name: Backgammon Browser Smoke Tests
+name: Backgammon Browser and Worker API Tests
 
 on:
   push:
@@ -58,3 +58,18 @@ jobs:
         env:
           BACKGAMMON_TEST_URL: https://fly-chess-arena.pages.dev/games/backgammon/
         run: node games/backgammon/tests/browser-smoke.mjs
+
+  worker-api-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check live Worker health and backgammon stats route guards
+        env:
+          BACKGAMMON_WORKER_URL: https://fly-chess-arena-api.flyinfinityplatform.workers.dev
+        run: node games/backgammon/tests/worker-api-smoke.mjs
