@@ -110,7 +110,7 @@ const rpc = await startRpcMock();
 let worker;
 let browser;
 try {
-  const migration = spawn("npx", ["wrangler", "d1", "migrations", "apply", "fly-infinity-arena-isolated-test", "--local", "--config", "wrangler.test.toml", "--yes"], { cwd: workerDir, stdio: "inherit" });
+  const migration = spawn("npx", ["wrangler", "d1", "migrations", "apply", "fly-infinity-arena-isolated-test", "--local", "--config", "wrangler.test.toml"], { cwd: workerDir, stdio: "inherit" });
   const migrationCode = await new Promise((resolve, reject) => {
     migration.once("error", reject);
     migration.once("exit", resolve);
