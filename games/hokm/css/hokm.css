@@ -90,6 +90,7 @@
 .hokm-card,.hokm-card-back{animation:hokmDealIn .32s cubic-bezier(.2,.75,.25,1) both}
 .trick-cards .played-card:not(.empty){animation:hokmPlayIn .24s ease-out both}
 @media(max-width:760px){
+ .seat-north .player-chip,.seat-south .player-chip{width:clamp(112px,38vw,170px);min-width:0}
  .seat-west,.seat-east{width:76px;gap:7px}
  .seat-west .player-chip,.seat-east .player-chip{width:76px;min-width:0;padding:5px 4px;gap:4px;justify-content:center}
  .seat-west .player-chip .avatar,.seat-east .player-chip .avatar{width:21px;height:21px;flex:0 0 21px;font-size:10px}
