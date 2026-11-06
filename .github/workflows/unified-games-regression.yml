@@ -31,6 +31,7 @@ jobs:
           node --test games/backgammon/js/backgammon-engine.test.js
           node --test games/backgammon/tests/engine.test.mjs
           node --test games/backgammon/tests/backgammon-room.test.mjs
+          node --test games/backgammon/tests/online-match.integration.test.mjs
 
   chess-worker-check:
     runs-on: ubuntu-latest
@@ -46,6 +47,9 @@ jobs:
       - name: Check worker and chess client syntax
         working-directory: games/chess-arena/worker
         run: npm run check
+      - name: Simulate a complete two-player chess match and verify ranked results
+        working-directory: games/chess-arena/worker
+        run: node --test tests/online-match.integration.test.mjs
       - name: Build Worker bundle without deploying
         working-directory: games/chess-arena/worker
         run: npx wrangler deploy --dry-run --outdir /tmp/fly-chess-arena-worker
