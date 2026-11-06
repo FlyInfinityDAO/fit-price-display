@@ -24,11 +24,19 @@ jobs:
         run: |
           node --check games/hokm/js/hokm.js
           node --check games/hokm/js/hokm-wallet-bridge.js
+          node --check games/hokm/js/hokm-play.js
+          node --check games/hokm/js/hokm-online.js
+          node --check games/hokm/worker/src/index.js
+          node --check games/hokm/worker/src/room.js
       - name: Validate page structure and language coverage
         run: |
           test -s games/hokm/index.html
           test -s games/hokm/css/hokm.css
           test -s games/hokm/js/hokm.js
+          test -s games/hokm/js/hokm-online.js
+          test -s games/hokm/worker/src/room.js
+          grep -q 'hokm-online.js' games/hokm/index.html
+          grep -q 'HokmRoom' games/hokm/worker/wrangler.toml
           for lang in en fa ar tr ru zh es pt; do grep -q "value=\"$lang\"" games/hokm/index.html; done
           for seat in north south east west; do grep -q "seat-$seat" games/hokm/index.html; done
           grep -q 'background:#64152f' games/hokm/css/hokm.css
