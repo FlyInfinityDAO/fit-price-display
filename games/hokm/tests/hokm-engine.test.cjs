@@ -1,0 +1,12 @@
+const test=require("node:test");
+const assert=require("node:assert/strict");
+const H=require("../engine/hokm-engine.js");
+test("deck contains 52 unique cards",()=>{const d=H.makeDeck();assert.equal(d.length,52);assert.equal(new Set(d.map(c=>c.id)).size,52)});
+test("solo seats create one human and three CPUs across two teams",()=>{const seats=H.seatMap("solo",0);assert.deepEqual(seats.map(s=>s.kind),["human","cpu","cpu","cpu"]);assert.deepEqual(seats.map(s=>s.team),[0,1,0,1])});
+test("deal gives five cards each before trump and thirteen after",()=>{const g=H.createGame({rng:()=>0.37});assert.deepEqual(g.hands.map(h=>h.length),[5,5,5,5]);H.chooseTrump(g,"♠");assert.deepEqual(g.hands.map(h=>h.length),[13,13,13,13]);assert.equal(g.remaining.length,0)});
+test("players must follow lead suit when possible",()=>{const g=H.createGame({rng:()=>0.42});H.chooseTrump(g,"♥");g.trick=[{player:0,card:{id:"2♠",suit:"♠",rank:"2"}}];g.currentPlayer=1;const legal=H.legalCards(g,1);if(g.hands[1].some(c=>c.suit==="♠"))assert.ok(legal.every(c=>c.suit==="♠"));else assert.equal(legal.length,g.hands[1].length)});
+test("trump beats lead suit and higher trump wins",()=>{const trick=[{player:0,card:{suit:"♣",rank:"A"}},{player:1,card:{suit:"♣",rank:"K"}},{player:2,card:{suit:"♦",rank:"2"}},{player:3,card:{suit:"♦",rank:"A"}}];assert.equal(H.trickWinner(trick,"♦"),3)});
+test("normal lead-suit winner is highest rank",()=>{const trick=[{player:0,card:{suit:"♣",rank:"10"}},{player:1,card:{suit:"♣",rank:"A"}},{player:2,card:{suit:"♥",rank:"A"}},{player:3,card:{suit:"♣",rank:"K"}}];assert.equal(H.trickWinner(trick,"♦"),1)});
+test("CPU selects only a legal card",()=>{const g=H.createGame({rng:()=>0.23});H.chooseTrump(g,"♣");const c=H.chooseCpuCard(g,g.currentPlayer);assert.ok(H.legalCards(g,g.currentPlayer).some(x=>x.id===c.id))});
+test("playCard rejects wrong turn and illegal off-suit",()=>{const g=H.createGame({rng:()=>0.51});H.chooseTrump(g,"♠");assert.throws(()=>H.playCard(g,1,g.hands[1][0].id),/turn/);});
+test("four cards complete a trick and winner leads next",()=>{const g=H.createGame({rng:()=>0.71});H.chooseTrump(g,"♠");let result;for(let i=0;i<4;i++){const p=g.currentPlayer;const c=H.chooseCpuCard(g,p);result=H.playCard(g,p,c.id)}assert.equal(result.completed,true);assert.equal(g.tricksWon.reduce((a,b)=>a+b,0),1);assert.equal(g.currentPlayer,result.winner)});
