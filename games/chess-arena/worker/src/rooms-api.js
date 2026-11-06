@@ -13,10 +13,10 @@ const FIT_TOKEN = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
 const MIN_FIT_WEI = 10n ** 18n;
 const BSC_CHAIN_ID = 56;
 
-function json(data, status = 200) {
+function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" }
+    headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", ...extraHeaders }
   });
 }
 
@@ -215,7 +215,7 @@ export async function handleRoomApi(request, env) {
     const wallet = getAddress(row.wallet_address);
     let balance;
     try { balance = await getFitBalance(env, wallet); }
-    catch { return json({ ok: false, error: "BSC RPC is temporarily unavailable. Please retry shortly." }, 503); }
+    catch { return json({ ok: false, error: "BSC RPC is temporarily unavailable. Please retry shortly." }, 503, { "retry-after": "5" }); }
     if (balance < MIN_FIT_WEI) return json({ ok: false, error: "At least 1 FIT is required to join this game." }, 403);
     const consumed = await env.DB.prepare(
       "UPDATE websocket_tickets SET used = 1 WHERE ticket = ? AND room_code = ? AND used = 0 AND expires_at > ?"
