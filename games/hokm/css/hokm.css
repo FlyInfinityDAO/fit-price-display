@@ -48,13 +48,14 @@
 
 
 /* Isolated online Hokm room controls */
+.hokm-online-panel[hidden]{display:none}
 .hokm-online-panel{grid-column:1/-1;display:grid;gap:12px;margin-top:6px;padding:16px;border:1px solid #d7b86666;border-radius:14px;background:linear-gradient(135deg,#3c0c1b,#501329)}
 .hokm-online-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .hokm-online-heading h3{margin:4px 0 0;color:#f7e8c8;font-size:17px}
 .hokm-online-mark{display:grid;place-items:center;width:38px;height:38px;border:1px solid #d7b86677;border-radius:50%;color:#e7cc8b;font-size:22px}
 .hokm-online-actions{display:grid;grid-template-columns:1fr minmax(150px,220px) auto;gap:9px;align-items:end}
 .hokm-room-entry{display:grid;gap:5px;color:#f0dce1;font-size:11px}
-.hokm-room-entry input{width:100%;min-width:0;padding:11px;border:1px solid #d7b86688;border-radius:10px;background:#2e0b17;color:#fff0d0;font:700 14px inherit;letter-spacing:.16em;text-transform:uppercase}
+.hokm-room-entry input{width:100%;min-width:0;padding:11px;border:1px solid #d7b86688;border-radius:10px;background:#2e0b17;color:#fff0d0;font-family:inherit;font-size:14px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
 .hokm-room-invite{display:flex;align-items:center;justify-content:center;gap:12px;padding:9px;border:1px dashed #d7b86688;border-radius:10px}
 .hokm-room-invite strong{font-size:22px;letter-spacing:.22em;color:#f6dfaa}
 .hokm-online-status{min-height:20px;text-align:center;color:#f0d99a;font-size:12px;font-weight:700}
