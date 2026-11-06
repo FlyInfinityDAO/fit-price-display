@@ -68,3 +68,5 @@
 @media(max-width:650px){.hokm-online-actions{grid-template-columns:1fr 1fr}.hokm-room-entry{grid-column:1/-1;grid-row:2}.hokm-online-actions #hokmJoinRoom{grid-column:2}.hokm-online-actions #hokmCreateRoom{grid-column:1}.hokm-room-invite{flex-wrap:wrap}}
 
 .hokm-online-trump[hidden],.hokm-room-invite[hidden],.hokm-online-panel[hidden],.hokm-game-controls[hidden],.hokm-trump-picker[hidden],.hokm-turn-clock[hidden]{display:none!important}
+
+.hokm-cpu-controls{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0;align-items:center}.hokm-cpu-controls[hidden]{display:none}.hokm-cpu-controls button{flex:1 1 220px;min-height:42px}
