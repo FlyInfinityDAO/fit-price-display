@@ -20,9 +20,10 @@ const isRed=c=>c.suit==="♥"||c.suit==="♦";
 function ensureControls(){
  if($("hokmGameControls"))return;
  const bar=document.querySelector(".control-bar");
- const wrap=document.createElement("div");wrap.id="hokmGameControls";wrap.className="hokm-game-controls";wrap.hidden=true;
+ const wrap=document.createElement("div");wrap.id="hokmGameControls";wrap.className="hokm-game-controls";wrap.hidden=false;
  wrap.innerHTML='<div class="hokm-game-status" id="hokmGameStatus" aria-live="polite"></div><div class="hokm-game-buttons"><button id="hokmStartBtn" class="primary-btn" type="button"></button><button id="hokmNextBtn" class="primary-btn" type="button" hidden></button><button id="hokmRestartBtn" class="secondary-btn" type="button" hidden></button></div><div id="hokmTrumpPicker" class="hokm-trump-picker" hidden><strong id="hokmTrumpTitle"></strong><div class="hokm-trump-options"><button type="button" data-suit="♠">♠ <span></span></button><button type="button" data-suit="♥">♥ <span></span></button><button type="button" data-suit="♦">♦ <span></span></button><button type="button" data-suit="♣">♣ <span></span></button></div></div><div class="hokm-hand-caption" id="hokmHandCaption"></div><div class="hokm-turn-clock" id="hokmTurnClock" hidden></div>';
  bar.parentNode.insertBefore(wrap,bar);
+ $("hokmStartBtn").disabled=true;
  $("hokmStartBtn").addEventListener("click",startMatch);
  $("hokmNextBtn").addEventListener("click",nextRound);
  $("hokmRestartBtn").addEventListener("click",startMatch);
@@ -171,13 +172,16 @@ ensureControls();
 $("hokmGameControls").hidden=true;
 $("languageSelect").addEventListener("change",e=>setLanguage(e.target.value));
 $("cpuDifficulty").addEventListener("change",e=>{difficulty=["easy","normal","hard"].includes(e.target.value)?e.target.value:"normal"});
-window.addEventListener("hokm:authenticated",e=>{
- const d=e.detail||{};tier=Number(d.tier)||0;setLanguage($("languageSelect").value||"en");
- $("hokmGameControls").hidden=false;$("hokmStartBtn").hidden=false;$("hokmStartBtn").textContent=tr("start");$("hokmNextBtn").hidden=true;$("hokmRestartBtn").hidden=true;
- setStatus(tr("access"));setMessage(tr("access"));
-});
+function activateAuthenticated(d){
+ tier=Number(d&&d.tier)||0;setLanguage($("languageSelect").value||"en");
+ $("hokmGameControls").hidden=false;$("hokmStartBtn").hidden=false;$("hokmStartBtn").disabled=!tier;$("hokmStartBtn").textContent=tr("start");$("hokmNextBtn").hidden=true;$("hokmRestartBtn").hidden=true;
+ setStatus(tier?tr("access"):tr("needAuth"));setMessage(tier?tr("access"):tr("needAuth"));
+}
+window.addEventListener("hokm:authenticated",e=>activateAuthenticated(e.detail||{}));
+// Recover authentication if wallet verification completed before this controller attached its listener.
+if(window.hokmAuthState)activateAuthenticated(window.hokmAuthState);
 window.addEventListener("hokm:access-revoked",()=>{
- stopTimers();tier=0;match=null;game=null;visibleTrick=[];$("hokmGameControls").hidden=true;
+ stopTimers();tier=0;match=null;game=null;visibleTrick=[];$("hokmGameControls").hidden=false;$("hokmStartBtn").disabled=true;$("hokmStartBtn").hidden=false;setStatus(tr("needAuth"));
  document.querySelectorAll(".hand").forEach(el=>{el.replaceChildren(...Array.from({length:13},()=>makeBack()))});
  document.querySelectorAll(".trick-cards .played-card").forEach(el=>{el.classList.add("empty");el.textContent="·"});
  const trump=document.querySelector(".trump-pill b");if(trump)trump.textContent="—";
