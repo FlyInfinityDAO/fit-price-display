@@ -21,12 +21,18 @@ function createMatch({mode="solo",players=[],difficulty="normal",allowCpuSeats=f
  if(!["easy","normal","hard"].includes(difficulty))throw new Error("Invalid CPU difficulty");
  return {mode,players:players.map(p=>({...p})),difficulty,accessTier:policy.tier,maxRounds:policy.maxRounds,roundsPlayed:0,matchPoints:[0,0],finished:false,round:null};
 }
-function createGame({mode="solo",humanSeat=0,hakem=0,rng=Math.random}={}){
+function selectHakemByFirstAce(rng=Math.random){
+ const draw=shuffle(makeDeck(),rng);
+ for(let i=0;i<draw.length;i++)if(draw[i].rank==="A")return i%4;
+ return 0;
+}
+function createGame({mode="solo",humanSeat=0,hakem,rng=Math.random}={}){
+ const selectedHakem=Number.isInteger(hakem)&&hakem>=0&&hakem<4?hakem:selectHakemByFirstAce(rng);
  const deck=shuffle(makeDeck(),rng),hands=[[],[],[],[]];
  for(let n=0;n<5;n++)for(let p=0;p<4;p++)hands[p].push(deck.pop());
- return {mode,humanSeat,hakem,hands,remaining:deck,phase:"choose-trump",trump:null,leader:hakem,currentPlayer:hakem,trick:[],tricksWon:[0,0,0,0],teamTricks:[0,0],teamPoints:[0,0],round:1,finished:false};
+ return {mode,humanSeat,hakem:selectedHakem,hands,remaining:deck,phase:"choose-trump",trump:null,leader:selectedHakem,currentPlayer:selectedHakem,trick:[],tricksWon:[0,0,0,0],teamTricks:[0,0],teamPoints:[0,0],round:1,finished:false};
 }
-function startRound(match,{humanSeat=0,hakem=0,rng=Math.random}={}){
+function startRound(match,{humanSeat=0,hakem,rng=Math.random}={}){
  if(match.finished||match.roundsPlayed>=match.maxRounds)throw new Error("Match has reached its round limit");
  match.round=createGame({mode:match.mode,humanSeat,hakem,rng});
  match.roundNo=match.roundsPlayed+1;
@@ -139,6 +145,6 @@ function expireDisconnectedPlayers(match,now=Date.now()){
  return replaced;
 }
 
-const api={SUITS,RANKS,TEAMS,TURN_TIMEOUT_MS,RECONNECT_GRACE_MS,makeDeck,shuffle,tierForBalance,resolveAccessPolicy,createMatch,startRound,createGame,chooseTrump,legalCards,cardStrength,trickWinner,finishRound,playCard,playCardWithClock,startTurnClock,resolveTurnTimeout,markPlayerDisconnected,reconnectPlayer,expireDisconnectedPlayers,chooseCpuCard,seatMap};
+const api={SUITS,RANKS,TEAMS,TURN_TIMEOUT_MS,RECONNECT_GRACE_MS,makeDeck,shuffle,selectHakemByFirstAce,tierForBalance,resolveAccessPolicy,createMatch,startRound,createGame,chooseTrump,legalCards,cardStrength,trickWinner,finishRound,playCard,playCardWithClock,startTurnClock,resolveTurnTimeout,markPlayerDisconnected,reconnectPlayer,expireDisconnectedPlayers,chooseCpuCard,seatMap};
 if(typeof module!=="undefined"&&module.exports)module.exports=api;root.HokmEngine=api;
 })(typeof globalThis!=="undefined"?globalThis:this);
