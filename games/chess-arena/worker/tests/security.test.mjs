@@ -68,7 +68,10 @@ test("expired security records are cleaned in bounded batches", async () => {
     DB: {
       prepare(sql) {
         statements.push(sql);
-        return { bind: (...args) => ({ run: async () => ({ meta: { changes: args.length ? 2 : 0 } }) }) };
+        return {
+          async run() { return { meta: { changes: 0 } }; },
+          bind: (...args) => ({ run: async () => ({ meta: { changes: args.length ? 2 : 0 } }) })
+        };
       }
     }
   };
