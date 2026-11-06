@@ -1,0 +1,31 @@
+name = "fly-infinity-arena-isolated-test"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+FRONTEND_ORIGIN = "http://127.0.0.1:8787"
+FRONTEND_ORIGINS = "http://127.0.0.1:8787"
+BSC_RPC_URL = "http://127.0.0.1:8545"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "fly-infinity-arena-isolated-test"
+database_id = "00000000-0000-4000-8000-000000000001"
+migrations_dir = "migrations"
+
+[[durable_objects.bindings]]
+name = "CHESS_ROOMS"
+class_name = "ChessRoom"
+
+[[durable_objects.bindings]]
+name = "BACKGAMMON_ROOMS"
+class_name = "BackgammonRoom"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["ChessRoom"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["BackgammonRoom"]
