@@ -5,17 +5,18 @@ const rankValue=r=>RANKS.indexOf(r);
 function makeDeck(){return SUITS.flatMap(s=>RANKS.map(r=>({suit:s,rank:r,id:r+s})))}
 function shuffle(deck,rng=Math.random){const a=[...deck];for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function tierForBalance(balance){const n=Number(balance);if(!Number.isFinite(n)||n<1)return 0;return n>=10?2:1}
-function resolveAccessPolicy({mode="solo",players=[]}={}){
+function resolveAccessPolicy({mode="solo",players=[],allowCpuSeats=false}={}){
  const humans=players.filter(p=>p.kind!=="cpu");
  const expected=mode==="online"?4:1;
- if(humans.length!==expected)return {allowed:false,reason:"player-count",maxRounds:0,tier:0};
+ const validCount=allowCpuSeats&&mode==="online"?humans.length>=1&&humans.length<=4:humans.length===expected;
+ if(!validCount)return {allowed:false,reason:"player-count",maxRounds:0,tier:0};
  const tiers=humans.map(p=>tierForBalance(p.balance));
  if(tiers.some(t=>t===0))return {allowed:false,reason:"insufficient-fit",maxRounds:0,tier:0};
  const tier=Math.min(...tiers),maxRounds=tier===2?7:3;
  return {allowed:true,reason:null,maxRounds,tier,limitingPlayers:humans.filter(p=>tierForBalance(p.balance)===tier).map(p=>p.seat)};
 }
-function createMatch({mode="solo",players=[],difficulty="normal"}={}){
- const policy=resolveAccessPolicy({mode,players});
+function createMatch({mode="solo",players=[],difficulty="normal",allowCpuSeats=false}={}){
+ const policy=resolveAccessPolicy({mode,players,allowCpuSeats});
  if(!policy.allowed)throw new Error(policy.reason==="player-count"?"Invalid human player count":"Every human player needs at least 1 FIT");
  if(!["easy","normal","hard"].includes(difficulty))throw new Error("Invalid CPU difficulty");
  return {mode,players:players.map(p=>({...p})),difficulty,accessTier:policy.tier,maxRounds:policy.maxRounds,roundsPlayed:0,matchPoints:[0,0],finished:false,round:null};
