@@ -41,6 +41,17 @@ async function session(request,env){
  const tier=balance>=TIER2_FIT?2:1;
  return json({ok:true,wallet:getAddress(claims.sub),chainId:CHAIN_ID,tier,fitBalanceWei:balance.toString(),expiresAt:claims.exp});
 }
+async function verifiedPlayer(request,env){
+ const auth=request.headers.get("Authorization")||"",token=auth.startsWith("Bearer ")?auth.slice(7):"",claims=await verifySession(token,env.SESSION_SECRET||"");
+ if(!claims||!isAddress(claims.sub)||claims.chainId!==CHAIN_ID)return json({ok:false,error:"Session is invalid or expired"},401);
+ let balance;try{balance=await getFitBalance(env,getAddress(claims.sub))}catch{return json({ok:false,error:"BSC RPC is temporarily unavailable"},503,{"retry-after":"5"})}
+ if(balance<MIN_FIT)return json({ok:false,error:"At least 1 FIT is required. Access revoked."},403);
+ return {wallet:getAddress(claims.sub).toLowerCase(),tier:balance>=TIER2_FIT?2:1};
+}
+function makeRoomCode(){
+ const alphabet="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",bytes=crypto.getRandomValues(new Uint8Array(6));
+ return Array.from(bytes,b=>alphabet[b%alphabet.length]).join("");
+}
 function withHeaders(response,headers){const h=new Headers(response.headers);for(const[k,v]of Object.entries(headers))h.set(k,v);return new Response(response.body,{status:response.status,headers:h})}
 export default {
  async scheduled(_controller,env,ctx){ctx.waitUntil(cleanupExpiredRecords(env).catch(error=>console.error("Hokm cleanup failed",error)))},
@@ -56,6 +67,32 @@ export default {
    if(request.method==="POST"&&path==="/api/auth/challenge")return withHeaders(await challenge(request,env),headers);
    if(request.method==="POST"&&path==="/api/auth/verify")return withHeaders(await verify(request,env),headers);
    if(request.method==="GET"&&path==="/api/auth/session")return withHeaders(await session(request,env),headers);
+   if(request.method==="POST"&&path==="/api/rooms"){
+    const player=await verifiedPlayer(request,env);if(player instanceof Response)return withHeaders(player,headers);
+    let body;try{body=await request.json()}catch{return json({ok:false,error:"Invalid JSON body"},400,headers)}
+    const action=body.action==="join"?"join":body.action==="create"?"create":null;
+    if(!action)return json({ok:false,error:"Action must be create or join"},400,headers);
+    const code=action==="create"?makeRoomCode():String(body.code||"").toUpperCase();
+    if(!/^[A-HJ-NP-Z2-9]{6}$/.test(code))return json({ok:false,error:"Invalid room code"},400,headers);
+    const id=env.HOKM_ROOMS.idFromName(code),stub=env.HOKM_ROOMS.get(id);
+    const response=await stub.fetch("https://hokm-room.internal/"+action+"?code="+code,{method:"POST",headers:{"x-player-wallet":player.wallet,"x-player-tier":String(player.tier)}});
+    return withHeaders(response,headers);
+   }
+   const ticketMatch=path.match(/^\/api\/rooms\/([A-HJ-NP-Z2-9]{6})\/ticket$/);
+   if(request.method==="POST"&&ticketMatch){
+    const player=await verifiedPlayer(request,env);if(player instanceof Response)return withHeaders(player,headers);
+    const stub=env.HOKM_ROOMS.get(env.HOKM_ROOMS.idFromName(ticketMatch[1]));
+    const response=await stub.fetch("https://hokm-room.internal/ticket",{method:"POST",headers:{"x-player-wallet":player.wallet}});
+    return withHeaders(response,headers);
+   }
+   const wsMatch=path.match(/^\/api\/rooms\/([A-HJ-NP-Z2-9]{6})\/ws$/);
+   if(request.method==="GET"&&wsMatch){
+    if(request.headers.get("Upgrade")?.toLowerCase()!=="websocket")return json({ok:false,error:"WebSocket upgrade required"},426,headers);
+    const ticket=url.searchParams.get("ticket")||"";
+    if(!ticket||ticket.length>128)return json({ok:false,error:"A one-time connection ticket is required"},401,headers);
+    const stub=env.HOKM_ROOMS.get(env.HOKM_ROOMS.idFromName(wsMatch[1]));
+    return await stub.fetch(new Request("https://hokm-room.internal/ws?ticket="+encodeURIComponent(ticket),request));
+   }
    return json({ok:false,error:"Not found"},404,headers);
   }catch(error){return json({ok:false,error:error.message||"Request failed"},500,headers)}
  }
