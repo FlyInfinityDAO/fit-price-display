@@ -2,16 +2,17 @@ const encoder = new TextEncoder();
 const rateLimitTablePromises = new WeakMap();
 
 async function ensureRateLimitTable(env) {
-  if (!rateLimitTablePromises.has(env)) {
+  const database = env.DB;
+  if (!rateLimitTablePromises.has(database)) {
     const pending = env.DB.prepare(
       "CREATE TABLE IF NOT EXISTS api_rate_limits (bucket_key TEXT PRIMARY KEY, window_start INTEGER NOT NULL, hits INTEGER NOT NULL, expires_at INTEGER NOT NULL)"
     ).run().catch(error => {
-      rateLimitTablePromises.delete(env);
+      rateLimitTablePromises.delete(database);
       throw error;
     });
-    rateLimitTablePromises.set(env, pending);
+    rateLimitTablePromises.set(database, pending);
   }
-  return rateLimitTablePromises.get(env);
+  return rateLimitTablePromises.get(database);
 }
 
 function toHex(bytes) {
@@ -21,7 +22,9 @@ function toHex(bytes) {
 export async function enforceRateLimit(request, env, bucket, limit, windowSeconds, now = Math.floor(Date.now() / 1000)) {
   await ensureRateLimitTable(env);
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
-  const digest = await crypto.subtle.digest("SHA-256", encoder.encode(ip));
+  if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32) throw new Error("Rate-limit signing secret is not configured.");
+  const hmacKey = await crypto.subtle.importKey("raw", encoder.encode(env.SESSION_SECRET), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const digest = await crypto.subtle.sign("HMAC", hmacKey, encoder.encode(ip));
   const key = bucket + ":" + toHex(digest);
   const windowStart = Math.floor(now / windowSeconds) * windowSeconds;
   const expiresAt = windowStart + windowSeconds * 2;
