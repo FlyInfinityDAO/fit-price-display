@@ -95,3 +95,41 @@ test("two virtual players complete a legal checkmate game and persist both ranke
     bothPlayersReceivedFinalState: true
   }, null, 2));
 });
+
+
+test("chess room rejects wrong-turn and non-member socket moves without changing the position", async () => {
+  const values = new Map();
+  const received = { white: [], black: [], intruder: [] };
+  const sockets = [
+    { deserializeAttachment: () => ({ wallet: "0xwhite-test-wallet" }), send: message => received.white.push(JSON.parse(message)) },
+    { deserializeAttachment: () => ({ wallet: "0xblack-test-wallet" }), send: message => received.black.push(JSON.parse(message)) },
+    { deserializeAttachment: () => ({ wallet: "0xintruder-test-wallet" }), send: message => received.intruder.push(JSON.parse(message)) }
+  ];
+  const db = makeDb();
+  const ctx = {
+    storage: {
+      get: async key => values.get(key),
+      put: async (key, value) => values.set(key, structuredClone(value)),
+      setAlarm: async () => {},
+      deleteAlarm: async () => {}
+    },
+    getWebSockets: () => sockets
+  };
+  const room = new ChessRoom(ctx, { DB: db });
+
+  await room.fetch(makeRequest("/create?code=SIMCH2", "POST", "0xwhite-test-wallet"));
+  await room.fetch(makeRequest("/join", "POST", "0xblack-test-wallet"));
+  const initial = await values.get("game");
+
+  await room.webSocketMessage(sockets[1], JSON.stringify({ type: "move", from: "e7", to: "e5" }));
+  assert.equal((await values.get("game")).fen, initial.fen);
+  assert.ok(received.black.some(message => message.type === "error" && message.error === "It is not your turn."));
+
+  await room.webSocketMessage(sockets[2], JSON.stringify({ type: "move", from: "f2", to: "f3" }));
+  assert.equal((await values.get("game")).fen, initial.fen);
+  assert.ok(received.intruder.some(message => message.type === "error" && message.error === "This game is not active for your wallet."));
+
+  await room.webSocketMessage(sockets[0], JSON.stringify({ type: "move", from: "f2", to: "f3" }));
+  assert.notEqual((await values.get("game")).fen, initial.fen);
+  assert.equal((await values.get("game")).turn, "b");
+});
