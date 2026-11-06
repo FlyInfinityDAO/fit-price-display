@@ -58,6 +58,11 @@ jobs:
         run: |
           npm install --no-save playwright
           npx playwright install --with-deps chromium
+      - name: Install isolated Worker dependencies
+        working-directory: games/chess-arena/worker
+        run: npm install
+      - name: Run two independent browsers against isolated local Worker and Durable Objects
+        run: node games/chess-arena/worker/tests/two-browser-worker.integration.mjs
       - name: Verify chess browser UI with safe wallet stubs
         env:
           CHESS_TEST_URL: https://flyinfinitydao.github.io/fit-price-display/games/chess-arena/
