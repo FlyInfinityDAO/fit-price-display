@@ -155,6 +155,8 @@ export class HokmRoom extends DurableObject {
     const room = await this.loadRoom();
     const player = room?.players.find(p => p.wallet === wallet);
     if (!player) return json({ ok: false, error: "Join this room before connecting" }, 403);
+    const matchPlayer = room.match?.players.find(p => p.seat === player.seat);
+    if (matchPlayer?.connectionStatus === "replaced") return json({ ok: false, error: "Reconnect window expired; this seat is now controlled by CPU" }, 409);
     const ticket = crypto.randomUUID().replace(/-/g, "") + crypto.randomUUID().replace(/-/g, "");
     room.tickets ||= {};
     room.tickets[ticket] = { wallet, seat: player.seat, expiresAt: Date.now() + TICKET_TTL * 1000 };
