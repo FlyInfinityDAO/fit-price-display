@@ -1,0 +1,92 @@
+name: Hokm Isolated Pages Preview
+
+on:
+  push:
+    branches: [feature/hokm-four-player]
+    paths:
+      - 'games/hokm/**'
+      - 'walletconnect-bridge.js'
+      - 'logo.png'
+      - '.github/workflows/hokm-pages-preview.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hokm-pages-preview
+  cancel-in-progress: false
+
+jobs:
+  deploy-preview:
+    if: github.ref == 'refs/heads/feature/hokm-four-player'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      PREVIEW_URL: https://hokm-preview.fly-hokm-preview.pages.dev
+    steps:
+      - name: Checkout Hokm branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/hokm-four-player
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate Cloudflare credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Missing CLOUDFLARE_API_TOKEN secret."; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Missing CLOUDFLARE_ACCOUNT_ID variable."; exit 1; }
+
+      - name: Install Wrangler
+        working-directory: games/hokm/worker
+        run: npm install --no-audit --no-fund
+
+      - name: Prepare isolated preview site
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hokm-preview/games"
+          cp -R games/hokm "$RUNNER_TEMP/hokm-preview/games/hokm"
+          cp logo.png walletconnect-bridge.js "$RUNNER_TEMP/hokm-preview/"
+          cat > "$RUNNER_TEMP/hokm-preview/index.html" <<'HTML'
+          <!doctype html>
+          <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url=/games/hokm/"><title>Fly Infinity Hokm Preview</title></head>
+          <body><p>Opening <a href="/games/hokm/">Fly Infinity Hokm</a>…</p></body></html>
+          HTML
+
+      - name: Create dedicated Cloudflare Pages project if needed
+        shell: bash
+        run: |
+          set -euo pipefail
+          WRANGLER="./games/hokm/worker/node_modules/.bin/wrangler"
+          if ! "$WRANGLER" pages project list | grep -q 'fly-hokm-preview'; then
+            "$WRANGLER" pages project create fly-hokm-preview --production-branch main
+          fi
+
+      - name: Deploy only the Hokm preview files
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./games/hokm/worker/node_modules/.bin/wrangler pages deploy "$RUNNER_TEMP/hokm-preview" --project-name=fly-hokm-preview --branch=hokm-preview
+
+      - name: Verify preview page and API CORS
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --silent --show-error --fail --retry 8 --retry-delay 5 "$PREVIEW_URL/games/hokm/" -o /tmp/hokm.html
+          grep -q 'Hokm Fly Infinity' /tmp/hokm.html
+          headers="$(curl --silent --show-error --dump-header - --output /dev/null --request OPTIONS \
+            --header "Origin: $PREVIEW_URL" \
+            --header "Access-Control-Request-Method: POST" \
+            --header "Access-Control-Request-Headers: content-type" \
+            https://fly-hokm-api.flyinfinityplatform.workers.dev/api/auth/challenge)"
+          printf '%s\n' "$headers"
+          printf '%s' "$headers" | grep -qi "access-control-allow-origin: $PREVIEW_URL"
+          echo "Hokm preview page and authentication API CORS are reachable."
