@@ -2,6 +2,11 @@ name: Hokm Cloudflare Deploy
 
 on:
   workflow_dispatch:
+  push:
+    branches: [feature/hokm-four-player]
+    paths:
+      - 'games/hokm/worker/**'
+      - '.github/workflows/hokm-cloudflare-deploy.yml'
 
 permissions:
   contents: read
@@ -13,7 +18,7 @@ concurrency:
 jobs:
   deploy:
     name: Deploy isolated Hokm Worker
-    if: github.ref == 'refs/heads/feature/hokm-four-player'
+    if: github.ref == 'refs/heads/feature/hokm-four-player' && (github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy-hokm]'))
     runs-on: ubuntu-latest
     defaults:
       run:
