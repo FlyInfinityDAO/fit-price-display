@@ -61,7 +61,7 @@ async function waitForWorker(child) {
 
 async function api(page, path, token, body) {
   return page.evaluate(async ({ path, token, body }) => {
-    const response = await fetch(path, {
+    const response = await fetch(path, { signal: AbortSignal.timeout(15000),
       method: body ? "POST" : "GET",
       headers: { Authorization: "Bearer " + token, ...(body ? { "content-type": "application/json" } : {}) },
       body: body ? JSON.stringify(body) : undefined
@@ -110,15 +110,25 @@ const rpc = await startRpcMock();
 let worker;
 let browser;
 try {
-  const migration = spawn("npx", ["wrangler", "d1", "migrations", "apply", "fly-infinity-arena-isolated-test", "--local", "--config", "wrangler.test.toml"], { cwd: workerDir, stdio: "inherit" });
+  console.log("[two-browser] Applying isolated local D1 migrations");
+  const migration = spawn("npx", ["wrangler", "d1", "migrations", "apply", "fly-infinity-arena-isolated-test", "--local", "--config", "wrangler.test.toml"], { cwd: workerDir, stdio: ["ignore", "pipe", "pipe"] });
+  let migrationOutput = "";
+  migration.stdout.on("data", chunk => { migrationOutput += chunk.toString(); process.stdout.write(chunk); });
+  migration.stderr.on("data", chunk => { migrationOutput += chunk.toString(); process.stderr.write(chunk); });
   const migrationCode = await new Promise((resolve, reject) => {
-    migration.once("error", reject);
-    migration.once("exit", resolve);
+    const timer = setTimeout(() => {
+      migration.kill("SIGTERM");
+      reject(new Error("D1 migrations timed out after 90 seconds. Output:\\n" + migrationOutput));
+    }, 90000);
+    migration.once("error", error => { clearTimeout(timer); reject(error); });
+    migration.once("exit", code => { clearTimeout(timer); resolve(code); });
   });
   assert.equal(migrationCode, 0, "Local isolated D1 migrations must apply");
 
+  console.log("[two-browser] Starting isolated local Worker");
   worker = spawn("npx", ["wrangler", "dev", "--local", "--config", "wrangler.test.toml", "--ip", "127.0.0.1", "--port", "8787"], { cwd: workerDir, stdio: ["ignore", "pipe", "pipe"] });
   await waitForWorker(worker);
+  console.log("[two-browser] Worker ready; launching two isolated browser contexts");
 
   browser = await chromium.launch({ headless: true });
   const whiteContext = await browser.newContext();
@@ -131,6 +141,7 @@ try {
 
   // Chess: two separate browser contexts authenticate as different test wallets,
   // create/join the same room, receive independent WebSocket states, and observe a live move.
+  console.log("[two-browser] Creating and joining chess room");
   const chessRoom = await api(whitePage, "/api/rooms/create", whiteToken, {});
   const chessCode = chessRoom.roomCode;
   await api(blackPage, "/api/rooms/join", blackToken, { roomCode: chessCode });
@@ -152,6 +163,7 @@ try {
 
   // Backgammon: the same two independent browser contexts join a distinct room
   // and both observe the authoritative server's dice-roll broadcast.
+  console.log("[two-browser] Creating and joining backgammon room");
   const bgRoom = await api(whitePage, "/api/backgammon/rooms/create", whiteToken, {});
   const bgCode = bgRoom.roomCode;
   await api(blackPage, "/api/backgammon/rooms/join", blackToken, { roomCode: bgCode });
@@ -171,6 +183,7 @@ try {
   assert.equal(bgBroadcast.game.turn, "w");
   assert.ok(Array.isArray(bgBroadcast.game.dice) && bgBroadcast.game.dice.length === 2);
 
+  console.log("[two-browser] Both games broadcast successfully");
   console.log(JSON.stringify({
     ok: true,
     environment: "isolated local Cloudflare Workers runtime (Wrangler) with local Durable Objects and D1",
