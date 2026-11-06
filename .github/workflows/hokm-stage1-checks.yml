@@ -21,7 +21,9 @@ jobs:
         with:
           node-version: 22
       - name: Validate JavaScript
-        run: node --check games/hokm/js/hokm.js
+        run: |
+          node --check games/hokm/js/hokm.js
+          node --check games/hokm/js/hokm-wallet-bridge.js
       - name: Validate page structure and language coverage
         run: |
           test -s games/hokm/index.html
