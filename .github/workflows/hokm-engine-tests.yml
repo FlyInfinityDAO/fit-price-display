@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: 22
       - name: Validate Hokm browser client and wallet integration
-        run: node --check games/hokm/js/hokm.js && node --check games/hokm/js/hokm-play.js
+        run: node --check games/hokm/js/hokm.js && node --check games/hokm/js/hokm-play.js && node --check games/hokm/js/hokm-online.js
       - name: Validate isolated Hokm Worker syntax
         run: node --check games/hokm/worker/src/index.js && node --check games/hokm/worker/src/security.js && node --check games/hokm/worker/src/room.js
       - name: Run Hokm rules, CPU and access-tier tests
