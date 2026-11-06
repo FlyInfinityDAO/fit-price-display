@@ -83,13 +83,11 @@ async function connectHokm(method){
    try{
     await activeProvider.request({method:"wallet_switchEthereumChain",params:[{chainId:"0x38"}]});
    }catch(switchError){
-    if(switchError.code===4902)throw new Error(msg("addBsc"));
     throw new Error(msg("wrongChain"));
    }
   }
   const signer=provider.getSigner();
   const address=await signer.getAddress();
-  setAccessStatus(msg("walletConnected")+address.slice(0,6)+"…"+address.slice(-4));
   activeButton.textContent=msg("signing");
   setAccessStatus(msg("signing"));
   const challenge=await api("/api/auth/challenge",{address});
