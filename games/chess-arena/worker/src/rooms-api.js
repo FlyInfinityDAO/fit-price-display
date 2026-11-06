@@ -56,7 +56,7 @@ async function authorize(request, env) {
   let balance;
   try { balance = await getFitBalance(env, wallet); }
   catch {
-    return { response: json({ ok: false, error: "BSC RPC is temporarily unavailable. Please retry shortly." }, 503) };
+    return { response: json({ ok: false, error: "BSC RPC is temporarily unavailable. Please retry shortly." }, 503, { "retry-after": "5" }) };
   }
   if (balance < MIN_FIT_WEI) {
     return { response: json({ ok: false, error: "At least 1 FIT is required to enter or continue a game.", balanceWei: balance.toString() }, 403) };
@@ -320,7 +320,7 @@ export async function handleRoomApi(request, env) {
     const wallet = getAddress(row.wallet_address);
     let balance;
     try { balance = await getFitBalance(env, wallet); }
-    catch { return json({ ok: false, error: "BSC RPC is temporarily unavailable. Please retry shortly." }, 503); }
+    catch { return json({ ok: false, error: "BSC RPC is temporarily unavailable. Please retry shortly." }, 503, { "retry-after": "5" }); }
     if (balance < MIN_FIT_WEI) return json({ ok: false, error: "At least 1 FIT is required to join this game." }, 403);
     const consumed = await env.DB.prepare(
       "UPDATE websocket_tickets SET used = 1 WHERE ticket = ? AND room_code = ? AND used = 0 AND expires_at > ?"
