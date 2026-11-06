@@ -62,7 +62,8 @@ export default {
   if(origin&&!origins(env).has(origin))return json({ok:false,error:"Origin not allowed"},403);
   if(request.method==="GET"&&path==="/api/health")return json({ok:true,service:"Fly Hokm API",version:"0.1.0"},200,headers);
   const configs={"POST /api/auth/challenge":["auth-challenge",20,600],"POST /api/auth/verify":["auth-verify",30,600],"GET /api/auth/session":["auth-session",60,60]};
-  const config=configs[request.method+" "+path];
+  const dynamicTicket=request.method==="POST"&&/^\/api\/rooms\/[A-HJ-NP-Z2-9]{6}\/ticket$/.test(path);
+  const config=configs[request.method+" "+path]||(request.method==="POST"&&path==="/api/rooms"?["room-create",20,600]:dynamicTicket?["room-ticket",80,60]:null);
   if(config){try{const limit=await enforceRateLimit(request,env,...config);if(!limit.allowed)return json({ok:false,error:"Too many requests. Please wait and retry."},429,{"retry-after":String(limit.retryAfter),...headers})}catch{return json({ok:false,error:"Security service temporarily unavailable"},503,{"retry-after":"5",...headers})}}
   try{
    if(request.method==="POST"&&path==="/api/auth/challenge")return withHeaders(await challenge(request,env),headers);
