@@ -63,7 +63,7 @@ function renderTrick(){
  const entries=visibleTrick.length?visibleTrick:(game?game.trick:[]);
  nodes.forEach((node,i)=>{
   node.classList.toggle("empty",!entries[i]);
-  node.classList.toggle("red",!!entries[i]&&isRed(entries[i].card));node.classList.toggle("black",!!entries[i]&&!isRed(entries[i].card));
+  node.classList.toggle("red",!!entries[i]&&isRed(entries[i].card));node.classList.toggle("black",!!entries[i]&&!isRed(entries[i].card));node.classList.toggle("black",!!entries[i]&&!isRed(entries[i].card));
   node.textContent=entries[i]?entries[i].card.rank+entries[i].card.suit:"·";
  });
 }
