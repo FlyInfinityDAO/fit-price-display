@@ -47,6 +47,9 @@ jobs:
       - name: Check worker and chess client syntax
         working-directory: games/chess-arena/worker
         run: npm run check
+      - name: Test security rate limits and RPC failure handling
+        working-directory: games/chess-arena/worker
+        run: npm run test:security
       - name: Simulate a complete two-player chess match and verify ranked results
         working-directory: games/chess-arena/worker
         run: node --test tests/online-match.integration.test.mjs
