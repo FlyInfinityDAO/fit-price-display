@@ -7,6 +7,7 @@ function rateLimitDb() {
   return {
     prepare(sql) {
       return {
+        async run() { return { meta: { changes: 0 } }; },
         bind(...args) {
           return {
             async run() { return { meta: { changes: 0 } }; },
