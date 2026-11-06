@@ -29,3 +29,6 @@ const pending=lang==="fa"?"اتصال کیف پول در مرحله بعد به 
 $("connectBrowserBtn").addEventListener("click",()=>{$("accessStatus").textContent=pending});
 $("connectWalletBtn").addEventListener("click",()=>{$("accessStatus").textContent=pending});
 applyLang();
+let selectedCpuDifficulty="normal";
+$("cpuDifficulty")?.addEventListener("change",e=>{selectedCpuDifficulty=["easy","normal","hard"].includes(e.target.value)?e.target.value:"normal";window.hokmCpuDifficulty=selectedCpuDifficulty;});
+window.hokmCpuDifficulty=selectedCpuDifficulty;
