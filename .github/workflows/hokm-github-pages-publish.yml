@@ -2,6 +2,11 @@ name: Publish Hokm on GitHub Pages
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/hokm-github-pages-publish.yml
 
 permissions:
   contents: read
