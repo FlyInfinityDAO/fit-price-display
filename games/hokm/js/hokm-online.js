@@ -47,6 +47,8 @@ async function request(path,body){
 async function createOrJoin(action){
  if(connecting)return;
  if(!auth?.sessionToken){status(t("need"),true);return}
+ if(socket){intentionalClose=true;socket.close();socket=null}
+ stopCountdown();lastState=null;
  if(action==="join"){
   roomCode=$("hokmRoomCodeInput").value.trim().toUpperCase();
   if(!/^[A-HJ-NP-Z2-9]{6}$/.test(roomCode)){status(t("invalidCode"),true);return}
@@ -137,7 +139,7 @@ function renderState(s){
   const trump=document.querySelector(".trump-pill b");if(trump)trump.textContent=game.trump||"—";
   const score=document.querySelectorAll(".game-bottom .team-score b");
   if(score.length&&s.match){score[0].textContent=s.match.matchPoints[0];score[1].textContent=s.match.matchPoints[1]}
-  const round=document.querySelector(".round-info b");if(round&&s.match)round.textContent=(s.match.roundsPlayed+(s.status==="round-break"?0:1))+" / "+s.match.maxRounds;
+  const round=document.querySelector(".round-info b");if(round&&s.match){const completed=s.status==="round-break"||s.status==="finished";round.textContent=(s.match.roundsPlayed+(completed?0:1))+" / "+s.match.maxRounds;}
   const picker=$("hokmOnlineTrump");
   const mayChoose=s.status==="playing"&&game.phase==="choose-trump"&&game.hakem===ownSeat;
   picker.hidden=!mayChoose;
@@ -148,6 +150,12 @@ function renderState(s){
   if(s.status==="finished")status(t("finished")+" · "+(s.match?.matchPoints||[0,0]).join(" : "));
  }else{
   stopCountdown();
+  document.querySelectorAll(".hand").forEach(hand=>{hand.replaceChildren(...Array.from({length:13},()=>{const back=document.createElement("span");back.className="hokm-card-back";return back}))});
+  document.querySelectorAll(".player-chip em").forEach(el=>el.textContent="0");
+  document.querySelectorAll(".trick-cards .played-card").forEach(el=>{el.classList.add("empty");el.classList.remove("red");el.textContent="·"});
+  const trump=document.querySelector(".trump-pill b");if(trump)trump.textContent="—";
+  document.querySelectorAll(".game-bottom .team-score b").forEach(el=>el.textContent="0");
+  const round=document.querySelector(".round-info b");if(round)round.textContent="—";
  }
 }
 function startCountdown(deadline){
