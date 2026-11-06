@@ -3,7 +3,8 @@ const assert=require("node:assert/strict");
 const H=require("../engine/hokm-engine.js");
 test("deck contains 52 unique cards",()=>{const d=H.makeDeck();assert.equal(d.length,52);assert.equal(new Set(d.map(c=>c.id)).size,52)});
 test("solo seats create one human and three CPUs across two teams",()=>{const seats=H.seatMap("solo",0);assert.deepEqual(seats.map(s=>s.kind),["human","cpu","cpu","cpu"]);assert.deepEqual(seats.map(s=>s.team),[0,1,0,1])});
-test("deal gives five cards each before trump and thirteen after",()=>{const g=H.createGame({rng:()=>0.37});assert.deepEqual(g.hands.map(h=>h.length),[5,5,5,5]);H.chooseTrump(g,"♠");assert.deepEqual(g.hands.map(h=>h.length),[13,13,13,13]);assert.equal(g.remaining.length,0)});
+test("first Ace in the draw selects Hakem",()=>{const rng=()=>0.37;const expected=H.selectHakemByFirstAce(rng);const g=H.createGame({rng});assert.equal(g.hakem,expected);assert.ok(g.hakem>=0&&g.hakem<4);assert.deepEqual(g.hands.map(h=>h.length),[5,5,5,5]);H.chooseTrump(g,"♠");assert.deepEqual(g.hands.map(h=>h.length),[13,13,13,13]);assert.equal(g.remaining.length,0)});
+test("deal gives five cards each before Hokm suit and thirteen after",()=>{const g=H.createGame({hakem:0,rng:()=>0.37});assert.deepEqual(g.hands.map(h=>h.length),[5,5,5,5]);H.chooseTrump(g,"♠");assert.deepEqual(g.hands.map(h=>h.length),[13,13,13,13]);assert.equal(g.remaining.length,0)});
 test("players must follow lead suit when possible",()=>{const g=H.createGame({rng:()=>0.42});H.chooseTrump(g,"♥");g.trick=[{player:0,card:{id:"2♠",suit:"♠",rank:"2"}}];g.currentPlayer=1;const legal=H.legalCards(g,1);if(g.hands[1].some(c=>c.suit==="♠"))assert.ok(legal.every(c=>c.suit==="♠"));else assert.equal(legal.length,g.hands[1].length)});
 test("trump beats lead suit and higher trump wins",()=>{const trick=[{player:0,card:{suit:"♣",rank:"A"}},{player:1,card:{suit:"♣",rank:"K"}},{player:2,card:{suit:"♦",rank:"2"}},{player:3,card:{suit:"♦",rank:"A"}}];assert.equal(H.trickWinner(trick,"♦"),3)});
 test("normal lead-suit winner is highest rank",()=>{const trick=[{player:0,card:{suit:"♣",rank:"10"}},{player:1,card:{suit:"♣",rank:"A"}},{player:2,card:{suit:"♥",rank:"A"}},{player:3,card:{suit:"♣",rank:"K"}}];assert.equal(H.trickWinner(trick,"♦"),1)});
@@ -19,34 +20,34 @@ test("seven-round match finishes exactly after round seven",()=>{const m=H.creat
 test("easy, normal and hard CPU levels are accepted",()=>{for(const difficulty of ["easy","normal","hard"])assert.equal(H.createMatch({mode:"solo",difficulty,players:[{seat:0,kind:"human",balance:10},{kind:"cpu"},{kind:"cpu"},{kind:"cpu"}]}).difficulty,difficulty)});
 
 test("turn clock grants exactly 15 seconds and automatically plays a legal card after expiry",()=>{
- const g=H.createGame({rng:()=>0.31});H.chooseTrump(g,"♠");const clock=H.startTurnClock(g,1000);
+ const g=H.createGame({hakem:0,rng:()=>0.31});H.chooseTrump(g,"♠");const clock=H.startTurnClock(g,1000);
  assert.equal(clock.deadlineAt,16000);assert.throws(()=>H.resolveTurnTimeout(g,{now:15999}),/not expired/);
  const result=H.resolveTurnTimeout(g,{now:16000,difficulty:"hard",rng:()=>0});
  assert.equal(result.automatic,true);assert.equal(result.automaticPlayer,0);assert.ok(!g.hands[0].some(c=>c.id===result.automaticCardId));
  assert.equal(g.turnDeadlineAt,31000);
 });
 test("a timely human card resets the 15-second turn clock",()=>{
- const g=H.createGame({rng:()=>0.28});H.chooseTrump(g,"♥");H.startTurnClock(g,5000);
+ const g=H.createGame({hakem:0,rng:()=>0.28});H.chooseTrump(g,"♥");H.startTurnClock(g,5000);
  const card=H.legalCards(g,0)[0],result=H.playCardWithClock(g,0,card.id,9000);
  assert.equal(result.automatic,false);assert.equal(g.turnStartedAt,9000);assert.equal(g.turnDeadlineAt,24000);
 });
-test("disconnect preserves the human seat for 30 seconds and permits timely reconnection",()=>{
+test("disconnect preserves the human seat for five minutes and permits timely reconnection",()=>{
  const m={players:[0,1,2,3].map(seat=>({seat,kind:"human",connectionStatus:"connected"}))};
- const d=H.markPlayerDisconnected(m,2,10000);assert.equal(d.deadlineAt,40000);
- assert.deepEqual(H.expireDisconnectedPlayers(m,39999),[]);
- assert.deepEqual(H.reconnectPlayer(m,2,39999),{reconnected:true,seat:2,kind:"human"});
+ const d=H.markPlayerDisconnected(m,2,10000);assert.equal(d.deadlineAt,10000+H.RECONNECT_GRACE_MS);
+ assert.deepEqual(H.expireDisconnectedPlayers(m,d.deadlineAt-1),[]);
+ assert.deepEqual(H.reconnectPlayer(m,2,d.deadlineAt-1),{reconnected:true,seat:2,kind:"human"});
  assert.equal(m.players[2].kind,"human");assert.equal(m.players[2].connectionStatus,"connected");
 });
-test("disconnected player is replaced by CPU after 30 seconds and cannot reclaim the seat",()=>{
+test("disconnected player is replaced by CPU after five minutes and cannot reclaim the seat",()=>{
  const m={players:[0,1,2,3].map(seat=>({seat,kind:"human",connectionStatus:"connected"}))};
- H.markPlayerDisconnected(m,1,20000);assert.deepEqual(H.expireDisconnectedPlayers(m,50000),[1]);
+ H.markPlayerDisconnected(m,1,20000);assert.deepEqual(H.expireDisconnectedPlayers(m,20000+H.RECONNECT_GRACE_MS-1),[]);assert.deepEqual(H.expireDisconnectedPlayers(m,20000+H.RECONNECT_GRACE_MS),[1]);
  assert.equal(m.players[1].kind,"cpu");assert.equal(m.players[1].connectionStatus,"replaced");
  assert.deepEqual(H.reconnectPlayer(m,1,50001),{reconnected:false,reason:"seat-unavailable"});
 });
-test("disconnect grace period uses inclusive 30-second deadline",()=>{
+test("disconnect grace period uses inclusive five-minute deadline",()=>{
  const m={players:[{seat:0,kind:"human",connectionStatus:"connected"}]};
- H.markPlayerDisconnected(m,0,0);assert.deepEqual(H.expireDisconnectedPlayers(m,29999),[]);
- assert.deepEqual(H.expireDisconnectedPlayers(m,30000),[0]);
+ H.markPlayerDisconnected(m,0,0);assert.deepEqual(H.expireDisconnectedPlayers(m,H.RECONNECT_GRACE_MS-1),[]);
+ assert.deepEqual(H.expireDisconnectedPlayers(m,H.RECONNECT_GRACE_MS),[0]);
 });
 
 test("solo CPU match completes three real rounds using legal card plays",()=>{
