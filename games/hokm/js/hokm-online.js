@@ -158,8 +158,8 @@ function startCountdown(deadline){
 function stopCountdown(){if(timer)clearInterval(timer);timer=null}
 function reset(){
  intentionalClose=true;if(socket){socket.close();socket=null}
- stopCountdown();lastState=null;roomCode="";ownSeat=-1;
- if($("hokmOnlinePanel")){$("hokmRoomInvite").hidden=true;$("hokmOnlineTrump").hidden=true;status(t("need"))}
+ stopCountdown();lastState=null;roomCode="";ownSeat=-1;auth=null;
+ if($("hokmOnlinePanel")){$("hokmOnlinePanel").hidden=true;$("hokmRoomInvite").hidden=true;$("hokmOnlineTrump").hidden=true;status(t("need"))}
 }
 function activate(d){
  auth=d||null;
