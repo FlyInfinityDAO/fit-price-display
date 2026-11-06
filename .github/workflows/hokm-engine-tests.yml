@@ -1,0 +1,23 @@
+name: Hokm Engine Tests
+on:
+  push:
+    branches: [feature/hokm-four-player]
+    paths:
+      - 'games/hokm/**'
+      - '.github/workflows/hokm-engine-tests.yml'
+  pull_request:
+    branches: [feature/hokm-four-player]
+    paths:
+      - 'games/hokm/**'
+      - '.github/workflows/hokm-engine-tests.yml'
+  workflow_dispatch:
+jobs:
+  engine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run Hokm rules and solo-seat tests
+        run: node --test games/hokm/tests/hokm-engine.test.cjs
