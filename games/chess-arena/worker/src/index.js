@@ -1,10 +1,10 @@
 import { getAddress, isAddress, verifyMessage } from "ethers";
 import { handleRoomApi } from "./rooms-api.js";
+import { enforceRateLimit, cleanupExpiredRecords, getFitBalance } from "./security.js";
 
 const FIT_TOKEN = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
 const BSC_CHAIN_ID = 56;
 const MIN_FIT_WEI = 10n ** 18n;
-const BALANCE_OF_SELECTOR = "70a08231";
 const NONCE_TTL_SECONDS = 5 * 60;
 const SESSION_TTL_SECONDS = 30 * 60;
 
@@ -77,37 +77,6 @@ async function verifySession(token, secret) {
   return payload;
 }
 
-async function getFitBalance(env, wallet) {
-  const rpcUrl = env.BSC_RPC_URL || "https://bsc-dataseed.binance.org/";
-  const chainResponse = await fetch(rpcUrl, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_chainId", params: [] })
-  });
-  if (!chainResponse.ok) throw new Error("BSC RPC is unavailable.");
-  const chainData = await chainResponse.json();
-  if (Number.parseInt(chainData.result, 16) !== BSC_CHAIN_ID) throw new Error("Configured RPC is not BNB Smart Chain.");
-
-  const paddedAddress = wallet.slice(2).toLowerCase().padStart(64, "0");
-  const callData = "0x" + BALANCE_OF_SELECTOR + paddedAddress;
-  const response = await fetch(rpcUrl, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      jsonrpc: "2.0",
-      id: 2,
-      method: "eth_call",
-      params: [{ to: FIT_TOKEN, data: callData }, "latest"]
-    })
-  });
-  if (!response.ok) throw new Error("Could not read FIT token balance.");
-  const result = await response.json();
-  if (result.error || typeof result.result !== "string" || !/^0x[0-9a-fA-F]+$/.test(result.result)) {
-    throw new Error("FIT token contract read failed.");
-  }
-  return BigInt(result.result);
-}
-
 async function handleChallenge(request, env) {
   const body = await request.json();
   if (typeof body.address !== "string" || !isAddress(body.address)) {
@@ -164,18 +133,21 @@ async function handleVerify(request, env) {
   }
   if (recovered !== wallet) return json({ ok: false, error: "Signature does not match the wallet address." }, 401);
 
-  const consumed = await env.DB.prepare(
-    "UPDATE wallet_nonces SET used = 1 WHERE nonce = ? AND wallet_address = ? AND used = 0 AND expires_at > ?"
-  ).bind(body.nonce, wallet.toLowerCase(), now).run();
-  if (!consumed.meta || consumed.meta.changes !== 1) {
-    return json({ ok: false, error: "Challenge has already been used. Request a new one." }, 409);
+  if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32) {
+    return json({ ok: false, error: "Chess Arena session signing is not configured." }, 503);
   }
 
   let balance;
   try {
     balance = await getFitBalance(env, wallet);
-  } catch (error) {
-    return json({ ok: false, error: error.message || "On-chain verification failed." }, 503);
+  } catch {
+    return json({ ok: false, error: "BSC RPC is temporarily unavailable. Please retry shortly." }, 503, { "retry-after": "5" });
+  }
+  const consumed = await env.DB.prepare(
+    "UPDATE wallet_nonces SET used = 1 WHERE nonce = ? AND wallet_address = ? AND used = 0 AND expires_at > ?"
+  ).bind(body.nonce, wallet.toLowerCase(), now).run();
+  if (!consumed.meta || consumed.meta.changes !== 1) {
+    return json({ ok: false, error: "Challenge has already been used. Request a new one." }, 409);
   }
   if (balance < MIN_FIT_WEI) {
     return json({
@@ -231,6 +203,9 @@ async function handleSession(request, env) {
 }
 
 export default {
+  async scheduled(_controller, env, ctx) {
+    ctx.waitUntil(cleanupExpiredRecords(env).catch(error => console.error("Expired security record cleanup failed.", error)));
+  },
   async fetch(request, env) {
     const headers = corsHeaders(request, env);
     const origin = request.headers.get("Origin");
@@ -239,6 +214,23 @@ export default {
       return new Response(null, { status: 204, headers });
     }
     if (origin && !allowedFrontendOrigins(env).has(origin)) return json({ ok: false, error: "Origin not allowed." }, 403);
+    const requestPath = new URL(request.url).pathname;
+    let rateConfig = null;
+    if (request.method === "POST" && requestPath === "/api/auth/challenge") rateConfig = ["auth-challenge", 20, 600];
+    else if (request.method === "POST" && requestPath === "/api/auth/verify") rateConfig = ["auth-verify", 30, 600];
+    else if (request.method === "GET" && requestPath === "/api/auth/session") rateConfig = ["auth-session", 60, 60];
+    else if (requestPath.startsWith("/api/rooms/") || requestPath.startsWith("/api/backgammon/") ||
+             requestPath === "/api/stats/me" || requestPath === "/api/stats/leaderboard") {
+      rateConfig = ["game-api", 120, 60];
+    }
+    if (rateConfig) {
+      try {
+        const rate = await enforceRateLimit(request, env, ...rateConfig);
+        if (!rate.allowed) return json({ ok: false, error: "Too many requests. Please wait and try again." }, 429, { "retry-after": String(rate.retryAfter) , ...headers });
+      } catch {
+        return json({ ok: false, error: "Security service is temporarily unavailable. Please retry shortly." }, 503, { "retry-after": "5", ...headers });
+      }
+    }
     if (request.method === "GET" && new URL(request.url).pathname === "/api/health") {
       return json({ ok: true, service: "Fly Chess Arena API", version: "0.1.0" }, 200, headers);
     }
