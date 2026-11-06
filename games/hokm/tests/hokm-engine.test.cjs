@@ -48,3 +48,24 @@ test("disconnect grace period uses inclusive 30-second deadline",()=>{
  H.markPlayerDisconnected(m,0,0);assert.deepEqual(H.expireDisconnectedPlayers(m,29999),[]);
  assert.deepEqual(H.expireDisconnectedPlayers(m,30000),[0]);
 });
+
+test("solo CPU match completes three real rounds using legal card plays",()=>{
+ const match=H.createMatch({mode:"solo",difficulty:"normal",players:[{seat:0,kind:"human",balance:1},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}]});
+ for(let round=0;round<3;round++){
+  const g=H.startRound(match,{humanSeat:0,hakem:0,rng:()=>0.31+round*0.07});
+  H.chooseTrump(g,H.SUITS[round%H.SUITS.length]);
+  let moves=0;
+  while(!g.finished&&moves<52){
+   const player=g.currentPlayer;
+   const card=H.chooseCpuCard(g,player,"normal");
+   H.playCard(g,player,card.id);
+   moves++;
+  }
+  assert.equal(g.finished,true,"round should finish within 52 card plays");
+  assert.ok(moves<=52);
+  H.finishRound(match,g,g.teamTricks[0]>g.teamTricks[1]?0:1);
+ }
+ assert.equal(match.finished,true);
+ assert.equal(match.roundsPlayed,3);
+ assert.equal(match.matchPoints[0]+match.matchPoints[1],3);
+});
