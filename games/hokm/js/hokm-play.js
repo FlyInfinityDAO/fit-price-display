@@ -63,7 +63,7 @@ function renderTrick(){
  const entries=visibleTrick.length?visibleTrick:(game?game.trick:[]);
  nodes.forEach((node,i)=>{
   node.classList.toggle("empty",!entries[i]);
-  node.classList.toggle("red",!!entries[i]&&isRed(entries[i].card));
+  node.classList.toggle("red",!!entries[i]&&isRed(entries[i].card));node.classList.toggle("black",!!entries[i]&&!isRed(entries[i].card));
   node.textContent=entries[i]?entries[i].card.rank+entries[i].card.suit:"·";
  });
 }
@@ -72,7 +72,8 @@ function render(){
  const mapping=[0,1,2,3];
  mapping.forEach(seat=>renderHand(seat,game.hands[seat],seat===0));
  renderSeats();renderTrick();
- const trump=document.querySelector(".trump-pill b");if(trump)trump.textContent=game.trump||"—";
+ const trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent=game.trump||"—";
+ const hakem=document.getElementById("tableHakem"),hakemChip=document.querySelector(seatElements(game.hakem).chip+" b");if(hakem)hakem.textContent=hakemChip?hakemChip.textContent:(game.hakem===0?"You":"CPU "+(game.hakem+1));
  const bottom=document.querySelectorAll(".game-bottom .team-score b");
  if(bottom.length&&match){bottom[0].textContent=match.matchPoints[0];bottom[1].textContent=match.matchPoints[1]}
  const round=document.querySelector(".round-info b");if(round&&match)round.textContent=match.roundNo+" / "+match.maxRounds;
@@ -175,7 +176,7 @@ $("cpuDifficulty").addEventListener("change",e=>{difficulty=["easy","normal","ha
 function activateAuthenticated(d){
  tier=Number(d&&d.tier)||0;setLanguage($("languageSelect").value||"en");
  $("hokmGameControls").hidden=false;$("hokmStartBtn").hidden=false;$("hokmStartBtn").disabled=!tier;$("hokmStartBtn").textContent=tr("start");$("hokmNextBtn").hidden=true;$("hokmRestartBtn").hidden=true;
- setStatus(tier?tr("access"):tr("needAuth"));setMessage(tier?tr("access"):tr("needAuth"));
+ setStatus(tier?tr("access"):tr("needAuth"));setMessage("");
 }
 window.addEventListener("hokm:authenticated",e=>activateAuthenticated(e.detail||{}));
 // Recover authentication if wallet verification completed before this controller attached its listener.
@@ -184,7 +185,7 @@ window.addEventListener("hokm:access-revoked",()=>{
  stopTimers();tier=0;match=null;game=null;visibleTrick=[];$("hokmGameControls").hidden=false;$("hokmStartBtn").disabled=true;$("hokmStartBtn").hidden=false;setStatus(tr("needAuth"));
  document.querySelectorAll(".hand").forEach(el=>{el.replaceChildren(...Array.from({length:13},()=>makeBack()))});
  document.querySelectorAll(".trick-cards .played-card").forEach(el=>{el.classList.add("empty");el.textContent="·"});
- const trump=document.querySelector(".trump-pill b");if(trump)trump.textContent="—";
+ const trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent="—";const hakem=document.getElementById("tableHakem");if(hakem)hakem.textContent="—";
 });
 setLanguage($("languageSelect").value||"en");
 })();
