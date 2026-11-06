@@ -17,3 +17,34 @@ test("wallet below 1 FIT is denied and online requires four wallets",()=>{assert
 test("three-round match finishes exactly after round three",()=>{const m=H.createMatch({mode:"solo",players:[{seat:0,kind:"human",balance:1},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}]});assert.equal(m.maxRounds,3);for(let i=0;i<3;i++){const g=H.startRound(m);g.finished=true;H.finishRound(m,g,i%2)}assert.equal(m.finished,true);assert.equal(m.roundsPlayed,3);assert.throws(()=>H.startRound(m),/limit/)});
 test("seven-round match finishes exactly after round seven",()=>{const m=H.createMatch({mode:"online",players:[10,10,11,14].map((balance,seat)=>({seat,kind:"human",balance}))});for(let i=0;i<7;i++){const g=H.startRound(m);g.finished=true;H.finishRound(m,g,i%2)}assert.equal(m.finished,true);assert.equal(m.roundsPlayed,7)});
 test("easy, normal and hard CPU levels are accepted",()=>{for(const difficulty of ["easy","normal","hard"])assert.equal(H.createMatch({mode:"solo",difficulty,players:[{seat:0,kind:"human",balance:10},{kind:"cpu"},{kind:"cpu"},{kind:"cpu"}]}).difficulty,difficulty)});
+
+test("turn clock grants exactly 15 seconds and automatically plays a legal card after expiry",()=>{
+ const g=H.createGame({rng:()=>0.31});H.chooseTrump(g,"♠");const clock=H.startTurnClock(g,1000);
+ assert.equal(clock.deadlineAt,16000);assert.throws(()=>H.resolveTurnTimeout(g,{now:15999}),/not expired/);
+ const result=H.resolveTurnTimeout(g,{now:16000,difficulty:"hard",rng:()=>0});
+ assert.equal(result.automatic,true);assert.equal(result.automaticPlayer,0);assert.ok(!g.hands[0].some(c=>c.id===result.automaticCardId));
+ assert.equal(g.turnDeadlineAt,31000);
+});
+test("a timely human card resets the 15-second turn clock",()=>{
+ const g=H.createGame({rng:()=>0.28});H.chooseTrump(g,"♥");H.startTurnClock(g,5000);
+ const card=H.legalCards(g,0)[0],result=H.playCardWithClock(g,0,card.id,9000);
+ assert.equal(result.automatic,false);assert.equal(g.turnStartedAt,9000);assert.equal(g.turnDeadlineAt,24000);
+});
+test("disconnect preserves the human seat for 30 seconds and permits timely reconnection",()=>{
+ const m={players:[0,1,2,3].map(seat=>({seat,kind:"human",connectionStatus:"connected"}))};
+ const d=H.markPlayerDisconnected(m,2,10000);assert.equal(d.deadlineAt,40000);
+ assert.deepEqual(H.expireDisconnectedPlayers(m,39999),[]);
+ assert.deepEqual(H.reconnectPlayer(m,2,39999),{reconnected:true,seat:2,kind:"human"});
+ assert.equal(m.players[2].kind,"human");assert.equal(m.players[2].connectionStatus,"connected");
+});
+test("disconnected player is replaced by CPU after 30 seconds and cannot reclaim the seat",()=>{
+ const m={players:[0,1,2,3].map(seat=>({seat,kind:"human",connectionStatus:"connected"}))};
+ H.markPlayerDisconnected(m,1,20000);assert.deepEqual(H.expireDisconnectedPlayers(m,50000),[1]);
+ assert.equal(m.players[1].kind,"cpu");assert.equal(m.players[1].connectionStatus,"replaced");
+ assert.deepEqual(H.reconnectPlayer(m,1,50001),{reconnected:false,reason:"seat-unavailable"});
+});
+test("disconnect grace period uses inclusive 30-second deadline",()=>{
+ const m={players:[{seat:0,kind:"human",connectionStatus:"connected"}]};
+ H.markPlayerDisconnected(m,0,0);assert.deepEqual(H.expireDisconnectedPlayers(m,29999),[]);
+ assert.deepEqual(H.expireDisconnectedPlayers(m,30000),[0]);
+});
