@@ -14,25 +14,21 @@
     <link rel="stylesheet" href="wallet-ui.css?v=20261104-2">
     <script src="lang.js"></script>
     <script>
-      // Android RTL WebView stability: keep the document scroll root LTR, while visual sections remain RTL.
+      // Mirror Hokm's Android RTL strategy: LTR document scroll root, RTL content sections.
       (function(){
         if (!/Android/i.test(navigator.userAgent || "")) return;
         const root = document.documentElement;
         root.classList.add("fi-android-webview");
-        const syncAndroidRtlShell = () => {
+        const syncAndroidRtl = () => {
           const rtl = ["fa", "ar"].includes((root.lang || "").toLowerCase());
-          if (rtl && root.dir !== "ltr") root.dir = "ltr";
-          if (document.body) {
-            document.body.classList.toggle("fi-android-native-scroll", rtl);
-            if (rtl) document.body.dir = "ltr";
-            else document.body.removeAttribute("dir");
-          }
+          if (rtl) root.dir = "ltr";
         };
-        new MutationObserver(syncAndroidRtlShell).observe(root, {
+        new MutationObserver(syncAndroidRtl).observe(root, {
           attributes: true, attributeFilter: ["lang", "dir"]
         });
-        document.addEventListener("DOMContentLoaded", syncAndroidRtlShell, { once: true });
-        syncAndroidRtlShell();
+        document.addEventListener("fi-language-updated", syncAndroidRtl);
+        document.addEventListener("DOMContentLoaded", syncAndroidRtl, { once: true });
+        syncAndroidRtl();
       })();
     </script>
     <style>
@@ -1644,49 +1640,14 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 [data-i18n="dapp.oneTime"]::before{content:"\f017";color:#D4AF37}
 
 
-        /* Android Persian/Arabic: keep wallet addresses LTR so the keyboard and caret stay stable. */
-        html.fi-android-webview[lang="fa"] #buyerAddress,
-        html.fi-android-webview[lang="ar"] #buyerAddress {
-            direction: ltr !important;
-            text-align: left !important;
-            unicode-bidi: plaintext;
-            font-size: 16px !important;
-            writing-mode: horizontal-tb !important;
-        }
-
-        /* Android TokenPocket/WebView RTL stability — keep the page scroll root LTR, like Hokm. */
-        html.fi-android-webview[lang="fa"],
-        html.fi-android-webview[lang="ar"] { direction: ltr !important; }
-        html.fi-android-webview[lang="fa"] body,
-        html.fi-android-webview[lang="ar"] body {
-            direction: ltr !important;
-            scroll-behavior: auto !important;
-            overflow-anchor: none !important;
-        }
-        html.fi-android-webview[lang="fa"] body .container,
-        html.fi-android-webview[lang="ar"] body .container {
-            direction: ltr !important;
-        }
-        html.fi-android-webview[lang="fa"] body .container > *,
-        html.fi-android-webview[lang="ar"] body .container > * {
-            direction: rtl;
-        }
-        html.fi-android-webview[lang="fa"] body .container > .sidebar-overlay,
-        html.fi-android-webview[lang="ar"] body .container > .sidebar-overlay {
-            direction: ltr;
-        }
-
-        html.fi-android-webview[lang="fa"] #buyerAddress,
-        html.fi-android-webview[lang="ar"] #buyerAddress {
-            direction: ltr !important;
-            text-align: left !important;
-            unicode-bidi: isolate !important;
-            writing-mode: horizontal-tb !important;
-            font-size: 16px !important;
-            scroll-margin-block: 16px;
-            -webkit-text-size-adjust: 100%;
-        }
-</style>
+        /* Android TokenPocket RTL scroll fix — same layout model as Hokm. */
+        html.fi-android-webview{direction:ltr!important;scroll-behavior:auto!important;overflow-anchor:none!important}
+        html.fi-android-webview body.fi-rtl{direction:ltr!important;scroll-behavior:auto!important;overflow-anchor:none!important}
+        html.fi-android-webview body.fi-rtl .container{direction:ltr!important;overflow-anchor:none!important}
+        html.fi-android-webview body.fi-rtl .container>:not(.sidebar-overlay){direction:rtl}
+        html.fi-android-webview body.fi-rtl .container>.sidebar-overlay{direction:ltr}
+        html.fi-android-webview body.fi-rtl #buyerAddress{direction:ltr!important;text-align:left!important;unicode-bidi:isolate!important;writing-mode:horizontal-tb!important;font-size:16px!important;scroll-margin-block:16px;-webkit-text-size-adjust:100%}
+        </style>
     <link rel="stylesheet" href="wallet-ui.css?v=20261104-2">
     <link rel="stylesheet" href="card-hover.css?v=4">
     <script src="card-hover.js?v=1" defer></script>
