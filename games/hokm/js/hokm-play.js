@@ -44,9 +44,13 @@ function makeCardNode(card,clickable){
 }
 function makeBack(){const b=document.createElement("span");b.className="hokm-card-back";b.setAttribute("aria-hidden","true");return b}
 function renderHand(seat,cards,faceUp){
- const el=document.querySelector(seatElements(seat).hand);if(!el)return;el.replaceChildren();
- if(faceUp)cards.forEach(card=>el.appendChild(makeCardNode(card,game&&game.phase==="playing"&&game.currentPlayer===0&&!locked&&H.legalCards(game,0).some(c=>c.id===card.id))));
- else cards.forEach(()=>el.appendChild(makeBack()));
+ const el=document.querySelector(seatElements(seat).hand);if(!el)return;
+ const previous=Number(el.dataset.cardCount||0),dealing=cards.length>previous;
+ el.classList.remove("dealing");el.replaceChildren();
+ if(dealing){el.classList.add("dealing");el.style.setProperty("--deal-x",seat===0?"0px":seat===2?"0px":seat===1?"clamp(70px,14vw,170px)":"clamp(-170px,-14vw,-70px)");el.style.setProperty("--deal-y",seat===0?"clamp(55px,13vw,145px)":seat===2?"clamp(-145px,-13vw,-55px)":"0px")}
+ if(faceUp)cards.forEach((card,index)=>{const node=makeCardNode(card,game&&game.phase==="playing"&&game.currentPlayer===0&&!locked&&H.legalCards(game,0).some(c=>c.id===card.id));node.style.setProperty("--deal-index",index);el.appendChild(node)});
+ else cards.forEach((_,index)=>{const node=makeBack();node.style.setProperty("--deal-index",index);el.appendChild(node)});
+ el.dataset.cardCount=String(cards.length);
 }
 function renderSeats(){
  const counts=game?game.tricksWon:[0,0,0,0];
@@ -99,7 +103,7 @@ function beginRound(hakem){
  cardFxSafe("deal");render();
  if(game.hakem===0){setStatus(tr("selectTrump"));setMessage(tr("selectTrump"));updateTrumpOptions();return}
  setStatus(tr("cpuTrump"));setMessage(tr("cpuTrump"));
- turnTimer=setTimeout(()=>{if(!game||game.phase!=="choose-trump")return;const suit=chooseCpuTrump();H.chooseTrump(game,suit);cardFxSafe("deal");render();setStatus(tr("playing"));setMessage(tr("playing"));advance();},700);
+ turnTimer=setTimeout(()=>{if(!game||game.phase!=="choose-trump")return;const suit=chooseCpuTrump();H.chooseTrump(game,suit);cardFxSafe("deal-more");render();setStatus(tr("playing"));setMessage(tr("playing"));advance();},700);
 }
 function startMatch(){
  if(!tier){setStatus(tr("needAuth"));return}
@@ -109,7 +113,7 @@ function startMatch(){
 }
 function chooseTrump(suit){
  if(!game||game.phase!=="choose-trump"||game.hakem!==0)return;
- try{H.chooseTrump(game,suit);$("hokmTrumpPicker").hidden=true;cardFxSafe("deal");render();setStatus(tr("playing"));setMessage(tr("playing"));startClock();advance()}catch(e){setStatus(e.message)}
+ try{H.chooseTrump(game,suit);$("hokmTrumpPicker").hidden=true;cardFxSafe("deal-more");render();setStatus(tr("playing"));setMessage(tr("playing"));startClock();advance()}catch(e){setStatus(e.message)}
 }
 function startClock(){
  clearClock();if(!game||game.finished||game.currentPlayer!==0)return;
@@ -125,7 +129,7 @@ function playHumanCard(id){
  }catch(e){setStatus(e.message)}
 }
 function onCardPlayed(result,automatic){
- if(result.completed){visibleTrick=result.trick;cardFxSafe("collect")}else visibleTrick=[];
+ if(result.completed){visibleTrick=result.trick;cardFxSafe("collect")}else{visibleTrick=[];cardFxSafe("play")}
  render();
  if(automatic){setStatus(tr("auto"));setMessage(tr("auto"))}
  if(result.roundWinner!==undefined){completeRound(result.roundWinner);return}
