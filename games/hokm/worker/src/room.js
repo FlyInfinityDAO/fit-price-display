@@ -64,7 +64,8 @@ export class HokmRoom extends DurableObject {
         trickPiles: room.trickPiles || [],
         teamTricks: game.teamTricks,
         finished: game.finished,
-        turnDeadlineAt: game.turnDeadlineAt || null,
+        turnDeadlineAt: game.turnDeadlineAt || room.trumpDeadlineAt || null,
+        reconnectGraceMs: H.RECONNECT_GRACE_MS,
         roundWinner: room.roundWinner ?? null
       } : null,
       error: room.error || null
@@ -343,6 +344,10 @@ export class HokmRoom extends DurableObject {
   }
   async applyResult(room, result) {
     const game = room.match.round;
+    if (result.completed) {
+      room.trickPiles ||= [];
+      room.trickPiles.push({ winner: result.winner, cards: result.trick || [] });
+    }
     if (result.roundWinner !== undefined) {
       room.lastTrick = result.trick || [];
       room.lastTrickClearAt = Date.now() + 1200;
@@ -355,8 +360,6 @@ export class HokmRoom extends DurableObject {
       return;
     }
     if (result.completed) {
-      room.trickPiles ||= [];
-      room.trickPiles.push({ winner: result.winner, cards: result.trick || [] });
       room.lastTrick = result.trick || [];
       room.lastTrickClearAt = Date.now() + 900;
     }
