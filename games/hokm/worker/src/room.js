@@ -36,6 +36,7 @@ export class HokmRoom extends DurableObject {
     room.updatedAt = Date.now();
     await this.ctx.storage.put("room", room);
   }
+  // Team Hakem counts and access tier are match-level stats shared by every seat.
   snapshot(room, wallet) {
     const seat = room.players.find(p => p.wallet === wallet)?.seat ?? -1;
     const game = room.match?.round || null;
