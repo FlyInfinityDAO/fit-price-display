@@ -34,7 +34,7 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/hokm-browser"
           npm install --prefix "$RUNNER_TEMP/hokm-browser" --no-audit --no-fund playwright
-          "$RUNNER_TEMP/hokm-browser/node_modules/.bin/playwright" install --with-deps chromium
+          "$RUNNER_TEMP/hokm-browser/node_modules/.bin/playwright" install --with-deps chromium webkit
       - name: Run desktop and mobile card interaction tests
         env:
           HOKM_PREVIEW_URL: https://hokm-preview.fly-hokm-preview.pages.dev/games/hokm/
