@@ -9,6 +9,8 @@
  const pageY=()=>window.scrollY||document.documentElement.scrollTop||document.body.scrollTop||0;
  function remember(){const y=pageY();if(y>0)savedScrollY=y;}
  function restoreIfReset(){
+  /* RTL Android uses native scrolling; never force a saved position while the IME is active. */
+  if(["fa","ar"].includes(document.documentElement.lang))return;
   if(restoring)return;
   const input=roomInput();
   const focused=input&&document.activeElement===input;
