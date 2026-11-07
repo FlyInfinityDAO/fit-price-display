@@ -21,10 +21,12 @@
         root.classList.add("fi-android-webview");
         const syncAndroidRtl = () => {
           const rtl = ["fa", "ar"].includes((root.lang || "").toLowerCase());
-          if (rtl) root.dir = "ltr";
+          if (rtl && root.dir !== "ltr") root.dir = "ltr";
         };
+        // Observe language changes only. Watching "dir" causes a MutationObserver
+        // loop because syncAndroidRtl also updates root.dir.
         new MutationObserver(syncAndroidRtl).observe(root, {
-          attributes: true, attributeFilter: ["lang", "dir"]
+          attributes: true, attributeFilter: ["lang"]
         });
         document.addEventListener("fi-language-updated", syncAndroidRtl);
         document.addEventListener("DOMContentLoaded", syncAndroidRtl, { once: true });
