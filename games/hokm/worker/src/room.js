@@ -4,7 +4,7 @@ import "../../engine/hokm-engine.js";
 const H = globalThis.HokmEngine;
 const ROOM_TTL = 6 * 60 * 60;
 const TICKET_TTL = 60;
-const TURN_TIMEOUT_MS = 15000;
+const TURN_TIMEOUT_MS = 30000;
 const json = (data, status = 200) => new Response(JSON.stringify(data), {
   status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" }
 });
