@@ -82,7 +82,19 @@ function openSocket(ticket){
  ws.addEventListener("open",()=>{if(socket!==ws)return;reconnectAttempt=0;status(t("room")+" "+roomCode+" · "+t("connected"))});
  ws.addEventListener("message",event=>{
   let data;try{data=JSON.parse(event.data)}catch{return}
-  if(data.type==="state"){lastState=data.state;ownSeat=data.state.seat;renderState(data.state)}
+  if(data.type==="state"){
+   const previous=lastState,next=data.state;
+   if(previous&&next.game&&previous.game){
+    const before=previous.game.handCounts||[],after=next.game.handCounts||[];
+    if(after.some((n,i)=>Number(n)>Number(before[i]||0)))window.HokmAudio?.card("deal-more");
+    const beforeTrick=(previous.game.trick||[]).length,afterTrick=(next.game.trick||[]).length;
+    const beforeLast=(previous.game.lastTrick||[]).map(x=>x.card?.id).join(",");
+    const afterLast=(next.game.lastTrick||[]).map(x=>x.card?.id).join(",");
+    if(afterLast&&afterLast!==beforeLast&&(next.game.lastTrick||[]).length===4)window.HokmAudio?.card("collect");
+    else if(afterTrick>beforeTrick)window.HokmAudio?.card("play");
+   }else if(next.status==="playing"&&next.game)window.HokmAudio?.card("deal");
+   lastState=next;ownSeat=next.seat;renderState(next);
+  }
   else if(data.type==="error")status(data.error,true);
  });
  ws.addEventListener("close",()=>{
@@ -182,12 +194,19 @@ function renderState(s){
     let crown=chip.querySelector(".hokm-hakem-crown");if(game.hakem===actual){if(!crown){crown=document.createElement("span");crown.className="hokm-hakem-crown";crown.textContent="♛";crown.title="Hakem";chip.appendChild(crown)}}else crown?.remove();
    }
    if(hand){
-    hand.replaceChildren();
     const cards=actual===ownSeat?(game.ownHand||[]):Array.from({length:hands[actual]||0},()=>null);
-    cards.forEach(card=>{
-     if(card)hand.appendChild(cardNode(card,s.status==="playing"&&game.phase==="playing"&&game.currentPlayer===ownSeat));
-     else{const back=document.createElement("span");back.className="hokm-card-back";back.setAttribute("aria-hidden","true");hand.appendChild(back)}
-    });
+    const signature=actual===ownSeat?cards.map(card=>card.id).join("|"):String(cards.length);
+    if(hand.dataset.handSignature!==signature){
+     const previous=Number(hand.dataset.cardCount||0),dealing=cards.length>previous;
+     hand.classList.remove("dealing");hand.replaceChildren();
+     if(dealing){hand.classList.add("dealing");hand.style.setProperty("--deal-x",visual===0?"0px":visual===2?"0px":visual===1?"clamp(70px,14vw,170px)":"clamp(-170px,-14vw,-70px)");hand.style.setProperty("--deal-y",visual===0?"clamp(55px,13vw,145px)":visual===2?"clamp(-145px,-13vw,-55px)":"0px")}
+     cards.forEach((card,index)=>{
+      const node=card?cardNode(card,s.status==="playing"&&game.phase==="playing"&&game.currentPlayer===ownSeat):document.createElement("span");
+      if(!card){node.className="hokm-card-back";node.setAttribute("aria-hidden","true")}
+      node.style.setProperty("--deal-index",index);hand.appendChild(node);
+     });
+     hand.dataset.cardCount=String(cards.length);hand.dataset.handSignature=signature;
+    }
    }
   }
   const nodes=[...document.querySelectorAll(".trick-cards .played-card")];
