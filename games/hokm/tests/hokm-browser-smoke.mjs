@@ -23,6 +23,7 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       }, true);
     });
     await page.goto(baseURL, { waitUntil: "domcontentloaded", timeout: 45000 });
+    if (language !== "en") await page.locator("#languageSelect").selectOption(language);
     await page.waitForSelector("#hokmStartBtn:not([disabled])", { timeout: 15000 });
     await page.locator("#hokmStartBtn").click();
 
@@ -115,7 +116,8 @@ async function runViewport(browserType, name, viewport, mobile = false, language
 await runViewport(browser, "desktop-chromium", { width: 1365, height: 900 }, false);
 await runViewport(browser, "mobile-chromium-touch", { width: 390, height: 844 }, true);
 const safari = await webkit.launch({ headless: true });
-await runViewport(safari, "mobile-webkit-touch-en", { width: 390, height: 844 }, true);\nawait runViewport(safari, "mobile-webkit-touch-fa-rtl", { width: 390, height: 844 }, true, "fa");
+await runViewport(safari, "mobile-webkit-touch-en", { width: 390, height: 844 }, true);
+await runViewport(safari, "mobile-webkit-touch-fa-rtl", { width: 390, height: 844 }, true, "fa");
 await safari.close();
 await browser.close();
 
