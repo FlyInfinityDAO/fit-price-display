@@ -19,7 +19,7 @@ function createMatch({mode="solo",players=[],difficulty="normal",allowCpuSeats=f
  const policy=resolveAccessPolicy({mode,players,allowCpuSeats});
  if(!policy.allowed)throw new Error(policy.reason==="player-count"?"Invalid human player count":"Every human player needs at least 1 FIT");
  if(!["easy","normal","hard"].includes(difficulty))throw new Error("Invalid CPU difficulty");
- return {mode,players:players.map(p=>({...p})),difficulty,accessTier:policy.tier,maxRounds:policy.maxRounds,roundsPlayed:0,matchPoints:[0,0],finished:false,round:null};
+ return {mode,players:players.map(p=>({...p})),difficulty,accessTier:policy.tier,maxRounds:policy.maxRounds,roundsPlayed:0,matchPoints:[0,0],hakemCounts:[0,0],finished:false,round:null};
 }
 function selectHakemByFirstAce(rng=Math.random){
  const draw=shuffle(makeDeck(),rng);
