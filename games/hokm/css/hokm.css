@@ -561,3 +561,9 @@ html.fi-android-webview .hokm-room-entry input{
 
 /* Android RTL: keep the document scroll container LTR; apply RTL only inside visible game sections. */
 @media (max-width: 10000px){html.fi-android-webview body.fi-rtl{direction:ltr!important}html.fi-android-webview body.fi-rtl .arena{direction:ltr!important}html.fi-android-webview body.fi-rtl .arena>header,html.fi-android-webview body.fi-rtl .arena>section,html.fi-android-webview body.fi-rtl .arena>footer{direction:rtl}html.fi-android-webview body.fi-rtl .hokm-room-entry input{direction:ltr!important;text-align:center!important}}
+
+/* Accessible music controls remain available before wallet verification. */
+.sound-controls{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.sound-controls .volume-control{min-width:190px}
+.game-shell[hidden]{display:none!important}
+@media(max-width:760px){.sound-controls{display:grid;grid-template-columns:1fr;margin-top:12px}.sound-controls .volume-control{min-width:0}}
