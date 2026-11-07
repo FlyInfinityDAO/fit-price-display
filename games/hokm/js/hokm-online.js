@@ -133,7 +133,7 @@ async function resumeSavedRoom(){
   const ticket=await request("/api/rooms/"+roomCode+"/ticket",{});
   openSocket(ticket.ticket);
  }catch(error){
-  status(error.message||t("connectionLost"),true);
+  status(friendlyError(error),true);
   if(/not found|expired|replaced|seat is no longer/i.test(error.message||""))sessionStorage.removeItem(ROOM_SESSION_KEY);
  }finally{connecting=false}
 }
