@@ -1,0 +1,43 @@
+name: Hokm Browser Input E2E
+
+on:
+  push:
+    branches: [feature/hokm-four-player]
+    paths:
+      - 'games/hokm/tests/hokm-browser-smoke.mjs'
+      - '.github/workflows/hokm-browser-e2e.yml'
+      - 'games/hokm/index.html'
+      - 'games/hokm/js/hokm-play.js'
+      - 'games/hokm/css/hokm.css'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hokm-browser-e2e
+  cancel-in-progress: false
+
+jobs:
+  browser-input:
+    if: github.ref == 'refs/heads/feature/hokm-four-player'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/hokm-four-player
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright and Chromium
+        run: |
+          mkdir -p "$RUNNER_TEMP/hokm-browser"
+          npm install --prefix "$RUNNER_TEMP/hokm-browser" --no-audit --no-fund playwright
+          "$RUNNER_TEMP/hokm-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Run desktop and mobile card interaction tests
+        env:
+          HOKM_PREVIEW_URL: https://hokm-preview.fly-hokm-preview.pages.dev/games/hokm/
+        run: |
+          cp games/hokm/tests/hokm-browser-smoke.mjs "$RUNNER_TEMP/hokm-browser/test.mjs"
+          node "$RUNNER_TEMP/hokm-browser/test.mjs"
