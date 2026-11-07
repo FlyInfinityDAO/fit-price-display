@@ -87,7 +87,8 @@
     let selected = 0;
     if (choices.length > 1) {
       const menu = choices.map((name, index) => (index + 1) + '. ' + name).join('\n');
-      const answer = window.prompt('Choose a wallet to connect:\n\n' + menu + '\n\nEnter the number:');
+      const translate = window.hokmTranslate || (key => key);
+      const answer = window.prompt(translate('chooseWalletPrompt') + '\n\n' + menu + '\n\n' + translate('enterNumberPrompt'));
       if (answer === null) throw new Error('Wallet selection cancelled.');
       selected = Number.parseInt(answer, 10) - 1;
       if (!Number.isInteger(selected) || selected < 0 || selected >= choices.length) {
