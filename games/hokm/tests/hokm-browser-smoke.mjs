@@ -1,11 +1,11 @@
-import { chromium } from "playwright";
+import { chromium, webkit } from "playwright";
 
 const baseURL = process.env.HOKM_PREVIEW_URL || "https://hokm-preview.fly-hokm-preview.pages.dev/games/hokm/";
 const failures = [];
 const browser = await chromium.launch({ headless: true });
 
-async function runViewport(name, viewport, mobile = false) {
-  const context = await browser.newContext({ viewport, isMobile: mobile, hasTouch: mobile });
+async function runViewport(browserType, name, viewport, mobile = false) {
+  const context = await browserType.newContext({ viewport, isMobile: mobile && browserType === chromium, hasTouch: mobile });
   const page = await context.newPage();
   const pageErrors = [];
   const consoleErrors = [];
@@ -112,8 +112,11 @@ async function runViewport(name, viewport, mobile = false) {
   }
 }
 
-await runViewport("desktop", { width: 1365, height: 900 }, false);
-await runViewport("mobile", { width: 390, height: 844 }, true);
+await runViewport(browser, "desktop-chromium", { width: 1365, height: 900 }, false);
+await runViewport(browser, "mobile-chromium-touch", { width: 390, height: 844 }, true);
+const safari = await webkit.launch({ headless: true });
+await runViewport(safari, "mobile-webkit-touch", { width: 390, height: 844 }, true);
+await safari.close();
 await browser.close();
 
 if (failures.length) process.exit(1);
