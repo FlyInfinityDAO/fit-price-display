@@ -210,10 +210,27 @@
  from{opacity:0;transform:translate(var(--deal-x,0px),var(--deal-y,0px)) scale(.55) rotate(9deg);filter:brightness(1.35)}
  to{opacity:1;transform:translate(0,0) scale(1) rotate(0);filter:brightness(1)}
 }
-.hand.dealing .hokm-card:nth-child(4n+1),.hand.dealing .hokm-card-back:nth-child(4n+1){z-index:2}
+.hand.dealing .hokm-card,.hand.dealing .hokm-card-back{z-index:calc(var(--deal-index,0) + 1)}
 @media(max-width:760px){
  .hand.dealing .hokm-card,.hand.dealing .hokm-card-back{animation-duration:.42s;animation-delay:calc(var(--deal-index,0)*34ms)}
 }
 @media(prefers-reduced-motion:reduce){
  .hand.dealing .hokm-card,.hand.dealing .hokm-card-back{animation:none!important}
+}
+
+
+/* Fix online hand reactivation and predictable card hit targets */
+.hand{display:flex;flex-wrap:nowrap;align-items:flex-end;gap:0}
+.hand .hokm-card{position:relative;z-index:calc(var(--deal-index,0) + 1);flex-shrink:0;pointer-events:auto;touch-action:manipulation}
+.hand .hokm-card.playable{cursor:pointer;pointer-events:auto;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.hand .hokm-card.playable:active{transform:translateY(-7px);border-color:#f4d77f}
+.hand-south{overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain}
+.hand-south .hokm-card{margin-left:-7px}
+.hand-south .hokm-card:first-child{margin-left:0}
+@media(max-width:760px){
+ .hand-south .hokm-card{margin-left:-8px}
+ .hand .hokm-card.playable{min-height:52px}
+}
+@media(max-width:420px){
+ .hand-south .hokm-card{margin-left:-7px}
 }
