@@ -21,7 +21,7 @@ async function runViewport(name, viewport, mobile = false) {
         if (event.target.closest(".hand-south .hokm-card")) window.__hokmCardClicks++;
       }, true);
     });
-    await page.goto(baseURL, { waitUntil: "networkidle", timeout: 45000 });
+    await page.goto(baseURL, { waitUntil: "domcontentloaded", timeout: 45000 });
     await page.waitForSelector("#hokmStartBtn:not([disabled])", { timeout: 15000 });
     await page.locator("#hokmStartBtn").click();
 
@@ -80,9 +80,9 @@ async function runViewport(name, viewport, mobile = false) {
 
     const clickCount = await page.evaluate(() => window.__hokmCardClicks);
     if (clickCount < 2) throw new Error(`Only ${clickCount} card click events were observed`);
-    if (pageErrors.length) throw new Error("Browser errors: " + pageErrors.join(" | "));
+    if (pageErrors.length) throw new Error("Browser runtime errors: " + pageErrors.join(" | "));
 
-    console.log(JSON.stringify({ viewport: name, result: "PASS", firstHitTest: hitTest, observedCardClicks: clickCount }));
+    console.log(JSON.stringify({ viewport: name, result: "PASS", firstHitTest: hitTest, observedCardClicks: clickCount, consoleErrors }));
   } catch (error) {
     const diagnostics = await page.evaluate(() => {
       const hand = document.querySelector(".hand-south");
