@@ -1,0 +1,80 @@
+name: Hokm Cloudflare D1 Provision
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_create:
+        description: "Type CREATE_HOKM_D1 to create the separate fly-hokm-db database"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hokm-cloudflare-provision-d1
+  cancel-in-progress: false
+
+jobs:
+  provision:
+    name: Create isolated Hokm D1 database
+    if: github.ref == 'refs/heads/feature/hokm-four-player' && inputs.confirm_create == 'CREATE_HOKM_D1'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: games/hokm/worker
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Checkout Hokm branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/hokm-four-player
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate Cloudflare credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Missing repository secret CLOUDFLARE_API_TOKEN."; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Missing repository variable CLOUDFLARE_ACCOUNT_ID."; exit 1; }
+
+      - name: Install Wrangler
+        run: npm install --no-save --no-package-lock wrangler@4
+
+      - name: Create D1 database and report its ID
+        id: create_db
+        shell: bash
+        run: |
+          set -euo pipefail
+          output="$(npx wrangler d1 create fly-hokm-db 2>&1)" || {
+            printf '%s\n' "$output"
+            exit 1
+          }
+          printf '%s\n' "$output"
+          database_id="$(printf '%s\n' "$output" | grep -Eo '[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}' | head -n 1 || true)"
+          if [ -z "$database_id" ]; then
+            echo "::error::Could not automatically extract the D1 database ID. Review the Wrangler output in this run."
+            exit 1
+          fi
+          echo "database_id=$database_id" >> "$GITHUB_OUTPUT"
+          echo "::notice::D1 database created. Add the reported ID to games/hokm/worker/wrangler.toml; this workflow does not deploy the Worker."
+
+      - name: Publish database ID as workflow summary
+        env:
+          DATABASE_ID: ${{ steps.create_db.outputs.database_id }}
+        run: |
+          {
+            echo "## Hokm D1 database created"
+            echo
+            echo "Database name: `fly-hokm-db`"
+            echo
+            echo "Database ID: `$DATABASE_ID`"
+            echo
+            echo "Next: set this ID as `database_id` in `games/hokm/worker/wrangler.toml`. No Worker deployment was performed."
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,27 @@
+name: Hokm Engine Tests
+on:
+  push:
+    branches: [feature/hokm-four-player]
+    paths:
+      - 'games/hokm/**'
+      - '.github/workflows/hokm-engine-tests.yml'
+  pull_request:
+    branches: [feature/hokm-four-player]
+    paths:
+      - 'games/hokm/**'
+      - '.github/workflows/hokm-engine-tests.yml'
+  workflow_dispatch:
+jobs:
+  engine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate Hokm browser client and wallet integration
+        run: node --check games/hokm/js/hokm.js && node --check games/hokm/js/hokm-play.js && node --check games/hokm/js/hokm-online.js
+      - name: Validate isolated Hokm Worker syntax
+        run: node --check games/hokm/worker/src/index.js && node --check games/hokm/worker/src/security.js && node --check games/hokm/worker/src/room.js
+      - name: Run Hokm rules, CPU and access-tier tests
+        run: node --test games/hokm/tests/hokm-engine.test.cjs
