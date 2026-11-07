@@ -567,3 +567,16 @@ html.fi-android-webview .hokm-room-entry input{
 .sound-controls .volume-control{min-width:190px}
 .game-shell[hidden]{display:none!important}
 @media(max-width:760px){.sound-controls{display:grid;grid-template-columns:1fr;margin-top:12px}.sound-controls .volume-control{min-width:0}}
+
+
+/* Reliable, table-centred card dealing. Per-card animation survives harmless rerenders. */
+.hand .hokm-card.deal-in,
+.hand .hokm-card-back.deal-in{
+ animation:hokmCardDeal .74s cubic-bezier(.16,.84,.24,1) both!important;
+ animation-delay:var(--deal-delay,0ms)!important;
+ will-change:transform,opacity,filter;
+}
+@media(prefers-reduced-motion:reduce){
+ .hand .hokm-card.deal-in,
+ .hand .hokm-card-back.deal-in{animation:none!important;will-change:auto}
+}
