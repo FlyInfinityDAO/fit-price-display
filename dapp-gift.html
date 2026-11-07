@@ -13,6 +13,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="wallet-ui.css?v=20261104-2">
     <script src="lang.js"></script>
+    <script>
+      // Android RTL address-field compatibility; deliberately scoped to this page.
+      (function(){ if (/Android/i.test(navigator.userAgent || "")) document.documentElement.classList.add("fi-android-webview"); })();
+    </script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -1455,6 +1459,18 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 [data-i18n="dapp.agreementHeadingInfrastructure"]::before{content:"\f3ed"}
 [data-i18n="dapp.oneTime"]::before{content:"\f017";color:#D4AF37}
 
+
+        /* Android Persian/Arabic: keep wallet addresses LTR so the keyboard and caret stay stable. */
+        html.fi-android-webview[lang="fa"] #joinGiftAddress,
+        html.fi-android-webview[lang="ar"] #joinGiftAddress,
+        html.fi-android-webview[lang="fa"] #freeGiftAddress,
+        html.fi-android-webview[lang="ar"] #freeGiftAddress {
+            direction: ltr !important;
+            text-align: left !important;
+            unicode-bidi: plaintext;
+            font-size: 16px !important;
+            writing-mode: horizontal-tb !important;
+        }
 </style>
     <link rel="stylesheet" href="wallet-ui.css?v=20261104-2">
     <link rel="stylesheet" href="card-hover.css?v=4">
