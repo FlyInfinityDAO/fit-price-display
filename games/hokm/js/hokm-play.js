@@ -35,11 +35,33 @@ function seatElements(seat){return ({0:{hand:".hand-south",chip:".seat-south .pl
 function clearClock(){if(turnInterval)clearInterval(turnInterval);turnInterval=null;turnDeadline=0;$("hokmTurnClock").hidden=true}
 function stopTimers(){clearClock();if(turnTimer)clearTimeout(turnTimer);turnTimer=null;locked=false}
 function makeCardNode(card,clickable){
- const b=document.createElement(clickable?"button":"div");b.className="hokm-card"+(isRed(card)?" red":"")+(clickable?" playable":"");b.type=clickable?"button":undefined;b.setAttribute("aria-label",card.rank+" "+suitName(card.suit));
+ const b=document.createElement("button");b.className="hokm-card"+(isRed(card)?" red":"")+(clickable?" playable":"");b.type="button";b.disabled=!clickable;b.setAttribute("aria-disabled",String(!clickable));b.dataset.cardId=card.id;b.setAttribute("aria-label",card.rank+" "+suitName(card.suit));
  const top=document.createElement("span");top.className="card-corner";top.textContent=card.rank+card.suit;
  const center=document.createElement("span");center.className="card-center";center.textContent=card.suit;
  b.append(top,center);
- if(clickable)b.addEventListener("click",()=>playHumanCard(card.id));
+ // TokenPocket's embedded iOS/Android WebViews may deliver touchend without
+ // synthesizing a reliable click on dynamically-created card buttons.
+ let touchStart=null,lastTouchAt=0;
+ b.addEventListener("touchstart",event=>{
+  const point=event.changedTouches&&event.changedTouches[0];
+  if(point)touchStart={x:point.clientX,y:point.clientY};
+ },{passive:true});
+ b.addEventListener("touchend",event=>{
+  const point=event.changedTouches&&event.changedTouches[0];
+  if(!point||!touchStart)return;
+  const moved=Math.hypot(point.clientX-touchStart.x,point.clientY-touchStart.y);
+  touchStart=null;
+  if(moved>12)return;
+  event.preventDefault();
+  lastTouchAt=Date.now();
+  playHumanCard(card.id);
+ },{passive:false});
+ b.addEventListener("touchcancel",()=>{touchStart=null},{passive:true});
+ b.addEventListener("click",event=>{
+  // Ignore the compatibility click following a touch; touchend already played it.
+  if(event.detail>0&&Date.now()-lastTouchAt<1000)return;
+  playHumanCard(card.id);
+ });
  return b;
 }
 function makeBack(){const b=document.createElement("span");b.className="hokm-card-back";b.setAttribute("aria-hidden","true");return b}
@@ -129,12 +151,18 @@ function playHumanCard(id){
  }catch(e){setStatus(e.message)}
 }
 function onCardPlayed(result,automatic){
- if(result.completed){visibleTrick=result.trick;cardFxSafe("collect")}else{visibleTrick=[];cardFxSafe("play")}
+ if(result.completed){
+  visibleTrick=result.trick;
+  cardFxSafe("collect");
+  // Lock before rendering: otherwise the hand briefly looks playable while the
+  // 950ms trick-display pause is active, and taps are silently discarded.
+  if(result.roundWinner===undefined)locked=true;
+ }else{visibleTrick=[];cardFxSafe("play")}
  render();
  if(automatic){setStatus(tr("auto"));setMessage(tr("auto"))}
  if(result.roundWinner!==undefined){completeRound(result.roundWinner);return}
  if(result.completed){
-  locked=true;setStatus(tr("playing"));setMessage(tr("playing"));
+  setStatus(tr("playing"));setMessage(tr("playing"));
   turnTimer=setTimeout(()=>{visibleTrick=[];locked=false;render();if(game.currentPlayer===0)startClock();advance()},950);
   return;
  }
