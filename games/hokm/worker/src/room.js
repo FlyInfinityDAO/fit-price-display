@@ -9,14 +9,18 @@ const json = (data, status = 200) => new Response(JSON.stringify(data), {
   status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" }
 });
 const cleanWallet = value => typeof value === "string" ? value.toLowerCase() : "";
-const publicPlayer = (p, viewer) => ({
-  seat: p.seat,
-  wallet: p.kind === "cpu" ? null : p.wallet.slice(0, 6) + "…" + p.wallet.slice(-4),
-  you: p.wallet === viewer,
-  tier: p.tier,
-  connected: !!p.connected,
-  cpu: p.kind === "cpu" || !!p.replaced
-});
+const publicPlayer = (p, viewer, match) => {
+  const matchPlayer = match?.players.find(x => x.seat === p.seat);
+  return {
+    seat: p.seat,
+    wallet: p.kind === "cpu" ? null : p.wallet.slice(0, 3) + "..." + p.wallet.slice(-3),
+    you: p.wallet === viewer,
+    tier: p.tier,
+    connected: !!p.connected,
+    cpu: p.kind === "cpu" || !!p.replaced,
+    reconnectDeadlineAt: matchPlayer?.connectionStatus === "disconnected" ? (matchPlayer.reconnectDeadlineAt || null) : (!match && !p.connected ? (p.reconnectUntil || null) : null)
+  };
+};
 
 export class HokmRoom extends DurableObject {
   constructor(ctx, env) {
@@ -38,7 +42,7 @@ export class HokmRoom extends DurableObject {
     return {
       code: room.code,
       status: room.status,
-      players: room.players.map(p => publicPlayer(p, wallet)),
+      players: room.players.map(p => publicPlayer(p, wallet, room.match)),
       seat,
       maxPlayers: 4,
       match: room.match ? {
@@ -57,6 +61,7 @@ export class HokmRoom extends DurableObject {
         tricksWon: game.tricksWon,
         trick: game.trick,
         lastTrick: room.lastTrick || [],
+        trickPiles: room.trickPiles || [],
         teamTricks: game.teamTricks,
         finished: game.finished,
         turnDeadlineAt: game.turnDeadlineAt || null,
@@ -214,6 +219,7 @@ export class HokmRoom extends DurableObject {
       });
       room.status = "playing";
       room.lastTrick = [];
+      room.trickPiles = [];
       room.roundWinner = null;
       await this.startRound(room);
     } catch (error) {
@@ -224,6 +230,7 @@ export class HokmRoom extends DurableObject {
   async startRound(room, hakem) {
     H.startRound(room.match, { humanSeat: 0, hakem });
     room.lastTrick = [];
+    room.trickPiles = [];
     room.roundWinner = null;
     room.status = "playing";
     const game = room.match.round;
@@ -348,6 +355,8 @@ export class HokmRoom extends DurableObject {
       return;
     }
     if (result.completed) {
+      room.trickPiles ||= [];
+      room.trickPiles.push({ winner: result.winner, cards: result.trick || [] });
       room.lastTrick = result.trick || [];
       room.lastTrickClearAt = Date.now() + 900;
     }
