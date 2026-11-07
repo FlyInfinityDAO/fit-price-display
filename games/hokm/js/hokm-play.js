@@ -35,11 +35,11 @@ function seatElements(seat){return ({0:{hand:".hand-south",chip:".seat-south .pl
 function clearClock(){if(turnInterval)clearInterval(turnInterval);turnInterval=null;turnDeadline=0;$("hokmTurnClock").hidden=true}
 function stopTimers(){clearClock();if(turnTimer)clearTimeout(turnTimer);turnTimer=null;locked=false}
 function makeCardNode(card,clickable){
- const b=document.createElement(clickable?"button":"div");b.className="hokm-card"+(isRed(card)?" red":"")+(clickable?" playable":"");b.type=clickable?"button":undefined;b.setAttribute("aria-label",card.rank+" "+suitName(card.suit));
+ const b=document.createElement("button");b.className="hokm-card"+(isRed(card)?" red":"")+(clickable?" playable":"");b.type="button";b.dataset.cardId=card.id;b.setAttribute("aria-label",card.rank+" "+suitName(card.suit));
  const top=document.createElement("span");top.className="card-corner";top.textContent=card.rank+card.suit;
  const center=document.createElement("span");center.className="card-center";center.textContent=card.suit;
  b.append(top,center);
- if(clickable)b.addEventListener("click",()=>playHumanCard(card.id));
+ b.addEventListener("click",()=>playHumanCard(card.id));
  return b;
 }
 function makeBack(){const b=document.createElement("span");b.className="hokm-card-back";b.setAttribute("aria-hidden","true");return b}
