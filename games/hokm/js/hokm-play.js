@@ -50,12 +50,30 @@ function makeCardNode(card,clickable){
 function makeBack(){const b=document.createElement("span");b.className="hokm-card-back";b.setAttribute("aria-hidden","true");return b}
 function renderHand(seat,cards,faceUp){
  const el=document.querySelector(seatElements(seat).hand);if(!el)return;
- const previous=Number(el.dataset.cardCount||0),dealing=cards.length>previous;
+ const signature=cards.map(card=>card.id).join(",")+"|"+faceUp+"|"+(game?.currentPlayer??"")+"|"+(game?.phase??"")+"|"+locked;
+ if(el.dataset.handSignature===signature)return;
+ const previous=Number(el.dataset.cardCount||0),dealing=cards.length>previous&&cards.length>0;
  el.classList.remove("dealing");el.replaceChildren();
- if(dealing){el.classList.add("dealing");el.style.setProperty("--deal-x",seat===0?"0px":seat===2?"0px":seat===1?"clamp(70px,14vw,170px)":"clamp(-170px,-14vw,-70px)");el.style.setProperty("--deal-y",seat===0?"clamp(55px,13vw,145px)":seat===2?"clamp(-145px,-13vw,-55px)":"0px")}
- if(faceUp)cards.forEach((card,index)=>{const node=makeCardNode(card,game&&game.phase==="playing"&&game.currentPlayer===0&&!locked&&H.legalCards(game,0).some(c=>c.id===card.id));node.style.setProperty("--deal-index",index);el.appendChild(node)});
- else cards.forEach((_,index)=>{const node=makeBack();node.style.setProperty("--deal-index",index);el.appendChild(node)});
+ if(dealing){
+  el.classList.add("dealing");
+  el.style.setProperty("--deal-x",seat===0?"0px":seat===2?"0px":seat===1?"clamp(70px,14vw,170px)":"clamp(-170px,-14vw,-70px)");
+  el.style.setProperty("--deal-y",seat===0?"clamp(55px,13vw,145px)":seat===2?"clamp(-145px,-13vw,-55px)":"0px");
+ }
+ const appendCard=(node,index)=>{
+  node.style.setProperty("--deal-index",index);
+  if(dealing){
+   node.classList.add("deal-in");
+   node.style.setProperty("--deal-delay",(index*48+seat*14)+"ms");
+  }
+  el.appendChild(node);
+ };
+ if(faceUp)cards.forEach(card=>{
+  const node=makeCardNode(card,game&&game.phase==="playing"&&game.currentPlayer===0&&!locked&&H.legalCards(game,0).some(c=>c.id===card.id));
+  appendCard(node,cards.indexOf(card));
+ });
+ else cards.forEach((_,index)=>appendCard(makeBack(),index));
  el.dataset.cardCount=String(cards.length);
+ el.dataset.handSignature=signature;
 }
 function renderSeats(){
  const counts=game?game.tricksWon:[0,0,0,0];
