@@ -143,3 +143,29 @@
 }
 
 .player-chip>.hokm-won-pile{flex:initial;min-width:0;overflow-x:auto;overflow-y:hidden}
+
+
+/* Clear neon turn focus and face-down captured tricks */
+@keyframes hokm-neon-pulse{
+ 0%,100%{box-shadow:0 0 0 1px #ffe9a5,0 0 8px 3px #ffd76b,0 0 18px 6px #ffae35,0 0 30px 9px #ff6a36}
+ 50%{box-shadow:0 0 0 2px #fff3c4,0 0 13px 5px #ffe28a,0 0 27px 10px #ffc04c,0 0 42px 13px #ff713c}
+}
+.player-chip.active{
+ border-color:#ffe6a0!important;
+ animation:hokm-neon-pulse 1.25s ease-in-out infinite;
+ position:relative;z-index:6;
+}
+.hokm-won-trick{background:transparent;border:0;box-shadow:none;padding:0;gap:1px}
+.hokm-trick-back{
+ display:block;position:relative;width:13px;height:19px;flex:0 0 13px;
+ border:1px solid #e7d39b;border-radius:3px;
+ background:repeating-linear-gradient(45deg,#17243c 0 2px,#d9d5c7 2px 3px,#263653 3px 5px);
+ box-shadow:0 1px 3px #16050b;
+}
+.hokm-trick-back:after{
+ content:"✦";position:absolute;inset:2px;display:grid;place-items:center;
+ border:1px solid #b9a66f;border-radius:2px;color:#e8d79f;font-size:7px;
+ background:#1d2b45;
+}
+@media(max-width:760px){.hokm-trick-back{width:11px;height:16px;flex-basis:11px}}
+@media(prefers-reduced-motion:reduce){.player-chip.active{animation:none;box-shadow:0 0 0 2px #ffe6a0,0 0 14px 5px #ffbf50}}
