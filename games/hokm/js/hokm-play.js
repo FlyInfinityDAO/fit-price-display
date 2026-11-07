@@ -13,6 +13,8 @@ zh:{start:"开始单人游戏",next:"开始下一局",restart:"新比赛",choose
 es:{start:"Iniciar partida individual",next:"Iniciar siguiente ronda",restart:"Nueva partida",choose:"Elegir triunfo",yourHand:"Tus cartas",thinking:"La CPU está pensando…",yourTurn:"Tu turno · juega una carta válida",turn:"Turno",seconds:"s",round:"Ronda",tricks:"Bazas",team0:"SUR · NORTE",team1:"OESTE · ESTE",won:"Tu equipo ganó la ronda",matchWon:"Partida completada",lost:"El otro equipo ganó la ronda",finished:"¡Ganaste la partida!",matchLost:"Partida terminada · gana la CPU",tie:"Empate",needAuth:"Conecta tu cartera y verifica al menos 1 FIT para empezar.",selectTrump:"Eres el hakim. Elige el triunfo entre tus cinco primeras cartas.",playing:"Debes asistir al palo si puedes. Tu turno está resaltado.",cpuTrump:"El hakim de la CPU está eligiendo triunfo…",nextRound:"Ronda terminada. Inicia la siguiente cuando quieras.",access:"Acceso verificado. Ya puedes iniciar una partida individual.",easy:"Fácil",normal:"Normal",hard:"Difícil",noCards:"No hay cartas legales.",auto:"Se acabó el tiempo: se jugó una carta legal automáticamente.",roundCount:"de",limit:"rondas",trump:"TRIUNFO"},
 pt:{start:"Iniciar partida solo",next:"Iniciar próxima rodada",restart:"Nova partida",choose:"Escolher trunfo",yourHand:"Suas cartas",thinking:"A CPU está pensando…",yourTurn:"Sua vez · jogue uma carta válida",turn:"Vez",seconds:"s",round:"Rodada",tricks:"Vazas",team0:"SUL · NORTE",team1:"OESTE · LESTE",won:"Sua equipe venceu a rodada",matchWon:"Partida concluída",lost:"A outra equipe venceu a rodada",finished:"Você venceu a partida!",matchLost:"Partida encerrada · CPU venceu",tie:"Empate",needAuth:"Conecte sua carteira e verifique pelo menos 1 FIT para começar.",selectTrump:"Você é o hakim. Escolha o trunfo entre suas cinco primeiras cartas.",playing:"Siga o naipe se possível. Sua vez fica destacada.",cpuTrump:"O hakim da CPU está escolhendo o trunfo…",nextRound:"Rodada concluída. Inicie a próxima quando estiver pronto.",access:"Acesso verificado. Você já pode iniciar uma partida solo.",easy:"Fácil",normal:"Normal",hard:"Difícil",noCards:"Não há cartas válidas.",auto:"O tempo acabou — uma carta válida foi jogada automaticamente.",roundCount:"de",limit:"rodadas",trump:"TRUNFO"}
 };
+const EXTRA_I={"en":{"cpu":"CPU","you":"You"},"fa":{"cpu":"هوش مصنوعی","you":"شما"},"ar":{"cpu":"الكمبيوتر","you":"أنت"},"tr":{"cpu":"CPU","you":"Sen"},"ru":{"cpu":"Компьютер","you":"Вы"},"zh":{"cpu":"电脑","you":"你","access":"访问权限已验证。现在可以开始单人游戏。"},"es":{"cpu":"CPU","you":"Tú"},"pt":{"cpu":"CPU","you":"Você"}};
+Object.entries(EXTRA_I).forEach(([locale,values])=>Object.assign(I[locale],values));
 let lang="en",tier=0,difficulty="normal",match=null,game=null,visibleTrick=[],roundResult=null,turnTimer=null,turnDeadline=0,turnInterval=null,locked=false;
 const tr=k=>(I[lang]&&I[lang][k])||I.en[k]||k;
 const suitName=s=>({ "♠":{en:"Spades",fa:"پیک",ar:"البستوني",tr:"Maça",ru:"Пики",zh:"黑桃",es:"Picas",pt:"Espadas"},"♥":{en:"Hearts",fa:"دل",ar:"القلب",tr:"Kupa",ru:"Червы",zh:"红桃",es:"Corazones",pt:"Copas"},"♦":{en:"Diamonds",fa:"خشت",ar:"الديناري",tr:"Karo",ru:"Бубны",zh:"方块",es:"Diamantes",pt:"Ouros"},"♣":{en:"Clubs",fa:"گشنیز",ar:"السباتي",tr:"Sinek",ru:"Трефы",zh:"梅花",es:"Tréboles",pt:"Paus"}}[s]?.[lang]||s);
@@ -29,8 +31,10 @@ function ensureControls(){
  $("hokmRestartBtn").addEventListener("click",startMatch);
  $("hokmTrumpPicker").querySelectorAll("[data-suit]").forEach(b=>b.addEventListener("click",()=>chooseTrump(b.dataset.suit)));
 }
-function setStatus(s){$("hokmGameStatus").textContent=s}
-function setMessage(s){$("tableMessage").textContent=s}
+let statusKey=null,statusSuffix="",messageKey=null,messageSuffix="";
+function detectStatusKey(value){if(typeof value!=="string")return null;const dict=I[lang]||I.en;let best=null;for(const[key,label]of Object.entries(dict)){if(label&&(value===label||value.startsWith(label+" · "))&&(!best||label.length>best.label.length))best={key,label,suffix:value.slice(label.length)}}return best}
+function setStatus(s){const found=detectStatusKey(s);statusKey=found?.key||null;statusSuffix=found?.suffix||"";$("hokmGameStatus").textContent=s}
+function setMessage(s){const found=detectStatusKey(s);messageKey=found?.key||null;messageSuffix=found?.suffix||"";$("tableMessage").textContent=s}
 function seatElements(seat){return ({0:{hand:".hand-south",chip:".seat-south .player-chip"},1:{hand:".seat-west .hand",chip:".seat-west .player-chip"},2:{hand:".hand-north",chip:".seat-north .player-chip"},3:{hand:".seat-east .hand",chip:".seat-east .player-chip"}})[seat]}
 function clearClock(){if(turnInterval)clearInterval(turnInterval);turnInterval=null;turnDeadline=0;$("hokmTurnClock").hidden=true}
 function stopTimers(){clearClock();if(turnTimer)clearTimeout(turnTimer);turnTimer=null;locked=false}
@@ -57,7 +61,7 @@ function renderSeats(){
  for(let seat=0;seat<4;seat++){
   const node=document.querySelector(seatElements(seat).chip);if(!node)continue;
   const small=node.querySelector("small"),em=node.querySelector("em");
-  if(small){small.textContent=seat===0?(game&&game.currentPlayer===0?tr("yourTurn"):tr("yourHand")):((game&&game.currentPlayer===seat)?tr("thinking"):"CPU");}
+  if(small){small.textContent=seat===0?(game&&game.currentPlayer===0?tr("yourTurn"):tr("yourHand")):((game&&game.currentPlayer===seat)?tr("thinking"):tr("cpu"));}
   if(em)em.textContent=String(counts[seat]||0);
   node.classList.toggle("active",!!game&&!game.finished&&game.currentPlayer===seat);
  }
@@ -77,7 +81,7 @@ function render(){
  mapping.forEach(seat=>renderHand(seat,game.hands[seat],seat===0));
  renderSeats();renderTrick();
  const trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent=game.trump||"—";
- const hakem=document.getElementById("tableHakem"),hakemChip=document.querySelector(seatElements(game.hakem).chip+" b");if(hakem)hakem.textContent=hakemChip?hakemChip.textContent:(game.hakem===0?"You":"CPU "+(game.hakem+1));
+ const hakem=document.getElementById("tableHakem"),hakemChip=document.querySelector(seatElements(game.hakem).chip+" b");if(hakem)hakem.textContent=hakemChip?hakemChip.textContent:(game.hakem===0?tr("you"):tr("cpu")+" "+(game.hakem+1));
  const bottom=document.querySelectorAll(".game-bottom .team-score b");
  if(bottom.length&&match){bottom[0].textContent=match.matchPoints[0];bottom[1].textContent=match.matchPoints[1]}
  const round=document.querySelector(".round-info b");if(round&&match)round.textContent=match.roundNo+" / "+match.maxRounds;
@@ -172,10 +176,10 @@ function nextRound(){
  beginRound(hakem);
 }
 function cardFxSafe(kind){try{if(typeof cardFx==="function")cardFx(kind)}catch(e){}}
-function setLanguage(value){if(I[value])lang=value;if($("hokmGameControls")&&!$("hokmGameControls").hidden){$("hokmStartBtn").textContent=tr("start");$("hokmNextBtn").textContent=tr("next");$("hokmRestartBtn").textContent=tr("restart");if(game){$("hokmHandCaption").textContent=game.phase==="choose-trump"?tr("selectTrump"):tr("playing");if(game.phase==="choose-trump"&&game.hakem===0){$("hokmTrumpTitle").textContent=tr("choose");$("hokmTrumpPicker").querySelectorAll("[data-suit]").forEach(b=>b.querySelector("span").textContent=suitName(b.dataset.suit))}}}}
+function setLanguage(value){if(I[value])lang=value;if($("hokmGameControls")&&!$("hokmGameControls").hidden){$("hokmStartBtn").textContent=tr("start");$("hokmNextBtn").textContent=tr("next");$("hokmRestartBtn").textContent=tr("restart");if(game){$("hokmHandCaption").textContent=game.phase==="choose-trump"?tr("selectTrump"):tr("playing");if(game.phase==="choose-trump"&&game.hakem===0){$("hokmTrumpTitle").textContent=tr("choose");$("hokmTrumpPicker").querySelectorAll("[data-suit]").forEach(b=>b.querySelector("span").textContent=suitName(b.dataset.suit))}renderSeats()}}if(statusKey)$("hokmGameStatus").textContent=tr(statusKey)+statusSuffix;if(messageKey)$("tableMessage").textContent=tr(messageKey)+messageSuffix}
 ensureControls();
 $("hokmGameControls").hidden=true;
-$("languageSelect").addEventListener("change",e=>setLanguage(e.target.value));
+window.addEventListener("hokm:language-changed",e=>setLanguage(e.detail?.lang||$("languageSelect").value));
 $("cpuDifficulty").addEventListener("change",e=>{difficulty=["easy","normal","hard"].includes(e.target.value)?e.target.value:"normal"});
 function activateAuthenticated(d){
  tier=Number(d&&d.tier)||0;setLanguage($("languageSelect").value||"en");
