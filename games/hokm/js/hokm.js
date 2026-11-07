@@ -37,7 +37,7 @@ window.HokmAudio={card:cardFx,startMusic,stopMusic,isMusicOn:()=>musicOn};
 function syncGameShell(visible){const shell=document.querySelector(".game-shell");if(shell)shell.hidden=!visible}
 syncGameShell(false);
 window.addEventListener("hokm:authenticated",e=>{const valid=!!e.detail?.sessionToken;syncGameShell(valid);if(valid)startMusic()});
-window.addEventListener("hokm:access-revoked",()=>{syncGameShell(false);stopMusic()});
+window.addEventListener("hokm:access-revoked",()=>{syncGameShell(false)});
 
 document.addEventListener("pointerdown",e=>{if(!musicAutoStart||musicOn||e.target.closest("#musicToggle,#soundToggle,#musicVolume"))return;musicAutoStart=false;startMusic()},{passive:true});
 function stopMusic(){musicOn=false;if(musicAudio){musicAudio.pause();musicAudio.currentTime=0}applyLang()}
