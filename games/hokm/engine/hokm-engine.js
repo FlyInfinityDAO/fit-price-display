@@ -96,7 +96,7 @@ function seatMap(mode="solo",humanSeat=0){
  return [0,1,2,3].map(seat=>({seat,kind:seat===humanSeat?"human":"cpu",team:seat%2}));
 }
 
-const TURN_TIMEOUT_MS=15000,RECONNECT_GRACE_MS=30000;
+const TURN_TIMEOUT_MS=30000,RECONNECT_GRACE_MS=60000;
 function startTurnClock(game,now=Date.now()){
  if(game.phase!=="playing"||game.finished)throw new Error("Game is not accepting turns");
  game.turnStartedAt=now;game.turnDeadlineAt=now+TURN_TIMEOUT_MS;
