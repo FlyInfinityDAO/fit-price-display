@@ -141,7 +141,7 @@ async function copyRoomCode(){
 }
 function displaySeat(seat){return (seat-ownSeat+4)%4}
 function makeSeatRing(kind){const ring=document.createElement("span");ring.className="hokm-seat-ring "+kind;ring.setAttribute("aria-hidden","true");return ring}
-function renderSeatRing(chip,kind,deadline,now){let ring=chip.querySelector(".hokm-seat-ring."+kind);if(!deadline){ring?.remove();return}if(!ring){ring=makeSeatRing(kind);chip.appendChild(ring)}const total=kind==="turn"?15000:300000;const left=Math.max(0,deadline-now);ring.style.setProperty("--ring-progress",String(Math.max(0,Math.min(1,left/total))));ring.textContent=String(Math.ceil(left/1000));ring.title=kind==="turn"?"Turn countdown":"Reconnect countdown";}
+function renderSeatRing(chip,kind,deadline,now){let ring=chip.querySelector(".hokm-seat-ring."+kind);if(!deadline){ring?.remove();return}if(!ring){ring=makeSeatRing(kind);chip.appendChild(ring)}const total=kind==="turn"?15000:(lastState?.game?.reconnectGraceMs||300000);const left=Math.max(0,deadline-now);ring.style.setProperty("--ring-progress",String(Math.max(0,Math.min(1,left/total))));ring.textContent=String(Math.ceil(left/1000));ring.title=kind==="turn"?"Turn countdown":"Reconnect countdown";}
 function renderWonPile(chip,piles,seat){let pile=chip.querySelector(".hokm-won-pile");if(!pile){pile=document.createElement("div");pile.className="hokm-won-pile";pile.setAttribute("aria-label","Won tricks");chip.appendChild(pile)}pile.replaceChildren();(piles||[]).filter(x=>x.winner===seat).forEach((trick,index)=>{const group=document.createElement("span");group.className="hokm-won-trick";group.title="Won trick "+(index+1);(trick.cards||[]).forEach(entry=>{const card=document.createElement("i");card.className=(["♥","♦"].includes(entry.card.suit)?"red":"black");card.textContent=entry.card.rank+entry.card.suit;group.appendChild(card)});pile.appendChild(group)});pile.hidden=!pile.childElementCount;}
 function seatEls(seat){
  return ({0:{hand:".hand-south",chip:".seat-south .player-chip"},1:{hand:".seat-west .hand",chip:".seat-west .player-chip"},2:{hand:".hand-north",chip:".seat-north .player-chip"},3:{hand:".seat-east .hand",chip:".seat-east .player-chip"}})[seat];
@@ -175,7 +175,7 @@ function renderState(s){
    const visual=displaySeat(actual),els=seatEls(visual),player=players.find(p=>p.seat===actual),chip=document.querySelector(els.chip),hand=document.querySelector(els.hand);
    if(chip){
     const b=chip.querySelector("b"),small=chip.querySelector("small"),em=chip.querySelector("em");
-    if(b)b.textContent=player?(player.cpu?t("cpu"):(player.wallet||"—")):t("openSeat");
+    if(b)b.textContent=player?(player.cpu?t("cpu"):(player.wallet||"—").replace(/\.\.\.(.{3})$/,(_,tail)=>"..."+tail.toUpperCase())):t("openSeat");
     if(small)small.textContent=!player?t("waiting"):(player.cpu?t("cpu"):(player.connected?t("connected"):t("disconnected")));
     if(em)em.textContent=String((game.tricksWon||[])[actual]||0);
     chip.classList.toggle("active",game.currentPlayer===actual&&s.status==="playing");
@@ -207,8 +207,8 @@ function renderState(s){
   if(game.phase==="choose-trump"&&!mayChoose&&s.status==="playing")status(t("chooseBy").replace("{seat}",String(game.hakem+1)));
   if(game.phase==="playing"&&Number.isFinite(game.turnDeadlineAt))startCountdown(game.turnDeadlineAt);
   else stopCountdown();
-  const now=Date.now();
-  for(let actual=0;actual<4;actual++){const visual=displaySeat(actual),chip=document.querySelector(seatEls(visual).chip),player=players.find(p=>p.seat===actual);if(!chip)continue;renderSeatRing(chip,"turn",s.status==="playing"&&game.phase==="playing"&&game.currentPlayer===actual?game.turnDeadlineAt:null,now);renderSeatRing(chip,"disconnect",player&&!player.connected&&!player.cpu?player.reconnectDeadlineAt:null,now);}
+  const now=Date.now(),activeSeat=game.phase==="choose-trump"?game.hakem:game.currentPlayer;
+  for(let actual=0;actual<4;actual++){const visual=displaySeat(actual),chip=document.querySelector(seatEls(visual).chip),player=players.find(p=>p.seat===actual);if(!chip)continue;renderSeatRing(chip,"turn",s.status==="playing"&&activeSeat===actual?game.turnDeadlineAt:null,now);renderSeatRing(chip,"disconnect",player&&!player.connected&&!player.cpu?player.reconnectDeadlineAt:null,now);}
   if(s.status==="round-break"&&s.roundWinner!==null)status((s.roundWinner===ownSeat%2?t("won"):t("lost"))+" · "+(s.match?.matchPoints||[0,0]).join(" : "));
   if(s.status==="finished")status(t("finished")+" · "+(s.match?.matchPoints||[0,0]).join(" : "));
  }else{
@@ -223,7 +223,7 @@ function renderState(s){
 }
 function startCountdown(deadline){
  if(timer)clearInterval(timer);
- const tick=()=>{const now=Date.now(),left=Math.max(0,Math.ceil((deadline-now)/1000));const base=lastState?.status==="playing"&&lastState?.game?.currentPlayer===ownSeat?t("yourTurn"):t("opponent");status(base+" · "+left+" "+t("seconds"));const players=lastState?.players||[],game=lastState?.game;for(let actual=0;actual<4;actual++){const chip=document.querySelector(seatEls(displaySeat(actual)).chip),player=players.find(p=>p.seat===actual);if(!chip)continue;renderSeatRing(chip,"turn",lastState?.status==="playing"&&game?.phase==="playing"&&game.currentPlayer===actual?game.turnDeadlineAt:null,now);renderSeatRing(chip,"disconnect",player&&!player.connected&&!player.cpu?player.reconnectDeadlineAt:null,now)}};
+ const tick=()=>{const now=Date.now(),left=Math.max(0,Math.ceil((deadline-now)/1000));const base=lastState?.status==="playing"&&lastState?.game?.currentPlayer===ownSeat?t("yourTurn"):t("opponent");status(base+" · "+left+" "+t("seconds"));const players=lastState?.players||[],game=lastState?.game;for(let actual=0;actual<4;actual++){const chip=document.querySelector(seatEls(displaySeat(actual)).chip),player=players.find(p=>p.seat===actual);if(!chip)continue;renderSeatRing(chip,"turn",lastState?.status==="playing"&&(game?.phase==="choose-trump"?game.hakem:game?.currentPlayer)===actual?game.turnDeadlineAt:null,now);renderSeatRing(chip,"disconnect",player&&!player.connected&&!player.cpu?player.reconnectDeadlineAt:null,now)}};
  tick();timer=setInterval(tick,200);
 }
 function stopCountdown(){if(timer)clearInterval(timer);timer=null}
