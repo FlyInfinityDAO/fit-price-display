@@ -19,7 +19,7 @@ let lang="en",ctx=null,musicOn=false,soundOn=true,timer=null,musicGain=null,bar=
 const tr=k=>T[lang]?.[k]||T.en[k]||k;
 window.hokmTranslate=tr;
 window.hokmTranslate=tr;
-function applyLang(){const rtl=["fa","ar"].includes(lang),android=/Android/i.test(navigator.userAgent||"");document.documentElement.lang=lang;document.documentElement.dir=android&&rtl?"ltr":(rtl?"rtl":"ltr");document.body.classList.toggle("fi-rtl",rtl);const arena=document.querySelector(".arena");if(android&&arena)arena.dir="ltr";document.title=tr("pageTitle");document.querySelectorAll("[data-i]").forEach(el=>{if(el.id==="accessStatus"&&sessionToken)return;el.textContent=tr(el.dataset.i)});document.querySelectorAll("[data-i-aria]").forEach(el=>el.setAttribute("aria-label",tr(el.dataset.iAria)));document.querySelectorAll("[data-i-placeholder]").forEach(el=>el.setAttribute("placeholder",tr(el.dataset.iPlaceholder)));const sound=$("soundToggle"),music=$("musicToggle");if(sound)sound.textContent=(soundOn?"♫ ":"♪ ")+tr(soundOn?"soundOn":"soundOff");if(music)music.textContent=(musicOn?"♪ ":"♫ ")+tr(musicOn?"musicOn":"musicOff");window.dispatchEvent(new CustomEvent("hokm:language-changed",{detail:{lang}}))}
+function applyLang(){const rtl=["fa","ar"].includes(lang),android=/Android/i.test(navigator.userAgent||"");document.documentElement.lang=lang;document.documentElement.dir=android&&rtl?"ltr":(rtl?"rtl":"ltr");document.body.classList.toggle("fi-rtl",rtl);const arena=document.querySelector(".arena");if(android&&arena)arena.dir="ltr";document.title=tr("pageTitle");document.querySelectorAll("[data-i]").forEach(el=>{if(el.id==="accessStatus")return;el.textContent=tr(el.dataset.i)});document.querySelectorAll("[data-i-aria]").forEach(el=>el.setAttribute("aria-label",tr(el.dataset.iAria)));document.querySelectorAll("[data-i-placeholder]").forEach(el=>el.setAttribute("placeholder",tr(el.dataset.iPlaceholder)));const sound=$("soundToggle"),music=$("musicToggle");if(sound)sound.textContent=(soundOn?"♫ ":"♪ ")+tr(soundOn?"soundOn":"soundOff");if(music)music.textContent=(musicOn?"♪ ":"♫ ")+tr(musicOn?"musicOn":"musicOff");refreshAccessStatus();window.dispatchEvent(new CustomEvent("hokm:language-changed",{detail:{lang}}))}
 $("languageSelect").addEventListener("change",e=>{lang=e.target.value;applyLang()});
 function audio(){if(!ctx){ctx=new(window.AudioContext||window.webkitAudioContext)()}if(ctx.state==="suspended")ctx.resume();return ctx}
 function note(freq,dur=.2,vol=.012,delay=0){const c=audio(),o=c.createOscillator(),g=c.createGain(),t=c.currentTime+delay;o.type="triangle";o.frequency.value=freq;g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(vol,t+.04);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02)}
@@ -55,6 +55,7 @@ $("collectDemoBtn").addEventListener("click",()=>{cardFx("collect");$("tableMess
 
 const API_BASE=(window.HOKM_API_URL||"https://fly-hokm-api.flyinfinityplatform.workers.dev").replace(/\/$/,"");
 let activeProvider=null,sessionToken=null,currentWallet=null,watchedWalletProvider=null;
+let accessStatusKind="notConnected",currentFitDisplay="",currentTier=0,lastAuthError=null;
 const accessMessages={
  en:{connecting:"Connecting wallet…",signing:"Please approve the free signature in your wallet…",verifying:"Verifying FIT balance on BNB Smart Chain…",ready:"Access verified · ",denied:"Access denied: ",wrongChain:"Please switch to BNB Smart Chain.",noWallet:"No compatible wallet found. Open this page in your wallet browser or use Connect wallet.",noInjectedWallet:"No injected wallet was detected. Open this page in your wallet’s built-in browser.",api:"Hokm authentication service is not configured or unavailable.",timeout:"Wallet signature timed out. Please try again."},
  fa:{connecting:"در حال اتصال کیف پول…",signing:"لطفاً امضای رایگان را در کیف پول تأیید کنید…",verifying:"در حال بررسی موجودی FIT روی BNB Smart Chain…",ready:"دسترسی تأیید شد · ",denied:"عدم دسترسی: ",wrongChain:"لطفاً شبکه را به BNB Smart Chain تغییر دهید.",noWallet:"کیف پول سازگار پیدا نشد. صفحه را در مرورگر کیف پول باز کنید یا روش اتصال کیف پول را امتحان کنید.",noInjectedWallet:"کیف پول مرورگری پیدا نشد. صفحه را از مرورگر داخلی کیف پول باز کنید.",api:"سرویس احراز هویت حکم هنوز راه‌اندازی نشده یا در دسترس نیست.",timeout:"زمان امضای کیف پول تمام شد. دوباره تلاش کنید."},
@@ -70,6 +71,7 @@ const msg=k=>accessMessages[lang]?.[k]||accessMessages.en[k];
 function localizeAuthError(error){const raw=String(error&&error.message||error||"");if(/Wallet selection cancelled/i.test(raw))return tr("selectionCancelled");if(/Invalid wallet selection/i.test(raw))return tr("invalidWalletSelection");if(/WalletConnect provider could not be loaded/i.test(raw))return tr("walletConnectLoadFailed");if(/approved the connection but returned no account/i.test(raw))return tr("walletNoAccount");if(/User rejected|user denied|request rejected/i.test(raw))return tr("userRejected");if(/No internet connection|network.*unavailable|relay/i.test(raw))return tr("networkUnavailable");if(/At least 1 FIT/i.test(raw))return tr("fitRequired");if(/Wallet signature is invalid|Signature does not match/i.test(raw))return tr("invalidSignature");if(/Nonce is invalid|Challenge already used/i.test(raw))return tr("challengeExpired");if(/Too many requests/i.test(raw))return tr("rateLimited");if(/BSC RPC|temporarily unavailable/i.test(raw))return tr("rpcUnavailable");if(/Origin not allowed/i.test(raw))return tr("originBlocked");return raw||msg("api")}
 function localizeAuthError(error){const raw=String(error&&error.message||error||"");if(/Wallet selection cancelled/i.test(raw))return tr("selectionCancelled");if(/Invalid wallet selection/i.test(raw))return tr("invalidWalletSelection");if(/WalletConnect provider could not be loaded/i.test(raw))return tr("walletConnectLoadFailed");if(/approved the connection but returned no account/i.test(raw))return tr("walletNoAccount");if(/User rejected|user denied|request rejected/i.test(raw))return tr("userRejected");if(/No internet connection|network.*unavailable|relay/i.test(raw))return tr("networkUnavailable");if(/At least 1 FIT/i.test(raw))return tr("fitRequired");if(/Wallet signature is invalid|Signature does not match/i.test(raw))return tr("invalidSignature");if(/Nonce is invalid|Challenge already used/i.test(raw))return tr("challengeExpired");if(/Too many requests/i.test(raw))return tr("rateLimited");if(/BSC RPC|temporarily unavailable/i.test(raw))return tr("rpcUnavailable");if(/Origin not allowed/i.test(raw))return tr("originBlocked");return tr("requestError")}
 function setAccessStatus(text,error=false){$("accessStatus").textContent=text;$("accessStatus").style.color=error?"#ff9999":""}
+function refreshAccessStatus(){if(accessStatusKind==="notConnected")accessStatusKind="notConnected";lastAuthError=null;setAccessStatus(tr("notConnected"));else if(accessStatusKind==="connecting")setAccessStatus(msg("connecting"));else if(accessStatusKind==="signing")setAccessStatus(msg("signing"));else if(accessStatusKind==="verifying")setAccessStatus(msg("verifying"));else if(accessStatusKind==="ready")setAccessStatus(msg("ready")+currentWallet.slice(0,6)+"…"+currentWallet.slice(-4)+" · "+currentFitDisplay+" FIT · "+tr("tierLabel")+" "+currentTier);else if(accessStatusKind==="denied")setAccessStatus(msg("denied")+localizeAuthError(lastAuthError),true)}
 async function api(path,body,token){
  const response=await fetch(API_BASE+path,{method:body?"POST":"GET",headers:{...(body?{"Content-Type":"application/json"}:{}),...(token?{Authorization:"Bearer "+token}:{})},body:body?JSON.stringify(body):undefined,cache:"no-store"});
  const data=await response.json().catch(()=>({}));
@@ -103,7 +105,7 @@ async function connectHokm(method){
  const originalLabel=activeButton.textContent;
  buttons.forEach(button=>button.disabled=true);
  activeButton.textContent=msg("connecting");
- setAccessStatus(msg("connecting"));
+ accessStatusKind="connecting";lastAuthError=null;setAccessStatus(msg("connecting"));
  sessionToken=null;currentWallet=null;window.hokmAuthState=null;window.dispatchEvent(new CustomEvent("hokm:access-revoked"));
  try{
   activeProvider=await walletProvider(method);
@@ -119,22 +121,22 @@ async function connectHokm(method){
   const signer=provider.getSigner();
   const address=await signer.getAddress();
   activeButton.textContent=msg("signing");
-  setAccessStatus(msg("signing"));
+  accessStatusKind="signing";setAccessStatus(msg("signing"));
   const challenge=await api("/api/auth/challenge",{address});
   const signature=await signWithTimeout(signer,challenge.message);
-  setAccessStatus(msg("verifying"));
+  accessStatusKind="verifying";setAccessStatus(msg("verifying"));
   activeButton.textContent=msg("verifying");
   const verified=await api("/api/auth/verify",{address,nonce:challenge.nonce,signature});
   sessionToken=verified.sessionToken;
   currentWallet=verified.wallet.toLowerCase();
   watchWalletProvider(activeProvider);
   const fit=Number(ethers.utils.formatUnits(verified.fitBalanceWei,18)).toLocaleString(undefined,{maximumFractionDigits:4});
-  setAccessStatus(msg("ready")+currentWallet.slice(0,6)+"…"+currentWallet.slice(-4)+" · "+fit+" FIT · "+tr("tierLabel")+" "+verified.tier);
+  currentFitDisplay=fit;currentTier=verified.tier;accessStatusKind="ready";setAccessStatus(msg("ready")+currentWallet.slice(0,6)+"…"+currentWallet.slice(-4)+" · "+fit+" FIT · "+tr("tierLabel")+" "+verified.tier);
   window.hokmAuthState={wallet:currentWallet,tier:verified.tier,expiresAt:verified.expiresAt,sessionToken};
    window.dispatchEvent(new CustomEvent("hokm:authenticated",{detail:window.hokmAuthState}));
  }catch(error){
   console.error("[Hokm wallet]",error);
-  setAccessStatus(msg("denied")+localizeAuthError(error),true);
+  accessStatusKind="denied";lastAuthError=error;setAccessStatus(msg("denied")+localizeAuthError(error),true);
   sessionToken=null;currentWallet=null;activeProvider=null;
  }finally{
   buttons.forEach(button=>button.disabled=false);
