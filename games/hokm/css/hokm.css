@@ -141,3 +141,5 @@
  .hokm-won-pile{max-width:58vw}
  .seat-west .hokm-won-pile,.seat-east .hokm-won-pile{max-width:115px}
 }
+
+.player-chip>.hokm-won-pile{flex:initial;min-width:0;overflow-x:auto;overflow-y:hidden}
