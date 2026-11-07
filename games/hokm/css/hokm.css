@@ -219,6 +219,11 @@
 }
 
 
+/* Keep the human hand above the central trick display so every card receives pointer input. */
+.seat-south{z-index:30}
+.seat-south .hand-south{position:relative;z-index:31;pointer-events:auto}
+.table-center{pointer-events:none}
+
 /* Fix online hand reactivation and predictable card hit targets */
 .hand{display:flex;flex-wrap:nowrap;align-items:flex-end;gap:0}
 .hand .hokm-card{position:relative;z-index:calc(var(--deal-index,0) + 1);flex-shrink:0;pointer-events:auto;touch-action:manipulation}
