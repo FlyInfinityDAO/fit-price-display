@@ -18,8 +18,12 @@ async function runViewport(browserType, name, viewport, mobile = false, language
     await page.addInitScript(() => {
       window.hokmAuthState = { wallet: "0x0000000000000000000000000000000000000001", tier: 2 };
       window.__hokmCardClicks = 0;
+      window.__hokmCardTouchEnds = 0;
       document.addEventListener("click", event => {
         if (event.target.closest(".hand-south .hokm-card")) window.__hokmCardClicks++;
+      }, true);
+      document.addEventListener("touchend", event => {
+        if (event.target.closest(".hand-south .hokm-card")) window.__hokmCardTouchEnds++;
       }, true);
     });
     await page.goto(baseURL, { waitUntil: "domcontentloaded", timeout: 45000 });
@@ -80,11 +84,15 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       { timeout: 10000 }
     );
 
-    const clickCount = await page.evaluate(() => window.__hokmCardClicks);
-    if (clickCount < 2) throw new Error(`Only ${clickCount} card click events were observed`);
+    const activationCounts = await page.evaluate(() => ({
+      clicks: window.__hokmCardClicks,
+      touchEnds: window.__hokmCardTouchEnds
+    }));
+    const observedActivations = mobile ? activationCounts.touchEnds : activationCounts.clicks;
+    if (observedActivations < 2) throw new Error(`Only ${observedActivations} card activation events were observed`);
     if (pageErrors.length) throw new Error("Browser runtime errors: " + pageErrors.join(" | "));
 
-    console.log(JSON.stringify({ viewport: name, result: "PASS", firstHitTest: hitTest, observedCardClicks: clickCount, consoleErrors }));
+    console.log(JSON.stringify({ viewport: name, result: "PASS", firstHitTest: hitTest, activationCounts, consoleErrors }));
   } catch (error) {
     const diagnostics = await page.evaluate(() => {
       const hand = document.querySelector(".hand-south");
