@@ -558,3 +558,6 @@ html.fi-android-webview .hokm-room-entry input{
  direction:ltr;
  text-align:center;
 }
+
+/* Android RTL: keep the document scroll container LTR; apply RTL only inside visible game sections. */
+@media (max-width: 10000px){html.fi-android-webview body.fi-rtl{direction:ltr!important}html.fi-android-webview body.fi-rtl .arena{direction:ltr!important}html.fi-android-webview body.fi-rtl .arena>header,html.fi-android-webview body.fi-rtl .arena>section,html.fi-android-webview body.fi-rtl .arena>footer{direction:rtl}html.fi-android-webview body.fi-rtl .hokm-room-entry input{direction:ltr!important;text-align:center!important}}
