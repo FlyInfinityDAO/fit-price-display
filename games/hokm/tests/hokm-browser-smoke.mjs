@@ -4,7 +4,7 @@ const baseURL = process.env.HOKM_PREVIEW_URL || "https://hokm-preview.fly-hokm-p
 const failures = [];
 const browser = await chromium.launch({ headless: true });
 
-async function runViewport(browserType, name, viewport, mobile = false) {
+async function runViewport(browserType, name, viewport, mobile = false, language = "en") {
   const context = await browserType.newContext({ viewport, isMobile: mobile && browserType === chromium, hasTouch: mobile });
   const page = await context.newPage();
   const pageErrors = [];
@@ -115,7 +115,7 @@ async function runViewport(browserType, name, viewport, mobile = false) {
 await runViewport(browser, "desktop-chromium", { width: 1365, height: 900 }, false);
 await runViewport(browser, "mobile-chromium-touch", { width: 390, height: 844 }, true);
 const safari = await webkit.launch({ headless: true });
-await runViewport(safari, "mobile-webkit-touch", { width: 390, height: 844 }, true);
+await runViewport(safari, "mobile-webkit-touch-en", { width: 390, height: 844 }, true);\nawait runViewport(safari, "mobile-webkit-touch-fa-rtl", { width: 390, height: 844 }, true, "fa");
 await safari.close();
 await browser.close();
 
