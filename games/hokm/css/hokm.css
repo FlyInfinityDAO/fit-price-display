@@ -224,6 +224,13 @@
 .seat-south .hand-south{position:relative;z-index:31;pointer-events:auto}
 .table-center{pointer-events:none}
 
+/* Reliable pointer hit-testing for the human hand on desktop and touch devices. */
+.seat-south{z-index:40;isolation:isolate}
+.seat-south .hand-south{position:relative;z-index:41;pointer-events:auto!important;overflow-x:auto;overflow-y:hidden}
+.seat-south .hand-south .hokm-card{pointer-events:auto!important;position:relative;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.table-center{z-index:0;pointer-events:none!important}
+.hokm-round-scoreboard{pointer-events:none!important}
+
 /* Fix online hand reactivation and predictable card hit targets */
 .hand{display:flex;flex-wrap:nowrap;align-items:flex-end;gap:0}
 .hand .hokm-card{position:relative;z-index:calc(var(--deal-index,0) + 1);flex-shrink:0;pointer-events:auto;touch-action:manipulation}
