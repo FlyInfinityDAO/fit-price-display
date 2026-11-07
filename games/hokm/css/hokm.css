@@ -541,3 +541,20 @@ body.fi-rtl .hero,body.fi-rtl .game-status{text-align:center}
 .velvet-table{
   background:radial-gradient(ellipse at center,#76213f 0%,#64152f 58%,#4a1023 100%)!important;
 }
+
+/* Android TokenPocket/WebView: avoid smooth-scroll + IME viewport feedback loops. */
+html.fi-android-webview{
+ scroll-behavior:auto!important;
+ overflow-anchor:none!important;
+}
+html.fi-android-webview body,
+html.fi-android-webview body .arena,
+html.fi-android-webview .match-settings,
+html.fi-android-webview .hokm-online-panel{
+ overflow-anchor:none!important;
+}
+html.fi-android-webview .hokm-room-entry input{
+ scroll-margin-block:16px;
+ direction:ltr;
+ text-align:center;
+}
