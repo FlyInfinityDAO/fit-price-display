@@ -8,9 +8,10 @@ async function runViewport(name, viewport, mobile = false) {
   const context = await browser.newContext({ viewport, isMobile: mobile, hasTouch: mobile });
   const page = await context.newPage();
   const pageErrors = [];
+  const consoleErrors = [];
   page.on("pageerror", error => pageErrors.push(error.message));
   page.on("console", message => {
-    if (message.type() === "error") pageErrors.push(message.text());
+    if (message.type() === "error") consoleErrors.push(message.text());
   });
 
   try {
