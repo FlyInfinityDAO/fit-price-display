@@ -195,13 +195,14 @@ function renderState(s){
    }
    if(hand){
     const cards=actual===ownSeat?(game.ownHand||[]):Array.from({length:hands[actual]||0},()=>null);
-    const signature=actual===ownSeat?cards.map(card=>card.id).join("|"):String(cards.length);
+    const canPlay=s.status==="playing"&&game.phase==="playing"&&game.currentPlayer===ownSeat;
+    const signature=(actual===ownSeat?cards.map(card=>card.id).join("|"):String(cards.length))+"|"+(canPlay?"play":"wait");
     if(hand.dataset.handSignature!==signature){
      const previous=Number(hand.dataset.cardCount||0),dealing=cards.length>previous;
      hand.classList.remove("dealing");hand.replaceChildren();
      if(dealing){hand.classList.add("dealing");hand.style.setProperty("--deal-x",visual===0?"0px":visual===2?"0px":visual===1?"clamp(70px,14vw,170px)":"clamp(-170px,-14vw,-70px)");hand.style.setProperty("--deal-y",visual===0?"clamp(55px,13vw,145px)":visual===2?"clamp(-145px,-13vw,-55px)":"0px")}
      cards.forEach((card,index)=>{
-      const node=card?cardNode(card,s.status==="playing"&&game.phase==="playing"&&game.currentPlayer===ownSeat):document.createElement("span");
+      const node=card?cardNode(card,canPlay):document.createElement("span");
       if(!card){node.className="hokm-card-back";node.setAttribute("aria-hidden","true")}
       node.style.setProperty("--deal-index",index);hand.appendChild(node);
      });
