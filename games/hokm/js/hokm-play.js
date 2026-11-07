@@ -39,7 +39,29 @@ function makeCardNode(card,clickable){
  const top=document.createElement("span");top.className="card-corner";top.textContent=card.rank+card.suit;
  const center=document.createElement("span");center.className="card-center";center.textContent=card.suit;
  b.append(top,center);
- b.addEventListener("click",()=>playHumanCard(card.id));
+ // TokenPocket's embedded iOS/Android WebViews may deliver touchend without
+ // synthesizing a reliable click on dynamically-created card buttons.
+ let touchStart=null,lastTouchAt=0;
+ b.addEventListener("touchstart",event=>{
+  const point=event.changedTouches&&event.changedTouches[0];
+  if(point)touchStart={x:point.clientX,y:point.clientY};
+ },{passive:true});
+ b.addEventListener("touchend",event=>{
+  const point=event.changedTouches&&event.changedTouches[0];
+  if(!point||!touchStart)return;
+  const moved=Math.hypot(point.clientX-touchStart.x,point.clientY-touchStart.y);
+  touchStart=null;
+  if(moved>12)return;
+  event.preventDefault();
+  lastTouchAt=Date.now();
+  playHumanCard(card.id);
+ },{passive:false});
+ b.addEventListener("touchcancel",()=>{touchStart=null},{passive:true});
+ b.addEventListener("click",event=>{
+  // Ignore the compatibility click following a touch; touchend already played it.
+  if(event.detail>0&&Date.now()-lastTouchAt<1000)return;
+  playHumanCard(card.id);
+ });
  return b;
 }
 function makeBack(){const b=document.createElement("span");b.className="hokm-card-back";b.setAttribute("aria-hidden","true");return b}
