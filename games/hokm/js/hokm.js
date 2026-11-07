@@ -15,11 +15,24 @@ function applyLang(){document.documentElement.lang=lang;document.documentElement
 $("languageSelect").addEventListener("change",e=>{lang=e.target.value;applyLang()});
 function audio(){if(!ctx){ctx=new(window.AudioContext||window.webkitAudioContext)();musicGain=ctx.createGain();musicGain.gain.value=0;musicGain.connect(ctx.destination)}if(ctx.state==="suspended")ctx.resume();return ctx}
 function note(freq,dur=.2,vol=.012,delay=0){const c=audio(),o=c.createOscillator(),g=c.createGain(),t=c.currentTime+delay;o.type="triangle";o.frequency.value=freq;g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(vol,t+.04);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(musicGain||c.destination);o.start(t);o.stop(t+dur+.02)}
-function cardFx(kind){if(!soundOn)return;const c=audio(),count=kind==="deal"?13:6;for(let i=0;i<count;i++){const t=c.currentTime+i*(kind==="deal"?.09:.07),b=c.createBuffer(1,Math.floor(c.sampleRate*.065),c.sampleRate),d=b.getChannelData(0);for(let j=0;j<d.length;j++)d[j]=(Math.random()*2-1)*Math.pow(1-j/d.length,3);const s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();s.buffer=b;f.type="lowpass";f.frequency.value=kind==="deal"?2500:1650;g.gain.setValueAtTime(kind==="deal"?.045:.055,t);g.gain.exponentialRampToValueAtTime(.0001,t+.065);s.connect(f);f.connect(g);g.connect(c.destination);s.start(t)}}
+function cardFx(kind){
+ if(!soundOn)return;
+ const c=audio(),settings={deal:{count:52,step:.027,duration:.052,volume:.034,filter:2900}, "deal-more":{count:32,step:.027,duration:.05,volume:.03,filter:2700},play:{count:2,step:.025,duration:.075,volume:.052,filter:2100},collect:{count:7,step:.055,duration:.07,volume:.045,filter:1750}},cfg=settings[kind]||settings.play;
+ for(let i=0;i<cfg.count;i++){
+  const t=c.currentTime+i*cfg.step,b=c.createBuffer(1,Math.floor(c.sampleRate*cfg.duration),c.sampleRate),d=b.getChannelData(0);
+  for(let j=0;j<d.length;j++)d[j]=(Math.random()*2-1)*Math.pow(1-j/d.length,3);
+  const s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();s.buffer=b;f.type="lowpass";f.frequency.value=cfg.filter;g.gain.setValueAtTime(cfg.volume,t);g.gain.exponentialRampToValueAtTime(.0001,t+cfg.duration);s.connect(f);f.connect(g);g.connect(c.destination);s.start(t);
+ }
+ if(kind==="play")note(520,.045,.004);
+ if(kind==="collect")note(392,.11,.004);
+}
 const chords=[[261.63,329.63,392,493.88],[220,261.63,329.63,392],[174.61,220,261.63,329.63],[196,246.94,293.66,369.99]];
 function musicBar(){if(!musicOn)return;const ns=chords[bar++%chords.length];ns.forEach((f,i)=>note(f,2.7,.004,i*.045));note(ns[0]*2,1,.001,.15)}
-function startMusic(){audio();musicOn=true;musicGain.gain.setTargetAtTime(Number($("musicVolume").value)/100,ctx.currentTime,.5);musicBar();timer=setInterval(musicBar,3000);applyLang()}
-function stopMusic(){musicOn=false;if(timer)clearInterval(timer);timer=null;if(musicGain)musicGain.gain.setTargetAtTime(0,ctx.currentTime,.3);applyLang()}
+function startMusic(){if(musicOn)return;audio();musicOn=true;musicGain.gain.setTargetAtTime(Number($("musicVolume").value)/100,ctx.currentTime,.7);musicBar();timer=setInterval(musicBar,3000);applyLang()}
+let musicAutoStart=true;
+window.HokmAudio={card:cardFx,startMusic,stopMusic,isMusicOn:()=>musicOn};
+document.addEventListener("pointerdown",e=>{if(!musicAutoStart||musicOn||!e.target.closest(".game-shell")||e.target.closest("#musicToggle,#soundToggle,#musicVolume"))return;musicAutoStart=false;startMusic()},{passive:true});
+function stopMusic(){musicOn=false;if(timer)clearInterval(timer);timer=null;if(musicGain&&ctx)musicGain.gain.setTargetAtTime(0,ctx.currentTime,.3);applyLang()}
 $("soundToggle").addEventListener("click",()=>{soundOn=!soundOn;if(soundOn)note(660,.08,.008);applyLang()});
 $("musicToggle").addEventListener("click",()=>musicOn?stopMusic():startMusic());
 $("musicVolume").addEventListener("input",e=>{$("volumeValue").textContent=e.target.value+"%";if(musicGain&&musicOn)musicGain.gain.setTargetAtTime(Number(e.target.value)/100,ctx.currentTime,.15)});
