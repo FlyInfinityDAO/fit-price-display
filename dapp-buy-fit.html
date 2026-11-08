@@ -1659,6 +1659,25 @@ button:focus-visible,a:focus-visible,input:focus-visible{
             will-change: auto !important;
           }
         }
+
+/* Isolated wallet-address entry modal: keeps mobile keyboard interaction away from the RTL page flow. */
+.fi-address-source{cursor:pointer!important}
+.fi-address-modal-overlay{display:none;position:fixed;inset:0;z-index:10050;background:rgba(0,0,0,.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:max(12px,env(safe-area-inset-top)) 12px max(12px,env(safe-area-inset-bottom));overflow-y:auto;overscroll-behavior:contain;align-items:flex-start;justify-content:center;direction:ltr}
+.fi-address-modal-overlay.active{display:flex}
+.fi-address-modal-dialog{width:100%;max-width:560px;margin:min(8vh,40px) auto 12px;max-height:calc(100dvh - 24px);overflow-y:auto;background:#0F0F0F;border:1px solid rgba(0,200,150,.42);border-radius:24px;padding:24px;box-shadow:0 24px 64px rgba(0,0,0,.72);color:#c0d0e8}
+.fi-address-modal-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.fi-address-modal-title{margin:0;color:#D4AF37;font-size:18px;font-weight:700;line-height:1.45}
+.fi-address-modal-close{width:38px;height:38px;flex:0 0 38px;border:1px solid rgba(212,175,55,.35);border-radius:50%;background:transparent;color:#D4AF37;font-size:24px;line-height:1;cursor:pointer}
+.fi-address-modal-hint{margin:0 0 14px;color:#999;font-size:13px;line-height:1.6}
+.fi-address-modal-input{display:block;width:100%;min-height:54px;padding:14px 15px;border:1px solid #2a3a55;border-radius:14px;background:#1a1a1a;color:#D4AF37;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:16px!important;line-height:1.4;direction:ltr!important;text-align:left!important;unicode-bidi:isolate!important;writing-mode:horizontal-tb!important;letter-spacing:0}
+.fi-address-modal-input:focus{outline:none;border-color:#00C896;box-shadow:0 0 0 2px rgba(0,200,150,.12)}
+.fi-address-modal-actions{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:18px}
+.fi-address-modal-btn{min-height:44px;padding:10px 20px;border-radius:28px;font-size:14px;font-weight:700;cursor:pointer}
+.fi-address-modal-cancel{border:1px solid rgba(212,175,55,.6);background:transparent;color:#D4AF37}
+.fi-address-modal-apply{border:1px solid #00C896;background:linear-gradient(135deg,#00C896,#008a6a);color:#fff}
+@media(max-width:768px){.fi-address-modal-dialog{margin:4px auto 8px;padding:20px 16px;border-radius:20px;max-height:calc(100dvh - 24px)}.fi-address-modal-title{font-size:16px}.fi-address-modal-actions{display:grid;grid-template-columns:1fr 1fr}.fi-address-modal-btn{width:100%}}
+html.fi-android-webview .fi-address-modal-overlay{direction:ltr!important;overscroll-behavior:contain}
+
 </style>
     <link rel="stylesheet" href="wallet-ui.css?v=20261104-2">
     <link rel="stylesheet" href="card-hover.css?v=4">
@@ -2679,5 +2698,126 @@ button:focus-visible,a:focus-visible,input:focus-visible{
 
     <script src="wallet-ui.js"></script>
     <script src="walletconnect-bridge.js?v=20261104-android-pairing"></script>
+
+<!-- Isolated wallet-address editor; original page fields remain the source of truth for existing contract functions. -->
+<div id="fiAddressModal" class="fi-address-modal-overlay" aria-hidden="true">
+  <section class="fi-address-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="fiAddressModalTitle">
+    <header class="fi-address-modal-header">
+      <h2 id="fiAddressModalTitle" class="fi-address-modal-title">Wallet address</h2>
+      <button type="button" id="fiAddressModalClose" class="fi-address-modal-close" aria-label="Close">×</button>
+    </header>
+    <p id="fiAddressModalHint" class="fi-address-modal-hint">Enter or paste a wallet address.</p>
+    <input id="fiAddressModalInput" class="fi-address-modal-input" type="text" dir="ltr" inputmode="text" enterkeyhint="done" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+    <div class="fi-address-modal-actions">
+      <button type="button" id="fiAddressModalCancel" class="fi-address-modal-btn fi-address-modal-cancel">Cancel</button>
+      <button type="button" id="fiAddressModalApply" class="fi-address-modal-btn fi-address-modal-apply">Use address</button>
+    </div>
+  </section>
+</div>
+<script>
+(function(){
+  const modal=document.getElementById("fiAddressModal");
+  const modalDialog=modal&&modal.querySelector(".fi-address-modal-dialog");
+  const modalTitle=document.getElementById("fiAddressModalTitle");
+  const modalHint=document.getElementById("fiAddressModalHint");
+  const modalInput=document.getElementById("fiAddressModalInput");
+  const closeButton=document.getElementById("fiAddressModalClose");
+  const cancelButton=document.getElementById("fiAddressModalCancel");
+  const applyButton=document.getElementById("fiAddressModalApply");
+  if(!modal||!modalDialog||!modalInput||!closeButton||!cancelButton||!applyButton)return;
+
+  const translations={
+    en:{cancel:"Cancel",apply:"Use address",hint:"Enter or paste a wallet address.",close:"Close",title:"Wallet address"},
+    fa:{cancel:"انصراف",apply:"ثبت آدرس",hint:"آدرس کیف پول را وارد یا جای‌گذاری کنید.",close:"بستن",title:"آدرس کیف پول"},
+    ar:{cancel:"إلغاء",apply:"استخدام العنوان",hint:"أدخل عنوان المحفظة أو الصقه.",close:"إغلاق",title:"عنوان المحفظة"},
+    es:{cancel:"Cancelar",apply:"Usar dirección",hint:"Escribe o pega una dirección de billetera.",close:"Cerrar",title:"Dirección de billetera"},
+    pt:{cancel:"Cancelar",apply:"Usar endereço",hint:"Digite ou cole um endereço de carteira.",close:"Fechar",title:"Endereço da carteira"},
+    ru:{cancel:"Отмена",apply:"Использовать адрес",hint:"Введите или вставьте адрес кошелька.",close:"Закрыть",title:"Адрес кошелька"},
+    tr:{cancel:"İptal",apply:"Adresi kullan",hint:"Cüzdan adresini girin veya yapıştırın.",close:"Kapat",title:"Cüzdan adresi"},
+    zh:{cancel:"取消",apply:"使用地址",hint:"输入或粘贴钱包地址。",close:"关闭",title:"钱包地址"}
+  };
+  const android=/Android/i.test(navigator.userAgent||"");
+  let activeSource=null;
+  let previousBodyOverflow="";
+
+  function languagePack(){
+    const code=(document.documentElement.lang||"en").toLowerCase().split("-")[0];
+    return translations[code]||translations.en;
+  }
+  function updateLabels(){
+    const pack=languagePack();
+    const rtl=["fa","ar"].includes((document.documentElement.lang||"").toLowerCase().split("-")[0]);
+    modalDialog.dir=rtl?"rtl":"ltr";
+    modalHint.textContent=pack.hint;
+    cancelButton.textContent=pack.cancel;
+    applyButton.textContent=pack.apply;
+    closeButton.setAttribute("aria-label",pack.close);
+    if(!activeSource)modalTitle.textContent=pack.title;
+  }
+  function openFor(source){
+    activeSource=source;
+    const group=source.closest(".input-group");
+    const label=group&&group.querySelector("label");
+    const pack=languagePack();
+    modalTitle.textContent=label?label.textContent.trim():pack.title;
+    updateLabels();
+    modalTitle.textContent=label?label.textContent.trim():pack.title;
+    modalInput.value=source.value||"";
+    previousBodyOverflow=document.body.style.overflow;
+    document.body.style.overflow="hidden";
+    modal.classList.add("active");
+    modal.setAttribute("aria-hidden","false");
+    if(!android){
+      try{modalInput.focus({preventScroll:true});modalInput.setSelectionRange(modalInput.value.length,modalInput.value.length);}catch(_){}
+    }
+  }
+  function closeModal(restoreFocus){
+    modal.classList.remove("active");
+    modal.setAttribute("aria-hidden","true");
+    document.body.style.overflow=previousBodyOverflow;
+    const source=activeSource;
+    activeSource=null;
+    if(restoreFocus&&!android&&source){try{source.focus({preventScroll:true});}catch(_){}}
+  }
+  function applyAddress(){
+    if(!activeSource)return;
+    activeSource.value=modalInput.value.trim();
+    closeModal(true);
+  }
+
+  const ids=["referrerAddress"];
+  const pageIds=document.body.dataset.dappView==="ownership"?ids:
+    document.body.dataset.dappView==="buy"?["buyerAddress"]:
+    document.body.dataset.dappView==="gift"?["joinGiftAddress","freeGiftAddress"]:[];
+  pageIds.forEach(id=>{
+    const source=document.getElementById(id);
+    if(!source)return;
+    source.readOnly=true;
+    source.classList.add("fi-address-source");
+    source.setAttribute("aria-haspopup","dialog");
+    source.setAttribute("aria-controls","fiAddressModal");
+    source.setAttribute("aria-readonly","true");
+    source.addEventListener("click",event=>{event.preventDefault();openFor(source);});
+    source.addEventListener("keydown",event=>{
+      if(event.key==="Enter"||event.key===" "){event.preventDefault();openFor(source);}
+    });
+  });
+
+  closeButton.addEventListener("click",()=>closeModal(true));
+  cancelButton.addEventListener("click",()=>closeModal(true));
+  applyButton.addEventListener("click",applyAddress);
+  modal.addEventListener("click",event=>{if(event.target===modal)closeModal(true);});
+  modalInput.addEventListener("keydown",event=>{
+    if(event.key==="Enter"){event.preventDefault();applyAddress();}
+    if(event.key==="Escape"){event.preventDefault();closeModal(true);}
+  });
+  document.addEventListener("keydown",event=>{
+    if(event.key==="Escape"&&modal.classList.contains("active"))closeModal(true);
+  });
+  document.addEventListener("fi-language-updated",updateLabels);
+  updateLabels();
+})();
+</script>
+
 </body>
 </html>
