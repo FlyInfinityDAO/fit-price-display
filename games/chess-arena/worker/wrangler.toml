@@ -1,0 +1,34 @@
+name = "fly-chess-arena-api"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+FRONTEND_ORIGIN = "https://flyinfinitydao.github.io"
+FRONTEND_ORIGINS = "https://flyinfinitydao.github.io,https://fly-chess-arena.pages.dev"
+BSC_RPC_URL = "https://bsc-dataseed.binance.org/"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "fly-chess-arena-db"
+database_id = "eae175c6-d221-48b8-ba54-3b784475b192"
+migrations_dir = "migrations"
+
+[[durable_objects.bindings]]
+name = "CHESS_ROOMS"
+class_name = "ChessRoom"
+
+[[durable_objects.bindings]]
+name = "BACKGAMMON_ROOMS"
+class_name = "BackgammonRoom"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["ChessRoom"]
+
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = ["BackgammonRoom"]
+
+[triggers]
+crons = ["17 * * * *"]
