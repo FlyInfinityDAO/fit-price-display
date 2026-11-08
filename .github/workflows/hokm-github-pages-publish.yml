@@ -1,4 +1,4 @@
-name: Publish Hokm on GitHub Pages
+name: Publish Fly Infinity Games on GitHub Pages
 
 on:
   workflow_dispatch:
@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   build-and-deploy:
-    name: Publish existing site plus isolated Hokm page
+    name: Validate and publish the existing development site
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -28,46 +28,42 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Checkout the currently published site
+      - name: Checkout main site and integrated games
         uses: actions/checkout@v4
         with:
           ref: main
           path: site
 
-      - name: Checkout the isolated Hokm implementation
-        uses: actions/checkout@v4
-        with:
-          ref: feature/hokm-four-player
-          path: hokm-source
-
-      - name: Validate inputs and assemble the Pages artifact
+      - name: Validate site and game entry points
         shell: bash
         run: |
           set -euo pipefail
 
-          test -f site/index.html || { echo "::error::The current site index.html is missing."; exit 1; }
-          test -f site/logo.png || { echo "::error::The current site logo.png is missing."; exit 1; }
-          test -f site/walletconnect-bridge.js || { echo "::error::The current wallet bridge is missing."; exit 1; }
-          test -f hokm-source/games/hokm/index.html || { echo "::error::Hokm page was not found on feature/hokm-four-player."; exit 1; }
-          test -f hokm-source/games/hokm/engine/hokm-engine.js || { echo "::error::Hokm engine is missing."; exit 1; }
-          test -f hokm-source/games/hokm/js/hokm.js || { echo "::error::Hokm frontend script is missing."; exit 1; }
-          test -f hokm-source/games/hokm/js/hokm-wallet-bridge.js || { echo "::error::Hokm wallet bridge is missing."; exit 1; }
+          test -f site/index.html || { echo "::error::The site index.html is missing."; exit 1; }
+          test -f site/logo.png || { echo "::error::The site logo.png is missing."; exit 1; }
+          test -f site/walletconnect-bridge.js || { echo "::error::The wallet bridge is missing."; exit 1; }
 
-          if [ -e site/games/hokm ]; then
-            echo "::error::games/hokm already exists on main. Stop to avoid overwriting existing content."
+          for game in chess-arena backgammon hokm; do
+            test -f "site/games/$game/index.html" || {
+              echo "::error::Missing games/$game/index.html"
+              exit 1
+            }
+          done
+
+          test -f site/games/chess-arena/css/style.css || {
+            echo "::error::Chess Arena stylesheet is missing."
             exit 1
-          fi
+          }
+          test -f site/games/backgammon/css/style.css || {
+            echo "::error::Backgammon stylesheet is missing."
+            exit 1
+          }
+          test -f site/games/hokm/css/hokm.css || {
+            echo "::error::Hokm stylesheet is missing."
+            exit 1
+          }
 
-          mkdir -p site/games
-          cp -R hokm-source/games/hokm site/games/hokm
-
-          node --check site/games/hokm/engine/hokm-engine.js
-          node --check site/games/hokm/js/hokm.js
-          node --check site/games/hokm/js/hokm-wallet-bridge.js
-
-          test -f site/games/hokm/css/hokm.css
-          test -f site/games/hokm/worker/src/index.js
-          echo "Prepared the existing main site with only the isolated games/hokm directory added."
+          echo "Validated all three integrated game entry points and required assets."
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
