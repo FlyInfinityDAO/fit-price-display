@@ -11,6 +11,23 @@
 ## Access policy implemented
 The backend reads `Owner_Exists(address)` from the Network contract and `balanceOf(address)` from the FIT ERC-20 contract. A non-owner is always tier 0; a verified owner is tier 1, tier 2 at 1 FIT, and tier 3 at 10 FIT. FIT uses 18 decimals and integer-safe comparisons. Ownership is rechecked for chat requests. This is the agreed v1 policy; no separate Agreement getter is assumed.
 
+## OpenRouter provider setup
+The existing Worker adapter already supports OpenAI-compatible APIs, so OpenRouter can be used without adding another service or changing the chat/authentication flow.
+
+In Cloudflare Worker settings for `fly-ai-api`, configure:
+
+- Variable `AI_PROVIDER`: `openai-compatible`
+- Variable `AI_BASE_URL`: `https://openrouter.ai/api/v1`
+- Secret `AI_API_KEY`: the API key generated in the OpenRouter account
+- Variable or secret `AI_MODEL`: the exact model slug copied from the OpenRouter model catalog (for example, a model with the `:free` suffix only when that exact free variant is currently available)
+
+Keep the key only in Cloudflare Worker secrets. Never place it in `fly-ai/js/config.js`, browser JavaScript, GitHub, or a public workflow file.
+
+OpenRouter's free models have provider-side rate and daily limits and availability can change. A model marked free is not an unlimited or guaranteed production capacity. Check the model's current limits and context window before selecting it. The existing Fly AI per-wallet daily quota and output cap remain active independently.
+
+No OmniRoute installation is required for this setup. If OpenRouter is selected, the request path is:
+`Fly AI frontend → existing fly-ai-api Worker → OpenRouter API → selected model`.
+
 ## Required deployment steps
 1. Create a Cloudflare D1 database named `fly-ai-db`. Apply `backend/migrations/0001_init.sql` using Wrangler or the Cloudflare dashboard.
 2. Replace `database_id` in `backend/wrangler.toml` with the created D1 database ID.
