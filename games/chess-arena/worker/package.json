@@ -1,0 +1,19 @@
+{
+  "name": "fly-chess-arena-api",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "check": "node --check src/index.js && node --check src/rooms-api.js && node --check src/security.js && node --check src/room.js && node --check src/backgammon-room.js && node --check ../js/chess-arena.js",
+    "test:security": "node --test tests/security.test.mjs",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "ethers": "^6.15.0",
+    "chess.js": "^1.4.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.20.0"
+  }
+}

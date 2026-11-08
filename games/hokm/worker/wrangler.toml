@@ -1,0 +1,26 @@
+name = "fly-hokm-api"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+FRONTEND_ORIGIN = "https://flyinfinitydao.github.io"
+FRONTEND_ORIGINS = "https://flyinfinitydao.github.io,https://hokm-preview.fly-hokm-preview.pages.dev"
+BSC_RPC_URL = "https://bsc-dataseed.binance.org/"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "fly-hokm-db"
+database_id = "0f82c3fb-95f7-42d5-a2ca-9861d63b8948"
+migrations_dir = "migrations"
+
+[[durable_objects.bindings]]
+name = "HOKM_ROOMS"
+class_name = "HokmRoom"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["HokmRoom"]
+
+[triggers]
+crons = ["23 * * * *"]
