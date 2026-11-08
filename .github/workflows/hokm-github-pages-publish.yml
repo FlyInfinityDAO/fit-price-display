@@ -50,11 +50,11 @@ jobs:
             }
           done
 
-          test -f site/games/chess-arena/css/style.css || {
+          test -f site/games/chess-arena/css/chess-arena.css || {
             echo "::error::Chess Arena stylesheet is missing."
             exit 1
           }
-          test -f site/games/backgammon/css/style.css || {
+          test -f site/games/backgammon/css/backgammon.css || {
             echo "::error::Backgammon stylesheet is missing."
             exit 1
           }
