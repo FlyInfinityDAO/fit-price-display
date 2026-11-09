@@ -1,7 +1,7 @@
 # Fly Infinity — Infrastructure & Transfer Readiness Map
 
 Last audited: 2026-11-09
-Source of truth: `FlyInfinityDAO/fit-price-display`, branch `main`, plus a read-only Cloudflare dashboard inspection.
+Source of truth: `FlyInfinityDAO/fit-price-display`, branch `main`, repository configuration, and a read-only Cloudflare dashboard inspection.
 
 ## Non-negotiable repository policy
 
@@ -88,6 +88,33 @@ Never copy secret values into Git, this document, issue comments, or PR descript
 - GitHub workflow credential names for a future approved Worker deploy: `CLOUDFLARE_API_TOKEN` (repository secret) and `CLOUDFLARE_ACCOUNT_ID` (repository variable). The deploy workflow does not overwrite the existing Worker `SESSION_SECRET`.
 - Verify the actual configured names in Cloudflare and GitHub before future deployment. Values must never be exposed.
 
+## GitHub Actions workflow inventory
+
+This inventory is based on the workflow files currently checked into `.github/workflows/`. Schedules are UTC unless otherwise specified by GitHub.
+
+| Workflow | Trigger | Side effects | Transfer note |
+|---|---|---|---|
+| `hokm-github-pages-publish.yml` | Push to `main` when site/game paths change; manual dispatch | Publishes the complete repository site to GitHub Pages | Intended development-site publisher; Pages permissions and deployment environment required |
+| `fly-ai-check.yml` | PR/push affecting Fly AI, backend, or workflows | Installs dependencies and runs syntax checks | No deploy or secret write |
+| `fly-games-validation.yml` | PR/push affecting games or workflows | Frontend syntax, Backgammon rules tests, Worker checks/security tests | No deploy or Cloudflare writes |
+| `hokm-cloudflare-deploy.yml` | Manual dispatch on `main` with exact confirmation | Deploys Hokm Worker code only | Production-affecting; never dispatch without a separate explicit approval |
+| `hokm-cloudflare-provision-d1.yml` | Manual dispatch on `main` with exact confirmation | Can create a new Hokm D1 only if a placeholder database ID is configured | Emergency-only; current real database ID should cause safe refusal |
+| `hokm-pages-preview.yml` | Push to legacy `feature/hokm-four-player` paths or manual dispatch | Deploys isolated Hokm preview files to Cloudflare Pages; may create the Pages project if absent | Retain and review before any branch cleanup; preview URL is not the integrated production URL |
+| `auto-update-airdrop.yml` | Every 6 hours; manual dispatch | Reads chain data and commits `airdrop-stats.json` to the checked-out branch | Requires write permission; uses GitHub token |
+| `save-table-history.yml` | Every 6 hours; manual dispatch | Fetches CoinGecko prices and commits `price-history-table.json` | Requires write permission; uses external API |
+| `update-crypto-cache.yml` | Every 6 hours; manual dispatch | Runs cache updater and attempts to commit `crypto-cache.json` | Workflow currently has no explicit `contents: write`; verify effective token permissions and run health |
+| `update-price.yml` | Daily; manual dispatch | Runs price updater and pushes `price-history.json` to `main` | Direct main-branch write; retain only if this automated behavior is still intended |
+| `update-trading-volume.yml` | Every 6 hours; manual dispatch | Scans chain and commits trading-volume data/progress files | Requires write permission; uses GitHub token |
+
+### Workflow audit findings and cautions
+
+- The price/cache/history/airdrop/trading-volume jobs are operational automations, not validation-only workflows. A future repository move must preserve or intentionally replace their schedules, token permissions, API dependencies, and commit targets.
+- `update-price.yml` explicitly pushes to `main`; the other scheduled writers commit and push the checked-out branch. Verify default branch and permissions after any repository change.
+- `update-crypto-cache.yml` does not declare explicit `permissions: contents: write`; its push may depend on repository-level default token permissions. Do not change permissions without verifying whether the workflow is still used.
+- `hokm-pages-preview.yml` is tied to the legacy `feature/hokm-four-player` branch and Cloudflare credentials. Do not delete the branch, workflow, or preview resource until their relationship and current usage are deliberately reviewed.
+- The preview host appears in both the Hokm Wrangler CORS allowlist and preview workflow. The checked-in hostname is `hokm-preview.fly-hokm-preview.pages.dev`; the Cloudflare project root observed earlier was `fly-hokm-preview.pages.dev`. Treat these as distinct hostnames and verify the deployed custom/subdomain mapping before changing either.
+- CI validation added in PR #42 checks the named frontend scripts and Backgammon rules engine. It is not a full browser/device end-to-end test and does not prove wallet-provider or live multiplayer behavior.
+
 ## Deployment and migration rules
 
 1. All Worker source/config changes are reviewed in a branch and PR first.
@@ -96,9 +123,21 @@ Never copy secret values into Git, this document, issue comments, or PR descript
 4. Apply only the existing database's checked-in migrations. Never run `wrangler d1 create` when the real database ID is already present.
 5. D1 schema migrations and Worker code deployments are separate operations. The Hokm code-deploy workflow does not apply remote D1 migrations or rotate `SESSION_SECRET`.
 6. Durable Object class changes require deliberate migration review; do not rename bindings/classes casually.
-6. Confirm the intended frontend origins before changing CORS configuration.
-7. Preserve current account IDs, database IDs, Worker names, bindings, compatibility dates, cron schedules, and production URLs unless a reviewed migration plan explicitly changes them.
-8. Keep a rollback reference to the last known-good commit and Worker deployment before any future production deployment.
+7. Confirm the intended frontend origins before changing CORS configuration.
+8. Preserve current account IDs, database IDs, Worker names, bindings, compatibility dates, cron schedules, and production URLs unless a reviewed migration plan explicitly changes them.
+9. Keep a rollback reference to the last known-good commit and Worker deployment before any future production deployment.
+
+## Dependency and reproducibility inventory
+
+| Component | Runtime/dependency evidence | Reproducibility concern |
+|---|---|---|
+| Root repository | Root `package.json` declares `ethers ^5.7.2` | No root lockfile was present in the audited file list |
+| Fly AI Worker | `backend/package.json` declares `ethers ^6.13.5`, Wrangler `^3.99.0` | No `backend/package-lock.json` was present in the audited file list |
+| Chess/Backgammon Worker | Declares `ethers ^6.15.0`, `chess.js ^1.4.0`, Wrangler `^4.20.0` | No worker package lock was present in the audited file list |
+| Hokm Worker | Declares `ethers ^6.15.0`, Wrangler `^4.20.0` | No worker package lock was present in the audited file list |
+| GitHub Actions | Uses major-version tags such as `@v4` and `@v5` | Action tags are not pinned to immutable commit SHAs |
+
+Do not generate or commit lockfiles blindly. First run each package's install/test flow in an isolated branch, inspect the generated lockfile and runtime compatibility, then add it in a separate reviewed PR. Pinning third-party Actions to verified commit SHAs is a separate supply-chain hardening task.
 
 ## Known follow-up checks
 
@@ -107,9 +146,12 @@ Never copy secret values into Git, this document, issue comments, or PR descript
 - Record exact D1 table names and migration histories, not only counts.
 - Confirm the complete Pages build settings and clarify the legacy `fly-chess-arena` project's role without deleting it.
 - Verify GitHub Pages settings and confirm the deployed URL for each frontend.
-- Audit every remaining workflow for branch filters, checkout refs, secrets, remote migration commands, and deployment side effects.
-- Run frontend/backend tests in CI; never use a production deployment as a test.
+- Confirm whether the legacy Hokm preview branch/workflow and scheduled data-update workflows are still required.
+- Verify the effective GitHub Actions token permissions for every scheduled writer.
+- Review dependency lockfile strategy and pin Actions to immutable SHAs only after compatibility review.
+- Run browser/device tests for wallet connection, mobile layouts, and live multiplayer in a non-production preview; CI syntax checks alone do not cover these behaviors.
 
 ## Change log
 
 - 2026-11-09: Initial read-only Cloudflare and repository inventory. No Worker, Pages, D1, Durable Object, secret, variable, or production deployment setting was changed by the audit.
+- 2026-11-09: Expanded the inventory to include all checked-in GitHub Actions workflows, their triggers/side effects, dependency reproducibility observations, and outstanding preview-host verification. Documentation-only change; no production resource or workflow execution setting was changed.
