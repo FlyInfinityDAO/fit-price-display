@@ -219,18 +219,6 @@
 }
 
 
-/* Keep the human hand above the central trick display so every card receives pointer input. */
-.seat-south{z-index:30}
-.seat-south .hand-south{position:relative;z-index:31;pointer-events:auto}
-.table-center{pointer-events:none}
-
-/* Reliable pointer hit-testing for the human hand on desktop and touch devices. */
-.seat-south{z-index:40;isolation:isolate}
-.seat-south .hand-south{position:relative;z-index:41;pointer-events:auto!important;overflow-x:auto;overflow-y:hidden}
-.seat-south .hand-south .hokm-card{pointer-events:auto!important;position:relative;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-.table-center{z-index:0;pointer-events:none!important}
-.hokm-round-scoreboard{pointer-events:none!important}
-
 /* Fix online hand reactivation and predictable card hit targets */
 .hand{display:flex;flex-wrap:nowrap;align-items:flex-end;gap:0}
 .hand .hokm-card{position:relative;z-index:calc(var(--deal-index,0) + 1);flex-shrink:0;pointer-events:auto;touch-action:manipulation}
@@ -246,25 +234,6 @@
 @media(max-width:420px){
  .hand-south .hokm-card{margin-left:-7px}
 }
-
-
-/* Unified Fly Infinity Games shell: keep Hokm's maroon identity with the Chess/Backgammon page rhythm. */
-html{min-height:100%;scroll-behavior:auto;overflow-anchor:none}
-body{min-height:100vh;min-height:100dvh;padding:20px;background:#100b0e;color:var(--cream);position:relative;isolation:isolate}
-body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(135deg,rgba(18,8,13,.90),rgba(48,8,24,.84)),url("../../../background-desktop.png") center/cover no-repeat}
-.arena{width:min(100%,1400px);max-width:1400px;margin:0 auto;position:relative;z-index:1}
-.topbar{min-height:68px;margin-bottom:22px;padding:11px 22px;background:rgba(45,9,24,.78);-webkit-backdrop-filter:blur(18px) saturate(135%);backdrop-filter:blur(18px) saturate(135%);border-radius:24px}
-.hero{position:relative;overflow:hidden;margin:0 0 22px;padding:25px 20px 27px;background:linear-gradient(135deg,rgba(63,11,31,.66),rgba(30,8,17,.62));-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-radius:26px}
-.access-card,.game-shell,.sound-panel{background:rgba(58,10,29,.78);-webkit-backdrop-filter:blur(18px) saturate(135%);backdrop-filter:blur(18px) saturate(135%);border-radius:24px}
-.access-card{margin-bottom:22px}
-.game-shell{padding:22px}
-.velvet-table{background:radial-gradient(ellipse at center,#76213f 0%,#64152f 58%,#4a1023 100%);}
-.sound-panel{margin-top:22px}
-body.fi-rtl{direction:rtl}
-body.fi-rtl .topbar,body.fi-rtl .topbar-actions{direction:rtl}
-body.fi-rtl .hand-south{direction:ltr}
-@media(max-width:760px){body{padding:10px}.topbar{margin-bottom:14px;padding:10px 12px;flex-wrap:wrap}.topbar-actions{justify-content:flex-end;gap:7px}.hero{margin-bottom:14px;padding:20px 14px}.access-card{padding:18px;margin-bottom:14px}.game-shell{padding:12px}.sound-panel{margin-top:14px}}
-@media(max-width:420px){body{padding:8px}.arena{width:100%}.topbar{border-radius:16px}.game-shell{padding:9px}.velvet-table{border-radius:22px}}
 
 
 /* Fly Infinity shared theme: graphite background + mint primary accents.
@@ -592,3 +561,67 @@ html.fi-android-webview .hokm-room-entry input{
 
 /* Android RTL: keep the document scroll container LTR; apply RTL only inside visible game sections. */
 @media (max-width: 10000px){html.fi-android-webview body.fi-rtl{direction:ltr!important}html.fi-android-webview body.fi-rtl .arena{direction:ltr!important}html.fi-android-webview body.fi-rtl .arena>header,html.fi-android-webview body.fi-rtl .arena>section,html.fi-android-webview body.fi-rtl .arena>footer{direction:rtl}html.fi-android-webview body.fi-rtl .hokm-room-entry input{direction:ltr!important;text-align:center!important}}
+
+/* Accessible music controls remain available before wallet verification. */
+.sound-controls{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.sound-controls .volume-control{min-width:190px}
+.game-shell[hidden]{display:none!important}
+@media(max-width:760px){.sound-controls{display:grid;grid-template-columns:1fr;margin-top:12px}.sound-controls .volume-control{min-width:0}}
+
+
+/* Reliable, table-centred card dealing. Per-card animation survives harmless rerenders. */
+.hand .hokm-card.deal-in,
+.hand .hokm-card-back.deal-in{
+ animation:hokmCardDeal .74s cubic-bezier(.16,.84,.24,1) both!important;
+ animation-delay:var(--deal-delay,0ms)!important;
+ will-change:transform,opacity,filter;
+}
+@media(prefers-reduced-motion:reduce){
+ .hand .hokm-card.deal-in,
+ .hand .hokm-card-back.deal-in{animation:none!important;will-change:auto}
+}
+
+
+/* Preserved current-main card hit-testing and shared Fly Infinity page shell. */
+}
+
+
+/* Keep the human hand above the central trick display so every card receives pointer input. */
+.seat-south{z-index:30}
+.seat-south .hand-south{position:relative;z-index:31;pointer-events:auto}
+.table-center{pointer-events:none}
+
+/* Reliable pointer hit-testing for the human hand on desktop and touch devices. */
+.seat-south{z-index:40;isolation:isolate}
+.seat-south .hand-south{position:relative;z-index:41;pointer-events:auto!important;overflow-x:auto;overflow-y:hidden}
+.seat-south .hand-south .hokm-card{pointer-events:auto!important;position:relative;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.table-center{z-index:0;pointer-events:none!important}
+.hokm-round-scoreboard{pointer-events:none!important}
+
+/* Fix online hand reactivation and predictable card hit targets */
+.hand{display:flex;flex-wrap:nowrap;align-items:flex-end;gap:0}
+.hand .hokm-card{position:relative;z-index:calc(var(--deal-index,0) + 1);flex-shrink:0;pointer-events:auto;touch-action:manipulation}
+.hand .hokm-card.playable{cursor:pointer;pointer-events:auto;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}
+.hand .hokm-card.playable:active{transform:translateY(-7px);border-color:#f4d77f}
+.hand-south{overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain}
+.hand-south .hokm-card{margin-left:-7px}
+.hand-south .hokm-card:first-child{margin-left:0}
+@media(max-width:760px){
+ .hand-south .hokm-card{margin-left:-8px}
+ .hand .hokm-card.playable{min-height:52px}
+}
+@media(max-width:420px){
+ .hand-south .hokm-card{margin-left:-7px}
+}
+
+
+/* Unified Fly Infinity Games shell: keep Hokm's maroon identity with the Chess/Backgammon page rhythm. */
+html{min-height:100%;scroll-behavior:auto;overflow-anchor:none}
+body{min-height:100vh;min-height:100dvh;padding:20px;background:#100b0e;color:var(--cream);position:relative;isolation:isolate}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(135deg,rgba(18,8,13,.90),rgba(48,8,24,.84)),url("../../../background-desktop.png") center/cover no-repeat}
+.arena{width:min(100%,1400px);max-width:1400px;margin:0 auto;position:relative;z-index:1}
+.topbar{min-height:68px;margin-bottom:22px;padding:11px 22px;background:rgba(45,9,24,.78);-webkit-backdrop-filter:blur(18px) saturate(135%);backdrop-filter:blur(18px) saturate(135%);border-radius:24px}
+.hero{position:relative;overflow:hidden;margin:0 0 22px;padding:25px 20px 27px;background:linear-gradient(135deg,rgba(63,11,31,.66),rgba(30,8,17,.62));-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-radius:26px}
+.access-card,.game-shell,.sound-panel{background:rgba(58,10,29,.78);-webkit-backdrop-filter:blur(18px) saturate(135%);backdrop-filter:blur(18px) saturate(135%);border-radius:24px}
+.access-card{margin-bottom:22px}
+.game-shell{padding:22px}

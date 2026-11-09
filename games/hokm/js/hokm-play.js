@@ -204,6 +204,7 @@ function setLanguage(value){if(I[value])lang=value;if($("hokmGameControls")&&!$(
 ensureControls();
 $("hokmGameControls").hidden=true;
 $("languageSelect").addEventListener("change",e=>setLanguage(e.target.value));
+window.addEventListener("hokm:language-changed",e=>setLanguage(e.detail?.lang||$("languageSelect").value));
 $("cpuDifficulty").addEventListener("change",e=>{difficulty=["easy","normal","hard"].includes(e.target.value)?e.target.value:"normal"});
 function activateAuthenticated(d){
  tier=Number(d&&d.tier)||0;setLanguage($("languageSelect").value||"en");

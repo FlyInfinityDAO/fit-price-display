@@ -12,7 +12,9 @@ const words={
  es:{title:"MESA EN LÍNEA PARA CUATRO",create:"Crear sala privada",code:"Código de sala",join:"Unirse a la sala",copy:"Copiar código de invitación",waiting:"Esperando jugadores",connected:"Conectado",yourTurn:"Tu turno",opponent:"Esperando al rival",choose:"Elegir palo de Hokm",round:"Ronda",won:"Tu equipo ganó esta ronda",lost:"El otro equipo ganó esta ronda",finished:"Partida terminada",need:"Conecta y verifica tu cartera para usar salas en línea.",copyOk:"Código copiado.",copied:"Copiado",seat:"Asiento",start:"Esperando a los cuatro jugadores",error:"Error de sala en línea",creating:"Creando sala privada…",joining:"Entrando en la sala…",invalidCode:"Introduce un código válido de 6 caracteres.",room:"Sala",connectionLost:"Conexión perdida. Vuelve a entrar con la misma cartera y código.",wsFail:"Falló la conexión WebSocket. Inténtalo de nuevo.",roomInactive:"La conexión de la sala no está activa.",copyFallback:"Selecciona y copia el código de la sala.",chooseBy:"El jugador {seat} está eligiendo el palo de Hokm…",seconds:"s",walletVerified:"Cartera verificada · salas en línea desbloqueadas.",cpu:"CPU",addTwoCpu:"Añadir CPU a los asientos 3 y 4",addLastCpu:"Añadir CPU solo al asiento 4",addingCpu:"Añadiendo jugadores CPU…",cpuAdded:"Jugadores CPU añadidos.",partner:"Compañero",you:"Tú",openSeat:"Asiento libre",disconnected:"Desconectado",hands:"manos",whiteTeam:"EQUIPO BLANCO · NORTE / SUR",blackTeam:"EQUIPO NEGRO · ESTE / OESTE",handWins:"Manos ganadas",hakemTimes:"Veces como Hakem",matchWins:"Rondas ganadas"},
  pt:{title:"MESA ONLINE PARA QUATRO",create:"Criar sala privada",code:"Código da sala",join:"Entrar na sala",copy:"Copiar código de convite",waiting:"Aguardando jogadores",connected:"Conectado",yourTurn:"Sua vez",opponent:"Aguardando adversário",choose:"Escolher trunfo",round:"Rodada",won:"Sua equipe venceu esta rodada",lost:"A outra equipe venceu esta rodada",finished:"Partida encerrada",need:"Conecte e verifique sua carteira para usar salas online.",copyOk:"Código da sala copiado.",copied:"Copiado",seat:"Assento",start:"Aguardando os quatro jogadores",addTwoCpu:"Adicionar CPUs aos lugares 3 e 4",addLastCpu:"Adicionar CPU apenas ao lugar 4",addingCpu:"Adicionando jogadores CPU…",cpuAdded:"Jogadores CPU adicionados.",error:"Erro na sala online",hands:"mãos",whiteTeam:"EQUIPE BRANCA · NORTE / SUL",blackTeam:"EQUIPE PRETA · LESTE / OESTE",handWins:"Mãos vencidas",hakemTimes:"Vezes como Hakem",matchWins:"Rodadas vencidas"}
 };
-const t=k=>(words[$("languageSelect")?.value]||words.en)[k]||words.en[k]||k;
+const EXTRA_WORDS={"en":{"hakem":"Hakem","turnCountdown":"Turn countdown","reconnectCountdown":"Reconnect countdown","requestFailed":"The request could not be completed.","walletRequired":"Connect and verify a wallet holding at least 1 FIT.","roomNotFound":"The room was not found or has expired.","roomExists":"A room with this code already exists.","walletInRoom":"This wallet is already in the room.","roomFull":"The room is full or the match has already started.","creatorOnly":"Only the room creator can add CPU players.","seatsTaken":"One or more selected seats are already occupied.","reconnectExpired":"The reconnect period has expired; this seat is now controlled by CPU.","notYourTurn":"It is not your turn.","waitTrick":"Wait for the current trick to finish.","serviceUnavailable":"The game service is temporarily unavailable. Please try again."},"fa":{"hakem":"حاکم","turnCountdown":"شمارش معکوس نوبت","reconnectCountdown":"مهلت اتصال مجدد","requestFailed":"انجام درخواست ممکن نشد.","walletRequired":"کیف پولی با حداقل ۱ FIT را متصل و احراز کنید.","roomNotFound":"اتاق پیدا نشد یا مهلت آن تمام شده است.","roomExists":"اتاقی با این کد از قبل وجود دارد.","walletInRoom":"این کیف پول از قبل در اتاق حضور دارد.","roomFull":"اتاق پر شده یا مسابقه شروع شده است.","creatorOnly":"فقط سازنده اتاق می‌تواند هوش مصنوعی اضافه کند.","seatsTaken":"یک یا چند جایگاه انتخاب‌شده قبلاً اشغال شده‌اند.","reconnectExpired":"مهلت اتصال مجدد تمام شده و این جایگاه اکنون در اختیار هوش مصنوعی است.","notYourTurn":"اکنون نوبت شما نیست.","waitTrick":"تا پایان دور فعلی صبر کنید.","serviceUnavailable":"سرویس بازی موقتاً در دسترس نیست. دوباره تلاش کنید.","creating":"در حال ساخت اتاق خصوصی…","joining":"در حال ورود به اتاق…","invalidCode":"کد معتبر ۶ کاراکتری وارد کنید.","room":"اتاق","connectionLost":"ارتباط قطع شد. با همان کیف پول و کد اتاق دوباره وارد شوید.","wsFail":"اتصال آنلاین برقرار نشد؛ دوباره تلاش کنید.","roomInactive":"اتصال اتاق فعال نیست.","copyFallback":"کد اتاق را انتخاب و کپی کنید.","chooseBy":"بازیکن {seat} در حال انتخاب خال حکم است…","seconds":"ثانیه"},"ar":{"hakem":"الحاكم","turnCountdown":"العد التنازلي للدور","reconnectCountdown":"مهلة إعادة الاتصال","requestFailed":"تعذر إكمال الطلب.","walletRequired":"اربط محفظة تحتوي على 1 FIT على الأقل وتحقق منها.","roomNotFound":"الغرفة غير موجودة أو انتهت صلاحيتها.","roomExists":"توجد غرفة بهذا الرمز بالفعل.","walletInRoom":"هذه المحفظة موجودة بالفعل في الغرفة.","roomFull":"الغرفة ممتلئة أو بدأت المباراة بالفعل.","creatorOnly":"يمكن لمنشئ الغرفة فقط إضافة لاعبي الكمبيوتر.","seatsTaken":"مقعد واحد أو أكثر من المقاعد المحددة مشغول بالفعل.","reconnectExpired":"انتهت مهلة إعادة الاتصال وأصبح هذا المقعد تحت تحكم الكمبيوتر.","notYourTurn":"ليس دورك الآن.","waitTrick":"يرجى الانتظار حتى تنتهي الجولة الحالية.","serviceUnavailable":"خدمة اللعبة غير متاحة مؤقتاً. حاول مجدداً."},"tr":{"hakem":"Hakem","turnCountdown":"Tur geri sayımı","reconnectCountdown":"Yeniden bağlanma süresi","requestFailed":"İstek tamamlanamadı.","walletRequired":"En az 1 FIT içeren bir cüzdanı bağlayıp doğrulayın.","roomNotFound":"Oda bulunamadı veya süresi doldu.","roomExists":"Bu kodla bir oda zaten var.","walletInRoom":"Bu cüzdan zaten odada.","roomFull":"Oda dolu veya maç zaten başladı.","creatorOnly":"CPU oyuncularını yalnızca oda sahibi ekleyebilir.","seatsTaken":"Seçilen koltuklardan biri veya birkaçı zaten dolu.","reconnectExpired":"Yeniden bağlanma süresi doldu; bu koltuğu artık CPU yönetiyor.","notYourTurn":"Şu anda sıra sizde değil.","waitTrick":"Lütfen mevcut elin bitmesini bekleyin.","serviceUnavailable":"Oyun hizmeti geçici olarak kullanılamıyor. Lütfen tekrar deneyin.","addTwoCpu":"3. ve 4. koltuklara CPU ekle","addLastCpu":"Yalnızca 4. koltuğa CPU ekle","addingCpu":"CPU oyuncuları ekleniyor…","cpuAdded":"CPU oyuncuları eklendi."},"ru":{"hakem":"Хакем","turnCountdown":"Обратный отсчёт хода","reconnectCountdown":"Время на переподключение","requestFailed":"Не удалось выполнить запрос.","walletRequired":"Подключите и подтвердите кошелёк минимум с 1 FIT.","roomNotFound":"Комната не найдена или срок её действия истёк.","roomExists":"Комната с таким кодом уже существует.","walletInRoom":"Этот кошелёк уже находится в комнате.","roomFull":"Комната заполнена или матч уже начался.","creatorOnly":"Добавлять CPU может только создатель комнаты.","seatsTaken":"Одно или несколько выбранных мест уже заняты.","reconnectExpired":"Время на переподключение истекло; этим местом теперь управляет CPU.","notYourTurn":"Сейчас не ваш ход.","waitTrick":"Дождитесь завершения текущей взятки.","serviceUnavailable":"Игровой сервис временно недоступен. Повторите попытку."},"zh":{"hakem":"主牌庄家","turnCountdown":"回合倒计时","reconnectCountdown":"重新连接倒计时","requestFailed":"请求无法完成。","walletRequired":"请连接并验证至少持有 1 FIT 的钱包。","roomNotFound":"房间不存在或已过期。","roomExists":"此房间代码已被使用。","walletInRoom":"此钱包已经在房间中。","roomFull":"房间已满或比赛已经开始。","creatorOnly":"只有房间创建者可以添加电脑玩家。","seatsTaken":"一个或多个所选座位已被占用。","reconnectExpired":"重新连接期限已过，该座位现在由电脑控制。","notYourTurn":"现在还没轮到你。","waitTrick":"请等待当前墩结束。","serviceUnavailable":"游戏服务暂时不可用，请稍后重试。"},"es":{"hakem":"Hakem","turnCountdown":"Cuenta atrás del turno","reconnectCountdown":"Tiempo para reconectar","requestFailed":"No se pudo completar la solicitud.","walletRequired":"Conecta y verifica una cartera con al menos 1 FIT.","roomNotFound":"La sala no existe o ha caducado.","roomExists":"Ya existe una sala con este código.","walletInRoom":"Esta cartera ya está en la sala.","roomFull":"La sala está llena o la partida ya comenzó.","creatorOnly":"Solo quien creó la sala puede añadir CPU.","seatsTaken":"Uno o más asientos seleccionados ya están ocupados.","reconnectExpired":"Se agotó el plazo de reconexión; la CPU controla este asiento.","notYourTurn":"No es tu turno.","waitTrick":"Espera a que termine la baza actual.","serviceUnavailable":"El servicio del juego no está disponible temporalmente. Inténtalo de nuevo."},"pt":{"hakem":"Hakem","turnCountdown":"Contagem regressiva da vez","reconnectCountdown":"Prazo para reconectar","requestFailed":"Não foi possível concluir a solicitação.","walletRequired":"Conecte e verifique uma carteira com pelo menos 1 FIT.","roomNotFound":"A sala não foi encontrada ou expirou.","roomExists":"Já existe uma sala com este código.","walletInRoom":"Esta carteira já está na sala.","roomFull":"A sala está cheia ou a partida já começou.","creatorOnly":"Somente quem criou a sala pode adicionar CPUs.","seatsTaken":"Um ou mais lugares selecionados já estão ocupados.","reconnectExpired":"O prazo para reconectar terminou; este lugar agora é controlado pela CPU.","notYourTurn":"Não é sua vez.","waitTrick":"Aguarde o fim da vaza atual.","serviceUnavailable":"O serviço do jogo está temporariamente indisponível. Tente novamente.","creating":"Criando sala privada…","joining":"Entrando na sala…","invalidCode":"Digite um código válido de 6 caracteres.","room":"Sala","connectionLost":"Conexão perdida. Entre novamente com a mesma carteira e código.","wsFail":"Falha na conexão WebSocket. Tente novamente.","roomInactive":"A conexão da sala não está ativa.","copyFallback":"Selecione e copie o código da sala.","chooseBy":"O jogador {seat} está escolhendo o naipe de Hokm…","seconds":"s","walletVerified":"Carteira verificada","cpu":"CPU","partner":"Seu parceiro","you":"Você","openSeat":"Lugar disponível","disconnected":"Sem conexão"}};
+Object.entries(EXTRA_WORDS).forEach(([locale,values])=>Object.assign(words[locale],values));
+const t=k=>(words[$("languageSelect")?.value]||words.en)[k]||(words.en[k])||k;
 const ROOM_SESSION_KEY="hokmFlyInfinityRoom";
 let auth=null, socket=null, roomCode="", ownSeat=-1, lastState=null, timer=null, connecting=false, intentionalClose=false;
 let reconnectTimer=null,reconnectAttempt=0,reconnecting=false;
@@ -43,11 +45,13 @@ function translatePanel(){
  $("hokmAddLastCpu").textContent=t("addLastCpu");
  $("hokmOnlineTrumpTitle").textContent=t("choose");
 }
-function status(s,error){if($("hokmOnlineStatus")){$("hokmOnlineStatus").textContent=s||"";$("hokmOnlineStatus").classList.toggle("error",!!error)}}
+function friendlyError(error){const raw=String(error&&error.message||error||"");if(/at least 1 FIT|FIT is required|verified wallet required|wallet required/i.test(raw))return t("walletRequired");if(/room.*not found|not found|expired|seat is no longer available|connection ticket/i.test(raw))return t("roomNotFound");if(/already exists/i.test(raw))return t("roomExists");if(/already in the room/i.test(raw))return t("walletInRoom");if(/full|already started/i.test(raw))return t("roomFull");if(/creator/i.test(raw))return t("creatorOnly");if(/occupied/i.test(raw))return t("seatsTaken");if(/reconnect window/i.test(raw))return t("reconnectExpired");if(/not your turn|not your turn to choose/i.test(raw))return t("notYourTurn");if(/wait for the current trick/i.test(raw))return t("waitTrick");if(/BSC RPC|temporarily unavailable|failed to fetch|networkerror/i.test(raw))return t("serviceUnavailable");return t("error")}
+let lastStatusKey=null,lastStatusSuffix="",lastStatusError=false;
+function status(s,error){if(!$("hokmOnlineStatus"))return;const dict=words[$("languageSelect")?.value]||words.en;let found=null;if(typeof s==="string"){for(const[key,label]of Object.entries(dict)){if(label&&(s===label||s.startsWith(label+" · "))&&(!found||label.length>found.label.length))found={key,label,suffix:s.slice(label.length)}}}lastStatusKey=found?.key||null;lastStatusSuffix=found?.suffix||"";lastStatusError=!!error;$("hokmOnlineStatus").textContent=s||"";$("hokmOnlineStatus").classList.toggle("error",!!error)}
 async function request(path,body){
  const response=await fetch(API+path,{method:body?"POST":"GET",headers:{...(body?{"Content-Type":"application/json"}:{}),Authorization:"Bearer "+(auth?.sessionToken||"")},body:body?JSON.stringify(body):undefined,cache:"no-store"});
  const data=await response.json().catch(()=>({}));
- if(!response.ok||data.ok!==true)throw new Error(data.error||"Request failed");
+ if(!response.ok||data.ok!==true)throw new Error(data.error||t("requestFailed"));
  return data;
 }
 async function createOrJoin(action){
@@ -71,7 +75,7 @@ async function createOrJoin(action){
   status(t("room")+" "+roomCode+" · "+t("seat")+" "+(ownSeat+1)+" · "+t("waiting")+"…");
   const ticket=await request("/api/rooms/"+roomCode+"/ticket",{});
   openSocket(ticket.ticket);
- }catch(error){status(error.message||t("error"),true)}
+ }catch(error){status(friendlyError(error),true)}
  finally{connecting=false;$("hokmCreateRoom").disabled=$("hokmJoinRoom").disabled=false}
 }
 function openSocket(ticket){
@@ -95,7 +99,7 @@ function openSocket(ticket){
    }else if(next.status==="playing"&&next.game)window.HokmAudio?.card("deal");
    lastState=next;ownSeat=next.seat;renderState(next);
   }
-  else if(data.type==="error")status(data.error,true);
+  else if(data.type==="error")status(friendlyError(data.error),true);
  });
  ws.addEventListener("close",()=>{
   if(socket===ws)socket=null;
@@ -112,7 +116,7 @@ function scheduleReconnect(){
    const ticket=await request("/api/rooms/"+roomCode+"/ticket",{});
    openSocket(ticket.ticket);
   }catch(error){
-   status((error.message||t("connectionLost"))+" · "+t("connectionLost"),true);
+   status(friendlyError(error)+" · "+t("connectionLost"),true);
    reconnecting=false;
    if(!/not found|expired|replaced|seat is no longer/i.test(error.message||""))scheduleReconnect();
   }finally{reconnecting=false}
@@ -129,7 +133,7 @@ async function resumeSavedRoom(){
   const ticket=await request("/api/rooms/"+roomCode+"/ticket",{});
   openSocket(ticket.ticket);
  }catch(error){
-  status(error.message||t("connectionLost"),true);
+  status(friendlyError(error),true);
   if(/not found|expired|replaced|seat is no longer/i.test(error.message||""))sessionStorage.removeItem(ROOM_SESSION_KEY);
  }finally{connecting=false}
 }
@@ -143,17 +147,17 @@ async function addCpuSeats(seats){
  $("hokmAddTwoCpu").disabled=$("hokmAddLastCpu").disabled=true;
  status(t("addingCpu"));
  try{await request("/api/rooms/"+roomCode+"/cpu",{seats});status(t("cpuAdded"));}
- catch(error){status(error.message||t("error"),true)}
+ catch(error){status(friendlyError(error),true)}
  finally{connecting=false;$("hokmAddTwoCpu").disabled=$("hokmAddLastCpu").disabled=false}
 }
 async function copyRoomCode(){
  if(!roomCode)return;
  try{await navigator.clipboard.writeText(roomCode);status(t("copyOk"))}
- catch{const input=$("hokmRoomCodeInput");input.value=roomCode;input.select();status("Select and copy the room code.")}
+ catch{const input=$("hokmRoomCodeInput");input.value=roomCode;input.select();status(t("copyFallback"))}
 }
 function displaySeat(seat){return (seat-ownSeat+4)%4}
 function makeSeatRing(kind){const ring=document.createElement("span");ring.className="hokm-seat-ring "+kind;ring.setAttribute("aria-hidden","true");return ring}
-function renderSeatRing(chip,kind,deadline,now){let ring=chip.querySelector(".hokm-seat-ring."+kind);if(!deadline){ring?.remove();return}if(!ring){ring=makeSeatRing(kind);chip.appendChild(ring)}const total=kind==="turn"?30000:(lastState?.game?.reconnectGraceMs||60000);const left=Math.max(0,deadline-now);ring.style.setProperty("--ring-progress",String(Math.max(0,Math.min(1,left/total))));ring.textContent=String(Math.ceil(left/1000));ring.title=kind==="turn"?"Turn countdown":"Reconnect countdown";}
+function renderSeatRing(chip,kind,deadline,now){let ring=chip.querySelector(".hokm-seat-ring."+kind);if(!deadline){ring?.remove();return}if(!ring){ring=makeSeatRing(kind);chip.appendChild(ring)}const total=kind==="turn"?30000:(lastState?.game?.reconnectGraceMs||60000);const left=Math.max(0,deadline-now);ring.style.setProperty("--ring-progress",String(Math.max(0,Math.min(1,left/total))));ring.textContent=String(Math.ceil(left/1000));ring.title=kind==="turn"?t("turnCountdown"):t("reconnectCountdown");}
 function seatEls(seat){
  return ({0:{hand:".hand-south",chip:".seat-south .player-chip"},1:{hand:".seat-west .hand",chip:".seat-west .player-chip"},2:{hand:".hand-north",chip:".seat-north .player-chip"},3:{hand:".seat-east .hand",chip:".seat-east .player-chip"}})[seat];
 }
@@ -191,17 +195,18 @@ function renderState(s){
     if(em)em.textContent=String((game.tricksWon||[])[actual]||0);
     chip.classList.toggle("active",game.currentPlayer===actual&&s.status==="playing");
     chip.classList.toggle("hakem-seat",game.hakem===actual);
-    let crown=chip.querySelector(".hokm-hakem-crown");if(game.hakem===actual){if(!crown){crown=document.createElement("span");crown.className="hokm-hakem-crown";crown.textContent="♛";crown.title="Hakem";chip.appendChild(crown)}}else crown?.remove();
+    let crown=chip.querySelector(".hokm-hakem-crown");if(game.hakem===actual){if(!crown){crown=document.createElement("span");crown.className="hokm-hakem-crown";crown.textContent="♛";crown.title=t("hakem");chip.appendChild(crown)}}else crown?.remove();
    }
    if(hand){
     const cards=actual===ownSeat?(game.ownHand||[]):Array.from({length:hands[actual]||0},()=>null);
-    const signature=actual===ownSeat?cards.map(card=>card.id).join("|"):String(cards.length);
+    const canPlay=s.status==="playing"&&game.phase==="playing"&&game.currentPlayer===ownSeat;
+    const signature=(actual===ownSeat?cards.map(card=>card.id).join("|"):String(cards.length))+"|"+(canPlay?"play":"wait");
     if(hand.dataset.handSignature!==signature){
      const previous=Number(hand.dataset.cardCount||0),dealing=cards.length>previous;
      hand.classList.remove("dealing");hand.replaceChildren();
      if(dealing){hand.classList.add("dealing");hand.style.setProperty("--deal-x",visual===0?"0px":visual===2?"0px":visual===1?"clamp(70px,14vw,170px)":"clamp(-170px,-14vw,-70px)");hand.style.setProperty("--deal-y",visual===0?"clamp(55px,13vw,145px)":visual===2?"clamp(-145px,-13vw,-55px)":"0px")}
      cards.forEach((card,index)=>{
-      const node=card?cardNode(card,s.status==="playing"&&game.phase==="playing"&&game.currentPlayer===ownSeat):document.createElement("span");
+      const node=card?cardNode(card,canPlay):document.createElement("span");
       if(!card){node.className="hokm-card-back";node.setAttribute("aria-hidden","true")}
       node.style.setProperty("--deal-index",index);hand.appendChild(node);
      });
@@ -214,7 +219,7 @@ function renderState(s){
   const entries=(game.lastTrick&&game.lastTrick.length?game.lastTrick:game.trick)||[];
   entries.forEach(entry=>{const visual=displaySeat(entry.player),node=nodes[visual];if(node){node.classList.remove("empty");node.classList.toggle("red",["♥","♦"].includes(entry.card.suit));node.classList.toggle("black",!["♥","♦"].includes(entry.card.suit));node.textContent=entry.card.rank+entry.card.suit}});
   const trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent=game.trump||"—";
-  const hakem=document.getElementById("tableHakem"),hakemActual=game.hakem, hakemVisual=displaySeat(hakemActual),hakemChip=document.querySelector(seatEls(hakemVisual).chip+" b");if(hakem)hakem.textContent=hakemChip?hakemChip.textContent:(players.find(p=>p.seat===hakemActual)?.cpu?"CPU":"Seat "+(hakemActual+1));
+  const hakem=document.getElementById("tableHakem"),hakemActual=game.hakem, hakemVisual=displaySeat(hakemActual),hakemChip=document.querySelector(seatEls(hakemVisual).chip+" b");if(hakem)hakem.textContent=hakemChip?hakemChip.textContent:(players.find(p=>p.seat===hakemActual)?.cpu?t("cpu"):t("seat")+" "+(hakemActual+1));
   const currentScores=document.querySelectorAll(".hokm-round-score b");
   if(currentScores.length){currentScores[0].textContent=String((game.teamTricks||[0,0])[0]||0);currentScores[1].textContent=String((game.teamTricks||[0,0])[1]||0)}
   const score=document.querySelectorAll(".game-bottom .team-score b");
@@ -261,7 +266,7 @@ function activate(d){
 }
 window.addEventListener("hokm:authenticated",e=>activate(e.detail||{}));
 window.addEventListener("hokm:access-revoked",reset);
-$("languageSelect")?.addEventListener("change",translatePanel);
+window.addEventListener("hokm:language-changed",()=>{translatePanel();if(lastState)renderState(lastState);else if(lastStatusKey)status(t(lastStatusKey)+lastStatusSuffix,lastStatusError)});
 if(window.hokmAuthState)activate(window.hokmAuthState);else{ensurePanel();if($("hokmOnlinePanel"))$("hokmOnlinePanel").hidden=true}
 window.addEventListener("beforeunload",()=>{intentionalClose=true;if(socket)socket.close()});
 })();
