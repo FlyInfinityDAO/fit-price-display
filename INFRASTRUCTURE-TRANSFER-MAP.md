@@ -85,7 +85,7 @@ Never copy secret values into Git, this document, issue comments, or PR descript
 
 - Wrangler vars: `FRONTEND_ORIGIN`, `FRONTEND_ORIGINS`, `BSC_RPC_URL`.
 - Secret name used by code: `SESSION_SECRET`.
-- Current GitHub workflow credential names: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, and `HOKM_SESSION_SECRET`. The workflow maps `HOKM_SESSION_SECRET` into the Worker secret named `SESSION_SECRET`.
+- GitHub workflow credential names for a future approved Worker deploy: `CLOUDFLARE_API_TOKEN` (repository secret) and `CLOUDFLARE_ACCOUNT_ID` (repository variable). The deploy workflow does not overwrite the existing Worker `SESSION_SECRET`.
 - Verify the actual configured names in Cloudflare and GitHub before future deployment. Values must never be exposed.
 
 ## Deployment and migration rules
@@ -94,7 +94,8 @@ Never copy secret values into Git, this document, issue comments, or PR descript
 2. Syntax checks and tests must run before merge.
 3. A production deploy is a separate, explicit operation; do not infer deploy permission from permission to edit a workflow.
 4. Apply only the existing database's checked-in migrations. Never run `wrangler d1 create` when the real database ID is already present.
-5. Durable Object class changes require deliberate migration review; do not rename bindings/classes casually.
+5. D1 schema migrations and Worker code deployments are separate operations. The Hokm code-deploy workflow does not apply remote D1 migrations or rotate `SESSION_SECRET`.
+6. Durable Object class changes require deliberate migration review; do not rename bindings/classes casually.
 6. Confirm the intended frontend origins before changing CORS configuration.
 7. Preserve current account IDs, database IDs, Worker names, bindings, compatibility dates, cron schedules, and production URLs unless a reviewed migration plan explicitly changes them.
 8. Keep a rollback reference to the last known-good commit and Worker deployment before any future production deployment.
