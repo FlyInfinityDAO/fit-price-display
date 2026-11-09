@@ -4,13 +4,13 @@ on:
     paths:
       - 'fly-ai/**'
       - 'backend/**'
-      - '.github/workflows/fly-ai-check.yml'
+      - '.github/workflows/**'
   push:
     branches: [main]
     paths:
       - 'fly-ai/**'
       - 'backend/**'
-      - '.github/workflows/fly-ai-check.yml'
+      - '.github/workflows/**'
 jobs:
   syntax:
     runs-on: ubuntu-latest
