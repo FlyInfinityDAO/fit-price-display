@@ -3,7 +3,7 @@
 (function () {
   'use strict';
 
-  const PROJECT_ID = '2e312445cba4a41a1aab5f01552c5668';
+  const PROJECT_ID = 'ab10578e2b30d9e7bb63cee427cae780';
   const BSC_CHAIN_ID = 56;
   let wcProvider = null;
   let initPromise = null;
