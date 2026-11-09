@@ -151,6 +151,49 @@ Do not generate or commit lockfiles blindly. First run each package's install/te
 - Review dependency lockfile strategy and pin Actions to immutable SHAs only after compatibility review.
 - Run browser/device tests for wallet connection, mobile layouts, and live multiplayer in a non-production preview; CI syntax checks alone do not cover these behaviors.
 
+## Live Cloudflare reconciliation — 2026-11-09
+
+This section records a second read-only dashboard inspection and comparison with the checked-in Wrangler files. It supersedes earlier incomplete observations where noted; it does not authorize configuration changes.
+
+### Pages deployment state observed
+
+| Project | Live production state | Repository/build state | Transfer implication |
+|---|---|---|---|
+| `fly-chess-arena` | Active production deployment from branch `feature/chess-arena-games`, commit `cc8e246` (observed 2026-11-07) | Connected to `FlyInfinityDAO/fit-price-display`; build command `bash games/chess-arena/build-pages.sh`; output `dist`; production branch is `feature/chess-arena-games` | This is a legacy Pages production path and is not aligned with the current `main`-based GitHub Pages publishing plan. Do not change its branch or deploy from `main` until the replacement/publication path has been verified end-to-end. |
+| `fly-hokm-preview` | No production deployment observed; preview deployment history exists | No Git repository connection or build configuration displayed; subdomain `fly-hokm-preview.pages.dev` | Preserve as a legacy preview. Do not promote or delete. |
+
+The Cloudflare Pages project subdomain `fly-hokm-preview.pages.dev` differs from the Hokm Worker CORS allowlist entry `https://hokm-preview.fly-hokm-preview.pages.dev`. Verify whether the latter is an intentional custom hostname/alias before any CORS or DNS change.
+
+### Worker live state observed
+
+| Worker | Live binding/domain observations | Git/deployment observations |
+|---|---|---|
+| `fly-ai-api` | `workers.dev` subdomain only; D1 binding `DB → fly-ai-db`; no DO or Service bindings observed | Git repository `FlyInfinityDAO/fit-price-display` shown |
+| `fly-chess-arena-api` | `workers.dev` subdomain; D1 binding `DB → fly-chess-arena-db`; DO bindings `CHESS_ROOMS` and `BACKGAMMON_ROOMS` | Git repository `FlyInfinityDAO/fit-price-display` shown |
+| `fly-hokm-api` | Latest observed version `9d784e27` Ready; `workers.dev` subdomain only; D1 binding to `fly-hokm-db`; DO binding `HOKM_ROOMS` → dashboard class label `fly-hokm-api_HokmRoom` | Git integration not connected; recent versions shown as manually deployed by API token. Checked-in Wrangler class is `HokmRoom`; do not rename it based on the dashboard's display label. |
+
+No custom Worker routes/domains were observed for these three Workers; they use their `workers.dev` hostnames. Secret values were not opened or recorded.
+
+### D1 live observations and source reconciliation
+
+| Database | Live count / region | Live schema evidence | Checked-in migration evidence |
+|---|---|---|---|
+| `fly-ai-db` | 5 tables; 65.54 kB observed | `auth_nonces`, `d1_migrations`, `user_profiles`, `chat_audit`, `usage` visible | `0001_init.sql` creates auth_nonces, usage, chat_audit; `0002_user_profiles.sql` creates user_profiles. The visible schema is consistent with both migrations having been applied; the migration table is present. |
+| `fly-chess-arena-db` | 9 tables; APAC (from prior inventory) | Exact live table names were not captured in this inspection | Checked-in migrations create `wallet_nonces` and `websocket_tickets`; reconcile all nine live tables against runtime-created tables and migration history before any schema operation. |
+| `fly-hokm-db` | 3 tables; WNAM; 49.15 kB observed | `wallet_nonces` and `api_rate_limits` visible; third table name not captured | `0001_init.sql` creates the two named application tables. Do not assume the identity of the third table until a read-only schema listing confirms it. Migration metadata was not visible in the dashboard inspection. |
+
+The live database IDs continue to match the IDs in the checked-in Wrangler files. No SQL was executed and no database was changed during this audit.
+
+### Outstanding reconciliation before any migration or production change
+
+1. Capture exact table names and migration history for `fly-chess-arena-db` and `fly-hokm-db` using a strictly read-only schema inspection.
+2. Verify all three Workers' actual variable/secret *names and presence* against the code-required inventory; never read secret values.
+3. Confirm GitHub Pages publication URL/settings independently of the legacy Cloudflare Pages production branch.
+4. Decide, only after end-to-end verification, whether `fly-chess-arena` is retained as a legacy production fallback or eventually retired. No deletion or promotion is authorized by this audit.
+5. Establish a reproducible deployment path for `fly-hokm-api` in GitHub Actions only after confirming the existing deployment credentials and rollback plan; do not connect or deploy automatically.
+
+No Worker, Pages project, D1 database, Durable Object, secret, variable, route, or production deployment was modified by this audit.
+
 ## Change log
 
 - 2026-11-09: Initial read-only Cloudflare and repository inventory. No Worker, Pages, D1, Durable Object, secret, variable, or production deployment setting was changed by the audit.
