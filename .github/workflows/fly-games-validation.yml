@@ -8,7 +8,7 @@ on:
       - 'games/hokm/**'
       - '.github/workflows/fly-games-validation.yml'
   push:
-    branches: [main]
+    branches: [main, 'chore/**']
     paths:
       - 'games/chess-arena/**'
       - 'games/backgammon/**'
