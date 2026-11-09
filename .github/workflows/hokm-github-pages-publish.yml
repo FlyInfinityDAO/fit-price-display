@@ -6,7 +6,6 @@ on:
     branches:
       - main
     paths:
-      - '.github/workflows/hokm-github-pages-publish.yml'
       - 'index.html'
       - 'logo.png'
       - 'walletconnect-bridge.js'
