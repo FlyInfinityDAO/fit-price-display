@@ -198,3 +198,37 @@ No Worker, Pages project, D1 database, Durable Object, secret, variable, route, 
 
 - 2026-11-09: Initial read-only Cloudflare and repository inventory. No Worker, Pages, D1, Durable Object, secret, variable, or production deployment setting was changed by the audit.
 - 2026-11-09: Expanded the inventory to include all checked-in GitHub Actions workflows, their triggers/side effects, dependency reproducibility observations, and outstanding preview-host verification. Documentation-only change; no production resource or workflow execution setting was changed.
+
+
+## Authenticated Cloudflare Worker settings audit — 2026-11-09
+
+A subsequent authenticated, read-only inspection of the Cloudflare dashboard was completed using the saved TinyFish browser profile. All three Worker settings pages were accessible. No settings were edited, no deployment was triggered, and no secret values were opened or recorded.
+
+### Live Worker settings and production branches
+
+| Worker | Production branch shown in dashboard | Configured non-secret variable names | Secret names confirmed present | Bindings confirmed |
+|---|---|---|---|---|
+| `fly-ai-api` | `feat/fly-ai-v1` | `AI_BASE_URL`, `AI_MODEL`, `AI_PROVIDER`, `CHAIN_ID`, `FIT_TOKEN_ADDRESS`, `MAX_INPUT_CHARS`, `MAX_OUTPUT_TOKENS`, `MIN_TIER2_FIT`, `MIN_TIER3_FIT`, `NETWORK_ADDRESS` | `JWT_SECRET`, `BSC_RPC_URL`, `AI_API_KEY` | `DB → fly-ai-db` |
+| `fly-chess-arena-api` | `feature/chess-arena-games` | `BSC_RPC_URL`, `FRONTEND_ORIGIN`, `FRONTEND_ORIGINS` | `SESSION_SECRET` | `DB → fly-chess-arena-db`; `CHESS_ROOMS → ChessRoom`; `BACKGAMMON_ROOMS → BackgammonRoom` |
+| `fly-hokm-api` | Not explicitly shown in the inspected settings page | `BSC_RPC_URL`, `FRONTEND_ORIGIN`, `FRONTEND_ORIGINS` | `SESSION_SECRET` | `DB → fly-hokm-db`; `HOKM_ROOMS → HokmRoom` (dashboard display label includes the Worker prefix) |
+
+All three Workers were shown in the Production environment. For Fly AI, `AI_MODEL` is a non-secret Variable, not a Secret. The expected Fly AI secret names `JWT_SECRET`, `BSC_RPC_URL`, and `AI_API_KEY` were present. No secret values were exposed.
+
+### Important branch divergence
+
+The dashboard reports `feat/fly-ai-v1` for Fly AI and `feature/chess-arena-games` for Chess/Backgammon, rather than the development repository's `main` branch. This is a material source-of-truth and future-transfer concern: do not change either Worker Git connection, production branch, or deploy source until the branch contents have been compared with current `main` and a deliberate cutover/rollback plan is approved. This audit made no branch or deployment changes.
+
+### D1 inspection limitation and reconciliation status
+
+The authenticated dashboard's standard D1 Overview/Settings pages did not expose table names or migration history for `fly-chess-arena-db` or `fly-hokm-db`. Accessing the Console would permit query execution, so it was intentionally not used. No SQL, schema query, or migration command was run.
+
+Consequently, the table counts and partial table-name observations in the earlier live-audit section remain historical observations only; this latest pass did not independently verify the full schema or migration history. Do not infer that missing table names indicate missing tables. A separate explicitly authorized, read-only schema inspection is still required before any D1 migration or schema modification.
+
+### Confirmed secret/variable presence only
+
+This inspection confirmed the expected secret *names* listed above, not their values, validity, rotation age, or runtime functionality. Non-secret variable values were visible in the dashboard but are intentionally omitted from this transfer document. Never copy secret values into repository files.
+
+No Worker, Pages project, D1 database, Durable Object, variable, secret, route, or production deployment was modified during this authenticated audit.
+
+
+- 2026-11-09: Added authenticated Cloudflare Worker settings/secret-name audit, production branch observations, and explicit D1 dashboard inspection limitations. Documentation-only; no Cloudflare resource changed.
