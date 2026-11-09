@@ -1,6 +1,6 @@
 # Fly Chess Arena API
 
-A separate Cloudflare Worker, isolated from Fly AI and its database.
+A separate Cloudflare Worker, isolated from Fly AI and its database. Chess Arena and Backgammon intentionally share this Worker and D1 database while using separate Durable Object classes.
 
 ## Included
 
@@ -9,65 +9,46 @@ A separate Cloudflare Worker, isolated from Fly AI and its database.
 - Server-side FIT Token `balanceOf(wallet)` check; minimum is exactly `10^18` base units (1 FIT, 18 decimals).
 - 30-minute HMAC-signed session; FIT balance is rechecked for protected actions and WebSocket tickets.
 - Private room creation and joining by six-character code.
-- Durable Object room state with authoritative chess.js move validation, 10-minute clocks, checkmate/draw/resignation, draw offers, and WebSocket broadcasts.
-- Single-use 30-second WebSocket tickets.
-- Server-authoritative backgammon dice, legal move validation, resign/draw handling, and CPU opponents.
-- Wallet-based backgammon records for completed online and CPU matches, with player totals, ranks, and a top-20 leaderboard.
-- Backgammon match points mirror Chess Arena: 3 for a win, 1 for a draw, 0 for a loss; practice boards are not ranked.
+- Durable Object room state with authoritative chess.js move validation, clocks, checkmate/draw/resignation, draw offers, and WebSocket broadcasts.
+- Separate Backgammon room class with server-authoritative dice, legal move validation, resign/draw handling, and CPU opponents.
+- Wallet-based Backgammon records and leaderboard.
 - No Network registration check, FIT transfer, approval, or transaction.
 
-## Deploy setup
+## Existing production resources
+
+- Worker: `fly-chess-arena-api`.
+- Existing D1: `fly-chess-arena-db`.
+- Existing database ID: `eae175c6-d221-48b8-ba54-3b784475b192`.
+- D1 binding: `DB`.
+- Durable Object bindings: `CHESS_ROOMS` → `ChessRoom`; `BACKGAMMON_ROOMS` → `BackgammonRoom`.
+- Durable Object migration tags: `v1` for `ChessRoom`, `v2` for `BackgammonRoom`.
+
+The database and Worker already exist. Do not run `wrangler d1 create fly-chess-arena-db` or replace the configured database ID during routine deployment.
+
+## Configuration and secrets
+
+The Wrangler file is the source of truth for D1, Durable Object bindings, compatibility date/flags, frontend origins, and cron configuration. The runtime requires the Worker secret `SESSION_SECRET` (at least 32 characters). Never commit secret values.
+
+## Validation
 
 From this directory:
 
 ```bash
 npm install
-npx wrangler d1 create fly-chess-arena-db
+npm run check
+npm run test:security
 ```
 
-Copy the returned database ID into `wrangler.toml` in place of `REPLACE_WITH_D1_DATABASE_ID`. Then apply the D1 migrations and create the secret:
-
-```bash
-npx wrangler d1 migrations apply fly-chess-arena-db --remote
-npx wrangler secret put SESSION_SECRET
-```
-
-Use a random secret of at least 32 characters. Never commit it to GitHub. Confirm `FRONTEND_ORIGIN` is the exact origin serving the site, without a trailing slash. A reliable BSC RPC can be set in `BSC_RPC_URL`.
-
-### Git-connected Cloudflare Builds
-
-The Cloudflare Worker build is configured with this directory as its root. Its Deploy command applies the checked-in D1 migrations remotely before deploying the Worker:
-
-```bash
-npx wrangler d1 migrations apply fly-chess-arena-db --remote && npx wrangler deploy
-```
-
-Keep the `SESSION_SECRET` configured as a Cloudflare Worker secret; do not add it to repository files or build variables.
-
-For a manual deployment outside the Git-connected build, deploy after the database migrations and secret are configured:
-
-```bash
-npx wrangler deploy
-```
+A production deploy or remote migration is a separate operation and requires explicit approval, review of pending migrations, and a rollback plan. Do not use production as a test environment.
 
 ## API
 
 - `GET /api/health`
-- `POST /api/auth/challenge` — JSON `{ "address": "0x..." }`
-- `POST /api/auth/verify` — JSON `{ "address": "0x...", "nonce": "...", "signature": "0x..." }`
-- `GET /api/auth/session` — bearer session
-- `POST /api/rooms/create` — bearer session; creates a private room
-- `POST /api/rooms/join` — bearer session; JSON `{ "roomCode": "ABC234" }`
-- `GET /api/rooms/{code}` — authenticated room snapshot
-- `POST /api/rooms/{code}/ticket` — bearer session; issues a one-use WebSocket ticket
-- `GET /api/rooms/{code}/ws?ticket=...` — consumes ticket and upgrades to WebSocket
-- `POST /api/backgammon/rooms/cpu` — bearer session; JSON `{ "difficulty": "easy|medium|hard" }`
-- `POST /api/backgammon/rooms/create` and `POST /api/backgammon/rooms/join` — backgammon private rooms
-- `POST /api/backgammon/rooms/{code}/ticket` and `GET /api/backgammon/rooms/{code}/ws?ticket=...` — authenticated backgammon WebSocket
-- `GET /api/backgammon/stats/me` and `GET /api/backgammon/stats/leaderboard` — player record and top-20 rankings
+- `POST /api/auth/challenge`
+- `POST /api/auth/verify`
+- `GET /api/auth/session`
+- Chess private-room and WebSocket endpoints under `/api/rooms/`
+- Backgammon room and WebSocket endpoints under `/api/backgammon/rooms/`
+- Backgammon statistics under `/api/backgammon/stats/`
 
 The frontend signs only a login message. It never approves or transfers FIT. The only eligibility rule is holding at least 1 FIT.
-
-## Not yet included
-
-Public matchmaking, ELO/rating history, tournament support, and full chess tournament controls are not included yet. The live room service must be deployed and tested before presenting the game as production-ready.
