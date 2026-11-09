@@ -6,7 +6,18 @@ on:
     branches:
       - main
     paths:
-      - .github/workflows/hokm-github-pages-publish.yml
+      - '.github/workflows/hokm-github-pages-publish.yml'
+      - 'index.html'
+      - 'logo.png'
+      - 'walletconnect-bridge.js'
+      - '*.html'
+      - '*.css'
+      - '*.js'
+      - '*.json'
+      - 'assets/**'
+      - 'images/**'
+      - 'games/**'
+      - 'fly-ai/**'
 
 permissions:
   contents: read
