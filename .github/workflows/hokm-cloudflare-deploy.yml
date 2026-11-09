@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       confirm_deploy:
-        description: "Type DEPLOY_HOKM_WORKER to apply migrations and deploy the production Worker"
+        description: "Type DEPLOY_HOKM_WORKER to deploy Worker code only (no D1 migrations or secret changes)"
         required: true
         type: string
 
@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy isolated Hokm Worker
+    name: Deploy isolated Hokm Worker code only
     if: github.ref == 'refs/heads/main' && inputs.confirm_deploy == 'DEPLOY_HOKM_WORKER'
     runs-on: ubuntu-latest
     defaults:
@@ -54,5 +54,5 @@ jobs:
       - name: Install Worker dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Deploy Worker
+      - name: Deploy Worker code only
         run: npx wrangler deploy
