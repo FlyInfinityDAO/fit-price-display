@@ -268,3 +268,19 @@ Do not merge either production branch wholesale into `main`, do not change Cloud
 No source code, workflow, Worker configuration, Pages configuration, D1 schema, secret, variable, route, or production deployment was modified during this comparison.
 
 - 2026-11-09: Added Git tree/blob reconciliation of the two Cloudflare-connected production branches against development main. Documentation-only; no production change.
+
+
+## Fly AI live profile endpoint smoke check — 2026-11-09
+
+After the branch-content comparison, a read-only unauthenticated GET was made to the live Fly AI Worker endpoint:
+
+- URL: `https://fly-ai-api.flyinfinityplatform.workers.dev/api/profile`
+- Response: `{"error":"Invalid session"}`
+- The route returned an authentication/session error rather than a missing-route 404. This confirms that the live Worker currently recognizes the protected `/api/profile` route.
+- No wallet was connected, no signature was requested, no profile was read or changed, and no POST/PUT request was made.
+
+This live result reduces the earlier concern that the deployed Worker might lack the profile route, despite the Cloudflare dashboard showing the older `feat/fly-ai-v1` Git-connected production branch. It does not identify the exact deployed source commit, prove that an authenticated profile read succeeds, or validate profile persistence against D1. Those require a separate authenticated test and should not be attempted without the user's explicit approval to connect/sign with a wallet. Do not change the Cloudflare Git connection or deploy source based on this smoke check alone.
+
+No production resource or repository source code was modified by the endpoint test.
+
+- 2026-11-09: Recorded unauthenticated live Fly AI profile-route check; protected endpoint exists. No authenticated profile access or writes performed.
