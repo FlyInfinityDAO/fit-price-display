@@ -232,3 +232,39 @@ No Worker, Pages project, D1 database, Durable Object, variable, secret, route, 
 
 
 - 2026-11-09: Added authenticated Cloudflare Worker settings/secret-name audit, production branch observations, and explicit D1 dashboard inspection limitations. Documentation-only; no Cloudflare resource changed.
+
+
+## Production-branch content reconciliation — 2026-11-09
+
+Compared the current development `main` tree (`2f440e7bb03865f08196297d30bf7fe4dde7bc9f`) with the two Cloudflare-connected production branches observed in the authenticated dashboard. This was a Git object/tree comparison only; no branch, Worker, Pages project, D1 database, or deployment was changed.
+
+### Chess / Backgammon / Hokm branch
+
+Compared `feature/chess-arena-games` (`cc8e2469da726b14148e2898877a63a470782114`) with `main`:
+
+- Of 45 files under `games/chess-arena/`, `games/backgammon/`, and `games/hokm/` present in the production branch tree, 40 have identical Git blob contents in `main`.
+- Five existing paths have different contents: the Chess Worker README, Hokm Worker README, `games/hokm/css/hokm.css`, `games/hokm/js/hokm-play.js`, and `games/hokm/js/hokm.js`.
+- `main` additionally contains `games/hokm/tests/hokm-browser-smoke.mjs`, which is absent from the production branch tree.
+- The checked runtime-critical files for the Chess/Backgammon Worker (entry point, security module, Wrangler config, package manifest), and Hokm Worker (entry point, security module, Wrangler config), are byte-for-byte identical between the two refs. The Backgammon frontend and rules-engine files checked are also identical.
+- The meaningful runtime differences found in this sampled tree are concentrated in Hokm's frontend. `main` contains newer shared-game shell styling, extra card touch handling for embedded mobile WebViews, and scroll-position preservation on language changes. The production branch contains some Hokm-specific error translation/status handling that is not present in the current `main` versions. Therefore, neither side should be blindly copied over the other; reconcile these focused Hokm changes deliberately if the Cloudflare Pages project still uses this branch.
+
+### Fly AI production branch
+
+Compared `feat/fly-ai-v1` (`d3d2e0c62bee188f8405f8ec85ff2a55574113c7`) with `main`:
+
+- Of 10 files under `fly-ai/` and `backend/` present in the production branch tree, six have identical Git blob contents in `main`.
+- Four paths differ: `backend/src/index.js`, `fly-ai/css/fly-ai.css`, `fly-ai/js/app.js`, and `fly-ai/js/i18n.js`.
+- `main` additionally contains `backend/migrations/0002_user_profiles.sql`, absent from the production branch tree.
+- The checked `backend/wrangler.toml`, `backend/src/ai-provider.js`, `backend/package.json`, `fly-ai/index.html`, and `fly-ai/js/config.js` are byte-for-byte identical.
+- The newer `main` version adds country/region profile UI, language-aware prompts, profile GET/PUT API endpoints, and persistence through the `user_profiles` table/migration. The production branch versions of the AI frontend and Worker entry point do not contain those additions.
+- The authenticated Cloudflare audit previously observed `user_profiles` in the live `fly-ai-db`. That suggests the database may already have the profile schema, but it does not prove that the currently deployed Worker serves the newer profile endpoints. The Cloudflare Worker dashboard showed `feat/fly-ai-v1` as the connected production branch, so this is a concrete source/deployment consistency risk that must be verified with a read-only live API check before any branch or deployment change.
+
+### Interpretation and safe next steps
+
+The ahead/behind commit counts are not a reliable measure of missing runtime functionality because these branches have diverged histories and several paths are identical Git blobs despite the history divergence. The file-tree/content comparison is the stronger evidence.
+
+Do not merge either production branch wholesale into `main`, do not change Cloudflare Git connections or production branches, and do not deploy from either branch as a reconciliation shortcut. Keep `main` as the development source of truth. Next, verify the live Fly AI profile endpoint behavior without changing data, then decide whether any small, isolated Hokm frontend differences need to be reconciled. Preserve current production behavior until those checks and browser tests are complete.
+
+No source code, workflow, Worker configuration, Pages configuration, D1 schema, secret, variable, route, or production deployment was modified during this comparison.
+
+- 2026-11-09: Added Git tree/blob reconciliation of the two Cloudflare-connected production branches against development main. Documentation-only; no production change.
