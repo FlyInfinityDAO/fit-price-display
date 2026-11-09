@@ -581,11 +581,6 @@ html.fi-android-webview .hokm-room-entry input{
  .hand .hokm-card-back.deal-in{animation:none!important;will-change:auto}
 }
 
-
-/* Preserved current-main card hit-testing and shared Fly Infinity page shell. */
-}
-
-
 /* Keep the human hand above the central trick display so every card receives pointer input. */
 .seat-south{z-index:30}
 .seat-south .hand-south{position:relative;z-index:31;pointer-events:auto}
@@ -625,3 +620,10 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .access-card,.game-shell,.sound-panel{background:rgba(58,10,29,.78);-webkit-backdrop-filter:blur(18px) saturate(135%);backdrop-filter:blur(18px) saturate(135%);border-radius:24px}
 .access-card{margin-bottom:22px}
 .game-shell{padding:22px}
+.velvet-table{background:radial-gradient(ellipse at center,#76213f 0%,#64152f 58%,#4a1023 100%);}
+.sound-panel{margin-top:22px}
+body.fi-rtl{direction:rtl}
+body.fi-rtl .topbar,body.fi-rtl .topbar-actions{direction:rtl}
+body.fi-rtl .hand-south{direction:ltr}
+@media(max-width:760px){body{padding:10px}.topbar{margin-bottom:14px;padding:10px 12px;flex-wrap:wrap}.topbar-actions{justify-content:flex-end;gap:7px}.hero{margin-bottom:14px;padding:20px 14px}.access-card{padding:18px;margin-bottom:14px}.game-shell{padding:12px}.sound-panel{margin-top:14px}}
+@media(max-width:420px){body{padding:8px}.arena{width:100%}.topbar{border-radius:16px}.game-shell{padding:9px}.velvet-table{border-radius:22px}}
