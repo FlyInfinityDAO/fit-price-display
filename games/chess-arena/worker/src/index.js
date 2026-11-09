@@ -265,3 +265,5 @@ function withHeaders(response, headers) {
   for (const [key, value] of Object.entries(headers)) merged.set(key, value);
   return new Response(response.body, { status: response.status, headers: merged });
 }
+
+// No-op comment: verify Cloudflare Workers Builds from the main branch.
