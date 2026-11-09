@@ -4,21 +4,23 @@ on:
     paths:
       - 'fly-ai/**'
       - 'backend/**'
-      - '.github/workflows/fly-ai-check.yml'
+      - '.github/workflows/**'
   push:
-    branches: [feat/fly-ai-v1]
+    branches: [main]
     paths:
       - 'fly-ai/**'
       - 'backend/**'
-      - '.github/workflows/fly-ai-check.yml'
+      - '.github/workflows/**'
 jobs:
   syntax:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Check frontend JavaScript syntax
         run: |
           node --check fly-ai/js/app.js
@@ -27,7 +29,7 @@ jobs:
           node --check walletconnect-bridge.js
       - name: Install Worker dependencies
         working-directory: backend
-        run: npm install
+        run: npm install --no-audit --no-fund
       - name: Check Worker JavaScript syntax
         working-directory: backend
         run: |

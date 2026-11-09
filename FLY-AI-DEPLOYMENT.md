@@ -1,60 +1,98 @@
-# Fly AI v1 — deployment guide
+# Fly AI — current deployment and operations guide
 
-## What is in this branch
-- `fly-ai/`: standalone GitHub Pages interface, matching the existing dark / gold / emerald Fly Infinity visual language.
-- Eight interface languages: English, Persian, Arabic, Turkish, Russian, Chinese, Spanish and Portuguese.
-- Existing Reown WalletConnect bridge is reused for injected wallets and WalletConnect mobile/desktop flows.
-- Wallet proof uses a short-lived, single-use signed challenge. No private key or seed phrase is requested.
-- Cloudflare Worker API, D1 schema, server-side owner and FIT checks, signed sessions, daily request quota and configurable AI provider adapter.
-- Read-only BNB Smart Chain contract access only.
+## Current architecture
 
-## Access policy implemented
-The backend reads `Owner_Exists(address)` from the Network contract and `balanceOf(address)` from the FIT ERC-20 contract. A non-owner is always tier 0; a verified owner is tier 1, tier 2 at 1 FIT, and tier 3 at 10 FIT. FIT uses 18 decimals and integer-safe comparisons. Ownership is rechecked for chat requests. This is the agreed v1 policy; no separate Agreement getter is assumed.
+- Frontend source: `fly-ai/` in `FlyInfinityDAO/fit-price-display`.
+- Worker source: `backend/`.
+- Worker name: `fly-ai-api`.
+- D1 database: `fly-ai-db`.
+- Existing D1 database ID: `be1d9f7e-09b9-42ae-818d-94eb50faede0`.
+- The database already exists and is bound as `DB` in `backend/wrangler.toml`.
+- Do not create another `fly-ai-db` database and do not replace the configured ID during routine deployment.
+- The Worker is read-only with respect to BNB Smart Chain contracts; wallet login is a signature and does not authorize token transfers.
 
-## OpenRouter provider setup
-The existing Worker adapter already supports OpenAI-compatible APIs, so OpenRouter can be used without adding another service or changing the chat/authentication flow.
+## Access policy
 
-In Cloudflare Worker settings for `fly-ai-api`, configure:
+The backend reads `Owner_Exists(address)` from the Network contract and `balanceOf(address)` from the FIT ERC-20 contract. A non-owner is tier 0; a verified owner is tier 1, tier 2 at 1 FIT, and tier 3 at 10 FIT. FIT uses 18 decimals and integer-safe comparisons. Ownership is rechecked for authenticated requests.
 
-- Variable `AI_PROVIDER`: `openai-compatible`
-- Variable `AI_BASE_URL`: `https://openrouter.ai/api/v1`
-- Secret `AI_API_KEY`: the API key generated in the OpenRouter account
-- Variable or secret `AI_MODEL`: the exact model slug copied from the OpenRouter model catalog (for example, a model with the `:free` suffix only when that exact free variant is currently available)
+## Worker configuration
 
-Keep the key only in Cloudflare Worker secrets. Never place it in `fly-ai/js/config.js`, browser JavaScript, GitHub, or a public workflow file.
+The checked-in `backend/wrangler.toml` is the source of truth for non-secret Worker configuration:
 
-OpenRouter's free models have provider-side rate and daily limits and availability can change. A model marked free is not an unlimited or guaranteed production capacity. Check the model's current limits and context window before selecting it. The existing Fly AI per-wallet daily quota and output cap remain active independently.
+- `CHAIN_ID`
+- `FIT_TOKEN_ADDRESS`
+- `NETWORK_ADDRESS`
+- `MIN_TIER2_FIT`
+- `MIN_TIER3_FIT`
+- `MAX_INPUT_CHARS`
+- `MAX_OUTPUT_TOKENS`
+- D1 binding `DB` → existing `fly-ai-db`
+- Compatibility date and `nodejs_compat` flag
 
-No OmniRoute installation is required for this setup. If OpenRouter is selected, the request path is:
-`Fly AI frontend → existing fly-ai-api Worker → OpenRouter API → selected model`.
+The runtime code also reads these secret/config names:
 
-## Required deployment steps
-1. Create a Cloudflare D1 database named `fly-ai-db`. Apply `backend/migrations/0001_init.sql` using Wrangler or the Cloudflare dashboard.
-2. Replace `database_id` in `backend/wrangler.toml` with the created D1 database ID.
-3. Set Worker secrets:
-   - `BSC_RPC_URL`: reliable BNB Smart Chain RPC endpoint.
-   - `JWT_SECRET`: long random secret (at least 32 random bytes).
-   - `AI_API_KEY`: selected provider key.
-   - `AI_MODEL`: exact model identifier enabled for that provider.
-   - For OpenAI-compatible APIs: `AI_PROVIDER=openai-compatible`, `AI_BASE_URL` (optional; defaults to OpenAI API).
-   - For Gemini: `AI_PROVIDER=gemini`; `AI_BASE_URL` is not used.
-4. Optional Worker vars: `APP_ORIGIN=https://flyinfinitydao.github.io`, `DAILY_REQUEST_LIMIT=30`, `MAX_OUTPUT_TOKENS=1200`. Configure a strict custom domain/route and retain HTTPS.
-5. Deploy from `backend/` with Wrangler after installing dependencies.
-6. Set `fly-ai/js/config.js` `apiBase` to the deployed Worker origin, e.g. `https://fly-ai-api.<account>.workers.dev`.
-7. Enable GitHub Pages for the repository's `main` branch after merging this feature branch. The public page path will be `https://flyinfinitydao.github.io/fit-price-display/fly-ai/` for project Pages, unless the repository has a custom Pages domain or a different publishing setup. Confirm the actual Pages settings before advertising a URL.
-8. Smoke-test with a registered Owner wallet, a non-owner wallet, an Owner with 0 FIT, 1 FIT and 10 FIT; test mobile WalletConnect, account changes, wrong network, expired signature, repeated nonce and exhausted quota.
+- `JWT_SECRET` — required for signed sessions.
+- `BSC_RPC_URL` — required for BNB Smart Chain reads.
+- `AI_API_KEY` — provider credential.
+- `AI_MODEL` — model identifier; configure as a Worker variable or secret.
+- Optional variables: `AI_PROVIDER` (defaults to `openai-compatible`), `AI_BASE_URL`, `APP_ORIGIN` (defaults to `https://flyinfinitydao.github.io`), and `DAILY_REQUEST_LIMIT` (defaults to 30).
 
-## Important limitations / security notes
-- The UI and API are not production-ready until Worker, D1, RPC and AI secrets are deployed. The frontend deliberately shows a configuration message rather than silently using a paid or public API.
-- Provider quotas and model availability are controlled by the selected AI provider. Choose the best model actually available under the intended free quota; do not assume unlimited free inference.
-- The Worker enforces a per-wallet daily request limit and caps input/output. Configure Cloudflare platform limits and monitor usage; free plans have changing quotas.
-- Add abuse controls (Cloudflare rate limiting / Turnstile) before public launch. D1 nonce storage is one-time and expires after five minutes.
-- CORS is restricted to the published Fly Infinity origin. If the actual Pages/custom domain differs, update `APP_ORIGIN` in the Worker before deployment.
-- Chat requests are currently non-streaming. Streaming can be added once the chosen provider and deployment are validated.
-- Wallet login proves control of an address; it never asks for transaction approval.
-- No smart-contract write method is exposed.
+Keep credentials only in Cloudflare Worker secrets. Never place them in frontend JavaScript, GitHub files, workflow logs, or this document. Record only names and presence in the infrastructure inventory.
 
-## Local development
-- Frontend: serve the repository root over HTTP; open `/fly-ai/`.
-- Backend: `cd backend && npm install && npx wrangler dev`.
-- Use test-only credentials and a test D1 database during development. Never commit secrets.
+## AI provider
+
+The adapter supports OpenAI-compatible APIs and Gemini.
+
+For an OpenAI-compatible provider, configure `AI_PROVIDER=openai-compatible`, the provider's API base in `AI_BASE_URL` if required, the API credential in `AI_API_KEY`, and the exact supported model identifier in `AI_MODEL`.
+
+For Gemini, configure `AI_PROVIDER=gemini`, the API credential in `AI_API_KEY`, and the exact model identifier in `AI_MODEL`.
+
+Free provider tiers have changing availability, quotas, and rate limits. Do not assume unlimited capacity. The Fly AI per-wallet daily quota and output cap are separate from provider limits.
+
+## D1 migrations
+
+The production database already exists and its ID is configured. Before applying migrations in any future approved deployment:
+
+1. Confirm the intended database is `fly-ai-db` and the configured ID still matches the infrastructure map.
+2. Review pending migration files under `backend/migrations/`.
+3. Take/confirm an appropriate backup and understand the migration's effect.
+4. Apply migrations only as a deliberate production operation.
+
+Never run `wrangler d1 create fly-ai-db` for the existing production database.
+
+## Deployment safety
+
+There is no automatic production Worker deployment in this guide. A production deployment must be separately and explicitly approved after reviewing the exact diff, migrations, Cloudflare bindings, required secret names, and rollback plan.
+
+From `backend/`, the normal build commands are:
+
+```bash
+npm install
+node --check src/index.js
+node --check src/ai-provider.js
+```
+
+A future approved deployment may use Wrangler from this directory after the production configuration and migration review. Do not run a production deploy as a validation step.
+
+## Frontend
+
+The frontend reads its API base from `fly-ai/js/config.js`. Verify that it points to the existing `fly-ai-api` Worker before advertising a public URL.
+
+GitHub Pages is the intended frontend publishing path. Confirm the repository's actual Pages settings and URL before publishing or documenting a final public route.
+
+## Smoke-test checklist for an approved release
+
+- Health endpoint responds with the expected Fly AI service identity.
+- Registered Owner with 0 FIT receives tier 1.
+- Registered Owner with at least 1 FIT receives tier 2.
+- Registered Owner with at least 10 FIT receives tier 3.
+- Non-owner is denied.
+- Wallet signature nonce is single-use and expires.
+- Wrong chain, changed account, expired session, and exhausted quota are handled safely.
+- Mobile WalletConnect and desktop injected-wallet flows work.
+- AI provider failure returns a controlled error and does not expose credentials.
+- Confirm no transaction or token approval is requested.
+
+## Historical notes
+
+This document replaces the original first-deployment instructions that told operators to create a new D1 database and overwrite the database ID. Those steps are no longer appropriate because the production database already exists.

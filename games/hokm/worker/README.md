@@ -11,14 +11,38 @@ This Worker is intentionally separate from the Chess/Backgammon Worker.
 - Session revalidation checks the live FIT balance.
 - D1-backed single-use nonces, rate limiting, and scheduled cleanup.
 - Isolated Durable Object room coordination with one-time WebSocket tickets.
-- Four-player private rooms, wallet-bound seats, authoritative turn validation, server-side 15-second turn timeouts, reconnect support, and server-side score progression.
+- Four-player private rooms, wallet-bound seats, authoritative turn validation, reconnect support, and server-side score progression.
 
-## Provisioning
-1. The isolated D1 database `fly-hokm-db` is already configured in `wrangler.toml`.
-2. Apply D1 migrations with `npx wrangler d1 migrations apply fly-hokm-db --remote` if not already applied.
-3. Keep the existing `SESSION_SECRET` secret configured (at least 32 characters).
-4. Apply the Durable Object migration by deploying the Worker with the new `HOKM_ROOMS` binding.
-5. Configure `FRONTEND_ORIGIN` / `FRONTEND_ORIGINS` to the final Hokm page origin.
-6. Run `npm install`, `npm run check`, then deploy only after review.
+## Existing production resources
 
-This commit adds backend room infrastructure only; it does not change wallet connection code or automatically deploy the Worker.
+- Worker: `fly-hokm-api`.
+- Existing D1: `fly-hokm-db`.
+- Existing database ID: `0f82c3fb-95f7-42d5-a2ca-9861d63b8948`.
+- D1 binding: `DB`.
+- Durable Object binding: `HOKM_ROOMS` → `HokmRoom`.
+- Durable Object migration tag: `v1`.
+
+The isolated D1 database already exists and is configured in `wrangler.toml`. Never run the provisioning workflow or `wrangler d1 create fly-hokm-db` for this existing production database. The emergency provisioning workflow now refuses to create a database unless the Wrangler file explicitly contains the unprovisioned placeholder.
+
+## Provisioning and approved deployment
+
+1. Confirm the existing `fly-hokm-db` ID in the infrastructure map and Wrangler configuration.
+2. Review pending SQL migrations before any production application.
+3. Keep the Worker secret `SESSION_SECRET` configured (at least 32 characters); never expose its value.
+4. Review Durable Object migration changes before deploying.
+5. Confirm `FRONTEND_ORIGIN` / `FRONTEND_ORIGINS` match the intended frontend origins.
+6. Run local validation first: `npm install` and `npm run check`.
+7. Production Worker deployment is manual-only and requires an explicit workflow confirmation. It deploys Worker code only; it does not change the existing D1 schema or overwrite the existing `SESSION_SECRET`.
+8. Any future D1 migration must be reviewed and backed up, then applied as a separate explicitly approved operation. Do not combine schema changes with an ordinary Worker code deployment.
+
+The GitHub Actions deploy workflow now checks out `main`, not a historical feature branch. It does not deploy on ordinary pushes.
+
+## API
+
+- `GET /api/health`
+- `POST /api/auth/challenge`
+- `POST /api/auth/verify`
+- `GET /api/auth/session`
+- Room creation, joining, CPU, and WebSocket endpoints under `/api/rooms/`
+
+The frontend signs only a login message. It never approves or transfers FIT.

@@ -1,0 +1,58 @@
+name: Fly Infinity Games validation
+
+on:
+  pull_request:
+    paths:
+      - 'games/chess-arena/**'
+      - 'games/backgammon/**'
+      - 'games/hokm/**'
+      - '.github/workflows/**'
+  push:
+    branches: [main, 'chore/**']
+    paths:
+      - 'games/chess-arena/**'
+      - 'games/backgammon/**'
+      - 'games/hokm/**'
+      - '.github/workflows/**'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-chess-backgammon:
+    name: Validate Chess Arena and Backgammon Worker
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: games/chess-arena/worker
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Syntax validation
+        run: npm run check
+      - name: Security tests
+        run: npm run test:security
+
+  validate-hokm:
+    name: Validate Hokm Worker
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: games/hokm/worker
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Syntax validation
+        run: npm run check
