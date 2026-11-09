@@ -1,10 +1,10 @@
-name: Hokm Cloudflare D1 Provision
+name: Hokm Cloudflare D1 Provision (Emergency Only)
 
 on:
   workflow_dispatch:
     inputs:
       confirm_create:
-        description: "Type CREATE_HOKM_D1 to create the separate fly-hokm-db database"
+        description: "Type CREATE_HOKM_D1 only when intentionally provisioning a brand-new database"
         required: true
         type: string
 
@@ -17,8 +17,8 @@ concurrency:
 
 jobs:
   provision:
-    name: Create isolated Hokm D1 database
-    if: github.ref == 'refs/heads/feature/hokm-four-player' && inputs.confirm_create == 'CREATE_HOKM_D1'
+    name: Create Hokm D1 only when no database exists
+    if: github.ref == 'refs/heads/main' && inputs.confirm_create == 'CREATE_HOKM_D1'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -27,27 +27,31 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
     steps:
-      - name: Checkout Hokm branch
+      - name: Checkout current development source
         uses: actions/checkout@v4
         with:
-          ref: feature/hokm-four-player
+          ref: main
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: Validate Cloudflare credentials
+      - name: Validate credentials and require an unprovisioned placeholder
         shell: bash
         run: |
           set -euo pipefail
           test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Missing repository secret CLOUDFLARE_API_TOKEN."; exit 1; }
           test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Missing repository variable CLOUDFLARE_ACCOUNT_ID."; exit 1; }
+          grep -q 'REPLACE_WITH_HOKM_D1_DATABASE_ID' wrangler.toml || {
+            echo "::error::A real database_id is already configured. Refusing to create a duplicate fly-hokm-db. Use the existing database."
+            exit 1
+          }
 
       - name: Install Wrangler
         run: npm install --no-save --no-package-lock wrangler@4
 
-      - name: Create D1 database and report its ID
+      - name: Create D1 database only after the safeguards pass
         id: create_db
         shell: bash
         run: |
@@ -63,7 +67,7 @@ jobs:
             exit 1
           fi
           echo "database_id=$database_id" >> "$GITHUB_OUTPUT"
-          echo "::notice::D1 database created. Add the reported ID to games/hokm/worker/wrangler.toml; this workflow does not deploy the Worker."
+          echo "::notice::A new D1 was created. Record its ID and update wrangler.toml in a reviewed pull request before deploying."
 
       - name: Publish database ID as workflow summary
         env:
@@ -76,5 +80,5 @@ jobs:
             echo
             echo "Database ID: `$DATABASE_ID`"
             echo
-            echo "Next: set this ID as `database_id` in `games/hokm/worker/wrangler.toml`. No Worker deployment was performed."
+            echo "No Worker deployment was performed."
           } >> "$GITHUB_STEP_SUMMARY"
