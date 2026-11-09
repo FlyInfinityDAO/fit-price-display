@@ -627,3 +627,104 @@ body.fi-rtl .topbar,body.fi-rtl .topbar-actions{direction:rtl}
 body.fi-rtl .hand-south{direction:ltr}
 @media(max-width:760px){body{padding:10px}.topbar{margin-bottom:14px;padding:10px 12px;flex-wrap:wrap}.topbar-actions{justify-content:flex-end;gap:7px}.hero{margin-bottom:14px;padding:20px 14px}.access-card{padding:18px;margin-bottom:14px}.game-shell{padding:12px}.sound-panel{margin-top:14px}}
 @media(max-width:420px){body{padding:8px}.arena{width:100%}.topbar{border-radius:16px}.game-shell{padding:9px}.velvet-table{border-radius:22px}}
+
+
+/* Final shared Fly Infinity Games theme alignment.
+   Match Chess Arena and Backgammon chrome; only the Hokm playing felt stays maroon.
+   Presentation-only overrides: do not alter cards, layout mechanics, wallet, or gameplay. */
+:root{
+  --fi-bg:#0F0F0F;
+  --fi-mint:#00C896;
+  --fi-mint-bright:#00E6AD;
+  --fi-gold:#D4AF37;
+  --fi-text:#F4F4F4;
+  --fi-muted:#AEBDB8;
+  --fi-glass:rgba(10,20,19,.34);
+  --fi-border:rgba(0,200,150,.24);
+  --fi-border-strong:rgba(0,225,170,.62);
+}
+html{background:var(--fi-bg)}
+body{
+  background:var(--fi-bg)!important;
+  color:var(--fi-text);
+}
+body::before{
+  background-image:linear-gradient(rgba(15,15,15,.62),rgba(15,15,15,.68)),url("../../../background-desktop.png");
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+.topbar{
+  background:rgba(15,15,15,.74)!important;
+  border-color:rgba(0,200,150,.24);
+  box-shadow:0 8px 24px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.06);
+}
+.hero{
+  border-color:rgba(0,200,150,.38);
+  background:linear-gradient(135deg,rgba(12,24,21,.34),rgba(8,12,11,.24))!important;
+  box-shadow:inset 0 0 28px rgba(0,200,150,.045),0 12px 35px rgba(0,0,0,.18);
+}
+.hero h1{
+  background:linear-gradient(95deg,#D4AF37 10%,#c6d66a 48%,#00C896 92%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.access-card,.match-settings,.game-shell,.sound-panel{
+  border-color:rgba(0,200,150,.24);
+  background:rgba(10,20,19,.38)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  backdrop-filter:blur(18px) saturate(140%);
+  box-shadow:0 12px 32px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.075);
+}
+.access-card{border-color:rgba(0,200,150,.38);background:rgba(10,20,19,.48)!important}
+.topbar select,.difficulty-control select,.hokm-room-entry input{
+  background:rgba(255,255,255,.035);
+  color:var(--fi-text);
+  border-color:rgba(0,200,150,.28);
+}
+.network,.dashboard-link{
+  border-color:rgba(0,200,150,.2);
+  background:rgba(255,255,255,.025);
+  color:#c7d8d2;
+}
+.dashboard-link{color:#70f5cf}
+.eyebrow{color:var(--fi-mint)}
+.brand-name{color:var(--fi-gold)}
+.brand-name small{color:var(--fi-mint)}
+.access-heading h2,.settings-copy h3,.sound-panel h3,.table-toolbar h2{color:var(--fi-text)}
+.access-mark,.minimum>span,.minimum strong,.tier-rules b{color:var(--fi-gold)}
+.access-card>p,.settings-copy p,.tier-note,.sound-panel p{color:#c7d8d2}
+.minimum,.tier-rules article,.hokm-online-panel,.hokm-game-controls{
+  border-color:rgba(0,200,150,.22);
+  background:rgba(10,20,19,.48);
+}
+.primary-btn{
+  border-color:rgba(0,230,173,.85);
+  background:linear-gradient(105deg,#00C896,#70f5cf);
+  color:#07130f;
+}
+.secondary-btn,.icon-btn{
+  border-color:rgba(0,200,150,.42);
+  background:linear-gradient(135deg,rgba(0,200,150,.18),rgba(0,200,150,.055));
+  color:#70f5cf;
+}
+.wallet-actions .secondary-btn{border-color:rgba(212,175,55,.48);color:#f2df9c}
+.control-bar{border-top-color:rgba(0,200,150,.22)}
+.volume-control{color:var(--fi-muted)}
+.volume-control input{accent-color:var(--fi-mint)}
+footer{color:rgba(199,216,210,.72)}
+footer span{color:var(--fi-gold)}
+/* The playing surface is the sole maroon/velvet area. */
+.velvet-table{
+  background:radial-gradient(ellipse at center,#76213f 0%,#64152f 58%,#4a1023 100%)!important;
+}
+@media(max-width:760px){
+  body::before{
+    background-image:linear-gradient(rgba(15,15,15,.62),rgba(15,15,15,.68)),url("../../../background-mobile.png");
+    background-size:contain;
+    background-position:center top;
+    background-repeat:no-repeat;
+    background-color:#0F0F0F;
+  }
+}
