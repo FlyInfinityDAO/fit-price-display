@@ -32,7 +32,8 @@ The isolated D1 database already exists and is configured in `wrangler.toml`. Ne
 4. Review Durable Object migration changes before deploying.
 5. Confirm `FRONTEND_ORIGIN` / `FRONTEND_ORIGINS` match the intended frontend origins.
 6. Run local validation first: `npm install` and `npm run check`.
-7. Production deployment is manual-only and requires an explicit workflow confirmation. It applies the checked-in D1 migrations and deploys the Worker; do not run it as a test.
+7. Production Worker deployment is manual-only and requires an explicit workflow confirmation. It deploys Worker code only; it does not change the existing D1 schema or overwrite the existing `SESSION_SECRET`.
+8. Any future D1 migration must be reviewed and backed up, then applied as a separate explicitly approved operation. Do not combine schema changes with an ordinary Worker code deployment.
 
 The GitHub Actions deploy workflow now checks out `main`, not a historical feature branch. It does not deploy on ordinary pushes.
 
