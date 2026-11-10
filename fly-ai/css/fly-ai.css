@@ -365,3 +365,13 @@ body.light .workspace-menu-toggle{color:#493b70}
 @media(prefers-reduced-transparency:reduce){
   .side-panel{background:rgba(19,19,39,.96)}
 }
+
+
+/* Mobile workspace drawer close control */
+@media(max-width:620px){
+  .side-panel{padding-top:54px}
+  .workspace-menu-close{position:absolute;top:10px;right:12px;z-index:32;display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid rgba(190,174,255,.34);border-radius:11px;background:rgba(154,123,255,.16);color:#e4dcff;font:inherit;font-size:27px;line-height:1;cursor:pointer;touch-action:manipulation}
+  .workspace-menu-close:focus-visible{outline:2px solid #61d9ef;outline-offset:2px}
+  [dir=rtl] .workspace-menu-close{right:auto;left:12px}
+  body.light .workspace-menu-close{color:#493b70;background:rgba(154,123,255,.12)}
+}
