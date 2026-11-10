@@ -14,7 +14,7 @@ function bindWalletEvents(p){if(!p||!p.on||p.__flyAiBound)return;p.__flyAiBound=
 function currentLanguage(){const l=localStorage.getItem('fit_lang')||'en';return supportedLanguages.includes(l)?l:'en'}
 function countryName(code,lang){try{return new Intl.DisplayNames([lang],{type:'region'}).of(code)||code}catch{return code}}
 function ensureRegionUI(){
- if(!$('regionSettingsBtn')){const b=document.createElement('button');b.id='regionSettingsBtn';b.type='button';b.className='text-btn';b.textContent=t('regionSettings');b.addEventListener('click',()=>showCountryDialog(false));$('disconnectBtn').parentElement.before(b)}
+ if(!$('regionSettingsBtn')){const b=document.createElement('button');b.id='regionSettingsBtn';b.type='button';b.className='text-btn region-settings-btn';b.textContent=t('regionSettings');b.addEventListener('click',()=>showCountryDialog(false));$('disconnectBtn').parentElement.before(b)}
  if(!$('countryDialog')){const wrap=document.createElement('div');wrap.id='countryDialog';wrap.className='region-overlay hidden';wrap.innerHTML='<section class="region-dialog" role="dialog" aria-modal="true" aria-labelledby="regionTitle"><div class="region-mark">◎</div><h2 id="regionTitle"></h2><p id="regionDescription"></p><label id="countryLabel" for="countrySelect"></label><select id="countrySelect" required></select><p class="region-note" id="regionNote"></p><div class="region-actions"><button id="countrySave" class="primary-btn" type="button"></button><button id="countryCancel" class="text-btn" type="button"></button></div><div id="regionError" role="status"></div></section>';$('toast').before(wrap);
  const select=$('countrySelect');const lang=currentLanguage();const codes=countryCodes.filter(c=>c!=='AQ');codes.sort((a,b)=>countryName(a,lang).localeCompare(countryName(b,lang),lang));const blank=document.createElement('option');blank.value='';blank.textContent=t('chooseCountry');select.append(blank);codes.forEach(code=>{const o=document.createElement('option');o.value=code;o.textContent=countryName(code,lang);select.append(o)});
  $('countrySave').addEventListener('click',saveCountry);$('countryCancel').addEventListener('click',()=>{if(profile?.country_code)$('countryDialog').classList.add('hidden')});
@@ -64,13 +64,13 @@ const assistantPrompts={
  culture:["Explain an important Iranian cultural tradition and its historical background.","Compare a social custom in Iran with the same custom in another culture, respectfully and with context.","Create a learning path to explore the history, arts and everyday culture of a country."],
  network:["Explain how to build a sustainable network through trust, value and ethical communication.","Give me a practical framework for mentoring a new team member and tracking their progress.","Create a 30-day leadership and team-development plan with measurable weekly actions."]
 };
-const actionKeys=["actionExplore","actionPractice","actionPlan"];
+
 function renderAssistantSuggestions(){
  const wrap=$("assistantSuggestions");if(!wrap)return;
  const prompts=assistantPrompts[assistantId]||assistantPrompts.general;
  const icons=["✧","◈","⌘"];
  wrap.innerHTML="";
- prompts.forEach((prompt,index)=>{const b=document.createElement("button");b.type="button";b.dataset.prompt=prompt;b.innerHTML=icons[index]+' <span></span>';b.querySelector("span").textContent=t(actionKeys[index]);b.addEventListener("click",()=>send(prompt));wrap.appendChild(b)});
+ prompts.forEach((prompt,index)=>{const b=document.createElement("button");b.type="button";b.dataset.prompt=prompt;b.innerHTML=icons[index]+' <span></span>';b.querySelector("span").textContent=t('suggest_'+assistantId+'_'+(index+1));b.addEventListener("click",()=>send(prompt));wrap.appendChild(b)});
 }
 function addMessage(role,content){const el=document.createElement('div');el.className='message '+role;el.textContent=content;$('messages').appendChild(el);$('welcome').classList.add('hidden');el.scrollIntoView({block:'end',behavior:'smooth'})}
 async function send(text){text=(text||'').trim();if(!text){toast(t('empty'));return}if(!token){toast(t('backendMissing'));return}if(!profile?.country_code){showCountryDialog(true);return}if(busy)return;busy=true;addMessage('user',text);history.push({role:'user',content:text});$('prompt').value='';$('sendBtn').disabled=true;const loading=document.createElement('div');loading.className='message assistant';loading.textContent=t('sending');$('messages').appendChild(loading);try{const result=await request('/api/chat',{method:'POST',body:JSON.stringify({messages:history.slice(-20),language:currentLanguage(),assistantId})});loading.remove();addMessage('assistant',result.reply||'');history.push({role:'assistant',content:result.reply||''})}catch(e){loading.remove();addMessage('assistant',e.message||t('sendError'))}finally{busy=false;$('sendBtn').disabled=false}}
