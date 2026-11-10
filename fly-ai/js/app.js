@@ -26,13 +26,15 @@ function showCountryDialog(required){ensureRegionUI();$('regionError').textConte
 async function loadProfile(){ensureRegionUI();const data=await request('/api/profile');profile=data.profile;if(!profile?.country_code)showCountryDialog(true);else{$('regionSettingsBtn').title=countryName(profile.country_code,currentLanguage());}}
 async function saveCountry(){const countryCode=$('countrySelect').value;if(!countryCode){$('regionError').textContent=t('chooseCountry');return}const button=$('countrySave');button.disabled=true;try{const data=await request('/api/profile',{method:'PUT',body:JSON.stringify({countryCode,language:currentLanguage()})});profile=data.profile;$('countryDialog').classList.add('hidden');$('regionSettingsBtn').title=countryName(countryCode,currentLanguage());toast(t('countrySaved'))}catch(e){$('regionError').textContent=e.message||t('sendError')}finally{button.disabled=false}}
 async function connect(method='browser'){
- const buttons=[$('connectBtn'),$('connectWalletBtn'),$('heroConnect'),$('heroWalletConnect')].filter(Boolean);
+ const buttons=[$('connectBtn'),$('connectWalletBtn')];
  buttons.forEach(b=>b.disabled=true);
  try{
   toast(t('connecting'));
   if(method==='wallet'){
-   if(typeof window.fiConnectWalletConnect!=='function')throw new Error(t('sendError'));
-   provider=await window.fiConnectWalletConnect();
+   if(!window.ethereum||typeof window.ethereum.request!=='function')throw new Error(t('sendError'));
+   provider=window.ethereum;
+   await provider.request({method:'eth_requestAccounts'});
+   window.fiWalletConnectActive=false;
   }else{
    if(typeof window.fiSelectWalletProvider!=='function')throw new Error(t('sendError'));
    provider=await window.fiSelectWalletProvider();
@@ -55,6 +57,6 @@ async function connect(method='browser'){
 }
 function addMessage(role,content){const el=document.createElement('div');el.className='message '+role;el.textContent=content;$('messages').appendChild(el);$('welcome').classList.add('hidden');el.scrollIntoView({block:'end',behavior:'smooth'})}
 async function send(text){text=(text||'').trim();if(!text){toast(t('empty'));return}if(!token){toast(t('backendMissing'));return}if(!profile?.country_code){showCountryDialog(true);return}if(busy)return;busy=true;addMessage('user',text);history.push({role:'user',content:text});$('prompt').value='';$('sendBtn').disabled=true;const loading=document.createElement('div');loading.className='message assistant';loading.textContent=t('sending');$('messages').appendChild(loading);try{const result=await request('/api/chat',{method:'POST',body:JSON.stringify({messages:history.slice(-20),language:currentLanguage(),assistantId})});loading.remove();addMessage('assistant',result.reply||'');history.push({role:'assistant',content:result.reply||''})}catch(e){loading.remove();addMessage('assistant',e.message||t('sendError'))}finally{busy=false;$('sendBtn').disabled=false}}
-$('connectBtn').addEventListener('click',()=>connect('browser'));$('heroConnect').addEventListener('click',()=>connect('browser'));$('connectWalletBtn').addEventListener('click',()=>connect('wallet'));$('heroWalletConnect').addEventListener('click',()=>connect('wallet'));
+$('connectBtn').addEventListener('click',()=>connect('browser'));$('connectWalletBtn').addEventListener('click',()=>connect('wallet'));
 document.querySelectorAll('[data-assistant]').forEach(card=>card.addEventListener('click',()=>{const next=card.dataset.assistant;if(next===assistantId)return;assistantId=next;history=[];$('messages').innerHTML='';$('welcome').classList.remove('hidden');document.querySelectorAll('[data-assistant]').forEach(item=>{const active=item===card;item.classList.toggle('active',active);item.setAttribute('aria-pressed',String(active))});}));$('chatForm').addEventListener('submit',e=>{e.preventDefault();send($('prompt').value)});document.querySelectorAll('[data-prompt]').forEach(b=>b.addEventListener('click',()=>send(b.dataset.prompt)));document.querySelector('[data-i18n="newChat"]').addEventListener('click',()=>{history=[];$('messages').innerHTML='';$('welcome').classList.remove('hidden')});$('disconnectBtn').addEventListener('click',async()=>{token='';address='';profile=null;history=[];$('messages').innerHTML='';$('workspace').classList.add('hidden');$('accessPanel').classList.remove('hidden');$('connectBtn').textContent=t('connectBrowser');$('connectWalletBtn').textContent=t('connectWallet');$('regionSettingsBtn')?.remove();$('countryDialog')?.remove();if(window.fiDisconnectSelectedWallet)await window.fiDisconnectSelectedWallet();toast(t('signedOut'))});$('themeToggle').addEventListener('click',()=>{document.body.classList.toggle('light');localStorage.setItem('fly_ai_theme',document.body.classList.contains('light')?'light':'dark')});if(localStorage.getItem('fly_ai_theme')==='light')document.body.classList.add('light');if(window.ethereum)bindWalletEvents(window.ethereum);document.addEventListener('fly-ai-language-updated',updateRegionTexts);
 })();
