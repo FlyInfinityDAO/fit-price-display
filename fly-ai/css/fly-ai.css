@@ -258,3 +258,6 @@ body.light .welcome p,body.light .tier-card p,body.light .tier-card small{color:
     body:before{position:fixed!important;height:100svh!important;min-height:100svh!important}
   }
 }
+
+/* Consistent regional settings control */
+.region-settings-btn{display:flex;align-items:center;justify-content:flex-start;width:100%;min-height:38px;padding:10px 12px;border:1px solid rgba(0,200,150,.24);border-radius:10px;background:linear-gradient(110deg,rgba(212,175,55,.10),rgba(0,200,150,.08));color:#cbd4d0;text-align:left;font:inherit;font-size:11px;cursor:pointer;transition:border-color .2s,background .2s,color .2s}.region-settings-btn:hover{border-color:var(--mint);background:rgba(0,200,150,.13);color:var(--mint)}[dir=rtl] .region-settings-btn{text-align:right;justify-content:flex-start}
