@@ -375,3 +375,21 @@ body.light .workspace-menu-toggle{color:#493b70}
   [dir=rtl] .workspace-menu-close{right:auto;left:12px}
   body.light .workspace-menu-close{color:#493b70;background:rgba(154,123,255,.12)}
 }
+
+
+/* Mobile dashboard navigation: compact pill matching the language selector */
+@media(max-width:620px){
+  .topbar{height:auto;min-height:70px;padding:10px 0;display:flex;flex-wrap:wrap;align-items:center;column-gap:10px;row-gap:9px}
+  .brand{order:1;flex:1 1 auto;min-width:0}
+  .topnav{order:2;display:flex;align-items:center;justify-content:flex-end;flex:0 0 auto;margin:0;gap:0}
+  .topnav a{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 12px;border:1px solid rgba(154,123,255,.36);border-radius:12px;background:linear-gradient(135deg,rgba(42,34,70,.78),rgba(16,49,58,.78));color:#cfc7eb;font:inherit;font-size:12px;font-weight:600;line-height:1.2;text-decoration:none;white-space:nowrap;backdrop-filter:blur(26px) saturate(175%);-webkit-backdrop-filter:blur(26px) saturate(175%)}
+  .topnav a:hover,.topnav a:focus-visible{border-color:rgba(97,217,239,.55);color:#d8d0f3;outline:none}
+  .top-actions{order:3;flex:1 0 100%;width:100%;max-width:none;display:flex;flex-wrap:nowrap;justify-content:flex-end;gap:6px}
+  .top-actions select{min-width:42px}
+}
+@media(max-width:350px){
+  .brand small{letter-spacing:1.6px;font-size:7px}
+  .topnav a{padding:8px 9px;font-size:11px}
+  .top-actions .connect-btn{padding:8px 6px;font-size:8px}
+}
+body.light .topnav a{color:#493b70;background:rgba(246,247,255,.58);border-color:rgba(104,82,165,.25)}
