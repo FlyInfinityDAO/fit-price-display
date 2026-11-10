@@ -1,9 +1,9 @@
 /* Provider adapter: credentials stay in Worker secrets. Supports OpenAI-compatible APIs
    (including compatible hosted providers) and Google's Gemini generateContent API. */
-export async function generateReply({messages,env,system}) {
+export async function generateReply({messages,env,system,maxTokens:requestedMaxTokens}) {
   if (!env.AI_API_KEY || !env.AI_MODEL) throw new Error('AI provider is not configured');
   const provider=(env.AI_PROVIDER||'openai-compatible').toLowerCase();
-  const maxTokens=Number(env.MAX_OUTPUT_TOKENS||1200);
+  const configuredMaxTokens=Number(env.MAX_OUTPUT_TOKENS||1200);\n  const maxTokens=Number.isFinite(requestedMaxTokens)?Math.max(1,Math.min(configuredMaxTokens,Math.floor(requestedMaxTokens))):configuredMaxTokens;
   if(provider==='gemini'){
     const contents=messages.filter(m=>m.role!=='system').map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]}));
     const url='https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(env.AI_MODEL)+':generateContent?key='+encodeURIComponent(env.AI_API_KEY);
