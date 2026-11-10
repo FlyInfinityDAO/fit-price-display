@@ -48,7 +48,7 @@ async function extractUserMemories(address,conversationId,env){
   const transcript=(rows.results||[]).reverse().map(x=>x.role.toUpperCase()+': '+x.content).join('\n').slice(-9000);
   if(!transcript)return;
   const prompt='Extract only stable, useful, non-sensitive facts the user explicitly shared that would improve future assistance: preferences, ongoing goals, projects, expertise level, and communication preferences. Never extract or store health, medical, financial account details, passwords, private keys, seed phrases, government identifiers, precise addresses, political/religious/sexual information, or other sensitive personal data. Do not infer facts. Return ONLY a JSON array of objects with short key and value strings, maximum 8 items; return [] if nothing qualifies. Existing memories should be updated only when clearly corrected or superseded.\n\nConversation:\n'+transcript;
-  const raw=await generateReply({messages:[{role:'user',content:prompt}],env,system:'You are a privacy-preserving memory extraction component. Follow the extraction rules exactly. Output valid JSON only.'});
+  const raw=await generateReply({messages:[{role:'user',content:prompt}],env,maxTokens:600,system:'You are a privacy-preserving memory extraction component. Follow the extraction rules exactly. Output valid JSON only.'});
   const start=raw.indexOf('['),end=raw.lastIndexOf(']');
   if(start<0||end<start)return;
   const items=JSON.parse(raw.slice(start,end+1));
