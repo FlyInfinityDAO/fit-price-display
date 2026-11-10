@@ -2,7 +2,7 @@
 const $=id=>document.getElementById(id);
 const API=(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.apiBase||'').replace(/\/$/,'');
 const FIT='0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa',CHAIN='0x38';
-let provider=null,address='',token='',busy=false,history=[],profile=null,assistantId='general',conversationId=null,conversations=[],memoryEnabled=true,memoryItems=[];
+let provider=null,address='',token='',busy=false,history=[],profile=null,assistantId='general',conversationId=null,conversations=[],memoryEnabled=true,memoryItems=[],historyUiBound=false;
 const t=k=>window.FlyI18n.t(k);
 const supportedLanguages=['en','fa','ar','tr','ru','zh','es','pt'];
 const countryCodes=('AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW').split(' ');
@@ -72,7 +72,7 @@ async function refreshConversations(){
  conversations.forEach(item=>{const row=document.createElement('div');row.className='conversation-row'+(item.id===conversationId?' active':'');const open=document.createElement('button');open.type='button';open.className='conversation-open';open.textContent=item.title;open.title=item.title;open.addEventListener('click',()=>openConversation(item.id));const del=document.createElement('button');del.type='button';del.className='conversation-delete';del.textContent='×';del.title=t('deleteChat');del.addEventListener('click',async e=>{e.stopPropagation();try{await request('/api/conversations/'+item.id,{method:'DELETE'});if(conversationId===item.id){conversationId=null;history=[];$('messages').innerHTML='';$('welcome').classList.remove('hidden')}await refreshConversations()}catch(err){toast(err.message)}});row.append(open,del);wrap.append(row)});
 }
 async function openConversation(id){
- try{const data=await request('/api/conversations/'+id);conversationId=id;assistantId=data.conversation.assistant_id;history=(data.messages||[]).map(m=>({role:m.role,content:m.content}));$('messages').innerHTML='';$('welcome').classList.add('hidden');history.forEach(m=>addMessage(m.role,m.content));document.querySelectorAll('[data-assistant]').forEach(item=>{const active=item.dataset.assistant===assistantId;item.classList.toggle('active',active);item.setAttribute('aria-pressed',String(active))});await refreshConversations()}catch(e){toast(e.message||t('sendError'))}
+ try{const data=await request('/api/conversations/'+id);conversationId=id;assistantId=data.conversation.assistant_id;history=(data.messages||[]).map(m=>({role:m.role,content:m.content}));$('messages').innerHTML='';$('welcome').classList.add('hidden');history.forEach(m=>addMessage(m.role,m.content));renderAssistantSuggestions();document.querySelectorAll('[data-assistant]').forEach(item=>{const active=item.dataset.assistant===assistantId;item.classList.toggle('active',active);item.setAttribute('aria-pressed',String(active))});await refreshConversations()}catch(e){toast(e.message||t('sendError'))}
 }
 async function loadMemory(){
  const data=await request('/api/memory');memoryEnabled=data.enabled;memoryItems=data.memories||[];renderMemory();
@@ -85,10 +85,12 @@ function renderMemory(){
 }
 async function initializeHistoryUI(){
  if(!$('conversationList'))return;
+ if(!historyUiBound){historyUiBound=true;
  $('memoryToggle').addEventListener('click',async()=>{try{const enabled=!memoryEnabled;const data=await request('/api/memory/settings',{method:'PUT',body:JSON.stringify({enabled})});memoryEnabled=data.enabled;if(!memoryEnabled)memoryItems=[];else await loadMemory();renderMemory()}catch(e){toast(e.message)}});
- $('memoryView').addEventListener('click',()=>{$('memoryList').classList.toggle('hidden')});
+ $('memoryView').addEventListener('click',async()=>{try{await loadMemory();$('memoryList').classList.toggle('hidden')}catch(e){toast(e.message)}});
  $('clearMemory').addEventListener('click',async()=>{if(!confirm(t('confirmClearMemory')))return;try{await request('/api/memory',{method:'DELETE'});memoryItems=[];renderMemory();toast(t('memoryCleared'))}catch(e){toast(e.message)}});
  $('clearHistory').addEventListener('click',async()=>{if(!confirm(t('confirmClearHistory')))return;try{await request('/api/conversations',{method:'DELETE'});conversationId=null;history=[];$('messages').innerHTML='';$('welcome').classList.remove('hidden');await refreshConversations();toast(t('historyCleared'))}catch(e){toast(e.message)}});
+ }
  await Promise.all([refreshConversations(),loadMemory()]);
  if(conversations.length)await openConversation(conversations[0].id);
 }
