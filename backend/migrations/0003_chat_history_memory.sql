@@ -1,5 +1,3 @@
-ALTER TABLE user_profiles ADD COLUMN memory_enabled INTEGER NOT NULL DEFAULT 1;
-
 CREATE TABLE IF NOT EXISTS conversations (
   id TEXT PRIMARY KEY,
   address TEXT NOT NULL,
