@@ -19,3 +19,6 @@ MAX_OUTPUT_TOKENS = "16384"
 AI_PROVIDER = "openai-compatible"
 AI_BASE_URL = "https://api.z.ai/api/paas/v4"
 AI_MODEL = "glm-4.7-flash"
+
+[triggers]
+crons = ["0 3 * * *"]
