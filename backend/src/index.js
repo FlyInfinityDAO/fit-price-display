@@ -56,7 +56,9 @@ async function extractUserMemories(address,conversationId,env){
   for(const item of items.slice(0,8)){
    const key=typeof item?.key==='string'?item.key.trim().toLowerCase().replace(/[^a-z0-9_-]/g,'_').slice(0,64):'';
    const value=typeof item?.value==='string'?item.value.trim().slice(0,400):'';
-   if(!key||!value)continue;
+   const safeKey=/^(preference|communication|project|goal|learning|interest|expertise|reading|language|professional|response|style)/i.test(key);
+   const sensitive=/\b(health|medical|diagnos|medication|disease|religion|politic|sexual|password|private key|seed phrase|passport|national id|bank account|credit card|precise address)\b|سلامت|پزشک|بیماری|دارو|مذهب|دین|سیاسی|رمز|کلید خصوصی|عبارت بازیابی|گذرنامه|کد ملی|حساب بانکی|آدرس دقیق/i.test(value);
+   if(!key||!value||!safeKey||sensitive)continue;
    await env.DB.prepare('INSERT INTO user_memories(id,address,memory_key,memory_value,source_conversation_id,created_at,updated_at) VALUES(?,?,?,?,?,?,?) ON CONFLICT(address,memory_key) DO UPDATE SET memory_value=excluded.memory_value,source_conversation_id=excluded.source_conversation_id,updated_at=excluded.updated_at').bind(crypto.randomUUID(),address,key,value,conversationId,now(),now()).run();
   }
  }catch(error){console.error('Fly AI memory extraction skipped:',error.message)}
@@ -108,6 +110,15 @@ if(path==='/api/memory'&&req.method==='DELETE'){
  const session=await requireAuth(req,env);await env.DB.prepare('DELETE FROM user_memories WHERE address=?').bind(session.sub).run();return json({ok:true});
 }
 const memoryMatch=path.match(/^\/api\/memory\/([0-9a-f-]{36})$/i);
+
+if(memoryMatch&&req.method==='PUT'){
+ const session=await requireAuth(req,env);let body;try{body=await req.json()}catch{return json({error:'Request body must be valid JSON'},400)}
+ const value=typeof body?.value==='string'?body.value.trim().slice(0,400):'';
+ if(!value)return json({error:'Memory value is required'},400);
+ const result=await env.DB.prepare('UPDATE user_memories SET memory_value=?,updated_at=? WHERE id=? AND address=?').bind(value,now(),memoryMatch[1],session.sub).run();
+ if(Number(result.meta?.changes||0)!==1)return json({error:'Memory item not found'},404);
+ return json({ok:true});
+}
 if(memoryMatch&&req.method==='DELETE'){
  const session=await requireAuth(req,env);await env.DB.prepare('DELETE FROM user_memories WHERE id=? AND address=?').bind(memoryMatch[1],session.sub).run();return json({ok:true});
 }
