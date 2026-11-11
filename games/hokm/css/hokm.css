@@ -728,3 +728,79 @@ footer span{color:var(--fi-gold)}
     background-color:#0F0F0F;
   }
 }
+
+
+/* Mobile RTL hardening shared with Fly AI: stable LTR scroll root,
+   contained game header, and viewport-safe language control.
+   Scoped to RTL mobile only; gameplay and desktop layouts are untouched. */
+@media(max-width:760px){
+  html[dir="rtl"]{
+    direction:ltr!important;
+    max-width:100%;
+    overflow-x:clip;
+    overscroll-behavior-x:none;
+  }
+  html[dir="rtl"] body{
+    direction:ltr!important;
+    width:100%;
+    max-width:100%;
+    overflow-x:clip;
+    overscroll-behavior-x:none;
+  }
+  html[dir="rtl"] body .arena{
+    direction:ltr!important;
+    width:100%;
+    max-width:100%;
+    min-width:0;
+  }
+  html[dir="rtl"] body .arena > :not(.topbar){
+    direction:rtl;
+    min-width:0;
+    max-width:100%;
+  }
+  html[dir="rtl"] .topbar{
+    direction:ltr!important;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    width:100%;
+    max-width:100%;
+    min-width:0;
+  }
+  html[dir="rtl"] .topbar .brand{
+    direction:ltr;
+    flex:1 1 100%;
+    width:100%;
+    max-width:100%;
+    min-width:0;
+  }
+  html[dir="rtl"] .topbar .topbar-actions{
+    direction:rtl;
+    display:flex;
+    flex:1 1 100%;
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    gap:7px;
+  }
+  html[dir="rtl"] .topbar select,
+  html[dir="rtl"] .topbar .language-control{
+    flex:0 1 auto;
+    min-width:0;
+    max-width:min(112px,35vw);
+  }
+  html[dir="rtl"] .topbar select{
+    width:auto;
+    max-width:min(112px,35vw);
+  }
+  html[dir="rtl"] .topbar .dashboard-link{
+    flex:0 1 auto;
+    min-width:0;
+    max-width:calc(100% - 124px);
+    white-space:nowrap;
+  }
+}
