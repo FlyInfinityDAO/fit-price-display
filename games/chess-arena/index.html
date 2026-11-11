@@ -7,7 +7,7 @@
   <title>Chess Fly Infinity | Fly Infinity Games</title>
   <link rel="icon" type="image/png" href="../../logo.png">
   <link rel="apple-touch-icon" href="../../logo.png">
-  <link rel="stylesheet" href="./css/chess-arena.css?v=fi-player-profile-20261106a&v=fi-rtl-mobile-20261112a">
+  <link rel="stylesheet" href="./css/chess-arena.css?v=fi-player-profile-20261106a&v=fi-rtl-mobile-20261112a&v=fi-ai-language-menu-20261112>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="../../walletconnect-bridge.js"></script>
 </head>
@@ -19,7 +19,12 @@
         <span class="brand-name">FLY INFINITY <small data-i18n="games">GAMES</small></span>
       </a>
       <div class="topbar-actions">
-        <label class="language-control"><span class="sr-only" data-i18n="language">Language</span><select id="languageSelect" aria-label="Language"><option value="en">🇬🇧 English</option><option value="fa">🇮🇷 فارسی</option><option value="ar">🇮🇶 العربية</option><option value="tr">🇹🇷 Türkçe</option><option value="ru">🇷🇺 Русский</option><option value="zh">🇨🇳 中文</option><option value="es">🇪🇸 Español</option><option value="pt">🇵🇹 Português</option></select></label>
+        <div class="language-control fi-game-language">
+<button id="languageButton" class="language-button" type="button" aria-label="Change language" aria-haspopup="true" aria-expanded="false">🌐</button>
+<div id="languageMenu" class="language-menu" role="menu" aria-label="Choose language"></div>
+<select id="languageSelect" class="fi-game-language-select" aria-label="Language" aria-hidden="true" tabindex="-1">
+<option value="en">🇬🇧 English</option><option value="fa">🇮🇷 فارسی</option><option value="ar">🇮🇶 العربية</option><option value="tr">🇹🇷 Türkçe</option><option value="ru">🇷🇺 Русский</option><option value="zh">🇨🇳 中文</option><option value="es">🇪🇸 Español</option><option value="pt">🇵🇹 Português</option>
+</select></div>
         <div class="network"><i></i> BNB SMART CHAIN</div>
         <a class="dashboard-link" href="../../index.html"><span aria-hidden="true">←</span> <span data-i18n="dashboard">Dashboard</span></a>
       </div>
