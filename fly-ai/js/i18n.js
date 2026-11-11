@@ -58,8 +58,8 @@ document.addEventListener('DOMContentLoaded',()=>{
  if(!button||!menu)return;
  const closeMenu=()=>{menu.classList.remove('open');button.setAttribute('aria-expanded','false')};
  const toggleMenu=e=>{e.stopPropagation();const opening=!menu.classList.contains('open');menu.classList.toggle('open',opening);button.setAttribute('aria-expanded',String(opening))};
- languageOptions.forEach(([code,flag,name])=>{const item=document.createElement('button');item.type='button';item.className='language-option';item.dataset.lang=code;item.setAttribute('role','menuitem');item.innerHTML='<span class="language-flag" aria-hidden="true">'+flag+'</span><span>'+name+'</span>';item.addEventListener('click',()=>{apply(code);closeMenu()});menu.appendChild(item)});
- lang=localStorage.getItem('fit_lang')||((navigator.language||'en').slice(0,2));if(!D[lang])lang='en';apply(lang);
+ languageOptions.forEach(([code,flag,name])=>{const item=document.createElement('button');item.type='button';item.className='language-option';item.dataset.lang=code;item.setAttribute('role','menuitem');item.innerHTML='<span class="language-flag" aria-hidden="true">'+flag+'</span><span>'+name+'</span>';item.addEventListener('click',()=>{apply(code);button.textContent=flag;closeMenu()});menu.appendChild(item)});
+ lang=localStorage.getItem('fit_lang')||((navigator.language||'en').slice(0,2));if(!D[lang])lang='en';apply(lang);button.textContent=(languageOptions.find(([code])=>code===lang)||languageOptions[0])[1];
  button.addEventListener('click',toggleMenu);
  document.addEventListener('click',e=>{if(!e.target.closest('.language-control'))closeMenu()});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
