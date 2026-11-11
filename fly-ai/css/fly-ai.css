@@ -730,3 +730,46 @@ body.light .ai-motion-bg:before{opacity:.54}
 
 /* Remove only the moving square grid; preserve all ambient color, glow and orb motion. */
 .ai-motion-bg:before{display:none!important}
+
+
+/* Distinct translucent glass treatments for the three Fly AI access tiers. */
+.tiers .tier-grid > .tier-card:nth-child(1){
+  --tier-accent:rgba(74,222,128,.92);
+  border-color:rgba(74,222,128,.42);
+  background:linear-gradient(145deg,rgba(22,101,52,.30),rgba(8,35,27,.42));
+  box-shadow:inset 0 1px 0 rgba(187,247,208,.16),0 12px 34px rgba(34,197,94,.08);
+  -webkit-backdrop-filter:blur(22px) saturate(145%);
+  backdrop-filter:blur(22px) saturate(145%);
+}
+.tiers .tier-grid > .tier-card:nth-child(2){
+  --tier-accent:rgba(74,220,235,.96);
+  border-color:rgba(74,220,235,.48);
+  background:linear-gradient(145deg,rgba(8,105,125,.34),rgba(10,38,57,.44));
+  box-shadow:inset 0 1px 0 rgba(207,250,254,.18),0 12px 34px rgba(34,211,238,.10);
+  -webkit-backdrop-filter:blur(22px) saturate(150%);
+  backdrop-filter:blur(22px) saturate(150%);
+}
+.tiers .tier-grid > .tier-card:nth-child(3){
+  --tier-accent:rgba(181,145,255,.96);
+  border-color:rgba(181,145,255,.48);
+  background:linear-gradient(145deg,rgba(91,55,157,.34),rgba(31,24,65,.46));
+  box-shadow:inset 0 1px 0 rgba(233,213,255,.18),0 12px 34px rgba(139,92,246,.10);
+  -webkit-backdrop-filter:blur(22px) saturate(150%);
+  backdrop-filter:blur(22px) saturate(150%);
+}
+.tiers .tier-grid > .tier-card .tier-number,
+.tiers .tier-grid > .tier-card h3{
+  color:var(--tier-accent);
+}
+body.light .tiers .tier-grid > .tier-card:nth-child(1){
+  background:linear-gradient(145deg,rgba(187,247,208,.58),rgba(220,252,231,.34));
+  border-color:rgba(22,163,74,.36);
+}
+body.light .tiers .tier-grid > .tier-card:nth-child(2){
+  background:linear-gradient(145deg,rgba(165,243,252,.60),rgba(207,250,254,.36));
+  border-color:rgba(8,145,178,.38);
+}
+body.light .tiers .tier-grid > .tier-card:nth-child(3){
+  background:linear-gradient(145deg,rgba(221,214,254,.62),rgba(237,233,254,.36));
+  border-color:rgba(124,58,237,.38);
+}
