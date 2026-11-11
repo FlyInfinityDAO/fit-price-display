@@ -654,3 +654,15 @@ body.light .ai-motion-bg:before{opacity:.42}
     animation-iteration-count:infinite!important;
   }
 }
+
+
+/* Explicitly restore the requested ambient animations under reduced-motion mode,
+   but at a slower pace; the earlier safety rule sets animation:none!important. */
+@media(prefers-reduced-motion:reduce){
+  .ai-motion-bg{animation:flyAiEnergyFlow 60s linear infinite alternate!important}
+  .ai-motion-bg:before{animation:flyAiGridDrift 60s linear infinite!important}
+  .ai-motion-bg:after{animation:flyAiFieldDrift 60s linear infinite alternate!important}
+  .ai-motion-orb.orb-violet{animation:flyAiOrbViolet 60s linear infinite alternate!important}
+  .ai-motion-orb.orb-cyan{animation:flyAiOrbCyan 60s linear infinite alternate!important}
+  .ai-motion-orb.orb-gold{animation:flyAiOrbGold 60s linear infinite alternate!important}
+}
