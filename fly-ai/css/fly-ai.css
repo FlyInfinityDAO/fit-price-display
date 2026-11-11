@@ -528,3 +528,57 @@ body.light .ai-motion-bg:before{opacity:.28}
   .ai-motion-bg:after,.ai-motion-orb{animation:none!important}
   .ai-motion-orb{will-change:auto}
 }
+
+
+/* Visibility pass: make the ambient field clearly perceptible without covering UI. */
+.ai-motion-bg{
+  z-index:0;
+  opacity:1;
+  mix-blend-mode:screen;
+}
+.ai-motion-bg:before{
+  background-size:68px 68px;
+  background-image:
+    linear-gradient(rgba(177,160,255,.075) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(97,217,239,.065) 1px,transparent 1px);
+  opacity:.62;
+  animation:flyAiGridDrift 34s linear infinite;
+}
+.ai-motion-bg:after{
+  background:conic-gradient(from 20deg at 50% 50%,
+    transparent 0 22%,rgba(154,123,255,.13) 34%,transparent 45% 61%,
+    rgba(97,217,239,.11) 73%,transparent 86%);
+  filter:blur(34px);
+  opacity:.88;
+}
+.ai-motion-orb{filter:blur(42px)}
+.ai-motion-orb.orb-violet{
+  background:radial-gradient(circle,rgba(139,104,255,.40),rgba(139,104,255,.14) 48%,transparent 74%);
+  animation-duration:23s;
+}
+.ai-motion-orb.orb-cyan{
+  background:radial-gradient(circle,rgba(74,211,231,.34),rgba(74,211,231,.12) 48%,transparent 74%);
+  animation-duration:27s;
+}
+.ai-motion-orb.orb-gold{
+  background:radial-gradient(circle,rgba(215,183,106,.25),rgba(215,183,106,.085) 48%,transparent 74%);
+  animation-duration:31s;
+}
+@keyframes flyAiGridDrift{
+  from{background-position:0 0,0 0}
+  to{background-position:68px 34px,-68px 34px}
+}
+body.light .ai-motion-bg{opacity:.62}
+body.light .ai-motion-bg:before{opacity:.42}
+@media(max-width:620px){
+  .ai-motion-bg{opacity:.94}
+  .ai-motion-bg:before{background-size:54px 54px;opacity:.48}
+  .ai-motion-bg:after{filter:blur(28px);opacity:.72}
+  .ai-motion-orb{filter:blur(34px)}
+  .ai-motion-orb.orb-violet{width:92vw;height:92vw;left:-34%;top:9%;animation-duration:25s}
+  .ai-motion-orb.orb-cyan{width:96vw;height:96vw;right:-38%;top:39%;animation-duration:29s}
+  .ai-motion-orb.orb-gold{width:68vw;height:68vw;left:18%;bottom:-5%;animation-duration:33s}
+}
+@media(prefers-reduced-motion:reduce){
+  .ai-motion-bg:before,.ai-motion-bg:after,.ai-motion-orb{animation:none!important}
+}
