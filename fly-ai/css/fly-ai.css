@@ -666,3 +666,63 @@ body.light .ai-motion-bg:before{opacity:.42}
   .ai-motion-orb.orb-cyan{animation:flyAiOrbCyan 60s linear infinite alternate!important}
   .ai-motion-orb.orb-gold{animation:flyAiOrbGold 60s linear infinite alternate!important}
 }
+
+
+/* Fly AI motion tuning: faster, richer violet and turquoise without a white wash. */
+.ai-motion-bg{
+  mix-blend-mode:normal;
+  opacity:1;
+  background-image:
+    radial-gradient(ellipse at 18% 28%,rgba(124,67,255,.30),transparent 36%),
+    radial-gradient(ellipse at 82% 62%,rgba(0,190,215,.27),transparent 39%),
+    radial-gradient(ellipse at 52% 92%,rgba(26,205,190,.16),transparent 34%);
+  background-size:190% 190%;
+  animation:flyAiEnergyFlow 9s ease-in-out infinite alternate;
+}
+.ai-motion-bg:before{
+  background-image:
+    linear-gradient(rgba(155,119,255,.095) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(38,220,222,.085) 1px,transparent 1px);
+  opacity:.68;
+  animation:flyAiGridDrift 7s linear infinite;
+}
+.ai-motion-bg:after{
+  background:conic-gradient(from 20deg at 50% 50%,
+    transparent 0 20%,rgba(130,75,255,.22) 33%,transparent 45% 60%,
+    rgba(0,202,220,.20) 74%,transparent 87%);
+  filter:blur(30px) saturate(155%);
+  opacity:.95;
+  animation:flyAiFieldDrift 10s ease-in-out infinite alternate;
+}
+.ai-motion-orb{filter:blur(38px) saturate(145%)}
+.ai-motion-orb.orb-violet{
+  background:radial-gradient(circle,rgba(124,72,255,.58),rgba(124,72,255,.23) 48%,transparent 74%);
+  animation-duration:10s;
+}
+.ai-motion-orb.orb-cyan{
+  background:radial-gradient(circle,rgba(0,198,220,.52),rgba(0,198,220,.21) 48%,transparent 74%);
+  animation-duration:12s;
+}
+.ai-motion-orb.orb-gold{
+  background:radial-gradient(circle,rgba(35,194,190,.30),rgba(35,194,190,.10) 48%,transparent 74%);
+  animation-duration:14s;
+}
+body.light .ai-motion-bg{opacity:.86}
+body.light .ai-motion-bg:before{opacity:.54}
+@media(max-width:620px){
+  .ai-motion-bg{opacity:1;animation-duration:11s;background-size:230% 230%}
+  .ai-motion-bg:before{opacity:.58;animation-duration:8s}
+  .ai-motion-bg:after{filter:blur(25px) saturate(160%);opacity:.88;animation-duration:12s}
+  .ai-motion-orb{filter:blur(32px) saturate(155%)}
+  .ai-motion-orb.orb-violet{animation-duration:11s}
+  .ai-motion-orb.orb-cyan{animation-duration:13s}
+  .ai-motion-orb.orb-gold{animation-duration:15s}
+}
+@media(prefers-reduced-motion:reduce){
+  .ai-motion-bg{animation:flyAiEnergyFlow 24s linear infinite alternate!important}
+  .ai-motion-bg:before{animation:flyAiGridDrift 24s linear infinite!important}
+  .ai-motion-bg:after{animation:flyAiFieldDrift 24s linear infinite alternate!important}
+  .ai-motion-orb.orb-violet{animation:flyAiOrbViolet 24s linear infinite alternate!important}
+  .ai-motion-orb.orb-cyan{animation:flyAiOrbCyan 24s linear infinite alternate!important}
+  .ai-motion-orb.orb-gold{animation:flyAiOrbGold 24s linear infinite alternate!important}
+}
