@@ -58,12 +58,17 @@ document.addEventListener('DOMContentLoaded',()=>{
  if(!button||!menu)return;
  const closeMenu=()=>{menu.classList.remove('open');button.setAttribute('aria-expanded','false')};
  const positionMenu=()=>{
-  const rect=button.getBoundingClientRect(),margin=12,gap=8,vw=document.documentElement.clientWidth||window.innerWidth,vh=window.innerHeight;
-  const width=Math.min(Math.max(menu.getBoundingClientRect().width,158),Math.max(120,vw-margin*2));
+  const rect=button.getBoundingClientRect(),margin=12,gap=8;
+  const vw=document.documentElement.clientWidth||window.innerWidth;
+  const vh=window.innerHeight;
+  // Keep a predictable menu width; never let long labels expand it beyond the viewport.
+  const width=Math.min(176,Math.max(120,vw-margin*2));
   menu.style.width=width+'px';
+  menu.style.maxWidth=width+'px';
+  const maxLeft=Math.max(margin,vw-width-margin);
   const rtl=document.documentElement.dir==='rtl';
   let left=rtl?rect.right-width:rect.left;
-  left=Math.max(margin,Math.min(left,vw-width-margin));
+  left=Math.max(margin,Math.min(left,maxLeft));
   const menuHeight=Math.min(menu.scrollHeight,vh-margin*2);
   const below=vh-rect.bottom-margin,above=rect.top-margin;
   let top=rect.bottom+gap;
