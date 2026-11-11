@@ -805,8 +805,6 @@ body.light .language-menu button:hover,body.light .language-menu button.active{b
   .language-menu{
     inset-inline-start:auto;
     inset-inline-end:0;
-    right:auto;
-    left:auto;
     width:min(176px,calc(100vw - 24px));
     min-width:0;
     max-width:calc(100vw - 24px);
