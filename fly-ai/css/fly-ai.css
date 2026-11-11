@@ -815,3 +815,41 @@ body.light .language-menu button:hover,body.light .language-menu button.active{b
     -webkit-overflow-scrolling:touch;
   }
 }
+
+
+/* Mobile language + Persian layout hardening.
+   The menu is portaled to body by i18n.js, so it is not clipped or stacked
+   inside the blurred header / shell stacking contexts. */
+.language-menu{
+  position:fixed;
+  z-index:5000;
+  width:min(176px,calc(100vw - 24px));
+  min-width:0;
+  max-width:calc(100vw - 24px);
+  max-height:calc(100vh - 24px);
+  max-height:calc(100dvh - 24px);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+html[dir="rtl"] .language-menu{
+  direction:rtl;
+  text-align:right;
+}
+@media(max-width:620px){
+  /* Keep the viewport scroll origin stable in RTL while preserving RTL
+     reading/layout direction inside the actual page content. */
+  html[dir="rtl"]{direction:ltr;overflow-x:clip}
+  html[dir="rtl"] body{direction:ltr;overflow-x:clip}
+  html[dir="rtl"] .shell{direction:ltr;min-width:0;width:100%}
+  html[dir="rtl"] .topbar{direction:ltr}
+  html[dir="rtl"] .brand,
+  html[dir="rtl"] .topnav{direction:ltr}
+  html[dir="rtl"] .topnav a{direction:rtl}
+  html[dir="rtl"] main{direction:rtl;min-width:0;width:100%}
+  html[dir="rtl"] main>*{min-width:0;max-width:100%}
+  html[dir="rtl"] .assistant-grid,
+  html[dir="rtl"] .workspace,
+  html[dir="rtl"] .tier-grid{min-width:0;max-width:100%}
+  .language-menu{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px)}
+}
