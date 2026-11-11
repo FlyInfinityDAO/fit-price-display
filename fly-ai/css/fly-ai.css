@@ -726,3 +726,7 @@ body.light .ai-motion-bg:before{opacity:.54}
   .ai-motion-orb.orb-cyan{animation:flyAiOrbCyan 24s linear infinite alternate!important}
   .ai-motion-orb.orb-gold{animation:flyAiOrbGold 24s linear infinite alternate!important}
 }
+
+
+/* Remove only the moving square grid; preserve all ambient color, glow and orb motion. */
+.ai-motion-bg:before{display:none!important}
