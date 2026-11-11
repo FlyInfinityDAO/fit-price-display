@@ -52,15 +52,32 @@ Object.assign(D.zh,{"assistantHealth":"健康与美容顾问","assistantHealthDe
 Object.assign(D.es,{"assistantHealth":"Asesor de Salud y Belleza","assistantHealthDesc":"Orientación de salud y belleza basada en evidencia","suggest_health_1":"Comprender un tema de salud","suggest_health_2":"Crear una rutina segura para la piel","suggest_health_3":"Comparar ingredientes para el cuidado de la piel"});
 Object.assign(D.pt,{"assistantHealth":"Consultor de Saúde e Beleza","assistantHealthDesc":"Orientação de saúde e beleza baseada em evidências","suggest_health_1":"Entender um tema de saúde","suggest_health_2":"Criar uma rotina segura de cuidados com a pele","suggest_health_3":"Comparar ingredientes de cuidados com a pele"});
 
-let lang='en';function apply(l){lang=D[l]?l:'en';document.documentElement.lang=lang;document.documentElement.dir=['fa','ar'].includes(lang)?'rtl':'ltr';document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(D[lang][k])el.textContent=D[lang][k]});document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{const k=el.dataset.i18nPlaceholder;if(D[lang][k])el.placeholder=D[lang][k]});localStorage.setItem('fit_lang',lang);document.dispatchEvent(new Event('fly-ai-language-updated'))}window.FlyI18n={t:k=>D[lang][k]||D.en[k]||k,apply};const languageOptions=[['en','🇬🇧','English'],['fa','🇮🇷','فارسی'],['ar','🇮🇶','العربية'],['tr','🇹🇷','Türkçe'],['ru','🇷🇺','Русский'],['zh','🇨🇳','中文'],['es','🇪🇸','Español'],['pt','🇵🇹','Português']];
+let lang='en';function apply(l){lang=D[l]?l:'en';const rtl=['fa','ar'].includes(lang);document.documentElement.lang=lang;document.documentElement.dir=rtl?'rtl':'ltr';if(document.body)document.body.classList.toggle('fi-rtl',rtl);document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(D[lang][k])el.textContent=D[lang][k]});document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{const k=el.dataset.i18nPlaceholder;if(D[lang][k])el.placeholder=D[lang][k]});localStorage.setItem('fit_lang',lang);document.dispatchEvent(new Event('fly-ai-language-updated'))}window.FlyI18n={t:k=>D[lang][k]||D.en[k]||k,apply};const languageOptions=[['en','🇬🇧','English'],['fa','🇮🇷','فارسی'],['ar','🇮🇶','العربية'],['tr','🇹🇷','Türkçe'],['ru','🇷🇺','Русский'],['zh','🇨🇳','中文'],['es','🇪🇸','Español'],['pt','🇵🇹','Português']];
 document.addEventListener('DOMContentLoaded',()=>{
  const button=document.getElementById('languageButton'),menu=document.getElementById('languageMenu');
  if(!button||!menu)return;
  const closeMenu=()=>{menu.classList.remove('open');button.setAttribute('aria-expanded','false')};
- const toggleMenu=e=>{e.stopPropagation();const opening=!menu.classList.contains('open');menu.classList.toggle('open',opening);button.setAttribute('aria-expanded',String(opening))};
+ const positionMenu=()=>{
+  const rect=button.getBoundingClientRect(),margin=12,gap=8,vw=document.documentElement.clientWidth||window.innerWidth,vh=window.innerHeight;
+  const width=Math.min(Math.max(menu.getBoundingClientRect().width,158),Math.max(120,vw-margin*2));
+  menu.style.width=width+'px';
+  const rtl=document.documentElement.dir==='rtl';
+  let left=rtl?rect.right-width:rect.left;
+  left=Math.max(margin,Math.min(left,vw-width-margin));
+  const menuHeight=Math.min(menu.scrollHeight,vh-margin*2);
+  const below=vh-rect.bottom-margin,above=rect.top-margin;
+  let top=rect.bottom+gap;
+  if(menuHeight>below&&above>below)top=rect.top-gap-menuHeight;
+  top=Math.max(margin,Math.min(top,vh-menuHeight-margin));
+  menu.style.left=left+'px';menu.style.right='auto';menu.style.top=top+'px';
+ };
+ const toggleMenu=e=>{e.stopPropagation();const opening=!menu.classList.contains('open');if(opening){menu.classList.add('open');positionMenu();button.setAttribute('aria-expanded','true')}else closeMenu()};
  languageOptions.forEach(([code,flag,name])=>{const item=document.createElement('button');item.type='button';item.className='language-option';item.dataset.lang=code;item.setAttribute('role','menuitem');item.innerHTML='<span class="language-flag" aria-hidden="true">'+flag+'</span><span>'+name+'</span>';item.addEventListener('click',()=>{apply(code);button.textContent=flag;menu.querySelectorAll('button').forEach(option=>option.classList.toggle('active',option.dataset.lang===code));closeMenu()});menu.appendChild(item)});
+ document.body.appendChild(menu);
  lang=localStorage.getItem('fit_lang')||((navigator.language||'en').slice(0,2));if(!D[lang])lang='en';apply(lang);button.textContent=(languageOptions.find(([code])=>code===lang)||languageOptions[0])[1];menu.querySelectorAll('button').forEach(option=>option.classList.toggle('active',option.dataset.lang===lang));
  button.addEventListener('click',toggleMenu);
- document.addEventListener('click',e=>{if(!e.target.closest('.language-control'))closeMenu()});
+ document.addEventListener('click',e=>{if(!button.contains(e.target)&&!menu.contains(e.target))closeMenu()});
+ window.addEventListener('resize',()=>{if(menu.classList.contains('open'))positionMenu()},{passive:true});
+ window.addEventListener('scroll',()=>{if(menu.classList.contains('open'))positionMenu()},{passive:true,capture:true});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
 });})();
