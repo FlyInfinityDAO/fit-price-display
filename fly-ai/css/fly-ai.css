@@ -427,3 +427,24 @@ body.light .topnav a{color:#493b70;background:rgba(246,247,255,.58);border-color
   .top-actions .connect-btn{padding:8px 4px;font-size:8px}
 }
 body.light .topnav a{color:#493b70;background:rgba(246,247,255,.58);border-color:rgba(104,82,165,.25)}
+
+
+/* Subtle typewriter treatment for new Fly AI replies */
+.message.assistant.is-typing{
+  text-shadow:0 0 16px rgba(154,123,255,.12);
+}
+.message.assistant.is-typing::after{
+  content:"";display:inline-block;width:6px;height:1.05em;margin-inline-start:5px;
+  vertical-align:-.13em;border-radius:3px;
+  background:linear-gradient(180deg,#b9a6ff,#61d9ef);
+  box-shadow:0 0 10px rgba(154,123,255,.48);
+  animation:flyAiTypingCaret .85s ease-in-out infinite;
+}
+@keyframes flyAiTypingCaret{
+  0%,100%{opacity:.28;transform:scaleY(.72)}
+  50%{opacity:1;transform:scaleY(1)}
+}
+@media(prefers-reduced-motion:reduce){
+  .message.assistant.is-typing{ text-shadow:none }
+  .message.assistant.is-typing::after{display:none;animation:none}
+}
