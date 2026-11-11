@@ -398,13 +398,13 @@ body.light .topnav a{color:#493b70;background:rgba(246,247,255,.58);border-color
 /* Final compact mobile header layout: dashboard beside brand, controls on row two */
 @media(max-width:620px){
   .topbar{
-    display:grid;grid-template-columns:minmax(0,1fr) auto;
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(0,max-content);
     grid-template-rows:auto auto;align-items:center;
     column-gap:8px;row-gap:9px;height:auto;min-height:70px;padding:10px 0;
   }
   .brand{grid-column:1;grid-row:1;min-width:0;gap:8px}
   .brand span{min-width:0}
-  .topnav{grid-column:2;grid-row:1;display:flex;align-items:center;justify-content:flex-end;margin:0;justify-self:end}
+  .topnav{grid-column:2;grid-row:1;display:flex;align-items:center;justify-content:flex-end;gap:6px;margin:0;justify-self:end;min-width:0;max-width:100%}
   .topnav a{
     display:inline-flex;align-items:center;justify-content:center;min-height:38px;
     padding:8px 12px;border:1px solid rgba(154,123,255,.36);border-radius:12px;
@@ -852,4 +852,14 @@ html[dir="rtl"] .language-menu{
   html[dir="rtl"] .workspace,
   html[dir="rtl"] .tier-grid{min-width:0;max-width:100%}
   .language-menu{max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px)}
+}
+
+
+/* RTL mobile header containment: keep the brand and navigation inside the viewport. */
+@media(max-width:620px){
+  html[dir="rtl"] .shell{width:100%;max-width:100%;min-width:0;padding-left:12px;padding-right:12px;}
+  html[dir="rtl"] .topbar{width:100%;max-width:100%;min-width:0;overflow:visible;}
+  html[dir="rtl"] .brand{min-width:0;max-width:100%;}
+  html[dir="rtl"] .topnav{min-width:0;max-width:100%;}
+  html[dir="rtl"] .topnav a{min-width:0;padding-left:8px;padding-right:8px;font-size:11px;}
 }
