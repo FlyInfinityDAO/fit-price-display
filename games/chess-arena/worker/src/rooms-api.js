@@ -373,6 +373,21 @@ export async function handleRoomApi(request, env) {
     }
     return json({ok:false,error:"Could not allocate a Ludo room."},503);
   }
+  if (request.method === "POST" && path === "/api/ludo/rooms/cpu") {
+    const auth=await authorize(request,env);if(auth.response)return auth.response;
+    const body=await request.json().catch(()=>({}));
+    const playerCount=Math.max(2,Math.min(4,Number(body.playerCount)||2));
+    const humanCount=Math.max(1,Math.min(playerCount,Number(body.humanCount)||1));
+    const difficulty=["easy","medium","hard"].includes(body.difficulty)?body.difficulty:"medium";
+    for(let attempt=0;attempt<5;attempt++){
+      const code=makeRoomCode(),stub=env.LUDO_ROOMS.get(env.LUDO_ROOMS.idFromName(code));
+      const response=await stub.fetch("https://ludo-room.internal/create?code="+code+"&mode=cpu&players="+playerCount+"&humans="+humanCount+"&difficulty="+difficulty,{method:"POST",headers:{"x-ludo-wallet":auth.wallet.toLowerCase()}});
+      if(response.status===409)continue;
+      const data=await response.json();if(!response.ok||data.ok!==true)return json(data,response.status);
+      return json({...data,roomCode:code});
+    }
+    return json({ok:false,error:"Could not allocate a Ludo CPU game."},503);
+  }
   if (request.method === "POST" && path === "/api/ludo/rooms/join") {
     const auth=await authorize(request,env);if(auth.response)return auth.response;
     const body=await request.json().catch(()=>({}));if(!validRoomCode(body.roomCode))return json({ok:false,error:"Enter a valid six-character room code."},400);
