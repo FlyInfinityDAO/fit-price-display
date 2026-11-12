@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {createGame,roll,legalPieceMoves,applyMove,globalTrackIndex,SAFE_CELLS} from "./ludo-engine.js";
+import {createGame,roll,legalPieceMoves,applyMove,chooseCpuMove,globalTrackIndex,SAFE_CELLS} from "./ludo-engine.js";
 
 test("a six lets a piece leave the yard and grants another roll",()=>{
   let game=createGame(2,2);
@@ -69,4 +69,11 @@ test("safe squares do not allow captures",()=>{
 
 test("the engine supports two, three and four players",()=>{
   assert.deepEqual([2,3,4].map(n=>createGame(n,n).players.length),[2,3,4]);
+});
+
+test("CPU strategy always selects a legal move",()=>{
+  const game=createGame(4,1);
+  game.dice=6;
+  const move=chooseCpuMove(game,"hard");
+  assert.ok(legalPieceMoves(game).some(candidate=>candidate.pieceIndex===move.pieceIndex&&candidate.to===move.to));
 });
