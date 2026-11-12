@@ -164,7 +164,17 @@ function seatEls(seat){
 function cardNode(card,playable){
  const el=document.createElement(playable?"button":"span");
  el.className="hokm-card"+(["♥","♦"].includes(card.suit)?" red":"")+(playable?" playable":"");
- if(playable){el.type="button";el.addEventListener("click",()=>send({type:"play_card",cardId:card.id}))}
+ if(playable){
+  el.type="button";let touchStart=null,lastTouchAt=0;
+  el.addEventListener("touchstart",event=>{const point=event.changedTouches&&event.changedTouches[0];if(point)touchStart={x:point.clientX,y:point.clientY}},{passive:true});
+  el.addEventListener("touchend",event=>{
+   const point=event.changedTouches&&event.changedTouches[0];if(!point||!touchStart)return;
+   const moved=Math.hypot(point.clientX-touchStart.x,point.clientY-touchStart.y);touchStart=null;
+   if(moved>12)return;event.preventDefault();lastTouchAt=Date.now();send({type:"play_card",cardId:card.id});
+  },{passive:false});
+  el.addEventListener("touchcancel",()=>{touchStart=null},{passive:true});
+  el.addEventListener("click",event=>{if(event.detail>0&&Date.now()-lastTouchAt<1000)return;send({type:"play_card",cardId:card.id})});
+ }
  const corner=document.createElement("span");corner.className="card-corner";corner.textContent=card.rank+card.suit;
  const center=document.createElement("span");center.className="card-center";center.textContent=card.suit;
  el.append(corner,center);return el;
