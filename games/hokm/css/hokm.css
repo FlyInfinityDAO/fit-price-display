@@ -179,6 +179,8 @@
 .hokm-round-score b{font-size:22px;line-height:1;font-variant-numeric:tabular-nums}
 .hokm-round-score.white{background:linear-gradient(145deg,#f7f0df,#d9d2bf);color:#222}
 .hokm-round-score.black{background:linear-gradient(145deg,#292631,#09090d);color:#f4e8c7}
+.hokm-round-score.white b{color:#24131b}
+.hokm-round-score.black b{color:#fff4d6;text-shadow:0 1px 2px #000}
 .game-bottom .team-score{display:grid;gap:3px}
 .team-stat{font-size:9px;color:#d9b9c3}
 .team-stat em{font-style:normal;color:var(--gold);font-weight:900}
