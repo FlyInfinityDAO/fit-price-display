@@ -216,6 +216,7 @@ function advance(){
 function completeRound(winner){
  stopTimers();visibleTrick=[];render();
  const result=H.finishRound(match,game,winner);
+ render();
  const humanWon=winner===0;
  const message=humanWon?tr("won"):tr("lost");
  setStatus(message+" · "+match.matchPoints[0]+" : "+match.matchPoints[1]);
