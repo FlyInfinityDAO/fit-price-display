@@ -136,7 +136,7 @@ async function handleVerify(request, env) {
   if (recovered !== wallet) return json({ ok: false, error: "Signature does not match the wallet address." }, 401);
 
   if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32) {
-    return json({ ok: false, error: "Chess Arena session signing is not configured." }, 503);
+    return json({ ok: false, error: "Fly Infinity Games session signing is not configured." }, 503);
   }
 
   let balance;
@@ -180,7 +180,7 @@ async function handleVerify(request, env) {
 
 async function handleSession(request, env) {
   if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32) {
-    return json({ ok: false, error: "Chess Arena session signing is not configured." }, 503);
+    return json({ ok: false, error: "Fly Infinity Games session signing is not configured." }, 503);
   }
   const authorization = request.headers.get("Authorization") || "";
   const token = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
@@ -231,7 +231,7 @@ export default {
       }
     }
     if (request.method === "GET" && new URL(request.url).pathname === "/api/health") {
-      return json({ ok: true, service: "Fly Chess Arena API", version: "0.1.0" }, 200, headers);
+      return json({ ok: true, service: "Fly Infinity Games API", version: "0.1.0" }, 200, headers);
     }
     if (request.method === "POST" && new URL(request.url).pathname === "/api/auth/challenge") {
       try { return await handleChallenge(request, env).then(r => withHeaders(r, headers)); }
