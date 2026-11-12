@@ -21,7 +21,7 @@ function ensureControls(){
  if($("hokmGameControls"))return;
  const bar=document.querySelector(".control-bar");
  const wrap=document.createElement("div");wrap.id="hokmGameControls";wrap.className="hokm-game-controls";wrap.hidden=false;
- wrap.innerHTML='<div class="hokm-game-status" id="hokmGameStatus" aria-live="polite"></div><div class="hokm-game-buttons"><button id="hokmStartBtn" class="primary-btn" type="button"></button><button id="hokmNextBtn" class="primary-btn" type="button" hidden></button><button id="hokmRestartBtn" class="secondary-btn" type="button" hidden></button></div><div id="hokmTrumpPicker" class="hokm-trump-picker" hidden><strong id="hokmTrumpTitle"></strong><div class="hokm-trump-options"><button type="button" data-suit="♠">♠ <span></span></button><button type="button" data-suit="♥">♥ <span></span></button><button type="button" data-suit="♦">♦ <span></span></button><button type="button" data-suit="♣">♣ <span></span></button></div></div><div class="hokm-hand-caption" id="hokmHandCaption"></div><div class="hokm-turn-clock" id="hokmTurnClock" hidden></div>';
+ wrap.innerHTML='<div class="hokm-game-status" id="hokmGameStatus" aria-live="polite"></div><div class="hokm-game-buttons"><button id="hokmStartBtn" class="primary-btn" type="button"></button><button id="hokmNextBtn" class="primary-btn" type="button" hidden></button><button id="hokmRestartBtn" class="secondary-btn" type="button" hidden></button></div><div id="hokmTrumpPicker" class="hokm-trump-picker" hidden><strong id="hokmTrumpTitle"></strong><div class="hokm-trump-options"><button type="button" data-suit="♠">♠ <span></span></button><button type="button" data-suit="♥">♥ <span></span></button><button type="button" data-suit="♦">♦ <span></span></button><button type="button" data-suit="♣">♣ <span></span></button></div></div><div class="hokm-hand-caption" id="hokmHandCaption"></div><div class="hokm-turn-clock" id="hokmTurnClock" role="timer" aria-label="30 second turn timer" hidden></div>';
  bar.parentNode.insertBefore(wrap,bar);
  $("hokmStartBtn").disabled=true;
  $("hokmStartBtn").addEventListener("click",startMatch);
@@ -87,10 +87,13 @@ function renderSeats(){
 function renderTrick(){
  const nodes=[...document.querySelectorAll(".trick-cards .played-card")];
  const entries=visibleTrick.length?visibleTrick:(game?game.trick:[]);
+ const visualBySeat={0:"south",1:"west",2:"north",3:"east"};
  nodes.forEach((node,i)=>{
-  node.classList.toggle("empty",!entries[i]);
-  node.classList.toggle("red",!!entries[i]&&isRed(entries[i].card));node.classList.toggle("black",!!entries[i]&&!isRed(entries[i].card));node.classList.toggle("black",!!entries[i]&&!isRed(entries[i].card));
-  node.textContent=entries[i]?entries[i].card.rank+entries[i].card.suit:"·";
+  const entry=entries[i],label=entry?entry.card.rank+entry.card.suit:"";
+  node.classList.toggle("empty",!entry);node.classList.toggle("red",!!entry&&isRed(entry.card));node.classList.toggle("black",!!entry&&!isRed(entry.card));
+  node.classList.remove("from-south","from-west","from-north","from-east");
+  if(entry){const source=visualBySeat[entry.player]||"south";if(node.dataset.cardLabel!==label||node.dataset.playerSeat!==String(entry.player)){node.classList.add("from-"+source);void node.offsetWidth;}node.dataset.cardLabel=label;node.dataset.playerSeat=String(entry.player)}else{delete node.dataset.cardLabel;delete node.dataset.playerSeat}
+  node.textContent=entry?label:"·";
  });
 }
 function render(){
@@ -100,6 +103,8 @@ function render(){
  renderSeats();renderTrick();
  const trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent=game.trump||"—";
  const hakem=document.getElementById("tableHakem"),hakemChip=document.querySelector(seatElements(game.hakem).chip+" b");if(hakem)hakem.textContent=hakemChip?hakemChip.textContent:(game.hakem===0?"You":"CPU "+(game.hakem+1));
+ const handScores=document.querySelectorAll(".hokm-round-score b");
+ if(handScores.length){handScores[0].textContent=String((game.teamTricks||[0,0])[0]||0);handScores[1].textContent=String((game.teamTricks||[0,0])[1]||0)}
  const bottom=document.querySelectorAll(".game-bottom .team-score b");
  if(bottom.length&&match){bottom[0].textContent=match.matchPoints[0];bottom[1].textContent=match.matchPoints[1]}
  const round=document.querySelector(".round-info b");if(round&&match)round.textContent=match.roundNo+" / "+match.maxRounds;
@@ -141,7 +146,7 @@ function startClock(){
  clearClock();if(!game||game.finished||game.currentPlayer!==0)return;
  H.startTurnClock(game);turnDeadline=game.turnDeadlineAt;
  $("hokmTurnClock").hidden=false;
- const tick=()=>{const left=Math.max(0,Math.ceil((turnDeadline-Date.now())/1000));$("hokmTurnClock").textContent=tr("turn")+": "+left+" "+tr("seconds");if(left<=0){clearClock();if(game&&game.phase==="playing"&&game.currentPlayer===0){const result=H.resolveTurnTimeout(game,{difficulty});onCardPlayed(result,true)}}};
+ const tick=()=>{const left=Math.max(0,Math.ceil((turnDeadline-Date.now())/1000));const clock=$("hokmTurnClock");clock.textContent=String(left);clock.style.setProperty("--ring-progress",String(Math.max(0,Math.min(1,left/30))));clock.setAttribute("aria-label",tr("turn")+": "+left+" "+tr("seconds"));if(left<=0){clearClock();if(game&&game.phase==="playing"&&game.currentPlayer===0){const result=H.resolveTurnTimeout(game,{difficulty});onCardPlayed(result,true)}}};
  tick();turnInterval=setInterval(tick,250);
 }
 function playHumanCard(id){
