@@ -96,12 +96,14 @@ function animatePlayedCard(node,entry,seat){
 function renderTrick(){
  const nodes=[...document.querySelectorAll(".trick-cards .played-card")];
  const entries=visibleTrick.length?visibleTrick:(game?game.trick:[]);
- nodes.forEach(node=>{node.classList.add("empty");node.classList.remove("red","black","hokm-card-arriving");node.textContent="·";node.dataset.playedCardKey=""});
+ nodes.forEach(node=>{node.classList.add("empty");node.classList.remove("red","black");node.textContent="·"});
+ const active=new Set();
  entries.forEach(entry=>{
-  const node=nodes[entry.player];if(!node)return;
+  const node=nodes[entry.player];if(!node)return;active.add(entry.player);
   node.classList.remove("empty");node.classList.toggle("red",isRed(entry.card));node.classList.toggle("black",!isRed(entry.card));
   node.textContent=entry.card.rank+entry.card.suit;animatePlayedCard(node,entry,entry.player);
  });
+ nodes.forEach((node,index)=>{if(!active.has(index)){node.classList.remove("hokm-card-arriving");node.dataset.playedCardKey="";}});
 }
 function render(){
  if(!game)return;
