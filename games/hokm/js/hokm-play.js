@@ -131,7 +131,9 @@ function render(){
  [0,1,2,3].forEach(seat=>renderHand(seat,game.hands[seat],seat===0));renderSeats();
  const flights=renderTrick(),trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent=game.trump||"—";
  const hakem=document.getElementById("tableHakem"),hakemChip=document.querySelector(seatElements(game.hakem).chip+" b");if(hakem)hakem.textContent=hakemChip?hakemChip.textContent:(game.hakem===0?"You":"CPU "+(game.hakem+1));
+ const trickScores=document.querySelectorAll(".hokm-round-score b");if(trickScores.length){trickScores[0].textContent=String(game.teamTricks[0]||0);trickScores[1].textContent=String(game.teamTricks[1]||0)}
  const bottom=document.querySelectorAll(".game-bottom .team-score b");if(bottom.length&&match){bottom[0].textContent=match.matchPoints[0];bottom[1].textContent=match.matchPoints[1]}
+ const hakemStats=document.querySelectorAll(".team-hakem-count");if(hakemStats.length&&match){hakemStats[0].textContent=String((match.hakemCounts||[0,0])[0]||0);hakemStats[1].textContent=String((match.hakemCounts||[0,0])[1]||0)}
  const round=document.querySelector(".round-info b");if(round&&match)round.textContent=match.roundNo+" / "+match.maxRounds;
  $("hokmHandCaption").textContent=game.phase==="choose-trump"?tr("selectTrump"):tr("playing");return flights;
 }
@@ -219,7 +221,7 @@ function completeRound(winner){
  setStatus(message+" · "+match.matchPoints[0]+" : "+match.matchPoints[1]);
  setMessage(message);
  if(result.matchFinished){
-  const final=match.matchPoints[0]===match.matchPoints[1]?tr("tie"):(match.matchPoints[0]>match.matchPoints[1]?tr("finished"):tr("matchLost"));
+  const final=result.matchWinner===0?tr("finished"):result.matchWinner===1?tr("matchLost"):tr("tie");
   setStatus(tr("matchWon")+" · "+final);setMessage(final);
   $("hokmRestartBtn").textContent=tr("restart");$("hokmRestartBtn").hidden=false;
  }else{
