@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="index,follow">
+  <title>Terms of Service | Fly Infinity Auto Backup</title>
+  <meta name="description" content="Terms governing the personal Fly Infinity Auto Backup service.">
+  <style>
+    :root{color-scheme:dark;--bg:#090d18;--panel:#111a2b;--text:#edf3ff;--muted:#aab8d0;--accent:#64d8e8}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172744 0,#090d18 58%);color:var(--text);font:16px/1.7 system-ui,-apple-system,Segoe UI,sans-serif}
+    main{width:min(860px,calc(100% - 32px));margin:56px auto;padding:clamp(24px,5vw,48px);background:var(--panel);border:1px solid #293a55;border-radius:20px;box-shadow:0 20px 70px #0006}
+    h1{line-height:1.2;font-size:clamp(2rem,5vw,3rem);margin:.2em 0;color:#fff}h2{margin-top:2em;color:var(--accent);font-size:1.2rem}
+    p,li{color:var(--muted)}a{color:var(--accent)}.eyebrow{letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-size:.78rem;font-weight:700}
+    footer{margin-top:3em;padding-top:1.5em;border-top:1px solid #293a55;color:var(--muted);font-size:.9rem}
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Fly Infinity</div>
+  <h1>Terms of Service</h1>
+  <p><strong>Fly Infinity Auto Backup</strong></p>
+  <p>Effective date: 12 November 2026</p>
+
+  <h2>1. Purpose and scope</h2>
+  <p>Fly Infinity Auto Backup is a personal automation project intended to create backup copies of selected GitHub repository content and selected Cloudflare resources, and store generated backup files in the Google Drive account authorized by the operator. These terms apply to the operator's use of this project.</p>
+
+  <h2>2. Authorization and account responsibility</h2>
+  <p>You must be authorized to access each GitHub repository, Cloudflare account, and Google Drive destination configured for backup. You are responsible for protecting credentials, OAuth tokens, API tokens, and GitHub Actions secrets. Do not publish or share these credentials.</p>
+
+  <h2>3. Backup operation and limitations</h2>
+  <p>Backups are automated on a best-effort basis. Successful scheduling does not guarantee that every resource can be exported or restored. Provider outages, permission changes, API limits, configuration errors, and changes to provider services may interrupt or limit a backup. You are responsible for checking backup completion and periodically verifying that backup files can be restored.</p>
+
+  <h2>4. Data and third-party services</h2>
+  <p>Backup files are intended to be stored in the Google Drive destination you authorize. GitHub, Cloudflare, and Google operate their own services under their respective terms and privacy policies. Their processing and availability are outside the control of this project. The project should request only the permissions needed for the configured backup tasks.</p>
+
+  <h2>5. Sensitive information</h2>
+  <p>Do not include plaintext passwords, private keys, OAuth client secrets, refresh tokens, or other credentials in backup archives unless a separate, appropriate encryption and key-management process has been deliberately configured. Secrets required by automation should be stored in the provider's designated secret-storage settings, not committed to repository files.</p>
+
+  <h2>6. Retention and deletion</h2>
+  <p>Backup retention depends on the automation configuration and available Google Drive storage. The operator is responsible for reviewing retention settings and deleting backup files that are no longer required.</p>
+
+  <h2>7. No warranty</h2>
+  <p>The project is provided on an "as is" and "as available" basis, without a guarantee of uninterrupted operation, completeness, or successful restoration. Maintain independent copies of critical information where appropriate.</p>
+
+  <h2>8. Changes</h2>
+  <p>These terms may be updated when the project or its operation changes. The effective date above will be revised when material changes are made.</p>
+
+  <h2>9. Contact</h2>
+  <p>For questions about these terms, contact <a href="mailto:flyinfinityplatform@gmail.com">flyinfinityplatform@gmail.com</a>.</p>
+
+  <footer>© 2026 Fly Infinity Auto Backup. All rights reserved.</footer>
+</main>
+</body>
+</html>
