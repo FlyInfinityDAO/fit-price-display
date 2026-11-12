@@ -39,7 +39,7 @@ test("a player must roll the exact number to finish",()=>{
 test("landing on a non-safe opponent square captures the piece",()=>{
   let game=createGame(2,2);
   game.players[0].pieces[0]=0;
-  game.players[1].pieces[0]=40;
+  game.players[1].pieces[0]=27;
   game.dice=1;
   game=applyMove(game,0,{pieceIndex:0,from:0,to:1});
   assert.equal(game.players[1].pieces[0],-1);
@@ -50,7 +50,7 @@ test("two or more opponent pieces form a blockade",()=>{
   let game=createGame(2,2);
   game.players[0].pieces[0]=0;
   game.players[1].pieces[0]=40;
-  game.players[1].pieces[1]=40;
+  game.players[1].pieces[1]=27;
   game.dice=1;
   assert.equal(legalPieceMoves(game,0).some(m=>m.pieceIndex===0&&m.to===1),false);
 });
@@ -58,12 +58,12 @@ test("two or more opponent pieces form a blockade",()=>{
 test("safe squares do not allow captures",()=>{
   let game=createGame(2,2);
   game.players[0].pieces[0]=7;
-  game.players[1].pieces[0]=47;
+  game.players[1].pieces[0]=34;
   game.dice=1;
   const safe=globalTrackIndex("red",8);
   assert.equal(SAFE_CELLS.has(safe),true);
   game=applyMove(game,0,{pieceIndex:0,from:7,to:8});
-  assert.equal(game.players[1].pieces[0],47);
+  assert.equal(game.players[1].pieces[0],34);
 });
 
 test("the engine supports two, three and four players",()=>{
