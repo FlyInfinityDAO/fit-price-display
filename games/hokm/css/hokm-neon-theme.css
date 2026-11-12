@@ -925,3 +925,12 @@ html[dir="rtl"] body .arena .table-inner .player-chip,
 html[dir="rtl"] body .arena .table-inner .table-meta,
 html[dir="rtl"] body .arena .table-inner .table-message{direction:rtl!important}
 html[dir="rtl"] body .arena .table-inner .hand{direction:ltr!important}
+
+/* Keep the table and played-card coordinates physical LTR in every Persian browser mode,
+   including Android where the document root deliberately remains LTR. */
+body.fi-rtl .arena .table-inner,
+body.fi-rtl .arena .table-inner > .table-center,
+body.fi-rtl .arena .table-inner .trick-cards{direction:ltr!important}
+body.fi-rtl .arena .table-inner .player-chip,
+body.fi-rtl .arena .table-inner .table-meta,
+body.fi-rtl .arena .table-inner .table-message{direction:rtl!important}
