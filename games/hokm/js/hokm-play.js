@@ -88,10 +88,17 @@ function animatePlayedCard(node,entry,seat){
  const key=String(entry.card.id||entry.card.rank+entry.card.suit)+"@"+seat;
  if(node.dataset.playedCardKey===key)return;
  node.dataset.playedCardKey=key;
- const from={0:[0,150],1:[-155,0],2:[0,-150],3:[155,0]}[seat]||[0,0];
- node.style.setProperty("--hokm-from-x",from[0]+"px");node.style.setProperty("--hokm-from-y",from[1]+"px");
- node.classList.remove("hokm-card-arriving");node.style.animation="none";void node.offsetWidth;node.style.animation="";
  node.classList.add("hokm-card-arriving");
+ const source=document.querySelector(seatElements(seat).chip);
+ if(!source||typeof node.animate!=="function"||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+ const from=source.getBoundingClientRect(),to=node.getBoundingClientRect();
+ const dx=from.left+from.width/2-(to.left+to.width/2),dy=from.top+from.height/2-(to.top+to.height/2);
+ const motion=node.animate([
+  {opacity:.12,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(.62) rotate(-8deg)",filter:"drop-shadow(0 0 13px rgba(215,184,102,.6))"},
+  {opacity:.78,transform:"translate3d("+Math.round(dx*.42)+"px,"+Math.round(dy*.42)+"px,0) scale(.88) rotate(-3deg)",offset:.68},
+  {opacity:1,transform:"translate3d(0,0,0) scale(1) rotate(0deg)",filter:"none"}
+ ],{duration:2200,easing:"cubic-bezier(.18,.72,.22,1)",fill:"both"});
+ motion.onfinish=()=>motion.cancel();
 }
 function renderTrick(){
  const nodes=[...document.querySelectorAll(".trick-cards .played-card")];
