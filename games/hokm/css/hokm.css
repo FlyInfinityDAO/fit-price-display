@@ -818,3 +818,157 @@ footer span{color:var(--fi-gold)}
 .fi-game-language-select{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;opacity:0!important;pointer-events:none!important}
 @media(max-width:620px){.fi-game-language .language-button{width:32px;height:32px;font-size:14px}}
 @media(prefers-reduced-motion:reduce){.fi-game-language .language-button,.fi-game-language .language-menu,.language-menu.fi-game-language-menu button{transition:none}}
+
+
+/* Complete velvet table rebuild: responsive geometry, readable cards and score hierarchy. */
+.game-shell{overflow:hidden}
+.hokm-round-scoreboard{
+ position:relative;inset:auto;z-index:2;display:grid;grid-template-columns:1fr 1fr;
+ gap:12px;margin:0 0 12px;pointer-events:none
+}
+.hokm-round-score{
+ display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:3px 12px;
+ min-width:0;max-width:none;padding:10px 14px;border:1px solid #d7b86699;border-radius:13px;
+ box-shadow:0 5px 18px #17040b66
+}
+.hokm-round-score span{grid-column:1/-1;font-size:clamp(8px,1vw,11px);font-weight:900;letter-spacing:.055em;line-height:1.35}
+.hokm-round-score small{font-size:10px;opacity:.88}
+.hokm-round-score b{font-size:clamp(20px,2.2vw,27px);line-height:1;font-variant-numeric:tabular-nums}
+.velvet-table{
+ position:relative;min-height:0;height:auto;overflow:hidden;isolation:isolate;
+ border:9px solid #d7b866;border-radius:42px;
+ background:
+  radial-gradient(ellipse at 50% 48%,rgba(143,37,72,.42),transparent 60%),
+  radial-gradient(ellipse at center,#711b39 0%,#64152f 62%,#4d1025 100%);
+ box-shadow:inset 0 0 0 2px #3d0b1c,inset 0 0 0 6px #9b6c47,
+ inset 0 0 42px rgba(28,3,14,.48),0 14px 34px #23081199;
+ padding:18px
+}
+.table-inner{position:relative;width:100%;max-width:1120px;min-height:clamp(570px,58vw,700px);margin:0 auto}
+.seat{z-index:2;gap:9px;min-width:0}
+.seat-north{top:8px;left:50%;width:min(76%,720px);transform:translateX(-50%);flex-direction:column-reverse}
+.seat-south{bottom:8px;left:50%;width:min(92%,900px);transform:translateX(-50%);flex-direction:column}
+.seat-west{left:8px;top:50%;width:82px;transform:translateY(-50%);flex-direction:column}
+.seat-east{right:8px;top:50%;width:82px;transform:translateY(-50%);flex-direction:column}
+.player-chip{width:auto;max-width:100%;min-width:0;min-height:48px;padding:7px 30px 7px 9px;gap:8px;border-radius:14px}
+.seat-north .player-chip,.seat-south .player-chip{width:min(100%,205px)}
+.seat-west .player-chip,.seat-east .player-chip{width:100%;justify-content:center;padding-inline:5px}
+.player-chip>div{min-width:0;flex:1}
+.player-chip b{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.avatar{flex:0 0 30px}
+.hand{display:flex;align-items:center;justify-content:center;min-width:0;max-width:100%}
+.hand-south,.hand-north{
+ width:100%;max-width:100%;overflow:visible;justify-content:center;flex-wrap:nowrap;
+ padding:8px 4px 12px;gap:0
+}
+.hokm-card{
+ flex:0 1 clamp(24px,3.15vw,42px);width:clamp(24px,3.15vw,42px);
+ min-width:0;height:clamp(39px,4.8vw,62px);margin-left:clamp(-14px,-.85vw,-7px);
+ padding:4px 3px;touch-action:manipulation;user-select:none;-webkit-user-select:none
+}
+.hokm-card:first-child{margin-left:0}
+.hokm-card .card-corner{font-size:clamp(9px,.9vw,12px)}
+.hokm-card .card-center{font-size:clamp(16px,1.8vw,23px)}
+.hokm-card.playable{cursor:pointer;pointer-events:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.hokm-card.playable:active{transform:translateY(-7px) scale(1.025);border-color:#ffe7a1}
+.hand-side{flex-direction:column;justify-content:center;max-height:225px;overflow:visible}
+.hand-side .hokm-card-back{width:30px;height:42px;margin:0 0 -24px;flex:0 0 30px}
+.table-center{
+ z-index:1;left:50%;top:50%;transform:translate(-50%,-50%);
+ width:min(52%,570px);max-width:570px;padding:12px 10px;
+ border:1px solid rgba(215,184,102,.28);border-radius:22px;
+ background:rgba(54,9,26,.24);box-shadow:0 0 36px rgba(32,4,16,.16)
+}
+.table-meta{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.trick-cards{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,auto);
+ justify-items:center;align-items:center;gap:8px;width:min(100%,230px);margin:14px auto
+}
+.trick-cards .played-card{width:clamp(44px,5.2vw,66px);height:clamp(62px,7.2vw,92px);font-size:clamp(19px,2.4vw,30px)}
+.trick-cards .played-card:nth-child(1){grid-column:1;grid-row:2}
+.trick-cards .played-card:nth-child(2){grid-column:1;grid-row:1}
+.trick-cards .played-card:nth-child(3){grid-column:2;grid-row:1}
+.trick-cards .played-card:nth-child(4){grid-column:2;grid-row:2}
+.hokm-turn-clock{
+ width:54px;height:54px;min-width:54px;padding:0;border-radius:50%;
+ display:grid;place-items:center;justify-self:center;
+ font-size:17px;font-weight:900;font-variant-numeric:tabular-nums;
+ border:3px solid transparent;
+ background:linear-gradient(#421022,#421022) padding-box,
+ conic-gradient(#ffe08a calc(var(--ring-progress,1)*1turn),#5a273b 0) border-box;
+ box-shadow:0 0 18px rgba(255,205,93,.24)
+}
+.hokm-turn-clock[hidden]{display:none!important}
+.player-chip.active{
+ border-color:#ffe08a!important;
+ box-shadow:0 0 0 1px #ffe08a,0 0 10px 3px rgba(255,202,75,.68),0 0 24px rgba(255,174,44,.4)!important;
+ animation:hokmActiveGold 1.35s ease-in-out infinite!important
+}
+@keyframes hokmActiveGold{0%,100%{box-shadow:0 0 0 1px #ffe08a,0 0 9px 2px rgba(255,202,75,.5)}50%{box-shadow:0 0 0 2px #fff0b8,0 0 17px 6px rgba(255,190,57,.85),0 0 30px rgba(255,157,28,.45)}}
+.hokm-seat-ring{width:34px;height:34px;font-size:10px;inset-inline-end:-14px;z-index:6}
+.hokm-seat-ring.turn{background:conic-gradient(#ffe08a calc(var(--ring-progress)*1turn),#542034 0);color:#fff5d6;border-color:#fff0b8;box-shadow:0 0 13px rgba(255,197,68,.55)}
+.hokm-seat-ring.disconnect{background:conic-gradient(#ff777e calc(var(--ring-progress)*1turn),#542034 0);color:#fff;border-color:#ff9da2;box-shadow:0 0 12px rgba(255,90,105,.38)}
+.trick-cards .played-card:not(.empty){animation:hokmCardArrive .72s cubic-bezier(.2,.7,.2,1) both}
+@keyframes hokmCardArrive{
+ from{opacity:.25;transform:translate(var(--from-x,0),var(--from-y,0)) scale(.68) rotate(-8deg);filter:drop-shadow(0 0 8px rgba(255,220,145,.55))}
+ to{opacity:1;transform:translate(0,0) scale(1) rotate(0);filter:none}
+}
+.trick-cards .played-card.from-south{--from-y:72px}
+.trick-cards .played-card.from-north{--from-y:-72px}
+.trick-cards .played-card.from-west{--from-x:-72px}
+.trick-cards .played-card.from-east{--from-x:72px}
+.game-bottom{grid-template-columns:minmax(0,1fr) minmax(76px,auto) minmax(0,1fr)}
+.game-bottom .team-score{min-width:0;overflow:hidden}
+@media(max-width:760px){
+ .game-shell{padding:12px 9px}
+ .hokm-round-scoreboard{gap:7px;margin-bottom:9px}
+ .hokm-round-score{padding:7px 8px;gap:2px 6px}
+ .hokm-round-score span{font-size:clamp(7px,1.7vw,9px)}
+ .hokm-round-score small{font-size:8px}
+ .hokm-round-score b{font-size:19px}
+ .velvet-table{padding:10px 7px;border-width:5px;border-radius:27px}
+ .table-inner{min-height:clamp(510px,145vw,620px)}
+ .seat-north{top:5px;width:84%}
+ .seat-south{bottom:5px;width:98%}
+ .seat-west{left:1px;width:58px}
+ .seat-east{right:1px;width:58px}
+ .seat-north .player-chip,.seat-south .player-chip{width:min(54%,180px);min-height:40px}
+ .player-chip{min-height:39px;padding:5px 23px 5px 6px;gap:5px}
+ .avatar{width:24px;height:24px;flex-basis:24px;font-size:10px}
+ .player-chip b{font-size:10px}
+ .player-chip small{font-size:8px}
+ .seat-west .player-chip,.seat-east .player-chip{width:58px;min-height:38px;padding:4px 2px;gap:3px;flex-direction:column}
+ .seat-west .player-chip>div,.seat-east .player-chip>div{width:100%;max-width:100%;text-align:center}
+ .seat-west .player-chip em,.seat-east .player-chip em{display:none}
+ .hand-south,.hand-north{width:100%;max-width:100%;padding:5px 1px 9px}
+ .hokm-card{flex:0 1 clamp(21px,7.7vw,35px);width:clamp(21px,7.7vw,35px);height:clamp(35px,11.2vw,50px);margin-left:clamp(-14px,-3.3vw,-8px);padding:3px 2px}
+ .hokm-card .card-corner{font-size:clamp(8px,2.2vw,10px)}
+ .hokm-card .card-center{font-size:clamp(14px,4vw,19px)}
+ .hand-side{max-height:180px}
+ .hand-side .hokm-card-back{width:23px;height:34px;flex-basis:23px;margin-bottom:-19px}
+ .table-center{width:calc(100% - 126px);max-width:330px;padding:8px 5px;border-radius:15px}
+ .table-meta{gap:4px}
+ .hakem-pill,.trump-pill{font-size:8px;padding:4px 6px;gap:4px}
+ .hakem-pill b,.trump-pill b{font-size:11px}
+ .trick-cards{width:min(100%,145px);gap:5px;margin:8px auto}
+ .trick-cards .played-card{width:clamp(36px,10vw,48px);height:clamp(51px,14vw,66px);font-size:clamp(16px,4.8vw,21px)}
+ .table-message{font-size:10px;line-height:1.35}
+ .hokm-turn-clock{width:46px;height:46px;min-width:46px;font-size:15px}
+ .hokm-seat-ring{width:27px;height:27px;font-size:8px;inset-inline-end:-8px}
+ .game-bottom{gap:5px}
+ .game-bottom .team-score,.game-bottom .round-info{padding:7px 4px}
+ .game-bottom .team-score small,.round-info span{font-size:clamp(6px,1.7vw,8px)}
+ .team-stat{font-size:7px}
+}
+@media(max-width:380px){
+ .table-inner{min-height:500px}
+ .seat-west,.seat-east{width:52px}
+ .seat-west .player-chip,.seat-east .player-chip{width:52px}
+ .table-center{width:calc(100% - 112px)}
+ .hokm-card{flex-basis:clamp(20px,7.4vw,28px);width:clamp(20px,7.4vw,28px);margin-left:-8px}
+ .hokm-round-score{padding:6px}
+ .hokm-round-score span{font-size:6.5px}
+}
+@media(prefers-reduced-motion:reduce){
+ .player-chip.active,.trick-cards .played-card:not(.empty){animation:none!important}
+}
