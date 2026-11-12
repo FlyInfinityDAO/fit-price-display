@@ -20,6 +20,10 @@ cp games/backgammon/js/backgammon-engine.js dist/games/backgammon/js/backgammon-
 cp logo.png background-desktop.png background-mobile.png dist/
 cp walletconnect-bridge.js dist/walletconnect-bridge.js
 
+# Shared game chrome and language/ambient scripts are referenced by both game pages
+# via ../*. Copy them into dist/games so those URLs resolve in the standalone Pages build.
+cp games/fi-neon-games.css games/shared-language-menu.js games/shared-neon-ambient.js dist/games/
+
 cat > dist/index.html <<'HTML'
 <!doctype html>
 <html lang="en">
@@ -40,3 +44,6 @@ test -s dist/games/chess-arena/index.html
 test -s dist/games/backgammon/index.html
 test -s dist/games/backgammon/js/backgammon-engine.js
 test -s dist/walletconnect-bridge.js
+test -s dist/games/fi-neon-games.css
+test -s dist/games/shared-language-menu.js
+test -s dist/games/shared-neon-ambient.js
