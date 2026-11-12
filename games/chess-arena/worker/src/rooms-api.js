@@ -343,5 +343,73 @@ export async function handleRoomApi(request, env) {
     return new Response(response.body, { status: response.status, headers: { "content-type": "application/json", "cache-control": "no-store" } });
   }
 
+
+  if (request.method === "GET" && (path === "/api/ludo/stats/me" || path === "/api/ludo/stats/leaderboard")) {
+    const auth = await authorize(request, env);
+    if (auth.response) return auth.response;
+    await env.DB.prepare("CREATE TABLE IF NOT EXISTS ludo_player_results (room_code TEXT NOT NULL,wallet_address TEXT NOT NULL,outcome TEXT NOT NULL,points INTEGER NOT NULL,created_at INTEGER NOT NULL,PRIMARY KEY(room_code,wallet_address))").run();
+    if (path === "/api/ludo/stats/me") {
+      const row = await env.DB.prepare("SELECT wallet_address,COUNT(*) AS games,COALESCE(SUM(points),0) AS points,SUM(CASE WHEN outcome='win' THEN 1 ELSE 0 END) AS wins,SUM(CASE WHEN outcome='loss' THEN 1 ELSE 0 END) AS losses FROM ludo_player_results WHERE wallet_address=? GROUP BY wallet_address").bind(auth.wallet.toLowerCase()).first();
+      const totals = row || { wallet_address: auth.wallet.toLowerCase(), games: 0, points: 0, wins: 0, losses: 0 };
+      const rank = await env.DB.prepare("WITH totals AS (SELECT wallet_address,SUM(points) AS points FROM ludo_player_results GROUP BY wallet_address) SELECT COUNT(*)+1 AS rank FROM totals WHERE points>?").bind(totals.points).first();
+      return json({ok:true,stats:{...totals,rank:rank?.rank||1}});
+    }
+    const leaderboard = await env.DB.prepare("SELECT wallet_address,COUNT(*) AS games,SUM(points) AS points,SUM(CASE WHEN outcome='win' THEN 1 ELSE 0 END) AS wins FROM ludo_player_results GROUP BY wallet_address ORDER BY points DESC,wins DESC,games DESC LIMIT 20").all();
+    return json({ok:true,leaderboard:leaderboard.results||[]});
+  }
+
+  const ludoRoomMatch = path.match(/^\\/api\\/ludo\\/rooms\\/([A-HJ-NP-Z2-9]{6})(?:\\/(ticket|ws))?$/);
+  if (request.method === "POST" && path === "/api/ludo/rooms/create") {
+    const auth = await authorize(request, env);
+    if (auth.response) return auth.response;
+    const body = await request.json().catch(() => ({}));
+    const playerCount = Math.max(2, Math.min(4, Number(body.playerCount) || 4));
+    for (let attempt=0; attempt<5; attempt++) {
+      const code=makeRoomCode(),stub=env.LUDO_ROOMS.get(env.LUDO_ROOMS.idFromName(code));
+      const response=await stub.fetch("https://ludo-room.internal/create?code="+code+"&players="+playerCount,{method:"POST",headers:{"x-ludo-wallet":auth.wallet.toLowerCase()}});
+      if(response.status===409)continue;
+      const data=await response.json();if(!response.ok||data.ok!==true)return json(data,response.status);
+      return json({...data,roomCode:code});
+    }
+    return json({ok:false,error:"Could not allocate a Ludo room."},503);
+  }
+  if (request.method === "POST" && path === "/api/ludo/rooms/join") {
+    const auth=await authorize(request,env);if(auth.response)return auth.response;
+    const body=await request.json().catch(()=>({}));if(!validRoomCode(body.roomCode))return json({ok:false,error:"Enter a valid six-character room code."},400);
+    const code=body.roomCode.toUpperCase(),stub=env.LUDO_ROOMS.get(env.LUDO_ROOMS.idFromName(code));
+    const response=await stub.fetch("https://ludo-room.internal/join",{method:"POST",headers:{"x-ludo-wallet":auth.wallet.toLowerCase()}});
+    return new Response(response.body,{status:response.status,headers:{"content-type":"application/json","cache-control":"no-store"}});
+  }
+  if (request.method === "POST" && ludoRoomMatch && ludoRoomMatch[2] === "ticket") {
+    const auth=await authorize(request,env);if(auth.response)return auth.response;
+    const code=ludoRoomMatch[1],stub=env.LUDO_ROOMS.get(env.LUDO_ROOMS.idFromName(code));
+    const member=await stub.fetch("https://ludo-room.internal/check-player",{headers:{"x-ludo-wallet":auth.wallet.toLowerCase()}});
+    if(!member.ok)return new Response(member.body,{status:member.status,headers:{"content-type":"application/json"}});
+    const ticket=crypto.randomUUID().replace(/-/g,""),now=Math.floor(Date.now()/1000);
+    await env.DB.prepare("INSERT INTO websocket_tickets (ticket,room_code,wallet_address,expires_at,used,created_at) VALUES (?,?,?,?,0,?)").bind(ticket,"LD"+code,auth.wallet.toLowerCase(),now+30,now).run();
+    const wsUrl=new URL("/api/ludo/rooms/"+code+"/ws?ticket="+ticket,request.url);wsUrl.protocol=wsUrl.protocol==="https:"?"wss:":"ws:";
+    return json({ok:true,ticket,socketUrl:wsUrl.toString(),expiresAt:now+30});
+  }
+  if (request.method === "GET" && ludoRoomMatch && ludoRoomMatch[2] === "ws" && request.headers.get("Upgrade")?.toLowerCase()==="websocket") {
+    const origin=request.headers.get("Origin");if(!isAllowedFrontendOrigin(origin,env))return json({ok:false,error:"Origin not allowed."},403);
+    const code=ludoRoomMatch[1],ticket=url.searchParams.get("ticket")||"";
+    if(!/^[a-f0-9]{32}$/.test(ticket))return json({ok:false,error:"WebSocket ticket is invalid."},401);
+    const now=Math.floor(Date.now()/1000),row=await env.DB.prepare("SELECT wallet_address,expires_at,used FROM websocket_tickets WHERE ticket=? AND room_code=?").bind(ticket,"LD"+code).first();
+    if(!row||row.used!==0||row.expires_at<=now)return json({ok:false,error:"WebSocket ticket expired."},401);
+    const wallet=getAddress(row.wallet_address);let balance;
+    try{balance=await getFitBalance(env,wallet);}catch{return json({ok:false,error:"BSC RPC is temporarily unavailable."},503,{"retry-after":"5"});}
+    if(balance<MIN_FIT_WEI)return json({ok:false,error:"At least 1 FIT is required."},403);
+    const consumed=await env.DB.prepare("UPDATE websocket_tickets SET used=1 WHERE ticket=? AND room_code=? AND used=0 AND expires_at>?").bind(ticket,"LD"+code,Math.floor(Date.now()/1000)).run();
+    if(!consumed.meta||consumed.meta.changes!==1)return json({ok:false,error:"WebSocket ticket already used."},409);
+    const stub=env.LUDO_ROOMS.get(env.LUDO_ROOMS.idFromName(code));
+    return stub.fetch("https://ludo-room.internal/ws",{headers:{"x-ludo-wallet":wallet.toLowerCase(),"Upgrade":"websocket"}});
+  }
+  if (request.method === "GET" && ludoRoomMatch && !ludoRoomMatch[2]) {
+    const auth=await authorize(request,env);if(auth.response)return auth.response;
+    const stub=env.LUDO_ROOMS.get(env.LUDO_ROOMS.idFromName(ludoRoomMatch[1]));
+    const response=await stub.fetch("https://ludo-room.internal/snapshot",{headers:{"x-ludo-wallet":auth.wallet.toLowerCase()}});
+    return new Response(response.body,{status:response.status,headers:{"content-type":"application/json","cache-control":"no-store"}});
+  }
+
   return null;
 }
