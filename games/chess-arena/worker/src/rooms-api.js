@@ -358,7 +358,7 @@ export async function handleRoomApi(request, env) {
     return json({ok:true,leaderboard:leaderboard.results||[]});
   }
 
-  const ludoRoomMatch = path.match(/^\\/api\\/ludo\\/rooms\\/([A-HJ-NP-Z2-9]{6})(?:\\/(ticket|ws))?$/);
+  const ludoRoomMatch = path.match(/^\/api\/ludo\/rooms\/([A-HJ-NP-Z2-9]{6})(?:\/(ticket|ws))?$/);
   if (request.method === "POST" && path === "/api/ludo/rooms/create") {
     const auth = await authorize(request, env);
     if (auth.response) return auth.response;
