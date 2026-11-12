@@ -513,3 +513,144 @@ html body .arena .player-chip.active{
   html body .arena > .game-shell,
   html body .arena > .sound-panel{box-shadow:0 9px 24px rgba(3,8,25,.4),inset 0 1px rgba(255,255,255,.07)!important}
 }
+
+
+/* v5 — apply the four-color palette to the complete portal UI only.
+   Explicitly exclude .game-shell and every descendant: the entire Hokm table,
+   felt, player seats, cards, score overlays and table controls remain untouched. */
+html body .arena{
+  --hokm-ink:#111C35;
+  --hokm-cyan:#00D9FF;
+  --hokm-blue:#456CFF;
+  --hokm-violet:#8B5CF6;
+  --hokm-copy:#F0F6FF;
+  --hokm-muted:#C1CDE5;
+  color:#F0F6FF!important;
+}
+html body .arena > .topbar,
+html body .arena > .hero,
+html body .arena > .access-card,
+html body .arena > .match-settings,
+html body .arena > .sound-panel{
+  color:#F0F6FF!important;
+  background:linear-gradient(135deg,rgba(17,28,53,.98),rgba(27,43,83,.96))!important;
+  border:1px solid rgba(69,108,255,.68)!important;
+  box-shadow:0 12px 30px rgba(3,8,25,.38),inset 0 1px rgba(255,255,255,.08),0 0 20px rgba(69,108,255,.13)!important;
+}
+html body .arena > .topbar{border-color:rgba(0,217,255,.68)!important}
+html body .arena > .hero{border-color:rgba(139,92,246,.78)!important}
+html body .arena > .access-card{border-color:rgba(0,217,255,.76)!important}
+html body .arena > .match-settings{border-color:rgba(69,108,255,.78)!important}
+html body .arena > .sound-panel{border-color:rgba(139,92,246,.76)!important}
+
+/* Headings and all non-table copy. */
+html body .arena > .hero h1{
+  background:linear-gradient(100deg,#00D9FF 0%,#456CFF 52%,#8B5CF6 100%)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;color:transparent!important;
+  text-shadow:none!important;
+}
+html body .arena > .hero p,
+html body .arena > .access-card p,
+html body .arena > .match-settings p,
+html body .arena > .sound-panel p,
+html body .arena > footer,
+html body .arena > footer span,
+html body .arena .minimum small,
+html body .arena .tier-rules span,
+html body .arena .difficulty-control,
+html body .arena .volume-control{
+  color:#C1CDE5!important;-webkit-text-fill-color:#C1CDE5!important;
+}
+html body .arena > .access-card h2,
+html body .arena > .match-settings h3,
+html body .arena > .sound-panel h3{
+  color:#F0F6FF!important;-webkit-text-fill-color:#F0F6FF!important;
+  text-shadow:0 0 16px rgba(69,108,255,.16)!important;
+}
+html body .arena > .topbar .brand-name{color:#F0F6FF!important;-webkit-text-fill-color:#F0F6FF!important}
+html body .arena > .topbar .brand-name small,
+html body .arena > .topbar .network,
+html body .arena > .topbar .dashboard-link,
+html body .arena > .access-card .eyebrow,
+html body .arena > .match-settings .eyebrow,
+html body .arena > .sound-panel .eyebrow{color:#00D9FF!important;-webkit-text-fill-color:#00D9FF!important}
+html body .arena > .hero .eyebrow{color:#B99BFF!important;-webkit-text-fill-color:#B99BFF!important}
+html body .arena > .access-card .access-mark{color:#8B5CF6!important;-webkit-text-fill-color:#B99BFF!important}
+html body .arena > .topbar .brand-logo{border-color:#00D9FF!important;box-shadow:0 0 13px rgba(0,217,255,.25)!important}
+
+/* Access status, minimum balance and tier cards. */
+html body .arena > .access-card .status{color:#00D9FF!important;-webkit-text-fill-color:#00D9FF!important}
+html body .arena > .access-card .minimum,
+html body .arena > .match-settings .tier-rules article{
+  color:#F0F6FF!important;
+  background:linear-gradient(135deg,rgba(17,28,53,.99),rgba(29,46,88,.96))!important;
+  border:1px solid rgba(69,108,255,.62)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.07),0 7px 18px rgba(3,8,25,.24)!important;
+}
+html body .arena > .access-card .minimum{border-color:rgba(0,217,255,.72)!important}
+html body .arena > .access-card .minimum>span,
+html body .arena > .access-card .minimum strong{color:#00D9FF!important;-webkit-text-fill-color:#00D9FF!important}
+html body .arena > .access-card .minimum b{color:#F0F6FF!important;-webkit-text-fill-color:#F0F6FF!important}
+html body .arena > .match-settings .tier-rules article:nth-child(odd){border-color:rgba(0,217,255,.76)!important}
+html body .arena > .match-settings .tier-rules article:nth-child(even){border-color:rgba(139,92,246,.82)!important}
+html body .arena > .match-settings .tier-rules article:nth-child(odd) b{color:#00D9FF!important;-webkit-text-fill-color:#00D9FF!important}
+html body .arena > .match-settings .tier-rules article:nth-child(even) b{color:#B99BFF!important;-webkit-text-fill-color:#B99BFF!important}
+
+/* Wallet actions, difficulty selector, navigation and language control. */
+html body .arena > .access-card .wallet-actions .primary-btn{
+  color:#111C35!important;-webkit-text-fill-color:#111C35!important;
+  border:1px solid #00D9FF!important;
+  background:linear-gradient(110deg,#00D9FF,#91B8FF)!important;
+  box-shadow:0 7px 22px rgba(0,217,255,.25)!important;
+}
+html body .arena > .access-card .wallet-actions .secondary-btn,
+html body .arena > .match-settings button,
+html body .arena > .sound-panel button{
+  color:#F0F6FF!important;-webkit-text-fill-color:#F0F6FF!important;
+  border:1px solid rgba(139,92,246,.84)!important;
+  background:linear-gradient(125deg,rgba(69,108,255,.48),rgba(139,92,246,.44))!important;
+  box-shadow:0 6px 18px rgba(4,9,28,.26),inset 0 1px rgba(255,255,255,.1)!important;
+}
+html body .arena > .topbar .network,
+html body .arena > .topbar .dashboard-link,
+html body .arena > .topbar .fi-game-language .language-button,
+html body .arena > .match-settings select{
+  color:#F0F6FF!important;
+  background:rgba(17,28,53,.98)!important;
+  border:1px solid rgba(0,217,255,.58)!important;
+}
+html body .arena > .topbar .dashboard-link,
+html body .arena > .topbar .fi-game-language .language-button{color:#00D9FF!important}
+html body .arena > .match-settings select option{background:#111C35!important;color:#F0F6FF!important}
+html body .arena > .topbar .network i{background:#00D9FF!important;box-shadow:0 0 10px #00D9FF!important}
+html body .arena > .sound-panel .volume-control input{accent-color:#00D9FF!important}
+html body .arena > .match-settings select,
+html body .arena > .sound-panel input{accent-color:#00D9FF!important}
+html body .arena > .topbar button:focus-visible,
+html body .arena > .topbar a:focus-visible,
+html body .arena > .access-card button:focus-visible,
+html body .arena > .match-settings button:focus-visible,
+html body .arena > .match-settings select:focus-visible,
+html body .arena > .sound-panel button:focus-visible,
+html body .arena > .sound-panel input:focus-visible{
+  outline:2px solid #00D9FF!important;outline-offset:3px!important;
+}
+html body .arena > .access-card button:hover,
+html body .arena > .match-settings button:hover,
+html body .arena > .sound-panel button:hover,
+html body .arena > .topbar a:hover{
+  border-color:#00D9FF!important;box-shadow:0 0 20px rgba(0,217,255,.24)!important;
+}
+
+/* Mobile: retain contrast and avoid adding width or changing layout. */
+@media(max-width:760px){
+  html body .arena > .topbar,
+  html body .arena > .hero,
+  html body .arena > .access-card,
+  html body .arena > .match-settings,
+  html body .arena > .sound-panel{
+    box-shadow:0 9px 24px rgba(3,8,25,.4),inset 0 1px rgba(255,255,255,.07)!important;
+  }
+}
+/* Intentionally no selector targets .game-shell or its descendants. */
