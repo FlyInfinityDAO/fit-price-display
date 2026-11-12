@@ -890,3 +890,9 @@ html body .arena .table-inner .player-chip.active{border:1px solid #fff0b2!impor
  .table-inner .trick-cards{grid-template-columns:repeat(2,38px)!important;grid-template-rows:repeat(2,54px)!important}
 }
 @media(prefers-reduced-motion:reduce){html body .arena .table-inner .player-chip.active,.table-inner .trick-cards .played-card:not(.empty){animation:none!important}}
+
+/* v3: gold is reserved for the player whose turn is active. */
+body .arena .player-chip.active{border:1px solid #f5d77b!important;box-shadow:0 0 0 1px rgba(245,215,123,.78),0 0 13px rgba(245,196,72,.72),0 0 28px rgba(245,196,72,.48),inset 0 0 13px rgba(245,196,72,.16)!important;animation:hokmGoldTurnPulse 1.55s ease-in-out infinite!important}
+body .arena .player-chip.active b{color:#fff0b8!important;text-shadow:0 0 7px rgba(255,213,105,.95),0 0 16px rgba(245,196,72,.72)!important}
+@keyframes hokmGoldTurnPulse{0%,100%{box-shadow:0 0 0 1px rgba(245,215,123,.65),0 0 10px rgba(245,196,72,.5),0 0 20px rgba(245,196,72,.3),inset 0 0 9px rgba(245,196,72,.1)}50%{box-shadow:0 0 0 2px rgba(255,230,153,.95),0 0 18px rgba(255,207,86,.95),0 0 36px rgba(245,196,72,.7),inset 0 0 16px rgba(245,196,72,.22)}}
+@media(prefers-reduced-motion:reduce){body .arena .player-chip.active{animation:none!important;box-shadow:0 0 0 2px #f5d77b,0 0 20px rgba(245,196,72,.8),inset 0 0 12px rgba(245,196,72,.18)!important}}
