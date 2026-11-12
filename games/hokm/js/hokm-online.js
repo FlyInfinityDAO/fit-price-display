@@ -157,7 +157,7 @@ async function copyRoomCode(){
 }
 function displaySeat(seat){return (seat-ownSeat+4)%4}
 function makeSeatRing(kind){const ring=document.createElement("span");ring.className="hokm-seat-ring "+kind;ring.setAttribute("aria-hidden","true");return ring}
-function renderSeatRing(chip,kind,deadline,now){let ring=chip.querySelector(".hokm-seat-ring."+kind);if(!deadline){ring?.remove();return}if(!ring){ring=makeSeatRing(kind);chip.appendChild(ring)}const total=kind==="turn"?30000:(lastState?.game?.reconnectGraceMs||60000);const left=Math.max(0,deadline-now);ring.style.setProperty("--ring-progress",String(Math.max(0,Math.min(1,left/total))));ring.textContent=String(Math.ceil(left/1000));ring.title=kind==="turn"?t("turnCountdown"):t("reconnectCountdown");}
+function renderSeatRing(chip,kind,deadline,now){let ring=chip.querySelector(".hokm-seat-ring."+kind);if(!deadline){ring?.remove();return}if(!ring){ring=makeSeatRing(kind);chip.appendChild(ring)}const total=kind==="turn"?30000:60000;const left=Math.max(0,deadline-now);ring.style.setProperty("--ring-progress",String(Math.max(0,Math.min(1,left/total))));ring.textContent=String(Math.ceil(left/1000));ring.setAttribute("role","timer");ring.setAttribute("aria-label",kind==="turn"?t("turnCountdown")+" "+Math.ceil(left/1000):t("reconnectCountdown")+" "+Math.ceil(left/1000));ring.title=ring.getAttribute("aria-label");}
 function seatEls(seat){
  return ({0:{hand:".hand-south",chip:".seat-south .player-chip"},1:{hand:".seat-west .hand",chip:".seat-west .player-chip"},2:{hand:".hand-north",chip:".seat-north .player-chip"},3:{hand:".seat-east .hand",chip:".seat-east .player-chip"}})[seat];
 }
@@ -215,9 +215,9 @@ function renderState(s){
    }
   }
   const nodes=[...document.querySelectorAll(".trick-cards .played-card")];
-  nodes.forEach(n=>{n.classList.add("empty");n.classList.remove("red","black");n.textContent="·"});
+  nodes.forEach(n=>{n.classList.add("empty");n.classList.remove("red","black","from-south","from-west","from-north","from-east");n.textContent="·";delete n.dataset.cardLabel;delete n.dataset.playerSeat});
   const entries=(game.lastTrick&&game.lastTrick.length?game.lastTrick:game.trick)||[];
-  entries.forEach(entry=>{const visual=displaySeat(entry.player),node=nodes[visual];if(node){node.classList.remove("empty");node.classList.toggle("red",["♥","♦"].includes(entry.card.suit));node.classList.toggle("black",!["♥","♦"].includes(entry.card.suit));node.textContent=entry.card.rank+entry.card.suit}});
+  entries.forEach(entry=>{const visual=displaySeat(entry.player),node=nodes[visual],label=entry.card.rank+entry.card.suit;if(node){node.classList.remove("empty");node.classList.toggle("red",["♥","♦"].includes(entry.card.suit));node.classList.toggle("black",!["♥","♦"].includes(entry.card.suit));const source=["south","west","north","east"][visual]||"south";if(node.dataset.cardLabel!==label||node.dataset.playerSeat!==String(entry.player)){node.classList.add("from-"+source);void node.offsetWidth;}node.dataset.cardLabel=label;node.dataset.playerSeat=String(entry.player);node.textContent=label}});
   const trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent=game.trump||"—";
   const hakem=document.getElementById("tableHakem"),hakemActual=game.hakem, hakemVisual=displaySeat(hakemActual),hakemChip=document.querySelector(seatEls(hakemVisual).chip+" b");if(hakem)hakem.textContent=hakemChip?hakemChip.textContent:(players.find(p=>p.seat===hakemActual)?.cpu?t("cpu"):t("seat")+" "+(hakemActual+1));
   const currentScores=document.querySelectorAll(".hokm-round-score b");
