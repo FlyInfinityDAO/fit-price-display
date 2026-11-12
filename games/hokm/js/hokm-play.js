@@ -227,7 +227,7 @@ function completeRound(winner){
 }
 function nextRound(){
  if(!match||match.finished)return;
- const hakem=(game.hakem+1)%4;
+ const hakem=match.round.teamTricks[game.hakem%2] > match.round.teamTricks[1-(game.hakem%2)] ? game.hakem : (game.hakem+1)%4;
  beginRound(hakem);
 }
 function cardFxSafe(kind){try{if(typeof cardFx==="function")cardFx(kind)}catch(e){}}
