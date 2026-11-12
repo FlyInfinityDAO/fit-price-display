@@ -276,3 +276,48 @@ html body.fi-neon-backgammon .arena .danger-btn:hover{
   background:linear-gradient(120deg,rgba(160,38,82,.82),rgba(92,35,92,.68))!important;
   box-shadow:0 0 18px rgba(255,85,125,.24)!important;
 }
+
+
+/* v3 — brand-first animated titles and consistent post-wallet interface cards.
+   This layer styles only information/UI surfaces; game boards and pieces remain untouched. */
+html body.fi-neon-chess .hero h1[data-i18n="gameTitle"],
+html body.fi-neon-backgammon .hero h1[data-i="title"]{
+  background-image:linear-gradient(105deg,#00D9FF 0%,#456CFF 48%,#8B5CF6 100%)!important;
+  background-size:300% 100%!important;
+  background-position:0% 50%!important;
+  -webkit-background-clip:text!important;
+  background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+  color:transparent!important;
+  animation:fiGamesTitleGradientFlow 4.8s ease-in-out infinite alternate!important;
+  will-change:background-position;
+}
+
+/* Wallet-gated cards revealed only after successful signature/verification. */
+html body.fi-neon-chess .arena :is(.checks,.check-row,.eligible-panel,.denied-panel,.rooms-panel,.cpu-panel,.stats-grid>div,.leaderboard-row,.stats-wallet,.stats-leaderboard),
+html body.fi-neon-backgammon .arena :is(.checks,.check-row,.eligible-panel,.denied-panel,.rooms-panel,.mode-card,.players>.player,.control-row,.online-controls,.stats-grid>div,.leaderboard-row,.stats-wallet,.stats-leaderboard){
+  color:var(--fi-neon-copy)!important;
+  border-color:rgba(115,190,255,.34)!important;
+  background:linear-gradient(135deg,rgba(17,28,53,.30),rgba(69,108,255,.14) 58%,rgba(139,92,246,.11))!important;
+  -webkit-backdrop-filter:blur(20px) saturate(180%)!important;
+  backdrop-filter:blur(20px) saturate(180%)!important;
+  box-shadow:0 8px 22px rgba(3,8,25,.16),inset 0 1px 0 rgba(255,255,255,.17),0 0 14px rgba(69,108,255,.07)!important;
+}
+html body.fi-neon-chess .arena :is(.checks,.check-row,.eligible-panel,.denied-panel,.rooms-panel,.cpu-panel,.stats-grid>div,.leaderboard-row,.stats-wallet,.stats-leaderboard) :is(p,small,strong,b,label,span),
+html body.fi-neon-backgammon .arena :is(.checks,.check-row,.eligible-panel,.denied-panel,.rooms-panel,.mode-card,.control-row,.online-controls,.stats-grid>div,.leaderboard-row,.stats-wallet,.stats-leaderboard) :is(p,small,strong,b,label){
+  color:var(--fi-neon-copy)!important;
+}
+html body.fi-neon-chess .arena :is(.checks,.check-row,.eligible-panel,.denied-panel,.rooms-panel,.cpu-panel,.stats-grid>div,.leaderboard-row,.stats-wallet,.stats-leaderboard) :is(small,.muted,.status),
+html body.fi-neon-backgammon .arena :is(.checks,.check-row,.eligible-panel,.denied-panel,.rooms-panel,.mode-card,.control-row,.online-controls,.stats-grid>div,.leaderboard-row,.stats-wallet,.stats-leaderboard) :is(small,.muted,.status){
+  color:var(--fi-neon-muted)!important;
+}
+html body.fi-neon-chess .arena .eligible-panel,
+html body.fi-neon-backgammon .arena .eligible-panel{
+  border-color:rgba(0,217,255,.48)!important;
+  background:linear-gradient(120deg,rgba(0,217,255,.13),rgba(69,108,255,.12),rgba(139,92,246,.10))!important;
+}
+html body.fi-neon-chess .arena .denied-panel,
+html body.fi-neon-backgammon .arena .denied-panel{
+  border-color:rgba(255,115,135,.62)!important;
+  background:linear-gradient(120deg,rgba(130,35,75,.28),rgba(69,30,82,.22))!important;
+}
