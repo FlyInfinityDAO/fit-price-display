@@ -92,7 +92,7 @@ function animateCardFlight(node,source){
  const card=node.cloneNode(true);
  const startX=from.left+from.width/2-to.width/2,startY=from.top+from.height/2-to.height/2;
  const dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+to.height/2)-(from.top+from.height/2);
- card.removeAttribute("id");card.classList.remove("empty","hokm-card-arriving");
+ card.removeAttribute("id");card.removeAttribute("data-player-label");card.classList.remove("empty","hokm-card-arriving");
  Object.assign(card.style,{position:"fixed",left:(from.left+from.width/2-to.width/2)+"px",top:(from.top+from.height/2-to.height/2)+"px",width:to.width+"px",height:to.height+"px",margin:"0",zIndex:"10000",pointerEvents:"none",transformOrigin:"center center",opacity:"1"});
  document.body.appendChild(card);
  const oldOpacity=node.style.opacity;node.style.opacity="0";
@@ -112,19 +112,21 @@ function animatePlayedCard(node,entry,seat){
  if(node.dataset.playedCardKey===key)return;
  node.dataset.playedCardKey=key;
  const source=document.querySelector(seatElements(seat).chip);
+ const label=source?.querySelector("b")?.textContent?.trim();
+ if(label)node.dataset.playerLabel=label;else delete node.dataset.playerLabel;
  animateCardFlight(node,source);
 }
 function renderTrick(){
  const nodes=[...document.querySelectorAll(".trick-cards .played-card")];
  const entries=visibleTrick.length?visibleTrick:(game?game.trick:[]);
- nodes.forEach(node=>{node.classList.add("empty");node.classList.remove("red","black");node.textContent="·"});
+ nodes.forEach(node=>{node.classList.add("empty");node.classList.remove("red","black");node.removeAttribute("data-player-label");node.textContent="·"});
  const active=new Set();
  entries.forEach(entry=>{
   const node=nodes[entry.player];if(!node)return;active.add(entry.player);
   node.classList.remove("empty");node.classList.toggle("red",isRed(entry.card));node.classList.toggle("black",!isRed(entry.card));
   node.textContent=entry.card.rank+entry.card.suit;animatePlayedCard(node,entry,entry.player);
  });
- nodes.forEach((node,index)=>{if(!active.has(index)){node.classList.remove("hokm-card-arriving");node.dataset.playedCardKey="";}});
+ nodes.forEach((node,index)=>{if(!active.has(index)){node.classList.remove("hokm-card-arriving");node.dataset.playedCardKey="";node.removeAttribute("data-player-label");}});
 }
 function render(){
  if(!game)return;
