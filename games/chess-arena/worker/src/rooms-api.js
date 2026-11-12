@@ -377,7 +377,7 @@ export async function handleRoomApi(request, env) {
     const auth=await authorize(request,env);if(auth.response)return auth.response;
     const body=await request.json().catch(()=>({}));
     const playerCount=Math.max(2,Math.min(4,Number(body.playerCount)||2));
-    const humanCount=Math.max(1,Math.min(playerCount,Number(body.humanCount)||1));
+    const humanCount=Math.max(1,Math.min(playerCount-1,Number(body.humanCount)||1));
     const difficulty=["easy","medium","hard"].includes(body.difficulty)?body.difficulty:"medium";
     for(let attempt=0;attempt<5;attempt++){
       const code=makeRoomCode(),stub=env.LUDO_ROOMS.get(env.LUDO_ROOMS.idFromName(code));
