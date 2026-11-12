@@ -49,7 +49,7 @@ test("landing on a non-safe opponent square captures the piece",()=>{
 test("two or more opponent pieces form a blockade",()=>{
   let game=createGame(2,2);
   game.players[0].pieces[0]=0;
-  game.players[1].pieces[0]=40;
+  game.players[1].pieces[0]=27;
   game.players[1].pieces[1]=27;
   game.dice=1;
   assert.equal(legalPieceMoves(game,0).some(m=>m.pieceIndex===0&&m.to===1),false);
