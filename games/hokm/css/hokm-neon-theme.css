@@ -504,12 +504,7 @@ html body .arena .player-chip.active{
   50%{box-shadow:0 0 0 2px rgba(139,92,246,.72),0 0 22px rgba(69,108,255,.34)}
 }
 
-/* Explicitly leave the existing background artwork, velvet/felt and card art untouched. */
-html body .arena .velvet-table,
-html body .arena .table-inner,
-html body .arena .hokm-card,
-html body .arena .hokm-card-back,
-html body .arena .played-card{background-image:revert!important}
+/* Existing body artwork, velvet/felt and all playing-card rules are left untouched. */
 @media(max-width:760px){
   html body .arena > .topbar,
   html body .arena > .hero,
