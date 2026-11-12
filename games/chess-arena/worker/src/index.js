@@ -217,7 +217,7 @@ export default {
     if (request.method === "POST" && requestPath === "/api/auth/challenge") rateConfig = ["auth-challenge", 20, 600];
     else if (request.method === "POST" && requestPath === "/api/auth/verify") rateConfig = ["auth-verify", 30, 600];
     else if (request.method === "GET" && requestPath === "/api/auth/session") rateConfig = ["auth-session", 60, 60];
-    else if (requestPath.startsWith("/api/rooms/") || requestPath.startsWith("/api/backgammon/") ||
+    else if (requestPath.startsWith("/api/rooms/") || requestPath.startsWith("/api/backgammon/") || requestPath.startsWith("/api/ludo/") ||
              requestPath === "/api/stats/me" || requestPath === "/api/stats/leaderboard") {
       rateConfig = ["game-api", 120, 60];
     }
@@ -259,6 +259,7 @@ export default {
 
 export { ChessRoom } from "./room.js";
 export { BackgammonRoom } from "./backgammon-room.js";
+export { LudoRoom } from "./ludo-room.js";
 
 function withHeaders(response, headers) {
   const merged = new Headers(response.headers);
