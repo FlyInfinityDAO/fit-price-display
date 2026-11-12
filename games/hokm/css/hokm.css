@@ -819,7 +819,12 @@ footer span{color:var(--fi-gold)}
 @media(max-width:620px){.fi-game-language .language-button{width:32px;height:32px;font-size:14px}}
 @media(prefers-reduced-motion:reduce){.fi-game-language .language-button,.fi-game-language .language-menu,.language-menu.fi-game-language-menu button{transition:none}}
 
-/* v3: visible, slow card travel from each seat to the center. */
-@keyframes hokmCardTravel{0%{opacity:.12;transform:translate(var(--hokm-from-x,0px),var(--hokm-from-y,0px)) scale(.58) rotate(-9deg);filter:drop-shadow(0 0 12px rgba(215,184,102,.45))}65%{opacity:1;transform:translate(0,0) scale(1.06) rotate(2deg)}100%{opacity:1;transform:translate(0,0) scale(1) rotate(0);filter:none}}
-.trick-cards .played-card.hokm-card-arriving{animation:hokmCardTravel 1.15s cubic-bezier(.18,.72,.22,1) both!important;will-change:transform,opacity}
-@media(prefers-reduced-motion:reduce){.trick-cards .played-card.hokm-card-arriving{animation:none!important}}
+
+/* v4: a separate flying-card overlay makes the origin unmistakable. */
+.player-chip.hokm-card-source-active{
+ border-color:#f4d77f!important;
+ box-shadow:0 0 0 2px rgba(244,215,127,.48),0 0 26px rgba(244,215,127,.9)!important;
+ filter:brightness(1.2);
+}
+.trick-cards .played-card{position:relative}
+@media(prefers-reduced-motion:reduce){.player-chip.hokm-card-source-active{box-shadow:none!important;filter:none}}

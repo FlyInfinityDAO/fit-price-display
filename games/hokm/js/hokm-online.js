@@ -158,6 +158,29 @@ async function copyRoomCode(){
 function displaySeat(seat){return (seat-ownSeat+4)%4}
 function makeSeatRing(kind){const ring=document.createElement("span");ring.className="hokm-seat-ring "+kind;ring.setAttribute("aria-hidden","true");return ring}
 function renderSeatRing(chip,kind,deadline,now){let ring=chip.querySelector(".hokm-seat-ring."+kind);if(!deadline){ring?.remove();return}if(!ring){ring=makeSeatRing(kind);chip.appendChild(ring)}const total=kind==="turn"?30000:(lastState?.game?.reconnectGraceMs||60000);const left=Math.max(0,deadline-now);ring.style.setProperty("--ring-progress",String(Math.max(0,Math.min(1,left/total))));ring.textContent=String(Math.ceil(left/1000));ring.title=kind==="turn"?t("turnCountdown"):t("reconnectCountdown");}
+function animateCardFlight(node,source){
+ if(!node||!source||typeof node.getBoundingClientRect!=="function")return;
+ if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+ const from=source.getBoundingClientRect(),to=node.getBoundingClientRect();
+ if(!from.width||!from.height||!to.width||!to.height)return;
+ const card=node.cloneNode(true);
+ const startX=from.left+from.width/2-to.width/2,startY=from.top+from.height/2-to.height/2;
+ const dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+to.height/2)-(from.top+from.height/2);
+ card.removeAttribute("id");card.classList.remove("empty","hokm-card-arriving");
+ Object.assign(card.style,{position:"fixed",left:(from.left+from.width/2-to.width/2)+"px",top:(from.top+from.height/2-to.height/2)+"px",width:to.width+"px",height:to.height+"px",margin:"0",zIndex:"10000",pointerEvents:"none",transformOrigin:"center center",opacity:"1"});
+ document.body.appendChild(card);
+ const oldOpacity=node.style.opacity;node.style.opacity="0";
+ source.classList.add("hokm-card-source-active");
+ const motion=card.animate([
+  {opacity:0,transform:"translate3d(0,0,0) scale(.72) rotate(-7deg)",offset:0},
+  {opacity:1,transform:"translate3d(0,0,0) scale(.9) rotate(-4deg)",offset:.12},
+  {opacity:1,transform:"translate3d("+dx*.42+"px,"+dy*.42+"px,0) scale(.96) rotate(-2deg)",offset:.62},
+  {opacity:1,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(1.06) rotate(1deg)",offset:.9},
+  {opacity:1,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(1) rotate(0)",offset:1}
+ ],{duration:3000,easing:"linear",fill:"both"});
+ motion.onfinish=()=>{node.style.opacity=oldOpacity;source.classList.remove("hokm-card-source-active");card.remove();motion.cancel()};
+ motion.oncancel=()=>{node.style.opacity=oldOpacity;source.classList.remove("hokm-card-source-active");card.remove()};
+}
 function seatEls(seat){
  return ({0:{hand:".hand-south",chip:".seat-south .player-chip"},1:{hand:".seat-west .hand",chip:".seat-west .player-chip"},2:{hand:".hand-north",chip:".seat-north .player-chip"},3:{hand:".seat-east .hand",chip:".seat-east .player-chip"}})[seat];
 }
@@ -235,18 +258,8 @@ function renderState(s){
    const key=String(entry.card.id||entry.card.rank+entry.card.suit)+"@"+visual;
    if(node.dataset.playedCardKey!==key){
     node.dataset.playedCardKey=key;
-    node.classList.add("hokm-card-arriving");
     const source=document.querySelector(seatEls(visual).chip);
-    if(source&&typeof node.animate==="function"&&!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
-     const from=source.getBoundingClientRect(),to=node.getBoundingClientRect();
-     const dx=from.left+from.width/2-(to.left+to.width/2),dy=from.top+from.height/2-(to.top+to.height/2);
-     const motion=node.animate([
-      {opacity:.12,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(.62) rotate(-8deg)",filter:"drop-shadow(0 0 13px rgba(215,184,102,.6))"},
-      {opacity:.78,transform:"translate3d("+Math.round(dx*.42)+"px,"+Math.round(dy*.42)+"px,0) scale(.88) rotate(-3deg)",offset:.68},
-      {opacity:1,transform:"translate3d(0,0,0) scale(1) rotate(0deg)",filter:"none"}
-     ],{duration:2200,easing:"cubic-bezier(.18,.72,.22,1)",fill:"both"});
-     motion.onfinish=()=>motion.cancel();
-    }
+    animateCardFlight(node,source);
    }
   });
   nodes.forEach((node,index)=>{if(!activeTrickSeats.has(index)){node.classList.remove("hokm-card-arriving");node.dataset.playedCardKey="";}});
