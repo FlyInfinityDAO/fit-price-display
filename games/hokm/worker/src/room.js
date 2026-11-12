@@ -16,7 +16,7 @@ const publicPlayer = (p, viewer, match) => {
   const matchPlayer = match?.players.find(x => x.seat === p.seat);
   return {
     seat: p.seat,
-    wallet: p.kind === "cpu" ? null : p.wallet.slice(0, 3) + "..." + p.wallet.slice(-3),
+    wallet: p.kind === "cpu" ? null : p.wallet.slice(0, 6) + "…" + p.wallet.slice(-4).toUpperCase(),
     you: p.wallet === viewer,
     tier: p.tier,
     connected: !!p.connected,
