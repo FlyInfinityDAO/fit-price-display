@@ -57,10 +57,10 @@ function cardFx(kind){
  if(c.state==="suspended")c.resume().then(play).catch(error=>console.warn("[Hokm audio resume]",error));
  else play();
 }
-const MUSIC_URL="https://reddtools.com/music/vintage-lounge.mp3";
+const MUSIC_URL="./assets/music/City%20Stomp%20-%20Upbeat%20Big%20Band%20Swing%20Instrumental%20by%20NickPanek%20-%20Royalty-free%20Music.mp3";
 let musicAudio=null;
-function getMusicAudio(){if(!musicAudio){musicAudio=new Audio(MUSIC_URL);musicAudio.loop=true;musicAudio.preload="none";musicAudio.volume=Number($("musicVolume")?.value??55)/100;musicAudio.addEventListener("error",()=>console.warn("[Hokm music] Background track could not be loaded."));}return musicAudio}
-async function startMusic(){const player=getMusicAudio();if(musicOn&&!player.paused)return;player.volume=Number($("musicVolume")?.value??55)/100;try{await player.play();musicOn=true;applyLang()}catch(error){musicOn=false;console.warn("[Hokm music]",error);applyLang()}}
+function getMusicAudio(){if(!musicAudio){musicAudio=new Audio(MUSIC_URL);musicAudio.loop=true;musicAudio.preload="none";musicAudio.volume=Number($("musicVolume")?.value??35)/100;musicAudio.addEventListener("error",()=>console.warn("[Hokm music] Background track could not be loaded."));}return musicAudio}
+async function startMusic(){const player=getMusicAudio();if(musicOn&&!player.paused)return;player.volume=Number($("musicVolume")?.value??35)/100;try{await player.play();musicOn=true;applyLang()}catch(error){musicOn=false;console.warn("[Hokm music]",error);applyLang()}}
 let musicAutoStart=true;
 window.HokmAudio={card:cardFx,startMusic,stopMusic,isMusicOn:()=>musicOn};
 function syncGameShell(visible){const shell=document.querySelector(".game-shell");if(shell)shell.hidden=!visible}
