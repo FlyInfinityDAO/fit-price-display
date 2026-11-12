@@ -934,3 +934,7 @@ body.fi-rtl .arena .table-inner .trick-cards{direction:ltr!important}
 body.fi-rtl .arena .table-inner .player-chip,
 body.fi-rtl .arena .table-inner .table-meta,
 body.fi-rtl .arena .table-inner .table-message{direction:rtl!important}
+
+/* Score contrast fix: remove the cream panel and force a readable gold score. */
+.game-shell .hokm-round-score.white{background:linear-gradient(135deg,#421126,#210914)!important;color:#fff0d8!important}
+.game-shell .hokm-round-score.white b{color:#f4d77f!important}
