@@ -16,7 +16,13 @@ cp games/backgammon/index.html dist/games/backgammon/index.html
 cp games/backgammon/css/backgammon.css dist/games/backgammon/css/backgammon.css
 cp games/backgammon/js/backgammon.js dist/games/backgammon/js/backgammon.js
 cp games/backgammon/js/backgammon-engine.js dist/games/backgammon/js/backgammon-engine.js
-# Publish Fly Ludo frontend and deterministic rules engine.\ncp games/ludo/index.html dist/games/ludo/index.html\ncp games/ludo/css/ludo.css dist/games/ludo/css/ludo.css\ncp games/ludo/js/ludo.js dist/games/ludo/js/ludo.js\ncp games/ludo/js/ludo-engine.js dist/games/ludo/js/ludo-engine.js\n\n# Reuse the exact brand assets from the main Fly Infinity website.
+# Publish Fly Ludo frontend and deterministic rules engine.
+cp games/ludo/index.html dist/games/ludo/index.html
+cp games/ludo/css/ludo.css dist/games/ludo/css/ludo.css
+cp games/ludo/js/ludo.js dist/games/ludo/js/ludo.js
+cp games/ludo/js/ludo-engine.js dist/games/ludo/js/ludo-engine.js
+
+# Reuse the exact brand assets from the main Fly Infinity website.
 cp logo.png background-desktop.png background-mobile.png dist/
 cp walletconnect-bridge.js dist/walletconnect-bridge.js
 
@@ -42,7 +48,9 @@ HTML
 
 test -s dist/games/chess-arena/index.html
 test -s dist/games/backgammon/index.html
-test -s dist/games/backgammon/js/backgammon-engine.js\ntest -s dist/games/ludo/index.html\ntest -s dist/games/ludo/js/ludo-engine.js
+test -s dist/games/backgammon/js/backgammon-engine.js
+test -s dist/games/ludo/index.html
+test -s dist/games/ludo/js/ludo-engine.js
 test -s dist/walletconnect-bridge.js
 test -s dist/games/fi-neon-games.css
 test -s dist/games/shared-language-menu.js
