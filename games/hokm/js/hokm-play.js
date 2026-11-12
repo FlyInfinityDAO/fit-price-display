@@ -2,6 +2,7 @@
 "use strict";
 const H=window.HokmEngine;
 if(!H)return;
+const CARD_FLIGHT_MS=1600,TRICK_HOLD_MS=1300;
 const $=id=>document.getElementById(id);
 const I={
 en:{start:"Start solo match",next:"Start next round",restart:"New match",choose:"Choose Hokm suit",yourHand:"Your cards",thinking:"CPU is thinking…",yourTurn:"Your turn · play a legal card",turn:"Turn",seconds:"sec",round:"Round",tricks:"Tricks",team0:"SOUTH · NORTH",team1:"WEST · EAST",won:"Team won the round",matchWon:"Match complete",lost:"The other team won the round",finished:"You won the match!",matchLost:"Match finished · CPU team wins",tie:"Match drawn",needAuth:"Connect your wallet and verify at least 1 FIT to start.",selectTrump:"You are the Hakem. Choose the Hokm suit from your first five cards.",playing:"Follow suit when possible. Your turn is highlighted.",cpuTrump:"CPU Hakem is choosing the Hokm suit…",nextRound:"Round complete. Start the next round when ready.",access:"Access verified. You can now start a solo match.",easy:"Easy",normal:"Normal",hard:"Hard",noCards:"No legal cards available.",auto:"Time expired — a legal card was played automatically.",roundCount:"of",limit:"rounds",trump:"Hokm suit"},
@@ -85,61 +86,53 @@ function renderSeats(){
  }
 }
 function animateCardFlight(node,source){
- if(!node||!source||typeof node.getBoundingClientRect!=="function")return;
- if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+ if(!node||!source||typeof node.getBoundingClientRect!=="function")return Promise.resolve();
+ if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return Promise.resolve();
  const from=source.getBoundingClientRect(),to=node.getBoundingClientRect();
- if(!from.width||!from.height||!to.width||!to.height)return;
- const card=node.cloneNode(true);
- const startX=from.left+from.width/2-to.width/2,startY=from.top+from.height/2-to.height/2;
- const dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+to.height/2)-(from.top+from.height/2);
+ if(!from.width||!from.height||!to.width||!to.height)return Promise.resolve();
+ const card=node.cloneNode(true),dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+to.height/2)-(from.top+from.height/2);
  card.removeAttribute("id");card.removeAttribute("data-player-label");card.classList.remove("empty","hokm-card-arriving");
  Object.assign(card.style,{position:"fixed",left:(from.left+from.width/2-to.width/2)+"px",top:(from.top+from.height/2-to.height/2)+"px",width:to.width+"px",height:to.height+"px",margin:"0",zIndex:"10000",pointerEvents:"none",transformOrigin:"center center",opacity:"1"});
  document.body.appendChild(card);
- const oldOpacity=node.style.opacity;node.style.opacity="0";
- source.classList.add("hokm-card-source-active");
- const motion=card.animate([
-  {opacity:0,transform:"translate3d(0,0,0) scale(.72) rotate(-7deg)",offset:0},
-  {opacity:1,transform:"translate3d(0,0,0) scale(.9) rotate(-4deg)",offset:.12},
-  {opacity:1,transform:"translate3d("+dx*.42+"px,"+dy*.42+"px,0) scale(.96) rotate(-2deg)",offset:.62},
-  {opacity:1,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(1.06) rotate(1deg)",offset:.9},
-  {opacity:1,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(1) rotate(0)",offset:1}
- ],{duration:3000,easing:"linear",fill:"both"});
- motion.onfinish=()=>{node.style.opacity=oldOpacity;source.classList.remove("hokm-card-source-active");card.remove();motion.cancel()};
- motion.oncancel=()=>{node.style.opacity=oldOpacity;source.classList.remove("hokm-card-source-active");card.remove()};
+ const oldOpacity=node.style.opacity;node.style.opacity="0";source.classList.add("hokm-card-source-active");
+ return new Promise(resolve=>{
+  let settled=false,motion;
+  const finish=()=>{if(settled)return;settled=true;node.style.opacity=oldOpacity;source.classList.remove("hokm-card-source-active");card.remove();try{motion&&motion.cancel()}catch{}resolve()};
+  motion=card.animate([
+   {opacity:0,transform:"translate3d(0,0,0) scale(.72) rotate(-7deg)",offset:0},
+   {opacity:1,transform:"translate3d(0,0,0) scale(.9) rotate(-4deg)",offset:.12},
+   {opacity:1,transform:"translate3d("+dx*.42+"px,"+dy*.42+"px,0) scale(.96) rotate(-2deg)",offset:.62},
+   {opacity:1,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(1.06) rotate(1deg)",offset:.9},
+   {opacity:1,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(1) rotate(0)",offset:1}
+  ],{duration:CARD_FLIGHT_MS,easing:"cubic-bezier(.22,.72,.25,1)",fill:"both"});
+  motion.onfinish=finish;motion.oncancel=finish;
+ });
 }
 function animatePlayedCard(node,entry,seat){
  const key=String(entry.card.id||entry.card.rank+entry.card.suit)+"@"+seat;
- if(node.dataset.playedCardKey===key)return;
+ if(node.dataset.playedCardKey===key)return Promise.resolve();
  node.dataset.playedCardKey=key;
  const source=document.querySelector(seatElements(seat).chip);
  const label=source?.querySelector("b")?.textContent?.trim();
  if(label)node.dataset.playerLabel=label;else delete node.dataset.playerLabel;
- animateCardFlight(node,source);
+ return animateCardFlight(node,source);
 }
 function renderTrick(){
- const nodes=[...document.querySelectorAll(".trick-cards .played-card")];
- const entries=visibleTrick.length?visibleTrick:(game?game.trick:[]);
+ const nodes=[...document.querySelectorAll(".trick-cards .played-card")],entries=visibleTrick.length?visibleTrick:(game?game.trick:[]);
  nodes.forEach(node=>{node.classList.add("empty");node.classList.remove("red","black");node.removeAttribute("data-player-label");node.textContent="·"});
- const active=new Set();
- entries.forEach(entry=>{
-  const node=nodes[entry.player];if(!node)return;active.add(entry.player);
-  node.classList.remove("empty");node.classList.toggle("red",isRed(entry.card));node.classList.toggle("black",!isRed(entry.card));
-  node.textContent=entry.card.rank+entry.card.suit;animatePlayedCard(node,entry,entry.player);
- });
- nodes.forEach((node,index)=>{if(!active.has(index)){node.classList.remove("hokm-card-arriving");node.dataset.playedCardKey="";node.removeAttribute("data-player-label");}});
+ const active=new Set(),flights=[];
+ entries.forEach(entry=>{const node=nodes[entry.player];if(!node)return;active.add(entry.player);node.classList.remove("empty");node.classList.toggle("red",isRed(entry.card));node.classList.toggle("black",!isRed(entry.card));node.textContent=entry.card.rank+entry.card.suit;flights.push(animatePlayedCard(node,entry,entry.player))});
+ nodes.forEach((node,index)=>{if(!active.has(index)){node.classList.remove("hokm-card-arriving");node.dataset.playedCardKey="";node.removeAttribute("data-player-label")}});
+ return Promise.all(flights);
 }
 function render(){
- if(!game)return;
- const mapping=[0,1,2,3];
- mapping.forEach(seat=>renderHand(seat,game.hands[seat],seat===0));
- renderSeats();renderTrick();
- const trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent=game.trump||"—";
+ if(!game)return Promise.resolve();
+ [0,1,2,3].forEach(seat=>renderHand(seat,game.hands[seat],seat===0));renderSeats();
+ const flights=renderTrick(),trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent=game.trump||"—";
  const hakem=document.getElementById("tableHakem"),hakemChip=document.querySelector(seatElements(game.hakem).chip+" b");if(hakem)hakem.textContent=hakemChip?hakemChip.textContent:(game.hakem===0?"You":"CPU "+(game.hakem+1));
- const bottom=document.querySelectorAll(".game-bottom .team-score b");
- if(bottom.length&&match){bottom[0].textContent=match.matchPoints[0];bottom[1].textContent=match.matchPoints[1]}
+ const bottom=document.querySelectorAll(".game-bottom .team-score b");if(bottom.length&&match){bottom[0].textContent=match.matchPoints[0];bottom[1].textContent=match.matchPoints[1]}
  const round=document.querySelector(".round-info b");if(round&&match)round.textContent=match.roundNo+" / "+match.maxRounds;
- $("hokmHandCaption").textContent=game.phase==="choose-trump"?tr("selectTrump"):tr("playing");
- renderTrick();
+ $("hokmHandCaption").textContent=game.phase==="choose-trump"?tr("selectTrump"):tr("playing");return flights;
 }
 function chooseCpuTrump(){
  const hand=game.hands[game.hakem];
@@ -197,23 +190,15 @@ function playHumanCard(id){
  }catch(e){setStatus(e.message)}
 }
 function onCardPlayed(result,automatic){
- if(result.completed){
-  visibleTrick=result.trick;
-  cardFxSafe("collect");
-  // Lock before rendering: otherwise the hand briefly looks playable while the
-  // 950ms trick-display pause is active, and taps are silently discarded.
-  if(result.roundWinner===undefined)locked=true;
- }else{visibleTrick=[];cardFxSafe("play")}
- render();
- if(automatic){setStatus(tr("auto"));setMessage(tr("auto"))}
- if(result.roundWinner!==undefined){completeRound(result.roundWinner);return}
- if(result.completed){
-  setStatus(tr("playing"));setMessage(tr("playing"));
-  turnTimer=setTimeout(()=>{visibleTrick=[];locked=false;render();if(game.currentPlayer===0)startClock();advance()},950);
-  return;
- }
- if(game.currentPlayer===0){startClock();setStatus(tr("yourTurn"));setMessage(tr("yourTurn"))}
- else{setStatus(tr("thinking"));setMessage(tr("thinking"));advance()}
+ locked=true;if(result.completed){visibleTrick=result.trick;cardFxSafe("collect")}else{visibleTrick=[];cardFxSafe("play")}
+ const flight=render();if(automatic){setStatus(tr("auto"));setMessage(tr("auto"))}
+ flight.then(()=>{
+  if(result.roundWinner!==undefined){turnTimer=setTimeout(()=>completeRound(result.roundWinner),TRICK_HOLD_MS);return}
+  if(result.completed){setStatus(tr("playing"));setMessage(tr("playing"));turnTimer=setTimeout(()=>{visibleTrick=[];locked=false;render();advance()},TRICK_HOLD_MS);return}
+  locked=false;
+  if(game.currentPlayer===0){startClock();setStatus(tr("yourTurn"));setMessage(tr("yourTurn"));render()}
+  else{setStatus(tr("thinking"));setMessage(tr("thinking"));advance()}
+ }).catch(error=>{locked=false;setStatus(error.message||tr("playing"))});
 }
 function advance(){
  if(!game||game.finished||game.phase!=="playing"||locked)return;
