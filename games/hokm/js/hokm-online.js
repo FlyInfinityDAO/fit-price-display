@@ -2,6 +2,7 @@
 "use strict";
 const API=(window.HOKM_API_URL||"https://fly-hokm-api.flyinfinityplatform.workers.dev").replace(/\/$/,"");
 const $=id=>document.getElementById(id);
+const CARD_FLIGHT_MS=1600;
 const words={
  en:{title:"ONLINE FOUR-PLAYER TABLE",create:"Create private room",code:"Room code",join:"Join room",copy:"Copy invite code",waiting:"Waiting for players",connected:"Connected",yourTurn:"Your turn",opponent:"Waiting for opponent",choose:"Choose Hokm suit",round:"Round",won:"Your team won this round",lost:"Opponents won this round",finished:"Match finished",need:"Connect and verify your wallet to use online rooms.",copyOk:"Room code copied.",copied:"Copied",seat:"Seat",start:"Waiting for all four players",error:"Online room error",creating:"Creating a private room…",joining:"Joining the room…",invalidCode:"Enter a valid 6-character room code.",room:"Room",connectionLost:"Connection lost. Rejoin with the same wallet and room code.",wsFail:"WebSocket connection failed. Please retry.",roomInactive:"Room connection is not active.",copyFallback:"Select and copy the room code.",chooseBy:"Player {seat} is choosing the Hokm suit…",seconds:"s",walletVerified:"Wallet verified · online rooms unlocked.",cpu:"CPU",addTwoCpu:"Add CPUs to seats 3 & 4",addLastCpu:"Add CPU to seat 4",addingCpu:"Adding CPU players…",cpuAdded:"CPU players added.",partner:"Partner",you:"You",openSeat:"Open seat",disconnected:"Disconnected",hands:"hands",whiteTeam:"WHITE TEAM · NORTH / SOUTH",blackTeam:"BLACK TEAM · EAST / WEST",handWins:"Hands won",hakemTimes:"Hakem",matchWins:"Rounds won"},
  fa:{title:"بازی آنلاین چهار‌نفره",create:"ساخت اتاق خصوصی",code:"کد اتاق",join:"ورود به اتاق",copy:"کپی کد دعوت",waiting:"در انتظار بازیکنان",connected:"متصل",yourTurn:"نوبت شماست",opponent:"در انتظار حرکت حریف",choose:"انتخاب خال حکم",round:"دست",won:"تیم شما این دست را برد",lost:"تیم مقابل این دست را برد",finished:"مسابقه تمام شد",need:"برای استفاده از اتاق آنلاین، کیف پول را متصل و احراز کنید.",copyOk:"کد اتاق کپی شد.",copied:"کپی شد",seat:"جایگاه",start:"در انتظار اتصال هر چهار بازیکن",error:"خطای اتاق آنلاین",creating:"در حال ساخت اتاق خصوصی…",joining:"در حال ورود به اتاق…",invalidCode:"کد معتبر ۶ کاراکتری وارد کنید.",room:"اتاق",connectionLost:"ارتباط قطع شد. با همان کیف پول و کد اتاق دوباره وارد شوید.",wsFail:"اتصال آنلاین برقرار نشد؛ دوباره تلاش کنید.",roomInactive:"اتصال اتاق فعال نیست.",copyFallback:"کد اتاق را انتخاب و کپی کنید.",chooseBy:"بازیکن {seat} در حال انتخاب خال حکم است…",seconds:"ثانیه",walletVerified:"کیف پول تأیید شد · اتاق آنلاین فعال است.",cpu:"هوش مصنوعی",addTwoCpu:"افزودن دو هوش مصنوعی برای جایگاه‌های سوم و چهارم",addLastCpu:"افزودن هوش مصنوعی فقط برای جایگاه چهارم",addingCpu:"در حال افزودن بازیکنان هوش مصنوعی…",cpuAdded:"بازیکنان هوش مصنوعی اضافه شدند.",partner:"هم‌تیمی",you:"شما",openSeat:"جایگاه خالی",disconnected:"قطع اتصال",hands:"دست",whiteTeam:"تیم سفید · شمال / جنوب",blackTeam:"تیم مشکی · شرق / غرب",handWins:"برد این دست",hakemTimes:"حاکم‌شدن",matchWins:"برد کلی"},
@@ -178,7 +179,7 @@ function animateCardFlight(node,source){
   {opacity:1,transform:"translate3d("+dx*.42+"px,"+dy*.42+"px,0) scale(.96) rotate(-2deg)",offset:.62},
   {opacity:1,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(1.06) rotate(1deg)",offset:.9},
   {opacity:1,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(1) rotate(0)",offset:1}
- ],{duration:3000,easing:"linear",fill:"both"});
+ ],{duration:CARD_FLIGHT_MS,easing:"cubic-bezier(.22,.72,.25,1)",fill:"both"});
  motion.onfinish=()=>{node.style.opacity=oldOpacity;source.classList.remove("hokm-card-source-active");card.remove();motion.cancel()};
  motion.oncancel=()=>{node.style.opacity=oldOpacity;source.classList.remove("hokm-card-source-active");card.remove()};
 }
@@ -233,7 +234,7 @@ function renderState(s){
    }
    if(hand){
     const cards=actual===ownSeat?(game.ownHand||[]):Array.from({length:hands[actual]||0},()=>null);
-    const canPlay=s.status==="playing"&&game.phase==="playing"&&game.currentPlayer===ownSeat;
+    const canPlay=s.status==="playing"&&game.phase==="playing"&&game.currentPlayer===ownSeat&&(!s.cardFlightUntil||Date.now()>=s.cardFlightUntil)&&!(game.lastTrick&&game.lastTrick.length);
     const signature=(actual===ownSeat?cards.map(card=>card.id).join("|"):String(cards.length))+"|"+(canPlay?"play":"wait");
     if(hand.dataset.handSignature!==signature){
      const previous=Number(hand.dataset.cardCount||0),dealing=cards.length>previous;
