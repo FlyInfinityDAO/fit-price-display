@@ -1,4 +1,4 @@
-/* Lightweight ambient neon motion for Hokm only. No gameplay or layout hooks. */
+/* Fixed-viewport ambient neon motion for Hokm only. No gameplay or layout hooks. */
 (() => {
   'use strict';
   if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -9,7 +9,14 @@
   if (!ctx) return;
   const mount = () => {
     if (!document.body || canvas.isConnected) return;
-    document.body.insertBefore(canvas, document.body.firstChild);
+    canvas.style.setProperty('position','fixed','important');
+    canvas.style.setProperty('inset','0','important');
+    canvas.style.setProperty('width','100vw','important');
+    canvas.style.setProperty('height','100vh','important');
+    canvas.style.setProperty('z-index','1','important');
+    canvas.style.setProperty('pointer-events','none','important');
+    canvas.style.setProperty('display','block','important');
+    document.body.appendChild(canvas);
     resize();
     requestAnimationFrame(frame);
   };
@@ -30,7 +37,8 @@
       width:rand(2.6,4.8),radius:rand(6,9),hue:Math.random()<.5?'cyan':'violet'};
   };
   function resize(){
-    width=window.innerWidth;height=window.innerHeight;
+    width=document.documentElement.clientWidth||window.innerWidth;
+    height=window.innerHeight||document.documentElement.clientHeight;
     dpr=Math.min(window.devicePixelRatio||1,1.5);
     canvas.width=Math.max(1,Math.round(width*dpr));
     canvas.height=Math.max(1,Math.round(height*dpr));
