@@ -35,6 +35,12 @@ export function legalPieceMoves(game, playerIndex = game.turn, dice = game.dice)
     if (progress >= 57) return;
     const next = progress + dice;
     if (next > 57) return;
+    if (next < 52) {
+      const target = globalTrackIndex(player.color, next);
+      const opponents = game.players.filter((_, i) => i !== playerIndex)
+        .reduce((total, opponent) => total + opponent.pieces.filter(n => n >= 0 && n < 52 && globalTrackIndex(opponent.color, n) === target).length, 0);
+      if (opponents >= 2) return;
+    }
     moves.push({ pieceIndex, from: progress, to: next, kind: next === 57 ? "finish" : next >= 52 ? "home" : "move" });
   });
   return moves;
@@ -53,15 +59,16 @@ export function applyMove(game, playerIndex, move) {
   if (legal.to >= 0 && legal.to < 52) {
     const landed = globalTrackIndex(player.color, legal.to);
     if (!SAFE_CELLS.has(landed)) {
+      const opponents = [];
       for (const opponent of next.players) {
         if (opponent === player) continue;
-        opponent.pieces = opponent.pieces.map(progress => {
-          if (progress >= 0 && progress < 52 && globalTrackIndex(opponent.color, progress) === landed) {
-            captured++;
-            return -1;
-          }
-          return progress;
+        opponent.pieces.forEach((progress, pieceIndex) => {
+          if (progress >= 0 && progress < 52 && globalTrackIndex(opponent.color, progress) === landed) opponents.push({ opponent, pieceIndex });
         });
+      }
+      if (opponents.length === 1) {
+        opponents[0].opponent.pieces[opponents[0].pieceIndex] = -1;
+        captured = 1;
       }
     }
   }
