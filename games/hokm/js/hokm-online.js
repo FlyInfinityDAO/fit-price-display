@@ -203,7 +203,7 @@ function renderState(s){
     if(b)b.textContent=player?(player.cpu?t("cpu"):(player.wallet||"—").replace(/\.\.\.(.{3})$/,(_,tail)=>"..."+tail.toUpperCase())):t("openSeat");
     if(small)small.textContent=!player?t("waiting"):(player.cpu?t("cpu"):(player.connected?t("connected"):t("disconnected")));
     if(em)em.textContent=String((game.tricksWon||[])[actual]||0);
-    chip.classList.toggle("active",game.currentPlayer===actual&&s.status==="playing");
+    chip.classList.toggle("active",activeSeat===actual&&s.status==="playing");
     chip.classList.toggle("hakem-seat",game.hakem===actual);
     let crown=chip.querySelector(".hokm-hakem-crown");if(game.hakem===actual){if(!crown){crown=document.createElement("span");crown.className="hokm-hakem-crown";crown.textContent="♛";crown.title=t("hakem");chip.appendChild(crown)}}else crown?.remove();
    }
@@ -226,8 +226,21 @@ function renderState(s){
   }
   const nodes=[...document.querySelectorAll(".trick-cards .played-card")];
   nodes.forEach(n=>{n.classList.add("empty");n.classList.remove("red","black");n.textContent="·"});
+  const activeTrickSeats=new Set();
   const entries=(game.lastTrick&&game.lastTrick.length?game.lastTrick:game.trick)||[];
-  entries.forEach(entry=>{const visual=displaySeat(entry.player),node=nodes[visual];if(node){node.classList.remove("empty");node.classList.toggle("red",["♥","♦"].includes(entry.card.suit));node.classList.toggle("black",!["♥","♦"].includes(entry.card.suit));node.textContent=entry.card.rank+entry.card.suit}});
+  entries.forEach(entry=>{
+   const visual=displaySeat(entry.player),node=nodes[visual];if(!node)return;activeTrickSeats.add(visual);
+   const red=["♥","♦"].includes(entry.card.suit);
+   node.classList.remove("empty");node.classList.toggle("red",red);node.classList.toggle("black",!red);node.textContent=entry.card.rank+entry.card.suit;
+   const key=String(entry.card.id||entry.card.rank+entry.card.suit)+"@"+visual;
+   if(node.dataset.playedCardKey!==key){
+    node.dataset.playedCardKey=key;
+    const from={0:[0,150],1:[-155,0],2:[0,-150],3:[155,0]}[visual]||[0,0];
+    node.style.setProperty("--hokm-from-x",from[0]+"px");node.style.setProperty("--hokm-from-y",from[1]+"px");
+    node.style.animation="none";void node.offsetWidth;node.style.animation="";node.classList.add("hokm-card-arriving");
+   }
+  });
+  nodes.forEach((node,index)=>{if(!activeTrickSeats.has(index)){node.classList.remove("hokm-card-arriving");node.dataset.playedCardKey="";}});
   const trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent=game.trump||"—";
   const hakem=document.getElementById("tableHakem"),hakemActual=game.hakem, hakemVisual=displaySeat(hakemActual),hakemChip=document.querySelector(seatEls(hakemVisual).chip+" b");if(hakem)hakem.textContent=hakemChip?hakemChip.textContent:(players.find(p=>p.seat===hakemActual)?.cpu?t("cpu"):t("seat")+" "+(hakemActual+1));
   const currentScores=document.querySelectorAll(".hokm-round-score b");
@@ -244,7 +257,7 @@ function renderState(s){
   if(game.phase==="choose-trump"&&!mayChoose&&s.status==="playing")status(t("chooseBy").replace("{seat}",String(game.hakem+1)));
   if(game.phase==="playing"&&Number.isFinite(game.turnDeadlineAt))startCountdown(game.turnDeadlineAt);
   else stopCountdown();
-  const now=Date.now(),activeSeat=game.phase==="choose-trump"?game.hakem:game.currentPlayer;
+  const now=Date.now();
   for(let actual=0;actual<4;actual++){const visual=displaySeat(actual),chip=document.querySelector(seatEls(visual).chip),player=players.find(p=>p.seat===actual);if(!chip)continue;renderSeatRing(chip,"turn",s.status==="playing"&&activeSeat===actual?game.turnDeadlineAt:null,now);renderSeatRing(chip,"disconnect",player&&!player.connected&&!player.cpu?player.reconnectDeadlineAt:null,now);}
   if(s.status==="round-break"&&s.roundWinner!==null)status((s.roundWinner===ownSeat%2?t("won"):t("lost"))+" · "+(s.match?.matchPoints||[0,0]).join(" : "));
   if(s.status==="finished")status(t("finished")+" · "+(s.match?.matchPoints||[0,0]).join(" : "));

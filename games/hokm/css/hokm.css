@@ -818,3 +818,8 @@ footer span{color:var(--fi-gold)}
 .fi-game-language-select{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;opacity:0!important;pointer-events:none!important}
 @media(max-width:620px){.fi-game-language .language-button{width:32px;height:32px;font-size:14px}}
 @media(prefers-reduced-motion:reduce){.fi-game-language .language-button,.fi-game-language .language-menu,.language-menu.fi-game-language-menu button{transition:none}}
+
+/* v3: visible, slow card travel from each seat to the center. */
+@keyframes hokmCardTravel{0%{opacity:.12;transform:translate(var(--hokm-from-x,0px),var(--hokm-from-y,0px)) scale(.58) rotate(-9deg);filter:drop-shadow(0 0 12px rgba(215,184,102,.45))}65%{opacity:1;transform:translate(0,0) scale(1.06) rotate(2deg)}100%{opacity:1;transform:translate(0,0) scale(1) rotate(0);filter:none}}
+.trick-cards .played-card.hokm-card-arriving{animation:hokmCardTravel 1.15s cubic-bezier(.18,.72,.22,1) both!important;will-change:transform,opacity}
+@media(prefers-reduced-motion:reduce){.trick-cards .played-card.hokm-card-arriving{animation:none!important}}
