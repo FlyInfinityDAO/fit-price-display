@@ -235,8 +235,6 @@ export class HokmRoom extends DurableObject {
   }
   async startRound(room, hakem) {
     H.startRound(room.match, { humanSeat: 0, hakem });
-    room.match.hakemCounts ||= [0,0];
-    room.match.hakemCounts[room.match.round.hakem % 2]++;
     room.lastTrick = [];
     room.roundWinner = null;
     room.status = "playing";
