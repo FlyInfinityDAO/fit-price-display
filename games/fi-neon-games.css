@@ -33,6 +33,7 @@ body.fi-neon-chess .final-result-panel,
 body.fi-neon-backgammon .topbar,
 body.fi-neon-backgammon .hero,
 body.fi-neon-backgammon .access-card,
+body.fi-neon-backgammon .rooms-panel,
 body.fi-neon-backgammon .mode-card,
 body.fi-neon-backgammon .game-panel,
 body.fi-neon-backgammon .stats-panel,
@@ -54,7 +55,7 @@ body.fi-neon-chess .hero,body.fi-neon-backgammon .hero{border-color:rgba(139,92,
 body.fi-neon-chess .access-card,body.fi-neon-backgammon .access-card{border-color:rgba(0,217,255,.7)!important}
 body.fi-neon-chess .game-panel,body.fi-neon-backgammon .game-panel{border-color:rgba(0,217,255,.56)!important}
 body.fi-neon-chess .stats-panel,body.fi-neon-backgammon .stats-panel{border-color:rgba(139,92,246,.68)!important}
-body.fi-neon-chess .rooms-panel,body.fi-neon-chess .cpu-panel,body.fi-neon-backgammon .mode-card{border-color:rgba(0,217,255,.42)!important}
+body.fi-neon-chess .rooms-panel,body.fi-neon-chess .cpu-panel,body.fi-neon-backgammon .rooms-panel,body.fi-neon-backgammon .mode-card{border-color:rgba(0,217,255,.42)!important}
 body.fi-neon-chess .features article:nth-child(odd){border-color:rgba(0,217,255,.58)!important}
 body.fi-neon-chess .features article:nth-child(even){border-color:rgba(139,92,246,.62)!important}
 body.fi-neon-chess .player-bar,body.fi-neon-backgammon .players>.player{border-color:rgba(69,108,255,.52)!important}
@@ -214,7 +215,7 @@ html body.fi-neon-backgammon .arena > .stats-panel{border-color:rgba(139,92,246,
 
 /* Nested information cards use a lighter glass tint without touching board surfaces. */
 html body.fi-neon-chess .arena :is(.rooms-panel,.cpu-panel,.player-bar,.game-header,.game-status,.final-result-panel,.features article),
-html body.fi-neon-backgammon .arena :is(.mode-card,.players > .player,.game-heading,.control-row,.game-status,.online-controls,.final-result-panel){
+html body.fi-neon-backgammon .arena :is(.rooms-panel,.mode-card,.players > .player,.game-heading,.control-row,.game-status,.online-controls,.final-result-panel){
   background:linear-gradient(135deg,rgba(17,28,53,.27),rgba(69,108,255,.12) 58%,rgba(139,92,246,.10))!important;
   -webkit-backdrop-filter:blur(20px) saturate(175%)!important;
   backdrop-filter:blur(20px) saturate(175%)!important;
@@ -258,4 +259,20 @@ html body.fi-neon-backgammon .arena .primary-btn{
   html body.fi-neon-backgammon .hero h1[data-i="title"]{
     animation:none!important;background-position:50% 50%!important;
   }
+}
+
+
+/* Critical action styling: resignation must remain visibly destructive after the glass-button layer. */
+html body.fi-neon-chess .arena .danger-btn,
+html body.fi-neon-backgammon .arena .danger-btn{
+  border-color:rgba(255,115,135,.82)!important;
+  background:linear-gradient(120deg,rgba(130,35,75,.72),rgba(69,30,82,.58))!important;
+  color:#FFE8EF!important;
+  box-shadow:0 7px 20px rgba(65,8,30,.24),inset 0 1px 0 rgba(255,255,255,.12)!important;
+}
+html body.fi-neon-chess .arena .danger-btn:hover,
+html body.fi-neon-backgammon .arena .danger-btn:hover{
+  border-color:rgba(255,145,160,.98)!important;
+  background:linear-gradient(120deg,rgba(160,38,82,.82),rgba(92,35,92,.68))!important;
+  box-shadow:0 0 18px rgba(255,85,125,.24)!important;
 }
