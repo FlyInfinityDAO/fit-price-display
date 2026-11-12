@@ -1,0 +1,174 @@
+/* Fly Infinity Games — Hokm visual identity for Chess Arena and Backgammon.
+   Presentation-only layer. Existing page artwork and every game-board surface/piece are excluded. */
+:root{
+  --fi-neon-ink:#111C35;
+  --fi-neon-cyan:#00D9FF;
+  --fi-neon-blue:#456CFF;
+  --fi-neon-violet:#8B5CF6;
+  --fi-neon-copy:#F0F6FF;
+  --fi-neon-muted:#C1CDE5;
+  --fi-neon-glass:rgba(17,28,53,.92);
+}
+body.fi-neon-chess,body.fi-neon-backgammon{color:var(--fi-neon-copy)}
+#fi-games-neon-canvas{
+  position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;height:100dvh!important;
+  display:block!important;z-index:0!important;pointer-events:none!important;opacity:.92!important;
+}
+body.fi-neon-chess .arena,body.fi-neon-backgammon .arena{
+  position:relative;z-index:1;
+}
+/* Outer page cards and information panels only. */
+body.fi-neon-chess .topbar,
+body.fi-neon-chess .hero,
+body.fi-neon-chess .access-card,
+body.fi-neon-chess .rooms-panel,
+body.fi-neon-chess .cpu-panel,
+body.fi-neon-chess .game-panel,
+body.fi-neon-chess .stats-panel,
+body.fi-neon-chess .features article,
+body.fi-neon-chess .player-bar,
+body.fi-neon-chess .game-header,
+body.fi-neon-chess .game-status,
+body.fi-neon-chess .final-result-panel,
+body.fi-neon-backgammon .topbar,
+body.fi-neon-backgammon .hero,
+body.fi-neon-backgammon .access-card,
+body.fi-neon-backgammon .mode-card,
+body.fi-neon-backgammon .game-panel,
+body.fi-neon-backgammon .stats-panel,
+body.fi-neon-backgammon .players>.player,
+body.fi-neon-backgammon .game-heading,
+body.fi-neon-backgammon .control-row,
+body.fi-neon-backgammon .game-status,
+body.fi-neon-backgammon .online-controls,
+body.fi-neon-backgammon .final-result-panel{
+  color:var(--fi-neon-copy)!important;
+  border:1px solid rgba(69,108,255,.58)!important;
+  background:linear-gradient(135deg,rgba(17,28,53,.95),rgba(24,39,76,.88))!important;
+  -webkit-backdrop-filter:blur(18px) saturate(145%);
+  backdrop-filter:blur(18px) saturate(145%);
+  box-shadow:0 12px 32px rgba(3,8,25,.36),inset 0 1px rgba(255,255,255,.075),0 0 18px rgba(69,108,255,.10)!important;
+}
+body.fi-neon-chess .topbar,body.fi-neon-backgammon .topbar{border-color:rgba(0,217,255,.62)!important}
+body.fi-neon-chess .hero,body.fi-neon-backgammon .hero{border-color:rgba(139,92,246,.72)!important}
+body.fi-neon-chess .access-card,body.fi-neon-backgammon .access-card{border-color:rgba(0,217,255,.7)!important}
+body.fi-neon-chess .game-panel,body.fi-neon-backgammon .game-panel{border-color:rgba(0,217,255,.56)!important}
+body.fi-neon-chess .stats-panel,body.fi-neon-backgammon .stats-panel{border-color:rgba(139,92,246,.68)!important}
+body.fi-neon-chess .rooms-panel,body.fi-neon-chess .cpu-panel,body.fi-neon-backgammon .mode-card{border-color:rgba(0,217,255,.42)!important}
+body.fi-neon-chess .features article:nth-child(odd){border-color:rgba(0,217,255,.58)!important}
+body.fi-neon-chess .features article:nth-child(even){border-color:rgba(139,92,246,.62)!important}
+body.fi-neon-chess .player-bar,body.fi-neon-backgammon .players>.player{border-color:rgba(69,108,255,.52)!important}
+body.fi-neon-chess .player-bar:has(#blackPlayer),body.fi-neon-backgammon .players>.player.active{border-color:rgba(0,217,255,.72)!important}
+/* Brand title and readable text hierarchy. */
+body.fi-neon-chess .hero h1,body.fi-neon-backgammon .hero h1{
+  background-image:linear-gradient(105deg,#00D9FF 0%,#456CFF 48%,#8B5CF6 100%)!important;
+  background-size:220% 100%!important;background-position:0 50%!important;
+  -webkit-background-clip:text!important;background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;color:transparent!important;
+  animation:fiNeonTitleFlow 5s ease-in-out infinite alternate;
+}
+@keyframes fiNeonTitleFlow{to{background-position:100% 50%}}
+body.fi-neon-chess .eyebrow,body.fi-neon-backgammon .eyebrow,
+body.fi-neon-chess .network,body.fi-neon-backgammon .network,
+body.fi-neon-chess .dashboard-link,body.fi-neon-backgammon .dashboard-link,
+body.fi-neon-chess .stats-grid strong,body.fi-neon-backgammon .stats-grid strong{
+  color:var(--fi-neon-cyan)!important;
+}
+body.fi-neon-chess .brand-name,body.fi-neon-backgammon .brand-name{color:#BFCBFF!important}
+body.fi-neon-chess .brand-name small,body.fi-neon-backgammon .brand-name small{color:var(--fi-neon-cyan)!important}
+body.fi-neon-chess .hero p,body.fi-neon-backgammon .hero p,
+body.fi-neon-chess .intro,body.fi-neon-backgammon .intro,
+body.fi-neon-chess .status,body.fi-neon-backgammon .status,
+body.fi-neon-chess .room-status,body.fi-neon-backgammon .room-status,
+body.fi-neon-chess footer,body.fi-neon-backgammon footer,
+body.fi-neon-chess .stats-scope,body.fi-neon-backgammon .stats-scope{
+  color:var(--fi-neon-muted)!important;
+}
+body.fi-neon-chess h2,body.fi-neon-backgammon h2,
+body.fi-neon-chess h3,body.fi-neon-backgammon h3,
+body.fi-neon-chess .player-bar strong,body.fi-neon-backgammon .players>.player b{
+  color:var(--fi-neon-copy)!important;
+}
+body.fi-neon-chess .brand-logo,body.fi-neon-backgammon .brand-logo{
+  border-color:var(--fi-neon-cyan)!important;box-shadow:0 0 13px rgba(0,217,255,.22);
+}
+/* Controls, links, selectors and language dropdown. */
+body.fi-neon-chess .primary-btn,body.fi-neon-backgammon .primary-btn,
+body.fi-neon-chess .secondary-btn,body.fi-neon-backgammon .secondary-btn,
+body.fi-neon-chess .small-btn,body.fi-neon-backgammon .small-btn,
+body.fi-neon-chess .game-controls button,body.fi-neon-backgammon .online-controls button{
+  min-height:40px;border:1px solid rgba(139,92,246,.72)!important;border-radius:12px!important;
+  color:#EAF5FF!important;background:linear-gradient(125deg,rgba(69,108,255,.38),rgba(139,92,246,.30))!important;
+  box-shadow:0 6px 18px rgba(4,9,28,.24),inset 0 1px rgba(255,255,255,.09)!important;
+  transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease;
+}
+body.fi-neon-chess .primary-btn,body.fi-neon-backgammon .primary-btn{
+  color:#07172E!important;border-color:rgba(0,217,255,.9)!important;
+  background:linear-gradient(110deg,#00D9FF,#9AC5FF)!important;
+  box-shadow:0 7px 22px rgba(0,217,255,.2)!important;
+}
+body.fi-neon-chess .danger-btn,body.fi-neon-backgammon .danger-btn{
+  border-color:rgba(255,115,135,.7)!important;background:linear-gradient(120deg,rgba(130,35,75,.52),rgba(69,30,82,.38))!important;color:#FFE8EF!important;
+}
+body.fi-neon-chess button:hover,body.fi-neon-backgammon button:hover,
+body.fi-neon-chess .dashboard-link:hover,body.fi-neon-backgammon .dashboard-link:hover{
+  border-color:var(--fi-neon-cyan)!important;box-shadow:0 0 19px rgba(0,217,255,.22)!important;
+}
+body.fi-neon-chess :is(select,input),body.fi-neon-backgammon :is(select,input){
+  color:var(--fi-neon-copy)!important;background:rgba(17,28,53,.94)!important;
+  border-color:rgba(0,217,255,.48)!important;accent-color:var(--fi-neon-cyan);
+}
+body.fi-neon-chess select option,body.fi-neon-backgammon select option{background:#111C35;color:#F0F6FF}
+body.fi-neon-chess .network,body.fi-neon-backgammon .network,
+body.fi-neon-chess .dashboard-link,body.fi-neon-backgammon .dashboard-link{
+  background:rgba(17,28,53,.88)!important;border:1px solid rgba(0,217,255,.45)!important;border-radius:11px;
+}
+body.fi-neon-chess .network i,body.fi-neon-backgammon .network i{
+  background:var(--fi-neon-cyan)!important;box-shadow:0 0 10px var(--fi-neon-cyan);
+}
+body.fi-neon-chess .fi-game-language .language-button,body.fi-neon-backgammon .fi-game-language .language-button{
+  color:var(--fi-neon-cyan)!important;background:rgba(17,28,53,.92)!important;border:1px solid rgba(139,92,246,.72)!important;
+  box-shadow:0 0 13px rgba(69,108,255,.14);
+}
+body.fi-neon-chess .language-menu.fi-game-language-menu,body.fi-neon-backgammon .language-menu.fi-game-language-menu{
+  background:rgba(17,28,53,.96)!important;border:1px solid rgba(0,217,255,.58)!important;
+  box-shadow:0 18px 44px rgba(0,0,0,.44),0 0 20px rgba(69,108,255,.18)!important;
+}
+body.fi-neon-chess .language-menu.fi-game-language-menu button,body.fi-neon-backgammon .language-menu.fi-game-language-menu button{color:#EAF5FF!important}
+body.fi-neon-chess .language-menu.fi-game-language-menu button:hover,
+body.fi-neon-chess .language-menu.fi-game-language-menu button.active,
+body.fi-neon-backgammon .language-menu.fi-game-language-menu button:hover,
+body.fi-neon-backgammon .language-menu.fi-game-language-menu button.active{
+  background:rgba(69,108,255,.22)!important;border-color:rgba(0,217,255,.42)!important;color:var(--fi-neon-cyan)!important;
+}
+body.fi-neon-chess :is(button,a,select,input):focus-visible,
+body.fi-neon-backgammon :is(button,a,select,input):focus-visible{outline:2px solid var(--fi-neon-cyan)!important;outline-offset:3px!important}
+/* Status and profile cards receive the same palette without changing game state. */
+body.fi-neon-chess .game-status,body.fi-neon-backgammon .game-status{
+  border-color:rgba(0,217,255,.52)!important;background:linear-gradient(110deg,rgba(17,28,53,.96),rgba(30,48,91,.92))!important;color:#EAF5FF!important;
+  box-shadow:0 0 20px rgba(0,217,255,.08),inset 0 1px rgba(255,255,255,.07)!important;
+}
+body.fi-neon-chess .stats-grid>div,body.fi-neon-backgammon .stats-grid>div,
+body.fi-neon-chess .leaderboard-row,body.fi-neon-backgammon .leaderboard-row{
+  border-color:rgba(69,108,255,.30)!important;background:linear-gradient(145deg,rgba(69,108,255,.14),rgba(17,28,53,.24))!important;
+}
+body.fi-neon-chess .stats-grid>div:nth-child(1),body.fi-neon-backgammon .stats-grid>div:nth-child(1),
+body.fi-neon-chess .stats-grid>div:nth-child(2),body.fi-neon-backgammon .stats-grid>div:nth-child(2){
+  border-color:rgba(0,217,255,.42)!important;
+}
+/* Board protection: deliberately no styling rules target chess squares/pieces,
+   Backgammon board-frame, points, stacks, checkers, dice or bar. */
+@media(max-width:760px){
+  #fi-games-neon-canvas{opacity:.78!important}
+  body.fi-neon-chess,body.fi-neon-backgammon{padding:10px}
+  body.fi-neon-chess .topbar,body.fi-neon-backgammon .topbar{gap:9px}
+  body.fi-neon-chess .hero,body.fi-neon-backgammon .hero{padding:20px 14px}
+  body.fi-neon-chess .access-card,body.fi-neon-backgammon .access-card,
+  body.fi-neon-chess .game-panel,body.fi-neon-backgammon .game-panel,
+  body.fi-neon-chess .stats-panel,body.fi-neon-backgammon .stats-panel{border-radius:20px}
+}
+@media(prefers-reduced-motion:reduce){
+  #fi-games-neon-canvas{display:none!important}
+  body.fi-neon-chess .hero h1,body.fi-neon-backgammon .hero h1{animation:none!important;background-position:50% 50%!important}
+  body.fi-neon-chess *,body.fi-neon-backgammon *{scroll-behavior:auto!important}
+}
