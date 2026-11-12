@@ -177,3 +177,141 @@ body .arena select option{background:var(--hokm-ink)!important;color:var(--hokm-
 body .arena .velvet-table,body .arena .table-inner,body .arena .hokm-card,
 body .arena .hokm-card-back,body .arena .played-card{background-color:initial}
 @media(max-width:760px){#hokm-neon-canvas{opacity:.82!important}}
+
+
+/* v3 — enforce the requested four-color palette across all visible interface
+   components. The ambient canvas, background artwork, felt and playing-card
+   faces are deliberately excluded from this UI-only pass. */
+:root{
+  --hokm-ink:#111C35!important;
+  --hokm-cyan:#00D9FF!important;
+  --hokm-blue:#456CFF!important;
+  --hokm-violet:#8B5CF6!important;
+  --hokm-copy:#F0F6FF!important;
+  --hokm-muted:#C1CDE5!important;
+}
+html body .arena{
+  color:var(--hokm-copy)!important;
+}
+html body .arena > .topbar,
+html body .arena > .hero,
+html body .arena > .access-card,
+html body .arena > .match-settings,
+html body .arena > .game-shell,
+html body .arena > .sound-panel,
+html body .arena .minimum,
+html body .arena .tier-rules article,
+html body .arena .hokm-online-panel,
+html body .arena .hokm-game-controls,
+html body .arena .hokm-cpu-controls,
+html body .arena .hokm-round-score,
+html body .arena .game-bottom .team-score,
+html body .arena .game-bottom .round-info,
+html body .arena .player-chip,
+html body .arena .hakem-pill,
+html body .arena .trump-pill,
+html body .arena .hokm-turn-clock,
+html body .arena .hokm-room-invite,
+html body .arena .hokm-won-pile,
+html body .arena .hokm-seat-ring{
+  color:var(--hokm-copy)!important;
+  background:linear-gradient(135deg,rgba(17,28,53,.97),rgba(30,48,91,.94))!important;
+  border:1px solid rgba(69,108,255,.66)!important;
+  box-shadow:0 10px 28px rgba(3,8,25,.38),inset 0 1px rgba(255,255,255,.08),0 0 15px rgba(69,108,255,.13)!important;
+}
+html body .arena > .topbar{border-color:rgba(0,217,255,.62)!important}
+html body .arena > .hero{border-color:rgba(139,92,246,.72)!important}
+html body .arena > .access-card{border-color:rgba(0,217,255,.78)!important}
+html body .arena > .match-settings{border-color:rgba(69,108,255,.78)!important}
+html body .arena > .game-shell{border-color:rgba(0,217,255,.56)!important}
+html body .arena > .sound-panel{border-color:rgba(139,92,246,.7)!important}
+html body .arena .minimum{border-color:rgba(0,217,255,.52)!important}
+html body .arena .tier-rules article:nth-child(odd),
+html body .arena .hokm-round-score.white{border-color:rgba(0,217,255,.82)!important}
+html body .arena .tier-rules article:nth-child(even),
+html body .arena .hokm-round-score.black{border-color:rgba(139,92,246,.82)!important}
+html body .arena :is(.eyebrow,.network,.dashboard-link,.volume-control,
+.volume-control b,.minimum>span,.minimum strong,.team-stat em,
+.hokm-game-status,.hokm-online-status,.hokm-turn-clock,
+.hokm-round-score b,.hokm-hakem-crown){color:var(--hokm-cyan)!important}
+html body .arena :is(.brand-name,.access-mark,.tier-rules b,.minimum b,
+.player-chip em,.team-score b,.round-info b,.hakem-pill b,.trump-pill b){
+  color:#BFCBFF!important;
+}
+html body .arena :is(.hero p,.access-card>p,.settings-copy p,.tier-note,
+.sound-panel p,.status,.control-hint,.table-message,footer,.minimum small,
+.tier-rules span,.player-chip small,.team-score small,.round-info span,
+.team-stat,.difficulty-control,.hokm-room-entry){
+  color:var(--hokm-muted)!important;
+}
+html body .arena :is(.access-heading h2,.settings-copy h3,.sound-panel h3,
+.table-toolbar h2,.player-chip b,.hokm-online-heading h3,
+.hokm-trump-picker>strong,.hokm-hand-caption,.hokm-online-trump b){
+  color:var(--hokm-copy)!important;
+}
+html body .arena .hero h1{
+  background:linear-gradient(100deg,var(--hokm-cyan) 0%,#91B8FF 48%,var(--hokm-violet) 100%)!important;
+  -webkit-background-clip:text!important;background-clip:text!important;color:transparent!important;
+}
+html body .arena :is(.network,.dashboard-link,select,.hokm-room-entry input,
+.fi-game-language .language-button){
+  color:var(--hokm-copy)!important;
+  background:rgba(17,28,53,.98)!important;
+  border:1px solid rgba(0,217,255,.62)!important;
+}
+html body .arena .dashboard-link{color:var(--hokm-cyan)!important}
+html body .arena .fi-game-language .language-button{
+  color:var(--hokm-cyan)!important;
+  border-color:rgba(139,92,246,.76)!important;
+}
+html body .arena :is(.primary-btn,.secondary-btn,.icon-btn,.small-btn,
+.hokm-trump-options button,.hokm-online-trump button,
+.hokm-cpu-controls button,.hokm-game-buttons button){
+  min-height:40px;
+  border:1px solid rgba(0,217,255,.68)!important;
+  border-radius:12px!important;
+  color:#EAF5FF!important;
+  background:linear-gradient(125deg,rgba(69,108,255,.42),rgba(139,92,246,.34))!important;
+  box-shadow:0 6px 18px rgba(4,9,28,.25),inset 0 1px rgba(255,255,255,.1)!important;
+}
+html body .arena .primary-btn{
+  color:#111C35!important;
+  border-color:var(--hokm-cyan)!important;
+  background:linear-gradient(110deg,#00D9FF,#8FB5FF)!important;
+  box-shadow:0 7px 22px rgba(0,217,255,.24)!important;
+}
+html body .arena :is(.secondary-btn,.icon-btn,.small-btn,
+.hokm-trump-options button,.hokm-online-trump button,
+.hokm-cpu-controls button,.hokm-game-buttons button){
+  border-color:rgba(139,92,246,.82)!important;
+}
+html body .arena :is(button,a,select,input):focus-visible{
+  outline:2px solid var(--hokm-cyan)!important;
+  outline-offset:3px!important;
+}
+html body .arena :is(button,.dashboard-link):hover{
+  border-color:var(--hokm-cyan)!important;
+  box-shadow:0 0 20px rgba(0,217,255,.25)!important;
+}
+html body .arena .avatar{
+  color:#F0F6FF!important;
+  background:linear-gradient(135deg,var(--hokm-blue),var(--hokm-violet))!important;
+  border:1px solid rgba(0,217,255,.62)!important;
+}
+html body .arena .hokm-seat-ring{
+  color:#111C35!important;
+  background:conic-gradient(var(--hokm-cyan) calc(var(--ring-progress)*1turn),rgba(139,92,246,.28) 0)!important;
+  border-color:var(--hokm-cyan)!important;
+}
+html body .arena :is(input,select){accent-color:var(--hokm-cyan)!important}
+html body .arena select option{background:#111C35!important;color:#F0F6FF!important}
+html body .arena .control-bar{border-top-color:rgba(0,217,255,.48)!important}
+@media(max-width:760px){
+  html body .arena > .topbar,
+  html body .arena > .hero,
+  html body .arena > .access-card,
+  html body .arena > .match-settings,
+  html body .arena > .game-shell,
+  html body .arena > .sound-panel{box-shadow:0 9px 24px rgba(3,8,25,.38),inset 0 1px rgba(255,255,255,.07)!important}
+}
+/* Preserve the game table surface, face-up cards and card backs exactly as designed. */
