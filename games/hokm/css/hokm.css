@@ -828,3 +828,18 @@ footer span{color:var(--fi-gold)}
 }
 .trick-cards .played-card{position:relative}
 @media(prefers-reduced-motion:reduce){.player-chip.hokm-card-source-active{box-shadow:none!important;filter:none}}
+
+
+/* Directional trick slots: one persistent card position directly facing each seat. */
+.table-center{width:min(78%,760px);height:300px;display:block}
+.table-center .table-meta{position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:2;white-space:nowrap}
+.table-center .trick-cards{position:absolute;inset:42px 0 34px;display:block;margin:0;pointer-events:none}
+.table-center .played-card{position:absolute;width:64px;height:90px;margin:0;display:grid;place-items:center}
+.table-center .played-card:nth-child(1){left:50%;bottom:0;transform:translateX(-50%)}
+.table-center .played-card:nth-child(2){left:0;top:50%;transform:translateY(-50%)}
+.table-center .played-card:nth-child(3){left:50%;top:0;transform:translateX(-50%)}
+.table-center .played-card:nth-child(4){right:0;top:50%;transform:translateY(-50%)}
+.table-center .played-card::before{content:attr(data-player-label);position:absolute;top:-24px;left:50%;transform:translateX(-50%);max-width:112px;padding:2px 7px;border:1px solid #d7b86688;border-radius:999px;background:#3f0d1d;color:#f4dfad;font:800 9px/1.4 "Segoe UI",Tahoma,sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;box-shadow:0 2px 7px #21071188}
+.table-center .table-message{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:100%;font-size:11px}
+@media(max-width:760px){.table-center{width:76%;height:238px}.table-center .trick-cards{inset:36px 0 30px}.table-center .played-card{width:clamp(36px,10vw,48px);height:clamp(52px,14vw,68px);font-size:22px}.table-center .played-card::before{top:-21px;max-width:86px;font-size:8px;padding:1px 5px}.table-center .table-message{font-size:9px}}
+@media(max-width:420px){.table-center{width:74%;height:218px}.table-center .trick-cards{inset:34px 0 28px}.table-center .played-card{width:34px;height:50px;font-size:19px}.table-center .played-card::before{max-width:70px;font-size:7px}}
