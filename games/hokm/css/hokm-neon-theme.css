@@ -1,0 +1,107 @@
+/* Fly Infinity Hokm — isolated neon visual layer and palette.
+   Keeps the existing background images and playable card faces untouched. */
+:root{
+  --hokm-ink:#111C35;
+  --hokm-cyan:#00D9FF;
+  --hokm-blue:#456CFF;
+  --hokm-violet:#8B5CF6;
+  --hokm-glass:rgba(17,28,53,.78);
+  --hokm-glass-soft:rgba(17,28,53,.58);
+  --hokm-line:rgba(0,217,255,.34);
+  --hokm-copy:#EAF4FF;
+  --hokm-muted:#B9C9E8;
+}
+body{color:var(--hokm-copy)}
+/* Decorative canvas is strictly between the original background and page UI. */
+#hokm-neon-canvas{
+  position:fixed;inset:0;width:100%;height:100%;
+  z-index:0;display:block;pointer-events:none;
+  opacity:.92;contain:strict;
+}
+.arena{position:relative;z-index:1}
+.topbar,.hero,.access-card,.match-settings,.game-shell,.sound-panel{
+  border-color:rgba(69,108,255,.34)!important;
+  background:linear-gradient(135deg,rgba(17,28,53,.88),rgba(17,28,53,.68))!important;
+  box-shadow:0 14px 38px rgba(4,9,28,.34),inset 0 1px rgba(255,255,255,.07),0 0 22px rgba(69,108,255,.07);
+}
+.topbar{border-color:rgba(0,217,255,.28)!important}
+.hero{border-color:rgba(139,92,246,.38)!important}
+.hero h1{
+  background:linear-gradient(100deg,var(--hokm-cyan),#8FB5FF 48%,var(--hokm-violet))!important;
+  -webkit-background-clip:text!important;background-clip:text!important;color:transparent!important;
+}
+.eyebrow,.brand-name small{color:var(--hokm-cyan)!important}
+.brand-name,.access-mark,.minimum>span,.minimum strong{color:#AFC5FF!important}
+.brand-logo{border-color:var(--hokm-cyan)!important}
+.hero p,.access-card>p,.settings-copy p,.tier-note,.sound-panel p,
+.status,.control-hint,.table-message,footer{color:var(--hokm-muted)!important}
+.access-heading h2,.settings-copy h3,.sound-panel h3,.table-toolbar h2,
+.player-chip b,.team-score,.round-info{color:var(--hokm-copy)}
+.network,.dashboard-link,.topbar select,.difficulty-control select,
+.hokm-room-entry input{
+  border-color:rgba(0,217,255,.34)!important;
+  background:rgba(17,28,53,.82)!important;color:var(--hokm-copy)!important;
+}
+.network i{background:var(--hokm-cyan)!important;box-shadow:0 0 9px var(--hokm-cyan)}
+.dashboard-link{color:var(--hokm-cyan)!important}
+.access-card,.minimum,.tier-rules article,.hokm-online-panel,.hokm-game-controls,
+.team-score,.round-info,.player-chip,.hokm-round-score{
+  background:linear-gradient(145deg,rgba(17,28,53,.94),rgba(22,38,73,.86))!important;
+  border-color:rgba(69,108,255,.38)!important;
+  color:var(--hokm-copy);
+}
+.access-card{border-color:rgba(0,217,255,.34)!important}
+.minimum,.tier-rules article,.hokm-online-panel,.hokm-game-controls{border-color:rgba(0,217,255,.24)!important}
+.minimum b,.tier-rules b,.hokm-online-heading h3{color:#B9C9FF!important}
+.minimum small,.tier-rules span,.player-chip small,.team-score small,.round-info span{color:var(--hokm-muted)!important}
+.primary-btn{
+  color:#07172E!important;
+  border-color:rgba(0,217,255,.9)!important;
+  background:linear-gradient(110deg,var(--hokm-cyan),#8CB9FF)!important;
+  box-shadow:0 7px 22px rgba(0,217,255,.2)!important;
+}
+.secondary-btn,.icon-btn,.small-btn,.hokm-trump-options button,.hokm-online-trump button{
+  color:#D9E8FF!important;
+  border-color:rgba(139,92,246,.62)!important;
+  background:linear-gradient(135deg,rgba(69,108,255,.22),rgba(139,92,246,.16))!important;
+}
+.secondary-btn:hover,.icon-btn:hover,.small-btn:hover,
+.hokm-trump-options button:hover,.hokm-online-trump button:hover{
+  border-color:var(--hokm-cyan)!important;box-shadow:0 0 18px rgba(0,217,255,.18)!important;
+}
+.difficulty-control{color:var(--hokm-muted)!important}
+.difficulty-control select{accent-color:var(--hokm-cyan)}
+.difficulty-control option[value="easy"]{color:#00D9FF;background:#111C35}
+.difficulty-control option[value="normal"]{color:#8FB5FF;background:#111C35}
+.difficulty-control option[value="hard"]{color:#B99BFF;background:#111C35}
+.hokm-game-status,.hokm-online-status,.hokm-turn-clock{color:var(--hokm-cyan)!important}
+.hokm-trump-picker>strong,.hokm-hand-caption,.hokm-online-trump b{color:#C6D5FF!important}
+.hokm-trump-options button:focus-visible,.hokm-online-trump button:focus-visible{
+  outline:2px solid var(--hokm-cyan);outline-offset:3px;
+}
+.player-chip.active{
+  border-color:var(--hokm-cyan)!important;
+  animation:hokmNeonSeatPulse 1.8s ease-in-out infinite!important;
+}
+@keyframes hokmNeonSeatPulse{
+  0%,100%{box-shadow:0 0 0 1px rgba(0,217,255,.45),0 0 12px rgba(0,217,255,.22)}
+  50%{box-shadow:0 0 0 2px rgba(139,92,246,.68),0 0 22px rgba(69,108,255,.36),0 0 34px rgba(139,92,246,.16)}
+}
+.hokm-seat-ring{border-color:var(--hokm-cyan)!important}
+.hokm-hakem-crown{color:#C4B0FF!important}
+.hokm-round-score.white{border-color:rgba(0,217,255,.5)!important}
+.hokm-round-score.black{border-color:rgba(139,92,246,.55)!important}
+.volume-control,.volume-control b{color:var(--hokm-cyan)!important}
+.volume-control input{accent-color:var(--hokm-cyan)!important}
+:focus-visible{outline-color:var(--hokm-cyan)}
+/* Preserve the original velvet table and all face-up playing-card colors for legibility. */
+.velvet-table,.hokm-card,.played-card{isolation:isolate}
+@media(max-width:760px){
+  #hokm-neon-canvas{opacity:.78}
+  .topbar,.hero,.access-card,.match-settings,.game-shell,.sound-panel{
+    box-shadow:0 10px 26px rgba(4,9,28,.34),inset 0 1px rgba(255,255,255,.06);
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  .player-chip.active{animation:none!important;box-shadow:0 0 0 2px rgba(0,217,255,.7),0 0 14px rgba(0,217,255,.2)}
+}
