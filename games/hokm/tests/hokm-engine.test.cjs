@@ -70,3 +70,7 @@ test("solo CPU match completes three real rounds using legal card plays",()=>{
  assert.equal(match.roundsPlayed,3);
  assert.equal(match.matchPoints[0]+match.matchPoints[1],3);
 });
+
+test("Hokm turn order is counterclockwise: south, east, north, west",()=>{assert.deepEqual([0,H.nextSeat(0),H.nextSeat(H.nextSeat(0)),H.nextSeat(H.nextSeat(H.nextSeat(0)))],[0,3,2,1]);assert.equal(H.nextSeat(1),0)});
+test("trick-card slots stay aligned with the physical south, west, north and east seats",()=>{assert.deepEqual([0,1,2,3].map(H.trickSlot),[0,1,2,3])});
+test("each card advances the turn counterclockwise",()=>{const g=H.createGame({hakem:0,rng:()=>0.37});H.chooseTrump(g,"♠");const order=[];for(let i=0;i<4;i++){const player=g.currentPlayer;order.push(player);const card=H.legalCards(g,player)[0];H.playCard(g,player,card.id)}assert.deepEqual(order,[0,3,2,1])});
