@@ -918,3 +918,10 @@ body .arena .player-chip.active b{color:#fff0b8!important;text-shadow:0 0 7px rg
 @media(max-width:760px){
   .table-inner .table-center .table-meta{top:-18px!important}
 }
+
+/* Keep the physical seat grid identical in Persian and English. */
+html[dir="rtl"] body .arena .table-inner{direction:ltr!important}
+html[dir="rtl"] body .arena .table-inner .player-chip,
+html[dir="rtl"] body .arena .table-inner .table-meta,
+html[dir="rtl"] body .arena .table-inner .table-message{direction:rtl!important}
+html[dir="rtl"] body .arena .table-inner .hand{direction:ltr!important}
