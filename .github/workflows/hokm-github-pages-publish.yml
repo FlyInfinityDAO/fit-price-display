@@ -53,12 +53,30 @@ jobs:
           test -f site/logo.png || { echo "::error::The site logo.png is missing."; exit 1; }
           test -f site/walletconnect-bridge.js || { echo "::error::The wallet bridge is missing."; exit 1; }
 
-          for game in chess-arena backgammon hokm; do
+          for game in chess-arena backgammon hokm ludo; do
             test -f "site/games/$game/index.html" || {
               echo "::error::Missing games/$game/index.html"
               exit 1
             }
           done
+
+          test -f site/games/index.html || {
+            echo "::error::Games hub is missing."
+            exit 1
+          }
+
+          test -f site/games/ludo/css/ludo.css || {
+            echo "::error::Ludo stylesheet is missing."
+            exit 1
+          }
+          test -f site/games/ludo/js/ludo.js || {
+            echo "::error::Ludo frontend is missing."
+            exit 1
+          }
+          test -f site/games/ludo/js/ludo-engine.js || {
+            echo "::error::Ludo rules engine is missing."
+            exit 1
+          }
 
           test -f site/games/chess-arena/css/chess-arena.css || {
             echo "::error::Chess Arena stylesheet is missing."
