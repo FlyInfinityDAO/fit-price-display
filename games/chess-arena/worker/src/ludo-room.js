@@ -42,7 +42,7 @@ export class LudoRoom {
       if(!wallet)return json({ok:false,error:"Wallet missing."},400);
       const mode=url.searchParams.get("mode")==="cpu"?"cpu":"friend";
       const count=Math.max(2,Math.min(4,Number(url.searchParams.get("players"))||4));
-      const humans=mode==="cpu"?Math.max(1,Math.min(count,Number(url.searchParams.get("humans"))||1)):count;
+      const humans=mode==="cpu"?Math.max(1,Math.min(count-1,Number(url.searchParams.get("humans"))||1)):count;
       const difficulty=["easy","medium","hard"].includes(url.searchParams.get("difficulty"))?url.searchParams.get("difficulty"):"medium";
       const game={code:url.searchParams.get("code")||"",playerCount:count,players:Array(humans).fill(wallet),mode,difficulty:mode==="cpu"?difficulty:null,state:mode==="cpu"?createGame(count,humans):null,status:mode==="cpu"?"active":"waiting",createdAt:Date.now(),statsRecorded:false};
       await this.save(game);return json({ok:true,room:this.snapshot(game)});
