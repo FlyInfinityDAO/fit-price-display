@@ -179,117 +179,15 @@ body.fi-neon-chess .stats-grid>div:nth-child(2),body.fi-neon-backgammon .stats-g
    Only page chrome/panels are affected; chess squares and the Backgammon board stay untouched. */
 html body.fi-neon-chess .hero h1[data-i18n="gameTitle"],
 html body.fi-neon-backgammon .hero h1[data-i="title"]{
-  background-image:linear-gradient(105deg,#00D9FF 0%,#00D9FF 22%,#456CFF 58%,#8B5CF6 100%)!important;
-  background-size:240% 100%!important;
+  background-image:linear-gradient(105deg,#00D9FF 0%,#456CFF 34%,#8B5CF6 68%,#00D9FF 100%)!important;
+  background-size:400% 100%!important;
   background-position:0% 50%!important;
   -webkit-background-clip:text!important;
   background-clip:text!important;
   -webkit-text-fill-color:transparent!important;
   color:transparent!important;
-  animation:fiGamesTitleGradientFlow 5.5s ease-in-out infinite alternate!important;
-}
-@keyframes fiGamesTitleGradientFlow{
-  0%{background-position:0% 50%}
-  100%{background-position:100% 50%}
-}
-
-/* High-transparency glass matching Hokm v6. */
-html body.fi-neon-chess .arena > :is(.topbar,.hero,.access-card,.game-panel,.stats-panel,.features),
-html body.fi-neon-backgammon .arena > :is(.topbar,.hero,.access-card,.game-panel,.stats-panel,.mode-grid){
-  background:linear-gradient(135deg,rgba(17,28,53,.25) 0%,rgba(24,39,76,.18) 52%,rgba(69,108,255,.10) 100%)!important;
-  -webkit-backdrop-filter:blur(28px) saturate(185%) contrast(108%)!important;
-  backdrop-filter:blur(28px) saturate(185%) contrast(108%)!important;
-  border:1px solid rgba(190,225,255,.24)!important;
-  box-shadow:0 16px 42px rgba(3,8,25,.22),inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,217,255,.08),0 0 24px rgba(69,108,255,.10)!important;
-  position:relative;
-}
-html body.fi-neon-chess .arena > .topbar{border-color:rgba(0,217,255,.34)!important}
-html body.fi-neon-chess .arena > .hero,
-html body.fi-neon-backgammon .arena > .hero{border-color:rgba(139,92,246,.34)!important}
-html body.fi-neon-chess .arena > .access-card,
-html body.fi-neon-backgammon .arena > .access-card{border-color:rgba(0,217,255,.36)!important}
-html body.fi-neon-chess .arena > .game-panel,
-html body.fi-neon-backgammon .arena > .game-panel{border-color:rgba(0,217,255,.34)!important}
-html body.fi-neon-chess .arena > .stats-panel,
-html body.fi-neon-backgammon .arena > .stats-panel{border-color:rgba(139,92,246,.34)!important}
-
-/* Nested information cards use a lighter glass tint without touching board surfaces. */
-html body.fi-neon-chess .arena :is(.rooms-panel,.cpu-panel,.player-bar,.game-header,.game-status,.final-result-panel,.features article),
-html body.fi-neon-backgammon .arena :is(.rooms-panel,.mode-card,.players > .player,.game-heading,.control-row,.game-status,.online-controls,.final-result-panel){
-  background:linear-gradient(135deg,rgba(17,28,53,.27),rgba(69,108,255,.12) 58%,rgba(139,92,246,.10))!important;
-  -webkit-backdrop-filter:blur(20px) saturate(175%)!important;
-  backdrop-filter:blur(20px) saturate(175%)!important;
-  border:1px solid rgba(190,225,255,.24)!important;
-  box-shadow:0 8px 22px rgba(3,8,25,.16),inset 0 1px 0 rgba(255,255,255,.18),0 0 14px rgba(69,108,255,.08)!important;
-}
-html body.fi-neon-chess .arena > .topbar :is(.network,.dashboard-link,.language-button),
-html body.fi-neon-backgammon .arena > .topbar :is(.network,.dashboard-link,.language-button),
-html body.fi-neon-chess .arena :is(select,input),
-html body.fi-neon-backgammon .arena :is(select,input){
-  background:rgba(17,28,53,.22)!important;
-  -webkit-backdrop-filter:blur(22px) saturate(180%)!important;
-  backdrop-filter:blur(22px) saturate(180%)!important;
-  border-color:rgba(160,220,255,.30)!important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 6px 18px rgba(3,8,25,.12)!important;
-}
-html body.fi-neon-chess .arena :is(.primary-btn,.secondary-btn,.small-btn,.game-controls button),
-html body.fi-neon-backgammon .arena :is(.primary-btn,.secondary-btn,.small-btn,.online-controls button,.control-row button){
-  background:linear-gradient(125deg,rgba(69,108,255,.25),rgba(139,92,246,.19))!important;
-  -webkit-backdrop-filter:blur(18px) saturate(180%)!important;
-  backdrop-filter:blur(18px) saturate(180%)!important;
-  border:1px solid rgba(190,225,255,.34)!important;
-  box-shadow:0 7px 20px rgba(3,8,25,.16),inset 0 1px 0 rgba(255,255,255,.20)!important;
-  text-shadow:0 1px 8px rgba(3,8,25,.22);
-}
-html body.fi-neon-chess .arena .primary-btn,
-html body.fi-neon-backgammon .arena .primary-btn{
-  background:linear-gradient(115deg,rgba(0,217,255,.76),rgba(69,108,255,.48))!important;
-  border-color:rgba(0,217,255,.72)!important;
-}
-@media(max-width:760px){
-  html body.fi-neon-chess .arena > :is(.topbar,.hero,.access-card,.game-panel,.stats-panel),
-  html body.fi-neon-backgammon .arena > :is(.topbar,.hero,.access-card,.game-panel,.stats-panel){
-    background:linear-gradient(135deg,rgba(17,28,53,.34),rgba(24,39,76,.26) 58%,rgba(69,108,255,.14))!important;
-    -webkit-backdrop-filter:blur(24px) saturate(180%)!important;
-    backdrop-filter:blur(24px) saturate(180%)!important;
-  }
-}
-@media(prefers-reduced-motion:reduce){
-  html body.fi-neon-chess .hero h1[data-i18n="gameTitle"],
-  html body.fi-neon-backgammon .hero h1[data-i="title"]{
-    animation:none!important;background-position:50% 50%!important;
-  }
-}
-
-
-/* Critical action styling: resignation must remain visibly destructive after the glass-button layer. */
-html body.fi-neon-chess .arena .danger-btn,
-html body.fi-neon-backgammon .arena .danger-btn{
-  border-color:rgba(255,115,135,.82)!important;
-  background:linear-gradient(120deg,rgba(130,35,75,.72),rgba(69,30,82,.58))!important;
-  color:#FFE8EF!important;
-  box-shadow:0 7px 20px rgba(65,8,30,.24),inset 0 1px 0 rgba(255,255,255,.12)!important;
-}
-html body.fi-neon-chess .arena .danger-btn:hover,
-html body.fi-neon-backgammon .arena .danger-btn:hover{
-  border-color:rgba(255,145,160,.98)!important;
-  background:linear-gradient(120deg,rgba(160,38,82,.82),rgba(92,35,92,.68))!important;
-  box-shadow:0 0 18px rgba(255,85,125,.24)!important;
-}
-
-
-/* v3 — brand-first animated titles and consistent post-wallet interface cards.
-   This layer styles only information/UI surfaces; game boards and pieces remain untouched. */
-html body.fi-neon-chess .hero h1[data-i18n="gameTitle"],
-html body.fi-neon-backgammon .hero h1[data-i="title"]{
-  background-image:linear-gradient(105deg,#00D9FF 0%,#456CFF 48%,#8B5CF6 100%)!important;
-  background-size:300% 100%!important;
-  background-position:0% 50%!important;
-  -webkit-background-clip:text!important;
-  background-clip:text!important;
-  -webkit-text-fill-color:transparent!important;
-  color:transparent!important;
-  animation:fiGamesTitleGradientFlow 4.8s ease-in-out infinite alternate!important;
+  animation:fiGamesTitleGradientFlow 5s linear infinite!important;
+  -webkit-animation:fiGamesTitleGradientFlow 5s linear infinite!important;
   will-change:background-position;
 }
 
