@@ -27,9 +27,48 @@ const homeLanes={red:[[7,1],[7,2],[7,3],[7,4],[7,5],[7,6]],green:[[1,7],[2,7],[3
 const startIndex={red:0,green:13,yellow:26,blue:39};
 function coordKey(r,c){return r+","+c;}
 function boardCell(r,c,cls=""){const el=document.createElement("div");el.className="cell "+cls;el.style.gridRow=(r+1);el.style.gridColumn=(c+1);return el;}
-function renderBoard(){const board=$("ludoBoard");board.replaceChildren();const cellMap=new Map();track.forEach(([r,c],i)=>{let cls="track"+(SAFE_CELLS.has(i)?" safe":"");const start=Object.entries(startIndex).find(([,value])=>value===i);if(start)cls+=" "+start[0];const e=boardCell(r,c,cls);cellMap.set(coordKey(r,c),e);board.append(e);});for(const color of game.players.map(p=>p.color)){for(const [r,c] of homeLanes[color]){const e=boardCell(r,c,"home-lane");e.style.setProperty("--lane","var(--"+color+")");board.append(e);cellMap.set(coordKey(r,c),e);}const [r,c]=yard[color];const y=boardCell(r,c,"yard");y.style.gridRow=(r+1)+"/span 6";y.style.gridColumn=(c+1)+"/span 6";y.style.setProperty("--yard","var(--"+color+")");const inner=document.createElement("div");inner.className="yard-inner";for(let i=0;i<4;i++){const spot=document.createElement("span");spot.className="yard-spot";inner.append(spot);}y.append(inner);board.append(y);}
-const center=boardCell(6,6,"home-center");board.append(center);
-for(const p of game.players){p.pieces.forEach((progress,index)=>{let coord;if(progress<0){const [r,c]=yard[p.color];coord=[r+1+(index>>1)*2,c+1+(index%2)*2];}else if(progress>=52){coord=homeLanes[p.color][Math.min(5,progress-52)];}else{coord=track[(startIndex[p.color]+progress)%52];}let key=coordKey(...coord),cell=cellMap.get(key);if(!cell){cell=boardCell(...coord,"track");board.append(cell);cellMap.set(key,cell);}const button=document.createElement("button");button.type="button";button.className="piece-token"+(selected?.color===p.color&&selected.index===index?" selected":"");button.style.setProperty("--token","var(--"+p.color+")");button.setAttribute("aria-label",p.color+" piece "+(index+1));const isCurrent=p===game.players[game.turn];const legal=game.dice!==null&&isCurrent&&legalPieceMoves(game).some(m=>m.pieceIndex===index);button.disabled=!legal&&!isCurrent||mode==="online"&&game.turn!==myPlayerIndex;button.addEventListener("click",()=>choosePiece(p.color,index));cell.append(button);});}
+function renderBoard(){
+  const board=$("ludoBoard");board.replaceChildren();
+  const cellMap=new Map(),yardMap=new Map();
+  track.forEach(([r,c],i)=>{
+    let cls="track"+(SAFE_CELLS.has(i)?" safe":"");
+    const start=Object.entries(startIndex).find(([,value])=>value===i);
+    if(start)cls+=" "+start[0];
+    const cell=boardCell(r,c,cls);cellMap.set(coordKey(r,c),cell);board.append(cell);
+  });
+  for(const color of game.players.map(p=>p.color)){
+    for(const [r,c] of homeLanes[color]){
+      const cell=boardCell(r,c,"home-lane");cell.style.setProperty("--lane","var(--"+color+")");
+      board.append(cell);cellMap.set(coordKey(r,c),cell);
+    }
+    const [r,c]=yard[color],area=boardCell(r,c,"yard");
+    area.style.gridRow=(r+1)+"/span 6";area.style.gridColumn=(c+1)+"/span 6";
+    area.style.setProperty("--yard","var(--"+color+")");
+    const inner=document.createElement("div");inner.className="yard-inner";
+    for(let i=0;i<4;i++){const spot=document.createElement("span");spot.className="yard-spot";inner.append(spot);}
+    area.append(inner);yardMap.set(color,area);board.append(area);
+  }
+  board.append(boardCell(6,6,"home-center"));
+  for(const player of game.players){
+    player.pieces.forEach((progress,index)=>{
+      let cell;
+      if(progress<0)cell=yardMap.get(player.color)?.querySelectorAll(".yard-spot")[index];
+      else{
+        const coord=progress>=52?homeLanes[player.color][Math.min(5,progress-52)]:track[(startIndex[player.color]+progress)%52];
+        const key=coordKey(...coord);cell=cellMap.get(key);
+        if(!cell){cell=boardCell(...coord,"track");board.append(cell);cellMap.set(key,cell);}
+      }
+      if(!cell)return;
+      const button=document.createElement("button");button.type="button";
+      button.className="piece-token"+(selected?.color===player.color&&selected.index===index?" selected":"");
+      button.style.setProperty("--token","var(--"+player.color+")");
+      button.setAttribute("aria-label",player.color+" piece "+(index+1));
+      const isCurrent=player===game.players[game.turn];
+      const legal=game.dice!==null&&isCurrent&&legalPieceMoves(game).some(move=>move.pieceIndex===index);
+      button.disabled=player.kind==="cpu"||(!legal&&!isCurrent)||(mode==="online"&&game.turn!==myPlayerIndex);
+      button.addEventListener("click",()=>choosePiece(player.color,index));cell.append(button);
+    });
+  }
 }
 function render(){if(!game)return;$("gamePanel").hidden=false;$("modePanel").hidden=true;$("playersBar").replaceChildren();game.players.forEach((p,i)=>{const chip=document.createElement("div");chip.className="player-chip"+(i===game.turn?" active":"");chip.style.setProperty("--player","var(--"+p.color+")");const dot=document.createElement("i");dot.className="player-dot";const name=document.createElement("strong");name.textContent=(colorName[p.color]?.[lang]||colorName[p.color].en)+(p.kind==="cpu"?" · CPU":"")+(p.finished===4?" · ✓":"");chip.append(dot,name);$("playersBar").append(chip);});const current=game.players[game.turn];$("turnText").textContent=(colorName[current.color]?.[lang]||colorName[current.color].en)+(current.kind==="cpu"?" · CPU":"");$("turnDot").style.setProperty("--player","var(--"+current.color+")");$("diceFace").textContent=game.dice??"–";$("rollBtn").disabled=game.dice!==null||game.status!=="active"||current.kind==="cpu"||(mode==="online"&&game.turn!==myPlayerIndex);$("gameMessage").textContent=game.status==="finished"?t("won",{color:colorName[game.winner]?.[lang]||game.winner}):game.dice===null?t("rollFirst"):t("choosePiece");$("rollBtn").textContent=t("roll");renderBoard();}
 function choosePiece(color,index){if(!game||game.status!=="active"||game.players[game.turn].color!==color||game.dice===null)return;const move=legalPieceMoves(game).find(m=>m.pieceIndex===index);if(!move){$("gameMessage").textContent=t("choosePiece");return;}if(mode==="online"){onlineSocket?.readyState===WebSocket.OPEN&&onlineSocket.send(JSON.stringify({type:"move",pieceIndex:index,to:move.to}));return;}game=applyMove(game,game.turn,move);selected=null;render();if(game.status==="finished"){recordResult();return;}advanceCpu();}
