@@ -8,7 +8,7 @@ const clone = value => structuredClone(value);
 export function createGame(playerCount = 4, humanCount = playerCount) {
   const count = Math.max(1, Math.min(4, Number(playerCount) || 4));
   const humans = Math.max(1, Math.min(count, Number(humanCount) || 1));
-  const colors = COLORS.slice(0, count);
+  const colors = count === 2 ? ["red", "yellow"] : COLORS.slice(0, count);
   return {
     version: 1, status: "active", turn: 0, dice: null, consecutiveSixes: 0,
     players: colors.map((color, index) => ({
