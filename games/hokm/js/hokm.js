@@ -58,11 +58,36 @@ function cardFx(kind){
  else play();
 }
 const MUSIC_URL="./assets/music/City%20Stomp%20-%20Upbeat%20Big%20Band%20Swing%20Instrumental%20by%20NickPanek%20-%20Royalty-free%20Music.mp3";
-let musicAudio=null;
-function getMusicAudio(){if(!musicAudio){musicAudio=new Audio(MUSIC_URL);musicAudio.loop=true;musicAudio.preload="none";musicAudio.volume=Number($("musicVolume")?.value??35)/100;musicAudio.addEventListener("error",()=>console.warn("[Hokm music] Background track could not be loaded."));}return musicAudio}
-async function startMusic(){const player=getMusicAudio();if(musicOn&&!player.paused)return;player.volume=Number($("musicVolume")?.value??35)/100;try{await player.play();musicOn=true;applyLang()}catch(error){musicOn=false;console.warn("[Hokm music]",error);applyLang()}}
+let musicAudio=null,musicContext=null,musicSource=null,musicGain=null,musicVolumeLevel=.20;
+const musicVolumeControl=$("musicVolume"),musicVolumeValue=$("volumeValue");
+if(musicVolumeControl){musicVolumeControl.value="20";musicVolumeControl.setAttribute("value","20");musicVolumeControl.style.touchAction="pan-y";}
+if(musicVolumeValue)musicVolumeValue.textContent="20%";
+function getMusicAudio(){if(!musicAudio){musicAudio=new Audio(MUSIC_URL);musicAudio.loop=true;musicAudio.preload="none";musicAudio.volume=1;musicAudio.addEventListener("error",()=>console.warn("[Hokm music] Background track could not be loaded."));}return musicAudio}
+function configureMusicOutput(){
+ const player=getMusicAudio(),AudioContextClass=window.AudioContext||window.webkitAudioContext;
+ if(AudioContextClass){
+  try{
+   if(!musicContext)musicContext=new AudioContextClass();
+   if(!musicSource){musicSource=musicContext.createMediaElementSource(player);musicGain=musicContext.createGain();musicSource.connect(musicGain);musicGain.connect(musicContext.destination);}
+   musicGain.gain.setValueAtTime(musicVolumeLevel,musicContext.currentTime);
+   player.volume=1;
+   return musicContext.resume();
+  }catch(error){console.warn("[Hokm music] Web Audio volume control unavailable; using media volume.",error)}
+ }
+ player.volume=musicVolumeLevel;
+ return Promise.resolve();
+}
+function setMusicVolume(value){
+ const parsed=Number(value),safe=Number.isFinite(parsed)?Math.max(0,Math.min(100,parsed)):20;
+ musicVolumeLevel=safe/100;
+ if(musicVolumeControl&&musicVolumeControl.value!==String(safe))musicVolumeControl.value=String(safe);
+ if(musicVolumeValue)musicVolumeValue.textContent=safe+"%";
+ if(musicGain&&musicContext)musicGain.gain.setTargetAtTime(musicVolumeLevel,musicContext.currentTime,.015);
+ else if(musicAudio)musicAudio.volume=musicVolumeLevel;
+}
+async function startMusic(){const player=getMusicAudio();if(musicOn&&!player.paused)return;try{await configureMusicOutput();await player.play();musicOn=true;applyLang()}catch(error){musicOn=false;console.warn("[Hokm music]",error);applyLang()}}
 let musicAutoStart=true;
-window.HokmAudio={card:cardFx,startMusic,stopMusic,isMusicOn:()=>musicOn};
+window.HokmAudio={card:cardFx,startMusic,stopMusic,isMusicOn:()=>musicOn,setMusicVolume};
 function syncGameShell(visible){const shell=document.querySelector(".game-shell");if(shell)shell.hidden=!visible}
 syncGameShell(false);
 window.addEventListener("hokm:authenticated",e=>{const valid=!!e.detail?.sessionToken;syncGameShell(valid);if(valid){musicAutoStart=false;startMusic()}});
@@ -70,9 +95,15 @@ window.addEventListener("hokm:access-revoked",()=>{syncGameShell(false)});
 
 document.addEventListener("pointerdown",e=>{if(!musicAutoStart||e.target.closest("#musicToggle,#soundToggle,#musicVolume"))return;musicAutoStart=false;startMusic()},{passive:true});
 function stopMusic(){musicOn=false;if(musicAudio){musicAudio.pause();musicAudio.currentTime=0}applyLang()}
+function toggleMusic(){musicAutoStart=false;musicOn?stopMusic():startMusic()}
 $("soundToggle").addEventListener("click",()=>{soundOn=!soundOn;if(soundOn)note(660,.08,.008);applyLang()});
-$("musicToggle").addEventListener("click",()=>{musicAutoStart=false;musicOn?stopMusic():startMusic()});
-$("musicVolume").addEventListener("input",e=>{$("volumeValue").textContent=e.target.value+"%";if(musicAudio)musicAudio.volume=Number(e.target.value)/100;});
+$("musicToggle").addEventListener("click",toggleMusic);
+$("musicToggle").addEventListener("touchend",e=>{e.preventDefault();toggleMusic()},{passive:false});
+if(musicVolumeControl){
+ musicVolumeControl.addEventListener("input",e=>setMusicVolume(e.currentTarget.value));
+ musicVolumeControl.addEventListener("change",e=>setMusicVolume(e.currentTarget.value));
+ musicVolumeControl.addEventListener("touchmove",e=>{const touch=e.touches[0],rect=musicVolumeControl.getBoundingClientRect();if(!touch||!rect.width)return;const ratio=Math.max(0,Math.min(1,(touch.clientX-rect.left)/rect.width));setMusicVolume(Math.round(ratio*100));},{passive:true});
+}
 $("dealDemoBtn").addEventListener("click",()=>{cardFx("deal");$("tableMessage").textContent=tr("cardDealPreview")});
 $("collectDemoBtn").addEventListener("click",()=>{cardFx("collect");$("tableMessage").textContent=tr("cardCollectPreview")});
 
