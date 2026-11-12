@@ -84,16 +84,17 @@ async function handleChallenge(request, env) {
     return json({ ok: false, error: "A valid wallet address is required." }, 400);
   }
   const wallet = getAddress(body.address);
+  const service = ["Chess Arena", "Backgammon", "Ludo"].includes(body.service) ? body.service : "Chess Arena";
   const nonce = crypto.randomUUID().replace(/-/g, "");
   const now = Math.floor(Date.now() / 1000);
   const expiresAt = now + NONCE_TTL_SECONDS;
   const origin = request.headers.get("Origin") || env.FRONTEND_ORIGIN;
   const domain = new URL(origin).host;
   const message = [
-    "Fly Infinity Chess Arena wants you to sign in with your BNB Smart Chain wallet:",
+    "Fly Infinity " + service + " wants you to sign in with your BNB Smart Chain wallet:",
     wallet,
     "",
-    "Sign in to Chess Arena. This signature is free and does not authorize a token transfer.",
+    "Sign in to Fly Infinity " + service + ". This signature is free and does not authorize a token transfer.",
     "",
     "URI: " + origin,
     "Chain ID: " + BSC_CHAIN_ID,
