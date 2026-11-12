@@ -111,3 +111,69 @@ body{color:var(--hokm-copy)}
 @media(prefers-reduced-motion:reduce){
   .player-chip.active{animation:none!important;box-shadow:0 0 0 2px rgba(0,217,255,.7),0 0 14px rgba(0,217,255,.2)}
 }
+
+
+/* v2: deterministic background/content stacking and comprehensive Hokm UI palette.
+   Keep the existing page artwork, velvet table, and playing-card faces unchanged. */
+body{isolation:isolate!important}
+#hokm-neon-canvas{
+  position:fixed!important;inset:0!important;
+  width:100vw!important;height:100vh!important;height:100dvh!important;
+  z-index:0!important;display:block!important;pointer-events:none!important;
+  opacity:.92!important;transform:none!important;contain:none!important;
+}
+.arena{position:relative!important;z-index:1!important}
+body .arena > .topbar,body .arena > .hero,body .arena > .access-card,
+body .arena > .match-settings,body .arena > .game-shell,body .arena > .sound-panel,
+body .arena .minimum,body .arena .tier-rules article,body .arena .hokm-online-panel,
+body .arena .hokm-game-controls,body .arena .hokm-cpu-controls,
+body .arena .hokm-round-scoreboard,body .arena .hokm-round-score,
+body .arena .game-bottom .team-score,body .arena .game-bottom .round-info,
+body .arena .player-chip,body .arena .hakem-pill,body .arena .trump-pill,
+body .arena .hokm-turn-clock,body .arena .hokm-room-invite,body .arena .hokm-won-pile{
+  color:var(--hokm-copy)!important;border-color:rgba(0,217,255,.52)!important;
+  background:linear-gradient(135deg,rgba(17,28,53,.96),rgba(24,39,76,.91))!important;
+  box-shadow:0 10px 28px rgba(4,9,28,.38),inset 0 1px rgba(255,255,255,.08),0 0 16px rgba(69,108,255,.10)!important;
+}
+body .arena > .hero{border-color:rgba(139,92,246,.62)!important}
+body .arena > .access-card{border-color:rgba(0,217,255,.68)!important}
+body .arena > .match-settings{border-color:rgba(69,108,255,.68)!important}
+body .arena > .sound-panel{border-color:rgba(139,92,246,.62)!important}
+body .arena .tier-rules article:nth-child(odd),body .arena .hokm-round-score.white{border-color:rgba(0,217,255,.68)!important}
+body .arena .tier-rules article:nth-child(even),body .arena .hokm-round-score.black{border-color:rgba(139,92,246,.72)!important}
+body .arena .hokm-online-panel,body .arena .hokm-game-controls,
+body .arena .hokm-cpu-controls,body .arena .hokm-room-invite{border-color:rgba(0,217,255,.48)!important}
+body .arena :is(.eyebrow,.network,.volume-control,.volume-control b,.dashboard-link,
+.minimum>span,.minimum strong,.team-score b,.round-info b,.team-stat em,
+.hokm-game-status,.hokm-online-status,.hokm-turn-clock,.hokm-round-score b){color:var(--hokm-cyan)!important}
+body .arena :is(.brand-name,.access-mark,.tier-rules b,.minimum b,.player-chip em,
+.hakem-pill b,.trump-pill b,.hokm-hakem-crown){color:#B9C9FF!important}
+body .arena :is(.hero p,.access-card>p,.settings-copy p,.tier-note,.sound-panel p,
+.status,.control-hint,.table-message,footer,.minimum small,.tier-rules span,
+.player-chip small,.team-score small,.round-info span,.team-stat,.difficulty-control,.hokm-room-entry){
+color:var(--hokm-muted)!important}
+body .arena :is(.access-heading h2,.settings-copy h3,.sound-panel h3,.table-toolbar h2,
+.player-chip b,.hokm-online-heading h3,.hokm-trump-picker>strong,.hokm-hand-caption,.hokm-online-trump b){
+color:var(--hokm-copy)!important}
+body .arena .hero h1{
+background:linear-gradient(100deg,var(--hokm-cyan),#91B8FF 48%,var(--hokm-violet))!important;
+-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+body .arena :is(.network,.dashboard-link,select,.hokm-room-entry input){
+border:1px solid rgba(0,217,255,.48)!important;background:rgba(17,28,53,.96)!important;color:var(--hokm-copy)!important}
+body .arena :is(.primary-btn,.secondary-btn,.icon-btn,.small-btn,.hokm-trump-options button,
+.hokm-online-trump button,.hokm-cpu-controls button,.hokm-game-buttons button){
+border:1px solid rgba(0,217,255,.62)!important;border-radius:12px!important;color:#EAF5FF!important;
+background:linear-gradient(135deg,rgba(69,108,255,.32),rgba(139,92,246,.28))!important;
+box-shadow:0 5px 16px rgba(4,9,28,.22)!important}
+body .arena .primary-btn{color:#07172E!important;border-color:rgba(0,217,255,.96)!important;
+background:linear-gradient(110deg,var(--hokm-cyan),#9AC5FF)!important}
+body .arena :is(.secondary-btn,.icon-btn,.small-btn,.hokm-trump-options button,
+.hokm-online-trump button,.hokm-cpu-controls button,.hokm-game-buttons button):hover{
+border-color:var(--hokm-cyan)!important;box-shadow:0 0 18px rgba(0,217,255,.24)!important}
+body .arena .network i{background:var(--hokm-cyan)!important;box-shadow:0 0 10px var(--hokm-cyan)!important}
+body .arena :is(input,select){accent-color:var(--hokm-cyan)!important}
+body .arena select option{background:var(--hokm-ink)!important;color:var(--hokm-copy)!important}
+/* Preserve the original felt and real playing-card faces. */
+body .arena .velvet-table,body .arena .table-inner,body .arena .hokm-card,
+body .arena .hokm-card-back,body .arena .played-card{background-color:initial}
+@media(max-width:760px){#hokm-neon-canvas{opacity:.82!important}}

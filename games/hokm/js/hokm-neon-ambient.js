@@ -13,9 +13,10 @@
     canvas.style.setProperty('inset','0','important');
     canvas.style.setProperty('width','100vw','important');
     canvas.style.setProperty('height','100vh','important');
-    canvas.style.setProperty('z-index','1','important');
+    canvas.style.setProperty('z-index','0','important');
     canvas.style.setProperty('pointer-events','none','important');
     canvas.style.setProperty('display','block','important');
+    canvas.style.setProperty('contain','none','important');
     document.body.appendChild(canvas);
     resize();
     requestAnimationFrame(frame);
