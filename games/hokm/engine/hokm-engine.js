@@ -67,7 +67,7 @@ function playCard(game,player,cardId){
  const card=game.hands[player].find(c=>c.id===cardId);if(!card)throw new Error("Card not in hand");
  if(!legalCards(game,player).some(c=>c.id===cardId))throw new Error("Must follow the lead suit when possible");
  game.hands[player]=game.hands[player].filter(c=>c.id!==cardId);game.trick.push({player,card});
- if(game.trick.length<4){game.currentPlayer=(player+1)%4;return {game,completed:false}}
+ if(game.trick.length<4){game.currentPlayer=(player+3)%4;return {game,completed:false}}
  const winner=trickWinner(game.trick,game.trump),team=winner%2===0?0:1;
  game.tricksWon[winner]++;game.teamTricks[team]++;game.leader=winner;game.currentPlayer=winner;
  const completedTrick=game.trick.map(x=>({...x}));game.trick=[];
