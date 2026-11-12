@@ -57,7 +57,7 @@ function cardFx(kind){
  if(c.state==="suspended")c.resume().then(play).catch(error=>console.warn("[Hokm audio resume]",error));
  else play();
 }
-const MUSIC_URL="./assets/music/City%20Stomp%20-%20Upbeat%20Big%20Band%20Swing%20Instrumental%20by%20NickPanek%20-%20Royalty-free%20Music.mp3";
+const MUSIC_URL="./assets/music/art_roseman-jazz-swing-573323.mp3";
 let musicAudio=null,musicContext=null,musicSource=null,hokmMusicGain=null,musicVolumeLevel=.20;
 const musicVolumeControl=$("musicVolume"),musicVolumeValue=$("volumeValue");
 if(musicVolumeControl){musicVolumeControl.value="20";musicVolumeControl.setAttribute("value","20");musicVolumeControl.style.touchAction="pan-y";}
