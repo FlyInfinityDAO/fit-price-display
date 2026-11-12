@@ -60,8 +60,12 @@ function trickWinner(trick,trump){
 function finishRound(match,game,winningTeam){
  if(match.round!==game||!game.finished)throw new Error("Round is not complete or does not belong to this match");
  match.roundsPlayed++;match.matchPoints[winningTeam]++;
- if(match.roundsPlayed>=match.maxRounds)match.finished=true;
- return {roundsPlayed:match.roundsPlayed,maxRounds:match.maxRounds,matchPoints:[...match.matchPoints],matchWinner:match.finished?(match.matchPoints[0]===match.matchPoints[1]?-1:match.matchPoints[0]>match.matchPoints[1]?0:1):null,matchFinished:match.finished};
+ match.hakemCounts ||= [0,0];
+ const hakemTeam=game.hakem%2;
+ match.hakemCounts[hakemTeam]++;
+ const matchWinner=match.hakemCounts[hakemTeam]>=match.maxRounds?hakemTeam:null;
+ if(matchWinner!==null)match.finished=true;
+ return {roundsPlayed:match.roundsPlayed,maxRounds:match.maxRounds,matchPoints:[...match.matchPoints],hakemCounts:[...match.hakemCounts],matchWinner,matchFinished:match.finished};
 }
 function playCard(game,player,cardId){
  if(game.phase!=="playing"||game.finished)throw new Error("Game is not accepting cards");
