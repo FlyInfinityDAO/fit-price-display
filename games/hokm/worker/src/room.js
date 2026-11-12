@@ -4,6 +4,7 @@ import "../../engine/hokm-engine.js";
 const H = globalThis.HokmEngine;
 const ROOM_TTL = 6 * 60 * 60;
 const CARD_FLIGHT_MS = 1600;
+const CARD_FLIGHT_BUFFER_MS = 300;
 const TRICK_HOLD_MS = 1300;
 const TICKET_TTL = 60;
 const TURN_TIMEOUT_MS = 30000;
@@ -350,11 +351,7 @@ export class HokmRoom extends DurableObject {
   }
   async applyResult(room, result) {
     const game = room.match.round;
-    room.cardFlightUntil = Date.now() + CARD_FLIGHT_MS;
-    if (!game.finished) {
-      game.turnStartedAt = room.cardFlightUntil;
-      game.turnDeadlineAt = room.cardFlightUntil + H.TURN_TIMEOUT_MS;
-    }
+    room.cardFlightUntil = Date.now() + CARD_FLIGHT_MS + CARD_FLIGHT_BUFFER_MS;
     if (result.roundWinner !== undefined) {
       room.lastTrick = result.trick || [];
       room.lastTrickClearAt = room.cardFlightUntil + TRICK_HOLD_MS;
@@ -369,6 +366,11 @@ export class HokmRoom extends DurableObject {
     if (result.completed) {
       room.lastTrick = result.trick || [];
       room.lastTrickClearAt = room.cardFlightUntil + TRICK_HOLD_MS;
+    }
+    if (!game.finished) {
+      const nextTurnAt = result.completed ? room.lastTrickClearAt : room.cardFlightUntil;
+      game.turnStartedAt = nextTurnAt;
+      game.turnDeadlineAt = nextTurnAt + H.TURN_TIMEOUT_MS;
     }
     await this.scheduleAlarm(room);
   }
