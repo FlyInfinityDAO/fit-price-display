@@ -3,6 +3,8 @@ import "../../engine/hokm-engine.js";
 
 const H = globalThis.HokmEngine;
 const ROOM_TTL = 6 * 60 * 60;
+const CARD_FLIGHT_MS = 1600;
+const TRICK_HOLD_MS = 1300;
 const TICKET_TTL = 60;
 const TURN_TIMEOUT_MS = 30000;
 const json = (data, status = 200) => new Response(JSON.stringify(data), {
@@ -43,6 +45,7 @@ export class HokmRoom extends DurableObject {
     return {
       code: room.code,
       status: room.status,
+      cardFlightUntil: room.cardFlightUntil || null,
       players: room.players.map(p => publicPlayer(p, wallet, room.match)),
       seat,
       maxPlayers: 4,
@@ -255,7 +258,7 @@ export class HokmRoom extends DurableObject {
     const cpu = room.match.players.find(p => p.seat === cpuSeat)?.kind === "cpu";
     if (cpu) {
       delete room.trumpDeadlineAt;
-      room.cpuTurnAt ||= Date.now() + 650;
+      room.cpuTurnAt = Math.max(room.cpuTurnAt || 0, Date.now() + 650, (room.cardFlightUntil || 0) + 650, (room.lastTrickClearAt || 0) + 650);
     } else {
       delete room.cpuTurnAt;
     }
@@ -286,6 +289,7 @@ export class HokmRoom extends DurableObject {
     const game = room.match?.round;
     if (room.status === "round-break" && room.nextRoundAt) times.push(room.nextRoundAt);
     if (room.lastTrickClearAt) times.push(room.lastTrickClearAt);
+    if (room.cardFlightUntil) times.push(room.cardFlightUntil);
     if (room.trumpDeadlineAt) times.push(room.trumpDeadlineAt);
     if (room.cpuTurnAt) times.push(room.cpuTurnAt);
     if (game?.phase === "playing" && Number.isFinite(game.turnDeadlineAt)) times.push(game.turnDeadlineAt);
@@ -324,7 +328,7 @@ export class HokmRoom extends DurableObject {
         this.queueCpuTurn(room);
         await this.scheduleAlarm(room);
       } else if (data.type === "play_card") {
-        if (room.status !== "playing" || room.lastTrick?.length) throw new Error("Please wait for the current trick to finish");
+        if (room.status !== "playing" || room.lastTrick?.length || (room.cardFlightUntil && Date.now() < room.cardFlightUntil)) throw new Error("Please wait for the current card animation to finish");
         const game = room.match?.round;
         if (!game || game.currentPlayer !== player.seat) throw new Error("It is not your turn");
         const result = H.playCardWithClock(game, player.seat, String(data.cardId || ""));
@@ -346,20 +350,25 @@ export class HokmRoom extends DurableObject {
   }
   async applyResult(room, result) {
     const game = room.match.round;
+    room.cardFlightUntil = Date.now() + CARD_FLIGHT_MS;
+    if (!game.finished) {
+      game.turnStartedAt = room.cardFlightUntil;
+      game.turnDeadlineAt = room.cardFlightUntil + H.TURN_TIMEOUT_MS;
+    }
     if (result.roundWinner !== undefined) {
       room.lastTrick = result.trick || [];
-      room.lastTrickClearAt = Date.now() + 1200;
+      room.lastTrickClearAt = room.cardFlightUntil + TRICK_HOLD_MS;
       const round = H.finishRound(room.match, game, result.roundWinner);
       room.roundWinner = result.roundWinner;
       room.status = round.matchFinished ? "finished" : "round-break";
-      if (!round.matchFinished) room.nextRoundAt = Date.now() + 1800;
+      if (!round.matchFinished) room.nextRoundAt = room.lastTrickClearAt + 500;
       else delete room.nextRoundAt;
       await this.scheduleAlarm(room);
       return;
     }
     if (result.completed) {
       room.lastTrick = result.trick || [];
-      room.lastTrickClearAt = Date.now() + 900;
+      room.lastTrickClearAt = room.cardFlightUntil + TRICK_HOLD_MS;
     }
     await this.scheduleAlarm(room);
   }
@@ -388,6 +397,10 @@ export class HokmRoom extends DurableObject {
       const hakem = (room.match.round.hakem + 1) % 4;
       delete room.nextRoundAt;
       await this.startRound(room, hakem);
+      changed = true;
+    }
+    if (room.cardFlightUntil && now >= room.cardFlightUntil) {
+      delete room.cardFlightUntil;
       changed = true;
     }
     if (room.lastTrickClearAt && now >= room.lastTrickClearAt) {
