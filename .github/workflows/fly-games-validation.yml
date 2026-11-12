@@ -5,7 +5,7 @@ on:
     paths:
       - 'games/chess-arena/**'
       - 'games/backgammon/**'
-      - 'games/hokm/**'
+      - 'games/hokm/**'\n      - 'games/ludo/**'
       - '.github/workflows/**'
   push:
     branches: [main, 'chore/**']
@@ -34,7 +34,7 @@ jobs:
         run: |
           set -euo pipefail
           files=(
-            games/chess-arena/js/chess-arena.js
+            games/ludo/js/ludo-engine.js\n            games/ludo/js/ludo-engine.test.js\n            games/ludo/js/ludo.js\n            games/chess-arena/js/chess-arena.js
             games/chess-arena/js/language.js
             games/backgammon/js/backgammon-engine.js
             games/backgammon/js/backgammon-engine.test.js
@@ -51,7 +51,7 @@ jobs:
             node --input-type=module --check < "$file"
             echo "Syntax OK: $file"
           done
-      - name: Run Backgammon rules-engine tests
+      - name: Run Fly Ludo rules-engine tests\n        run: node --experimental-default-type=module --test games/ludo/js/ludo-engine.test.js\n      - name: Run Backgammon rules-engine tests
         run: node --experimental-default-type=module --test games/backgammon/js/backgammon-engine.test.js
       - name: Build standalone Pages frontend and verify shared assets
         run: bash games/chess-arena/build-pages.sh
