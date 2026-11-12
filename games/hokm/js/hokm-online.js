@@ -157,7 +157,7 @@ async function copyRoomCode(){
  catch{const input=$("hokmRoomCodeInput");input.value=roomCode;input.select();status(t("copyFallback"))}
 }
 function displaySeat(seat){return (seat-ownSeat+4)%4}
-function trickSlot(seat){return seat===1?3:seat===3?1:seat;}
+
 function makeSeatRing(kind){const ring=document.createElement("span");ring.className="hokm-seat-ring "+kind;ring.setAttribute("aria-hidden","true");return ring}
 function renderSeatRing(chip,kind,deadline,now){let ring=chip.querySelector(".hokm-seat-ring."+kind);if(!deadline){ring?.remove();return}if(!ring){ring=makeSeatRing(kind);chip.appendChild(ring)}const total=kind==="turn"?30000:(lastState?.game?.reconnectGraceMs||60000);const left=Math.max(0,deadline-now);ring.style.setProperty("--ring-progress",String(Math.max(0,Math.min(1,left/total))));ring.textContent=String(Math.ceil(left/1000));ring.title=kind==="turn"?t("turnCountdown"):t("reconnectCountdown");}
 function shortWalletLabel(wallet){const value=String(wallet||"");return value.length>12?value.slice(0,6)+"…"+value.slice(-4).toUpperCase():value||"—"}
@@ -255,7 +255,7 @@ function renderState(s){
   const activeTrickSeats=new Set();
   const entries=(game.lastTrick&&game.lastTrick.length?game.lastTrick:game.trick)||[];
   entries.forEach(entry=>{
-   const visual=displaySeat(entry.player),slot=trickSlot(visual),node=nodes[slot];if(!node)return;activeTrickSeats.add(slot);
+   const visual=displaySeat(entry.player),slot=H.trickSlot(visual),node=nodes[slot];if(!node)return;activeTrickSeats.add(slot);
    const red=["♥","♦"].includes(entry.card.suit);
    node.classList.remove("empty");node.classList.toggle("red",red);node.classList.toggle("black",!red);node.textContent=entry.card.rank+entry.card.suit;
    const playerChip=document.querySelector(seatEls(visual).chip);

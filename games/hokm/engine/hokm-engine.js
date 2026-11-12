@@ -2,6 +2,8 @@
 "use strict";
 const SUITS=["♠","♥","♦","♣"],RANKS=["2","3","4","5","6","7","8","9","10","J","Q","K","A"],TEAMS=[[0,2],[1,3]];
 const rankValue=r=>RANKS.indexOf(r);
+function nextSeat(seat){return (seat+3)%4}
+function trickSlot(seat){return seat;}
 function makeDeck(){return SUITS.flatMap(s=>RANKS.map(r=>({suit:s,rank:r,id:r+s})))}
 function shuffle(deck,rng=Math.random){const a=[...deck];for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 function tierForBalance(balance){const n=Number(balance);if(!Number.isFinite(n)||n<1)return 0;return n>=10?2:1}
@@ -67,7 +69,7 @@ function playCard(game,player,cardId){
  const card=game.hands[player].find(c=>c.id===cardId);if(!card)throw new Error("Card not in hand");
  if(!legalCards(game,player).some(c=>c.id===cardId))throw new Error("Must follow the lead suit when possible");
  game.hands[player]=game.hands[player].filter(c=>c.id!==cardId);game.trick.push({player,card});
- if(game.trick.length<4){game.currentPlayer=(player+1)%4;return {game,completed:false}}
+ if(game.trick.length<4){game.currentPlayer=nextSeat(player);return {game,completed:false}}
  const winner=trickWinner(game.trick,game.trump),team=winner%2===0?0:1;
  game.tricksWon[winner]++;game.teamTricks[team]++;game.leader=winner;game.currentPlayer=winner;
  const completedTrick=game.trick.map(x=>({...x}));game.trick=[];
@@ -146,6 +148,6 @@ function expireDisconnectedPlayers(match,now=Date.now()){
  return replaced;
 }
 
-const api={SUITS,RANKS,TEAMS,TURN_TIMEOUT_MS,RECONNECT_GRACE_MS,makeDeck,shuffle,selectHakemByFirstAce,tierForBalance,resolveAccessPolicy,createMatch,startRound,createGame,chooseTrump,legalCards,cardStrength,trickWinner,finishRound,playCard,playCardWithClock,startTurnClock,resolveTurnTimeout,markPlayerDisconnected,reconnectPlayer,expireDisconnectedPlayers,chooseCpuCard,seatMap};
+const api={SUITS,RANKS,TEAMS,nextSeat,trickSlot,TURN_TIMEOUT_MS,RECONNECT_GRACE_MS,makeDeck,shuffle,selectHakemByFirstAce,tierForBalance,resolveAccessPolicy,createMatch,startRound,createGame,chooseTrump,legalCards,cardStrength,trickWinner,finishRound,playCard,playCardWithClock,startTurnClock,resolveTurnTimeout,markPlayerDisconnected,reconnectPlayer,expireDisconnectedPlayers,chooseCpuCard,seatMap};
 if(typeof module!=="undefined"&&module.exports)module.exports=api;root.HokmEngine=api;
 })(typeof globalThis!=="undefined"?globalThis:this);
