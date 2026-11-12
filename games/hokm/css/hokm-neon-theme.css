@@ -912,3 +912,9 @@ body .arena .player-chip.active b{color:#fff0b8!important;text-shadow:0 0 7px rg
 .table-inner .table-center .table-message{position:absolute!important;left:50%!important;bottom:0!important;transform:translateX(-50%)!important;width:100%!important;font-size:11px!important}
 @media(max-width:760px){.table-inner>.table-center{height:238px!important}.table-inner .table-center .trick-cards{inset:48px 0 24px!important}.table-inner .table-center .trick-cards .played-card{width:clamp(40px,10vw,54px)!important;height:clamp(58px,14vw,72px)!important;font-size:20px!important}.table-inner .table-center .trick-cards .played-card[data-player-label]::before{top:-20px!important;max-width:84px!important;font-size:8px!important;padding:1px 5px!important}.table-inner .table-center .trick-cards .played-card:nth-child(3)[data-player-label]::before{top:auto!important;bottom:-20px!important}.table-inner .table-center .table-meta{gap:4px!important}.table-inner .table-center .table-message{font-size:9px!important}}
 @media(max-width:420px){.table-inner>.table-center{height:220px!important}.table-inner .table-center .trick-cards{inset:45px 0 22px!important}.table-inner .table-center .trick-cards .played-card{width:34px!important;height:50px!important;font-size:18px!important}.table-inner .table-center .trick-cards .played-card[data-player-label]::before{top:-18px!important;max-width:68px!important;font-size:7px!important}.table-inner .table-center .trick-cards .played-card:nth-child(3)[data-player-label]::before{top:auto!important;bottom:-18px!important}}
+
+
+/* Mobile-only: lift the hakem/trump indicators clear of the north player's card slot. */
+@media(max-width:760px){
+  .table-inner .table-center .table-meta{top:-18px!important}
+}
