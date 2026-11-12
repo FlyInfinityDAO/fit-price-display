@@ -800,3 +800,12 @@ html body .arena > .hero h1[data-i="title"] .hokm-title-word:nth-of-type(3){anim
     animation:none!important;background-position:50% 50%!important;
   }
 }
+
+
+/* Table turn ownership is intentionally gold, while the preserved page neon remains unchanged. */
+body .arena .player-chip.active{
+ border-color:#ffe08a!important;
+ box-shadow:0 0 0 1px #ffe08a,0 0 12px 4px rgba(255,198,65,.72),0 0 28px rgba(255,165,35,.42)!important;
+ animation:hokmActiveGold 1.35s ease-in-out infinite!important;
+}
+@keyframes hokmActiveGold{0%,100%{box-shadow:0 0 0 1px #ffe08a,0 0 9px 2px rgba(255,202,75,.5)}50%{box-shadow:0 0 0 2px #fff0b8,0 0 17px 6px rgba(255,190,57,.85),0 0 30px rgba(255,157,28,.45)}}
