@@ -397,7 +397,7 @@ export class HokmRoom extends DurableObject {
     }
     if (room.status === "round-break" && room.match && !room.match.finished && room.nextRoundAt && now >= room.nextRoundAt) {
       const previousHakem = room.match.round.hakem;
-      const hakem = room.roundWinner === previousHakem % 2 ? previousHakem : (previousHakem + 1) % 4;
+      const hakem = room.roundWinner === previousHakem % 2 ? previousHakem : H.nextSeat(previousHakem);
       delete room.nextRoundAt;
       await this.startRound(room, hakem);
       changed = true;
