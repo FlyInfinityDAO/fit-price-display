@@ -32,3 +32,11 @@ new_sqlite_classes = ["BackgammonRoom"]
 
 [triggers]
 crons = ["17 * * * *"]
+
+[[durable_objects.bindings]]
+name = "LUDO_ROOMS"
+class_name = "LudoRoom"
+
+[[migrations]]
+tag = "v3"
+new_sqlite_classes = ["LudoRoom"]

@@ -84,16 +84,17 @@ async function handleChallenge(request, env) {
     return json({ ok: false, error: "A valid wallet address is required." }, 400);
   }
   const wallet = getAddress(body.address);
+  const service = ["Chess Arena", "Backgammon", "Ludo"].includes(body.service) ? body.service : "Chess Arena";
   const nonce = crypto.randomUUID().replace(/-/g, "");
   const now = Math.floor(Date.now() / 1000);
   const expiresAt = now + NONCE_TTL_SECONDS;
   const origin = request.headers.get("Origin") || env.FRONTEND_ORIGIN;
   const domain = new URL(origin).host;
   const message = [
-    "Fly Infinity Chess Arena wants you to sign in with your BNB Smart Chain wallet:",
+    "Fly Infinity " + service + " wants you to sign in with your BNB Smart Chain wallet:",
     wallet,
     "",
-    "Sign in to Chess Arena. This signature is free and does not authorize a token transfer.",
+    "Sign in to Fly Infinity " + service + ". This signature is free and does not authorize a token transfer.",
     "",
     "URI: " + origin,
     "Chain ID: " + BSC_CHAIN_ID,
@@ -135,7 +136,7 @@ async function handleVerify(request, env) {
   if (recovered !== wallet) return json({ ok: false, error: "Signature does not match the wallet address." }, 401);
 
   if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32) {
-    return json({ ok: false, error: "Chess Arena session signing is not configured." }, 503);
+    return json({ ok: false, error: "Fly Infinity Games session signing is not configured." }, 503);
   }
 
   let balance;
@@ -179,7 +180,7 @@ async function handleVerify(request, env) {
 
 async function handleSession(request, env) {
   if (!env.SESSION_SECRET || env.SESSION_SECRET.length < 32) {
-    return json({ ok: false, error: "Chess Arena session signing is not configured." }, 503);
+    return json({ ok: false, error: "Fly Infinity Games session signing is not configured." }, 503);
   }
   const authorization = request.headers.get("Authorization") || "";
   const token = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
@@ -217,7 +218,7 @@ export default {
     if (request.method === "POST" && requestPath === "/api/auth/challenge") rateConfig = ["auth-challenge", 20, 600];
     else if (request.method === "POST" && requestPath === "/api/auth/verify") rateConfig = ["auth-verify", 30, 600];
     else if (request.method === "GET" && requestPath === "/api/auth/session") rateConfig = ["auth-session", 60, 60];
-    else if (requestPath.startsWith("/api/rooms/") || requestPath.startsWith("/api/backgammon/") ||
+    else if (requestPath.startsWith("/api/rooms/") || requestPath.startsWith("/api/backgammon/") || requestPath.startsWith("/api/ludo/") ||
              requestPath === "/api/stats/me" || requestPath === "/api/stats/leaderboard") {
       rateConfig = ["game-api", 120, 60];
     }
@@ -230,7 +231,7 @@ export default {
       }
     }
     if (request.method === "GET" && new URL(request.url).pathname === "/api/health") {
-      return json({ ok: true, service: "Fly Chess Arena API", version: "0.1.0" }, 200, headers);
+      return json({ ok: true, service: "Fly Infinity Games API", version: "0.1.0" }, 200, headers);
     }
     if (request.method === "POST" && new URL(request.url).pathname === "/api/auth/challenge") {
       try { return await handleChallenge(request, env).then(r => withHeaders(r, headers)); }
@@ -259,6 +260,7 @@ export default {
 
 export { ChessRoom } from "./room.js";
 export { BackgammonRoom } from "./backgammon-room.js";
+export { LudoRoom } from "./ludo-room.js";
 
 function withHeaders(response, headers) {
   const merged = new Headers(response.headers);

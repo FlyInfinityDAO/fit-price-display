@@ -6,13 +6,15 @@ on:
       - 'games/chess-arena/**'
       - 'games/backgammon/**'
       - 'games/hokm/**'
+      - 'games/ludo/**'
       - '.github/workflows/**'
   push:
-    branches: [main, 'chore/**']
+    branches: [main, 'chore/**', 'feature/fly-ludo']
     paths:
       - 'games/chess-arena/**'
       - 'games/backgammon/**'
       - 'games/hokm/**'
+      - 'games/ludo/**'
       - '.github/workflows/**'
 
 permissions:
@@ -20,7 +22,7 @@ permissions:
 
 jobs:
   validate-game-frontends:
-    name: Validate all game frontend JavaScript and Backgammon rules
+    name: Validate all game frontend JavaScript and rules
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,6 +36,9 @@ jobs:
         run: |
           set -euo pipefail
           files=(
+            games/ludo/js/ludo-engine.js
+            games/ludo/js/ludo-engine.test.js
+            games/ludo/js/ludo.js
             games/chess-arena/js/chess-arena.js
             games/chess-arena/js/language.js
             games/backgammon/js/backgammon-engine.js
@@ -51,13 +56,15 @@ jobs:
             node --input-type=module --check < "$file"
             echo "Syntax OK: $file"
           done
+      - name: Run Fly Ludo rules-engine tests
+        run: node --experimental-default-type=module --test games/ludo/js/ludo-engine.test.js
       - name: Run Backgammon rules-engine tests
         run: node --experimental-default-type=module --test games/backgammon/js/backgammon-engine.test.js
       - name: Build standalone Pages frontend and verify shared assets
         run: bash games/chess-arena/build-pages.sh
 
   validate-chess-backgammon-worker:
-    name: Validate Chess Arena and Backgammon Worker
+    name: Validate Chess Arena, Backgammon and Ludo Worker
     runs-on: ubuntu-latest
     defaults:
       run:
