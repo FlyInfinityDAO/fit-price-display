@@ -77,7 +77,6 @@ export function applyMove(game, playerIndex, move) {
   const rolledSix = next.dice === 6;
   next.dice = null;
   if (!(rolledSix || captured > 0 || legal.kind === "finish")) next.turn = (next.turn + 1) % next.players.length;
-  next.consecutiveSixes = 0;
   return next;
 }
 export function roll(game, random = Math.random) {
@@ -98,6 +97,7 @@ export function roll(game, random = Math.random) {
   if (!legalPieceMoves(next).length) {
     next.dice = null;
     next.turn = (next.turn + 1) % next.players.length;
+    next.consecutiveSixes = 0;
     next.consecutiveSixes = 0;
     next.lastAction = { type: "blocked", value };
   }
