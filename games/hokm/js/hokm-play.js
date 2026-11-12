@@ -32,7 +32,7 @@ function ensureControls(){
 function setStatus(s){$("hokmGameStatus").textContent=s}
 function setMessage(s){$("tableMessage").textContent=s}
 function seatElements(seat){return ({0:{hand:".hand-south",chip:".seat-south .player-chip"},1:{hand:".seat-west .hand",chip:".seat-west .player-chip"},2:{hand:".hand-north",chip:".seat-north .player-chip"},3:{hand:".seat-east .hand",chip:".seat-east .player-chip"}})[seat]}
-function clearClock(){if(turnInterval)clearInterval(turnInterval);turnInterval=null;turnDeadline=0;$("hokmTurnClock").hidden=true}
+function clearClock(){if(turnInterval)clearInterval(turnInterval);turnInterval=null;turnDeadline=0;$("hokmTurnClock").hidden=true;document.querySelector(".seat-south .player-chip .hokm-seat-ring.turn")?.remove()}
 function stopTimers(){clearClock();if(turnTimer)clearTimeout(turnTimer);turnTimer=null;locked=false}
 function makeCardNode(card,clickable){
  const b=document.createElement("button");b.className="hokm-card"+(isRed(card)?" red":"")+(clickable?" playable":"");b.type="button";b.disabled=!clickable;b.setAttribute("aria-disabled",String(!clickable));b.dataset.cardId=card.id;b.setAttribute("aria-label",card.rank+" "+suitName(card.suit));
@@ -87,10 +87,11 @@ function renderSeats(){
 function renderTrick(){
  const nodes=[...document.querySelectorAll(".trick-cards .played-card")];
  const entries=visibleTrick.length?visibleTrick:(game?game.trick:[]);
- nodes.forEach((node,i)=>{
-  node.classList.toggle("empty",!entries[i]);
-  node.classList.toggle("red",!!entries[i]&&isRed(entries[i].card));node.classList.toggle("black",!!entries[i]&&!isRed(entries[i].card));node.classList.toggle("black",!!entries[i]&&!isRed(entries[i].card));
-  node.textContent=entries[i]?entries[i].card.rank+entries[i].card.suit:"·";
+ nodes.forEach(node=>{node.classList.add("empty");node.classList.remove("red","black");node.textContent="·"});
+ entries.forEach(entry=>{
+  const node=nodes[entry.player];if(!node)return;
+  node.classList.remove("empty");node.classList.toggle("red",isRed(entry.card));node.classList.toggle("black",!isRed(entry.card));
+  node.textContent=entry.card.rank+entry.card.suit;
  });
 }
 function render(){
@@ -141,7 +142,18 @@ function startClock(){
  clearClock();if(!game||game.finished||game.currentPlayer!==0)return;
  H.startTurnClock(game);turnDeadline=game.turnDeadlineAt;
  $("hokmTurnClock").hidden=false;
- const tick=()=>{const left=Math.max(0,Math.ceil((turnDeadline-Date.now())/1000));$("hokmTurnClock").textContent=tr("turn")+": "+left+" "+tr("seconds");if(left<=0){clearClock();if(game&&game.phase==="playing"&&game.currentPlayer===0){const result=H.resolveTurnTimeout(game,{difficulty});onCardPlayed(result,true)}}};
+ const tick=()=>{
+  const left=Math.max(0,Math.ceil((turnDeadline-Date.now())/1000));
+  $("hokmTurnClock").textContent=tr("turn")+": "+left+" "+tr("seconds");
+  const chip=document.querySelector(".seat-south .player-chip");
+  if(chip){
+   let ring=chip.querySelector(".hokm-seat-ring.turn");
+   if(!ring){ring=document.createElement("span");ring.className="hokm-seat-ring turn";ring.setAttribute("aria-hidden","true");chip.appendChild(ring)}
+   ring.style.setProperty("--ring-progress",String(Math.max(0,Math.min(1,(turnDeadline-Date.now())/30000))));
+   ring.textContent=String(left);
+  }
+  if(left<=0){clearClock();if(game&&game.phase==="playing"&&game.currentPlayer===0){const result=H.resolveTurnTimeout(game,{difficulty});onCardPlayed(result,true)}}
+ };
  tick();turnInterval=setInterval(tick,250);
 }
 function playHumanCard(id){
