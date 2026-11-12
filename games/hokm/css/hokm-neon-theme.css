@@ -315,3 +315,201 @@ html body .arena .control-bar{border-top-color:rgba(0,217,255,.48)!important}
   html body .arena > .sound-panel{box-shadow:0 9px 24px rgba(3,8,25,.38),inset 0 1px rgba(255,255,255,.07)!important}
 }
 /* Preserve the game table surface, face-up cards and card backs exactly as designed. */
+
+
+/* v4 — live-page palette correction.
+   The live audit found legacy green/gold treatments still visible on the portal.
+   These selectors intentionally target Hokm's real markup and win over legacy
+   component rules. Background artwork, felt and all playing-card surfaces stay intact. */
+html body .arena{
+  --hokm-ink:#111C35!important;
+  --hokm-cyan:#00D9FF!important;
+  --hokm-blue:#456CFF!important;
+  --hokm-violet:#8B5CF6!important;
+  --hokm-copy:#F0F6FF!important;
+  --hokm-muted:#C1CDE5!important;
+  color:#F0F6FF!important;
+}
+html body .arena > .topbar,
+html body .arena > .hero,
+html body .arena > .access-card,
+html body .arena > .match-settings,
+html body .arena > .game-shell,
+html body .arena > .sound-panel{
+  color:#F0F6FF!important;
+  background:linear-gradient(135deg,rgba(17,28,53,.97),rgba(25,39,77,.94))!important;
+  -webkit-backdrop-filter:blur(18px) saturate(135%);
+  backdrop-filter:blur(18px) saturate(135%);
+  box-shadow:0 12px 32px rgba(3,8,25,.4),inset 0 1px rgba(255,255,255,.08),0 0 22px rgba(69,108,255,.12)!important;
+}
+html body .arena > .topbar{border:1px solid rgba(0,217,255,.62)!important}
+html body .arena > .hero{border:1px solid rgba(139,92,246,.72)!important}
+html body .arena > .access-card{border:1px solid rgba(0,217,255,.72)!important}
+html body .arena > .match-settings{border:1px solid rgba(69,108,255,.76)!important}
+html body .arena > .game-shell{border:1px solid rgba(0,217,255,.58)!important}
+html body .arena > .sound-panel{border:1px solid rgba(139,92,246,.72)!important}
+
+/* Title and section headings: remove the old gold/green gradients. */
+html body .arena > .hero h1{
+  background-image:linear-gradient(100deg,#00D9FF 0%,#456CFF 52%,#8B5CF6 100%)!important;
+  -webkit-background-clip:text!important;
+  background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+  color:transparent!important;
+  text-shadow:none!important;
+}
+html body .arena .eyebrow,
+html body .arena .access-heading .eyebrow,
+html body .arena .table-toolbar .eyebrow{
+  color:#00D9FF!important;
+  -webkit-text-fill-color:#00D9FF!important;
+}
+html body .arena .match-settings .eyebrow{color:#456CFF!important;-webkit-text-fill-color:#456CFF!important}
+html body .arena .sound-panel .eyebrow{color:#8B5CF6!important;-webkit-text-fill-color:#B99BFF!important}
+html body .arena .access-heading h2,
+html body .arena .settings-copy h3,
+html body .arena .sound-panel h3,
+html body .arena .table-toolbar h2,
+html body .arena .hokm-online-heading h3{
+  color:#F0F6FF!important;
+  -webkit-text-fill-color:#F0F6FF!important;
+  text-shadow:0 0 16px rgba(69,108,255,.13);
+}
+html body .arena .brand-name{color:#F0F6FF!important;-webkit-text-fill-color:#F0F6FF!important}
+html body .arena .brand-name small{color:#00D9FF!important;-webkit-text-fill-color:#00D9FF!important}
+html body .arena .brand-logo{border-color:#00D9FF!important;box-shadow:0 0 12px rgba(0,217,255,.24)}
+html body .arena .access-mark{color:#8B5CF6!important;-webkit-text-fill-color:#B99BFF!important}
+
+/* Access requirements and tier accents. */
+html body .arena .minimum,
+html body .arena .tier-rules article{
+  color:#F0F6FF!important;
+  background:linear-gradient(135deg,rgba(17,28,53,.98),rgba(24,39,76,.94))!important;
+  border:1px solid rgba(69,108,255,.56)!important;
+}
+html body .arena .minimum>span,
+html body .arena .minimum strong{color:#00D9FF!important;-webkit-text-fill-color:#00D9FF!important}
+html body .arena .minimum b{color:#F0F6FF!important;-webkit-text-fill-color:#F0F6FF!important}
+html body .arena .tier-rules article:nth-child(odd){border-color:rgba(0,217,255,.68)!important}
+html body .arena .tier-rules article:nth-child(even){border-color:rgba(139,92,246,.76)!important}
+html body .arena .tier-rules article:nth-child(odd) b{color:#00D9FF!important;-webkit-text-fill-color:#00D9FF!important}
+html body .arena .tier-rules article:nth-child(even) b{color:#B99BFF!important;-webkit-text-fill-color:#B99BFF!important}
+
+/* Buttons: cyan primary action; blue/violet secondary actions. */
+html body .arena .wallet-actions .primary-btn,
+html body .arena .control-bar .primary-btn,
+html body .arena .hokm-game-buttons .primary-btn{
+  color:#111C35!important;
+  -webkit-text-fill-color:#111C35!important;
+  border:1px solid #00D9FF!important;
+  background:linear-gradient(110deg,#00D9FF,#8FB5FF)!important;
+  box-shadow:0 7px 22px rgba(0,217,255,.24)!important;
+}
+html body .arena .wallet-actions .secondary-btn,
+html body .arena .control-bar .secondary-btn,
+html body .arena .icon-btn,
+html body .arena .small-btn,
+html body .arena .hokm-trump-options button,
+html body .arena .hokm-online-trump button,
+html body .arena .hokm-cpu-controls button,
+html body .arena .hokm-game-buttons button{
+  color:#F0F6FF!important;
+  -webkit-text-fill-color:#F0F6FF!important;
+  border:1px solid rgba(139,92,246,.82)!important;
+  background:linear-gradient(125deg,rgba(69,108,255,.48),rgba(139,92,246,.42))!important;
+  box-shadow:0 6px 18px rgba(4,9,28,.28),inset 0 1px rgba(255,255,255,.1)!important;
+}
+html body .arena button:hover,
+html body .arena .dashboard-link:hover{
+  border-color:#00D9FF!important;
+  box-shadow:0 0 20px rgba(0,217,255,.25)!important;
+}
+html body .arena button:disabled{opacity:.5!important}
+
+/* Navigation, language control, form fields and audio controls. */
+html body .arena .network,
+html body .arena .dashboard-link,
+html body .arena .difficulty-control select,
+html body .arena .topbar select,
+html body .arena .hokm-room-entry input,
+html body .arena .fi-game-language .language-button{
+  color:#F0F6FF!important;
+  background:rgba(17,28,53,.98)!important;
+  border:1px solid rgba(0,217,255,.52)!important;
+}
+html body .arena .dashboard-link,
+html body .arena .network i,
+html body .arena .volume-control b{color:#00D9FF!important}
+html body .arena .fi-game-language .language-button{
+  color:#00D9FF!important;
+  border-color:rgba(139,92,246,.78)!important;
+}
+html body .arena .volume-control,
+html body .arena .difficulty-control{color:#C1CDE5!important}
+html body .arena input,
+html body .arena select{accent-color:#00D9FF!important}
+html body .arena select option{background:#111C35!important;color:#F0F6FF!important}
+html body .arena .volume-control input{accent-color:#00D9FF!important}
+html body .arena .network i{background:#00D9FF!important;box-shadow:0 0 10px #00D9FF!important}
+
+/* Neutral readable copy; no legacy green/gold text remains in the portal. */
+html body .arena .hero p,
+html body .arena .access-card>p,
+html body .arena .settings-copy p,
+html body .arena .tier-note,
+html body .arena .sound-panel p,
+html body .arena .status,
+html body .arena footer,
+html body .arena footer span,
+html body .arena .minimum small,
+html body .arena .tier-rules span,
+html body .arena .control-hint{
+  color:#C1CDE5!important;
+  -webkit-text-fill-color:#C1CDE5!important;
+}
+html body .arena :focus-visible{outline:2px solid #00D9FF!important;outline-offset:3px!important}
+
+/* The live table's UI chrome may use the palette; the felt and card faces do not. */
+html body .arena .player-chip,
+html body .arena .hokm-round-score,
+html body .arena .game-bottom .team-score,
+html body .arena .game-bottom .round-info,
+html body .arena .hakem-pill,
+html body .arena .trump-pill,
+html body .arena .hokm-game-controls,
+html body .arena .hokm-cpu-controls,
+html body .arena .hokm-online-panel,
+html body .arena .hokm-room-invite,
+html body .arena .hokm-turn-clock{
+  color:#F0F6FF!important;
+  background:linear-gradient(135deg,rgba(17,28,53,.97),rgba(28,43,83,.94))!important;
+  border-color:rgba(69,108,255,.62)!important;
+}
+html body .arena .hokm-round-score.white{border-color:rgba(0,217,255,.78)!important}
+html body .arena .hokm-round-score.black{border-color:rgba(139,92,246,.82)!important}
+html body .arena .hokm-round-score.white span,
+html body .arena .team-score small{color:#00D9FF!important}
+html body .arena .hokm-round-score.black span,
+html body .arena .round-info span{color:#B99BFF!important}
+html body .arena .hokm-round-score b,
+html body .arena .team-score b,
+html body .arena .round-info b,
+html body .arena .team-stat em{color:#F0F6FF!important}
+html body .arena .player-chip.active{
+  border-color:#00D9FF!important;
+  animation:hokmNeonSeatV4 1.7s ease-in-out infinite!important;
+}
+@keyframes hokmNeonSeatV4{
+  0%,100%{box-shadow:0 0 0 1px rgba(0,217,255,.5),0 0 12px rgba(0,217,255,.2)}
+  50%{box-shadow:0 0 0 2px rgba(139,92,246,.72),0 0 22px rgba(69,108,255,.34)}
+}
+
+/* Existing body artwork, velvet/felt and all playing-card rules are left untouched. */
+@media(max-width:760px){
+  html body .arena > .topbar,
+  html body .arena > .hero,
+  html body .arena > .access-card,
+  html body .arena > .match-settings,
+  html body .arena > .game-shell,
+  html body .arena > .sound-panel{box-shadow:0 9px 24px rgba(3,8,25,.4),inset 0 1px rgba(255,255,255,.07)!important}
+}
