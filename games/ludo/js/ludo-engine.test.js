@@ -28,7 +28,7 @@ test("three consecutive sixes forfeit the player's turn",()=>{
 
 test("a player must roll the exact number to finish",()=>{
   let game=createGame(2,2);
-  game.players[0].pieces[0]=54;
+  game.players[0].pieces=[54,57,57,57];\n  game.players[0].finished=3;
   game.dice=3;
   assert.equal(legalPieceMoves(game,0).some(m=>m.to===57),true);
   game=applyMove(game,0,{pieceIndex:0,from:54,to:57});
