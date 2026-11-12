@@ -4,7 +4,7 @@ set -euo pipefail
 # Cloudflare Pages build for the standalone Chess Arena site.
 # Run from the repository root; publish only the game frontend and its shared wallet bridge.
 rm -rf dist
-mkdir -p dist/games/chess-arena/css dist/games/chess-arena/js dist/games/backgammon/css dist/games/backgammon/js dist/games/ludo/css dist/games/ludo/js
+mkdir -p dist/games/chess-arena/css dist/games/chess-arena/js dist/games/backgammon/css dist/games/backgammon/js dist/games/hokm/css dist/games/hokm/js dist/games/hokm/engine dist/games/ludo/css dist/games/ludo/js
 
 cp games/chess-arena/index.html dist/games/chess-arena/index.html
 cp games/chess-arena/css/chess-arena.css dist/games/chess-arena/css/chess-arena.css
@@ -16,7 +16,7 @@ cp games/backgammon/index.html dist/games/backgammon/index.html
 cp games/backgammon/css/backgammon.css dist/games/backgammon/css/backgammon.css
 cp games/backgammon/js/backgammon.js dist/games/backgammon/js/backgammon.js
 cp games/backgammon/js/backgammon-engine.js dist/games/backgammon/js/backgammon-engine.js
-# Publish Fly Ludo frontend and deterministic rules engine.
+# Publish the Games hub and existing Hokm frontend.\ncp games/index.html dist/games/index.html\ncp games/hokm/index.html dist/games/hokm/index.html\ncp games/hokm/css/hokm.css games/hokm/css/hokm-neon-theme.css dist/games/hokm/css/\ncp games/hokm/engine/hokm-engine.js dist/games/hokm/engine/hokm-engine.js\ncp games/hokm/js/hokm-wallet-bridge.js games/hokm/js/hokm.js games/hokm/js/hokm-play.js games/hokm/js/hokm-online.js games/hokm/js/hokm-android-scroll.js games/hokm/js/hokm-neon-ambient.js dist/games/hokm/js/\n\n# Publish Fly Ludo frontend and deterministic rules engine.
 cp games/ludo/index.html dist/games/ludo/index.html
 cp games/ludo/css/ludo.css dist/games/ludo/css/ludo.css
 cp games/ludo/js/ludo.js dist/games/ludo/js/ludo.js
@@ -49,7 +49,7 @@ HTML
 test -s dist/games/chess-arena/index.html
 test -s dist/games/backgammon/index.html
 test -s dist/games/backgammon/js/backgammon-engine.js
-test -s dist/games/ludo/index.html
+test -s dist/games/index.html\ntest -s dist/games/hokm/index.html\ntest -s dist/games/hokm/js/hokm.js\ntest -s dist/games/ludo/index.html
 test -s dist/games/ludo/js/ludo-engine.js
 test -s dist/walletconnect-bridge.js
 test -s dist/games/fi-neon-games.css
