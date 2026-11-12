@@ -36,6 +36,29 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       await trumpPicker.locator("[data-suit]").first().click();
     }
 
+    const seatLayout = await page.evaluate(() => {
+      const rect = selector => {
+        const element = document.querySelector(selector);
+        if (!element) throw new Error("Missing table element: " + selector);
+        const r = element.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      };
+      const center = rect(".table-center");
+      const north = rect(".seat-north .player-chip");
+      const south = rect(".seat-south .player-chip");
+      const west = rect(".seat-west .player-chip");
+      const east = rect(".seat-east .player-chip");
+      const cards = [1, 2, 3, 4].map(index => rect(".trick-cards .played-card:nth-child(" + index + ")"));
+      return {
+        seats: north.y < center.y && south.y > center.y && west.x < center.x && east.x > center.x,
+        cards: cards[0].y > center.y && cards[1].x < center.x && cards[2].y < center.y && cards[3].x > center.x,
+        direction: document.documentElement.dir
+      };
+    });
+    if (!seatLayout.seats || !seatLayout.cards) {
+      throw new Error("Physical seat/card positions are inconsistent: " + JSON.stringify(seatLayout));
+    }
+
     const hand = page.locator(".hand-south .hokm-card");
     const playable = page.locator(".hand-south .hokm-card.playable");
     await playable.first().waitFor({ state: "visible", timeout: 20000 });
