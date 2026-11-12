@@ -8,11 +8,12 @@ on:
       - 'games/hokm/**'\n      - 'games/ludo/**'
       - '.github/workflows/**'
   push:
-    branches: [main, 'chore/**']
+    branches: [main, 'chore/**', 'feature/fly-ludo']
     paths:
       - 'games/chess-arena/**'
       - 'games/backgammon/**'
       - 'games/hokm/**'
+      - 'games/ludo/**'
       - '.github/workflows/**'
 
 permissions:
