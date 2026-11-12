@@ -158,6 +158,7 @@ async function copyRoomCode(){
 function displaySeat(seat){return (seat-ownSeat+4)%4}
 function makeSeatRing(kind){const ring=document.createElement("span");ring.className="hokm-seat-ring "+kind;ring.setAttribute("aria-hidden","true");return ring}
 function renderSeatRing(chip,kind,deadline,now){let ring=chip.querySelector(".hokm-seat-ring."+kind);if(!deadline){ring?.remove();return}if(!ring){ring=makeSeatRing(kind);chip.appendChild(ring)}const total=kind==="turn"?30000:(lastState?.game?.reconnectGraceMs||60000);const left=Math.max(0,deadline-now);ring.style.setProperty("--ring-progress",String(Math.max(0,Math.min(1,left/total))));ring.textContent=String(Math.ceil(left/1000));ring.title=kind==="turn"?t("turnCountdown"):t("reconnectCountdown");}
+function shortWalletLabel(wallet){const value=String(wallet||"");return value.length>12?value.slice(0,6)+"…"+value.slice(-4).toUpperCase():value||"—"}
 function animateCardFlight(node,source){
  if(!node||!source||typeof node.getBoundingClientRect!=="function")return;
  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
@@ -166,7 +167,7 @@ function animateCardFlight(node,source){
  const card=node.cloneNode(true);
  const startX=from.left+from.width/2-to.width/2,startY=from.top+from.height/2-to.height/2;
  const dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+to.height/2)-(from.top+from.height/2);
- card.removeAttribute("id");card.classList.remove("empty","hokm-card-arriving");
+ card.removeAttribute("id");card.removeAttribute("data-player-label");card.classList.remove("empty","hokm-card-arriving");
  Object.assign(card.style,{position:"fixed",left:(from.left+from.width/2-to.width/2)+"px",top:(from.top+from.height/2-to.height/2)+"px",width:to.width+"px",height:to.height+"px",margin:"0",zIndex:"10000",pointerEvents:"none",transformOrigin:"center center",opacity:"1"});
  document.body.appendChild(card);
  const oldOpacity=node.style.opacity;node.style.opacity="0";
@@ -223,7 +224,7 @@ function renderState(s){
    const visual=displaySeat(actual),els=seatEls(visual),player=players.find(p=>p.seat===actual),chip=document.querySelector(els.chip),hand=document.querySelector(els.hand);
    if(chip){
     const b=chip.querySelector("b"),small=chip.querySelector("small"),em=chip.querySelector("em");
-    if(b)b.textContent=player?(player.cpu?t("cpu"):(player.wallet||"—").replace(/\.\.\.(.{3})$/,(_,tail)=>"..."+tail.toUpperCase())):t("openSeat");
+    if(b)b.textContent=player?(player.cpu?t("cpu"):shortWalletLabel(player.wallet)):t("openSeat");
     if(small)small.textContent=!player?t("waiting"):(player.cpu?t("cpu"):(player.connected?t("connected"):t("disconnected")));
     if(em)em.textContent=String((game.tricksWon||[])[actual]||0);
     chip.classList.toggle("active",activeSeat===actual&&s.status==="playing");
@@ -248,13 +249,16 @@ function renderState(s){
    }
   }
   const nodes=[...document.querySelectorAll(".trick-cards .played-card")];
-  nodes.forEach(n=>{n.classList.add("empty");n.classList.remove("red","black");n.textContent="·"});
+  nodes.forEach(n=>{n.classList.add("empty");n.classList.remove("red","black");n.removeAttribute("data-player-label");n.textContent="·"});
   const activeTrickSeats=new Set();
   const entries=(game.lastTrick&&game.lastTrick.length?game.lastTrick:game.trick)||[];
   entries.forEach(entry=>{
    const visual=displaySeat(entry.player),node=nodes[visual];if(!node)return;activeTrickSeats.add(visual);
    const red=["♥","♦"].includes(entry.card.suit);
    node.classList.remove("empty");node.classList.toggle("red",red);node.classList.toggle("black",!red);node.textContent=entry.card.rank+entry.card.suit;
+   const playerChip=document.querySelector(seatEls(visual).chip);
+   const playerLabel=playerChip?.querySelector("b")?.textContent?.trim();
+   if(playerLabel)node.dataset.playerLabel=playerLabel;
    const key=String(entry.card.id||entry.card.rank+entry.card.suit)+"@"+visual;
    if(node.dataset.playedCardKey!==key){
     node.dataset.playedCardKey=key;
@@ -262,7 +266,7 @@ function renderState(s){
     animateCardFlight(node,source);
    }
   });
-  nodes.forEach((node,index)=>{if(!activeTrickSeats.has(index)){node.classList.remove("hokm-card-arriving");node.dataset.playedCardKey="";}});
+  nodes.forEach((node,index)=>{if(!activeTrickSeats.has(index)){node.classList.remove("hokm-card-arriving");node.dataset.playedCardKey="";node.removeAttribute("data-player-label");}});
   const trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent=game.trump||"—";
   const hakem=document.getElementById("tableHakem"),hakemActual=game.hakem, hakemVisual=displaySeat(hakemActual),hakemChip=document.querySelector(seatEls(hakemVisual).chip+" b");if(hakem)hakem.textContent=hakemChip?hakemChip.textContent:(players.find(p=>p.seat===hakemActual)?.cpu?t("cpu"):t("seat")+" "+(hakemActual+1));
   const currentScores=document.querySelectorAll(".hokm-round-score b");
