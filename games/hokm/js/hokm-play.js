@@ -32,6 +32,7 @@ function ensureControls(){
 }
 function setStatus(s){$("hokmGameStatus").textContent=s}
 function setMessage(s){$("tableMessage").textContent=s}
+function trickSlot(seat){return seat===1?3:seat===3?1:seat;}
 function seatElements(seat){return ({0:{hand:".hand-south",chip:".seat-south .player-chip"},1:{hand:".seat-west .hand",chip:".seat-west .player-chip"},2:{hand:".hand-north",chip:".seat-north .player-chip"},3:{hand:".seat-east .hand",chip:".seat-east .player-chip"}})[seat]}
 function clearClock(){if(turnInterval)clearInterval(turnInterval);turnInterval=null;turnDeadline=0;$("hokmTurnClock").hidden=true;document.querySelector(".seat-south .player-chip .hokm-seat-ring.turn")?.remove()}
 function stopTimers(){clearClock();if(turnTimer)clearTimeout(turnTimer);turnTimer=null;locked=false}
@@ -121,7 +122,7 @@ function renderTrick(){
  const nodes=[...document.querySelectorAll(".trick-cards .played-card")],entries=visibleTrick.length?visibleTrick:(game?game.trick:[]);
  nodes.forEach(node=>{node.classList.add("empty");node.classList.remove("red","black");node.removeAttribute("data-player-label");node.textContent="·"});
  const active=new Set(),flights=[];
- entries.forEach(entry=>{const node=nodes[entry.player];if(!node)return;active.add(entry.player);node.classList.remove("empty");node.classList.toggle("red",isRed(entry.card));node.classList.toggle("black",!isRed(entry.card));node.textContent=entry.card.rank+entry.card.suit;flights.push(animatePlayedCard(node,entry,entry.player))});
+ entries.forEach(entry=>{const slot=trickSlot(entry.player),node=nodes[slot];if(!node)return;active.add(slot);node.classList.remove("empty");node.classList.toggle("red",isRed(entry.card));node.classList.toggle("black",!isRed(entry.card));node.textContent=entry.card.rank+entry.card.suit;flights.push(animatePlayedCard(node,entry,entry.player))});
  nodes.forEach((node,index)=>{if(!active.has(index)){node.classList.remove("hokm-card-arriving");node.dataset.playedCardKey="";node.removeAttribute("data-player-label")}});
  return Promise.all(flights);
 }
