@@ -268,4 +268,4 @@ function withHeaders(response, headers) {
   return new Response(response.body, { status: response.status, headers: merged });
 }
 
-// No-op comment: verify Cloudflare Workers Builds from the main branch.
+// Build trigger: deploy current main, including the shared Ludo rules engine; preserve ChessRoom and BackgammonRoom.
