@@ -49,6 +49,18 @@ test("legacy CPU rooms with duplicate wallet seats are repaired to one human plu
   assert.deepEqual(data.room.players,[host,null,null,null]);
   assert.deepEqual(data.room.state.players.map(p=>p.kind),["human","cpu","cpu","cpu"]);
 });
+test("legacy waiting rooms deduplicate multiple wallets and restore all open seats",async()=>{
+  const legacy={code:"ABC234",playerCount:4,players:[host,host,guest,guest],hostWallet:host,mode:"friend",difficulty:null,state:null,status:"waiting",createdAt:Date.now(),statsRecorded:false};
+  const store=new Map([["game",legacy]]);
+  const ctx={storage:{get:async key=>store.get(key),put:async(key,value)=>store.set(key,structuredClone(value)),delete:async key=>store.delete(key)},getWebSockets:()=>[],acceptWebSocket:()=>{}};
+  const room=new LudoRoom(ctx,{});
+  const response=await room.fetch(new Request("https://ludo-room.internal/snapshot",{headers:{"x-ludo-wallet":host}}));
+  const data=await response.json();
+  assert.equal(response.status,200);
+  assert.deepEqual(data.room.players,[host,guest,null,null]);
+  assert.equal(data.room.playerCount,4);
+});
+
 test("joining a room fills one empty seat without duplicating the creator wallet",async()=>{
   const room=makeRoom();
   await room.fetch(post("/create?code=ABC234&players=4&mode=friend",host));
@@ -58,6 +70,22 @@ test("joining a room fills one empty seat without duplicating the creator wallet
   const duplicate=await room.fetch(post("/join",host)),duplicateData=await duplicate.json();
   assert.deepEqual(duplicateData.room.players,[host,guest,null,null]);
 });
+test("three distinct guests can fill a four-player room and the next join is rejected",async()=>{
+  const room=makeRoom(),third="0x3333333333333333333333333333333333333333",fourth="0x4444444444444444444444444444444444444444",fifth="0x5555555555555555555555555555555555555555";
+  await room.fetch(post("/create?code=ABC234&players=4&mode=friend",host));
+  const one=await room.fetch(post("/join",guest));
+  const two=await room.fetch(post("/join",third));
+  const three=await room.fetch(post("/join",fourth));
+  const full=await room.fetch(post("/join",fifth));
+  assert.equal(one.status,200);assert.equal(two.status,200);assert.equal(three.status,200);
+  assert.equal(full.status,409);
+  const snapshot=await room.fetch(new Request("https://ludo-room.internal/snapshot",{headers:{"x-ludo-wallet":host}}));
+  const data=await snapshot.json();
+  assert.deepEqual(data.room.players,[host,guest,third,fourth]);
+  assert.equal(data.room.status,"active");
+  assert.equal(data.room.state.players.length,4);
+});
+
 test("only the host can fill remaining waiting seats with CPU players",async()=>{
   const room=makeRoom();
   await room.fetch(post("/create?code=ABC234&players=4&mode=friend",host));
@@ -77,6 +105,18 @@ test("CPU room creates exactly one human seat for the connected wallet",async()=
   assert.deepEqual(data.room.players,[host,null,null,null]);
   assert.deepEqual(data.room.state.players.map(p=>p.kind),["human","cpu","cpu","cpu"]);
 });
+test("CPU keeps its bonus roll after six but passes the turn after a normal move",async()=>{
+  const room=makeRoom(),state=createGame(2,1);
+  state.turn=1;
+  const game={code:"ABC234",playerCount:2,players:[host,null],hostWallet:host,mode:"cpu",difficulty:"medium",state,status:"active",createdAt:Date.now(),statsRecorded:false};
+  const previous=Math.random,rolls=[0.99,0];
+  Math.random=()=>rolls.shift()??0;
+  try{await room.playCpuTurns(game);}finally{Math.random=previous;}
+  assert.equal(game.state.players[1].pieces[0],1);
+  assert.equal(game.state.turn,0);
+  assert.equal(game.state.dice,null);
+});
+
 test("CPU turn processing exits after three consecutive sixes instead of looping forever",async()=>{
   const room=makeRoom(),state=createGame(2,1);
   state.turn=1;
