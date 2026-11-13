@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { advanceLocalState, handleLudoApi } from "../src/rooms-api.js";
+import { advanceLocalState, getLocalWalletOutcome, handleLudoApi } from "../src/rooms-api.js";
 import { createGame, legalPieceMoves } from "../../js/ludo-engine.js";
 
 test("local match dice are generated server-side and a legal six-entry move is accepted",()=>{
@@ -27,4 +27,11 @@ test("unsupported client-supplied result endpoint is permanently rejected",async
   assert.equal(response.status,410);
   const data=await response.json();
   assert.equal(data.ok,false);
+});
+
+test("local FIGS records the wallet holder's first seat, not any human winner",()=>{
+  const playerOneWins=createGame(2,2);playerOneWins.status="finished";playerOneWins.winner="red";
+  const playerTwoWins=createGame(2,2);playerTwoWins.status="finished";playerTwoWins.winner="yellow";
+  assert.equal(getLocalWalletOutcome(playerOneWins),"win");
+  assert.equal(getLocalWalletOutcome(playerTwoWins),"loss");
 });
