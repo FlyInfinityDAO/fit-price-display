@@ -398,3 +398,147 @@ body.fi-neon-ludo .piece-token:disabled{opacity:1;filter:saturate(.92)}
   body.fi-neon-ludo .game-heading-actions{flex-direction:row}
   body.fi-neon-ludo .game-heading-actions button{flex:1 1 auto}
 }
+
+
+/* Fly Ludo tabletop v2 — refined porcelain path, dark emerald felt and polished pieces. */
+body.fi-neon-ludo{
+  --red:#C95663;
+  --green:#278D6A;
+  --yellow:#D7A53B;
+  --blue:#5278BE;
+}
+body.fi-neon-ludo .ludo-board{
+  padding:9px;
+  border:7px solid transparent;
+  border-radius:26px;
+  background:
+    linear-gradient(145deg,#17382F 0%,#0C211B 52%,#1C3D31 100%) padding-box,
+    linear-gradient(135deg,#F1D99A 0%,#98723A 30%,#E5C77B 62%,#76572B 100%) border-box;
+  box-shadow:0 24px 52px rgba(0,0,0,.48),0 0 0 1px rgba(255,245,213,.22),
+    inset 0 2px 12px rgba(255,255,255,.13),inset 0 -9px 20px rgba(0,0,0,.32);
+  gap:2px;
+}
+body.fi-neon-ludo .cell{
+  border:1px solid rgba(220,207,170,.13);
+  border-radius:4px;
+  background:linear-gradient(145deg,#1B392F,#10271F);
+}
+body.fi-neon-ludo .cell.track{
+  border:1px solid #D5C8A7;
+  border-radius:4px;
+  background:linear-gradient(145deg,#FFFEF8 0%,#F4EEDC 52%,#E6DCC4 100%);
+  box-shadow:inset 0 1px 2px rgba(255,255,255,.96),inset 0 -2px 4px rgba(93,75,43,.13),0 1px 1px rgba(0,0,0,.10);
+}
+body.fi-neon-ludo .cell.track.safe:after{
+  color:#A77D32;
+  font-size:clamp(10px,1.5vw,16px);
+  text-shadow:0 1px 0 #fff,0 0 5px rgba(212,175,55,.28);
+}
+body.fi-neon-ludo .cell.red{
+  background:linear-gradient(145deg,#F3A5A9,#C95663 72%,#A63D4C);
+  border-color:#F9D6D4;
+}
+body.fi-neon-ludo .cell.green{
+  background:linear-gradient(145deg,#A7E4C9,#278D6A 72%,#17694D);
+  border-color:#D4F1E1;
+}
+body.fi-neon-ludo .cell.yellow{
+  background:linear-gradient(145deg,#FFF0B8,#D7A53B 72%,#A97824);
+  border-color:#FFF4D4;
+}
+body.fi-neon-ludo .cell.blue{
+  background:linear-gradient(145deg,#C0D7FF,#5278BE 72%,#34558F);
+  border-color:#E0EAFF;
+}
+body.fi-neon-ludo .cell.home-lane{
+  border:1px solid rgba(255,255,255,.72);
+  background:linear-gradient(145deg,color-mix(in srgb,var(--lane) 32%,#FFFDF5),color-mix(in srgb,var(--lane) 62%,#D9D1BE));
+  box-shadow:inset 0 1px 3px rgba(255,255,255,.72),inset 0 -2px 3px rgba(0,0,0,.08);
+}
+body.fi-neon-ludo .cell.yard{
+  border:3px solid rgba(255,255,255,.86);
+  border-radius:15px;
+  background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.36),transparent 48%),
+    linear-gradient(145deg,color-mix(in srgb,var(--yard) 88%,#fff),color-mix(in srgb,var(--yard) 72%,#0D211B));
+  box-shadow:inset 0 2px 9px rgba(255,255,255,.34),inset 0 -6px 13px rgba(0,0,0,.18),0 2px 5px rgba(0,0,0,.2);
+}
+body.fi-neon-ludo .yard-inner{
+  width:80%;height:80%;padding:9%;gap:9%;
+  border:2px solid rgba(181,145,71,.58);
+  border-radius:17px;
+  background:linear-gradient(145deg,#FFFEF8,#E9DFC8);
+  box-shadow:0 6px 15px rgba(0,0,0,.27),inset 0 2px 5px #fff,inset 0 -2px 4px rgba(112,86,42,.12);
+}
+body.fi-neon-ludo .yard-spot{
+  border:2px solid rgba(255,255,255,.98);
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 24%,rgba(255,255,255,.65),transparent 38%),
+    color-mix(in srgb,var(--yard) 34%,#D8D0BD);
+  box-shadow:inset 0 3px 7px rgba(0,0,0,.20),0 1px 3px rgba(255,255,255,.9);
+}
+body.fi-neon-ludo .home-center{
+  border:4px solid #F4E7C6;
+  border-radius:10px;
+  background:conic-gradient(from -45deg,#C95663 0 25%,#D7A53B 0 50%,#5278BE 0 75%,#278D6A 0);
+  box-shadow:0 0 0 2px #87672F,0 6px 16px rgba(0,0,0,.38),inset 0 0 13px rgba(255,255,255,.30);
+}
+body.fi-neon-ludo .piece-stack{
+  position:absolute;inset:0;z-index:6;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+  place-items:center;align-content:center;pointer-events:none;
+}
+body.fi-neon-ludo .piece-token{
+  pointer-events:auto;position:relative;z-index:7;
+  appearance:none;
+  width:clamp(17px,3.4vw,29px);height:clamp(17px,3.4vw,29px);
+  max-width:none;max-height:none;margin:-2px;padding:0;
+  border:2px solid #FFF9EA!important;border-radius:50%;
+  background:
+    radial-gradient(circle at 28% 22%,rgba(255,255,255,.98) 0 7%,rgba(255,255,255,.48) 8% 17%,transparent 30%),
+    radial-gradient(circle at 50% 65%,color-mix(in srgb,var(--token) 72%,#000),transparent 70%),
+    linear-gradient(145deg,color-mix(in srgb,var(--token) 58%,#fff),var(--token) 62%,color-mix(in srgb,var(--token) 65%,#000));
+  box-shadow:0 3px 0 color-mix(in srgb,var(--token) 68%,#000),0 6px 10px rgba(0,0,0,.42),
+    inset 0 2px 4px rgba(255,255,255,.62),inset 0 -3px 5px rgba(0,0,0,.25);
+  transform:translateY(-1px);
+  transition:transform .14s ease,filter .14s ease,box-shadow .14s ease;
+}
+body.fi-neon-ludo .piece-token:after{
+  content:"";position:absolute;left:22%;top:17%;width:25%;height:14%;
+  border-radius:50%;background:rgba(255,255,255,.78);
+  filter:blur(.35px);pointer-events:none;
+}
+body.fi-neon-ludo .piece-stack:has(.piece-token:only-child){
+  display:flex;align-items:center;justify-content:center;
+}
+body.fi-neon-ludo .piece-stack:has(.piece-token:only-child) .piece-token{
+  width:82%;height:82%;max-width:31px;max-height:31px;margin:0;
+}
+body.fi-neon-ludo .piece-token:not(:disabled):hover{
+  transform:translateY(-3px) scale(1.08);filter:brightness(1.12);
+}
+body.fi-neon-ludo .piece-token.selected{
+  outline:3px solid #F2D27C;outline-offset:2px;
+  transform:translateY(-3px) scale(1.12);
+  box-shadow:0 0 0 2px rgba(255,255,255,.8),0 0 18px rgba(242,210,124,.72),0 7px 12px rgba(0,0,0,.4);
+}
+body.fi-neon-ludo .piece-token:focus-visible{outline:3px solid #F2D27C;outline-offset:3px}
+body.fi-neon-ludo .piece-token:disabled{opacity:1;filter:saturate(.94)}
+/* Language options are a popover, never a row appended at the bottom of the page. */
+body.fi-neon-ludo #languageMenu:not(.open){display:none!important}
+body.fi-neon-ludo #languageMenu.open{position:fixed!important;display:grid!important;z-index:10000!important}
+body.fi-neon-ludo .fi-game-language-select{
+  position:absolute!important;width:1px!important;height:1px!important;
+  padding:0!important;margin:-1px!important;overflow:hidden!important;
+  clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;
+}
+@media(max-width:600px){
+  body.fi-neon-ludo .ludo-board{padding:5px;border-width:5px;border-radius:18px;gap:1px}
+  body.fi-neon-ludo .piece-token{width:clamp(16px,5.2vw,23px);height:clamp(16px,5.2vw,23px);margin:-2px}
+  body.fi-neon-ludo .piece-stack:has(.piece-token:only-child) .piece-token{width:82%;height:82%;max-width:26px;max-height:26px}
+  body.fi-neon-ludo .yard-inner{width:82%;height:82%;gap:7%;padding:8%}
+}
+@media(max-width:380px){
+  body.fi-neon-ludo .ludo-board{padding:4px;border-width:4px;border-radius:15px}
+  body.fi-neon-ludo .piece-token{width:clamp(15px,4.8vw,19px);height:clamp(15px,4.8vw,19px)}
+}
