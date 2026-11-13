@@ -1,6 +1,6 @@
 import {createGame,roll,legalPieceMoves,applyMove,chooseCpuMove,globalTrackIndex,SAFE_CELLS} from "./ludo-engine.js";
 const $=id=>document.getElementById(id);
-const API="https://fly-chess-arena-api.flyinfinityplatform.workers.dev";
+const API="https://fly-ludo-api.flyinfinityplatform.workers.dev";
 const FIT_TOKEN="0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa";
 const BSC=56;
 let lang=localStorage.getItem("fi-game-language")||localStorage.getItem("fi-language")||"en";
