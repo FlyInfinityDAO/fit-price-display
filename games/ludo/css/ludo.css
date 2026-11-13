@@ -243,6 +243,7 @@ body.fi-neon-ludo .piece-token{
   border:2px solid #fff!important;touch-action:manipulation;
   box-shadow:0 2px 6px #000b,inset 0 1px 3px #ffffffaa;
 }
+body.fi-neon-ludo .piece-stack:has(.piece-token:only-child){display:flex;align-items:center;justify-content:center}
 body.fi-neon-ludo .piece-stack:has(.piece-token:only-child) .piece-token{
   width:82%;height:82%;max-width:28px;max-height:28px;margin:0;
 }
