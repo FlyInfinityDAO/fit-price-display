@@ -87,6 +87,12 @@ function renderBoard(){
       button.className="piece-token"+(selected?.color===player.color&&selected.index===index?" selected":"");
       button.style.setProperty("--token","var(--"+player.color+")");
       button.setAttribute("aria-label",(colorName[player.color]?.[lang]||colorName[player.color].en)+" "+(index+1));
+      const engravings=["✦","◈","✺","✧"];
+      const engraving=document.createElement("span");
+      engraving.className="piece-engraving";
+      engraving.setAttribute("aria-hidden","true");
+      engraving.textContent=engravings[index%engravings.length];
+      button.append(engraving);
       const isCurrent=player===game.players[game.turn];
       const legal=isCurrent&&legalMoves.some(move=>move.pieceIndex===index);
       const canAct=!(mode==="local"&&requestBusy)&&(!onlineMode||(socketIsOpen()&&myPlayerIndices.includes(game.turn)));
