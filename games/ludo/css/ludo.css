@@ -296,3 +296,105 @@ body.fi-neon-ludo a:focus-visible{outline:2px solid #D4AF37;outline-offset:3px}
   body.fi-neon-ludo .waiting-pulse{animation:none}
   body.fi-neon-ludo *{scroll-behavior:auto!important}
 }
+
+
+/* Ludo polish: hide the language popover until opened; never render its options at page bottom. */
+body.fi-neon-ludo .language-menu.fi-game-language-menu{
+  position:fixed;display:none;z-index:10000;max-height:min(72vh,440px);overflow:auto;
+  padding:7px;border:1px solid rgba(0,200,150,.58);border-radius:15px;
+  background:rgba(10,24,20,.97);box-shadow:0 18px 48px rgba(0,0,0,.48),0 0 24px rgba(0,200,150,.12);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)
+}
+body.fi-neon-ludo .language-menu.fi-game-language-menu.open{display:grid;grid-template-columns:1fr;gap:3px}
+body.fi-neon-ludo .language-menu.fi-game-language-menu .language-option{
+  display:flex;align-items:center;gap:10px;width:100%;min-height:42px;padding:8px 12px;
+  border:1px solid transparent;border-radius:10px;background:transparent;color:#EAF5FF;
+  text-align:start;font-size:13px;font-weight:700
+}
+body.fi-neon-ludo .language-menu.fi-game-language-menu .language-option:hover,
+body.fi-neon-ludo .language-menu.fi-game-language-menu .language-option.active{
+  background:rgba(0,200,150,.13);border-color:rgba(0,200,150,.36);color:#70F5CF
+}
+body.fi-neon-ludo .language-menu.fi-game-language-menu .language-flag{font-size:18px}
+
+/* Waiting seats are intentionally visible and visually distinct from occupied seats. */
+body.fi-neon-ludo .player-chip.empty-seat{
+  border-style:dashed;border-color:rgba(212,175,55,.42);background:rgba(212,175,55,.045)
+}
+body.fi-neon-ludo .player-chip.empty-seat strong{color:#D6C99F;font-weight:600}
+body.fi-neon-ludo #fillCpuBtn{border-color:rgba(212,175,55,.65)!important;color:#F1D77D!important}
+
+/* Premium tabletop: warm porcelain track, jewel-toned home zones and sculpted pieces. */
+body.fi-neon-ludo .ludo-board{
+  padding:9px;border:8px solid #8B6B32;border-radius:25px;
+  background:linear-gradient(145deg,#18352D 0%,#0C1D19 48%,#1B352A 100%);
+  box-shadow:0 22px 48px rgba(0,0,0,.46),0 0 0 1px rgba(244,221,157,.28),
+    inset 0 2px 10px rgba(255,255,255,.12),inset 0 -8px 18px rgba(0,0,0,.34)
+}
+body.fi-neon-ludo .cell{
+  border:1px solid rgba(112,94,58,.20);border-radius:3px;
+  background:linear-gradient(145deg,#1A3029,#10231E)
+}
+body.fi-neon-ludo .cell.track{
+  background:linear-gradient(145deg,#FFFDF4 0%,#F0E8D2 55%,#E4D8B9 100%);
+  border:1px solid #C8B98F;box-shadow:inset 0 1px 2px rgba(255,255,255,.92),inset 0 -2px 3px rgba(105,84,43,.12)
+}
+body.fi-neon-ludo .cell.track.safe:after{
+  content:"✦";color:#B18B3C;font-size:clamp(10px,1.45vw,16px);
+  text-shadow:0 1px 0 #fff7;pointer-events:none
+}
+body.fi-neon-ludo .cell.red{background:linear-gradient(145deg,#F7A1A9,#C94457);border-color:#F6C5C7}
+body.fi-neon-ludo .cell.green{background:linear-gradient(145deg,#9AE6C6,#238C68);border-color:#C7F3DF}
+body.fi-neon-ludo .cell.yellow{background:linear-gradient(145deg,#FFE9A0,#D9A52D);border-color:#FFF0C6}
+body.fi-neon-ludo .cell.blue{background:linear-gradient(145deg,#A6C8FF,#4774C8);border-color:#D6E4FF}
+body.fi-neon-ludo .cell.home-lane{
+  border:1px solid rgba(255,255,255,.58);
+  background:linear-gradient(145deg,color-mix(in srgb,var(--lane) 38%,#FFFDF4),color-mix(in srgb,var(--lane) 68%,#D8D0BC))
+}
+body.fi-neon-ludo .cell.yard{
+  border:3px solid rgba(255,255,255,.78);border-radius:13px;
+  background:linear-gradient(145deg,color-mix(in srgb,var(--yard) 86%,#fff),color-mix(in srgb,var(--yard) 72%,#101816));
+  box-shadow:inset 0 2px 8px rgba(255,255,255,.34),inset 0 -5px 12px rgba(0,0,0,.16)
+}
+body.fi-neon-ludo .yard-inner{
+  width:78%;height:78%;padding:10%;gap:9%;border:2px solid rgba(181,145,71,.52);border-radius:17px;
+  background:linear-gradient(145deg,#FFFDF6,#E9DFC5);
+  box-shadow:0 5px 14px rgba(0,0,0,.24),inset 0 2px 5px #fff
+}
+body.fi-neon-ludo .yard-spot{
+  border:2px solid rgba(255,255,255,.94);border-radius:50%;
+  background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.5),transparent 35%),color-mix(in srgb,var(--yard) 28%,#D6D0BF);
+  box-shadow:inset 0 3px 6px rgba(0,0,0,.22),0 1px 2px rgba(255,255,255,.8)
+}
+body.fi-neon-ludo .home-center{
+  border:4px solid #F3E4BD;border-radius:7px;
+  background:conic-gradient(from -45deg,#C94D5D 0 25%,#D8A83B 0 50%,#4777C7 0 75%,#278A68 0);
+  box-shadow:0 0 0 2px #85652E,0 5px 14px rgba(0,0,0,.36),inset 0 0 12px rgba(255,255,255,.24)
+}
+body.fi-neon-ludo .piece-stack{z-index:6}
+body.fi-neon-ludo .piece-token{
+  width:clamp(19px,3.3vw,29px);height:clamp(19px,3.3vw,29px);max-width:none;max-height:none;
+  border:2px solid #FFF8E8!important;border-radius:50%;padding:0;
+  background:radial-gradient(circle at 29% 22%,rgba(255,255,255,.98) 0 7%,rgba(255,255,255,.34) 8% 17%,transparent 29%),
+    linear-gradient(145deg,color-mix(in srgb,var(--token) 68%,#fff),var(--token) 58%,color-mix(in srgb,var(--token) 68%,#000));
+  box-shadow:0 4px 0 color-mix(in srgb,var(--token) 70%,#000),0 7px 11px rgba(0,0,0,.42),
+    inset 0 2px 4px rgba(255,255,255,.58),inset 0 -3px 5px rgba(0,0,0,.24);
+  transform:translateY(-1px);transition:transform .14s ease,filter .14s ease
+}
+body.fi-neon-ludo .piece-token:after{
+  content:"";position:absolute;left:23%;top:18%;width:23%;height:13%;border-radius:50%;
+  background:rgba(255,255,255,.72);filter:blur(.3px);pointer-events:none
+}
+body.fi-neon-ludo .piece-token:not(:disabled):hover{transform:translateY(-3px) scale(1.08);filter:brightness(1.12)}
+body.fi-neon-ludo .piece-token.selected{
+  outline:3px solid #F4D37B;outline-offset:2px;transform:translateY(-3px) scale(1.12);
+  box-shadow:0 0 0 2px rgba(255,255,255,.75),0 0 18px rgba(244,211,123,.72),0 7px 12px rgba(0,0,0,.4)
+}
+body.fi-neon-ludo .piece-token:disabled{opacity:1;filter:saturate(.92)}
+@media(max-width:600px){
+  body.fi-neon-ludo .ludo-board{padding:5px;border-width:5px;border-radius:17px}
+  body.fi-neon-ludo .piece-token{width:clamp(23px,7.2vw,32px);height:clamp(23px,7.2vw,32px)}
+  body.fi-neon-ludo .yard-inner{width:82%;height:82%;gap:7%;padding:8%}
+  body.fi-neon-ludo .game-heading-actions{flex-direction:row}
+  body.fi-neon-ludo .game-heading-actions button{flex:1 1 auto}
+}
