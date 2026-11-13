@@ -148,3 +148,31 @@ body.fi-neon-ludo footer{text-align:center;font-size:11px;padding:20px 12px}
 @media(prefers-reduced-motion:reduce){
   body.fi-neon-ludo *,body.fi-neon-ludo *:before,body.fi-neon-ludo *:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
 }
+
+
+/* Token stacking: keep two-to-four pieces visible inside one track square. */
+.fi-ludo .cell:has(.piece-token:nth-of-type(2)){
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+  place-items:center;
+  align-content:center;
+  justify-content:center;
+}
+.fi-ludo .cell:has(.piece-token:nth-of-type(2)) .piece-token{
+  width:88%;height:88%;max-width:none;max-height:none;min-width:0;min-height:0;
+  border-width:1.5px;padding:0;
+}
+.fi-ludo .cell:has(.piece-token:nth-of-type(2)) .piece-token.selected{outline-width:2px;outline-offset:0}
+.fi-ludo .cell.has-single-piece .piece-token{width:78%;height:78%;max-width:30px;max-height:30px}
+.fi-ludo .piece-token{touch-action:manipulation}
+.fi-ludo .ludo-board{max-width:min(100%,680px);min-width:0}
+.fi-ludo .game-controls>*{min-width:0}
+.fi-ludo .game-message{overflow-wrap:anywhere}
+@media(max-width:420px){
+  .fi-ludo .piece-token{border-width:1.5px}
+  .fi-ludo .cell:has(.piece-token:nth-of-type(2)) .piece-token{width:92%;height:92%;border-width:1px}
+  .fi-ludo .game-controls{grid-template-columns:minmax(0,1fr) auto}
+  .fi-ludo .turn-info strong{font-size:12px}
+  .fi-ludo .dice-control .primary-btn{padding-inline:9px;font-size:12px}
+}
