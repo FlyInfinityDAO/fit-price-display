@@ -135,10 +135,6 @@ export class LudoRoom {
         if(g.state.status==="finished")g.status="finished";
         await this.save(g);this.broadcast(g,g.status==="finished"?"finished":"move");return;
       }
-      if(action.type==="resign"){
-        g.state.status="finished";g.state.winner=g.state.players[(playerIndex+1)%g.playerCount].color;g.status="finished";
-        await this.save(g);this.broadcast(g,"finished");return;
-      }
       throw new Error("Unsupported action.");
     }catch(error){socket.send(JSON.stringify({type:"error",error:error.message||"Move rejected."}));}
   }
