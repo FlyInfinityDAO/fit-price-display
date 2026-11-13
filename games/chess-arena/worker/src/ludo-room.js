@@ -39,7 +39,7 @@ export class LudoRoom {
   broadcast(g,type="state"){const payload=JSON.stringify({type,game:this.snapshot(g)});for(const socket of this.ctx.getWebSockets()){try{socket.send(payload);}catch{}}}
   async playCpuTurns(g){
     let guard=0;
-    while(g.state?.status==="active"&&g.state.players[g.state.turn]?.kind==="cpu"&&guard++<16){
+    while(g.state?.status==="active"&&g.state.players[g.state.turn]?.kind==="cpu"&&guard++<64){
       g.state=roll(g.state);
       if(g.state.dice!==null){
         const move=chooseCpuMove(g.state,g.difficulty||"medium");
