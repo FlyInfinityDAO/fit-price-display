@@ -28,11 +28,11 @@ Standalone Cloudflare Worker for Fly Infinity Ludo. It is intentionally isolated
 
 ## Setup
 
-1. Create a Cloudflare D1 database named `fly-ludo-db`.
-2. Put its database UUID in `wrangler.toml`.
-3. Apply the migration with `npx wrangler d1 migrations apply fly-ludo-db --remote`.
-4. Set the Worker secret `SESSION_SECRET` (minimum 32 characters).
-5. Configure the Worker build root as `games/ludo/worker`, build command `npm install && npm run check`, deploy command `npx wrangler deploy`.
-6. Keep all changes on the repository `main` branch.
+1. The dedicated D1 database `fly-ludo-db` is created and its UUID is configured in `wrangler.toml`.
+2. The initial schema is stored in `migrations/0001_initial.sql`; the deployment workflow applies it remotely and safely.
+3. The Production secret `SESSION_SECRET` is configured in Cloudflare (96-character random value; never commit it).
+4. The Cloudflare Worker project is connected to `FlyInfinityDAO/fit-price-display`, branch `main`, root `/games/ludo/worker`.
+5. `.github/workflows/ludo-cloudflare-deploy.yml` validates the Worker, runs the engine/room tests, applies D1 migrations, deploys with Wrangler, and verifies the production health endpoint.
+6. All development and deployments use the repository `main` branch only.
 
-Do not alter the existing Chess Arena / Backgammon Worker or its D1 database when setting up Ludo.
+The Ludo frontend calls only `https://fly-ludo-api.flyinfinityplatform.workers.dev`. Chess and Backgammon continue using `fly-chess-arena-api`. Ludo has its own D1 database and Durable Object namespace; do not bind it to the Chess/Backgammon database or Worker.
