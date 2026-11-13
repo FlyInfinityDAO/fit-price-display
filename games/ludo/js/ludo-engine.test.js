@@ -140,6 +140,15 @@ test("a blocked six still grants another roll to the same player",()=>{
   assert.equal(next.lastAction.type,"blocked");
 });
 
+test("a blocked non-six roll passes the turn to the next player",()=>{
+  const game=createGame(2,2);
+  game.players[0].pieces=[57,57,57,57];
+  const next=roll(game,()=>0);
+  assert.equal(next.dice,null);
+  assert.equal(next.turn,1);
+  assert.equal(next.lastAction.type,"blocked");
+  assert.equal(next.lastAction.value,1);
+});
 test("three consecutive sixes are counted even when the rolls are blocked",()=>{
   let game=createGame(2,2);
   game.players[0].pieces=[57,57,57,57];
