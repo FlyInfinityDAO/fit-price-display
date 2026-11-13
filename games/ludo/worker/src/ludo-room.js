@@ -11,6 +11,13 @@ export class LudoRoom {
       const host=game.players[0];game.players=Array(game.playerCount).fill(null);game.players[0]=host;game.hostWallet=game.hostWallet||host;
       await this.ctx.storage.put("game",game);
     }
+    // Repair legacy CPU rooms where one wallet was incorrectly assigned multiple human seats.
+    if(game&&game.mode==="cpu"&&game.status==="active"&&game.state?.players?.length===game.playerCount&&
+       Array.isArray(game.players)&&game.players.length>1&&game.players.every(value=>value===game.players[0])){
+      const host=game.players[0];game.players=Array(game.playerCount).fill(null);game.players[0]=host;game.hostWallet=game.hostWallet||host;
+      game.state.players.forEach((player,index)=>{player.kind=index===0?"human":"cpu";});
+      await this.ctx.storage.put("game",game);
+    }
     return game;
   }
   async save(game){
