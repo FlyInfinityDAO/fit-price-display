@@ -1,4 +1,5 @@
 import { getAddress, isAddress } from "ethers";
+import { createGame, roll, legalPieceMoves, applyMove } from "../../js/ludo-engine.js";
 import { getFitBalance } from "./security.js";
 
 const MIN_FIT_WEI = 10n ** 18n;
@@ -45,6 +46,31 @@ async function createRoom(env,wallet,count,mode="friend",difficulty="medium"){
   return json({ok:false,error:"Could not allocate a Ludo room. Please try again."},503);
 }
 
+async function handleLocalMatch(request,env,path,auth){
+  if(path==="/api/ludo/local/start"&&request.method==="POST"){
+    const body=await request.json().catch(()=>({})),count=Number(body.playerCount);
+    if(!Number.isInteger(count)||count<2||count>4)return json({ok:false,error:"Choose between 2 and 4 local players."},400);
+    const matchId=crypto.randomUUID().replace(/-/g,""),state=createGame(count,count),now=Math.floor(Date.now()/1000);
+    await env.DB.prepare("INSERT INTO local_matches (match_id,wallet_address,state_json,status,revision,created_at,updated_at) VALUES (?,?,?,'active',0,?,?)").bind(matchId,auth.wallet.toLowerCase(),JSON.stringify(state),now,now).run();
+    return json({ok:true,matchId,game:state,revision:0});
+  }
+  if((path==="/api/ludo/local/roll"||path==="/api/ludo/local/move")&&request.method==="POST"){
+    const body=await request.json().catch(()=>({})),matchId=body.matchId;
+    if(typeof matchId!=="string"||!/^[a-f0-9]{32}$/.test(matchId))return json({ok:false,error:"Invalid local match."},400);
+    const row=await env.DB.prepare("SELECT wallet_address,state_json,status,revision FROM local_matches WHERE match_id=?").bind(matchId).first();
+    if(!row||row.wallet_address!==auth.wallet.toLowerCase())return json({ok:false,error:"Local match not found for this wallet."},404);
+    if(row.status!=="active")return json({ok:false,error:"This local match is already finished."},409);
+    let state;try{state=JSON.parse(row.state_json);}catch{return json({ok:false,error:"Stored local match is invalid."},500);}
+    try{state=advanceLocalState(state,path.endsWith("/roll")?{type:"roll"}:{type:"move",pieceIndex:body.pieceIndex,to:body.to});}
+    catch(error){return json({ok:false,error:error?.message||"Invalid local game action."},409);}
+    const finished=state.status==="finished",now=Math.floor(Date.now()/1000);
+    const saved=await env.DB.prepare("UPDATE local_matches SET state_json=?,status=?,revision=revision+1,updated_at=? WHERE match_id=? AND wallet_address=? AND revision=? AND status='active'").bind(JSON.stringify(state),finished?"finished":"active",now,matchId,auth.wallet.toLowerCase(),row.revision).run();
+    if(Number(saved.meta?.changes||0)!==1)return json({ok:false,error:"The match changed in another request. Refresh the game state and retry."},409);
+    if(finished)await env.DB.prepare("INSERT OR IGNORE INTO ludo_player_results (room_code,wallet_address,outcome,points,created_at) VALUES (?,?, 'win',3,?)").bind("LOCAL-"+matchId,auth.wallet.toLowerCase(),now).run();
+    return json({ok:true,matchId,game:state,revision:Number(row.revision)+1});
+  }
+  return null;
+}
 export async function handleLudoApi(request,env){
   const url=new URL(request.url),path=url.pathname;
   if(request.method==="POST"&&path==="/api/ludo/rooms/create"){
@@ -99,11 +125,12 @@ export async function handleLudoApi(request,env){
     return new Response(response.body,{status:response.status,headers:{"content-type":"application/json","cache-control":"no-store"}});
   }
   if(request.method==="POST"&&path==="/api/ludo/stats/record"){
+    return json({ok:false,error:"Client-submitted game results are disabled. Results are recorded by the authoritative game service."},410);
+  }
+  if(path.startsWith("/api/ludo/local/")){
     const auth=await authorize(request,env);if(auth.response)return auth.response;
-    const body=await request.json().catch(()=>({}));
-    if(body.source!=="local"||!["win","loss"].includes(body.outcome)||typeof body.roomCode!=="string"||!/^LOCAL-[A-Za-z0-9-]{8,64}$/.test(body.roomCode))return json({ok:false,error:"Invalid local game result."},400);
-    await env.DB.prepare("INSERT OR IGNORE INTO ludo_player_results (room_code,wallet_address,outcome,points,created_at) VALUES (?,?,?,?,?)").bind(body.roomCode,auth.wallet.toLowerCase(),body.outcome,body.outcome==="win"?3:0,Math.floor(Date.now()/1000)).run();
-    return json({ok:true,recorded:true});
+    const localResponse=await handleLocalMatch(request,env,path,auth);
+    if(localResponse)return localResponse;
   }
   if(request.method==="GET"&&(path==="/api/ludo/stats/me"||path==="/api/ludo/stats/leaderboard")){
     const auth=await authorize(request,env);if(auth.response)return auth.response;
