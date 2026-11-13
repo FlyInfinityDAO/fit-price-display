@@ -13,6 +13,16 @@ test("a six lets a piece leave the yard and grants another roll",()=>{
   assert.equal(game.dice,null);
 });
 
+test("a six grants one extra roll, but a following non-six move passes the turn",()=>{
+  let game=createGame(2,2);
+  game=roll(game,()=>0.99);
+  game=applyMove(game,0,legalPieceMoves(game)[0]);
+  assert.equal(game.turn,0);
+  game=roll(game,()=>0);
+  game=applyMove(game,0,legalPieceMoves(game)[0]);
+  assert.equal(game.turn,1);
+  assert.equal(game.lastAction.dice,1);
+});
 test("three consecutive sixes forfeit the player's turn",()=>{
   let game=createGame(2,2);
   for(let i=0;i<2;i++){
