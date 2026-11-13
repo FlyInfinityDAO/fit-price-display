@@ -90,3 +90,38 @@ jobs:
           }
           console.log("Ludo Worker healthy:", JSON.stringify(data));
           NODE
+
+      - name: Verify wallet challenge, D1 nonce storage and CORS
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          const base = "https://fly-ludo-api.flyinfinityplatform.workers.dev";
+          const origin = "https://flyinfinitydao.github.io";
+          const address = "0x1111111111111111111111111111111111111111";
+          const challengeResponse = await fetch(base + "/api/auth/challenge", {
+            method: "POST",
+            headers: { "content-type": "application/json", "Origin": origin },
+            body: JSON.stringify({ address }),
+            cache: "no-store"
+          });
+          const challenge = await challengeResponse.json();
+          if (!challengeResponse.ok || challenge.ok !== true || !challenge.nonce ||
+              !challenge.message?.includes("Fly Infinity Ludo") ||
+              challengeResponse.headers.get("access-control-allow-origin") !== origin) {
+            console.error("Wallet challenge/D1/CORS verification failed:", challenge);
+            process.exit(1);
+          }
+          const verifyResponse = await fetch(base + "/api/auth/verify", {
+            method: "POST",
+            headers: { "content-type": "application/json", "Origin": origin },
+            body: JSON.stringify({ address, nonce: challenge.nonce, signature: "0x1234" }),
+            cache: "no-store"
+          });
+          const rejected = await verifyResponse.json();
+          if (verifyResponse.status !== 401 || !/signature/i.test(rejected.error || "")) {
+            console.error("Invalid signature was not safely rejected:", rejected);
+            process.exit(1);
+          }
+          console.log("Wallet challenge stored and read from D1; invalid signature rejected; CORS verified.");
+          NODE
