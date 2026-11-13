@@ -11,7 +11,7 @@ export class LudoRoom {
     if(game.state?.status==="finished"&&!game.statsRecorded&&this.env.DB){
       await this.env.DB.prepare("CREATE TABLE IF NOT EXISTS ludo_player_results (room_code TEXT NOT NULL,wallet_address TEXT NOT NULL,outcome TEXT NOT NULL,points INTEGER NOT NULL,created_at INTEGER NOT NULL,PRIMARY KEY(room_code,wallet_address))").run();
       const now=Math.floor(Date.now()/1000),winnerIndex=game.state.players.findIndex(p=>p.color===game.state.winner);
-      const uniqueWallets=[...new Set(game.players)];
+      const uniqueWallets=[...new Set(game.players.filter(Boolean))];
       const statements=uniqueWallets.map(wallet=>{
         const seats=game.players.map((value,index)=>value===wallet?index:-1).filter(index=>index>=0);
         const won=seats.includes(winnerIndex),outcome=won?"win":"loss";
@@ -22,7 +22,7 @@ export class LudoRoom {
     }
     await this.ctx.storage.put("game",game);
   }
-  snapshot(g){return {roomCode:g.code,playerCount:g.playerCount,players:g.players,mode:g.mode,difficulty:g.difficulty,status:g.status,state:g.state,serverTime:Date.now()};}
+  snapshot(g){return {roomCode:g.code,playerCount:g.playerCount,players:g.players,hostWallet:g.hostWallet,mode:g.mode,difficulty:g.difficulty,status:g.status,state:g.state,serverTime:Date.now()};}
   broadcast(g,type="state"){const payload=JSON.stringify({type,game:this.snapshot(g)});for(const socket of this.ctx.getWebSockets()){try{socket.send(payload);}catch{}}}
   async playCpuTurns(g){
     let guard=0;
@@ -42,9 +42,11 @@ export class LudoRoom {
       if(!wallet)return json({ok:false,error:"Wallet missing."},400);
       const mode=url.searchParams.get("mode")==="cpu"?"cpu":"friend";
       const count=Math.max(2,Math.min(4,Number(url.searchParams.get("players"))||4));
-      const humans=mode==="cpu"?Math.max(1,Math.min(count-1,Number(url.searchParams.get("humans"))||1)):count;
+      // A wallet occupies exactly one human seat. Empty seats remain joinable.
+      const humans=1;
       const difficulty=["easy","medium","hard"].includes(url.searchParams.get("difficulty"))?url.searchParams.get("difficulty"):"medium";
-      const game={code:url.searchParams.get("code")||"",playerCount:count,players:Array(humans).fill(wallet),mode,difficulty:mode==="cpu"?difficulty:null,state:mode==="cpu"?createGame(count,humans):null,status:mode==="cpu"?"active":"waiting",createdAt:Date.now(),statsRecorded:false};
+      const players=Array(count).fill(null);players[0]=wallet;
+      const game={code:url.searchParams.get("code")||"",playerCount:count,players,hostWallet:wallet,mode,difficulty:mode==="cpu"?difficulty:null,state:mode==="cpu"?createGame(count,humans):null,status:mode==="cpu"?"active":"waiting",createdAt:Date.now(),statsRecorded:false};
       await this.save(game);return json({ok:true,room:this.snapshot(game)});
     }
     if(request.method==="POST"&&url.pathname==="/join"){
@@ -52,10 +54,22 @@ export class LudoRoom {
       if(!wallet)return json({ok:false,error:"Wallet missing."},400);
       if(g.mode==="cpu")return json({ok:false,error:"CPU rooms cannot be joined."},409);
       if(g.players.includes(wallet))return json({ok:true,room:this.snapshot(g)});
-      if(g.status!=="waiting"||g.players.length>=g.playerCount)return json({ok:false,error:"This room is full or already started."},409);
-      g.players.push(wallet);
-      if(g.players.length===g.playerCount){g.status="active";g.state=createGame(g.playerCount,g.playerCount);}
-      await this.save(g);this.broadcast(g,"joined");return json({ok:true,room:this.snapshot(g)});
+      if(g.status!=="waiting")return json({ok:false,error:"This room is full or already started."},409);
+      const seat=g.players.findIndex(value=>!value);
+      if(seat<0)return json({ok:false,error:"This room is full or already started."},409);
+      g.players[seat]=wallet;
+      if(g.players.every(Boolean)){g.status="active";g.mode="friend";g.state=createGame(g.playerCount,g.playerCount);}
+      await this.save(g);this.broadcast(g,g.status==="active"?"started":"joined");return json({ok:true,room:this.snapshot(g)});
+    }
+    if(request.method==="POST"&&url.pathname==="/fill-cpu"){
+      const g=await this.read();if(!g)return json({ok:false,error:"Room not found."},404);
+      if(!wallet||wallet!==g.hostWallet)return json({ok:false,error:"Only the room creator can start CPU seats."},403);
+      if(g.status!=="waiting")return json({ok:false,error:"This room has already started."},409);
+      const humans=g.players.filter(Boolean).length;
+      if(humans<1||humans>=g.playerCount)return json({ok:false,error:"There are no empty seats to fill."},409);
+      const difficulty=["easy","medium","hard"].includes(url.searchParams.get("difficulty"))?url.searchParams.get("difficulty"):"medium";
+      g.mode="mixed";g.difficulty=difficulty;g.state=createGame(g.playerCount,humans);g.status="active";
+      await this.save(g);this.broadcast(g,"started");return json({ok:true,room:this.snapshot(g)});
     }
     if(request.method==="GET"&&["/snapshot","/check-player"].includes(url.pathname)){
       const g=await this.read();if(!g)return json({ok:false,error:"Room not found."},404);
