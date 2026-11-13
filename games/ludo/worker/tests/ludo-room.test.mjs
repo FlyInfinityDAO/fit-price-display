@@ -138,3 +138,16 @@ test("concurrent joins are serialized and cannot overfill a room",async()=>{
   assert.equal(data.room.players.filter(Boolean).length,4);
   assert.equal(new Set(data.room.players).size,4);
 });
+
+test("an API resignation cannot manufacture a winner or award FIGS",async()=>{
+  const store=new Map([["game",{code:"ABC234",playerCount:2,players:[host,guest],hostWallet:host,mode:"friend",difficulty:null,state:createGame(2,2),status:"active",createdAt:Date.now(),statsRecorded:false}]]);
+  const ctx={storage:{get:async key=>store.get(key),put:async(key,value)=>store.set(key,structuredClone(value)),delete:async key=>store.delete(key)},getWebSockets:()=>[],acceptWebSocket:()=>{}};
+  const room=new LudoRoom(ctx,{});
+  const sent=[];
+  const socket={deserializeAttachment:()=>({wallet:host}),send:value=>sent.push(JSON.parse(value))};
+  await room.webSocketMessage(socket,JSON.stringify({type:"resign"}));
+  assert.equal(store.get("game").status,"active");
+  assert.equal(store.get("game").state.status,"active");
+  assert.equal(store.get("game").statsRecorded,false);
+  assert.equal(sent[0].type,"error");
+});
