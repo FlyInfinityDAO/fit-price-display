@@ -35,11 +35,19 @@ export function legalPieceMoves(game, playerIndex = game.turn, dice = game.dice)
     if (progress >= 57) return;
     const next = progress + dice;
     if (next > 57) return;
-    if (next < 52) {
-      const target = globalTrackIndex(player.color, next);
-      const opponents = game.players.filter((_, i) => i !== playerIndex)
-        .reduce((total, opponent) => total + opponent.pieces.filter(n => n >= 0 && n < 52 && globalTrackIndex(opponent.color, n) === target).length, 0);
-      if (opponents >= 2) return;
+    // A blockade is a wall, not merely an illegal landing square: a piece
+    // may not pass over two or more opposing pieces on any crossed track cell.
+    if (progress < 52) {
+      for (let step = 1; step <= Math.min(dice, 52 - progress); step++) {
+        const crossedProgress = progress + step;
+        if (crossedProgress >= 52) break; // Home lanes are private to each color.
+        const crossedCell = globalTrackIndex(player.color, crossedProgress);
+        const blockers = game.players.filter((_, i) => i !== playerIndex)
+          .reduce((total, opponent) => total + opponent.pieces.filter(n =>
+            n >= 0 && n < 52 && globalTrackIndex(opponent.color, n) === crossedCell
+          ).length, 0);
+        if (blockers >= 2) return;
+      }
     }
     moves.push({ pieceIndex, from: progress, to: next, kind: next === 57 ? "finish" : next >= 52 ? "home" : "move" });
   });
