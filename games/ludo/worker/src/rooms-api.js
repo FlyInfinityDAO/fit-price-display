@@ -46,6 +46,17 @@ async function createRoom(env,wallet,count,mode="friend",difficulty="medium"){
   return json({ok:false,error:"Could not allocate a Ludo room. Please try again."},503);
 }
 
+function secureRandom(){const value=new Uint32Array(1);crypto.getRandomValues(value);return value[0]/4294967296;}
+export function advanceLocalState(state,action,random=secureRandom){
+  if(action?.type==="roll")return roll(state,random);
+  if(action?.type==="move"){
+    if(!Number.isInteger(action.pieceIndex)||!Number.isInteger(action.to))throw new Error("Invalid piece move.");
+    const legal=legalPieceMoves(state).find(move=>move.pieceIndex===action.pieceIndex&&move.to===action.to);
+    if(!legal)throw new Error("Illegal Ludo move.");
+    return applyMove(state,state.turn,legal);
+  }
+  throw new Error("Unsupported local game action.");
+}
 async function handleLocalMatch(request,env,path,auth){
   if(path==="/api/ludo/local/start"&&request.method==="POST"){
     const body=await request.json().catch(()=>({})),count=Number(body.playerCount);
