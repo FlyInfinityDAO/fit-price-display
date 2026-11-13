@@ -77,3 +77,33 @@ test("CPU strategy always selects a legal move",()=>{
   const move=chooseCpuMove(game,"hard");
   assert.ok(legalPieceMoves(game).some(candidate=>candidate.pieceIndex===move.pieceIndex&&candidate.to===move.to));
 });
+
+
+test("a blocked six still grants another roll to the same player",()=>{
+  const game=createGame(2,2);
+  game.players[0].pieces=[57,57,57,57];
+  game.players[0].finished=4;
+  const next=roll(game,()=>0.99);
+  assert.equal(next.dice,null);
+  assert.equal(next.turn,0);
+  assert.equal(next.consecutiveSixes,1);
+  assert.equal(next.lastAction.type,"blocked");
+});
+
+test("three consecutive sixes are counted even when the rolls are blocked",()=>{
+  let game=createGame(2,2);
+  game.players[0].pieces=[57,57,57,57];
+  game.players[0].finished=4;
+  game=roll(game,()=>0.99);
+  game=roll(game,()=>0.99);
+  game=roll(game,()=>0.99);
+  assert.equal(game.turn,1);
+  assert.equal(game.consecutiveSixes,0);
+  assert.equal(game.lastAction.type,"three-sixes");
+});
+
+test("CPU player counts are clamped to available human seats",()=>{
+  assert.equal(createGame(2,99).players.filter(p=>p.kind==="human").length,2);
+  assert.equal(createGame(3,1).players.filter(p=>p.kind==="cpu").length,2);
+  assert.equal(createGame(4,2).players.filter(p=>p.kind==="human").length,2);
+});
