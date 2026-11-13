@@ -58,13 +58,13 @@ export async function handleLudoApi(request,env){
     const difficulty=["easy","medium","hard"].includes(body.difficulty)?body.difficulty:"medium";
     return createRoom(env,auth.wallet,count,"cpu",difficulty);
   }
-  const roomMatch=path.match(/^\/api\/ludo\/rooms\/([A-HJ-NP-Z2-9]{6})(?:\/(ticket|ws|fill-cpu))?$/);
-  if(request.method==="POST"&&roomMatch&&roomMatch[2]==="join"){
+  if(request.method==="POST"&&path==="/api/ludo/rooms/join"){
     const auth=await authorize(request,env);if(auth.response)return auth.response;
     const body=await request.json().catch(()=>({}));if(!validRoomCode(body.roomCode))return json({ok:false,error:"Enter a valid six-character room code."},400);
     const code=body.roomCode.toUpperCase(),response=await roomStub(env,code).fetch("https://ludo-room.internal/join",{method:"POST",headers:{"x-ludo-wallet":auth.wallet.toLowerCase()}});
     return new Response(response.body,{status:response.status,headers:{"content-type":"application/json","cache-control":"no-store"}});
   }
+  const roomMatch=path.match(/^\/api\/ludo\/rooms\/([A-HJ-NP-Z2-9]{6})(?:\/(ticket|ws|fill-cpu))?$/);
   if(request.method==="POST"&&roomMatch&&roomMatch[2]==="fill-cpu"){
     const auth=await authorize(request,env);if(auth.response)return auth.response;
     const body=await request.json().catch(()=>({})),difficulty=["easy","medium","hard"].includes(body.difficulty)?body.difficulty:"medium";
