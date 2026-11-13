@@ -231,7 +231,7 @@ export default {
       }
     }
     if (request.method === "GET" && new URL(request.url).pathname === "/api/health") {
-      return json({ ok: true, service: "Fly Infinity Games API", version: "0.1.0" }, 200, headers);
+      return json({ ok: true, service: "Fly Infinity Games API", version: "0.2.0" }, 200, headers);
     }
     if (request.method === "POST" && new URL(request.url).pathname === "/api/auth/challenge") {
       try { return await handleChallenge(request, env).then(r => withHeaders(r, headers)); }
