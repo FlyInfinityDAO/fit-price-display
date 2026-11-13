@@ -7,7 +7,10 @@ document.addEventListener("DOMContentLoaded",function(){
  const select=document.getElementById("languageSelect");
  if(!button||!menu||!select)return;
  menu.classList.add("fi-game-language-menu");
- const closeMenu=()=>{menu.classList.remove("open");button.setAttribute("aria-expanded","false")};
+ const ludoPage=document.body.classList.contains("fi-neon-ludo");
+ // Keep Ludo's menu out of normal document flow even if its stylesheet is cached or unavailable.
+ if(ludoPage){menu.style.position="fixed";menu.style.display="none";menu.style.zIndex="10000";menu.style.overflowY="auto";}
+ const closeMenu=()=>{menu.classList.remove("open");if(ludoPage)menu.style.display="none";button.setAttribute("aria-expanded","false")};
  const positionMenu=()=>{
   const rect=button.getBoundingClientRect(),margin=12,gap=8;
   const vw=document.documentElement.clientWidth||window.innerWidth,vh=window.innerHeight;
@@ -46,7 +49,7 @@ document.addEventListener("DOMContentLoaded",function(){
  button.addEventListener("click",event=>{
   event.stopPropagation();
   const opening=!menu.classList.contains("open");
-  if(opening){menu.classList.add("open");positionMenu();button.setAttribute("aria-expanded","true")}
+  if(opening){menu.classList.add("open");if(ludoPage)menu.style.display="grid";positionMenu();button.setAttribute("aria-expanded","true")}
   else closeMenu();
  });
  select.addEventListener("change",sync);
