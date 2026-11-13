@@ -80,7 +80,7 @@ export function applyMove(game, playerIndex, move) {
       }
     }
   }
-  next.lastAction = { type: "move", color: player.color, pieceIndex: legal.pieceIndex, dice: next.dice, captured };
+  next.lastAction = { type: "move", color: player.color, pieceIndex: legal.pieceIndex, dice: next.dice, captured, kind: legal.kind };
   next.moveNumber++;
   const won = player.pieces.every(progress => progress === 57);
   if (won) {
