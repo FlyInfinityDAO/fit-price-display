@@ -126,3 +126,15 @@ test("CPU turn processing exits after three consecutive sixes instead of looping
   assert.equal(game.state.turn,0);
   assert.equal(game.state.lastAction.type,"three-sixes");
 });
+
+test("concurrent joins are serialized and cannot overfill a room",async()=>{
+  const room=makeRoom(),third="0x3333333333333333333333333333333333333333",fourth="0x4444444444444444444444444444444444444444",fifth="0x5555555555555555555555555555555555555555";
+  await room.fetch(post("/create?code=ABC234&players=4&mode=friend",host));
+  const results=await Promise.all([guest,third,fourth,fifth].map(wallet=>room.fetch(post("/join",wallet))));
+  assert.equal(results.filter(r=>r.status===200).length,3);
+  assert.equal(results.filter(r=>r.status===409).length,1);
+  const snapshot=await room.fetch(new Request("https://ludo-room.internal/snapshot",{headers:{"x-ludo-wallet":host}}));
+  const data=await snapshot.json();
+  assert.equal(data.room.players.filter(Boolean).length,4);
+  assert.equal(new Set(data.room.players).size,4);
+});
