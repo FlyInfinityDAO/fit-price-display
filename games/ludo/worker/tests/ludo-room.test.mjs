@@ -27,6 +27,17 @@ test("new friend room reserves one host seat and leaves the remaining seats open
   assert.equal(data.room.status,"waiting");
   assert.equal(data.room.hostWallet,host);
 });
+test("legacy waiting rooms prefilled with the host wallet are repaired on read",async()=>{
+  const legacy={code:"ABC234",playerCount:4,players:[host,host,host,host],hostWallet:host,mode:"friend",difficulty:null,state:null,status:"waiting",createdAt:Date.now(),statsRecorded:false};
+  const store=new Map([["game",legacy]]);
+  const ctx={storage:{get:async key=>store.get(key),put:async(key,value)=>store.set(key,structuredClone(value)),delete:async key=>store.delete(key)},getWebSockets:()=>[],acceptWebSocket:()=>{}};
+  const room=new LudoRoom(ctx,{});
+  const response=await room.fetch(new Request("https://ludo-room.internal/snapshot",{headers:{"x-ludo-wallet":host}}));
+  const data=await response.json();
+  assert.equal(response.status,200);
+  assert.deepEqual(data.room.players,[host,null,null,null]);
+  assert.equal(store.get("game").hostWallet,host);
+});
 test("joining a room fills one empty seat without duplicating the creator wallet",async()=>{
   const room=makeRoom();
   await room.fetch(post("/create?code=ABC234&players=4&mode=friend",host));
