@@ -787,3 +787,9 @@ body.fi-neon-ludo .piece-token.selected{outline:3px solid #F7D77D!important;outl
   body.fi-neon-ludo .cell.yard{border-width:2px!important;border-radius:8px!important}
   body.fi-neon-ludo .yard-inner{width:82%;height:82%;padding:8%;gap:7%}
 }
+
+/* Directional start markers follow the clockwise race direction. */
+body.fi-neon-ludo .cell.track.start-red:after{content:"➜"}
+body.fi-neon-ludo .cell.track.start-green:after{content:"▼"}
+body.fi-neon-ludo .cell.track.start-yellow:after{content:"◀"}
+body.fi-neon-ludo .cell.track.start-blue:after{content:"▲"}
