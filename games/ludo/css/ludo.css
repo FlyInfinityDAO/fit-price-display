@@ -279,8 +279,8 @@ body.fi-neon-ludo a:focus-visible{outline:2px solid #D4AF37;outline-offset:3px}
   body.fi-neon-ludo .game-heading-actions{flex-direction:row;flex:1 1 100%;justify-content:flex-start}
   body.fi-neon-ludo .game-heading-actions button{flex:1 1 auto;min-width:0;min-height:40px}
   body.fi-neon-ludo .ludo-board{padding:4px;border-radius:11px}
-  body.fi-neon-ludo .piece-token{width:clamp(15px,5vw,21px);height:clamp(15px,5vw,21px);margin:-2px}
-  body.fi-neon-ludo .piece-stack:has(.piece-token:only-child) .piece-token{width:88%;height:88%}
+  body.fi-neon-ludo .piece-token{width:clamp(24px,7.5vw,30px);height:clamp(24px,7.5vw,30px);margin:-3px}
+  body.fi-neon-ludo .piece-stack:has(.piece-token:only-child) .piece-token{width:clamp(24px,7.5vw,30px);height:clamp(24px,7.5vw,30px)}
   body.fi-neon-ludo .waiting-panel{min-height:105px;padding:18px}
 }
 @media(max-width:380px){
