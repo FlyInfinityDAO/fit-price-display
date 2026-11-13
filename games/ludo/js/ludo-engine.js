@@ -103,9 +103,12 @@ export function roll(game, random = Math.random) {
   next.lastAction = { type: "roll", value };
   if (!legalPieceMoves(next).length) {
     next.dice = null;
-    next.turn = (next.turn + 1) % next.players.length;
-    next.consecutiveSixes = 0;
-    next.consecutiveSixes = 0;
+    // A six still grants the player another roll, even when no piece can move.
+    // Keep the consecutive-six counter so the three-sixes rule remains enforceable.
+    if (value !== 6) {
+      next.turn = (next.turn + 1) % next.players.length;
+      next.consecutiveSixes = 0;
+    }
     next.lastAction = { type: "blocked", value };
   }
   return next;
