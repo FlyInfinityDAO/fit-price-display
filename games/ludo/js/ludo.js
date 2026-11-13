@@ -54,14 +54,15 @@ function renderBoard(){
   track.forEach(([r,c],i)=>{
     let cls="track"+(SAFE_CELLS.has(i)?" safe":"");
     const start=Object.entries(startIndex).find(([,value])=>value===i);
-    if(start)cls+=" "+start[0];
+    if(start)cls+=" start-cell start-"+start[0];
     const cell=boardCell(r,c,cls);cellMap.set(coordKey(r,c),cell);board.append(cell);
   });
   for(const color of game.players.map(p=>p.color)){
-    for(const [r,c] of homeLanes[color]){
-      const cell=boardCell(r,c,"home-lane");cell.style.setProperty("--lane","var(--"+color+")");
+    homeLanes[color].forEach(([r,c],laneIndex)=>{
+      const cell=boardCell(r,c,"home-lane"+(laneIndex===5?" home-lane-finish finish-"+color:""));
+      cell.style.setProperty("--lane","var(--"+color+")");
       board.append(cell);cellMap.set(coordKey(r,c),cell);
-    }
+    });
     const [r,c]=yard[color],area=boardCell(r,c,"yard");
     area.style.gridRow=(r+1)+"/span 6";area.style.gridColumn=(c+1)+"/span 6";
     area.style.setProperty("--yard","var(--"+color+")");
@@ -69,7 +70,9 @@ function renderBoard(){
     for(let i=0;i<4;i++){const spot=document.createElement("span");spot.className="yard-spot";inner.append(spot);}
     area.append(inner);yardMap.set(color,area);board.append(area);
   }
-  board.append(boardCell(6,6,"home-center"));
+  // The four final colored lane cells surround a single central finish tile.
+  // Keeping the center to one grid cell prevents it from covering those finish cells.
+  board.append(boardCell(7,7,"home-center"));
   const pieceStacks=new Map(),legalMoves=legalPieceMoves(game),onlineMode=mode==="online"||mode==="cpu";
   for(const player of game.players){
     player.pieces.forEach((progress,index)=>{
@@ -87,9 +90,9 @@ function renderBoard(){
       button.className="piece-token"+(selected?.color===player.color&&selected.index===index?" selected":"");
       button.style.setProperty("--token","var(--"+player.color+")");
       button.setAttribute("aria-label",(colorName[player.color]?.[lang]||colorName[player.color].en)+" "+(index+1));
-      const engravings=["✦","◈","✺","✧"];
+      const engravings=["✦","❖","✺","✧"];
       const engraving=document.createElement("span");
-      engraving.className="piece-engraving";
+      engraving.className="piece-engraving emblem-"+index;
       engraving.setAttribute("aria-hidden","true");
       engraving.textContent=engravings[index%engravings.length];
       button.append(engraving);
