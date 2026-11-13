@@ -52,16 +52,38 @@ export class LudoRoom {
   }
   snapshot(g){return {roomCode:g.code,playerCount:g.playerCount,players:g.players,hostWallet:g.hostWallet,mode:g.mode,difficulty:g.difficulty,status:g.status,state:g.state,serverTime:Date.now()};}
   broadcast(g,type="state"){const payload=JSON.stringify({type,game:this.snapshot(g)});for(const socket of this.ctx.getWebSockets()){try{socket.send(payload);}catch{}}}
-  async playCpuTurns(g){
-    let guard=0;
-    while(g.state?.status==="active"&&g.state.players[g.state.turn]?.kind==="cpu"&&guard++<64){
-      g.state=roll(g.state);
-      if(g.state.dice!==null){
-        const move=chooseCpuMove(g.state,g.difficulty||"medium");
-        if(move)g.state=applyMove(g.state,g.state.turn,move);
-      }
+  async scheduleCpuTurn(g,delay=1050){
+    if(g.state?.status==="active"&&g.state.players[g.state.turn]?.kind==="cpu"){
+      await this.ctx.storage.setAlarm(Date.now()+delay);
+    }else{
+      await this.ctx.storage.deleteAlarm?.();
     }
-    if(g.state?.status==="finished")g.status="finished";
+  }
+  alarm(){return this.runExclusive(()=>this.runCpuStep());}
+  async runCpuStep(){
+    const g=await this.read();
+    if(!g||g.status!=="active"||g.state?.status!=="active"||g.state.players[g.state.turn]?.kind!=="cpu"){
+      await this.ctx.storage.deleteAlarm?.();
+      return;
+    }
+    const playerIndex=g.state.turn;
+    if(g.state.dice===null){
+      g.state=roll(g.state);
+      if(g.state.status==="finished")g.status="finished";
+      await this.save(g);
+      this.broadcast(g,"cpu-roll");
+      if(g.state.status==="active"&&g.state.players[g.state.turn]?.kind==="cpu"){
+        await this.scheduleCpuTurn(g,g.state.dice===null?850:1250);
+      }
+      return;
+    }
+    const move=chooseCpuMove(g.state,g.difficulty||"medium");
+    if(!move)throw new Error("CPU has a dice value but no legal move.");
+    g.state=applyMove(g.state,playerIndex,move);
+    if(g.state.status==="finished")g.status="finished";
+    await this.save(g);
+    this.broadcast(g,"cpu-move");
+    await this.scheduleCpuTurn(g,1100);
   }
   fetch(request){return this.runExclusive(()=>this.handleFetch(request));}
   async handleFetch(request){
@@ -124,16 +146,17 @@ export class LudoRoom {
     try{
       if(action.type==="roll"){
         g.state=roll(g.state);
-        await this.playCpuTurns(g);
-        await this.save(g);this.broadcast(g,g.status==="finished"?"finished":"roll");return;
+        if(g.state.status==="finished")g.status="finished";
+        await this.save(g);this.broadcast(g,g.status==="finished"?"finished":"roll");
+        await this.scheduleCpuTurn(g,900);return;
       }
       if(action.type==="move"){
         const move=legalPieceMoves(g.state).find(m=>m.pieceIndex===action.pieceIndex&&m.to===action.to);
         if(!move)throw new Error("Illegal move.");
         g.state=applyMove(g.state,playerIndex,move);
-        await this.playCpuTurns(g);
         if(g.state.status==="finished")g.status="finished";
-        await this.save(g);this.broadcast(g,g.status==="finished"?"finished":"move");return;
+        await this.save(g);this.broadcast(g,g.status==="finished"?"finished":"move");
+        await this.scheduleCpuTurn(g,1050);return;
       }
       throw new Error("Unsupported action.");
     }catch(error){socket.send(JSON.stringify({type:"error",error:error.message||"Move rejected."}));}
