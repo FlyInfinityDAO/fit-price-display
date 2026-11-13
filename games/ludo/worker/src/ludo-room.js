@@ -1,7 +1,8 @@
 import { createGame, roll, legalPieceMoves, applyMove, chooseCpuMove } from "../../js/ludo-engine.js";
 const json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store"}});
 export class LudoRoom {
-  constructor(ctx,env){this.ctx=ctx;this.env=env;}
+  constructor(ctx,env){this.ctx=ctx;this.env=env;this.mutationQueue=Promise.resolve();}
+  runExclusive(task){const run=this.mutationQueue.then(task,task);this.mutationQueue=run.catch(()=>{});return run;}
   async read(){
     const game=await this.ctx.storage.get("game");
     if(game&&Date.now()-game.createdAt>6*60*60*1000){await this.ctx.storage.delete("game");return null;}
@@ -62,7 +63,8 @@ export class LudoRoom {
     }
     if(g.state?.status==="finished")g.status="finished";
   }
-  async fetch(request){
+  fetch(request){return this.runExclusive(()=>this.handleFetch(request));}
+  async handleFetch(request){
     const url=new URL(request.url),wallet=(request.headers.get("x-ludo-wallet")||"").toLowerCase();
     if(request.method==="POST"&&url.pathname==="/create"){
       if(await this.read())return json({ok:false,error:"Room code collision."},409);
@@ -111,7 +113,8 @@ export class LudoRoom {
     }
     return json({ok:false,error:"Room route not found."},404);
   }
-  async webSocketMessage(socket,message){
+  webSocketMessage(socket,message){return this.runExclusive(()=>this.handleWebSocketMessage(socket,message));}
+  async handleWebSocketMessage(socket,message){
     let action;try{if(typeof message!=="string"||message.length>2048)throw 0;action=JSON.parse(message);}catch{socket.send(JSON.stringify({type:"error",error:"Invalid game message."}));return;}
     const wallet=socket.deserializeAttachment()?.wallet,g=await this.read();
     if(!g||g.status!=="active"||!g.state||!wallet||!g.players.includes(wallet)){socket.send(JSON.stringify({type:"error",error:"Game is not active for this wallet."}));return;}
