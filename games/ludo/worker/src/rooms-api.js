@@ -57,6 +57,10 @@ export function advanceLocalState(state,action,random=secureRandom){
   }
   throw new Error("Unsupported local game action.");
 }
+export function getLocalWalletOutcome(state){
+  if(state?.status!=="finished"||!state.winner)throw new Error("A completed local match is required.");
+  return state.players.findIndex(player=>player.color===state.winner)===0?"win":"loss";
+}
 async function handleLocalMatch(request,env,path,auth){
   if(path==="/api/ludo/local/start"&&request.method==="POST"){
     const body=await request.json().catch(()=>({})),count=Number(body.playerCount);
@@ -74,10 +78,14 @@ async function handleLocalMatch(request,env,path,auth){
     let state;try{state=JSON.parse(row.state_json);}catch{return json({ok:false,error:"Stored local match is invalid."},500);}
     try{state=advanceLocalState(state,path.endsWith("/roll")?{type:"roll"}:{type:"move",pieceIndex:body.pieceIndex,to:body.to});}
     catch(error){return json({ok:false,error:error?.message||"Invalid local game action."},409);}
-    const finished=state.status==="finished",now=Math.floor(Date.now()/1000);
-    const saved=await env.DB.prepare("UPDATE local_matches SET state_json=?,status=?,revision=revision+1,updated_at=? WHERE match_id=? AND wallet_address=? AND revision=? AND status='active'").bind(JSON.stringify(state),finished?"finished":"active",now,matchId,auth.wallet.toLowerCase(),row.revision).run();
-    if(Number(saved.meta?.changes||0)!==1)return json({ok:false,error:"The match changed in another request. Refresh the game state and retry."},409);
-    if(finished)await env.DB.prepare("INSERT OR IGNORE INTO ludo_player_results (room_code,wallet_address,outcome,points,created_at) VALUES (?,?, 'win',3,?)").bind("LOCAL-"+matchId,auth.wallet.toLowerCase(),now).run();
+    const finished=state.status==="finished",now=Math.floor(Date.now()/1000),wallet=auth.wallet.toLowerCase(),serialized=JSON.stringify(state);
+    const statements=[env.DB.prepare("UPDATE local_matches SET state_json=?,status=?,revision=revision+1,updated_at=? WHERE match_id=? AND wallet_address=? AND revision=? AND status='active'").bind(serialized,finished?"finished":"active",now,matchId,wallet,row.revision)];
+    if(finished){
+      const outcome=getLocalWalletOutcome(state),points=outcome==="win"?3:0;
+      statements.push(env.DB.prepare("INSERT OR IGNORE INTO ludo_player_results (room_code,wallet_address,outcome,points,created_at) SELECT ?,?,?,?,? WHERE EXISTS (SELECT 1 FROM local_matches WHERE match_id=? AND wallet_address=? AND status='finished' AND state_json=?)").bind("LOCAL-"+matchId,wallet,outcome,points,now,matchId,wallet,serialized));
+    }
+    const saved=await env.DB.batch(statements);
+    if(Number(saved[0]?.meta?.changes||0)!==1)return json({ok:false,error:"The match changed in another request. Refresh the game state and retry."},409);
     return json({ok:true,matchId,game:state,revision:Number(row.revision)+1});
   }
   return null;
