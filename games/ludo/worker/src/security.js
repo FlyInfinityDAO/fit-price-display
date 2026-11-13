@@ -44,7 +44,8 @@ export async function cleanupExpiredRecords(env, now = Math.floor(Date.now() / 1
   const results = await Promise.all([
     env.DB.prepare("DELETE FROM wallet_nonces WHERE rowid IN (SELECT rowid FROM wallet_nonces WHERE expires_at < ? LIMIT 1000)").bind(cutoff).run(),
     env.DB.prepare("DELETE FROM websocket_tickets WHERE rowid IN (SELECT rowid FROM websocket_tickets WHERE expires_at < ? LIMIT 1000)").bind(cutoff).run(),
-    env.DB.prepare("DELETE FROM api_rate_limits WHERE rowid IN (SELECT rowid FROM api_rate_limits WHERE expires_at < ? LIMIT 1000)").bind(now).run()
+    env.DB.prepare("DELETE FROM api_rate_limits WHERE rowid IN (SELECT rowid FROM api_rate_limits WHERE expires_at < ? LIMIT 1000)").bind(now).run(),
+    env.DB.prepare("DELETE FROM local_matches WHERE rowid IN (SELECT rowid FROM local_matches WHERE updated_at < ? LIMIT 1000)").bind(now-6*60*60).run()
   ]);
   return results.reduce((total, result) => total + Number(result.meta?.changes || 0), 0);
 }
