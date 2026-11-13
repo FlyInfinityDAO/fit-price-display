@@ -868,3 +868,33 @@ body.fi-neon-ludo .piece-stack:not(:has(.piece-token:only-child)) .piece-engravi
 @media(prefers-reduced-motion:reduce){
   body.fi-neon-ludo .piece-token{transition:none!important}
 }
+
+
+/* Ludo hero title — same flowing three-color word animation as Hokm. */
+html body.fi-neon-ludo .hero h1[data-i="title"]{
+  background:none!important;
+  -webkit-text-fill-color:initial!important;
+  color:#EAF5FF!important;
+}
+html body.fi-neon-ludo .hero h1[data-i="title"] .ludo-title-word{
+  display:inline-block;
+  background-image:linear-gradient(105deg,#00D9FF 0%,#456CFF 48%,#8B5CF6 100%);
+  background-size:220% 100%;
+  background-position:0% 50%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:transparent;
+  animation:ludoTitleWordFlow 4.8s ease-in-out infinite alternate;
+}
+html body.fi-neon-ludo .hero h1[data-i="title"] .ludo-title-word:nth-of-type(2){animation-delay:-1.6s}
+html body.fi-neon-ludo .hero h1[data-i="title"] .ludo-title-word:nth-of-type(3){animation-delay:-3.2s}
+@keyframes ludoTitleWordFlow{
+  0%{background-position:0% 50%}
+  100%{background-position:100% 50%}
+}
+@media(prefers-reduced-motion:reduce){
+  html body.fi-neon-ludo .hero h1[data-i="title"] .ludo-title-word{
+    animation:none!important;background-position:50% 50%!important;
+  }
+}
