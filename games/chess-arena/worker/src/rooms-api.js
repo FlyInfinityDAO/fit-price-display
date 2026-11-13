@@ -344,6 +344,23 @@ export async function handleRoomApi(request, env) {
   }
 
 
+  if (request.method === "POST" && path === "/api/ludo/stats/record") {
+    const auth = await authorize(request, env);
+    if (auth.response) return auth.response;
+    const body = await request.json().catch(() => ({}));
+    if (body.source !== "local" || !["win", "loss"].includes(body.outcome) ||
+        typeof body.roomCode !== "string" || !/^LOCAL-[A-Za-z0-9-]{8,64}$/.test(body.roomCode)) {
+      return json({ ok: false, error: "Invalid local game result." }, 400);
+    }
+    await env.DB.prepare(
+      "CREATE TABLE IF NOT EXISTS ludo_player_results (room_code TEXT NOT NULL,wallet_address TEXT NOT NULL,outcome TEXT NOT NULL,points INTEGER NOT NULL,created_at INTEGER NOT NULL,PRIMARY KEY(room_code,wallet_address))"
+    ).run();
+    await env.DB.prepare(
+      "INSERT OR IGNORE INTO ludo_player_results (room_code,wallet_address,outcome,points,created_at) VALUES (?,?,?,?,?)"
+    ).bind(body.roomCode, auth.wallet.toLowerCase(), body.outcome, body.outcome === "win" ? 3 : 0, Math.floor(Date.now() / 1000)).run();
+    return json({ ok: true, recorded: true });
+  }
+
   if (request.method === "GET" && (path === "/api/ludo/stats/me" || path === "/api/ludo/stats/leaderboard")) {
     const auth = await authorize(request, env);
     if (auth.response) return auth.response;
