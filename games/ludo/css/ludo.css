@@ -590,3 +590,88 @@ body.fi-neon-ludo #leaderboard .leader-row{
   body.fi-neon-ludo .stats-wallet{font-size:11px;letter-spacing:0}
   body.fi-neon-ludo #leaderboard .leader-row{justify-content:flex-start}
 }
+
+
+/* Reference-inspired Ludo board: warm walnut, crisp square track and engraved pieces. */
+body.fi-neon-ludo .ludo-board{
+  position:relative;
+  isolation:isolate;
+  padding:clamp(5px,1.15vw,11px);
+  gap:2px;
+  border:3px solid #b98a4b;
+  border-radius:20px;
+  background:
+    linear-gradient(112deg,rgba(255,226,167,.10),transparent 22%,rgba(35,16,5,.18) 48%,transparent 72%,rgba(255,218,153,.08)),
+    repeating-linear-gradient(4deg,rgba(255,255,255,.025) 0 2px,rgba(32,15,5,.045) 3px 5px),
+    linear-gradient(135deg,#6b3e20 0%,#9b6335 24%,#583119 51%,#8a542d 76%,#4a2817 100%);
+  box-shadow:0 18px 44px rgba(0,0,0,.42),inset 0 0 0 2px rgba(255,224,170,.22),inset 0 0 30px rgba(28,12,4,.42);
+}
+body.fi-neon-ludo .cell.track{
+  border:1px solid #b69b72;
+  border-radius:2px;
+  background:linear-gradient(145deg,#fffdf4,#e8dfca 58%,#d4c5a8);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 1px rgba(91,65,34,.18),0 1px 1px rgba(35,18,7,.24);
+}
+body.fi-neon-ludo .cell.track.safe{
+  background:linear-gradient(145deg,#fff8d9,#ead7a0);
+  border-color:#b58a35;
+}
+body.fi-neon-ludo .cell.track.red{background:linear-gradient(145deg,#ffb1a9,#e94c48);border-color:#a92d2b}
+body.fi-neon-ludo .cell.track.green{background:linear-gradient(145deg,#b9f4b2,#45b95e);border-color:#268b42}
+body.fi-neon-ludo .cell.track.yellow{background:linear-gradient(145deg,#fff0a0,#e8bb31);border-color:#a77c17}
+body.fi-neon-ludo .cell.track.blue{background:linear-gradient(145deg,#a8caff,#3474dc);border-color:#2454a5}
+body.fi-neon-ludo .cell.track:before{
+  content:"";position:absolute;inset:3px;border:1px solid rgba(91,66,35,.14);pointer-events:none
+}
+body.fi-neon-ludo .cell.track.safe:after{
+  content:"✦";position:relative;z-index:1;color:#8b641d;
+  font-size:clamp(8px,1.25vw,14px);text-shadow:0 1px #fff8
+}
+body.fi-neon-ludo .cell.home-lane{
+  border:1px solid rgba(255,255,255,.9);
+  box-shadow:inset 0 0 0 1px rgba(55,35,15,.14),0 1px 2px rgba(0,0,0,.18)
+}
+body.fi-neon-ludo .cell.yard{
+  border:3px solid rgba(255,240,207,.95);
+  border-radius:13px;
+  box-shadow:inset 0 0 0 2px rgba(74,44,20,.25),0 3px 8px rgba(0,0,0,.24)
+}
+body.fi-neon-ludo .yard-inner{
+  border:1px solid rgba(126,92,49,.28);
+  background:linear-gradient(145deg,#fffdf4,#e6dcc8);
+  box-shadow:inset 0 2px 8px rgba(80,54,25,.12)
+}
+body.fi-neon-ludo .yard-spot{
+  border:2px solid rgba(255,255,255,.98);
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.24),0 2px 4px rgba(0,0,0,.22)
+}
+body.fi-neon-ludo .cell.home-center{
+  border:3px solid #e7c47a;
+  box-shadow:0 0 0 2px rgba(62,35,14,.35),inset 0 0 12px rgba(45,25,10,.28)
+}
+body.fi-neon-ludo .piece-token{
+  display:grid;place-items:center;
+  border:2px solid rgba(255,255,255,.96)!important;
+  background:
+    radial-gradient(circle at 31% 24%,rgba(255,255,255,.75),transparent 23%),
+    radial-gradient(circle at 68% 78%,rgba(0,0,0,.22),transparent 42%),
+    linear-gradient(145deg,color-mix(in srgb,var(--token) 78%,white),var(--token) 56%,color-mix(in srgb,var(--token) 68%,black));
+  box-shadow:inset 0 2px 3px rgba(255,255,255,.48),inset 0 -3px 5px rgba(0,0,0,.32),0 3px 7px rgba(0,0,0,.48),0 0 0 1px rgba(35,20,8,.36)!important;
+}
+body.fi-neon-ludo .piece-engraving{
+  display:grid;place-items:center;width:66%;height:66%;border-radius:50%;
+  color:#fff8df;font-family:Georgia,serif;font-size:clamp(9px,1.45vw,15px);
+  line-height:1;text-shadow:0 1px 1px rgba(0,0,0,.72),0 -1px 1px rgba(255,255,255,.34);
+  background:radial-gradient(circle,rgba(28,18,8,.20),rgba(255,255,255,.08) 62%,transparent 68%);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.25);
+  pointer-events:none
+}
+body.fi-neon-ludo .piece-token.selected{
+  outline:3px solid #f5d47d;outline-offset:2px;
+  filter:brightness(1.12) saturate(1.18)
+}
+@media(max-width:600px){
+  body.fi-neon-ludo .ludo-board{gap:1px;border-width:2px;border-radius:13px}
+  body.fi-neon-ludo .piece-engraving{font-size:clamp(8px,2.3vw,12px)}
+  body.fi-neon-ludo .cell.yard{border-width:2px;border-radius:8px}
+}
