@@ -63,6 +63,26 @@ jobs:
       - name: Build standalone Pages frontend and verify shared assets
         run: bash games/chess-arena/build-pages.sh
 
+  validate-ludo-worker:
+    name: Validate standalone Ludo Worker
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: games/ludo/worker
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Ludo Worker dependencies
+        run: npm install --no-audit --no-fund
+      - name: Validate standalone Worker source
+        run: npm run check
+      - name: Run Ludo rules tests
+        run: npm test
+
   validate-chess-backgammon-worker:
     name: Validate Chess Arena, Backgammon and Ludo Worker
     runs-on: ubuntu-latest
