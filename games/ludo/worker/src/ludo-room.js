@@ -5,18 +5,32 @@ export class LudoRoom {
   async read(){
     const game=await this.ctx.storage.get("game");
     if(game&&Date.now()-game.createdAt>6*60*60*1000){await this.ctx.storage.delete("game");return null;}
-    // Repair legacy waiting rooms that were incorrectly pre-filled with the creator wallet.
-    if(game&&game.mode==="friend"&&game.status==="waiting"&&!game.state&&Array.isArray(game.players)&&
-       game.players.length===game.playerCount&&game.players.length>1&&game.players.every(value=>value===game.players[0])){
-      const host=game.players[0];game.players=Array(game.playerCount).fill(null);game.players[0]=host;game.hostWallet=game.hostWallet||host;
-      await this.ctx.storage.put("game",game);
+
+    // Normalize legacy waiting rooms: one wallet must occupy one seat only.
+    if(game&&game.mode==="friend"&&game.status==="waiting"&&!game.state&&Array.isArray(game.players)){
+      const count=Math.max(2,Math.min(4,Number(game.playerCount)||4));
+      const occupied=game.players.filter(value=>typeof value==="string"&&value.trim()).map(value=>value.toLowerCase());
+      const host=String(game.hostWallet||occupied[0]||"").toLowerCase();
+      if(host){
+        const unique=[...new Set([host,...occupied].filter(Boolean))].slice(0,count);
+        const normalized=Array(count).fill(null);
+        unique.forEach((address,index)=>{normalized[index]=address;});
+        const changed=game.playerCount!==count||game.hostWallet!==host||JSON.stringify(game.players)!==JSON.stringify(normalized);
+        if(changed){game.playerCount=count;game.players=normalized;game.hostWallet=host;await this.ctx.storage.put("game",game);}
+      }
     }
-    // Repair legacy CPU rooms where one wallet was incorrectly assigned multiple human seats.
-    if(game&&game.mode==="cpu"&&game.status==="active"&&game.state?.players?.length===game.playerCount&&
-       Array.isArray(game.players)&&game.players.length>1&&game.players.every(value=>value===game.players[0])){
-      const host=game.players[0];game.players=Array(game.playerCount).fill(null);game.players[0]=host;game.hostWallet=game.hostWallet||host;
-      game.state.players.forEach((player,index)=>{player.kind=index===0?"human":"cpu";});
-      await this.ctx.storage.put("game",game);
+
+    // A CPU room has exactly one human wallet; all remaining seats are CPU-controlled.
+    if(game&&game.mode==="cpu"&&game.status==="active"&&Array.isArray(game.state?.players)&&Array.isArray(game.players)){
+      const count=game.state.players.length;
+      const host=String(game.hostWallet||game.players.find(value=>typeof value==="string"&&value)||"").toLowerCase();
+      if(host&&count>=2&&count<=4){
+        const normalized=Array(count).fill(null);normalized[0]=host;
+        const fixedState=game.state.players.map((player,index)=>({...player,kind:index===0?"human":"cpu"}));
+        const changed=game.playerCount!==count||game.hostWallet!==host||JSON.stringify(game.players)!==JSON.stringify(normalized)||
+          game.state.players.some((player,index)=>player.kind!==fixedState[index].kind);
+        if(changed){game.playerCount=count;game.players=normalized;game.hostWallet=host;game.state.players=fixedState;await this.ctx.storage.put("game",game);}
+      }
     }
     return game;
   }
