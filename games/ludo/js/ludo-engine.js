@@ -22,6 +22,15 @@ export function playerAt(game, index = game.turn) { return game.players[index] |
 export function globalTrackIndex(color, progress) {
   return (COLOR_START[color] + progress) % TRACK_LENGTH;
 }
+function blockadeAt(game, cell) {
+  // A blockade is two or more pieces of the same color on one track square.
+  return game.players.some(player =>
+    player.pieces.filter(progress =>
+      progress >= 0 && progress < TRACK_LENGTH &&
+      globalTrackIndex(player.color, progress) === cell
+    ).length >= 2
+  );
+}
 export function legalPieceMoves(game, playerIndex = game.turn, dice = game.dice) {
   if (!dice || !Number.isInteger(dice) || dice < 1 || dice > 6) return [];
   const player = game.players[playerIndex];
@@ -29,7 +38,9 @@ export function legalPieceMoves(game, playerIndex = game.turn, dice = game.dice)
   const moves = [];
   player.pieces.forEach((progress, pieceIndex) => {
     if (progress === -1) {
-      if (dice === 6) moves.push({ pieceIndex, from: -1, to: 0, kind: "enter" });
+      if (dice === 6 && !blockadeAt(game, globalTrackIndex(player.color, 0))) {
+        moves.push({ pieceIndex, from: -1, to: 0, kind: "enter" });
+      }
       return;
     }
     if (progress >= 57) return;
@@ -42,11 +53,7 @@ export function legalPieceMoves(game, playerIndex = game.turn, dice = game.dice)
         const crossedProgress = progress + step;
         if (crossedProgress >= 52) break; // Home lanes are private to each color.
         const crossedCell = globalTrackIndex(player.color, crossedProgress);
-        const blockers = game.players.filter((_, i) => i !== playerIndex)
-          .reduce((total, opponent) => total + opponent.pieces.filter(n =>
-            n >= 0 && n < 52 && globalTrackIndex(opponent.color, n) === crossedCell
-          ).length, 0);
-        if (blockers >= 2) return;
+        if (blockadeAt(game, crossedCell)) return;
       }
     }
     moves.push({ pieceIndex, from: progress, to: next, kind: next === 57 ? "finish" : next >= 52 ? "home" : "move" });
