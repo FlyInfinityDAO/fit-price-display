@@ -552,3 +552,41 @@ body.fi-neon-ludo .join-row input{flex:1 1 0;width:1%;text-align:start;direction
 html[dir="rtl"] body.fi-neon-ludo .join-row{direction:rtl}
 body.fi-neon-ludo .mode-grid>*{min-width:0}
 @media(max-width:600px){body.fi-neon-ludo .arena{width:calc(100% - 20px)}body.fi-neon-ludo .mode-grid{grid-template-columns:minmax(0,1fr)}}
+
+
+/* Player records: keep long wallet addresses inside the card on narrow screens. */
+body.fi-neon-ludo .stats-panel{
+  min-width:0;
+  max-width:100%;
+  overflow:hidden;
+}
+body.fi-neon-ludo .stats-wallet{
+  display:block;
+  min-width:0;
+  max-width:100%;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+  white-space:normal;
+  line-height:1.65;
+  font-size:clamp(11px,2.8vw,14px);
+  font-variant-numeric:tabular-nums;
+}
+body.fi-neon-ludo #leaderboard,
+body.fi-neon-ludo #leaderboard .leader-row{
+  min-width:0;
+  max-width:100%;
+}
+body.fi-neon-ludo #leaderboard .leader-row{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px 10px;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+@media(max-width:600px){
+  body.fi-neon-ludo .stats-panel{padding:14px}
+  body.fi-neon-ludo .stats-wallet{font-size:11px;letter-spacing:0}
+  body.fi-neon-ludo #leaderboard .leader-row{justify-content:flex-start}
+}
