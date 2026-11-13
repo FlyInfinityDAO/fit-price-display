@@ -542,3 +542,13 @@ body.fi-neon-ludo .fi-game-language-select{
   body.fi-neon-ludo .ludo-board{padding:4px;border-width:4px;border-radius:15px}
   body.fi-neon-ludo .piece-token{width:clamp(15px,4.8vw,19px);height:clamp(15px,4.8vw,19px)}
 }
+
+/* Stable viewport geometry across RTL/LTR and wallet-gated panel transitions. */
+body.fi-neon-ludo .arena{box-sizing:border-box;width:min(calc(100% - 24px),1180px);max-width:1180px;margin-inline:auto;min-width:0}
+body.fi-neon-ludo .topbar,body.fi-neon-ludo .mode-grid,body.fi-neon-ludo .game-heading,
+body.fi-neon-ludo .join-row,body.fi-neon-ludo .wallet-connect-options{min-width:0;max-width:100%}
+body.fi-neon-ludo input,body.fi-neon-ludo select,body.fi-neon-ludo textarea{box-sizing:border-box;min-width:0;max-width:100%;font-size:16px!important;scroll-margin-block:100px;touch-action:manipulation}
+body.fi-neon-ludo .join-row input{flex:1 1 0;width:1%;text-align:start;direction:ltr;unicode-bidi:plaintext}
+html[dir="rtl"] body.fi-neon-ludo .join-row{direction:rtl}
+body.fi-neon-ludo .mode-grid>*{min-width:0}
+@media(max-width:600px){body.fi-neon-ludo .arena{width:calc(100% - 20px)}body.fi-neon-ludo .mode-grid{grid-template-columns:minmax(0,1fr)}}
