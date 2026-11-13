@@ -817,3 +817,54 @@ body.fi-neon-ludo .piece-stack:not(:has(.piece-token:only-child)) .piece-engravi
     font-size:clamp(5px,1.35vw,6px)!important;
   }
 }
+
+
+/* Strong, saturated enamel colors and color-specific engraved crests. */
+body.fi-neon-ludo{
+  --red:#F00032!important;
+  --green:#00B85C!important;
+  --yellow:#FFD000!important;
+  --blue:#064FE8!important;
+}
+body.fi-neon-ludo .piece-token{
+  border:2px solid #FFF8E8!important;
+  background:
+    radial-gradient(circle at 27% 19%,rgba(255,255,255,.98) 0 8%,rgba(255,255,255,.52) 9% 17%,transparent 31%),
+    radial-gradient(circle at 70% 82%,rgba(0,0,0,.38),transparent 48%),
+    linear-gradient(145deg,
+      color-mix(in srgb,var(--token) 72%,white) 0%,
+      var(--token) 48%,
+      color-mix(in srgb,var(--token) 68%,black) 100%)!important;
+  box-shadow:
+    0 4px 0 color-mix(in srgb,var(--token) 54%,black),
+    0 7px 12px rgba(0,0,0,.52),
+    inset 0 2px 4px rgba(255,255,255,.8),
+    inset 0 -4px 6px rgba(0,0,0,.46),
+    0 0 0 1px rgba(255,244,215,.48)!important;
+  filter:saturate(1.65) contrast(1.08);
+}
+body.fi-neon-ludo .piece-engraving{
+  display:grid!important;place-items:center!important;
+  width:68%!important;height:68%!important;
+  border:1.5px solid rgba(255,244,213,.96)!important;border-radius:50%!important;
+  color:#FFF8E5!important;background:radial-gradient(circle,rgba(22,12,5,.60),rgba(22,12,5,.22) 72%,transparent 74%)!important;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.72),0 1px 0 rgba(255,255,255,.48)!important;
+  font-family:Georgia,serif;font-weight:900;
+  font-size:clamp(10px,1.6vw,16px)!important;line-height:1;
+  text-shadow:0 1px 2px rgba(0,0,0,.95),0 -1px 1px rgba(255,255,255,.55);
+  pointer-events:none;
+}
+body.fi-neon-ludo .piece-engraving.emblem-red{border-radius:50%!important}
+body.fi-neon-ludo .piece-engraving.emblem-green{border-radius:5px!important;transform:rotate(45deg) scale(.78)}
+body.fi-neon-ludo .piece-engraving.emblem-yellow{border-radius:7px 2px 7px 2px!important}
+body.fi-neon-ludo .piece-engraving.emblem-blue{border-radius:50% 50% 5px 5px!important}
+body.fi-neon-ludo .piece-stack:not(:has(.piece-token:only-child)) .piece-engraving{
+  width:100%!important;height:100%!important;border:0!important;
+  font-size:clamp(5px,.9vw,8px)!important;
+}
+@media(max-width:600px){
+  body.fi-neon-ludo .piece-engraving{font-size:clamp(8px,2.3vw,12px)!important}
+}
+@media(prefers-reduced-motion:reduce){
+  body.fi-neon-ludo .piece-token{transition:none!important}
+}
