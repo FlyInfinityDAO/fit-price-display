@@ -90,7 +90,13 @@ export default{
     else if(request.method==="GET"&&path==="/api/auth/session")rate=["auth-session",60,60];
     else if(path.startsWith("/api/ludo/"))rate=["ludo-api",120,60];
     if(rate){try{const result=await enforceRateLimit(request,env,...rate);if(!result.allowed)return json({ok:false,error:"Too many requests. Please wait and try again."},429,{"retry-after":String(result.retryAfter),...headers});}catch{return json({ok:false,error:"Security service is temporarily unavailable. Please retry shortly."},503,{"retry-after":"5",...headers});}}
-    if(request.method==="GET"&&path==="/api/health")return json({ok:true,service:"Fly Infinity Ludo API",version:"1.0.1",build:"45340663"},200,headers);
+    if(request.method==="GET"&&path==="/api/health"){
+      let databaseReady=false;
+      try{const row=await env.DB.prepare("SELECT 1 AS ok").first();databaseReady=row?.ok===1;}catch{}
+      const sessionConfigured=typeof env.SESSION_SECRET==="string"&&env.SESSION_SECRET.length>=32;
+      const ready=databaseReady&&sessionConfigured;
+      return json({ok:ready,service:"Fly Infinity Ludo API",version:"1.0.2",build:"ludo-isolated-db-session-check",database:databaseReady?"ok":"unavailable",sessionConfigured},ready?200:503,headers);
+    }
     try{
       if(request.method==="POST"&&path==="/api/auth/challenge")return withHeaders(await handleChallenge(request,env),headers);
       if(request.method==="POST"&&path==="/api/auth/verify")return withHeaders(await handleVerify(request,env),headers);
