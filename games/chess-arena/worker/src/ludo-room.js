@@ -5,6 +5,12 @@ export class LudoRoom {
   async read(){
     const game=await this.ctx.storage.get("game");
     if(game&&Date.now()-game.createdAt>6*60*60*1000){await this.ctx.storage.delete("game");return null;}
+    // Repair legacy waiting rooms that were incorrectly pre-filled with the creator wallet.
+    if(game&&game.mode==="friend"&&game.status==="waiting"&&!game.state&&Array.isArray(game.players)&&
+       game.players.length===game.playerCount&&game.players.length>1&&game.players.every(value=>value===game.players[0])){
+      const host=game.players[0];game.players=Array(game.playerCount).fill(null);game.players[0]=host;game.hostWallet=game.hostWallet||host;
+      await this.ctx.storage.put("game",game);
+    }
     return game;
   }
   async save(game){
