@@ -375,7 +375,7 @@ export async function handleRoomApi(request, env) {
     return json({ok:true,leaderboard:leaderboard.results||[]});
   }
 
-  const ludoRoomMatch = path.match(/^\/api\/ludo\/rooms\/([A-HJ-NP-Z2-9]{6})(?:\/(ticket|ws))?$/);
+  const ludoRoomMatch = path.match(/^\/api\/ludo\/rooms\/([A-HJ-NP-Z2-9]{6})(?:\/(ticket|ws|fill-cpu))?$/);
   if (request.method === "POST" && path === "/api/ludo/rooms/create") {
     const auth = await authorize(request, env);
     if (auth.response) return auth.response;
@@ -394,7 +394,7 @@ export async function handleRoomApi(request, env) {
     const auth=await authorize(request,env);if(auth.response)return auth.response;
     const body=await request.json().catch(()=>({}));
     const playerCount=Math.max(2,Math.min(4,Number(body.playerCount)||2));
-    const humanCount=Math.max(1,Math.min(playerCount-1,Number(body.humanCount)||1));
+    const humanCount=1; // One connected wallet occupies one human seat; all other seats are CPU.
     const difficulty=["easy","medium","hard"].includes(body.difficulty)?body.difficulty:"medium";
     for(let attempt=0;attempt<5;attempt++){
       const code=makeRoomCode(),stub=env.LUDO_ROOMS.get(env.LUDO_ROOMS.idFromName(code));
@@ -404,6 +404,14 @@ export async function handleRoomApi(request, env) {
       return json({...data,roomCode:code});
     }
     return json({ok:false,error:"Could not allocate a Ludo CPU game."},503);
+  }
+  if (request.method === "POST" && ludoRoomMatch && ludoRoomMatch[2] === "fill-cpu") {
+    const auth=await authorize(request,env);if(auth.response)return auth.response;
+    const code=ludoRoomMatch[1],body=await request.json().catch(()=>({}));
+    const difficulty=["easy","medium","hard"].includes(body.difficulty)?body.difficulty:"medium";
+    const stub=env.LUDO_ROOMS.get(env.LUDO_ROOMS.idFromName(code));
+    const response=await stub.fetch("https://ludo-room.internal/fill-cpu?difficulty="+difficulty,{method:"POST",headers:{"x-ludo-wallet":auth.wallet.toLowerCase()}});
+    return new Response(response.body,{status:response.status,headers:{"content-type":"application/json","cache-control":"no-store"}});
   }
   if (request.method === "POST" && path === "/api/ludo/rooms/join") {
     const auth=await authorize(request,env);if(auth.response)return auth.response;
