@@ -66,6 +66,46 @@ test("two or more opponent pieces form a blockade",()=>{
   assert.equal(legalPieceMoves(game,0).some(m=>m.pieceIndex===0&&m.to===1),false);
 });
 
+test("a player's own blockade blocks its pieces from crossing",()=>{
+  const game=createGame(2,2);
+  game.players[0].pieces[0]=0;
+  game.players[0].pieces[1]=1;
+  game.players[0].pieces[2]=1;
+  game.dice=2;
+  assert.equal(legalPieceMoves(game,0).some(m=>m.pieceIndex===0&&m.to===2),false);
+});
+
+test("a piece can move out from a square occupied by its own blockade",()=>{
+  const game=createGame(2,2);
+  game.players[0].pieces[0]=1;
+  game.players[0].pieces[1]=1;
+  game.dice=1;
+  assert.equal(legalPieceMoves(game,0).some(m=>m.pieceIndex===0&&m.to===2),true);
+});
+
+test("a piece cannot enter onto an existing blockade at its start square",()=>{
+  const game=createGame(2,2);
+  game.players[0].pieces[0]=0;
+  game.players[0].pieces[1]=0;
+  game.dice=6;
+  assert.equal(legalPieceMoves(game,0).some(m=>m.kind==="enter"&&m.pieceIndex===2),false);
+});
+
+test("a second same-color piece may join one piece on its start square",()=>{
+  const game=createGame(2,2);
+  game.players[0].pieces[0]=0;
+  game.dice=6;
+  assert.equal(legalPieceMoves(game,0).some(m=>m.kind==="enter"&&m.pieceIndex===1),true);
+});
+
+test("different colors sharing a safe square do not form a same-color blockade",()=>{
+  const game=createGame(2,2);
+  game.players[0].pieces[0]=7;
+  game.players[1].pieces[0]=34;
+  game.dice=1;
+  assert.equal(legalPieceMoves(game,0).some(m=>m.pieceIndex===0&&m.to===8),true);
+});
+
 test("safe squares do not allow captures",()=>{
   let game=createGame(2,2);
   game.players[0].pieces[0]=7;
