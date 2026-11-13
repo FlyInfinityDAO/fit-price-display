@@ -176,3 +176,122 @@ body.fi-neon-ludo footer{text-align:center;font-size:11px;padding:20px 12px}
   .fi-ludo .turn-info strong{font-size:12px}
   .fi-ludo .dice-control .primary-btn{padding-inline:9px;font-size:12px}
 }
+
+
+/* Fly Ludo refinement: match the shared Fly Infinity black / mint / gold theme.
+   Player-piece colors remain intentionally unchanged for game clarity. */
+:root{
+  --ludo-ink:#0F0F0F;
+  --ludo-cyan:#00C896;
+  --ludo-blue:#D4AF37;
+  --ludo-violet:#00E6AD;
+  --ludo-copy:#F4F4F4;
+  --ludo-muted:#AEBDB8;
+}
+body.fi-neon-ludo .hero h1{
+  background:linear-gradient(105deg,#70F5CF 0%,#00C896 48%,#D4AF37 100%);
+  background-clip:text;-webkit-background-clip:text;color:transparent;
+}
+body.fi-neon-ludo .access-card,
+body.fi-neon-ludo .mode-card,
+body.fi-neon-ludo .game-panel,
+body.fi-neon-ludo .stats-panel{
+  border-color:rgba(0,200,150,.34)!important;
+  background:linear-gradient(145deg,rgba(10,20,19,.82),rgba(15,15,15,.78))!important;
+  box-shadow:0 14px 36px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.07),0 0 20px rgba(0,200,150,.07)!important;
+}
+body.fi-neon-ludo .primary-btn{
+  color:#071511!important;border-color:#00C896!important;
+  background:linear-gradient(105deg,#00C896,#70F5CF 72%,#D4AF37)!important;
+  box-shadow:0 6px 20px rgba(0,200,150,.18)!important;
+}
+body.fi-neon-ludo .secondary-btn{
+  color:#D9F8EE!important;border-color:rgba(0,200,150,.55)!important;
+  background:rgba(0,200,150,.08)!important;
+}
+body.fi-neon-ludo .secondary-btn:hover{border-color:#D4AF37!important;color:#F1D77D!important}
+body.fi-neon-ludo .danger-btn{
+  border-color:rgba(255,83,107,.55)!important;background:rgba(255,83,107,.10)!important;
+}
+body.fi-neon-ludo .game-heading-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px}
+body.fi-neon-ludo .game-heading-actions button{min-width:88px}
+body.fi-neon-ludo .players-bar{grid-template-columns:repeat(4,minmax(0,1fr))}
+body.fi-neon-ludo .players-bar[data-count="3"]{grid-template-columns:repeat(3,minmax(0,1fr))}
+body.fi-neon-ludo .players-bar[data-count="2"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+body.fi-neon-ludo .player-chip{min-width:0;overflow:hidden}
+body.fi-neon-ludo .player-chip strong{min-width:0;overflow-wrap:anywhere}
+body.fi-neon-ludo .board-wrap{overflow:visible}
+body.fi-neon-ludo .ludo-board{
+  width:min(100%,680px);min-width:0;overflow:visible;
+  border-color:rgba(0,200,150,.68);
+  background:#101816;
+  box-shadow:0 0 30px rgba(0,200,150,.12),inset 0 0 22px rgba(0,200,150,.07);
+}
+body.fi-neon-ludo .cell.track{background:#e9e6d9;border-color:#a7b4a8}
+body.fi-neon-ludo .cell.safe:after{color:#9b7823;font-size:clamp(8px,1.3vw,14px)}
+body.fi-neon-ludo .cell.home-lane{border-color:#fff9}
+body.fi-neon-ludo .piece-stack{
+  position:absolute;inset:0;z-index:5;display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+  place-items:center;align-content:center;pointer-events:none;
+}
+body.fi-neon-ludo .piece-token{
+  pointer-events:auto;position:relative;z-index:6;
+  width:clamp(17px,3vw,25px);height:clamp(17px,3vw,25px);
+  max-width:none;max-height:none;margin:-2px;padding:0;
+  border:2px solid #fff!important;touch-action:manipulation;
+  box-shadow:0 2px 6px #000b,inset 0 1px 3px #ffffffaa;
+}
+body.fi-neon-ludo .piece-stack:has(.piece-token:only-child) .piece-token{
+  width:82%;height:82%;max-width:28px;max-height:28px;margin:0;
+}
+body.fi-neon-ludo .piece-token:disabled{opacity:.76;cursor:default}
+body.fi-neon-ludo .piece-token:not(:disabled){box-shadow:0 0 0 2px rgba(255,255,255,.35),0 0 12px var(--token),0 2px 6px #000b}
+body.fi-neon-ludo .piece-token.selected{outline:3px solid #D4AF37;outline-offset:2px;transform:scale(1.08)}
+body.fi-neon-ludo .piece-token:focus-visible{outline:3px solid #D4AF37;outline-offset:3px}
+body.fi-neon-ludo .game-controls{border-color:rgba(0,200,150,.38);background:rgba(8,18,15,.82)}
+body.fi-neon-ludo .dice-face{border:1px solid rgba(212,175,55,.62);box-shadow:0 0 15px rgba(212,175,55,.14),0 4px 12px #0006}
+body.fi-neon-ludo .stats-grid strong{color:#70F5CF}
+body.fi-neon-ludo .waiting-panel{
+  min-height:120px;margin:14px 0;padding:24px;display:flex;align-items:center;
+  justify-content:center;gap:13px;text-align:center;flex-wrap:wrap;
+  border:1px solid rgba(0,200,150,.35);border-radius:18px;
+  background:rgba(0,200,150,.055);color:#DDF8EF;
+}
+body.fi-neon-ludo .waiting-panel[hidden]{display:none!important}
+body.fi-neon-ludo .waiting-pulse{
+  width:11px;height:11px;flex:0 0 11px;border-radius:50%;
+  background:#00C896;box-shadow:0 0 0 6px rgba(0,200,150,.12),0 0 16px #00C896;
+  animation:fi-ludo-pulse 1.6s ease-in-out infinite;
+}
+@keyframes fi-ludo-pulse{50%{opacity:.45;transform:scale(.82)}}
+body.fi-neon-ludo .stats-panel .status{margin:7px 0}
+body.fi-neon-ludo button:focus-visible,
+body.fi-neon-ludo input:focus-visible,
+body.fi-neon-ludo select:focus-visible,
+body.fi-neon-ludo a:focus-visible{outline:2px solid #D4AF37;outline-offset:3px}
+@media(max-width:600px){
+  body.fi-neon-ludo .players-bar[data-count="3"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+  body.fi-neon-ludo .players-bar[data-count="3"] .player-chip:last-child{grid-column:1/-1;width:calc(50% - 4px);justify-self:center}
+  body.fi-neon-ludo .players-bar[data-count="2"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+  body.fi-neon-ludo .game-heading{align-items:flex-start;flex-wrap:wrap}
+  body.fi-neon-ludo .game-heading-actions{flex-direction:row;flex:1 1 100%;justify-content:flex-start}
+  body.fi-neon-ludo .game-heading-actions button{flex:1 1 auto;min-width:0;min-height:40px}
+  body.fi-neon-ludo .ludo-board{padding:4px;border-radius:11px}
+  body.fi-neon-ludo .piece-token{width:clamp(15px,5vw,21px);height:clamp(15px,5vw,21px);margin:-2px}
+  body.fi-neon-ludo .piece-stack:has(.piece-token:only-child) .piece-token{width:88%;height:88%}
+  body.fi-neon-ludo .waiting-panel{min-height:105px;padding:18px}
+}
+@media(max-width:380px){
+  body.fi-neon-ludo .topbar{align-items:flex-start;flex-wrap:wrap}
+  body.fi-neon-ludo .topbar-actions{width:100%;justify-content:space-between}
+  body.fi-neon-ludo .ludo-board{padding:3px;gap:0}
+  body.fi-neon-ludo .game-panel{padding:9px}
+  body.fi-neon-ludo .player-chip{gap:5px;padding:6px}
+  body.fi-neon-ludo .player-chip strong{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  body.fi-neon-ludo .waiting-pulse{animation:none}
+  body.fi-neon-ludo *{scroll-behavior:auto!important}
+}
