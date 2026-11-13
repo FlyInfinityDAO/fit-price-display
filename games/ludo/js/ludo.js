@@ -49,7 +49,15 @@ const startIndex={red:0,green:13,yellow:26,blue:39};
 function coordKey(r,c){return r+","+c;}
 function boardCell(r,c,cls=""){const el=document.createElement("div");el.className="cell "+cls;el.style.gridRow=(r+1);el.style.gridColumn=(c+1);return el;}
 function renderBoard(){
-  const board=$("ludoBoard");board.replaceChildren();
+  const board=$("ludoBoard");
+  const previousPositions=new Map();
+  if(!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches){
+    board.querySelectorAll(".piece-token[data-piece-id]").forEach(piece=>{
+      const rect=piece.getBoundingClientRect();
+      previousPositions.set(piece.dataset.pieceId,{x:rect.left+rect.width/2,y:rect.top+rect.height/2});
+    });
+  }
+  board.replaceChildren();
   const cellMap=new Map(),yardMap=new Map();
   track.forEach(([r,c],i)=>{
     let cls="track"+(SAFE_CELLS.has(i)?" safe":"");
@@ -88,13 +96,14 @@ function renderBoard(){
       if(!stack){stack=document.createElement("div");stack.className="piece-stack";stack.setAttribute("role","group");stack.setAttribute("aria-label",t("piecesOnSquare"));cell.append(stack);pieceStacks.set(cell,stack);}
       const button=document.createElement("button");button.type="button";
       button.className="piece-token"+(selected?.color===player.color&&selected.index===index?" selected":"");
+      button.dataset.pieceId=player.color+"-"+index;
       button.style.setProperty("--token","var(--"+player.color+")");
       button.setAttribute("aria-label",(colorName[player.color]?.[lang]||colorName[player.color].en)+" "+(index+1));
-      const engravings=["✦","❖","✺","✧"];
+      const engravings={red:"✦",green:"❖",yellow:"✺",blue:"✧"};
       const engraving=document.createElement("span");
-      engraving.className="piece-engraving emblem-"+index;
+      engraving.className="piece-engraving emblem-"+player.color;
       engraving.setAttribute("aria-hidden","true");
-      engraving.textContent=engravings[index%engravings.length];
+      engraving.textContent=engravings[player.color]||"✦";
       button.append(engraving);
       const isCurrent=player===game.players[game.turn];
       const legal=isCurrent&&legalMoves.some(move=>move.pieceIndex===index);
@@ -102,6 +111,18 @@ function renderBoard(){
       button.disabled=player.kind==="cpu"||!isCurrent||!legal||!canAct;
       button.addEventListener("click",()=>choosePiece(player.color,index));
       stack.append(button);
+      const previous=previousPositions.get(button.dataset.pieceId);
+      if(previous&&typeof button.animate==="function"){
+        const rect=button.getBoundingClientRect();
+        const dx=previous.x-(rect.left+rect.width/2);
+        const dy=previous.y-(rect.top+rect.height/2);
+        if(Math.abs(dx)+Math.abs(dy)>2){
+          button.animate([
+            {transform:"translate("+dx+"px,"+dy+"px) scale(.94)"},
+            {transform:"translate(0,0) scale(1)"}
+          ],{duration:720,easing:"cubic-bezier(.22,.72,.24,1)",fill:"both"});
+        }
+      }
     });
   }
 }
