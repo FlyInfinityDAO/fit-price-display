@@ -164,7 +164,7 @@ body.fi-neon-ludo footer{text-align:center;font-size:11px;padding:20px 12px}
   border-width:1.5px;padding:0;
 }
 .fi-ludo .cell:has(.piece-token:nth-of-type(2)) .piece-token.selected{outline-width:2px;outline-offset:0}
-.fi-ludo .cell.has-single-piece .piece-token{width:78%;height:78%;max-width:30px;max-height:30px}
+.fi-ludo .cell:not(:has(.piece-token:nth-of-type(2))) .piece-token{width:78%;height:78%;max-width:30px;max-height:30px}
 .fi-ludo .piece-token{touch-action:manipulation}
 .fi-ludo .ludo-board{max-width:min(100%,680px);min-width:0}
 .fi-ludo .game-controls>*{min-width:0}
