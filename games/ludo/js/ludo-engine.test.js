@@ -107,3 +107,30 @@ test("CPU player counts are clamped to available human seats",()=>{
   assert.equal(createGame(3,1).players.filter(p=>p.kind==="cpu").length,2);
   assert.equal(createGame(4,2).players.filter(p=>p.kind==="human").length,2);
 });
+
+test("a blockade prevents passing through the blocked track square",()=>{
+  const game=createGame(2,2);
+  game.players[0].pieces[0]=0;
+  game.players[1].pieces[0]=28;
+  game.players[1].pieces[1]=28;
+  game.dice=3;
+  assert.equal(legalPieceMoves(game,0).some(m=>m.pieceIndex===0&&m.to===3),false);
+});
+
+test("a blockade does not block a move that stops before it",()=>{
+  const game=createGame(2,2);
+  game.players[0].pieces[0]=0;
+  game.players[1].pieces[0]=28;
+  game.players[1].pieces[1]=28;
+  game.dice=1;
+  assert.equal(legalPieceMoves(game,0).some(m=>m.pieceIndex===0&&m.to===1),true);
+});
+
+test("a piece may enter its private home lane without checking track blockades beyond the entry",()=>{
+  const game=createGame(2,2);
+  game.players[0].pieces[0]=51;
+  game.players[1].pieces[0]=27;
+  game.players[1].pieces[1]=27;
+  game.dice=1;
+  assert.equal(legalPieceMoves(game,0).some(m=>m.pieceIndex===0&&m.to===52),true);
+});
