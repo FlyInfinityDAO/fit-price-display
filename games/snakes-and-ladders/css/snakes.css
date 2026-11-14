@@ -501,3 +501,21 @@ body.fi-neon-ludo .language-menu.fi-game-language-menu button.active{
  body.fi-neon-ludo .fi-game-language .language-button{width:40px;min-width:40px;min-height:40px}
  body.fi-neon-ludo #languageMenu.open{max-width:calc(100vw - 24px)!important}
 }
+
+
+/* Android keyboard/scroll stability: mirror the proven Hokm fix. */
+html.fi-android-webview{
+ scroll-behavior:auto!important;
+ overflow-anchor:none!important;
+}
+html.fi-android-webview body,
+html.fi-android-webview body .arena,
+html.fi-android-webview .mode-grid,
+html.fi-android-webview .mode-card{
+ overflow-anchor:none!important;
+}
+html.fi-android-webview .room-join input{
+ scroll-margin-block:16px;
+ direction:ltr!important;
+ text-align:center!important;
+}
