@@ -43,7 +43,7 @@ test("player bar adapts to the number of occupied seats",()=>{
  assert.match(css,/players-bar\[data-count="2"\]/);
  assert.match(css,/players-bar\[data-count="3"\]/);
 });
-test("CPU difficulty selector controls the selected game difficulty",()=>{
- assert.match(html,/id="cpuDifficulty"/);
- assert.match(js,/start\(1,Number\(\$\("cpuCount"\)\.value\),\$\("cpuDifficulty"\)\.value\)/);
+test("CPU mode does not expose a difficulty setting that the random-dice rules cannot honor",()=>{
+ assert.doesNotMatch(html,/id="cpuDifficulty"/);
+ assert.match(js,/start\(1,Number\(\$\("cpuCount"\)\.value\),"medium"\)/);
 });
