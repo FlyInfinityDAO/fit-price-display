@@ -1,5 +1,4 @@
-const SNAKES = Object.freeze({16:6,47:26,49:11,56:53,62:19,64:60,87:24,93:73,95:75,98:78});
-const LADDERS = Object.freeze({1:38,4:14,9:31,21:42,28:84,36:44,51:67,71:91,80:100});
+import { resolveRoll } from "./rules.js";
 const COLORS = ["#36d6d0","#ffbf5b","#a78bfa","#ff668c"];
 const json = (data,status=200) => new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store"}});
 
@@ -79,11 +78,8 @@ export class SnakesRoom {
     if(player.wallet!==wallet){socket.send(JSON.stringify({type:"error",error:"It is not your turn."}));return;}
     if(action.type==="roll"){
       const value=1+crypto.getRandomValues(new Uint32Array(1))[0]%6;
-      const from=player.position,raw=from+value;let to=raw<=100?raw:from,transport=null;
-      if(LADDERS[to]){transport={type:"ladder",from:to,to:LADDERS[to]};to=LADDERS[to];}
-      else if(SNAKES[to]){transport={type:"snake",from:to,to:SNAKES[to]};to=SNAKES[to];}
-      player.position=to;game.state.lastAction={type:"roll",value,player:playerIndex,from,to,transport,overshoot:raw>100};game.state.moveNumber++;
-      if(to===100){game.state.status="finished";game.state.winner=playerIndex;game.status="finished";}
+      const move=resolveRoll(player.position,value);player.position=move.to;game.state.lastAction={type:"roll",value,player:playerIndex,...move};game.state.moveNumber++;
+      if(move.to===100){game.state.status="finished";game.state.winner=playerIndex;game.status="finished";}
       else game.state.turn=(playerIndex+1)%game.playerCount;
       await this.save(game);this.broadcast(game,game.status==="finished"?"finished":"roll");return;
     }

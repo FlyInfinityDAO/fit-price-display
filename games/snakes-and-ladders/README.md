@@ -1,21 +1,32 @@
 # Fly Infinity Snakes & Ladders
 
-Standalone game source, isolated under `games/snakes-and-ladders/`.
+The game is isolated under `games/snakes-and-ladders/`. All changes are made directly on `main`.
 
-- Frontend: `https://flyinfinitydao.github.io/fit-price-display/games/snakes-and-ladders/`
-- Dedicated Worker: `fly-snakes-and-ladders-api`
-- Worker source: `worker/`
-- Rules engine: `js/snakes-engine.js`
+## Live page and services
+- Frontend: https://flyinfinitydao.github.io/fit-price-display/games/snakes-and-ladders/
+- Dedicated Worker: https://fly-snakes-and-ladders-api.flyinfinityplatform.workers.dev/
+- Health: https://fly-snakes-and-ladders-api.flyinfinityplatform.workers.dev/api/health
+- Worker: `fly-snakes-and-ladders-api`
+- Dedicated D1: `fly-snakes-and-ladders-db`
+- Durable Object: `SnakesRoom` / `SNAKES_ROOMS`
 
-## Current implementation milestone
+## Features
+- Responsive 10×10 board and standard snakes/ladders.
+- Eight UI languages: Persian, English, Arabic, Turkish, Russian, Chinese, Spanish and Portuguese.
+- Wallet-gated access: BNB Smart Chain, minimum 1 FIT, server-verified free signature, no transaction.
+- Local pass-and-play and CPU modes for 2–4 seats.
+- Online private rooms for 2–4 wallet-connected players, six-character room codes and WebSocket updates.
+- Server-authoritative dice, turn order, snakes, ladders and exact finish.
+- FIGS records: 3 points for a win, 0 for a loss, matching the existing Fly Infinity games scoring convention.
+- No entry fee, token transfer or financial rewards.
 
-- Responsive Fly Infinity dark/neon interface, aligned with the Ludo game shell.
-- Eight UI locales: English, Persian, Arabic, Turkish, Russian, Chinese, Spanish and Portuguese.
-- Local pass-and-play and CPU game modes (2–4 seats).
-- One token per player; serpentine 10×10 numbering, exact roll required for square 100.
-- Wallet UI checks BNB Smart Chain and at least 1 FIT, then requests a free ownership signature. No transaction is requested.
-- Online rooms remain disabled until their independent server-authoritative room/session infrastructure is provisioned. The Worker currently exposes an isolated health endpoint only.
+## Dedicated Worker setup
+The deployment workflow provisions the isolated D1 database if missing, applies migrations, configures a session-signing secret, deploys the Worker and checks its health. It requires `CLOUDFLARE_API_TOKEN` with Workers Scripts:Edit and D1:Edit, plus the `CLOUDFLARE_ACCOUNT_ID` repository variable.
 
-## Worker setup
+## API outline
+- `POST /api/auth/challenge` and `POST /api/auth/verify`
+- `POST /api/rooms/create` and `POST /api/rooms/join`
+- `GET /api/rooms/:code`, `POST /api/rooms/:code/ticket`, WebSocket `/api/rooms/:code/ws`
+- `GET /api/stats/me` and `GET /api/stats/leaderboard`
 
-Configure a separate Cloudflare Worker named `fly-snakes-and-ladders-api`. Do not bind Ludo, Chess or Backgammon resources. Online play and server-verified wallet sessions are a separate follow-up milestone requiring a dedicated D1 database and Durable Object namespace.
+The Worker and database are separate from Chess Arena, Backgammon and Ludo. Do not reuse or bind those games' resources here.
