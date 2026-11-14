@@ -47,3 +47,23 @@ test("CPU mode does not expose a difficulty setting that the random-dice rules c
  assert.doesNotMatch(html,/id="cpuDifficulty"/);
  assert.match(js,/start\(1,Number\(\$\("cpuCount"\)\.value\),"medium"\)/);
 });
+
+test("illustrated board renders SVG snakes, wooden ladders, colorful tiles and 3D tokens",()=>{
+ assert.match(js,/function boardPoint\(square\)/);
+ assert.match(js,/function drawBoardRoutes\(svg\)/);
+ assert.match(js,/class:"board-routes"/);
+ assert.match(js,/class:"board-snake"/);
+ assert.match(js,/class:"board-ladder"/);
+ assert.match(js,/tilePalette=/);
+ assert.match(js,/className="token"/);
+ assert.match(css,/\.fi-snakes \.board-routes/);
+ assert.match(css,/\.fi-snakes \.board-snake/);
+ assert.match(css,/\.fi-snakes \.board-ladder/);
+ assert.match(css,/--token-color/);
+});
+test("visual board mapping preserves all 100 squares in serpentine order",()=>{
+ assert.match(js,/logicalRow=Math\.floor\(\(square-1\)\/10\)/);
+ assert.match(js,/logicalCol=logicalRow%2===0\?/);
+ assert.match(js,/for\(let row=9;row>=0;row--\)/);
+ assert.match(js,/n===1\?"START":"FINISH"/);
+});
