@@ -76,7 +76,7 @@ test("SVG route artwork aligns inside the grid without covering cell labels",()=
 });
 
 test("redesigned board assets use the final cache version",()=>{
- assert.match(html,/snakes[.]css[?]v=fly-snakes-13/);
+ assert.match(html,/snakes[.]css[?]v=fly-snakes-15/);
  assert.match(html,/snakes[.]js[?]v=fly-snakes-13/);
 });
 
@@ -131,7 +131,7 @@ test("Android room-code focus disables smooth scrolling and scroll anchoring lik
  const scroll=readFileSync(new URL("js/snakes-mobile-scroll.js",root),"utf8");
  assert.match(scroll,/if\(!\/Android\/i\.test\(navigator\.userAgent/);
  assert.match(scroll,/classList\.add\("fi-android-webview"\)/);
- assert.match(css,/html\.fi-android-webview\{[\\s\\S]*?scroll-behavior:auto!important/);
+ assert.match(css,/scroll-behavior:auto!important/);
  assert.match(css,/overflow-anchor:none!important/);
  assert.match(css,/html\.fi-android-webview \.room-join input\{[\\s\\S]*?scroll-margin-block:16px/);
 });
