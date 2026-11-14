@@ -24,10 +24,15 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -130,8 +135,15 @@ class MainActivity : ComponentActivity() {
             }
             callback?.onReceiveValue(selectedFiles)
         }
+        // Use one consistent edge-to-edge strategy on every Android version.
+        // Compose then applies safe system-bar and display-cutout insets below.
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         window.statusBarColor = AndroidColor.rgb(15, 15, 15)
         window.navigationBarColor = AndroidColor.rgb(15, 15, 15)
+        WindowInsetsControllerCompat(window, window.decorView).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = false
+        }
         setContent {
             MaterialTheme(colorScheme = FlyColorScheme) {
                 FlyInfinityApp { callback, params ->
@@ -233,7 +245,9 @@ private fun FlyInfinityApp(
     }
 
     Surface(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing),
         color = MaterialTheme.colorScheme.background
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
