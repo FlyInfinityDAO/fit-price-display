@@ -1,6 +1,7 @@
 package com.flyinfinity.app
 
 import android.app.Activity
+import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color as AndroidColor
@@ -9,11 +10,15 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.webkit.CookieManager
+import android.webkit.URLUtil
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.ValueCallback
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -305,6 +310,38 @@ private fun FlyInfinityApp(
                                     val uri = request.url
                                     if (isFlyInfinityUrl(uri)) return false
                                     return openExternal(uri)
+                                }
+                            }
+
+                            setDownloadListener { url, userAgent, contentDisposition, mimeType, _ ->
+                                val downloadUri = runCatching { Uri.parse(url) }.getOrNull()
+                                if (downloadUri?.scheme != "https") {
+                                    Toast.makeText(context, "Only secure HTTPS downloads are allowed", Toast.LENGTH_LONG).show()
+                                } else {
+                                    val guessedName = URLUtil.guessFileName(url, contentDisposition, mimeType)
+                                    val safeName = guessedName
+                                        .replace(Regex("[\\\\/:*?\\\"<>|]"), "_")
+                                        .take(180)
+                                        .ifBlank { "fly-infinity-download" }
+                                    try {
+                                        val request = DownloadManager.Request(downloadUri)
+                                            .setTitle(safeName)
+                                            .setDescription("Downloading from Fly Infinity")
+                                            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                                            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, safeName)
+                                            .setAllowedOverMetered(true)
+                                            .setAllowedOverRoaming(false)
+                                        if (!mimeType.isNullOrBlank()) request.setMimeType(mimeType)
+                                        if (!userAgent.isNullOrBlank()) request.addRequestHeader("User-Agent", userAgent)
+                                        CookieManager.getInstance().getCookie(url)?.let { cookies ->
+                                            request.addRequestHeader("Cookie", cookies)
+                                        }
+                                        val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                                        manager.enqueue(request)
+                                        Toast.makeText(context, "Download started: $safeName", Toast.LENGTH_LONG).show()
+                                    } catch (_: Exception) {
+                                        Toast.makeText(context, "Could not start download", Toast.LENGTH_LONG).show()
+                                    }
                                 }
                             }
 
