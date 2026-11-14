@@ -76,7 +76,7 @@ test("SVG route artwork aligns inside the grid without covering cell labels",()=
 });
 
 test("redesigned board assets use the final cache version",()=>{
- assert.match(html,/snakes[.]css[?]v=fly-snakes-16/);
+ assert.match(html,/snakes[.]css[?]v=fly-snakes-17/);
  assert.match(html,/snakes[.]js[?]v=fly-snakes-13/);
 });
 
@@ -139,6 +139,7 @@ test("Android room-code focus disables smooth scrolling and scroll anchoring lik
 
 
 test("Android Persian RTL keeps document scroll axis stable like Hokm",()=>{
+ assert.ok(css.includes("html.fi-android-webview[dir=\"rtl\"]{direction:ltr!important}"));
  assert.ok(css.includes("html.fi-android-webview body.fi-rtl{direction:ltr!important}"));
  assert.ok(css.includes("html.fi-android-webview body.fi-rtl .arena{direction:ltr!important}"));
  assert.ok(css.includes("html.fi-android-webview body.fi-rtl .arena>header,"));
