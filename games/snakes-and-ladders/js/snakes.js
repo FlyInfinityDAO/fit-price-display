@@ -1,6 +1,6 @@
 import {createGame,roll,validateGame,SNAKES,LADDERS} from "./snakes-engine.js";
 const $=id=>document.getElementById(id),API="https://fly-snakes-and-ladders-api.flyinfinityplatform.workers.dev",TOKEN="0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa",BSC=56;
-let game=null,lang=localStorage.getItem("fi-game-language")||localStorage.getItem("fi-language")||"en",wallet=null,sessionToken=null,socket=null,roomCode=null,onlineMode=false,walletProvider=null,requestBusy=false;
+let game=null,lang=localStorage.getItem("fi-game-language")||localStorage.getItem("fi-language")||"en",wallet=null,sessionToken=null,socket=null,roomCode=null,onlineMode=false,walletProvider=null,requestBusy=false,motionBusy=false,onlineStateQueue=Promise.resolve();
 const copy={
 en:{title:"Fly Infinity Snakes & Ladders",tagline:"Climb higher. Watch your step. Reach 100.",dashboard:"Dashboard",playerAccess:"PLAYER ACCESS",connectTitle:"Connect to enter",accessIntro:"Connect a BNB Smart Chain wallet holding at least 1 FIT. A free signature verifies your wallet; no transaction is requested.",connectBrowser:"Connect with browser",connectWallet:"Connect wallet",notConnected:"Your wallet has not been connected.",minimum:"Minimum FIT balance",fitRequired:"At least 1 FIT required",verified:"Wallet verified. Choose a game mode.",online:"ONLINE MULTIPLAYER",onlineTitle:"Play online",onlineDesc:"Create a room for 2–4 players or join with a six-character code.",createRoom:"Create a room",roomCode:"Room code",joinRoom:"Join room",waitingRoom:"Waiting for players…",copyCode:"Copy code",roomCreated:"Room created. Share this code with friends.",connectingRoom:"Connecting to room…",onlineError:"Online game service is unavailable.",statsTitle:"Player records",figsLabel:"FIGS",winsLabel:"Wins",gamesLabel:"Games",rankLabel:"Rank",leaderboardLabel:"Leaderboard",comingSoon:"Coming soon",local:"LOCAL MULTIPLAYER",localTitle:"Pass & play",localDesc:"Take turns on one device. Choose 2–4 players.",players:"Players",startLocal:"Start local game",cpu:"VS COMPUTER",cpuTitle:"Play against CPU",cpuDesc:"Play solo against computer opponents.",difficulty:"CPU difficulty",startCpu:"Start vs CPU",newGame:"New game",exit:"Exit",turn:"CURRENT TURN",roll:"Roll dice",rules:"Roll to move · Ladders take you up · Snakes send you down · Exact roll to reach 100",noRewards:"No entry fee. No token transfer. No financial rewards.",connecting:"Connecting…",signing:"Sign free message…",verifying:"Verifying FIT balance…",noWallet:"No compatible wallet was found.",switchChain:"Please switch to BNB Smart Chain.",lowFit:"At least 1 FIT is required.",rollFirst:"Roll the dice to move.",won:"{name} wins!",snake:"A snake! Slide down.",ladder:"A ladder! Climb up.",overshoot:"You need an exact roll to reach 100.",cpuTurn:"CPU is taking its turn…",move:" moved to ",position:"Position: "},
 fa:{title:"مار و پله فلای اینفینیتی",tagline:"بالاتر برو، مراقب مارها باش و به خانه ۱۰۰ برس.",dashboard:"داشبورد",playerAccess:"دسترسی بازیکن",connectTitle:"برای ورود کیف پول را متصل کنید",accessIntro:"کیف پول BNB Smart Chain با حداقل ۱ FIT متصل کنید. امضای پیام رایگان است و هیچ تراکنشی انجام نمی‌شود.",connectBrowser:"اتصال با مرورگر",connectWallet:"اتصال با ولت",notConnected:"هنوز کیف پول متصل نشده است.",minimum:"حداقل موجودی FIT",fitRequired:"حداقل ۱ FIT لازم است",verified:"کیف پول تأیید شد؛ حالت بازی را انتخاب کنید.",online:"چندنفره آنلاین",onlineTitle:"بازی آنلاین",onlineDesc:"برای ۲ تا ۴ بازیکن اتاق بسازید یا با کد شش‌حرفی وارد شوید.",createRoom:"ساخت اتاق",roomCode:"کد اتاق",joinRoom:"ورود به اتاق",waitingRoom:"در انتظار بازیکنان…",copyCode:"کپی کد",roomCreated:"اتاق ساخته شد؛ کد را برای دوستانتان بفرستید.",connectingRoom:"در حال اتصال به اتاق…",onlineError:"سرویس بازی آنلاین در دسترس نیست.",statsTitle:"سوابق بازیکن",figsLabel:"FIGS",winsLabel:"برد",gamesLabel:"بازی‌ها",rankLabel:"رتبه",leaderboardLabel:"جدول برترین‌ها",comingSoon:"به‌زودی",local:"چندنفره محلی",localTitle:"بازی نوبتی",localDesc:"۲ تا ۴ نفر روی یک دستگاه بازی کنید.",players:"تعداد بازیکنان",startLocal:"شروع بازی محلی",cpu:"بازی با کامپیوتر",cpuTitle:"بازی با CPU",cpuDesc:"به‌تنهایی در برابر حریف‌های کامپیوتری بازی کنید.",difficulty:"درجه سختی CPU",startCpu:"شروع بازی با CPU",newGame:"بازی جدید",exit:"خروج",turn:"نوبت بازیکن",roll:"ریختن تاس",rules:"با تاس حرکت کن · نردبان تو را بالا می‌برد · مار تو را پایین می‌فرستد · برای رسیدن به ۱۰۰ عدد دقیق لازم است",noRewards:"بدون هزینه ورود، انتقال توکن یا پاداش مالی.",connecting:"در حال اتصال…",signing:"امضای پیام رایگان…",verifying:"بررسی موجودی FIT…",noWallet:"کیف پول سازگار پیدا نشد.",switchChain:"شبکه را به BNB Smart Chain تغییر دهید.",lowFit:"حداقل ۱ FIT لازم است.",rollFirst:"برای حرکت تاس بریزید.",won:"{name} برنده شد!",snake:"مار! به خانه پایین‌تر برگشتی.",ladder:"نردبان! بالاتر رفتی.",overshoot:"برای رسیدن به ۱۰۰ باید عدد دقیق بیاید.",cpuTurn:"کامپیوتر در حال بازی است…",move:" به خانه ",position:"موقعیت: "},
@@ -109,23 +109,23 @@ async function connectRoomSocket(){
    let message;try{message=JSON.parse(event.data);}catch{return;}
    if(message.type==="error"){$("onlineStatus").textContent=message.error;return;}
    if(!message.game)return;
-   const room=message.game;game=room.state||null;
-   $("roomPlayersText").textContent=(room.players||[]).filter(Boolean).length+" / "+room.playerCount;
-   if(room.status==="waiting"){show("onlineWaiting",true);show("boardWrap",false);show("gameControls",false);show("gameFootnote",false);renderWaitingSeats(room);$("gameMessage").textContent=t("waitingRoom");}
-   else{show("onlineWaiting",false);show("boardWrap",true);show("gameControls",true);show("gameFootnote",true);render();if(game?.status==="finished")loadStats();}
+   const room=message.game;$("roomPlayersText").textContent=(room.players||[]).filter(Boolean).length+" / "+room.playerCount;
+   if(room.status==="waiting"){game=null;show("onlineWaiting",true);show("boardWrap",false);show("gameControls",false);show("gameFootnote",false);renderWaitingSeats(room);$("gameMessage").textContent=t("waitingRoom");return;}
+   show("onlineWaiting",false);show("boardWrap",true);show("gameControls",true);show("gameFootnote",true);
+   onlineStateQueue=onlineStateQueue.then(async()=>{if(socket!==activeSocket)return;const next=room.state;if(!next)return;const previous=game?structuredClone(game):null;if(previous&&next.moveNumber>previous.moveNumber){motionBusy=true;game=next;render();await animateMove(previous,next);motionBusy=false;render();}else{game=next;render();}if(game?.status==="finished")loadStats();}).catch(error=>{motionBusy=false;$("onlineStatus").textContent=error.message||t("onlineError");if(game)render();});
   };
   activeSocket.onclose=()=>{if(socket===activeSocket&&onlineMode&&roomCode){socket=null;$("onlineStatus").textContent=t("onlineError");$("reconnectBtn").hidden=false;$("reconnectBtn").disabled=false;}};
   activeSocket.onerror=()=>{if(socket===activeSocket&&onlineMode&&roomCode){$("onlineStatus").textContent=t("onlineError");$("reconnectBtn").hidden=false;$("reconnectBtn").disabled=false;}};
  }catch(error){$("onlineStatus").textContent=error.message||t("onlineError");$("reconnectBtn").hidden=false;$("reconnectBtn").disabled=false;}
 }
 async function createOnlineRoom(){
- if(requestBusy)return;requestBusy=true;$("createRoomBtn").disabled=true;
+ unlockGameAudio();if(requestBusy)return;requestBusy=true;$("createRoomBtn").disabled=true;
  try{$("onlineStatus").textContent=t("connectingRoom");const result=await api("/api/rooms/create",{playerCount:Number($("onlineCount").value)});$("onlineStatus").textContent=t("roomCreated");showOnlineRoom(result.room,result.roomCode);}
  catch(error){$("onlineStatus").textContent=error.message||t("onlineError");}
  finally{requestBusy=false;$("createRoomBtn").disabled=false;}
 }
 async function joinOnlineRoom(){
- if(requestBusy)return;
+ unlockGameAudio();if(requestBusy)return;
  const code=$("roomCodeInput").value.trim().toUpperCase();
  if(!/^[A-HJ-NP-Z2-9]{6}$/.test(code)){$("onlineStatus").textContent=t("roomCodeInvalid");$("roomCodeInput").focus();return;}
  requestBusy=true;$("joinRoomBtn").disabled=true;
@@ -185,6 +185,49 @@ function drawBoardRoutes(svg){
   svg.append(group);
  });
 }
+let snakesAudioContext=null,snakesNoiseBuffer=null;
+function unlockGameAudio(){try{const Audio=window.AudioContext||window.webkitAudioContext;if(!Audio)return null;if(!snakesAudioContext)snakesAudioContext=new Audio();if(snakesAudioContext.state==="suspended")snakesAudioContext.resume();return snakesAudioContext;}catch{return null;}}
+function playDiceSound(){const ctx=unlockGameAudio();if(!ctx)return;const now=ctx.currentTime;
+ if(!snakesNoiseBuffer){const buffer=ctx.createBuffer(1,Math.floor(ctx.sampleRate*.38),ctx.sampleRate),data=buffer.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1)*(.7+Math.random()*.3);snakesNoiseBuffer=buffer;}
+ const noise=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain();noise.buffer=snakesNoiseBuffer;filter.type="lowpass";filter.frequency.setValueAtTime(2100,now);filter.frequency.exponentialRampToValueAtTime(520,now+.34);gain.gain.setValueAtTime(.0001,now);gain.gain.linearRampToValueAtTime(.105,now+.035);gain.gain.exponentialRampToValueAtTime(.0001,now+.36);noise.connect(filter);filter.connect(gain);gain.connect(ctx.destination);noise.start(now);noise.stop(now+.38);
+ [0,.085,.17,.255].forEach((offset,i)=>{const osc=ctx.createOscillator(),amp=ctx.createGain();osc.type="triangle";osc.frequency.setValueAtTime([740,510,630,390][i],now+offset);amp.gain.setValueAtTime(.0001,now+offset);amp.gain.linearRampToValueAtTime(.055,now+offset+.008);amp.gain.exponentialRampToValueAtTime(.0001,now+offset+.055);osc.connect(amp);amp.connect(ctx.destination);osc.start(now+offset);osc.stop(now+offset+.06);});
+}
+function playPieceSound(action){const ctx=unlockGameAudio();if(!ctx)return;const now=ctx.currentTime;const base=action?.kind==="finish"?620:action?.captured?470:390;
+ const hit=(frequency,delay,volume,duration,type)=>{const osc=ctx.createOscillator(),amp=ctx.createGain();osc.type=type||"sine";osc.frequency.setValueAtTime(frequency,now+delay);osc.frequency.exponentialRampToValueAtTime(Math.max(90,frequency*.72),now+delay+duration);amp.gain.setValueAtTime(.0001,now+delay);amp.gain.linearRampToValueAtTime(volume,now+delay+.009);amp.gain.exponentialRampToValueAtTime(.0001,now+delay+duration);osc.connect(amp);amp.connect(ctx.destination);osc.start(now+delay);osc.stop(now+delay+duration+.01);};
+ hit(base,0,.075,.105,"sine");hit(base*1.48,.025,.022,.12,"triangle");
+ if(action?.captured||action?.kind==="finish"){hit(action.kind==="finish"?880:690,.095,.035,.22,"sine");}
+}
+
+function playStepSound(step=0){const ctx=unlockGameAudio();if(!ctx)return;const now=ctx.currentTime,osc=ctx.createOscillator(),gain=ctx.createGain();osc.type="triangle";osc.frequency.setValueAtTime(420+(step%4)*55,now);osc.frequency.exponentialRampToValueAtTime(210,now+.055);gain.gain.setValueAtTime(.0001,now);gain.gain.linearRampToValueAtTime(.045,now+.006);gain.gain.exponentialRampToValueAtTime(.0001,now+.07);osc.connect(gain);gain.connect(ctx.destination);osc.start(now);osc.stop(now+.075);}
+function sleep(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
+function pointDelta(board,token,square){const cell=board.querySelector('[data-square="'+square+'"]');if(!cell)return {x:0,y:0};const tr=token.getBoundingClientRect(),cr=cell.getBoundingClientRect();return {x:cr.left+cr.width/2-(tr.left+tr.width/2),y:cr.top+cr.height/2-(tr.top+tr.height/2)};}
+async function animateMove(previous,next){
+ if(!previous||!next||!next.lastAction||next.moveNumber===previous.moveNumber)return;
+ const action=next.lastAction;playDiceSound();
+ const dice=$("diceFace");if(dice?.animate)dice.animate([{transform:"rotate(-12deg) scale(.82)"},{transform:"rotate(9deg) scale(1.12)"},{transform:"rotate(0) scale(1)"}],{duration:420,easing:"cubic-bezier(.2,.8,.2,1)"});
+ if(action.needSix||action.overshoot){await sleep(320);return;}
+ const board=$("snakesBoard"),token=board.querySelector('.token[data-player="'+action.player+'"]');
+ if(!token)return;
+ if(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches){playPieceSound({kind:action.to===100?"finish":""});return;}
+ const path=[];
+ if(action.from===0){path.push(1);}
+ else{const raw=action.from+action.value;for(let n=action.from+1;n<=Math.min(raw,100);n++)path.push(n);}
+ const raw=action.from===0?1:action.from+action.value;
+ let current=action.from===0?1:action.from;
+ if(action.from===0&&action.transport?.from===1){const pop=token.animate([{transform:"scale(.25)",opacity:.3},{transform:"scale(1.18)",opacity:1},{transform:"scale(1)",opacity:1}],{duration:260,easing:"cubic-bezier(.2,.8,.2,1)"});await pop.finished.catch(()=>{});pop.cancel();playStepSound(0);}
+ for(let i=0;i<path.length;i++){
+  const nextSquare=path[i],fromDelta=pointDelta(board,token,current),toDelta=pointDelta(board,token,nextSquare);playStepSound(i);
+  const animation=token.animate([{transform:"translate("+fromDelta.x+"px,"+fromDelta.y+"px) scale(1.08)"},{transform:"translate("+toDelta.x+"px,"+toDelta.y+"px) scale(1)"}],{duration:132,easing:"cubic-bezier(.22,.72,.24,1)",fill:"forwards"});
+  await animation.finished.catch(()=>{});animation.cancel();current=nextSquare;
+ }
+ if(action.transport){
+  const a=pointDelta(board,token,raw),b=pointDelta(board,token,action.to);
+  const frames=[];for(let i=0;i<=5;i++){const p=i/5;frames.push({transform:"translate("+(a.x+(b.x-a.x)*p)+"px,"+(a.y+(b.y-a.y)*p)+"px) scale("+(1+Math.sin(p*Math.PI)*.12)+")"});}
+  const route=token.animate(frames,{duration:action.transport.type==="snake"?560:470,easing:action.transport.type==="snake"?"cubic-bezier(.35,0,.65,1)":"cubic-bezier(.2,.75,.25,1)",fill:"forwards"});
+  await route.finished.catch(()=>{});route.cancel();playPieceSound({kind:action.transport.type==="ladder"?"finish":"snake"});
+ }else if(action.to===100)playPieceSound({kind:"finish"});
+}
+
 function render(){
  if(!game)return;
  validateGame(game);
@@ -233,12 +276,12 @@ function render(){
  $("turnText").textContent=game.status==="finished"?game.players[game.winner].name:game.players[game.turn].name;
  $("turnDot").style.setProperty("--player",game.players[game.turn].color);
  $("diceFace").textContent=game.lastAction?.value||"–";
- $("rollBtn").disabled=game.status!=="active"||(onlineMode&&(game.players[game.turn]?.wallet!==wallet||socket?.readyState!==WebSocket.OPEN));
+ $("rollBtn").disabled=motionBusy||game.status!=="active"||(onlineMode&&(game.players[game.turn]?.wallet!==wallet||socket?.readyState!==WebSocket.OPEN));
  $("gameMessage").textContent=game.status==="finished"?t("won").replace("{name}",game.players[game.winner].name):game.lastAction?.needSix?t("needSix"):game.lastAction?.transport?.type==="snake"?t("snake"):game.lastAction?.transport?.type==="ladder"?t("ladder"):game.lastAction?.overshoot?t("overshoot"):t("rollFirst");
 }
-function start(humans,total,difficulty){onlineMode=false;roomCode=null;if(socket){try{socket.close();}catch{}socket=null;}$("copyRoomBtn").hidden=true;$("reconnectBtn").hidden=true;show("onlineWaiting",false);show("boardWrap",true);show("gameControls",true);show("gameFootnote",true);game=createGame(total,humans,difficulty);show("modePanel",false);show("gamePanel",true);render();if(humans<total&&game.turn>=humans)cpuTurn();}
-function cpuTurn(){if(!game||game.status!=="active"||game.players[game.turn].kind!=="cpu")return;$("rollBtn").disabled=true;$("gameMessage").textContent=t("cpuTurn");setTimeout(()=>{if(!game||game.status!=="active")return;game=roll(game);render();if(game.status==="active"&&game.players[game.turn].kind==="cpu")cpuTurn();},850);}
-function playerRoll(){if(onlineMode){if(socket?.readyState===WebSocket.OPEN&&game?.status==="active"&&game.players[game.turn]?.wallet===wallet)socket.send(JSON.stringify({type:"roll"}));return;}if(!game||game.status!=="active"||game.players[game.turn].kind!=="human")return;try{game=roll(game);render();if(game.status==="active"&&game.players[game.turn].kind==="cpu")cpuTurn();}catch(e){$("gameMessage").textContent=e.message;}}
+function start(humans,total,difficulty){unlockGameAudio();motionBusy=false;onlineStateQueue=Promise.resolve();onlineMode=false;roomCode=null;if(socket){try{socket.close();}catch{}}$("copyRoomBtn").hidden=true;$("reconnectBtn").hidden=true;show("onlineWaiting",false);show("boardWrap",true);show("gameControls",true);show("gameFootnote",true);game=createGame(total,humans,difficulty);show("modePanel",false);show("gamePanel",true);render();if(humans<total&&game.turn>=humans)cpuTurn();}
+async function cpuTurn(){if(!game||game.status!=="active"||game.players[game.turn].kind!=="cpu"||motionBusy)return;$("rollBtn").disabled=true;$("gameMessage").textContent=t("cpuTurn");await sleep(720);if(!game||game.status!=="active"||game.players[game.turn].kind!=="cpu")return;const previous=structuredClone(game);motionBusy=true;game=roll(game);render();await animateMove(previous,game);motionBusy=false;render();if(game.status==="active"&&game.players[game.turn].kind==="cpu")cpuTurn();}
+async function playerRoll(){unlockGameAudio();if(motionBusy||!game||game.status!=="active"||game.players[game.turn].kind!=="human")return;if(onlineMode){if(socket?.readyState===WebSocket.OPEN&&game.players[game.turn]?.wallet===wallet)socket.send(JSON.stringify({type:"roll"}));return;}try{const previous=structuredClone(game);motionBusy=true;game=roll(game);render();await animateMove(previous,game);motionBusy=false;render();if(game.status==="active"&&game.players[game.turn].kind==="cpu")cpuTurn();}catch(e){motionBusy=false;$("gameMessage").textContent=e.message;render();}}
 $("connectBrowserBtn").addEventListener("click",()=>connect("browser"));$("connectWalletBtn").addEventListener("click",()=>connect("wallet"));
 $("createRoomBtn").addEventListener("click",createOnlineRoom);$("joinRoomBtn").addEventListener("click",joinOnlineRoom);
 $("copyRoomBtn").addEventListener("click",copyRoomCode);
