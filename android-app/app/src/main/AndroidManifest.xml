@@ -5,7 +5,9 @@
 
     <application
         android:allowBackup="false"
-        android:label="Fly Infinity"
+        android:label="Fly Infinity DAO"
+        android:icon="@drawable/fly_infinity_logo"
+        android:roundIcon="@drawable/fly_infinity_logo"
         android:usesCleartextTraffic="false"
         android:theme="@android:style/Theme.Material.NoActionBar">
         <activity

@@ -42,7 +42,13 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Casino
 import androidx.compose.material.icons.filled.Home
@@ -64,6 +70,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.Image
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -961,12 +970,22 @@ private fun FlyInfinityApp(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    "FLY INFINITY",
-                    color = FlyGold,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleLarge
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.fly_infinity_logo),
+                        contentDescription = "Fly Infinity DAO",
+                        modifier = Modifier.size(38.dp)
+                    )
+                    Text(
+                        "FLY INFINITY DAO",
+                        color = FlyGold,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
                 Text(
                     if (hasInternet) "ONLINE · BNB SMART CHAIN" else "OFFLINE · CACHED CONTENT ONLY",
                     color = if (hasInternet) FlyTeal else FlyGold,
@@ -1208,37 +1227,69 @@ private fun FlyInfinityApp(
                 }
             }
 
-            NavigationBar(containerColor = FlySurface) {
-                AppDestination.entries.forEach { item ->
-                    NavigationBarItem(
-                        selected = destination == item,
-                        onClick = { openDestination(item) },
-                        icon = {
-                            when (item) {
-                                AppDestination.Dashboard ->
-                                    androidx.compose.material3.Icon(
-                                        Icons.Filled.Home,
-                                        contentDescription = item.label
-                                    )
-                                AppDestination.DApp ->
-                                    androidx.compose.material3.Icon(
-                                        Icons.Filled.SwapHoriz,
-                                        contentDescription = item.label
-                                    )
-                                AppDestination.Games ->
-                                    androidx.compose.material3.Icon(
-                                        Icons.Filled.Casino,
-                                        contentDescription = item.label
-                                    )
-                                AppDestination.FlyAI ->
-                                    androidx.compose.material3.Icon(
-                                        Icons.Filled.SmartToy,
-                                        contentDescription = item.label
-                                    )
-                            }
-                        },
-                        label = { Text(item.label) }
-                    )
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                color = Color(0xCC101A15),
+                shape = RoundedCornerShape(24.dp),
+                border = BorderStroke(1.dp, Color.White.copy(alpha = 0.16f)),
+                shadowElevation = 16.dp
+            ) {
+                NavigationBar(
+                    containerColor = Color.Transparent,
+                    tonalElevation = 0.dp
+                ) {
+                    AppDestination.entries.forEach { item ->
+                        NavigationBarItem(
+                            selected = destination == item,
+                            onClick = { openDestination(item) },
+                            icon = {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    when (item) {
+                                        AppDestination.Dashboard ->
+                                            androidx.compose.material3.Icon(
+                                                Icons.Filled.Home,
+                                                contentDescription = item.label
+                                            )
+                                        AppDestination.DApp ->
+                                            androidx.compose.material3.Icon(
+                                                Icons.Filled.SwapHoriz,
+                                                contentDescription = item.label
+                                            )
+                                        AppDestination.Games ->
+                                            androidx.compose.material3.Icon(
+                                                Icons.Filled.Casino,
+                                                contentDescription = item.label
+                                            )
+                                        AppDestination.FlyAI ->
+                                            androidx.compose.material3.Icon(
+                                                Icons.Filled.SmartToy,
+                                                contentDescription = item.label
+                                            )
+                                    }
+                                    if (destination == item) {
+                                        Box(
+                                            modifier = Modifier
+                                                .padding(top = 5.dp)
+                                                .width(28.dp)
+                                                .height(3.dp)
+                                                .shadow(9.dp, RoundedCornerShape(50))
+                                                .background(Color(0xFFFFFF00), RoundedCornerShape(50))
+                                        )
+                                    }
+                                }
+                            },
+                            label = { Text(item.label, fontWeight = FontWeight.SemiBold) },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = FlyTeal,
+                                selectedTextColor = FlyTeal,
+                                unselectedIconColor = FlyTeal,
+                                unselectedTextColor = FlyTeal,
+                                indicatorColor = Color.Transparent
+                            )
+                        )
+                    }
                 }
             }
         }
