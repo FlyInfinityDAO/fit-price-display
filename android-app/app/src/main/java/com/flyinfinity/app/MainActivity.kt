@@ -211,6 +211,7 @@ private const val DASHBOARD_SNAPSHOT_SCRIPT = """
       } catch (_) {}
     }
     function save() {
+      if (!online) return;
       try {
         var values = {};
         document.querySelectorAll('[id]').forEach(function(el) {
