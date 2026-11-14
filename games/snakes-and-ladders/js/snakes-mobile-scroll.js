@@ -10,6 +10,10 @@
  const pageY=()=>window.scrollY||document.documentElement.scrollTop||document.body.scrollTop||0;
  function remember(){const y=pageY();if(y>0)savedScrollY=y;}
  function restoreIfReset(){
+  /* Persian and Arabic Android keyboards must keep native RTL scrolling.
+     The Hokm page uses this exact exception because forced scroll restoration
+     while the IME is open can itself trigger a jump to the document top. */
+  if(["fa","ar"].includes(document.documentElement.lang))return;
   if(restoring)return;
   const input=roomInput(),focused=input&&document.activeElement===input;
   if(!focused)return;
