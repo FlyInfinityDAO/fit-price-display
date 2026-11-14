@@ -29,7 +29,18 @@
  }
  document.addEventListener("scroll",()=>{if(!restoring&&!roomInputActive)remember();},{passive:true,capture:true});
  document.addEventListener("pointerdown",event=>{
-  if(event.target&&event.target.id==="roomCodeInput"){remember();roomInputActive=true;}
+  const input=event.target&&event.target.closest&&event.target.closest("#roomCodeInput");
+  if(!input)return;
+  remember();
+  roomInputActive=true;
+  /* On Android Persian/Arabic, let the tap focus the field without the
+     WebView's native RTL scroll-to-focus adjustment. The keyboard still
+     opens from this user gesture; the browser's default action then only
+     places the caret in the already-focused input. */
+  if(["fa","ar"].includes(document.documentElement.lang)){
+   try{input.focus({preventScroll:true});}
+   catch{input.focus();}
+  }
  },true);
  document.addEventListener("focusin",event=>{
   if(event.target&&event.target.id==="roomCodeInput"){
