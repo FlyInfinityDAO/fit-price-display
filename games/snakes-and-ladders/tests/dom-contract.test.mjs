@@ -67,3 +67,10 @@ test("visual board mapping preserves all 100 squares in serpentine order",()=>{
  assert.match(js,/for\(let row=9;row>=0;row--\)/);
  assert.match(js,/n===1\?"START":"FINISH"/);
 });
+
+test("SVG route artwork aligns inside the grid without covering cell labels",()=>{
+ assert.match(css,/--board-inner-gap/);
+ assert.match(css,/\.board-routes\{inset:var\(--board-inner-gap\)/);
+ assert.match(css,/\.square\{z-index:auto\}/);
+ assert.match(css,/\.square-number,\.square-marker,\.square-icon\{z-index:4\}/);
+});
