@@ -464,3 +464,40 @@ body.fi-neon-ludo footer{text-align:center;font-size:12px;line-height:1.7;paddin
 @keyframes snakesDiceRoll{0%{transform:rotate(-12deg) scale(.82)}48%{transform:rotate(10deg) scale(1.12)}100%{transform:rotate(0) scale(1)}}
 .fi-snakes .token-stack{isolation:isolate}
 @media(prefers-reduced-motion:reduce){.fi-snakes .token,.fi-snakes .dice-face{will-change:auto}.fi-snakes .dice-face.is-rolling{animation:none!important}}
+
+
+/* Match the shared Fly Games language popover on small screens as well as desktop. */
+body.fi-neon-ludo #languageMenu:not(.open){display:none!important}
+body.fi-neon-ludo #languageMenu.open{
+ position:fixed!important;display:grid!important;z-index:10000!important;
+ grid-template-columns:1fr;max-height:calc(100dvh - 24px);overflow-y:auto;
+}
+body.fi-neon-ludo .fi-game-language-select{
+ position:absolute!important;width:1px!important;height:1px!important;
+ padding:0!important;margin:-1px!important;overflow:hidden!important;
+ clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;
+}
+body.fi-neon-ludo .fi-game-language .language-button{
+ width:40px;min-width:40px;min-height:40px;display:grid;place-items:center;
+ color:#00D9FF!important;background:rgba(17,28,53,.35)!important;
+ border:1px solid rgba(139,92,246,.72)!important;border-radius:12px;
+ box-shadow:0 0 13px rgba(69,108,255,.14);font-size:19px;cursor:pointer;
+}
+body.fi-neon-ludo .language-menu.fi-game-language-menu{
+ background:rgba(17,28,53,.97)!important;border:1px solid rgba(0,217,255,.58)!important;
+ border-radius:14px;box-shadow:0 18px 44px rgba(0,0,0,.44),0 0 20px rgba(69,108,255,.18)!important;
+ padding:6px;gap:3px;
+}
+body.fi-neon-ludo .language-menu.fi-game-language-menu button{
+ display:flex;align-items:center;gap:10px;width:100%;min-height:38px;padding:7px 10px;
+ color:#EAF5FF!important;background:transparent;border:1px solid transparent;border-radius:9px;text-align:start;
+}
+body.fi-neon-ludo .language-menu.fi-game-language-menu button:hover,
+body.fi-neon-ludo .language-menu.fi-game-language-menu button.active{
+ background:rgba(69,108,255,.22)!important;border-color:rgba(0,217,255,.42)!important;color:#00D9FF!important;
+}
+@media(max-width:600px){
+ body.fi-neon-ludo .topbar-actions{align-items:center;flex-wrap:nowrap}
+ body.fi-neon-ludo .fi-game-language .language-button{width:40px;min-width:40px;min-height:40px}
+ body.fi-neon-ludo #languageMenu.open{max-width:calc(100vw - 24px)!important}
+}
