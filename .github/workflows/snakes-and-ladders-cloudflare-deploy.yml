@@ -55,7 +55,15 @@ jobs:
       - name: Apply database migrations
         run: npx wrangler d1 migrations apply fly-snakes-and-ladders-db --remote
       - name: Configure Worker session secret
-        run: openssl rand -hex 32 | npx wrangler secret put SESSION_SECRET
+        shell: bash
+        run: |
+          set -euo pipefail
+          SECRETS="$(npx wrangler secret list)"
+          if ! printf '%s' "$SECRETS" | jq -e '.[] | select(.name == "SESSION_SECRET")' >/dev/null; then
+            openssl rand -hex 32 | npx wrangler secret put SESSION_SECRET
+          else
+            echo "Existing session secret retained."
+          fi
       - name: Deploy dedicated Worker
         run: npx wrangler deploy
       - name: Verify Worker health

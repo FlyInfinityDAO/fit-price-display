@@ -27,7 +27,9 @@ export async function getFitBalance(env, wallet) {
 
 export async function rateLimit(request, env, bucket, limit, seconds) {
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
-  const key = bucket + ":" + ip;
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(ip));
+  const fingerprint = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, "0")).join("");
+  const key = bucket + ":" + fingerprint;
   const now = Math.floor(Date.now() / 1000);
   const windowStart = Math.floor(now / seconds) * seconds;
   const row = await env.DB.prepare(

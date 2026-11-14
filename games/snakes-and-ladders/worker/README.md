@@ -14,7 +14,7 @@ Dedicated resources only; this Worker does not share a namespace or database wit
 - `BSC_RPC_URL`: BNB Smart Chain JSON-RPC endpoint
 - `FRONTEND_ORIGIN`: `https://flyinfinitydao.github.io`
 
-The deploy workflow provisions the dedicated D1 database if it does not exist, applies migrations, and deploys this Worker. The Cloudflare API token must allow Workers Scripts:Edit and D1:Edit. The workflow also requires the repository variable `CLOUDFLARE_ACCOUNT_ID` and secret `CLOUDFLARE_API_TOKEN`.
+The deploy workflow provisions the dedicated D1 database if it does not exist, applies migrations, creates the session-signing secret only if it is missing (preserving existing sessions), and deploys this Worker. The Cloudflare API token must allow Workers Scripts:Edit and D1:Edit. The workflow also requires the repository variable `CLOUDFLARE_ACCOUNT_ID` and secret `CLOUDFLARE_API_TOKEN`.
 
 ## API
 - `POST /api/auth/challenge`
