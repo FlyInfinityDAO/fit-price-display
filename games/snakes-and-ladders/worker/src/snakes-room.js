@@ -77,7 +77,7 @@ export class SnakesRoom {
     const playerIndex=game.state.turn,player=game.state.players[playerIndex];
     if(player.wallet!==wallet){socket.send(JSON.stringify({type:"error",error:"It is not your turn."}));return;}
     if(action.type==="roll"){
-      const value=1+crypto.getRandomValues(new Uint32Array(1))[0]%6;
+      let random;do{random=crypto.getRandomValues(new Uint32Array(1))[0];}while(random>=4294967292);const value=1+random%6;
       const move=resolveRoll(player.position,value);player.position=move.to;game.state.lastAction={type:"roll",value,player:playerIndex,...move};game.state.moveNumber++;
       if(move.to===100){game.state.status="finished";game.state.winner=playerIndex;game.status="finished";}
       else game.state.turn=(playerIndex+1)%game.playerCount;

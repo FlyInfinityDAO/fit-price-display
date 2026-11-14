@@ -6,7 +6,7 @@ test("server rules climb every mapped ladder endpoint",()=>{
  for(const [from,to] of Object.entries(LADDERS)){
   const start=Number(from)-1;
   const move=resolveRoll(start,1);
-  assert.equal(move.to,to);
+  assert.equal(move.to,Number(to));
   assert.equal(move.transport.type,"ladder");
  }
 });
