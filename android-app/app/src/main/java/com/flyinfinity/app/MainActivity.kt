@@ -1071,81 +1071,58 @@ private fun FlyInfinityApp(
                                     super.onPageFinished(view, url)
                                     isLoading = false
                                     if (!url.isNullOrBlank()) {
-                                        // Preserve each hosted page's own stacking model. The previous
-                                        // global negative z-index rule put the main site's background
-                                        // behind its opaque body and also disturbed page-specific layers.
-                                        // Fly AI alone needs an isolated body so its negative-z background
-                                        // pseudo-elements remain visible in Android WebView.
-                                        view.evaluateJavascript(
-                                            """
-                                            (function(){
-                                              var style=document.getElementById('fly-android-visual-compat');
-                                              if(!style){
-                                                style=document.createElement('style');
-                                                style.id='fly-android-visual-compat';
-                                                var isFlyAi=location.pathname.indexOf('/fly-ai/')!==-1;
-                                                style.textContent=
-                                                  (isFlyAi ? 'body{isolation:isolate!important}body::before{z-index:-1!important}body::after{z-index:-1!important}' : '') +
-                                                  'html body #fi-games-neon-canvas,' +
-                                                  'html body #hokm-neon-canvas{display:block!important;visibility:visible!important;opacity:1!important}';
-                                                (document.head||document.documentElement).appendChild(style);
-                                              }
-                                            })();
-                                            """.trimIndent(),
-                                            null
-                                        )
-                                        // Some Android WebView builds suppress the site's ambient
-                                        // canvas before its page script starts (notably with reduced-motion
-                                        // enabled). Add a visual-only fallback only when the page did not
-                                        // create its own canvas; this never touches game state or controls.
+                                        // Mirror the exact visual layers already used by the website:
+                                        // 1) main site background image on non-game/non-AI pages;
+                                        // 2) Fly AI's ambient orb animation on every game page.
+                                        // This is Android WebView-only and does not modify hosted files.
                                         view.evaluateJavascript(
                                             """
                                             (function(){
                                               try{
-                                                if(location.pathname.indexOf('/games/')===-1)return;
-                                                var canvasId=location.pathname.indexOf('/games/hokm/')!==-1?'hokm-neon-canvas':'fi-games-neon-canvas';
-                                                if(document.getElementById(canvasId)||!document.body)return;
-                                                var canvas=document.createElement('canvas');
-                                                canvas.id=canvasId;
-                                                canvas.setAttribute('aria-hidden','true');
-                                                canvas.style.cssText='position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;z-index:0!important;pointer-events:none!important;display:block!important';
-                                                document.body.appendChild(canvas);
-                                                var ctx=canvas.getContext('2d');
-                                                if(!ctx)return;
-                                                var w=0,h=0,dpr=1,last=0,raf=0;
-                                                var dots=[];
-                                                function resize(){
-                                                  w=document.documentElement.clientWidth||innerWidth;
-                                                  h=innerHeight||document.documentElement.clientHeight;
-                                                  dpr=Math.min(devicePixelRatio||1,1.5);
-                                                  canvas.width=Math.max(1,Math.round(w*dpr));
-                                                  canvas.height=Math.max(1,Math.round(h*dpr));
-                                                  canvas.style.width=w+'px';canvas.style.height=h+'px';
-                                                  ctx.setTransform(dpr,0,0,dpr,0,0);
-                                                  dots=Array.from({length:w<700?16:25},function(){
-                                                    return{x:Math.random()*w,y:Math.random()*h,r:1.5+Math.random()*3.5,
-                                                      vx:(Math.random()-.5)*.22,vy:(Math.random()-.5)*.22,
-                                                      p:Math.random()*6.28,c:Math.random()<.5?'0,217,255':'139,92,246'};
-                                                  });
+                                                var path=location.pathname||'';
+                                                var isGame=path.indexOf('/games/')!==-1;
+                                                var isFlyAi=path.indexOf('/fly-ai/')!==-1;
+                                                var styleId='fly-android-page-visuals';
+                                                var style=document.getElementById(styleId);
+                                                if(!style){
+                                                  style=document.createElement('style');
+                                                  style.id=styleId;
+                                                  (document.head||document.documentElement).appendChild(style);
                                                 }
-                                                function frame(now){
-                                                  var dt=Math.min(40,now-(last||now));last=now;
-                                                  ctx.clearRect(0,0,w,h);
-                                                  dots.forEach(function(d,i){
-                                                    d.x+=d.vx*dt;d.y+=d.vy*dt;d.p+=dt*.001;
-                                                    if(d.x< -8)d.x=w+8;if(d.x>w+8)d.x=-8;
-                                                    if(d.y< -8)d.y=h+8;if(d.y>h+8)d.y=-8;
-                                                    var a=.22+.22*(.5+.5*Math.sin(d.p+i));
-                                                    ctx.beginPath();ctx.fillStyle='rgba('+d.c+','+a+')';
-                                                    ctx.shadowColor='rgba('+d.c+',.9)';ctx.shadowBlur=18;
-                                                    ctx.arc(d.x,d.y,d.r,0,Math.PI*2);ctx.fill();
-                                                  });
-                                                  ctx.shadowBlur=0;raf=requestAnimationFrame(frame);
+                                                var css='';
+                                                if(!isGame&&!isFlyAi){
+                                                  css +=
+                                                    'body{isolation:isolate!important;background-color:transparent!important}' +
+                                                    'body::before{content:""!important;position:fixed!important;inset:0!important;width:100%!important;height:100vh!important;height:100dvh!important;z-index:-1!important;pointer-events:none!important;transform:translate3d(0,0,0)!important;will-change:transform!important;background-image:linear-gradient(rgba(15,15,15,.60),rgba(15,15,15,.60)),url("/fit-price-display/background-desktop.png")!important;background-size:cover!important;background-position:center center!important;background-repeat:no-repeat!important}' +
+                                                    '@media(max-width:768px){body::before{background-image:linear-gradient(rgba(15,15,15,.60),rgba(15,15,15,.60)),url("/fit-price-display/background-mobile.png")!important;background-size:contain!important;background-position:center top!important;background-repeat:repeat-y!important;background-color:#0f0f0f!important}}';
                                                 }
-                                                resize();
-                                                addEventListener('resize',resize,{passive:true});
-                                                requestAnimationFrame(frame);
-                                              }catch(_){}
+                                                if(isGame){
+                                                  css +=
+                                                    '.ai-motion-bg{position:fixed!important;inset:0!important;z-index:0!important;overflow:hidden!important;pointer-events:none!important;isolation:isolate!important;contain:paint!important;opacity:1!important;background-image:radial-gradient(ellipse at 18% 28%,rgba(124,67,255,.30),transparent 36%),radial-gradient(ellipse at 82% 62%,rgba(0,190,215,.27),transparent 39%),radial-gradient(ellipse at 52% 92%,rgba(26,205,190,.16),transparent 34%)!important;background-size:190% 190%!important;animation:flyAiEnergyFlow 9s ease-in-out infinite alternate!important}' +
+                                                    '.ai-motion-bg:before{content:""!important;position:absolute!important;inset:-12%!important;background-image:linear-gradient(rgba(155,119,255,.095) 1px,transparent 1px),linear-gradient(90deg,rgba(38,220,222,.085) 1px,transparent 1px)!important;background-size:76px 76px!important;opacity:.68!important;animation:flyAiGridDrift 7s linear infinite!important}' +
+                                                    '.ai-motion-bg:after{content:""!important;position:absolute!important;inset:-25%!important;background:conic-gradient(from 20deg at 50% 50%,transparent 0 20%,rgba(130,75,255,.22) 33%,transparent 45% 60%,rgba(0,202,220,.20) 74%,transparent 87%)!important;filter:blur(30px) saturate(155%)!important;opacity:.95!important;animation:flyAiFieldDrift 10s ease-in-out infinite alternate!important}' +
+                                                    '.ai-motion-orb{position:absolute!important;display:block!important;border-radius:50%!important;filter:blur(38px) saturate(145%)!important;transform:translate3d(0,0,0)!important;will-change:transform,opacity!important}' +
+                                                    '.ai-motion-orb.orb-violet{width:clamp(220px,34vw,520px)!important;height:clamp(220px,34vw,520px)!important;left:-12%!important;top:8%!important;background:radial-gradient(circle,rgba(124,72,255,.58),rgba(124,72,255,.23) 48%,transparent 74%)!important;animation:flyAiOrbViolet 10s ease-in-out infinite alternate!important}' +
+                                                    '.ai-motion-orb.orb-cyan{width:clamp(230px,38vw,560px)!important;height:clamp(230px,38vw,560px)!important;right:-14%!important;top:34%!important;background:radial-gradient(circle,rgba(0,198,220,.52),rgba(0,198,220,.21) 48%,transparent 74%)!important;animation:flyAiOrbCyan 12s ease-in-out infinite alternate!important}' +
+                                                    '.ai-motion-orb.orb-gold{width:clamp(170px,24vw,360px)!important;height:clamp(170px,24vw,360px)!important;left:36%!important;bottom:-18%!important;background:radial-gradient(circle,rgba(35,194,190,.30),rgba(35,194,190,.10) 48%,transparent 74%)!important;animation:flyAiOrbGold 14s ease-in-out infinite alternate!important}' +
+                                                    '@keyframes flyAiEnergyFlow{0%{background-position:0% 10%;filter:hue-rotate(0deg)}50%{background-position:65% 90%;filter:hue-rotate(12deg)}100%{background-position:100% 15%;filter:hue-rotate(-8deg)}}' +
+                                                    '@keyframes flyAiOrbViolet{0%{transform:translate3d(-2vw,-1vh,0) scale(.82);opacity:.62}55%{transform:translate3d(24vw,15vh,0) scale(1.13);opacity:1}100%{transform:translate3d(39vw,4vh,0) scale(.96);opacity:.78}}' +
+                                                    '@keyframes flyAiOrbCyan{0%{transform:translate3d(2vw,2vh,0) scale(1.02);opacity:.58}50%{transform:translate3d(-23vw,-17vh,0) scale(.84);opacity:1}100%{transform:translate3d(-39vw,8vh,0) scale(1.12);opacity:.76}}' +
+                                                    '@keyframes flyAiOrbGold{0%{transform:translate3d(-5vw,3vh,0) scale(.82);opacity:.46}50%{transform:translate3d(12vw,-17vh,0) scale(1.2);opacity:.9}100%{transform:translate3d(27vw,-4vh,0) scale(.94);opacity:.62}}' +
+                                                    '@keyframes flyAiGridDrift{from{background-position:0 0,0 0}to{background-position:136px 68px,-136px 68px}}' +
+                                                    '@keyframes flyAiFieldDrift{from{transform:rotate(-20deg) scale(.86)}to{transform:rotate(24deg) scale(1.16)}}' +
+                                                    '@media(max-width:620px){.ai-motion-bg{animation-duration:11s!important;background-size:230% 230%!important}.ai-motion-bg:before{opacity:.58!important;animation-duration:8s!important}.ai-motion-bg:after{filter:blur(25px) saturate(160%)!important;opacity:.88!important;animation-duration:12s!important}.ai-motion-orb{filter:blur(32px) saturate(155%)!important}.ai-motion-orb.orb-violet{animation-duration:11s!important}.ai-motion-orb.orb-cyan{animation-duration:13s!important}.ai-motion-orb.orb-gold{animation-duration:15s!important}}' +
+                                                    '@media(prefers-reduced-motion:reduce){.ai-motion-bg,.ai-motion-bg:before,.ai-motion-bg:after,.ai-motion-orb.orb-violet,.ai-motion-orb.orb-cyan,.ai-motion-orb.orb-gold{animation-duration:24s!important;animation-timing-function:linear!important;animation-iteration-count:infinite!important}}';
+                                                  if(!document.querySelector('.ai-motion-bg')){
+                                                    var field=document.createElement('div');
+                                                    field.className='ai-motion-bg';
+                                                    field.setAttribute('aria-hidden','true');
+                                                    field.innerHTML='<span class="ai-motion-orb orb-violet"></span><span class="ai-motion-orb orb-cyan"></span><span class="ai-motion-orb orb-gold"></span>';
+                                                    (document.body||document.documentElement).insertBefore(field,(document.body||document.documentElement).firstChild);
+                                                  }
+                                                }
+                                                style.textContent=css;
+                                              }catch(e){console.warn('Fly Android visual compatibility:',e)}
                                             })();
                                             """.trimIndent(),
                                             null
