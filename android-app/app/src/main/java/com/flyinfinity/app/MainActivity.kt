@@ -538,13 +538,10 @@ private class FullSiteCache(private val context: Context) {
     fun intercept(request: WebResourceRequest): WebResourceResponse? {
         if (request.method != "GET") return null
         val path = normalizedPath(request.url) ?: return null
+        // Let WebView load live resources normally while online. The startup
+        // prefetcher refreshes the full mirror in the background without blocking pages.
+        if (hasValidatedInternet(context)) return null
         val file = cacheFile(path)
-        if (hasValidatedInternet(context)) {
-            fetch(path)?.let { bytes ->
-                save(path, bytes)
-                return response(path, bytes)
-            }
-        }
         return if (file.isFile) runCatching { response(path, file.readBytes()) }.getOrNull() else null
     }
 
