@@ -200,31 +200,64 @@ function playPieceSound(action){const ctx=unlockGameAudio();if(!ctx)return;const
 
 function playStepSound(step=0){const ctx=unlockGameAudio();if(!ctx)return;const now=ctx.currentTime,osc=ctx.createOscillator(),gain=ctx.createGain();osc.type="triangle";osc.frequency.setValueAtTime(420+(step%4)*55,now);osc.frequency.exponentialRampToValueAtTime(210,now+.055);gain.gain.setValueAtTime(.0001,now);gain.gain.linearRampToValueAtTime(.045,now+.006);gain.gain.exponentialRampToValueAtTime(.0001,now+.07);osc.connect(gain);gain.connect(ctx.destination);osc.start(now);osc.stop(now+.075);}
 function sleep(ms){return new Promise(resolve=>setTimeout(resolve,ms));}
-function pointDelta(board,token,square){const cell=board.querySelector('[data-square="'+square+'"]');if(!cell)return {x:0,y:0};const tr=token.getBoundingClientRect(),cr=cell.getBoundingClientRect();return {x:cr.left+cr.width/2-(tr.left+tr.width/2),y:cr.top+cr.height/2-(tr.top+tr.height/2)};}
+function squareOffset(board,token,square,baseRect){
+ const cell=board.querySelector('[data-square="'+square+'"]');
+ if(!cell)return {x:0,y:0};
+ const rect=cell.getBoundingClientRect();
+ return {x:rect.left+rect.width/2-(baseRect.left+baseRect.width/2),y:rect.top+rect.height/2-(baseRect.top+baseRect.height/2)};
+}
+function translateAt(point){return "translate("+point.x+"px,"+point.y+"px)";}
 async function animateMove(previous,next){
  if(!previous||!next||!next.lastAction||next.moveNumber===previous.moveNumber)return;
  const action=next.lastAction;playDiceSound();
- const dice=$("diceFace");if(dice?.animate)dice.animate([{transform:"rotate(-12deg) scale(.82)"},{transform:"rotate(9deg) scale(1.12)"},{transform:"rotate(0) scale(1)"}],{duration:420,easing:"cubic-bezier(.2,.8,.2,1)"});
+ const dice=$("diceFace");
+ if(dice?.animate)dice.animate([{transform:"rotate(-12deg) scale(.82)"},{transform:"rotate(9deg) scale(1.12)"},{transform:"rotate(0) scale(1)"}],{duration:420,easing:"cubic-bezier(.2,.8,.2,1)"});
  if(action.needSix||action.overshoot){await sleep(320);return;}
  const board=$("snakesBoard"),token=board.querySelector('.token[data-player="'+action.player+'"]');
  if(!token)return;
  if(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches){playPieceSound({kind:action.to===100?"finish":""});return;}
  const path=[];
- if(action.from===0){path.push(1);}
- else{const raw=action.from+action.value;for(let n=action.from+1;n<=Math.min(raw,100);n++)path.push(n);}
+ if(action.from===0)path.push(1);
+ else for(let n=action.from+1;n<=Math.min(action.from+action.value,100);n++)path.push(n);
  const raw=action.from===0?1:action.from+action.value;
+ const baseRect=token.getBoundingClientRect();
  let current=action.from===0?1:action.from;
- if(action.from===0&&action.transport?.from===1){const pop=token.animate([{transform:"scale(.25)",opacity:.3},{transform:"scale(1.18)",opacity:1},{transform:"scale(1)",opacity:1}],{duration:260,easing:"cubic-bezier(.2,.8,.2,1)"});await pop.finished.catch(()=>{});pop.cancel();playStepSound(0);}
+ let currentOffset=squareOffset(board,token,current,baseRect);
+
+ // The token is rendered in its authoritative destination cell. Keep it visible
+ // by translating that same DOM node from its old square; never remove/recreate it.
+ if(action.from===0){
+  token.style.transform=translateAt(currentOffset);
+  const pop=token.animate([{transform:translateAt(currentOffset)+" scale(.18)",opacity:.15},{transform:translateAt(currentOffset)+" scale(1.16)",opacity:1},{transform:translateAt(currentOffset)+" scale(1)",opacity:1}],{duration:280,easing:"cubic-bezier(.2,.8,.2,1)",fill:"forwards"});
+  await pop.finished.catch(()=>{});
+  token.style.transform=translateAt(currentOffset);pop.cancel();playStepSound(0);
+ }
  for(let i=0;i<path.length;i++){
-  const nextSquare=path[i],fromDelta=pointDelta(board,token,current),toDelta=pointDelta(board,token,nextSquare);playStepSound(i);
-  const animation=token.animate([{transform:"translate("+fromDelta.x+"px,"+fromDelta.y+"px) scale(1.08)"},{transform:"translate("+toDelta.x+"px,"+toDelta.y+"px) scale(1)"}],{duration:132,easing:"cubic-bezier(.22,.72,.24,1)",fill:"forwards"});
-  await animation.finished.catch(()=>{});animation.cancel();current=nextSquare;
+  const nextSquare=path[i],targetOffset=squareOffset(board,token,nextSquare,baseRect);
+  if(nextSquare===current){currentOffset=targetOffset;continue;}
+  playStepSound(i);
+  const animation=token.animate([
+   {transform:translateAt(currentOffset)+" scale(1)",offset:0},
+   {transform:translateAt({x:(currentOffset.x+targetOffset.x)/2,y:(currentOffset.y+targetOffset.y)/2})+" scale(1.12)",offset:.5},
+   {transform:translateAt(targetOffset)+" scale(1)",offset:1}
+  ],{duration:190,easing:"cubic-bezier(.22,.72,.24,1)",fill:"forwards"});
+  await animation.finished.catch(()=>{});
+  // Commit the visual position before cancelling WAAPI so there is no one-frame
+  // reset to the destination between consecutive squares.
+  token.style.transform=translateAt(targetOffset);animation.cancel();
+  current=nextSquare;currentOffset=targetOffset;
  }
  if(action.transport){
-  const a=pointDelta(board,token,raw),b=pointDelta(board,token,action.to);
-  const frames=[];for(let i=0;i<=5;i++){const p=i/5;frames.push({transform:"translate("+(a.x+(b.x-a.x)*p)+"px,"+(a.y+(b.y-a.y)*p)+"px) scale("+(1+Math.sin(p*Math.PI)*.12)+")"});}
-  const route=token.animate(frames,{duration:action.transport.type==="snake"?560:470,easing:action.transport.type==="snake"?"cubic-bezier(.35,0,.65,1)":"cubic-bezier(.2,.75,.25,1)",fill:"forwards"});
-  await route.finished.catch(()=>{});route.cancel();playPieceSound({kind:action.transport.type==="ladder"?"finish":"snake"});
+  const fromOffset=squareOffset(board,token,raw,baseRect),toOffset=squareOffset(board,token,action.to,baseRect);
+  const frames=[];
+  for(let i=0;i<=10;i++){
+   const p=i/10,eased=action.transport.type==="snake"?p*p*(3-2*p):p;
+   frames.push({transform:translateAt({x:fromOffset.x+(toOffset.x-fromOffset.x)*eased,y:fromOffset.y+(toOffset.y-fromOffset.y)*eased})+" scale("+(1+Math.sin(p*Math.PI)*.12)+")"});
+  }
+  const route=token.animate(frames,{duration:action.transport.type==="snake"?620:560,easing:action.transport.type==="snake"?"cubic-bezier(.35,0,.65,1)":"cubic-bezier(.2,.75,.25,1)",fill:"forwards"});
+  await route.finished.catch(()=>{});
+  token.style.transform=translateAt(toOffset);route.cancel();
+  playPieceSound({kind:action.transport.type==="ladder"?"finish":"snake"});
  }else if(action.to===100)playPieceSound({kind:"finish"});
 }
 
