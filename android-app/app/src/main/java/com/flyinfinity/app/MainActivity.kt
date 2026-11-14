@@ -1,14 +1,18 @@
 package com.flyinfinity.app
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color as AndroidColor
 import android.net.Uri
 import android.os.Bundle
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
+import android.webkit.ValueCallback
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -82,20 +86,48 @@ private fun isFlyInfinityUrl(uri: Uri): Boolean {
 }
 
 class MainActivity : ComponentActivity() {
+    private var pendingFileChooser: ValueCallback<Array<Uri>>? = null
+    private lateinit var filePickerLauncher: ActivityResultLauncher<Intent>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        filePickerLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            val callback = pendingFileChooser
+            pendingFileChooser = null
+            val selectedFiles = if (result.resultCode == Activity.RESULT_OK) {
+                WebChromeClient.FileChooserParams.parseResult(result.resultCode, result.data)
+            } else {
+                null
+            }
+            callback?.onReceiveValue(selectedFiles)
+        }
         window.statusBarColor = AndroidColor.rgb(15, 15, 15)
         window.navigationBarColor = AndroidColor.rgb(15, 15, 15)
         setContent {
             MaterialTheme(colorScheme = FlyColorScheme) {
-                FlyInfinityApp()
+                FlyInfinityApp { callback, params ->
+                    pendingFileChooser?.onReceiveValue(null)
+                    pendingFileChooser = callback
+                    try {
+                        filePickerLauncher.launch(params.createIntent())
+                        true
+                    } catch (_: Exception) {
+                        pendingFileChooser = null
+                        callback.onReceiveValue(null)
+                        false
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun FlyInfinityApp() {
+private fun FlyInfinityApp(
+    onFileChooser: (ValueCallback<Array<Uri>>, WebChromeClient.FileChooserParams) -> Boolean
+) {
     val context = LocalContext.current
     var destination by remember { mutableStateOf(AppDestination.Dashboard) }
     var webView by remember { mutableStateOf<WebView?>(null) }
@@ -212,6 +244,17 @@ private fun FlyInfinityApp() {
                             }
 
                             webChromeClient = object : WebChromeClient() {
+                                override fun onShowFileChooser(
+                                    webView: WebView?,
+                                    filePathCallback: ValueCallback<Array<Uri>>?,
+                                    fileChooserParams: FileChooserParams?
+                                ): Boolean {
+                                    if (filePathCallback == null || fileChooserParams == null) {
+                                        return false
+                                    }
+                                    return onFileChooser(filePathCallback, fileChooserParams)
+                                }
+
                                 override fun onProgressChanged(view: WebView, newProgress: Int) {
                                     isLoading = newProgress < 100
                                 }
