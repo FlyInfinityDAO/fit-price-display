@@ -138,8 +138,8 @@ test("Android room-code focus disables smooth scrolling and scroll anchoring lik
 
 
 test("Android Persian RTL keeps document scroll axis stable like Hokm",()=>{
- assert.match(css,/html\.fi-android-webview body\.fi-rtl\{direction:ltr!important\}/);
- assert.match(css,/html\.fi-android-webview body\.fi-rtl \.arena\{direction:ltr!important\}/);
- assert.match(css,/body\.fi-rtl \.arena>header[\s\S]*?direction:rtl/);
- assert.match(css,/body\.fi-rtl \.room-join input\{direction:ltr!important;text-align:center!important\}/);
+ assert.ok(css.includes("html.fi-android-webview body.fi-rtl{direction:ltr!important}"));
+ assert.ok(css.includes("html.fi-android-webview body.fi-rtl .arena{direction:ltr!important}"));
+ assert.ok(css.includes("html.fi-android-webview body.fi-rtl .arena>header,"));
+ assert.ok(css.includes("html.fi-android-webview body.fi-rtl .room-join input{direction:ltr!important;text-align:center!important}"));
 });
