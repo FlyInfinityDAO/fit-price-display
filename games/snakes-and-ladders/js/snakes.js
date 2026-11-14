@@ -233,9 +233,10 @@ function render(){
  validateGame(game);
  $("playersBar").dataset.count=String(game.players.length);
  $("playersBar").replaceChildren();
+ const highlightedTurn=motionBusy&&game.lastAction?.type==="roll"?game.lastAction.player:game.turn;
  game.players.forEach((p,i)=>{
   const chip=document.createElement("div");
-  chip.className="player-chip"+(i===game.turn&&game.status==="active"?" active":"");
+  chip.className="player-chip"+(i===highlightedTurn&&game.status==="active"?" active":"");
   chip.style.setProperty("--player",p.color);
   const dot=document.createElement("span");dot.className="player-dot";
   const name=document.createElement("strong");name.textContent=p.name;
@@ -273,8 +274,9 @@ function render(){
    board.append(cell);
   }
  }
- $("turnText").textContent=game.status==="finished"?game.players[game.winner].name:game.players[game.turn].name;
- $("turnDot").style.setProperty("--player",game.players[game.turn].color);
+ const displayedTurn=motionBusy&&game.lastAction?.type==="roll"?game.lastAction.player:game.turn;
+ $("turnText").textContent=game.status==="finished"?game.players[game.winner].name:game.players[displayedTurn].name;
+ $("turnDot").style.setProperty("--player",game.players[displayedTurn].color);
  $("diceFace").textContent=game.lastAction?.value||"–";
  $("rollBtn").disabled=motionBusy||game.status!=="active"||(onlineMode&&(game.players[game.turn]?.wallet!==wallet||socket?.readyState!==WebSocket.OPEN));
  $("gameMessage").textContent=game.status==="finished"?t("won").replace("{name}",game.players[game.winner].name):game.lastAction?.needSix?t("needSix"):game.lastAction?.transport?.type==="snake"?t("snake"):game.lastAction?.transport?.type==="ladder"?t("ladder"):game.lastAction?.overshoot?t("overshoot"):t("rollFirst");
