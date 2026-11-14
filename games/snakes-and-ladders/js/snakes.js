@@ -95,9 +95,9 @@ async function connectRoomSocket(){
   $("reconnectBtn").hidden=true;$("reconnectBtn").disabled=true;
   if(socket){try{socket.close();}catch{}socket=null;}
   const ticket=await api("/api/rooms/"+roomCode+"/ticket",null,true,"POST");
-  socket=new WebSocket(ticket.socketUrl);
-  socket.onopen=()=>{$("onlineStatus").textContent=t("connected");$("reconnectBtn").hidden=true;$("reconnectBtn").disabled=false;};
-  socket.onmessage=event=>{
+  const activeSocket=new WebSocket(ticket.socketUrl);socket=activeSocket;
+  activeSocket.onopen=()=>{if(socket!==activeSocket)return;$("onlineStatus").textContent=t("connected");$("reconnectBtn").hidden=true;$("reconnectBtn").disabled=false;};
+  activeSocket.onmessage=event=>{if(socket!==activeSocket)return;
    let message;try{message=JSON.parse(event.data);}catch{return;}
    if(message.type==="error"){$("onlineStatus").textContent=message.error;return;}
    if(!message.game)return;
@@ -106,8 +106,8 @@ async function connectRoomSocket(){
    if(room.status==="waiting"){show("onlineWaiting",true);show("boardWrap",false);show("gameControls",false);show("gameFootnote",false);renderWaitingSeats(room);$("gameMessage").textContent=t("waitingRoom");}
    else{show("onlineWaiting",false);show("boardWrap",true);show("gameControls",true);show("gameFootnote",true);render();if(game?.status==="finished")loadStats();}
   };
-  socket.onclose=()=>{if(onlineMode&&roomCode){$("onlineStatus").textContent=t("onlineError");$("reconnectBtn").hidden=false;$("reconnectBtn").disabled=false;}};
-  socket.onerror=()=>{if(onlineMode&&roomCode){$("onlineStatus").textContent=t("onlineError");$("reconnectBtn").hidden=false;$("reconnectBtn").disabled=false;}};
+  activeSocket.onclose=()=>{if(socket===activeSocket&&onlineMode&&roomCode){socket=null;$("onlineStatus").textContent=t("onlineError");$("reconnectBtn").hidden=false;$("reconnectBtn").disabled=false;}};
+  activeSocket.onerror=()=>{if(socket===activeSocket&&onlineMode&&roomCode){$("onlineStatus").textContent=t("onlineError");$("reconnectBtn").hidden=false;$("reconnectBtn").disabled=false;}};
  }catch(error){$("onlineStatus").textContent=error.message||t("onlineError");$("reconnectBtn").hidden=false;$("reconnectBtn").disabled=false;}
 }
 async function createOnlineRoom(){
@@ -131,7 +131,7 @@ function cpuTurn(){if(!game||game.status!=="active"||game.players[game.turn].kin
 function playerRoll(){if(onlineMode){if(socket?.readyState===WebSocket.OPEN&&game?.status==="active"&&game.players[game.turn]?.wallet===wallet)socket.send(JSON.stringify({type:"roll"}));return;}if(!game||game.status!=="active"||game.players[game.turn].kind!=="human")return;try{game=roll(game);render();if(game.status==="active"&&game.players[game.turn].kind==="cpu")cpuTurn();}catch(e){$("gameMessage").textContent=e.message;}}
 $("connectBrowserBtn").addEventListener("click",()=>connect("browser"));$("connectWalletBtn").addEventListener("click",()=>connect("wallet"));
 $("createRoomBtn").addEventListener("click",createOnlineRoom);$("joinRoomBtn").addEventListener("click",joinOnlineRoom);
-$("copyRoomCodeBtn").addEventListener("click",copyRoomCode);$("copyRoomBtn").addEventListener("click",copyRoomCode);
+$("copyRoomBtn").addEventListener("click",copyRoomCode);
 $("reconnectBtn").addEventListener("click",connectRoomSocket);
 $("roomCodeInput").addEventListener("input",e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-HJ-NP-Z2-9]/g,"").slice(0,6);});
 $("startLocalBtn").addEventListener("click",()=>start(Number($("localCount").value),Number($("localCount").value),"medium"));
