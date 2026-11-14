@@ -6,14 +6,14 @@ const root=new URL("../",import.meta.url);
 const html=readFileSync(new URL("index.html",root),"utf8");
 const js=readFileSync(new URL("js/snakes.js",root),"utf8");
 const css=readFileSync(new URL("css/snakes.css",root),"utf8");
-const ids=new Set([...html.matchAll(/\\bid=["']([^"']+)["']/g)].map(m=>m[1]));
+const ids=new Set([...html.matchAll(/\bid=["']([^"']+)["']/g)].map(m=>m[1]));
 
 test("every JavaScript element lookup exists in the page",()=>{
- const refs=[...new Set([...js.matchAll(/\\$\\(["']([^"']+)["']\\)/g)].map(m=>m[1]))];
+ const refs=[...new Set([...js.matchAll(/\$\(["']([^"']+)["']\)/g)].map(m=>m[1]))];
  assert.deepEqual(refs.filter(id=>!ids.has(id)),[]);
 });
 test("all visibility toggles point to real DOM elements",()=>{
- const refs=[...new Set([...js.matchAll(/show\\(["']([^"']+)["']/g)].map(m=>m[1]))];
+ const refs=[...new Set([...js.matchAll(/show\(["']([^"']+)["']/g)].map(m=>m[1]))];
  assert.deepEqual(refs.filter(id=>!ids.has(id)),[]);
 });
 test("records panel is outside the hidden game-mode grid",()=>{
