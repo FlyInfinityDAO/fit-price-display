@@ -19,6 +19,7 @@ import android.webkit.WebResourceResponse
 import android.webkit.ValueCallback
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.webkit.WebViewCompat
 import android.widget.Toast
 import java.io.File
 import java.net.HttpURLConnection
@@ -817,6 +818,29 @@ private class LanguageAssetCache(private val context: Context) {
     }
 }
 
+private const val WEBVIEW_MOTION_COMPATIBILITY_SCRIPT = """
+(function() {
+  try {
+    var originalMatchMedia = window.matchMedia.bind(window);
+    window.matchMedia = function(query) {
+      if (typeof query === 'string' && /prefers-reduced-motion\\s*:\\s*reduce/i.test(query)) {
+        return {
+          matches: false,
+          media: query,
+          onchange: null,
+          addListener: function() {},
+          removeListener: function() {},
+          addEventListener: function() {},
+          removeEventListener: function() {},
+          dispatchEvent: function() { return true; }
+        };
+      }
+      return originalMatchMedia(query);
+    };
+  } catch (_) {}
+})();
+"""
+
 class MainActivity : ComponentActivity() {
     private var pendingFileChooser: ValueCallback<Array<Uri>>? = null
     private lateinit var filePickerLauncher: ActivityResultLauncher<Intent>
@@ -999,6 +1023,11 @@ private fun FlyInfinityApp(
                     modifier = Modifier.fillMaxSize(),
                     factory = { viewContext ->
                         WebView(viewContext).apply {
+                            WebViewCompat.addDocumentStartJavaScript(
+                                this,
+                                WEBVIEW_MOTION_COMPATIBILITY_SCRIPT,
+                                setOf("https://flyinfinitydao.github.io")
+                            )
                             settings.javaScriptEnabled = true
                             settings.domStorageEnabled = true
                             settings.databaseEnabled = true
