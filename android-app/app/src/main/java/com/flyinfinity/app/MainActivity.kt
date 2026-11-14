@@ -22,6 +22,8 @@ import android.webkit.WebViewClient
 import android.widget.Toast
 import java.io.File
 import java.net.HttpURLConnection
+import java.net.URI
+import android.view.View
 import java.net.URL
 import java.security.MessageDigest
 import androidx.activity.ComponentActivity
@@ -241,6 +243,152 @@ private const val DASHBOARD_SNAPSHOT_SCRIPT = """
 })();
 """
 
+
+
+/**
+ * Mirrors the small set of third-party presentation/runtime assets used by
+ * site pages (Font Awesome, Google Fonts, Chart.js and ethers) for offline use.
+ * Only explicitly approved CDN hosts and asset paths are intercepted.
+ */
+private class ExternalAssetCache(private val context: Context) {
+    private val directory = File(context.filesDir, "fly-external-assets").apply { mkdirs() }
+    private val seeds = listOf(
+        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css",
+        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css",
+        "https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js",
+        "https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js",
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700;800&display=swap",
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap"
+    )
+
+    private fun isAllowed(url: String): Boolean {
+        val uri = runCatching { URI(url) }.getOrNull() ?: return false
+        if (uri.scheme != "https") return false
+        val host = uri.host?.lowercase() ?: return false
+        val path = uri.path.orEmpty()
+        return when (host) {
+            "cdnjs.cloudflare.com" ->
+                path.startsWith("/ajax/libs/font-awesome/") &&
+                    (path.endsWith(".css") || path.contains("/webfonts/"))
+            "cdn.jsdelivr.net" ->
+                path == "/npm/chart.js@4.4.0/dist/chart.umd.min.js" ||
+                    path == "/npm/ethers@5.7.2/dist/ethers.umd.min.js"
+            "fonts.googleapis.com" -> path == "/css2"
+            "fonts.gstatic.com" -> path.endsWith(".woff2") || path.endsWith(".woff")
+            else -> false
+        }
+    }
+
+    private fun cacheFile(url: String): File {
+        val digest = MessageDigest.getInstance("SHA-256")
+            .digest(url.toByteArray(Charsets.UTF_8))
+            .joinToString("") { "%02x".format(it) }
+        return File(directory, "$digest.asset")
+    }
+
+    private fun mimeType(url: String): String {
+        val path = runCatching { URI(url).path.orEmpty() }.getOrDefault("")
+        return when {
+            path.endsWith(".css") || path == "/css2" -> "text/css"
+            path.endsWith(".js") -> "application/javascript"
+            path.endsWith(".woff2") -> "font/woff2"
+            path.endsWith(".woff") -> "font/woff"
+            path.endsWith(".ttf") -> "font/ttf"
+            else -> "application/octet-stream"
+        }
+    }
+
+    private fun fetch(url: String): ByteArray? {
+        if (!isAllowed(url)) return null
+        val connection = (URL(url).openConnection() as? HttpURLConnection) ?: return null
+        return try {
+            connection.requestMethod = "GET"
+            connection.connectTimeout = 10000
+            connection.readTimeout = 20000
+            connection.instanceFollowRedirects = true
+            connection.setRequestProperty(
+                "User-Agent",
+                "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/120.0.0.0 Mobile Safari/537.36"
+            )
+            if (connection.responseCode in 200..299) {
+                connection.inputStream.use { it.readBytes() }
+            } else null
+        } catch (_: Exception) {
+            null
+        } finally {
+            connection.disconnect()
+        }
+    }
+
+    private fun save(url: String, bytes: ByteArray) {
+        runCatching {
+            val target = cacheFile(url)
+            val temp = File(directory, target.name + ".tmp")
+            temp.writeBytes(bytes)
+            if (!temp.renameTo(target)) {
+                target.writeBytes(bytes)
+                temp.delete()
+            }
+        }
+    }
+
+    private fun response(url: String, bytes: ByteArray) = WebResourceResponse(
+        mimeType(url),
+        if (mimeType(url).startsWith("text/") || mimeType(url).contains("javascript")) "UTF-8" else null,
+        200,
+        "OK",
+        mapOf("Cache-Control" to "no-store"),
+        bytes.inputStream()
+    )
+
+    fun intercept(request: WebResourceRequest): WebResourceResponse? {
+        if (request.method != "GET") return null
+        val url = request.url.toString()
+        if (!isAllowed(url) || hasValidatedInternet(context)) return null
+        val file = cacheFile(url)
+        return if (file.isFile) runCatching { response(url, file.readBytes()) }.getOrNull() else null
+    }
+
+    /** Downloads CSS first, then the font files referenced by those stylesheets. */
+    fun prefetchAll() {
+        if (!hasValidatedInternet(context)) return
+        Thread {
+            val executor = java.util.concurrent.Executors.newFixedThreadPool(3)
+            try {
+                seeds.forEach { seed ->
+                    executor.submit {
+                        val bytes = fetch(seed) ?: return@submit
+                        save(seed, bytes)
+                        if (mimeType(seed) == "text/css") {
+                            val css = runCatching { bytes.toString(Charsets.UTF_8) }.getOrDefault("")
+                            val dependencies = Regex("""url\(\s*(['"]?)([^'")]+)\1\s*\)""")
+                                .findAll(css)
+                                .mapNotNull { match ->
+                                    val raw = match.groupValues[2].trim()
+                                    if (raw.startsWith("data:")) null
+                                    else runCatching { URI(seed).resolve(raw).toString() }.getOrNull()
+                                }
+                                .filter { isAllowed(it) }
+                                .distinct()
+                            dependencies.forEach { dependency ->
+                                if (hasValidatedInternet(context)) {
+                                    fetch(dependency)?.let { save(dependency, it) }
+                                }
+                            }
+                        }
+                    }
+                }
+            } finally {
+                executor.shutdown()
+                try {
+                    executor.awaitTermination(5, java.util.concurrent.TimeUnit.MINUTES)
+                } catch (_: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                }
+            }
+        }.apply { name = "FlyExternalAssetPrefetch"; isDaemon = true }.start()
+    }
+}
 
 /**
  * App-only offline mirror of every static site page and its repository assets.
@@ -713,6 +861,7 @@ private fun FlyInfinityApp(
     val languageAssetCache = remember(context) { LanguageAssetCache(context) }
     val dashboardDataCache = remember(context) { DashboardDataCache(context) }
     val fullSiteCache = remember(context) { FullSiteCache(context) }
+    val externalAssetCache = remember(context) { ExternalAssetCache(context) }
     var destination by remember { mutableStateOf(AppDestination.Dashboard) }
     var webView by remember { mutableStateOf<WebView?>(null) }
     var isLoading by remember { mutableStateOf(true) }
@@ -840,13 +989,16 @@ private fun FlyInfinityApp(
                             settings.mixedContentMode =
                                 android.webkit.WebSettings.MIXED_CONTENT_NEVER_ALLOW
                             settings.cacheMode = android.webkit.WebSettings.LOAD_DEFAULT
+                            // Keep CSS backdrop-filter/glass effects composited in offline WebView pages.
+                            setLayerType(View.LAYER_TYPE_HARDWARE, null)
 
                             webViewClient = object : WebViewClient() {
                                 override fun shouldInterceptRequest(
                                     view: WebView,
                                     request: WebResourceRequest
                                 ): WebResourceResponse? {
-                                    return fullSiteCache.intercept(request)
+                                    return externalAssetCache.intercept(request)
+                                        ?: fullSiteCache.intercept(request)
                                         ?: dashboardDataCache.intercept(request)
                                         ?: languageAssetCache.intercept(request)
                                         ?: super.shouldInterceptRequest(view, request)
@@ -994,7 +1146,10 @@ private fun FlyInfinityApp(
 
                             webView = this
                             applyWebCachePolicy(this, context)
-                            if (hasValidatedInternet(context)) fullSiteCache.prefetchAll()
+                            if (hasValidatedInternet(context)) {
+                                fullSiteCache.prefetchAll()
+                                externalAssetCache.prefetchAll()
+                            }
                             loadUrl(SITE_ROOT)
                         }
                     },
