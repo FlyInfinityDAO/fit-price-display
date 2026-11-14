@@ -1020,43 +1020,39 @@ html body.fi-neon-ludo footer{color:#C1CDE5;text-shadow:0 1px 8px rgba(3,8,25,.5
 }
 
 
-/* Active turn: illuminate the OUTER FRAME of the current player's card. */
+/* Active turn frame — explicit outline plus a separate glowing border layer. */
 html body.fi-neon-ludo .arena .players-bar .player-chip.active{
-  position:relative;
-  z-index:2;
+  position:relative!important;
+  z-index:5!important;
+  overflow:visible!important;
+  outline:2px solid var(--player)!important;
+  outline-offset:2px!important;
   border:2px solid var(--player)!important;
-  background:rgba(12,20,42,.94)!important;
-  box-shadow:
-    0 0 0 2px color-mix(in srgb,var(--player) 82%,transparent),
-    0 0 12px 3px color-mix(in srgb,var(--player) 96%,transparent),
-    0 0 26px 6px color-mix(in srgb,var(--player) 72%,transparent),
-    0 0 44px 9px color-mix(in srgb,var(--player) 38%,transparent),
-    inset 0 0 12px color-mix(in srgb,var(--player) 18%,transparent)!important;
-  animation:ludoPlayerFrameNeon 1.6s ease-in-out infinite;
+  background:rgba(9,17,36,.98)!important;
+  box-shadow:0 0 8px var(--player),0 0 18px var(--player),0 0 32px var(--player)!important;
+}
+html body.fi-neon-ludo .arena .players-bar .player-chip.active::after{
+  content:"";
+  position:absolute;
+  inset:-4px;
+  z-index:6;
+  border:1px solid var(--player);
+  border-radius:15px;
+  pointer-events:none;
+  box-shadow:0 0 7px var(--player),0 0 16px var(--player),0 0 28px var(--player);
+  animation:ludoPlayerFramePulse 1.5s ease-in-out infinite alternate;
 }
 html body.fi-neon-ludo .arena .players-bar .player-chip.active .player-dot{
   box-shadow:0 0 8px var(--player),0 0 18px var(--player),0 0 28px var(--player)!important;
 }
 html body.fi-neon-ludo .arena .players-bar .player-chip.active strong{
   color:#fff!important;
-  text-shadow:0 0 8px color-mix(in srgb,var(--player) 75%,transparent);
+  text-shadow:0 0 8px var(--player);
 }
-@keyframes ludoPlayerFrameNeon{
-  0%,100%{
-    box-shadow:0 0 0 2px color-mix(in srgb,var(--player) 72%,transparent),
-      0 0 10px 2px color-mix(in srgb,var(--player) 78%,transparent),
-      0 0 22px 5px color-mix(in srgb,var(--player) 48%,transparent),
-      0 0 36px 8px color-mix(in srgb,var(--player) 25%,transparent),
-      inset 0 0 9px color-mix(in srgb,var(--player) 12%,transparent);
-  }
-  50%{
-    box-shadow:0 0 0 2px var(--player),
-      0 0 16px 4px color-mix(in srgb,var(--player) 100%,transparent),
-      0 0 34px 8px color-mix(in srgb,var(--player) 82%,transparent),
-      0 0 52px 12px color-mix(in srgb,var(--player) 48%,transparent),
-      inset 0 0 15px color-mix(in srgb,var(--player) 22%,transparent);
-  }
+@keyframes ludoPlayerFramePulse{
+  from{opacity:.72;filter:drop-shadow(0 0 2px var(--player))}
+  to{opacity:1;filter:drop-shadow(0 0 8px var(--player))}
 }
 @media(prefers-reduced-motion:reduce){
-  html body.fi-neon-ludo .arena .players-bar .player-chip.active{animation:none!important}
+  html body.fi-neon-ludo .arena .players-bar .player-chip.active::after{animation:none!important}
 }
