@@ -3,7 +3,8 @@
    an unexpected jump to the document top while the room input is focused. */
 (function(){
  "use strict";
- if(!/Android|iPhone|iPad|iPod/i.test(navigator.userAgent||""))return;
+ if(!/Android/i.test(navigator.userAgent||""))return;
+ document.documentElement.classList.add("fi-android-webview");
  let savedScrollY=0,roomInputActive=false,restoreTimer=null,restoring=false;
  const roomInput=()=>document.getElementById("roomCodeInput");
  const pageY=()=>window.scrollY||document.documentElement.scrollTop||document.body.scrollTop||0;
