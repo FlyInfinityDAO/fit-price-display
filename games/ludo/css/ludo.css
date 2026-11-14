@@ -1020,46 +1020,43 @@ html body.fi-neon-ludo footer{color:#C1CDE5;text-shadow:0 1px 8px rgba(3,8,25,.5
 }
 
 
-/* Restore the per-player turn neon above the board.
-   Keep the active color ring stronger than the shared glass-card treatment. */
-html body.fi-neon-ludo .arena .player-chip.active{
+/* Active turn: illuminate the OUTER FRAME of the current player's card. */
+html body.fi-neon-ludo .arena .players-bar .player-chip.active{
   position:relative;
-  isolation:isolate;
-  border:1px solid var(--player)!important;
-  background:linear-gradient(135deg,
-    color-mix(in srgb,var(--player) 24%,rgba(17,28,53,.82)),
-    rgba(69,108,255,.18) 62%,rgba(139,92,246,.14))!important;
+  z-index:2;
+  border:2px solid var(--player)!important;
+  background:rgba(12,20,42,.94)!important;
   box-shadow:
-    0 0 0 1px color-mix(in srgb,var(--player) 62%,transparent),
-    0 0 13px color-mix(in srgb,var(--player) 76%,transparent),
-    0 0 28px color-mix(in srgb,var(--player) 42%,transparent),
-    inset 0 0 14px color-mix(in srgb,var(--player) 18%,transparent),
-    inset 0 1px 0 rgba(255,255,255,.24)!important;
-  animation:ludoActivePlayerNeon 1.9s ease-in-out infinite;
+    0 0 0 2px color-mix(in srgb,var(--player) 82%,transparent),
+    0 0 12px 3px color-mix(in srgb,var(--player) 96%,transparent),
+    0 0 26px 6px color-mix(in srgb,var(--player) 72%,transparent),
+    0 0 44px 9px color-mix(in srgb,var(--player) 38%,transparent),
+    inset 0 0 12px color-mix(in srgb,var(--player) 18%,transparent)!important;
+  animation:ludoPlayerFrameNeon 1.6s ease-in-out infinite;
 }
-html body.fi-neon-ludo .arena .player-chip.active .player-dot{
-  box-shadow:0 0 7px var(--player),0 0 15px var(--player),0 0 24px var(--player)!important;
+html body.fi-neon-ludo .arena .players-bar .player-chip.active .player-dot{
+  box-shadow:0 0 8px var(--player),0 0 18px var(--player),0 0 28px var(--player)!important;
 }
-html body.fi-neon-ludo .arena .player-chip.active strong{
-  color:#FFFFFF!important;
-  text-shadow:0 0 8px color-mix(in srgb,var(--player) 72%,transparent);
+html body.fi-neon-ludo .arena .players-bar .player-chip.active strong{
+  color:#fff!important;
+  text-shadow:0 0 8px color-mix(in srgb,var(--player) 75%,transparent);
 }
-@keyframes ludoActivePlayerNeon{
+@keyframes ludoPlayerFrameNeon{
   0%,100%{
-    box-shadow:0 0 0 1px color-mix(in srgb,var(--player) 52%,transparent),
-      0 0 10px color-mix(in srgb,var(--player) 62%,transparent),
-      0 0 20px color-mix(in srgb,var(--player) 32%,transparent),
-      inset 0 0 10px color-mix(in srgb,var(--player) 12%,transparent),
-      inset 0 1px 0 rgba(255,255,255,.22);
+    box-shadow:0 0 0 2px color-mix(in srgb,var(--player) 72%,transparent),
+      0 0 10px 2px color-mix(in srgb,var(--player) 78%,transparent),
+      0 0 22px 5px color-mix(in srgb,var(--player) 48%,transparent),
+      0 0 36px 8px color-mix(in srgb,var(--player) 25%,transparent),
+      inset 0 0 9px color-mix(in srgb,var(--player) 12%,transparent);
   }
   50%{
-    box-shadow:0 0 0 1px color-mix(in srgb,var(--player) 82%,transparent),
-      0 0 17px color-mix(in srgb,var(--player) 92%,transparent),
-      0 0 34px color-mix(in srgb,var(--player) 54%,transparent),
-      inset 0 0 17px color-mix(in srgb,var(--player) 22%,transparent),
-      inset 0 1px 0 rgba(255,255,255,.28);
+    box-shadow:0 0 0 2px var(--player),
+      0 0 16px 4px color-mix(in srgb,var(--player) 100%,transparent),
+      0 0 34px 8px color-mix(in srgb,var(--player) 82%,transparent),
+      0 0 52px 12px color-mix(in srgb,var(--player) 48%,transparent),
+      inset 0 0 15px color-mix(in srgb,var(--player) 22%,transparent);
   }
 }
 @media(prefers-reduced-motion:reduce){
-  html body.fi-neon-ludo .arena .player-chip.active{animation:none!important}
+  html body.fi-neon-ludo .arena .players-bar .player-chip.active{animation:none!important}
 }
