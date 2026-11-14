@@ -28,5 +28,5 @@ jobs:
           node --check games/snakes-and-ladders/worker/src/index.js
           node --check games/snakes-and-ladders/worker/src/security.js
           node --check games/snakes-and-ladders/worker/src/snakes-room.js
-          node --input-type=module --test games/snakes-and-ladders/worker/tests/rules.test.mjs
+          node --test games/snakes-and-ladders/worker/tests/rules.test.mjs
           node --experimental-default-type=module --test games/snakes-and-ladders/js/snakes-engine.test.js
