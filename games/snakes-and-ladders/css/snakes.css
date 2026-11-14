@@ -550,3 +550,14 @@ html.fi-android-webview body .arena{
  position:relative;
  z-index:1;
 }
+
+/* Android TokenPocket RTL IME fix — mirror the proven DApp pages.
+   Prevent the fixed page backdrop from being promoted while the keyboard opens;
+   that WebView layer promotion can reset the native document scroll position. */
+@media(max-width:768px){
+  html.fi-android-webview body.fi-rtl::before{
+    transform:none!important;
+    -webkit-transform:none!important;
+    will-change:auto!important;
+  }
+}
