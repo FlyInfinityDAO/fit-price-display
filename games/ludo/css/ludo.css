@@ -1057,6 +1057,45 @@ html body.fi-neon-ludo .arena .players-bar .player-chip.active strong{
   html body.fi-neon-ludo .arena .players-bar .player-chip.active::after{animation:none!important}
 }
 
+/* Android keyboard/scroll stability: use the same LTR document scroll axis as Hokm and Snakes & Ladders. */
+html.fi-android-webview{
+  min-height:100%;
+  scroll-behavior:auto!important;
+  overflow-anchor:none!important;
+}
+html.fi-android-webview body,
+html.fi-android-webview body .arena,
+html.fi-android-webview .mode-grid,
+html.fi-android-webview .mode-card,
+html.fi-android-webview .join-row{
+  overflow-anchor:none!important;
+}
+@media(max-width:10000px){
+  html.fi-android-webview[dir="rtl"]{direction:ltr!important}
+  html.fi-android-webview body.fi-rtl{direction:ltr!important}
+  html.fi-android-webview body.fi-rtl .arena{direction:ltr!important}
+  html.fi-android-webview body.fi-rtl .arena>header,
+  html.fi-android-webview body.fi-rtl .arena>section,
+  html.fi-android-webview body.fi-rtl .arena>footer,
+  html.fi-android-webview body.fi-rtl .arena>.mode-card,
+  html.fi-android-webview body.fi-rtl .arena>.mode-grid{direction:rtl}
+  html.fi-android-webview body.fi-rtl .join-row{direction:rtl}
+  html.fi-android-webview body.fi-rtl .join-row input{
+    direction:ltr!important;
+    text-align:center!important;
+  }
+}
+html.fi-android-webview body{
+  min-height:100vh;
+  min-height:100dvh;
+  position:relative;
+  isolation:isolate;
+}
+html.fi-android-webview body .arena{
+  position:relative;
+  z-index:1;
+}
+
 /* Android TokenPocket RTL IME fix — identical to the proven Snakes & Ladders rule. */
 @media(max-width:768px){
   html.fi-android-webview body.fi-rtl::before{
