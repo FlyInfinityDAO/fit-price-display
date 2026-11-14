@@ -1,2 +1,180 @@
 .fi-snakes{color:#f0f6ff}.fi-snakes .arena{max-width:1240px}.fi-snakes .hero h1{background:linear-gradient(105deg,#00d9ff,#456cff 48%,#8b5cf6);background-clip:text;-webkit-background-clip:text;color:transparent}.fi-snakes .access-card,.fi-snakes .mode-card,.fi-snakes .game-panel{color:#f0f6ff!important;border:1px solid #456cff88!important;background:linear-gradient(135deg,#111c35f2,#18274ce8)!important;backdrop-filter:blur(18px);box-shadow:0 14px 38px #03081966,inset 0 1px #ffffff12}.fi-snakes .access-card{width:min(100%,850px);margin:0 auto 20px;padding:25px;border-radius:24px}.fi-snakes .card-heading,.fi-snakes .game-heading{display:flex;justify-content:space-between;align-items:center;gap:14px}.fi-snakes .intro,.fi-snakes .mode-card p{color:#c1cde5;line-height:1.75}.fi-snakes .wallet-connect-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0}.fi-snakes button,.fi-snakes select{font:inherit}.fi-snakes .primary-btn,.fi-snakes .secondary-btn,.fi-snakes .danger-btn{min-height:42px;padding:10px 16px;border-radius:12px;cursor:pointer;font-weight:800}.fi-snakes .primary-btn{color:#fff;border:1px solid #00d9ff;background:linear-gradient(115deg,#00aeca,#456cff 70%,#8b5cf6);box-shadow:0 6px 20px #456cff40}.fi-snakes .secondary-btn{color:#e9f4ff;border:1px solid #00d9ff70;background:#00d9ff12}.fi-snakes .danger-btn{color:#ffd6dd;border:1px solid #ff536b77;background:#ff536b16}.fi-snakes button:disabled{opacity:.45;cursor:not-allowed}.fi-snakes select{width:100%;min-height:40px;margin:5px 0 10px;padding:8px 11px;color:#eef5ff;background:#101b37;border:1px solid #6b82bd66;border-radius:10px}.fi-snakes .status,.fi-snakes .room-status{color:#c1cde5;font-size:13px;overflow-wrap:anywhere}.fi-snakes .check-row{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid #00d9ff25;border-radius:13px}.fi-snakes .check-row small,.fi-snakes .check-row strong{display:block}.fi-snakes .check-row small{color:#b9c7df}.fi-snakes .mark{margin-inline-start:auto}.fi-snakes .eligible-panel{display:flex;justify-content:space-between;padding:12px;border:1px solid #00d69b77;border-radius:12px;background:#00d69b12}.fi-snakes .denied-panel{padding:12px;color:#ffc3cc;border:1px solid #ff536b77;border-radius:12px}.fi-snakes [hidden]{display:none!important}.fi-snakes .mode-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:20px 0}.fi-snakes .mode-card{padding:20px;border-radius:20px;min-width:0}.fi-snakes .mode-card h2{margin:8px 0;font-size:21px}.fi-snakes .mode-card p{min-height:64px}.fi-snakes .mode-card label{display:block;margin:10px 0 5px;color:#d9e7ff;font-size:12px}.fi-snakes .mode-card>.primary-btn{width:100%;margin-top:8px}.fi-snakes .coming-soon{display:inline-block;padding:8px 12px;border:1px solid #00d9ff55;border-radius:10px;color:#8eeaff;font-size:12px}.fi-snakes .game-panel{padding:20px;border-radius:24px;margin:18px 0}.fi-snakes .game-heading h2{margin:4px 0}.fi-snakes .game-heading-actions{display:flex;gap:8px}.fi-snakes .players-bar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:16px 0}.fi-snakes .player-chip{display:flex;align-items:center;gap:8px;min-width:0;padding:10px;border:1px solid #ffffff18;border-radius:12px;background:#ffffff08}.fi-snakes .player-chip.active{border-color:var(--player);box-shadow:0 0 18px color-mix(in srgb,var(--player) 45%,transparent),0 0 30px color-mix(in srgb,var(--player) 20%,transparent)}.fi-snakes .player-dot,.fi-snakes .turn-dot{width:12px;height:12px;flex:0 0 12px;border-radius:50%;background:var(--player);box-shadow:0 0 12px var(--player)}.fi-snakes .player-chip strong{font-size:12px;overflow:hidden;text-overflow:ellipsis}.fi-snakes .board-wrap{width:100%;display:grid;place-items:center;overflow:hidden}.fi-snakes .snakes-board{width:min(100%,760px);aspect-ratio:1;display:grid;grid-template-columns:repeat(10,minmax(0,1fr));grid-template-rows:repeat(10,minmax(0,1fr));gap:2px;padding:7px;border:2px solid #6e8cff;border-radius:18px;background:#0a142d;box-shadow:0 0 35px #456cff24,inset 0 0 24px #00d9ff12}.fi-snakes .square{position:relative;display:flex;align-items:flex-start;justify-content:flex-start;min-width:0;min-height:0;padding:3px;background:linear-gradient(145deg,#e9f0fb,#cbd8ee);color:#263653;border:1px solid #9cafd0;border-radius:4px;font-size:clamp(8px,1.1vw,13px);font-weight:800}.fi-snakes .square:nth-child(odd){background:linear-gradient(145deg,#dce8f8,#bacbe5)}.fi-snakes .square.endpoint{background:linear-gradient(145deg,#e7c978,#ad8740);color:#18233d}.fi-snakes .square .token-stack{position:absolute;inset:22% 4% 4%;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:2px}.fi-snakes .token{width:clamp(10px,2.2vw,22px);height:clamp(10px,2.2vw,22px);border-radius:50%;border:2px solid #fff;box-shadow:0 2px 6px #0009,inset 0 2px 4px #fff9}.fi-snakes .route-art{position:absolute;inset:0;pointer-events:none;display:grid;place-items:center;font-size:clamp(10px,2.2vw,24px);opacity:.8;text-shadow:0 1px 3px #fff}.fi-snakes .game-controls{display:grid;grid-template-columns:1fr auto 1.4fr;align-items:center;gap:16px;margin-top:18px;padding:14px;border:1px solid #456cff55;border-radius:16px;background:#0b1734}.fi-snakes .turn-info{display:flex;align-items:center;gap:10px}.fi-snakes .turn-info small,.fi-snakes .turn-info strong{display:block}.fi-snakes .turn-info small{font-size:9px;color:#aabbd9;letter-spacing:.12em}.fi-snakes .dice-control{display:flex;align-items:center;gap:10px}.fi-snakes .dice-face{width:48px;height:48px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(145deg,#fff,#cbd8ee);color:#111c35;font-size:27px;font-weight:900;box-shadow:0 4px 12px #0006}.fi-snakes .game-message{color:#d7e7ff;font-size:13px}.fi-snakes .game-footnote{text-align:center;margin-top:14px;color:#aabbd9;font-size:11px}.fi-snakes footer{text-align:center;font-size:11px;padding:20px 12px;color:#c1cde5}@media(max-width:850px){.fi-snakes .mode-grid{grid-template-columns:1fr 1fr}.fi-snakes .mode-card:first-child{grid-column:1/-1}.fi-snakes .game-controls{grid-template-columns:1fr auto}.fi-snakes .game-message{grid-column:1/-1}}@media(max-width:600px){body.fi-snakes{padding:10px}.fi-snakes .topbar{padding:9px;gap:6px}.fi-snakes .topbar-actions{gap:5px}.fi-snakes .network{display:none}.fi-snakes .access-card{padding:15px}.fi-snakes .wallet-connect-options,.fi-snakes .mode-grid{grid-template-columns:1fr}.fi-snakes .mode-card:first-child{grid-column:auto}.fi-snakes .game-panel{padding:10px}.fi-snakes .game-heading{align-items:flex-start;flex-direction:column}.fi-snakes .game-heading-actions{width:100%}.fi-snakes .game-heading-actions button{flex:1}.fi-snakes .snakes-board{gap:1px;padding:4px;border-radius:12px}.fi-snakes .square{padding:2px;font-size:8px}.fi-snakes .token{width:clamp(9px,2.6vw,17px);height:clamp(9px,2.6vw,17px);border-width:1px}.fi-snakes .game-controls{grid-template-columns:minmax(0,1fr) auto;gap:9px;padding:10px}.fi-snakes .turn-info strong{font-size:12px}.fi-snakes .dice-control .primary-btn{padding-inline:9px;font-size:12px}}@media(prefers-reduced-motion:reduce){.fi-snakes *{animation:none!important;transition:none!important}}
 .fi-snakes .online-room-actions{margin-top:12px}.fi-snakes .room-join{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:8px}.fi-snakes .room-join input{min-width:0;width:100%;padding:10px 12px;border:1px solid #6b82bd66;border-radius:10px;background:#101b37;color:#eef5ff;font:inherit;text-transform:uppercase}.fi-snakes .stats-card{grid-column:1/-1}.fi-snakes .stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.fi-snakes .stats-grid>div{padding:12px;border:1px solid #00d9ff25;border-radius:12px;background:#ffffff08}.fi-snakes .stats-grid small,.fi-snakes .stats-grid strong{display:block}.fi-snakes .stats-grid small{color:#aabbd9}.fi-snakes .stats-grid strong{margin-top:5px;font-size:18px}.fi-snakes .leaderboard-list{display:grid;gap:6px}.fi-snakes .leader-row{padding:8px 10px;border:1px solid #ffffff16;border-radius:9px;color:#d7e7ff;font-size:12px}.fi-snakes .online-waiting{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;margin:12px 0;padding:18px;border:1px solid #00d9ff55;border-radius:14px;background:#00d9ff0a}.fi-snakes .online-waiting strong{font-size:24px;letter-spacing:.18em;color:#8eeaff}.fi-snakes .online-waiting p{margin:0;color:#c1cde5}@media(max-width:600px){.fi-snakes .room-join{grid-template-columns:1fr}.fi-snakes .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* Shared Fly Infinity Games page chrome, copied from Ludo. Board-specific styles above remain untouched. */
+/* Unified Fly Games glass system — Ludo page chrome only.
+   Deliberately excludes the Ludo board, cells, tokens and board geometry. */
+html body.fi-neon-ludo{
+  --fi-ludo-glass-border:rgba(190,225,255,.26);
+  --fi-ludo-glass-copy:#F0F6FF;
+  --fi-ludo-glass-muted:#C1CDE5;
+  color:var(--fi-ludo-glass-copy);
+}
+html body.fi-neon-ludo .arena > :is(.topbar,.hero,.access-card,.game-panel,.stats-panel){
+  color:var(--fi-ludo-glass-copy)!important;
+  border:1px solid var(--fi-ludo-glass-border)!important;
+  background:linear-gradient(135deg,rgba(17,28,53,.28),rgba(24,39,76,.22) 52%,rgba(69,108,255,.13))!important;
+  -webkit-backdrop-filter:blur(28px) saturate(185%) contrast(108%)!important;
+  backdrop-filter:blur(28px) saturate(185%) contrast(108%)!important;
+  box-shadow:0 16px 42px rgba(3,8,25,.22),inset 0 1px 0 rgba(255,255,255,.20),inset 0 -1px 0 rgba(0,217,255,.08),0 0 24px rgba(69,108,255,.10)!important;
+}
+html body.fi-neon-ludo .arena > .topbar{border-color:rgba(0,217,255,.34)!important}
+html body.fi-neon-ludo .arena > .hero{border-color:rgba(139,92,246,.34)!important}
+html body.fi-neon-ludo .arena > .access-card,
+html body.fi-neon-ludo .arena > .game-panel{border-color:rgba(0,217,255,.36)!important}
+html body.fi-neon-ludo .arena > .stats-panel{border-color:rgba(139,92,246,.34)!important}
+
+/* All post-wallet and in-game information surfaces share one translucent treatment. */
+html body.fi-neon-ludo .arena :is(.mode-card,.check-row,.eligible-panel,.denied-panel,
+  .player-chip,.waiting-panel,.game-controls,.turn-info,.dice-control,.game-message,
+  .game-footnote,.stats-grid>div,.leader-row,#statsStatus,.room-status){
+  color:var(--fi-ludo-glass-copy)!important;
+  border:1px solid rgba(190,225,255,.24)!important;
+  background:linear-gradient(135deg,rgba(17,28,53,.29),rgba(69,108,255,.13) 58%,rgba(139,92,246,.10))!important;
+  -webkit-backdrop-filter:blur(20px) saturate(180%)!important;
+  backdrop-filter:blur(20px) saturate(180%)!important;
+  box-shadow:0 8px 22px rgba(3,8,25,.16),inset 0 1px 0 rgba(255,255,255,.17),0 0 14px rgba(69,108,255,.07)!important;
+}
+html body.fi-neon-ludo .mode-card{border-radius:20px!important}
+html body.fi-neon-ludo .mode-card h2,
+html body.fi-neon-ludo .stats-panel h2,
+html body.fi-neon-ludo .game-heading h2{color:#F4F8FF!important}
+html body.fi-neon-ludo .arena :is(.intro,.mode-card p,.mode-card label,.status,.room-status,
+  .check-row small,.game-message,.game-footnote,.turn-info small,.stats-wallet){
+  color:var(--fi-ludo-glass-muted)!important;
+}
+html body.fi-neon-ludo .arena :is(.eyebrow,.check-row strong,.stats-panel h3){color:#DCEBFF}
+html body.fi-neon-ludo .eligible-panel{
+  border-color:rgba(0,217,255,.48)!important;
+  background:linear-gradient(120deg,rgba(0,217,255,.13),rgba(69,108,255,.12),rgba(139,92,246,.10))!important;
+}
+html body.fi-neon-ludo .denied-panel{
+  border-color:rgba(255,115,135,.62)!important;
+  background:linear-gradient(120deg,rgba(130,35,75,.28),rgba(69,30,82,.22))!important;
+}
+
+/* Unified controls: translucent fields, blue-violet glass buttons, clear action hierarchy. */
+html body.fi-neon-ludo .arena :is(select,input){
+  color:#F0F6FF!important;
+  border:1px solid rgba(160,220,255,.30)!important;
+  background:rgba(17,28,53,.34)!important;
+  -webkit-backdrop-filter:blur(22px) saturate(180%)!important;
+  backdrop-filter:blur(22px) saturate(180%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 6px 18px rgba(3,8,25,.12)!important;
+}
+html body.fi-neon-ludo .arena select option{background:#111c35;color:#F0F6FF}
+html body.fi-neon-ludo .arena :is(select,input):focus-visible{
+  outline:2px solid rgba(0,217,255,.78)!important;outline-offset:2px!important;
+  border-color:rgba(0,217,255,.78)!important;
+}
+html body.fi-neon-ludo .arena :is(.primary-btn,.secondary-btn,.danger-btn){
+  min-height:44px;
+  border:1px solid rgba(190,225,255,.34)!important;
+  border-radius:12px!important;
+  color:#F0F6FF!important;
+  background:linear-gradient(125deg,rgba(69,108,255,.25),rgba(139,92,246,.19))!important;
+  -webkit-backdrop-filter:blur(18px) saturate(180%)!important;
+  backdrop-filter:blur(18px) saturate(180%)!important;
+  box-shadow:0 7px 20px rgba(3,8,25,.16),inset 0 1px 0 rgba(255,255,255,.20)!important;
+  text-shadow:0 1px 8px rgba(3,8,25,.22);
+  transition:transform .18s ease,border-color .18s ease,filter .18s ease,box-shadow .18s ease;
+}
+html body.fi-neon-ludo .arena .primary-btn{
+  color:#F5FBFF!important;
+  background:linear-gradient(115deg,rgba(0,217,255,.76),rgba(69,108,255,.58),rgba(139,92,246,.42))!important;
+  border-color:rgba(0,217,255,.72)!important;
+  box-shadow:0 8px 22px rgba(0,125,220,.20),inset 0 1px 0 rgba(255,255,255,.30)!important;
+}
+html body.fi-neon-ludo .arena .danger-btn{
+  border-color:rgba(255,115,135,.82)!important;
+  background:linear-gradient(120deg,rgba(130,35,75,.72),rgba(69,30,82,.58))!important;
+  color:#FFE8EF!important;
+}
+html body.fi-neon-ludo .arena button:disabled{opacity:.42!important;filter:saturate(.65)}
+@media(hover:hover){
+  html body.fi-neon-ludo .arena :is(.primary-btn,.secondary-btn,.danger-btn):not(:disabled):hover{
+    transform:translateY(-2px);filter:brightness(1.12);
+    border-color:rgba(0,217,255,.62)!important;
+    box-shadow:0 10px 25px rgba(3,8,25,.22),0 0 18px rgba(69,108,255,.14),inset 0 1px 0 rgba(255,255,255,.24)!important;
+  }
+}
+html body.fi-neon-ludo .stats-wallet{
+  display:block;max-width:100%;overflow-wrap:anywhere;word-break:break-word;
+  padding:9px 12px;border:1px solid rgba(115,190,255,.30)!important;border-radius:12px;
+  background:rgba(17,28,53,.24)!important;font-size:12px;line-height:1.65;
+}
+html body.fi-neon-ludo .stats-grid>div{border-radius:15px!important}
+html body.fi-neon-ludo .stats-grid strong{color:#7DEBFF!important}
+html body.fi-neon-ludo .leader-row{border-radius:12px!important;overflow-wrap:anywhere}
+html body.fi-neon-ludo footer{color:#C1CDE5;text-shadow:0 1px 8px rgba(3,8,25,.55)}
+@media(max-width:760px){
+  html body.fi-neon-ludo .arena > :is(.topbar,.hero,.access-card,.game-panel,.stats-panel){
+    background:linear-gradient(135deg,rgba(17,28,53,.36),rgba(24,39,76,.28) 58%,rgba(69,108,255,.15))!important;
+    -webkit-backdrop-filter:blur(24px) saturate(180%)!important;
+    backdrop-filter:blur(24px) saturate(180%)!important;
+  }
+  html body.fi-neon-ludo .mode-grid{gap:12px}
+  html body.fi-neon-ludo .mode-card{padding:18px!important}
+  html body.fi-neon-ludo .game-heading-actions{flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){
+  html body.fi-neon-ludo .arena :is(.primary-btn,.secondary-btn,.danger-btn){transition:none!important}
+}
+
+
+/* Active turn frame — explicit outline plus a separate glowing border layer. */
+html body.fi-neon-ludo .arena .players-bar .player-chip.active{
+  position:relative!important;
+  z-index:5!important;
+  overflow:visible!important;
+  outline:2px solid var(--player)!important;
+  outline-offset:2px!important;
+  border:2px solid var(--player)!important;
+  background:rgba(9,17,36,.98)!important;
+  box-shadow:0 0 8px var(--player),0 0 18px var(--player),0 0 32px var(--player)!important;
+}
+html body.fi-neon-ludo .arena .players-bar .player-chip.active::after{
+  content:"";
+  position:absolute;
+  inset:-4px;
+  z-index:6;
+  border:1px solid var(--player);
+  border-radius:15px;
+  pointer-events:none;
+  box-shadow:0 0 7px var(--player),0 0 16px var(--player),0 0 28px var(--player);
+  animation:ludoPlayerFramePulse 1.5s ease-in-out infinite alternate;
+}
+html body.fi-neon-ludo .arena .players-bar .player-chip.active .player-dot{
+  box-shadow:0 0 8px var(--player),0 0 18px var(--player),0 0 28px var(--player)!important;
+}
+html body.fi-neon-ludo .arena .players-bar .player-chip.active strong{
+  color:#fff!important;
+  text-shadow:0 0 8px var(--player);
+}
+@keyframes ludoPlayerFramePulse{
+  from{opacity:.72;filter:drop-shadow(0 0 2px var(--player))}
+  to{opacity:1;filter:drop-shadow(0 0 8px var(--player))}
+}
+@media(prefers-reduced-motion:reduce){
+  html body.fi-neon-ludo .arena .players-bar .player-chip.active::after{animation:none!important}
+}
+
+
+/* Consistent records and waiting-seat layout for Snakes & Ladders. */
+.fi-snakes .stats-panel{padding:20px;border-radius:24px;margin:18px 0;color:#f0f6ff}
+.fi-snakes .stats-panel h2{margin:4px 0 12px}
+.fi-snakes .stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.fi-snakes .stats-grid>div{padding:13px;border:1px solid #00d9ff30;border-radius:12px}
+.fi-snakes .stats-grid small,.fi-snakes .stats-grid strong{display:block}
+.fi-snakes .stats-grid strong{font-size:22px;color:#7deBff}
+.fi-snakes .stats-panel h3{margin:16px 0 8px}
+.fi-snakes .leaderboard-list{display:grid;gap:7px}
+.fi-snakes .leader-row{padding:10px;border:1px solid #ffffff15;border-radius:12px;overflow-wrap:anywhere}
+.fi-snakes .stats-wallet{display:block;max-width:100%;overflow-wrap:anywhere;word-break:break-word}
+.fi-snakes .player-chip{position:relative}
+.fi-snakes .player-chip small{margin-inline-start:auto;color:#c1cde5;font-size:11px;white-space:nowrap}
+.fi-snakes .player-chip.empty-seat{border-style:dashed;opacity:.78}
+.fi-snakes .online-waiting{min-height:76px}
+.fi-snakes .online-waiting .room-status{width:100%;text-align:center}
+@media(max-width:600px){.fi-snakes .stats-panel{padding:12px}.fi-snakes .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.fi-snakes .players-bar{grid-template-columns:repeat(2,minmax(0,1fr))}}
