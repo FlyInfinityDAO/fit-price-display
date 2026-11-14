@@ -1094,6 +1094,62 @@ private fun FlyInfinityApp(
                                             """.trimIndent(),
                                             null
                                         )
+                                        // Some Android WebView builds suppress the site's ambient
+                                        // canvas before its page script starts (notably with reduced-motion
+                                        // enabled). Add a visual-only fallback only when the page did not
+                                        // create its own canvas; this never touches game state or controls.
+                                        view.evaluateJavascript(
+                                            """
+                                            (function(){
+                                              try{
+                                                if(location.pathname.indexOf('/games/')===-1)return;
+                                                var canvasId=location.pathname.indexOf('/games/hokm/')!==-1?'hokm-neon-canvas':'fi-games-neon-canvas';
+                                                if(document.getElementById(canvasId)||!document.body)return;
+                                                var canvas=document.createElement('canvas');
+                                                canvas.id=canvasId;
+                                                canvas.setAttribute('aria-hidden','true');
+                                                canvas.style.cssText='position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;z-index:0!important;pointer-events:none!important;display:block!important';
+                                                document.body.appendChild(canvas);
+                                                var ctx=canvas.getContext('2d');
+                                                if(!ctx)return;
+                                                var w=0,h=0,dpr=1,last=0,raf=0;
+                                                var dots=[];
+                                                function resize(){
+                                                  w=document.documentElement.clientWidth||innerWidth;
+                                                  h=innerHeight||document.documentElement.clientHeight;
+                                                  dpr=Math.min(devicePixelRatio||1,1.5);
+                                                  canvas.width=Math.max(1,Math.round(w*dpr));
+                                                  canvas.height=Math.max(1,Math.round(h*dpr));
+                                                  canvas.style.width=w+'px';canvas.style.height=h+'px';
+                                                  ctx.setTransform(dpr,0,0,dpr,0,0);
+                                                  dots=Array.from({length:w<700?16:25},function(){
+                                                    return{x:Math.random()*w,y:Math.random()*h,r:1.5+Math.random()*3.5,
+                                                      vx:(Math.random()-.5)*.22,vy:(Math.random()-.5)*.22,
+                                                      p:Math.random()*6.28,c:Math.random()<.5?'0,217,255':'139,92,246'};
+                                                  });
+                                                }
+                                                function frame(now){
+                                                  var dt=Math.min(40,now-(last||now));last=now;
+                                                  ctx.clearRect(0,0,w,h);
+                                                  dots.forEach(function(d,i){
+                                                    d.x+=d.vx*dt;d.y+=d.vy*dt;d.p+=dt*.001;
+                                                    if(d.x< -8)d.x=w+8;if(d.x>w+8)d.x=-8;
+                                                    if(d.y< -8)d.y=h+8;if(d.y>h+8)d.y=-8;
+                                                    var a=.22+.22*(.5+.5*Math.sin(d.p+i));
+                                                    ctx.beginPath();ctx.fillStyle='rgba('+d.c+','+a+')';
+                                                    ctx.shadowColor='rgba('+d.c+',.9)';ctx.shadowBlur=18;
+                                                    ctx.arc(d.x,d.y,d.r,0,Math.PI*2);ctx.fill();
+                                                  });
+                                                  ctx.shadowBlur=0;raf=requestAnimationFrame(frame);
+                                                }
+                                                resize();
+                                                addEventListener('resize',resize,{passive:true});
+                                                requestAnimationFrame(frame);
+                                              }catch(_){}
+                                            })();
+                                            """.trimIndent(),
+                                            null
+                                        )
                                         languageAssetCache.prefetchForPage(url)
                                         val pageUri = runCatching { Uri.parse(url) }.getOrNull()
                                         val isDashboard = pageUri?.host == SITE_HOST &&
