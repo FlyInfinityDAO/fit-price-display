@@ -120,6 +120,7 @@ test("mobile room-code focus restores only an unexpected scroll reset",()=>{
  assert.match(html,/snakes-mobile-scroll\.js\?v=fly-snakes-15/);
  assert.match(scroll,/getElementById\("roomCodeInput"\)/);
  assert.match(scroll,/document\.activeElement===input/);
+ assert.match(scroll,/\["fa","ar"\]\.includes\(document\.documentElement\.lang\)/);
  assert.match(scroll,/savedScrollY<120/);
  assert.match(scroll,/window\.scrollTo\(0,savedScrollY\)/);
  assert.match(scroll,/visualViewport\.addEventListener\("resize"/);
