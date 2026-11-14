@@ -265,6 +265,8 @@ private fun FlyInfinityApp(
                             settings.javaScriptEnabled = true
                             settings.domStorageEnabled = true
                             settings.databaseEnabled = true
+                            settings.setSupportMultipleWindows(true)
+                            settings.javaScriptCanOpenWindowsAutomatically = true
                             settings.allowFileAccess = false
                             settings.allowContentAccess = true
                             settings.mixedContentMode =
@@ -345,7 +347,45 @@ private fun FlyInfinityApp(
                                 }
                             }
 
+                            val hostWebView = this
                             webChromeClient = object : WebChromeClient() {
+                                override fun onCreateWindow(
+                                    view: WebView?,
+                                    isDialog: Boolean,
+                                    isUserGesture: Boolean,
+                                    resultMsg: android.os.Message?
+                                ): Boolean {
+                                    if (!isUserGesture || resultMsg == null) return false
+                                    val popup = WebView(context).apply {
+                                        settings.javaScriptEnabled = true
+                                        settings.domStorageEnabled = true
+                                        settings.setSupportMultipleWindows(false)
+                                        webViewClient = object : WebViewClient() {
+                                            override fun shouldOverrideUrlLoading(
+                                                view: WebView,
+                                                request: WebResourceRequest
+                                            ): Boolean {
+                                                val target = request.url
+                                                if (isFlyInfinityUrl(target)) {
+                                                    hostWebView.loadUrl(target.toString())
+                                                } else {
+                                                    openExternal(target)
+                                                }
+                                                view.stopLoading()
+                                                view.destroy()
+                                                return true
+                                            }
+                                        }
+                                    }
+                                    val transport = resultMsg.obj as? WebView.WebViewTransport ?: run {
+                                        popup.destroy()
+                                        return false
+                                    }
+                                    transport.webView = popup
+                                    resultMsg.sendToTarget()
+                                    return true
+                                }
+
                                 override fun onShowFileChooser(
                                     webView: WebView?,
                                     filePathCallback: ValueCallback<Array<Uri>>?,
