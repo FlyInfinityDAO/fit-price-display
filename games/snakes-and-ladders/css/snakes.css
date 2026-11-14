@@ -409,3 +409,11 @@ body.fi-neon-ludo footer{text-align:center;font-size:12px;line-height:1.7;paddin
 }
 @media(max-width:370px){.fi-snakes .snakes-board{gap:1px;padding:4px}.fi-snakes .square{font-size:8px;padding:1px}.fi-snakes .square-marker{font-size:4px}.fi-snakes .token{width:10px;height:10px}}
 @media(prefers-reduced-motion:reduce){.fi-snakes .square{transition:none}}
+
+/* Keep route artwork aligned with the inner 10×10 grid and numbers above it. */
+.fi-snakes .snakes-board{--board-inner-gap:clamp(8px,1.25vw,13px)}
+.fi-snakes .board-routes{inset:var(--board-inner-gap);width:calc(100% - 2 * var(--board-inner-gap));height:calc(100% - 2 * var(--board-inner-gap))}
+.fi-snakes .square{z-index:auto}
+.fi-snakes .square-number,.fi-snakes .square-marker,.fi-snakes .square-icon{z-index:4}
+@media(max-width:600px){.fi-snakes .snakes-board{--board-inner-gap:6px}}
+@media(max-width:370px){.fi-snakes .snakes-board{--board-inner-gap:4px}}
