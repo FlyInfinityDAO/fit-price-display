@@ -532,3 +532,21 @@ html.fi-android-webview .room-join input{
  html.fi-android-webview body.fi-rtl .arena>footer{direction:rtl}
  html.fi-android-webview body.fi-rtl .room-join input{direction:ltr!important;text-align:center!important}
 }
+
+
+/* Match Hokm's Android document viewport foundation. */
+html.fi-android-webview{
+ min-height:100%;
+ scroll-behavior:auto!important;
+ overflow-anchor:none!important;
+}
+html.fi-android-webview body{
+ min-height:100vh;
+ min-height:100dvh;
+ position:relative;
+ isolation:isolate;
+}
+html.fi-android-webview body .arena{
+ position:relative;
+ z-index:1;
+}
