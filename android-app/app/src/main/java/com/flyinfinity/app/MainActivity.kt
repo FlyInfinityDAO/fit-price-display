@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -178,6 +177,9 @@ private fun FlyInfinityApp() {
                                     favicon: android.graphics.Bitmap?
                                 ) {
                                     super.onPageStarted(view, url, favicon)
+                                    if (!url.isNullOrBlank() && isFlyInfinityUrl(Uri.parse(url))) {
+                                        currentUrl = url
+                                    }
                                     hasLoadError = false
                                     isLoading = true
                                 }
