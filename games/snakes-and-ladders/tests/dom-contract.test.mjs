@@ -89,3 +89,13 @@ test("entry rule and vivid piece palette are wired through client and server",()
  assert.match(css,/saturate\(2\.2\)/);
  assert.match(css,/\.fi-snakes \.fi-game-language \.language-button/);
 });
+
+test("Ludo-style sequential movement animation and game sounds are wired",()=>{
+ assert.match(js,/async function animateMove\(previous,next\)/);
+ assert.match(js,/await animateMove\(previous,game\)/);
+ assert.match(js,/onlineStateQueue=onlineStateQueue\.then\(async\(\)=>/);
+ assert.match(js,/motionBusy\|\|game\.status/);
+ assert.match(js,/function playDiceSound\(\)/);
+ assert.match(js,/function playStepSound\(/);
+ assert.match(css,/snakesDiceRoll/);
+});
