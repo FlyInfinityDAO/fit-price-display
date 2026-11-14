@@ -1057,24 +1057,11 @@ html body.fi-neon-ludo .arena .players-bar .player-chip.active strong{
   html body.fi-neon-ludo .arena .players-bar .player-chip.active::after{animation:none!important}
 }
 
-/* Android TokenPocket RTL keyboard scroll fix — same proven treatment as Snakes & Ladders. */
-html.fi-android-webview{
-  scroll-behavior:auto!important;
-  overflow-anchor:none!important;
-}
-html.fi-android-webview body,
-html.fi-android-webview body .arena,
-html.fi-android-webview .mode-card,
-html.fi-android-webview .join-row{
-  overflow-anchor:none!important;
-}
-html.fi-android-webview body.fi-rtl::before{
-  transform:none!important;
-  -webkit-transform:none!important;
-  will-change:auto!important;
-}
-html.fi-android-webview .join-row input{
-  scroll-margin-block:16px;
-  direction:ltr;
-  text-align:center;
+/* Android TokenPocket RTL IME fix — identical to the proven Snakes & Ladders rule. */
+@media(max-width:768px){
+  html.fi-android-webview body.fi-rtl::before{
+    transform:none!important;
+    -webkit-transform:none!important;
+    will-change:auto!important;
+  }
 }
