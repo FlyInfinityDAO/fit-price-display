@@ -76,7 +76,7 @@ test("SVG route artwork aligns inside the grid without covering cell labels",()=
 });
 
 test("redesigned board assets use the final cache version",()=>{
- assert.match(html,/snakes[.]css[?]v=fly-snakes-17/);
+ assert.match(html,/snakes[.]css[?]v=fly-snakes-18/);
  assert.match(html,/snakes[.]js[?]v=fly-snakes-14/);
 });
 
@@ -152,4 +152,14 @@ test("Android Persian and Arabic language handling follows Hokm document and are
  assert.match(js,/document\.documentElement\.dir=android&&rtl\?"ltr":\(rtl\?"rtl":"ltr"\)/);
  assert.match(js,/if\(android&&arena\)arena\.dir="ltr"/);
  assert.match(js,/if\(!android\)requestAnimationFrame\(\(\)=>window\.scrollTo\(\{left:x,top:y,behavior:"auto"\}\)\)/);
+});
+
+
+test("Android Persian room input uses focus preventScroll and Hokm viewport foundation",()=>{
+ const scroll=readFileSync(new URL("js/snakes-mobile-scroll.js",root),"utf8");
+ assert.match(scroll,/input\.focus\(\{preventScroll:true\}\)/);
+ assert.match(scroll,/closest\("#roomCodeInput"\)/);
+ assert.match(css,/html\.fi-android-webview\s*\{[\s\S]*?min-height:100%[\s\S]*?scroll-behavior:auto!important/);
+ assert.match(css,/html\.fi-android-webview body\s*\{[\s\S]*?min-height:100vh[\s\S]*?min-height:100dvh[\s\S]*?position:relative[\s\S]*?isolation:isolate/);
+ assert.match(css,/html\.fi-android-webview body \.arena\s*\{[\s\S]*?position:relative[\s\S]*?z-index:1/);
 });
