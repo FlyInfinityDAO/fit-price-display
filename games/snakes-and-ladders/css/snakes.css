@@ -456,3 +456,11 @@ body.fi-neon-ludo footer{text-align:center;font-size:12px;line-height:1.7;paddin
 }
 .fi-snakes .fi-game-language .language-button:focus-visible,
 .fi-snakes .language-menu.fi-game-language-menu button:focus-visible{outline:2px solid #00D9FF!important;outline-offset:3px!important}
+
+/* Ludo-paced step movement feedback and dice motion. */
+.fi-snakes .token{will-change:transform,opacity;transform-origin:center;backface-visibility:hidden}
+.fi-snakes .dice-face{will-change:transform;transform-origin:center}
+.fi-snakes .dice-face.is-rolling{animation:snakesDiceRoll .42s cubic-bezier(.2,.8,.2,1)}
+@keyframes snakesDiceRoll{0%{transform:rotate(-12deg) scale(.82)}48%{transform:rotate(10deg) scale(1.12)}100%{transform:rotate(0) scale(1)}}
+.fi-snakes .token-stack{isolation:isolate}
+@media(prefers-reduced-motion:reduce){.fi-snakes .token,.fi-snakes .dice-face{will-change:auto}.fi-snakes .dice-face.is-rolling{animation:none!important}}
