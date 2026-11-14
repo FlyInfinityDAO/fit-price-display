@@ -53,7 +53,7 @@ jobs:
           test -f site/logo.png || { echo "::error::The site logo.png is missing."; exit 1; }
           test -f site/walletconnect-bridge.js || { echo "::error::The wallet bridge is missing."; exit 1; }
 
-          for game in chess-arena backgammon hokm ludo; do
+          for game in chess-arena backgammon hokm ludo snakes-and-ladders; do
             test -f "site/games/$game/index.html" || {
               echo "::error::Missing games/$game/index.html"
               exit 1
@@ -91,7 +91,16 @@ jobs:
             exit 1
           }
 
-          echo "Validated all three integrated game entry points and required assets."
+          test -f site/games/snakes-and-ladders/css/snakes.css || {
+            echo "::error::Snakes & Ladders stylesheet is missing."
+            exit 1
+          }
+          test -f site/games/snakes-and-ladders/js/snakes.js || {
+            echo "::error::Snakes & Ladders frontend is missing."
+            exit 1
+          }
+
+          echo "Validated all five integrated game entry points and required assets."
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
