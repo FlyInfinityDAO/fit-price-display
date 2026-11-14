@@ -77,7 +77,7 @@ test("SVG route artwork aligns inside the grid without covering cell labels",()=
 
 test("redesigned board assets use the final cache version",()=>{
  assert.match(html,/snakes[.]css[?]v=fly-snakes-17/);
- assert.match(html,/snakes[.]js[?]v=fly-snakes-13/);
+ assert.match(html,/snakes[.]js[?]v=fly-snakes-14/);
 });
 
 test("entry rule and vivid piece palette are wired through client and server",()=>{
@@ -144,4 +144,12 @@ test("Android Persian RTL keeps document scroll axis stable like Hokm",()=>{
  assert.ok(css.includes("html.fi-android-webview body.fi-rtl .arena{direction:ltr!important}"));
  assert.ok(css.includes("html.fi-android-webview body.fi-rtl .arena>header,"));
  assert.ok(css.includes("html.fi-android-webview body.fi-rtl .room-join input{direction:ltr!important;text-align:center!important}"));
+});
+
+
+test("Android Persian and Arabic language handling follows Hokm document and arena direction",()=>{
+ assert.match(js,/rtl=\["fa","ar"\]\.includes\(lang\),android=\/Android\/i\.test/);
+ assert.match(js,/document\.documentElement\.dir=android&&rtl\?"ltr":\(rtl\?"rtl":"ltr"\)/);
+ assert.match(js,/if\(android&&arena\)arena\.dir="ltr"/);
+ assert.match(js,/if\(!android\)requestAnimationFrame\(\(\)=>window\.scrollTo\(\{left:x,top:y,behavior:"auto"\}\)\)/);
 });
