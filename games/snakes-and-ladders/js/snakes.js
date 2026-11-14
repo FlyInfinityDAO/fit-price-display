@@ -140,4 +140,4 @@ $("rollBtn").addEventListener("click",playerRoll);
 $("newGameBtn").addEventListener("click",()=>{if(!game||!window.confirm(t("confirmNewGame")))return;const humans=game.players.filter(p=>p.kind==="human").length;start(humans,game.players.length,game.difficulty);});
 $("exitBtn").addEventListener("click",()=>{if(!window.confirm(t("confirmExit")))return;if(socket){socket.close();socket=null;}game=null;onlineMode=false;roomCode=null;show("gamePanel",false);show("modePanel",true);$("newGameBtn").hidden=false;$("copyRoomBtn").hidden=true;$("reconnectBtn").hidden=true;});
 $("languageSelect").addEventListener("change",e=>{lang=e.target.value;localStorage.setItem("fi-game-language",lang);applyLanguage();if(game)render();});
-applyLanguage();if(game)render();});applyLanguage();
+applyLanguage();
