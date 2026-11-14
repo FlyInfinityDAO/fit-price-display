@@ -178,3 +178,190 @@ html body.fi-neon-ludo .arena .players-bar .player-chip.active strong{
 .fi-snakes .online-waiting{min-height:76px}
 .fi-snakes .online-waiting .room-status{width:100%;text-align:center}
 @media(max-width:600px){.fi-snakes .stats-panel{padding:12px}.fi-snakes .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.fi-snakes .players-bar{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* Complete Snakes & Ladders page chrome — aligned with Ludo.
+   This layer styles the page shell and controls only; the 10×10 board remains game-specific. */
+:root{color-scheme:dark;--fi-snakes-copy:#F0F6FF;--fi-snakes-muted:#C1CDE5}
+html{min-height:100%;scroll-behavior:smooth}
+body.fi-neon-ludo{
+  margin:0;min-height:100vh;min-height:100dvh;padding:20px;
+  background:#0F0F0F;color:var(--fi-snakes-copy);
+  font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
+  line-height:1.5;position:relative;isolation:isolate
+}
+body.fi-neon-ludo:before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:linear-gradient(rgba(15,15,15,.62),rgba(15,15,15,.70)),url("../../../background-desktop.png");
+  background-size:cover;background-position:center;background-repeat:no-repeat
+}
+body.fi-neon-ludo *{box-sizing:border-box}
+body.fi-neon-ludo button,body.fi-neon-ludo input,body.fi-neon-ludo select{font:inherit}
+body.fi-neon-ludo button,body.fi-neon-ludo a{-webkit-tap-highlight-color:transparent}
+body.fi-neon-ludo .arena{width:min(100%,1400px);max-width:1400px;margin:0 auto;position:relative;z-index:1}
+body.fi-neon-ludo .topbar{
+  min-height:68px;margin:0 0 24px;padding:11px 22px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  border:1px solid rgba(0,217,255,.34)!important;border-radius:28px
+}
+body.fi-neon-ludo .brand{display:inline-flex;align-items:center;gap:11px;text-decoration:none;min-width:0}
+body.fi-neon-ludo .brand-logo{width:36px;height:36px;object-fit:contain;border-radius:50%;border:2px solid #00D9FF;box-shadow:0 0 13px rgba(0,217,255,.22)}
+body.fi-neon-ludo .brand-name{font-size:17px;font-weight:800;letter-spacing:.035em;color:#BFCBFF;white-space:nowrap}
+body.fi-neon-ludo .brand-name small{display:block;margin-top:-3px;font-size:9px;letter-spacing:.22em;color:#00D9FF;font-weight:900}
+body.fi-neon-ludo .topbar-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;min-width:0}
+body.fi-neon-ludo .network,body.fi-neon-ludo .dashboard-link{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;
+  padding:8px 13px;border-radius:13px;border:1px solid rgba(0,217,255,.45)!important;
+  background:rgba(17,28,53,.35)!important;color:#00D9FF;font-size:11px;font-weight:800;
+  letter-spacing:.045em;text-decoration:none;white-space:nowrap
+}
+body.fi-neon-ludo .network i{width:8px;height:8px;display:inline-block;border-radius:50%;background:#00D9FF;box-shadow:0 0 10px #00D9FF}
+body.fi-neon-ludo .fi-game-language{position:relative;flex:0 0 auto}
+body.fi-neon-ludo .fi-game-language .language-button{
+  width:40px;min-width:40px;min-height:40px;display:grid;place-items:center;
+  color:#00D9FF!important;background:rgba(17,28,53,.35)!important;
+  border:1px solid rgba(139,92,246,.72)!important;border-radius:12px;
+  box-shadow:0 0 13px rgba(69,108,255,.14);font-size:19px;cursor:pointer
+}
+body.fi-neon-ludo .language-menu.fi-game-language-menu{
+  background:rgba(17,28,53,.97)!important;border:1px solid rgba(0,217,255,.58)!important;
+  border-radius:14px;box-shadow:0 18px 44px rgba(0,0,0,.44),0 0 20px rgba(69,108,255,.18)!important;
+  padding:6px;gap:3px
+}
+body.fi-neon-ludo .language-menu.fi-game-language-menu button{
+  display:flex;align-items:center;gap:10px;width:100%;min-height:38px;padding:7px 10px;
+  color:#EAF5FF!important;background:transparent;border:1px solid transparent;border-radius:9px;text-align:start
+}
+body.fi-neon-ludo .language-menu.fi-game-language-menu button:hover,
+body.fi-neon-ludo .language-menu.fi-game-language-menu button.active{
+  background:rgba(69,108,255,.22)!important;border-color:rgba(0,217,255,.42)!important;color:#00D9FF!important
+}
+body.fi-neon-ludo .hero{
+  position:relative;overflow:hidden;text-align:center;margin:0 0 24px;padding:24px 20px 26px;
+  border:1px solid rgba(139,92,246,.34)!important;border-radius:30px
+}
+body.fi-neon-ludo .hero:before{
+  content:"";position:absolute;left:50%;top:-130px;width:min(900px,120%);height:210px;
+  transform:translateX(-50%);border-radius:50%;
+  background:radial-gradient(ellipse,rgba(139,92,246,.16),rgba(0,217,255,.10) 38%,transparent 72%);pointer-events:none
+}
+body.fi-neon-ludo .eyebrow{color:#00D9FF;font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase}
+body.fi-neon-ludo .hero h1{
+  position:relative;margin:6px 0 9px;font-size:clamp(32px,5vw,62px);line-height:1.08;font-weight:900;letter-spacing:.015em;
+  background-image:linear-gradient(105deg,#00D9FF 0%,#00D9FF 22%,#456CFF 58%,#8B5CF6 100%)!important;
+  background-size:240% 100%;background-position:0 50%;-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;animation:fiSnakesTitleFlow 5.5s ease-in-out infinite alternate
+}
+@keyframes fiSnakesTitleFlow{to{background-position:100% 50%}}
+body.fi-neon-ludo .hero p{margin:0;color:#D2DDF1;font-size:clamp(14px,1.6vw,17px);letter-spacing:.025em;line-height:1.6}
+body.fi-neon-ludo .access-card{width:min(100%,860px);margin:0 auto 22px;padding:26px;border-radius:26px;border-color:rgba(0,217,255,.36)!important}
+body.fi-neon-ludo .card-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:12px}
+body.fi-neon-ludo .card-heading h2{margin:5px 0 0;font-size:clamp(21px,2.4vw,27px);font-weight:850;color:#F0F6FF}
+body.fi-neon-ludo .lock-icon{width:48px;height:48px;flex:0 0 48px;display:grid;place-items:center;border:1px solid rgba(0,217,255,.45);border-radius:16px;background:rgba(0,217,255,.10);color:#00D9FF;font-size:28px}
+body.fi-neon-ludo .intro{max-width:720px;margin:0;color:#D2DDF1;font-size:14px;line-height:1.8}
+body.fi-neon-ludo .status,body.fi-neon-ludo .room-status,body.fi-neon-ludo footer{color:#D2DDF1}
+body.fi-neon-ludo .status{font-size:13px;line-height:1.6}
+body.fi-neon-ludo .check-row{background:linear-gradient(135deg,rgba(69,108,255,.14),rgba(17,28,53,.24));border-color:rgba(69,108,255,.38)}
+body.fi-neon-ludo .check-row strong{color:#F0F6FF}
+body.fi-neon-ludo .check-row small{color:#D2DDF1;font-size:13px}
+body.fi-neon-ludo .mark{color:#7DEBFF;font-weight:900}
+body.fi-neon-ludo .eligible-panel{color:#C9FFEF!important;border-color:rgba(0,214,155,.65)!important}
+body.fi-neon-ludo .denied-panel{color:#FFE2E8!important}
+body.fi-neon-ludo .mode-grid{margin:22px 0;gap:16px;align-items:stretch}
+body.fi-neon-ludo .mode-card{display:flex;flex-direction:column;min-width:0;min-height:100%;padding:22px;border-radius:22px}
+body.fi-neon-ludo .mode-card h2{margin:9px 0 8px;font-size:clamp(20px,2vw,24px);line-height:1.25}
+body.fi-neon-ludo .mode-card p{min-height:70px;margin:0 0 12px;color:#D2DDF1;font-size:14px;line-height:1.7}
+body.fi-neon-ludo .mode-card label{display:block;margin:10px 0 5px;color:#E1EBFA;font-size:12px;font-weight:700}
+body.fi-neon-ludo .mode-card select{width:100%;min-height:42px;margin:5px 0 9px;padding:9px 12px}
+body.fi-neon-ludo .mode-card>.primary-btn{width:100%;margin-top:auto}
+body.fi-neon-ludo .online-room-actions{display:flex;flex-direction:column;gap:8px;margin-top:auto}
+body.fi-neon-ludo .online-room-actions label{margin:0}
+body.fi-neon-ludo .online-room-actions select{margin:0 0 2px}
+body.fi-neon-ludo .room-join{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin-top:2px}
+body.fi-neon-ludo .room-join input{width:100%;min-width:0;min-height:42px;padding:9px 12px;text-transform:uppercase}
+body.fi-neon-ludo .room-join button{min-width:104px}
+body.fi-neon-ludo :is(select,input){
+  color:#F0F6FF!important;background:rgba(17,28,53,.45)!important;border:1px solid rgba(160,220,255,.38)!important;
+  border-radius:11px;-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 6px 18px rgba(3,8,25,.12)
+}
+body.fi-neon-ludo select option{background:#111C35;color:#F0F6FF}
+body.fi-neon-ludo :is(button,a,select,input):focus-visible{outline:2px solid #00D9FF!important;outline-offset:3px!important}
+body.fi-neon-ludo .game-panel,body.fi-neon-ludo .stats-panel{padding:22px;border-radius:26px;border-color:rgba(0,217,255,.34)!important;margin:20px 0}
+body.fi-neon-ludo .game-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+body.fi-neon-ludo .game-heading h2{margin:4px 0;color:#F4F8FF}
+body.fi-neon-ludo .game-heading-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px}
+body.fi-neon-ludo .game-heading-actions button{min-width:88px}
+body.fi-neon-ludo .players-bar{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+body.fi-neon-ludo .players-bar[data-count="3"]{grid-template-columns:repeat(3,minmax(0,1fr))}
+body.fi-neon-ludo .players-bar[data-count="2"]{grid-template-columns:repeat(2,minmax(0,1fr))}
+body.fi-neon-ludo .player-chip{min-width:0;overflow:hidden;padding:11px;background:rgba(17,28,53,.38)!important}
+body.fi-neon-ludo .player-chip strong{min-width:0;overflow-wrap:anywhere;color:#F4F8FF}
+body.fi-neon-ludo .player-chip small{color:#D2DDF1;font-size:11px;overflow-wrap:anywhere}
+body.fi-neon-ludo .player-chip.empty-seat{border-style:dashed!important;opacity:.82}
+body.fi-neon-ludo .online-waiting{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;margin:14px 0;padding:20px;text-align:center;border:1px solid rgba(0,217,255,.45);border-radius:18px;background:rgba(0,217,255,.08)}
+body.fi-neon-ludo .online-waiting p{margin:0;color:#D2DDF1}
+body.fi-neon-ludo .online-waiting strong{font-size:clamp(20px,3vw,28px);letter-spacing:.18em;color:#8EEAFF}
+body.fi-neon-ludo .game-controls{grid-template-columns:minmax(0,1fr) auto minmax(0,1.4fr);gap:14px;background:linear-gradient(135deg,rgba(17,28,53,.60),rgba(69,108,255,.14));border-color:rgba(0,217,255,.34)}
+body.fi-neon-ludo .game-controls>*{min-width:0}
+body.fi-neon-ludo .game-message{color:#EAF5FF;line-height:1.55;overflow-wrap:anywhere}
+body.fi-neon-ludo .game-footnote{color:#C9D8EF;font-size:12px;line-height:1.6}
+body.fi-neon-ludo .stats-panel{width:100%;margin:20px auto 24px}
+body.fi-neon-ludo .stats-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+body.fi-neon-ludo .stats-grid>div{min-width:0;padding:14px;border-radius:14px}
+body.fi-neon-ludo .stats-grid small{color:#D2DDF1;font-size:11px}
+body.fi-neon-ludo .stats-grid strong{color:#7DEBFF;font-size:clamp(18px,2vw,25px);overflow-wrap:anywhere}
+body.fi-neon-ludo .stats-wallet{display:block;max-width:100%;overflow-wrap:anywhere;word-break:break-word;color:#D2DDF1}
+body.fi-neon-ludo .leaderboard-list{display:grid;gap:8px}
+body.fi-neon-ludo .leader-row{padding:10px 12px;border-radius:11px;color:#EAF5FF;overflow-wrap:anywhere}
+body.fi-neon-ludo footer{text-align:center;font-size:12px;line-height:1.7;padding:20px 12px;color:#D2DDF1;text-shadow:0 1px 8px rgba(3,8,25,.55)}
+@media(max-width:850px){
+  body.fi-neon-ludo .mode-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  body.fi-neon-ludo .mode-card:first-child{grid-column:1/-1}
+  body.fi-neon-ludo .game-controls{grid-template-columns:minmax(0,1fr) auto}
+  body.fi-neon-ludo .game-message{grid-column:1/-1}
+  body.fi-neon-ludo .game-heading-actions{justify-content:flex-start}
+}
+@media(max-width:760px){
+  body.fi-neon-ludo{padding:12px}
+  body.fi-neon-ludo .topbar{gap:9px;padding:10px 12px}
+  body.fi-neon-ludo .topbar-actions{gap:7px}
+  body.fi-neon-ludo .hero{padding:20px 14px}
+  body.fi-neon-ludo .access-card,body.fi-neon-ludo .game-panel,body.fi-neon-ludo .stats-panel{border-radius:20px}
+}
+@media(max-width:600px){
+  body.fi-neon-ludo .topbar{align-items:center;flex-wrap:wrap}
+  body.fi-neon-ludo .topbar-actions{gap:6px;justify-content:flex-end}
+  body.fi-neon-ludo .brand-name{font-size:14px}
+  body.fi-neon-ludo .network{display:none}
+  body.fi-neon-ludo .access-card{padding:16px}
+  body.fi-neon-ludo .wallet-connect-options,body.fi-neon-ludo .mode-grid{grid-template-columns:1fr}
+  body.fi-neon-ludo .mode-card:first-child{grid-column:auto}
+  body.fi-neon-ludo .mode-card{padding:18px}
+  body.fi-neon-ludo .mode-card p{min-height:0}
+  body.fi-neon-ludo .game-panel,body.fi-neon-ludo .stats-panel{padding:12px}
+  body.fi-neon-ludo .game-heading{align-items:flex-start;flex-direction:column}
+  body.fi-neon-ludo .game-heading-actions{width:100%;justify-content:stretch}
+  body.fi-neon-ludo .game-heading-actions button{flex:1 1 calc(50% - 8px);min-width:0}
+  body.fi-neon-ludo .players-bar{grid-template-columns:repeat(2,minmax(0,1fr))}
+  body.fi-neon-ludo .player-chip{padding:8px}
+  body.fi-neon-ludo .room-join{grid-template-columns:minmax(0,1fr) auto}
+  body.fi-neon-ludo .room-join button{min-width:90px}
+  body.fi-neon-ludo .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  body.fi-neon-ludo .stats-grid>div{padding:10px}
+  body.fi-neon-ludo .game-controls{grid-template-columns:minmax(0,1fr) auto;gap:9px;padding:10px}
+  body.fi-neon-ludo .turn-info strong{font-size:13px}
+  body.fi-neon-ludo .dice-control{gap:7px}
+  body.fi-neon-ludo .dice-control .primary-btn{padding-inline:10px;font-size:12px}
+}
+@media(max-width:380px){
+  body.fi-neon-ludo .brand{gap:7px}
+  body.fi-neon-ludo .brand-logo{width:30px;height:30px}
+  body.fi-neon-ludo .brand-name{font-size:12px}
+  body.fi-neon-ludo .topbar-actions{gap:5px}
+  body.fi-neon-ludo .room-join{grid-template-columns:1fr}
+  body.fi-neon-ludo .room-join button{width:100%}
+}
+@media(prefers-reduced-motion:reduce){
+  body.fi-neon-ludo *,body.fi-neon-ludo *:before,body.fi-neon-ludo *:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+}
