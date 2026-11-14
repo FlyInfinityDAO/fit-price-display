@@ -135,3 +135,11 @@ test("Android room-code focus disables smooth scrolling and scroll anchoring lik
  assert.match(css,/overflow-anchor:none!important/);
  assert.match(css,/scroll-margin-block:16px/);
 });
+
+
+test("Android Persian RTL keeps document scroll axis stable like Hokm",()=>{
+ assert.match(css,/html\.fi-android-webview body\.fi-rtl\{direction:ltr!important\}/);
+ assert.match(css,/html\.fi-android-webview body\.fi-rtl \.arena\{direction:ltr!important\}/);
+ assert.match(css,/body\.fi-rtl \.arena>header[\s\S]*?direction:rtl/);
+ assert.match(css,/body\.fi-rtl \.room-join input\{direction:ltr!important;text-align:center!important\}/);
+});
