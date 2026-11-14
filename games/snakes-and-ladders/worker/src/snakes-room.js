@@ -1,5 +1,5 @@
 import { resolveRoll } from "./rules.js";
-const COLORS = ["#36d6d0","#ffbf5b","#a78bfa","#ff668c"];
+const COLORS = ["#FF1744","#00E676","#2979FF","#FFD600"];
 const json = (data,status=200) => new Response(JSON.stringify(data),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store"}});
 
 export class SnakesRoom {
