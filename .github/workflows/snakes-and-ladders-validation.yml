@@ -1,0 +1,29 @@
+name: Fly Snakes & Ladders Validation
+on:
+  push:
+    branches: [main]
+    paths:
+      - "games/snakes-and-ladders/**"
+      - ".github/workflows/snakes-and-ladders-validation.yml"
+  pull_request:
+    paths:
+      - "games/snakes-and-ladders/**"
+      - ".github/workflows/snakes-and-ladders-validation.yml"
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check isolated game scripts
+        run: |
+          node --input-type=module --check < games/snakes-and-ladders/js/snakes-engine.js
+          node --input-type=module --check < games/snakes-and-ladders/js/snakes.js
+          node --experimental-default-type=module --test games/snakes-and-ladders/js/snakes-engine.test.js
+          node --check games/snakes-and-ladders/worker/src/index.js

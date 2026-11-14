@@ -1,0 +1,8 @@
+name = "fly-snakes-and-ladders-api"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+FRONTEND_ORIGIN = "https://flyinfinitydao.github.io"
+BSC_RPC_URL = "https://bsc-dataseed.binance.org/"
