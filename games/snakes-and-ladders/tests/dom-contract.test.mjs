@@ -117,7 +117,7 @@ test("language popover uses the same fixed mobile menu behavior as Ludo",()=>{
 
 test("mobile room-code focus restores only an unexpected scroll reset",()=>{
  const scroll=readFileSync(new URL("js/snakes-mobile-scroll.js",root),"utf8");
- assert.match(html,/snakes-mobile-scroll\.js\?v=fly-snakes-15/);
+ assert.match(html,/snakes-mobile-scroll\.js\?v=fly-snakes-16/);
  assert.match(scroll,/getElementById\("roomCodeInput"\)/);
  assert.match(scroll,/document\.activeElement===input/);
  assert.match(scroll,/\["fa","ar"\]\.includes\(document\.documentElement\.lang\)/);
