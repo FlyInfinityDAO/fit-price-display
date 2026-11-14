@@ -127,6 +127,119 @@ private fun applyWebCachePolicy(webView: WebView, context: Context) {
  * Keeps the site's existing per-page language JSON files in the app's private
  * cache. The website's language manager and dictionaries remain untouched.
  */
+
+/**
+ * Persists dashboard JSON feeds and the rendered numeric dashboard values.
+ * This is app-only: the hosted website and its scripts are not modified.
+ */
+private class DashboardDataCache(private val context: Context) {
+    private val directory = File(context.filesDir, "fly-dashboard-data").apply { mkdirs() }
+
+    private fun cacheFile(path: String): File {
+        val digest = MessageDigest.getInstance("SHA-256")
+            .digest(path.toByteArray(Charsets.UTF_8))
+            .joinToString("") { "%02x".format(it) }
+        return File(directory, "$digest.json")
+    }
+
+    private fun download(url: String): ByteArray? {
+        val connection = (URL(url).openConnection() as? HttpURLConnection) ?: return null
+        return try {
+            connection.requestMethod = "GET"
+            connection.connectTimeout = 7000
+            connection.readTimeout = 10000
+            connection.instanceFollowRedirects = true
+            connection.setRequestProperty("Accept", "application/json")
+            if (connection.responseCode in 200..299) {
+                connection.inputStream.use { it.readBytes() }
+            } else null
+        } catch (_: Exception) {
+            null
+        } finally {
+            connection.disconnect()
+        }
+    }
+
+    private fun response(bytes: ByteArray) = WebResourceResponse(
+        "application/json",
+        "UTF-8",
+        200,
+        "OK",
+        mapOf(
+            "Content-Type" to "application/json; charset=utf-8",
+            "Cache-Control" to "no-store"
+        ),
+        bytes.inputStream()
+    )
+
+    fun intercept(request: WebResourceRequest): WebResourceResponse? {
+        if (request.method != "GET") return null
+        val uri = request.url
+        if (uri.scheme != "https" || uri.host != SITE_HOST) return null
+        val path = uri.path.orEmpty()
+        if (path !in setOf("$SITE_PATH/price-history.json", "$SITE_PATH/trading-volume.json")) {
+            return null
+        }
+
+        val file = cacheFile(path)
+        if (hasValidatedInternet(context)) {
+            val cleanUrl = uri.buildUpon().clearQuery().build().toString()
+            download(cleanUrl)?.let { bytes ->
+                runCatching { file.writeBytes(bytes) }
+                return response(bytes)
+            }
+        }
+        return if (file.isFile) runCatching { response(file.readBytes()) }.getOrNull() else null
+    }
+}
+
+private const val DASHBOARD_SNAPSHOT_SCRIPT = """
+(function() {
+  try {
+    var key = 'flyInfinityDashboardNumbersV1';
+    var online = __FLY_ONLINE__;
+    var ids = /price|supply|balance|volume|liquid|airdrop|holder|owner|token|market|cap|reserve|transaction|count|total|change|stat|circulation/i;
+    function restore() {
+      try {
+        var saved = JSON.parse(localStorage.getItem(key) || 'null');
+        if (!saved || !saved.values) return;
+        Object.keys(saved.values).forEach(function(id) {
+          var el = document.getElementById(id);
+          if (el && typeof saved.values[id] === 'string') el.innerHTML = saved.values[id];
+        });
+        document.documentElement.setAttribute('data-fly-dashboard-cache', 'restored');
+      } catch (_) {}
+    }
+    function save() {
+      try {
+        var values = {};
+        document.querySelectorAll('[id]').forEach(function(el) {
+          if (ids.test(el.id) && el.children.length < 8) {
+            var value = el.innerHTML;
+            if (value && value.trim()) values[el.id] = value;
+          }
+        });
+        if (Object.keys(values).length) {
+          localStorage.setItem(key, JSON.stringify({savedAt: Date.now(), values: values}));
+        }
+      } catch (_) {}
+    }
+    if (!online) restore();
+    save();
+    if (window.__flyDashboardCacheObserver) {
+      window.__flyDashboardCacheObserver.disconnect();
+    }
+    window.__flyDashboardCacheObserver = new MutationObserver(function() {
+      save();
+    });
+    window.__flyDashboardCacheObserver.observe(document.documentElement, {
+      subtree: true, childList: true, characterData: true
+    });
+    window.addEventListener('beforeunload', save);
+  } catch (_) {}
+})();
+"""
+
 private class LanguageAssetCache(private val context: Context) {
     private val languages = listOf("en", "fa", "ar", "tr", "ru", "zh", "es", "pt")
     private val directory = File(context.cacheDir, "fly-language-assets").apply { mkdirs() }
@@ -268,12 +381,22 @@ private fun FlyInfinityApp(
 ) {
     val context = LocalContext.current
     val languageAssetCache = remember(context) { LanguageAssetCache(context) }
+    val dashboardDataCache = remember(context) { DashboardDataCache(context) }
     var destination by remember { mutableStateOf(AppDestination.Dashboard) }
     var webView by remember { mutableStateOf<WebView?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var hasLoadError by remember { mutableStateOf(false) }
     var currentUrl by remember { mutableStateOf(SITE_ROOT) }
     var hasInternet by remember { mutableStateOf(hasValidatedInternet(context)) }
+    var wasOnline by remember { mutableStateOf(hasInternet) }
+
+    androidx.compose.runtime.LaunchedEffect(hasInternet) {
+        if (hasInternet && !wasOnline &&
+            (currentUrl == SITE_ROOT || currentUrl.substringBefore('?').endsWith("/index.html"))) {
+            webView?.post { webView?.reload() }
+        }
+        wasOnline = hasInternet
+    }
     val connectivityManager = remember(context) {
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
@@ -392,7 +515,8 @@ private fun FlyInfinityApp(
                                     view: WebView,
                                     request: WebResourceRequest
                                 ): WebResourceResponse? {
-                                    return languageAssetCache.intercept(request)
+                                    return dashboardDataCache.intercept(request)
+                                        ?: languageAssetCache.intercept(request)
                                         ?: super.shouldInterceptRequest(view, request)
                                 }
 
@@ -413,7 +537,18 @@ private fun FlyInfinityApp(
                                 override fun onPageFinished(view: WebView, url: String?) {
                                     super.onPageFinished(view, url)
                                     isLoading = false
-                                    if (!url.isNullOrBlank()) languageAssetCache.prefetchForPage(url)
+                                    if (!url.isNullOrBlank()) {
+                                        languageAssetCache.prefetchForPage(url)
+                                        val pageUri = runCatching { Uri.parse(url) }.getOrNull()
+                                        val isDashboard = pageUri?.host == SITE_HOST &&
+                                            (pageUri.path == SITE_PATH || pageUri.path == "$SITE_PATH/" ||
+                                             pageUri.path == "$SITE_PATH/index.html")
+                                        if (isDashboard) {
+                                            val onlineLiteral = hasValidatedInternet(context).toString()
+                                            val script = DASHBOARD_SNAPSHOT_SCRIPT.replace("__FLY_ONLINE__", onlineLiteral)
+                                            view.evaluateJavascript(script, null)
+                                        }
+                                    }
                                 }
 
                                 override fun onReceivedError(
