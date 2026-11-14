@@ -76,8 +76,8 @@ test("SVG route artwork aligns inside the grid without covering cell labels",()=
 });
 
 test("redesigned board assets use the final cache version",()=>{
- assert.match(html,/snakes\.css\?v=fly-snakes-11/);
- assert.match(html,/snakes\.js\?v=fly-snakes-11/);
+ assert.match(html,/snakes\.css\?v=fly-snakes-12/);
+ assert.match(html,/snakes\.js\?v=fly-snakes-12/);
 });
 
 test("entry rule and vivid piece palette are wired through client and server",()=>{
