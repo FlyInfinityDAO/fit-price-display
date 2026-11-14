@@ -519,3 +519,15 @@ html.fi-android-webview .room-join input{
  direction:ltr!important;
  text-align:center!important;
 }
+
+
+/* Android RTL scroll stability: keep the document scroll axis LTR, as in Hokm,
+   while preserving RTL direction inside the visible game sections. */
+@media(max-width:10000px){
+ html.fi-android-webview body.fi-rtl{direction:ltr!important}
+ html.fi-android-webview body.fi-rtl .arena{direction:ltr!important}
+ html.fi-android-webview body.fi-rtl .arena>header,
+ html.fi-android-webview body.fi-rtl .arena>section,
+ html.fi-android-webview body.fi-rtl .arena>footer{direction:rtl}
+ html.fi-android-webview body.fi-rtl .room-join input{direction:ltr!important;text-align:center!important}
+}
