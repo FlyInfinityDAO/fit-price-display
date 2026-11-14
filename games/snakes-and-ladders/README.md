@@ -17,7 +17,7 @@ The game is isolated under `games/snakes-and-ladders/`. All changes are made dir
 - Local pass-and-play and CPU modes for 2–4 seats.
 - Online private rooms for 2–4 wallet-connected players, six-character room codes and WebSocket updates.
 - Server-authoritative dice, turn order, snakes, ladders and exact finish.
-- FIGS records: 3 points for a win, 0 for a loss, matching the existing Fly Infinity games scoring convention.
+- FIGS records for completed online rooms: 3 points for a win, 0 for a loss. Local pass-and-play and CPU practice are not currently submitted to the server leaderboard; no unverified client-side result is counted.
 - No entry fee, token transfer or financial rewards.
 
 ## Dedicated Worker setup
