@@ -417,3 +417,42 @@ body.fi-neon-ludo footer{text-align:center;font-size:12px;line-height:1.7;paddin
 .fi-snakes .square-number,.fi-snakes .square-marker,.fi-snakes .square-icon{z-index:4}
 @media(max-width:600px){.fi-snakes .snakes-board{--board-inner-gap:6px}}
 @media(max-width:370px){.fi-snakes .snakes-board{--board-inner-gap:4px}}
+
+/* Vivid enamel player pieces — high saturation and strong separation on every tile. */
+.fi-snakes .token{
+  border:2px solid #FFFFFF!important;
+  background:
+    radial-gradient(circle at 27% 19%,rgba(255,255,255,1) 0 9%,rgba(255,255,255,.48) 10% 19%,transparent 32%),
+    radial-gradient(circle at 72% 82%,rgba(0,0,0,.48),transparent 48%),
+    linear-gradient(145deg,color-mix(in srgb,var(--token-color) 22%,white) 0%,var(--token-color) 52%,color-mix(in srgb,var(--token-color) 48%,black) 100%)!important;
+  box-shadow:0 3px 0 color-mix(in srgb,var(--token-color) 62%,black),0 5px 9px rgba(0,0,0,.58),
+    inset 0 2px 4px rgba(255,255,255,.92),inset 0 -3px 5px rgba(0,0,0,.48),
+    0 0 0 1px rgba(255,255,255,.42),0 0 9px color-mix(in srgb,var(--token-color) 62%,transparent)!important;
+  filter:saturate(2.2) contrast(1.16);
+}
+.fi-snakes .player-dot,.fi-snakes .turn-dot{
+  background:var(--player)!important;
+  box-shadow:0 0 0 2px rgba(255,255,255,.86),0 0 12px var(--player),0 0 20px color-mix(in srgb,var(--player) 70%,transparent)!important;
+}
+.fi-snakes .player-chip.active{
+  border-color:var(--player)!important;
+  box-shadow:0 0 0 1px var(--player),0 0 18px color-mix(in srgb,var(--player) 55%,transparent)!important;
+}
+@media(max-width:600px){.fi-snakes .token{border-width:1.5px!important;filter:saturate(2.25) contrast(1.18)}}
+/* Language selector matches the Ludo control and shared floating menu. */
+.fi-snakes .fi-game-language .language-button{
+  min-height:38px;color:#00D9FF!important;background:rgba(17,28,53,.22)!important;
+  border:1px solid rgba(139,92,246,.72)!important;border-radius:12px;
+  box-shadow:0 0 13px rgba(69,108,255,.14);
+}
+.fi-snakes .language-menu.fi-game-language-menu{
+  background:rgba(17,28,53,.96)!important;border:1px solid rgba(0,217,255,.58)!important;
+  border-radius:14px!important;box-shadow:0 18px 44px rgba(0,0,0,.44),0 0 20px rgba(69,108,255,.18)!important;
+}
+.fi-snakes .language-menu.fi-game-language-menu button{color:#EAF5FF!important}
+.fi-snakes .language-menu.fi-game-language-menu button:hover,
+.fi-snakes .language-menu.fi-game-language-menu button.active{
+  background:rgba(69,108,255,.22)!important;border-color:rgba(0,217,255,.42)!important;color:#00D9FF!important;
+}
+.fi-snakes .fi-game-language .language-button:focus-visible,
+.fi-snakes .language-menu.fi-game-language-menu button:focus-visible{outline:2px solid #00D9FF!important;outline-offset:3px!important}
