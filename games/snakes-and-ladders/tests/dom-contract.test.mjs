@@ -125,3 +125,13 @@ test("mobile room-code focus restores only an unexpected scroll reset",()=>{
  assert.match(scroll,/visualViewport\.addEventListener\("resize"/);
  assert.match(scroll,/roomInputActive/);
 });
+
+
+test("Android room-code focus disables smooth scrolling and scroll anchoring like Hokm",()=>{
+ const scroll=readFileSync(new URL("js/snakes-mobile-scroll.js",root),"utf8");
+ assert.match(scroll,/if\(!\/Android\/i\.test\(navigator\.userAgent/);
+ assert.match(scroll,/classList\.add\("fi-android-webview"\)/);
+ assert.match(css,/html\.fi-android-webview\{[\\s\\S]*?scroll-behavior:auto!important/);
+ assert.match(css,/overflow-anchor:none!important/);
+ assert.match(css,/html\.fi-android-webview \.room-join input\{[\\s\\S]*?scroll-margin-block:16px/);
+});
