@@ -76,6 +76,16 @@ test("SVG route artwork aligns inside the grid without covering cell labels",()=
 });
 
 test("redesigned board assets use the final cache version",()=>{
- assert.match(html,/snakes\.css\?v=fly-snakes-10/);
- assert.match(html,/snakes\.js\?v=fly-snakes-10/);
+ assert.match(html,/snakes\.css\?v=fly-snakes-11/);
+ assert.match(html,/snakes\.js\?v=fly-snakes-11/);
+});
+
+test("entry rule and vivid piece palette are wired through client and server",()=>{
+ const engine=readFileSync(new URL("js/snakes-engine.js",root),"utf8");
+ const rules=readFileSync(new URL("worker/src/rules.js",root),"utf8");
+ assert.match(engine,/needSix=from===0&&value!==6/);
+ assert.match(rules,/needSix=position===0&&value!==6/);
+ assert.match(js,/lastAction\?\.needSix\?t\("needSix"\)/);
+ assert.match(css,/saturate\(2\.2\)/);
+ assert.match(css,/\.fi-snakes \.fi-game-language \.language-button/);
 });
