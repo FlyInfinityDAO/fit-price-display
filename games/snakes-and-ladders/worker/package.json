@@ -1,8 +1,17 @@
 {
   "name": "fly-snakes-and-ladders-api",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
-  "scripts": {"dev":"wrangler dev","check":"node --check src/index.js","deploy":"wrangler deploy"},
-  "devDependencies": {"wrangler":"^4.20.0"}
+  "scripts": {
+    "dev": "wrangler dev",
+    "check": "node --check src/index.js && node --check src/security.js && node --check src/snakes-room.js",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "ethers": "^6.15.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.20.0"
+  }
 }

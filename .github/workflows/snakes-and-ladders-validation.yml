@@ -25,5 +25,7 @@ jobs:
         run: |
           node --input-type=module --check < games/snakes-and-ladders/js/snakes-engine.js
           node --input-type=module --check < games/snakes-and-ladders/js/snakes.js
-          node --experimental-default-type=module --test games/snakes-and-ladders/js/snakes-engine.test.js
           node --check games/snakes-and-ladders/worker/src/index.js
+          node --check games/snakes-and-ladders/worker/src/security.js
+          node --check games/snakes-and-ladders/worker/src/snakes-room.js
+          node --experimental-default-type=module --test games/snakes-and-ladders/js/snakes-engine.test.js

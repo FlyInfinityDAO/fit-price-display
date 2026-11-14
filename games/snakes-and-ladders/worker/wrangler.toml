@@ -6,3 +6,20 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 FRONTEND_ORIGIN = "https://flyinfinitydao.github.io"
 BSC_RPC_URL = "https://bsc-dataseed.binance.org/"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "fly-snakes-and-ladders-db"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
+
+[[durable_objects.bindings]]
+name = "SNAKES_ROOMS"
+class_name = "SnakesRoom"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["SnakesRoom"]
+
+[triggers]
+crons = ["17 * * * *"]
