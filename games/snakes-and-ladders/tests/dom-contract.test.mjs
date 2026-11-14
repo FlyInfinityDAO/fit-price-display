@@ -99,3 +99,17 @@ test("Ludo-style sequential movement animation and game sounds are wired",()=>{
  assert.match(js,/function playStepSound\(/);
  assert.match(css,/snakesDiceRoll/);
 });
+
+
+test("token motion preserves the same visible token between every square",()=>{
+ assert.match(js,/function squareOffset\(board,token,square,baseRect\)/);
+ assert.match(js,/token\.style\.transform=translateAt\(targetOffset\);animation\.cancel\(\)/);
+ assert.match(js,/token\.style\.transform=translateAt\(toOffset\);route\.cancel\(\)/);
+ assert.doesNotMatch(js,/function pointDelta\(/);
+});
+test("language popover uses the same fixed mobile menu behavior as Ludo",()=>{
+ assert.match(css,/#languageMenu:not\(\.open\)\{display:none!important\}/);
+ assert.match(css,/#languageMenu\.open\{[\s\S]*?position:fixed!important/);
+ assert.match(css,/\.fi-game-language-select\{[\s\S]*?clip:rect\(0,0,0,0\)!important/);
+ assert.match(html,/shared-language-menu\.js\?v=fly-snakes-13/);
+});
