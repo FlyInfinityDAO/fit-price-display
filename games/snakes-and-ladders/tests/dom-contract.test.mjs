@@ -155,10 +155,10 @@ test("Android Persian and Arabic language handling follows Hokm document and are
 });
 
 
-test("Android Persian room input uses focus preventScroll and Hokm viewport foundation",()=>{
+test("Android Persian room input keeps native focus behavior like Hokm",()=>{
  const scroll=readFileSync(new URL("js/snakes-mobile-scroll.js",root),"utf8");
- assert.match(scroll,/input\.focus\(\{preventScroll:true\}\)/);
- assert.match(scroll,/closest\("#roomCodeInput"\)/);
+ assert.doesNotMatch(scroll,/focus\(\{preventScroll:true\}\)/);
+ assert.match(scroll,/target&&target.id==="roomCodeInput"/);
  assert.match(css,/html\.fi-android-webview\s*\{[\s\S]*?min-height:100%[\s\S]*?scroll-behavior:auto!important/);
  assert.match(css,/html\.fi-android-webview body\s*\{[\s\S]*?min-height:100vh[\s\S]*?min-height:100dvh[\s\S]*?position:relative[\s\S]*?isolation:isolate/);
  assert.match(css,/html\.fi-android-webview body \.arena\s*\{[\s\S]*?position:relative[\s\S]*?z-index:1/);
