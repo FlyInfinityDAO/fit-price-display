@@ -1,0 +1,52 @@
+name: Fly Snakes & Ladders Cloudflare Deploy
+on:
+  push:
+    branches: [main]
+    paths:
+      - "games/snakes-and-ladders/worker/**"
+      - ".github/workflows/snakes-and-ladders-cloudflare-deploy.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: fly-snakes-and-ladders-cloudflare-deploy
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: games/snakes-and-ladders/worker
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate dedicated Worker configuration
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Add CLOUDFLARE_API_TOKEN repository secret."; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Add CLOUDFLARE_ACCOUNT_ID repository variable."; exit 1; }
+          grep -q 'name = "fly-snakes-and-ladders-api"' wrangler.toml
+          node --check src/index.js
+      - name: Install isolated Worker dependencies
+        run: npm install --no-audit --no-fund
+      - name: Deploy dedicated Snakes & Ladders Worker
+        run: npx wrangler deploy
+      - name: Verify Worker health
+        run: |
+          node --input-type=module <<'NODE'
+          const url = "https://fly-snakes-and-ladders-api.flyinfinityplatform.workers.dev/api/health";
+          const response = await fetch(url, { cache: "no-store" });
+          const data = await response.json();
+          if (!response.ok || data.ok !== true || data.service !== "Fly Infinity Snakes & Ladders API") {
+            console.error("Snakes & Ladders Worker health check failed:", data);
+            process.exit(1);
+          }
+          console.log("Dedicated Worker is healthy:", JSON.stringify(data));
+          NODE
