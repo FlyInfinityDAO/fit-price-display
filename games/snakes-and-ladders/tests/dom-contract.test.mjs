@@ -29,3 +29,21 @@ test("Ludo active-player glow and shared glass treatment are present",()=>{
  assert.match(css,/ludoPlayerFramePulse/);
  assert.match(css,/Unified Fly Games glass system/);
 });
+
+test("page chrome includes the complete Ludo-aligned responsive shell",()=>{
+ assert.match(css,/body\.fi-neon-ludo\s*\{[\s\S]*?background:#0F0F0F/);
+ assert.match(css,/body\.fi-neon-ludo \.topbar\s*\{[\s\S]*?display:flex/);
+ assert.match(css,/body\.fi-neon-ludo \.hero h1/);
+ assert.match(css,/body\.fi-neon-ludo footer[\s\S]*?color:#D2DDF1/);
+ assert.match(css,/#statsPanel|\.stats-panel/);
+});
+test("player bar adapts to the number of occupied seats",()=>{
+ assert.match(js,/bar\.dataset\.count=String\(room\.playerCount\)/);
+ assert.match(js,/playersBar"\)\.dataset\.count=String\(game\.players\.length\)/);
+ assert.match(css,/players-bar\[data-count="2"\]/);
+ assert.match(css,/players-bar\[data-count="3"\]/);
+});
+test("CPU difficulty selector controls the selected game difficulty",()=>{
+ assert.match(html,/id="cpuDifficulty"/);
+ assert.match(js,/start\(1,Number\(\$\("cpuCount"\)\.value\),\$\("cpuDifficulty"\)\.value\)/);
+});
