@@ -241,6 +241,338 @@ private const val DASHBOARD_SNAPSHOT_SCRIPT = """
 })();
 """
 
+
+/**
+ * App-only offline mirror of every static site page and its repository assets.
+ * The manifest is compiled into the APK; no website/repository files are changed.
+ */
+private class FullSiteCache(private val context: Context) {
+    private val directory = File(context.filesDir, "fly-full-site").apply { mkdirs() }
+    private val allowedPaths = setOf(
+        "airdrop-stats.json",
+        "audit.html",
+        "background-desktop.png",
+        "background-mobile.png",
+        "backup-privacy.html",
+        "backup-terms.html",
+        "card-hover.css",
+        "card-hover.js",
+        "compare.html",
+        "crypto-cache.json",
+        "dapp-buy-fit.html",
+        "dapp-gift.html",
+        "dapp-ownership.html",
+        "dapp-sell-fit.html",
+        "dapp.html",
+        "dapp/ar.json",
+        "dapp/en.json",
+        "dapp/es.json",
+        "dapp/fa.json",
+        "dapp/pt.json",
+        "dapp/ru.json",
+        "dapp/tr.json",
+        "dapp/zh.json",
+        "ecosystem-dashboard.js",
+        "ecosystem-visual.js",
+        "faq.html",
+        "fly-ai/css/fly-ai.css",
+        "fly-ai/index.html",
+        "fly-ai/js/app.js",
+        "fly-ai/js/config.js",
+        "fly-ai/js/i18n.js",
+        "games/backgammon/css/backgammon.css",
+        "games/backgammon/index.html",
+        "games/backgammon/js/backgammon-engine.js",
+        "games/backgammon/js/backgammon-engine.test.js",
+        "games/backgammon/js/backgammon.js",
+        "games/chess-arena/css/chess-arena.css",
+        "games/chess-arena/index.html",
+        "games/chess-arena/js/chess-arena.js",
+        "games/chess-arena/js/language.js",
+        "games/chess-arena/worker/package.json",
+        "games/chess-arena/worker/src/backgammon-room.js",
+        "games/chess-arena/worker/src/index.js",
+        "games/chess-arena/worker/src/ludo-room.js",
+        "games/chess-arena/worker/src/room.js",
+        "games/chess-arena/worker/src/rooms-api.js",
+        "games/chess-arena/worker/src/security.js",
+        "games/fi-neon-games.css",
+        "games/hokm/css/hokm-neon-theme.css",
+        "games/hokm/css/hokm.css",
+        "games/hokm/engine/hokm-engine.js",
+        "games/hokm/index.html",
+        "games/hokm/js/hokm-android-scroll.js",
+        "games/hokm/js/hokm-neon-ambient.js",
+        "games/hokm/js/hokm-online.js",
+        "games/hokm/js/hokm-play.js",
+        "games/hokm/js/hokm-wallet-bridge.js",
+        "games/hokm/js/hokm.js",
+        "games/hokm/worker/package.json",
+        "games/hokm/worker/src/index.js",
+        "games/hokm/worker/src/room.js",
+        "games/hokm/worker/src/security.js",
+        "games/index.html",
+        "games/ludo/css/ludo.css",
+        "games/ludo/index.html",
+        "games/ludo/js/ludo-engine.js",
+        "games/ludo/js/ludo-engine.test.js",
+        "games/ludo/js/ludo-mobile-scroll.js",
+        "games/ludo/js/ludo.js",
+        "games/ludo/package.json",
+        "games/ludo/worker/package.json",
+        "games/ludo/worker/src/index.js",
+        "games/ludo/worker/src/ludo-room.js",
+        "games/ludo/worker/src/rooms-api.js",
+        "games/ludo/worker/src/security.js",
+        "games/shared-language-menu.js",
+        "games/shared-neon-ambient.js",
+        "games/snakes-and-ladders/css/snakes.css",
+        "games/snakes-and-ladders/index.html",
+        "games/snakes-and-ladders/js/snakes-engine.js",
+        "games/snakes-and-ladders/js/snakes-engine.test.js",
+        "games/snakes-and-ladders/js/snakes-mobile-scroll.js",
+        "games/snakes-and-ladders/js/snakes.js",
+        "games/snakes-and-ladders/worker/package.json",
+        "games/snakes-and-ladders/worker/src/index.js",
+        "games/snakes-and-ladders/worker/src/rules.js",
+        "games/snakes-and-ladders/worker/src/security.js",
+        "games/snakes-and-ladders/worker/src/snakes-room.js",
+        "holders-data.json",
+        "index.html",
+        "lang.js",
+        "lang/audit/ar.json",
+        "lang/audit/en.json",
+        "lang/audit/es.json",
+        "lang/audit/fa.json",
+        "lang/audit/pt.json",
+        "lang/audit/ru.json",
+        "lang/audit/tr.json",
+        "lang/audit/zh.json",
+        "lang/compare/ar.json",
+        "lang/compare/en.json",
+        "lang/compare/es.json",
+        "lang/compare/fa.json",
+        "lang/compare/pt.json",
+        "lang/compare/ru.json",
+        "lang/compare/tr.json",
+        "lang/compare/zh.json",
+        "lang/dapp/ar.json",
+        "lang/dapp/en.json",
+        "lang/dapp/es.json",
+        "lang/dapp/fa.json",
+        "lang/dapp/pt.json",
+        "lang/dapp/ru.json",
+        "lang/dapp/tr.json",
+        "lang/dapp/zh.json",
+        "lang/faq/ar.json",
+        "lang/faq/en.json",
+        "lang/faq/es.json",
+        "lang/faq/fa.json",
+        "lang/faq/pt.json",
+        "lang/faq/ru.json",
+        "lang/faq/tr.json",
+        "lang/faq/zh.json",
+        "lang/index/ar.json",
+        "lang/index/en.json",
+        "lang/index/es.json",
+        "lang/index/fa.json",
+        "lang/index/pt.json",
+        "lang/index/ru.json",
+        "lang/index/tr.json",
+        "lang/index/zh.json",
+        "lang/next-projects/ar.json",
+        "lang/next-projects/en.json",
+        "lang/next-projects/es.json",
+        "lang/next-projects/fa.json",
+        "lang/next-projects/pt.json",
+        "lang/next-projects/ru.json",
+        "lang/next-projects/tr.json",
+        "lang/next-projects/zh.json",
+        "lang/privacy/ar.json",
+        "lang/privacy/en.json",
+        "lang/privacy/es.json",
+        "lang/privacy/fa.json",
+        "lang/privacy/pt.json",
+        "lang/privacy/ru.json",
+        "lang/privacy/tr.json",
+        "lang/privacy/zh.json",
+        "lang/profit-simulator/ar.json",
+        "lang/profit-simulator/en.json",
+        "lang/profit-simulator/es.json",
+        "lang/profit-simulator/fa.json",
+        "lang/profit-simulator/pt.json",
+        "lang/profit-simulator/ru.json",
+        "lang/profit-simulator/tr.json",
+        "lang/profit-simulator/zh.json",
+        "lang/transactions/ar.json",
+        "lang/transactions/en.json",
+        "lang/transactions/es.json",
+        "lang/transactions/fa.json",
+        "lang/transactions/pt.json",
+        "lang/transactions/ru.json",
+        "lang/transactions/tr.json",
+        "lang/transactions/zh.json",
+        "lang/warnings/ar.json",
+        "lang/warnings/en.json",
+        "lang/warnings/es.json",
+        "lang/warnings/fa.json",
+        "lang/warnings/pt.json",
+        "lang/warnings/ru.json",
+        "lang/warnings/tr.json",
+        "lang/warnings/zh.json",
+        "lang/what-is-fit/ar.json",
+        "lang/what-is-fit/en.json",
+        "lang/what-is-fit/es.json",
+        "lang/what-is-fit/fa.json",
+        "lang/what-is-fit/pt.json",
+        "lang/what-is-fit/ru.json",
+        "lang/what-is-fit/tr.json",
+        "lang/what-is-fit/zh.json",
+        "lang/whitepaper/ar.json",
+        "lang/whitepaper/en.json",
+        "lang/whitepaper/es.json",
+        "lang/whitepaper/fa.json",
+        "lang/whitepaper/pt.json",
+        "lang/whitepaper/ru.json",
+        "lang/whitepaper/tr.json",
+        "lang/whitepaper/zh.json",
+        "logo.png",
+        "next-projects.html",
+        "package.json",
+        "price-calculator.html",
+        "price-history-table.json",
+        "price-history.json",
+        "privacy.html",
+        "profit-simulator.html",
+        "ps.html",
+        "trading-volume-progress.json",
+        "trading-volume.json",
+        "transactions.html",
+        "update-airdrop.js",
+        "update-cache.js",
+        "update-price.js",
+        "update-trading-volume.js",
+        "wallet-connect.js",
+        "wallet-ui.css",
+        "wallet-ui.js",
+        "walletconnect-bridge.js",
+        "warnings.html",
+        "what-is-fit.html",
+        "whitepaper.html"
+    )
+
+    private fun normalizedPath(uri: Uri): String? {
+        if (uri.scheme != "https" || uri.host != SITE_HOST) return null
+        var path = uri.path.orEmpty()
+        if (path == SITE_PATH || path == "$SITE_PATH/") path = "$SITE_PATH/index.html"
+        if (!path.startsWith("$SITE_PATH/")) return null
+        val relative = path.removePrefix("$SITE_PATH/")
+        return relative.takeIf { it in allowedPaths }
+    }
+
+    private fun cacheFile(path: String): File {
+        val digest = MessageDigest.getInstance("SHA-256")
+            .digest(path.toByteArray(Charsets.UTF_8))
+            .joinToString("") { "%02x".format(it) }
+        return File(directory, digest + ".cache")
+    }
+
+    private fun mimeType(path: String): String = when (path.substringAfterLast('.', "").lowercase()) {
+        "html", "htm" -> "text/html"
+        "css" -> "text/css"
+        "js" -> "application/javascript"
+        "json" -> "application/json"
+        "svg" -> "image/svg+xml"
+        "png" -> "image/png"
+        "jpg", "jpeg" -> "image/jpeg"
+        "webp" -> "image/webp"
+        "gif" -> "image/gif"
+        "ico" -> "image/x-icon"
+        "woff" -> "font/woff"
+        "woff2" -> "font/woff2"
+        "ttf" -> "font/ttf"
+        "mp4" -> "video/mp4"
+        "webm" -> "video/webm"
+        else -> "application/octet-stream"
+    }
+
+    private fun fetch(path: String): ByteArray? {
+        val url = "https://$SITE_HOST$SITE_PATH/$path"
+        val connection = (URL(url).openConnection() as? HttpURLConnection) ?: return null
+        return try {
+            connection.requestMethod = "GET"
+            connection.connectTimeout = 10000
+            connection.readTimeout = 20000
+            connection.instanceFollowRedirects = true
+            connection.setRequestProperty("Cache-Control", "no-cache")
+            if (connection.responseCode in 200..299) connection.inputStream.use { it.readBytes() } else null
+        } catch (_: Exception) {
+            null
+        } finally {
+            connection.disconnect()
+        }
+    }
+
+    private fun save(path: String, bytes: ByteArray) {
+        runCatching {
+            val target = cacheFile(path)
+            val temp = File(directory, target.name + ".tmp")
+            temp.writeBytes(bytes)
+            if (!temp.renameTo(target)) {
+                target.writeBytes(bytes)
+                temp.delete()
+            }
+        }
+    }
+
+    private fun response(path: String, bytes: ByteArray) = WebResourceResponse(
+        mimeType(path),
+        if (mimeType(path).startsWith("text/") || mimeType(path).contains("javascript") ||
+            mimeType(path).contains("json") || mimeType(path).startsWith("image/svg")) "UTF-8" else null,
+        200,
+        "OK",
+        mapOf("Cache-Control" to "no-store"),
+        bytes.inputStream()
+    )
+
+    fun intercept(request: WebResourceRequest): WebResourceResponse? {
+        if (request.method != "GET") return null
+        val path = normalizedPath(request.url) ?: return null
+        val file = cacheFile(path)
+        if (hasValidatedInternet(context)) {
+            fetch(path)?.let { bytes ->
+                save(path, bytes)
+                return response(path, bytes)
+            }
+        }
+        return if (file.isFile) runCatching { response(path, file.readBytes()) }.getOrNull() else null
+    }
+
+    /** Called once when a fresh app process starts online; refreshes every page and asset. */
+    fun prefetchAll() {
+        if (!hasValidatedInternet(context)) return
+        Thread {
+            val executor = java.util.concurrent.Executors.newFixedThreadPool(4)
+            try {
+                allowedPaths.forEach { path ->
+                    executor.submit {
+                        if (hasValidatedInternet(context)) {
+                            fetch(path)?.let { save(path, it) }
+                        }
+                    }
+                }
+            } finally {
+                executor.shutdown()
+                try {
+                    executor.awaitTermination(15, java.util.concurrent.TimeUnit.MINUTES)
+                } catch (_: InterruptedException) {
+                    Thread.currentThread().interrupt()
+                }
+            }
+        }.apply { name = "FlyFullSitePrefetch"; isDaemon = true }.start()
+    }
+}
+
 private class LanguageAssetCache(private val context: Context) {
     private val languages = listOf("en", "fa", "ar", "tr", "ru", "zh", "es", "pt")
     private val directory = File(context.cacheDir, "fly-language-assets").apply { mkdirs() }
@@ -383,6 +715,7 @@ private fun FlyInfinityApp(
     val context = LocalContext.current
     val languageAssetCache = remember(context) { LanguageAssetCache(context) }
     val dashboardDataCache = remember(context) { DashboardDataCache(context) }
+    val fullSiteCache = remember(context) { FullSiteCache(context) }
     var destination by remember { mutableStateOf(AppDestination.Dashboard) }
     var webView by remember { mutableStateOf<WebView?>(null) }
     var isLoading by remember { mutableStateOf(true) }
@@ -516,7 +849,8 @@ private fun FlyInfinityApp(
                                     view: WebView,
                                     request: WebResourceRequest
                                 ): WebResourceResponse? {
-                                    return dashboardDataCache.intercept(request)
+                                    return fullSiteCache.intercept(request)
+                                        ?: dashboardDataCache.intercept(request)
                                         ?: languageAssetCache.intercept(request)
                                         ?: super.shouldInterceptRequest(view, request)
                                 }
@@ -663,6 +997,7 @@ private fun FlyInfinityApp(
 
                             webView = this
                             applyWebCachePolicy(this, context)
+                            if (hasValidatedInternet(context)) fullSiteCache.prefetchAll()
                             loadUrl(SITE_ROOT)
                         }
                     },
