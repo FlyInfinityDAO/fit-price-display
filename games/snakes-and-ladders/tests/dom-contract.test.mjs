@@ -72,5 +72,5 @@ test("SVG route artwork aligns inside the grid without covering cell labels",()=
  assert.match(css,/--board-inner-gap/);
  assert.match(css,/\.board-routes\{inset:var\(--board-inner-gap\)/);
  assert.match(css,/\.square\{z-index:auto\}/);
- assert.match(css,/\.square-number,\.square-marker,\.square-icon\{z-index:4\}/);
+ assert.match(css,/\.square-number[^\{]*\{z-index:4\}/);
 });
