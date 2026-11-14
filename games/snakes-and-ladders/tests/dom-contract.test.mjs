@@ -74,3 +74,8 @@ test("SVG route artwork aligns inside the grid without covering cell labels",()=
  assert.match(css,/\.square\{z-index:auto\}/);
  assert.match(css,/\.square-number[^\{]*\{z-index:4\}/);
 });
+
+test("redesigned board assets use the final cache version",()=>{
+ assert.match(html,/snakes\.css\?v=fly-snakes-10/);
+ assert.match(html,/snakes\.js\?v=fly-snakes-10/);
+});
