@@ -823,7 +823,7 @@ private const val WEBVIEW_MOTION_COMPATIBILITY_SCRIPT = """
   try {
     var originalMatchMedia = window.matchMedia.bind(window);
     window.matchMedia = function(query) {
-      if (typeof query === 'string' && /prefers-reduced-motion\\s*:\\s*reduce/i.test(query)) {
+      if (typeof query === 'string' && /prefers-reduced-motion\s*:\s*reduce/i.test(query)) {
         return {
           matches: false,
           media: query,
@@ -1071,6 +1071,27 @@ private fun FlyInfinityApp(
                                     super.onPageFinished(view, url)
                                     isLoading = false
                                     if (!url.isNullOrBlank()) {
+                                        // Give negative-z-index background pseudo-elements their own
+                                        // page stacking context so WebView cannot paint them behind
+                                        // the opaque body background.
+                                        view.evaluateJavascript(
+                                            """
+                                            (function(){
+                                              var style=document.getElementById('fly-android-visual-compat');
+                                              if(!style){
+                                                style=document.createElement('style');
+                                                style.id='fly-android-visual-compat';
+                                                style.textContent=
+                                                  'html,body{isolation:isolate!important}' +
+                                                  'body::before{z-index:-1!important}' +
+                                                  'html body #fi-games-neon-canvas,' +
+                                                  'html body #hokm-neon-canvas{display:block!important;visibility:visible!important;opacity:1!important}';
+                                                (document.head||document.documentElement).appendChild(style);
+                                              }
+                                            })();
+                                            """.trimIndent(),
+                                            null
+                                        )
                                         languageAssetCache.prefetchForPage(url)
                                         val pageUri = runCatching { Uri.parse(url) }.getOrNull()
                                         val isDashboard = pageUri?.host == SITE_HOST &&
