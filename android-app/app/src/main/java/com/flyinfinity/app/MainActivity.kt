@@ -15,10 +15,15 @@ import android.webkit.CookieManager
 import android.webkit.URLUtil
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.ValueCallback
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
+import java.io.File
+import java.net.HttpURLConnection
+import java.net.URL
+import java.security.MessageDigest
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -117,6 +122,100 @@ private fun applyWebCachePolicy(webView: WebView, context: Context) {
     }
 }
 
+
+/**
+ * Keeps the site's existing per-page language JSON files in the app's private
+ * cache. The website's language manager and dictionaries remain untouched.
+ */
+private class LanguageAssetCache(private val context: Context) {
+    private val languages = listOf("en", "fa", "ar", "tr", "ru", "zh", "es", "pt")
+    private val directory = File(context.cacheDir, "fly-language-assets").apply { mkdirs() }
+
+    private fun cacheFile(path: String): File {
+        val digest = MessageDigest.getInstance("SHA-256")
+            .digest(path.toByteArray(Charsets.UTF_8))
+            .joinToString("") { "%02x".format(it) }
+        return File(directory, "$digest.json")
+    }
+
+    private fun download(url: String): ByteArray? {
+        val connection = (URL(url).openConnection() as? HttpURLConnection) ?: return null
+        return try {
+            connection.requestMethod = "GET"
+            connection.connectTimeout = 7000
+            connection.readTimeout = 10000
+            connection.instanceFollowRedirects = true
+            connection.setRequestProperty("Accept", "application/json")
+            if (connection.responseCode in 200..299) connection.inputStream.use { it.readBytes() } else null
+        } catch (_: Exception) {
+            null
+        } finally {
+            connection.disconnect()
+        }
+    }
+
+    private fun save(path: String, bytes: ByteArray) {
+        runCatching {
+            val target = cacheFile(path)
+            val temporary = File(directory, target.name + ".tmp")
+            temporary.writeBytes(bytes)
+            if (!temporary.renameTo(target)) {
+                target.writeBytes(bytes)
+                temporary.delete()
+            }
+        }
+    }
+
+    private fun response(bytes: ByteArray): WebResourceResponse =
+        WebResourceResponse(
+            "application/json",
+            "UTF-8",
+            200,
+            "OK",
+            mapOf(
+                "Content-Type" to "application/json; charset=utf-8",
+                "Cache-Control" to "public, max-age=31536000"
+            ),
+            bytes.inputStream()
+        )
+
+    fun intercept(request: WebResourceRequest): WebResourceResponse? {
+        if (request.method != "GET") return null
+        val uri = request.url
+        if (uri.scheme != "https" || uri.host != SITE_HOST) return null
+        val path = uri.path.orEmpty()
+        if (!path.startsWith("$SITE_PATH/lang/") || !path.endsWith(".json")) return null
+
+        val file = cacheFile(path)
+        if (hasValidatedInternet(context)) {
+            val cleanUrl = uri.buildUpon().clearQuery().build().toString()
+            download(cleanUrl)?.let { bytes ->
+                save(path, bytes)
+                return response(bytes)
+            }
+        }
+        return if (file.isFile) runCatching { response(file.readBytes()) }.getOrNull() else null
+    }
+
+    /** Pre-download all eight language dictionaries for the page being viewed. */
+    fun prefetchForPage(pageUrl: String) {
+        if (!hasValidatedInternet(context)) return
+        val uri = runCatching { Uri.parse(pageUrl) }.getOrNull() ?: return
+        if (uri.host != SITE_HOST) return
+        var page = uri.path.orEmpty().substringAfterLast('/').substringBeforeLast('.', "")
+        if (page.isBlank()) page = "index"
+        if (page in setOf("dapp-ownership", "dapp-buy-fit", "dapp-sell-fit", "dapp-gift")) page = "dapp"
+        val pageName = page
+        Thread {
+            languages.forEach { language ->
+                val path = "$SITE_PATH/lang/$pageName/$language.json"
+                val url = "https://$SITE_HOST$path"
+                download(url)?.let { save(path, it) }
+            }
+        }.apply { name = "FlyLanguageCache-$pageName"; isDaemon = true }.start()
+    }
+}
+
 class MainActivity : ComponentActivity() {
     private var pendingFileChooser: ValueCallback<Array<Uri>>? = null
     private lateinit var filePickerLauncher: ActivityResultLauncher<Intent>
@@ -168,6 +267,7 @@ private fun FlyInfinityApp(
     onFileChooser: (ValueCallback<Array<Uri>>, WebChromeClient.FileChooserParams) -> Boolean
 ) {
     val context = LocalContext.current
+    val languageAssetCache = remember(context) { LanguageAssetCache(context) }
     var destination by remember { mutableStateOf(AppDestination.Dashboard) }
     var webView by remember { mutableStateOf<WebView?>(null) }
     var isLoading by remember { mutableStateOf(true) }
@@ -288,6 +388,14 @@ private fun FlyInfinityApp(
                             settings.cacheMode = android.webkit.WebSettings.LOAD_DEFAULT
 
                             webViewClient = object : WebViewClient() {
+                                override fun shouldInterceptRequest(
+                                    view: WebView,
+                                    request: WebResourceRequest
+                                ): WebResourceResponse? {
+                                    return languageAssetCache.intercept(request)
+                                        ?: super.shouldInterceptRequest(view, request)
+                                }
+
                                 override fun onPageStarted(
                                     view: WebView,
                                     url: String?,
@@ -305,6 +413,7 @@ private fun FlyInfinityApp(
                                 override fun onPageFinished(view: WebView, url: String?) {
                                     super.onPageFinished(view, url)
                                     isLoading = false
+                                    if (!url.isNullOrBlank()) languageAssetCache.prefetchForPage(url)
                                 }
 
                                 override fun onReceivedError(
