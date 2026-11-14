@@ -1,8 +1,11 @@
 package com.flyinfinity.app
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color as AndroidColor
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Bundle
 import android.webkit.WebChromeClient
@@ -85,6 +88,23 @@ private fun isFlyInfinityUrl(uri: Uri): Boolean {
         (path == SITE_PATH || path.startsWith("$SITE_PATH/"))
 }
 
+private fun hasValidatedInternet(context: Context): Boolean {
+    val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        ?: return false
+    val network = manager.activeNetwork ?: return false
+    val capabilities = manager.getNetworkCapabilities(network) ?: return false
+    return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+        capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+}
+
+private fun applyWebCachePolicy(webView: WebView, context: Context) {
+    webView.settings.cacheMode = if (hasValidatedInternet(context)) {
+        android.webkit.WebSettings.LOAD_DEFAULT
+    } else {
+        android.webkit.WebSettings.LOAD_CACHE_ELSE_NETWORK
+    }
+}
+
 class MainActivity : ComponentActivity() {
     private var pendingFileChooser: ValueCallback<Array<Uri>>? = null
     private lateinit var filePickerLauncher: ActivityResultLauncher<Intent>
@@ -140,7 +160,7 @@ private fun FlyInfinityApp(
         currentUrl = SITE_ROOT + target.path
         hasLoadError = false
         isLoading = true
-        webView?.loadUrl(currentUrl)
+        webView?.let { applyWebCachePolicy(it, context); it.loadUrl(currentUrl) }
     }
 
     fun openExternal(uri: Uri): Boolean {
@@ -212,6 +232,7 @@ private fun FlyInfinityApp(
                                     if (!url.isNullOrBlank() && isFlyInfinityUrl(Uri.parse(url))) {
                                         currentUrl = url
                                     }
+                                    applyWebCachePolicy(view, context)
                                     hasLoadError = false
                                     isLoading = true
                                 }
@@ -261,6 +282,7 @@ private fun FlyInfinityApp(
                             }
 
                             webView = this
+                            applyWebCachePolicy(this, context)
                             loadUrl(SITE_ROOT)
                         }
                     },
@@ -305,7 +327,7 @@ private fun FlyInfinityApp(
                                 onClick = {
                                     hasLoadError = false
                                     isLoading = true
-                                    webView?.loadUrl(currentUrl)
+                                    webView?.let { applyWebCachePolicy(it, context); it.loadUrl(currentUrl) }
                                 },
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = FlyGold,
