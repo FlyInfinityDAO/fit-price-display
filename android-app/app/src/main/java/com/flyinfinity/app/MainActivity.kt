@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Color as AndroidColor
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Bundle
 import android.webkit.WebChromeClient
@@ -40,6 +41,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -154,6 +156,48 @@ private fun FlyInfinityApp(
     var isLoading by remember { mutableStateOf(true) }
     var hasLoadError by remember { mutableStateOf(false) }
     var currentUrl by remember { mutableStateOf(SITE_ROOT) }
+    var hasInternet by remember { mutableStateOf(hasValidatedInternet(context)) }
+    val connectivityManager = remember(context) {
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
+
+    DisposableEffect(connectivityManager) {
+        val request = NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .build()
+        val callback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: android.net.Network) {
+                hasInternet = hasValidatedInternet(context)
+            }
+
+            override fun onLost(network: android.net.Network) {
+                hasInternet = hasValidatedInternet(context)
+            }
+
+            override fun onCapabilitiesChanged(
+                network: android.net.Network,
+                networkCapabilities: NetworkCapabilities
+            ) {
+                hasInternet = networkCapabilities.hasCapability(
+                    NetworkCapabilities.NET_CAPABILITY_INTERNET
+                ) && networkCapabilities.hasCapability(
+                    NetworkCapabilities.NET_CAPABILITY_VALIDATED
+                )
+            }
+        }
+        try {
+            connectivityManager.registerNetworkCallback(request, callback)
+        } catch (_: Exception) {
+            hasInternet = hasValidatedInternet(context)
+        }
+        onDispose {
+            try {
+                connectivityManager.unregisterNetworkCallback(callback)
+            } catch (_: Exception) {
+                // The callback may not have been registered on restricted devices.
+            }
+        }
+    }
 
     fun openDestination(target: AppDestination) {
         destination = target
@@ -202,8 +246,8 @@ private fun FlyInfinityApp(
                     style = MaterialTheme.typography.titleLarge
                 )
                 Text(
-                    "BNB SMART CHAIN",
-                    color = FlyTeal,
+                    if (hasInternet) "ONLINE · BNB SMART CHAIN" else "OFFLINE · CACHED CONTENT ONLY",
+                    color = if (hasInternet) FlyTeal else FlyGold,
                     style = MaterialTheme.typography.labelSmall
                 )
             }
