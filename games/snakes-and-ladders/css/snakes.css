@@ -365,3 +365,47 @@ body.fi-neon-ludo footer{text-align:center;font-size:12px;line-height:1.7;paddin
 @media(prefers-reduced-motion:reduce){
   body.fi-neon-ludo *,body.fi-neon-ludo *:before,body.fi-neon-ludo *:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
 }
+
+
+/* New illustrated board artwork — inspired by playful pastel board-game illustration. */
+.fi-snakes .board-wrap{padding:clamp(4px,1.4vw,14px);overflow:visible}
+.fi-snakes .snakes-board{
+ position:relative;isolation:isolate;overflow:hidden;width:min(100%,820px);aspect-ratio:1;
+ display:grid;grid-template-columns:repeat(10,minmax(0,1fr));grid-template-rows:repeat(10,minmax(0,1fr));
+ gap:clamp(2px,.42vw,5px);padding:clamp(8px,1.25vw,13px);
+ border:clamp(5px,.8vw,9px) solid transparent;border-radius:clamp(18px,2.4vw,30px);
+ background:linear-gradient(145deg,#142C50,#253B66) padding-box,linear-gradient(135deg,#7CE9E0,#F6C5E2 38%,#FFD77D 68%,#8AB9FF) border-box;
+ box-shadow:0 24px 60px rgba(3,12,32,.38),0 0 0 1px rgba(255,255,255,.45),0 0 35px rgba(74,183,218,.18),inset 0 0 0 2px rgba(255,255,255,.08)
+}
+.fi-snakes .snakes-board:before{content:"";position:absolute;inset:3px;border:1px solid rgba(255,255,255,.15);border-radius:15px;pointer-events:none;z-index:7}
+.fi-snakes .square{
+ position:relative;z-index:0;display:block;min-width:0;min-height:0;overflow:hidden;
+ padding:clamp(3px,.55vw,7px);border:1px solid rgba(35,60,94,.13);border-radius:clamp(5px,.75vw,10px);
+ background:linear-gradient(145deg,color-mix(in srgb,var(--tile) 92%,white),var(--tile) 72%,color-mix(in srgb,var(--tile) 78%,#6A7F9E));
+ color:#243451;font-size:clamp(10px,1.2vw,15px);font-weight:900;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.76),inset 0 -2px 0 rgba(32,57,88,.08),0 1px 2px rgba(20,35,60,.08);
+ transition:filter .18s ease,transform .18s ease
+}
+.fi-snakes .square.endpoint{background:linear-gradient(145deg,#FFF0B8,#FFD477 60%,#F3B85F);color:#533D25;border:1.5px solid #E7A84E;box-shadow:inset 0 1px 0 #fff8,0 2px 7px #A56A2C30}
+.fi-snakes .square-number{position:relative;z-index:3;display:inline-grid;place-items:center;min-width:1.5em;height:1.5em;padding:0 .12em;border-radius:6px;background:rgba(255,255,255,.44);font-size:inherit;line-height:1;text-shadow:0 1px 0 rgba(255,255,255,.6)}
+.fi-snakes .square-marker{position:absolute;z-index:3;left:50%;top:51%;transform:translate(-50%,-50%);font-size:clamp(6px,.72vw,9px);font-weight:1000;letter-spacing:.04em;white-space:nowrap;color:#65451F;background:rgba(255,255,255,.66);border-radius:20px;padding:2px 5px}
+.fi-snakes .square-icon{position:absolute;z-index:3;right:4%;bottom:1%;font-size:clamp(11px,1.7vw,20px);filter:drop-shadow(0 2px 2px #8A5B2440)}
+.fi-snakes .board-routes{position:absolute;inset:0;width:100%;height:100%;z-index:2;overflow:visible;pointer-events:none}
+.fi-snakes .board-ladder,.fi-snakes .board-snake{pointer-events:none}
+.fi-snakes .square .token-stack{position:absolute;z-index:5;inset:25% 3% 4%;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:clamp(1px,.25vw,3px)}
+.fi-snakes .token{position:relative;display:block;width:clamp(13px,2.15vw,25px);height:clamp(13px,2.15vw,25px);flex:0 0 auto;border:2px solid rgba(255,255,255,.96);border-radius:50%;background:radial-gradient(circle at 32% 24%,#FFFFFF 0 8%,color-mix(in srgb,var(--token-color) 62%,white) 18%,var(--token-color) 60%,color-mix(in srgb,var(--token-color) 65%,#101B35) 100%)!important;box-shadow:0 3px 5px rgba(10,25,48,.42),inset 0 1px 2px rgba(255,255,255,.85),0 0 0 1px rgba(27,42,69,.28)}
+.fi-snakes .token:after{content:"";position:absolute;left:23%;top:17%;width:25%;height:18%;border-radius:50%;background:rgba(255,255,255,.85);filter:blur(.3px)}
+.fi-snakes .player-chip{background:linear-gradient(145deg,rgba(255,255,255,.10),rgba(255,255,255,.035))!important;border-color:rgba(160,205,255,.22)!important}
+.fi-snakes .player-chip.active{background:linear-gradient(145deg,color-mix(in srgb,var(--player) 20%,#162847),rgba(255,255,255,.06))!important}
+@media(max-width:600px){
+ .fi-snakes .board-wrap{padding:2px}
+ .fi-snakes .snakes-board{gap:2px;padding:6px;border-radius:17px}
+ .fi-snakes .square{padding:2px;border-radius:4px;font-size:clamp(9px,2.4vw,12px)}
+ .fi-snakes .square-number{min-width:1.35em;height:1.35em;border-radius:4px}
+ .fi-snakes .square-marker{font-size:5px;padding:1px 3px}
+ .fi-snakes .square-icon{font-size:clamp(9px,2.8vw,14px)}
+ .fi-snakes .token{width:clamp(11px,3vw,17px);height:clamp(11px,3vw,17px);border-width:1.5px}
+ .fi-snakes .square .token-stack{inset:28% 2% 2%;gap:1px}
+}
+@media(max-width:370px){.fi-snakes .snakes-board{gap:1px;padding:4px}.fi-snakes .square{font-size:8px;padding:1px}.fi-snakes .square-marker{font-size:4px}.fi-snakes .token{width:10px;height:10px}}
+@media(prefers-reduced-motion:reduce){.fi-snakes .square{transition:none}}
