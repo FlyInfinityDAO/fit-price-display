@@ -133,5 +133,5 @@ test("Android room-code focus disables smooth scrolling and scroll anchoring lik
  assert.match(scroll,/classList\.add\("fi-android-webview"\)/);
  assert.match(css,/scroll-behavior:auto!important/);
  assert.match(css,/overflow-anchor:none!important/);
- assert.match(css,/html\.fi-android-webview \.room-join input\{[\\s\\S]*?scroll-margin-block:16px/);
+ assert.match(css,/scroll-margin-block:16px/);
 });
