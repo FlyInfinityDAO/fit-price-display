@@ -1071,9 +1071,11 @@ private fun FlyInfinityApp(
                                     super.onPageFinished(view, url)
                                     isLoading = false
                                     if (!url.isNullOrBlank()) {
-                                        // Give negative-z-index background pseudo-elements their own
-                                        // page stacking context so WebView cannot paint them behind
-                                        // the opaque body background.
+                                        // Preserve each hosted page's own stacking model. The previous
+                                        // global negative z-index rule put the main site's background
+                                        // behind its opaque body and also disturbed page-specific layers.
+                                        // Fly AI alone needs an isolated body so its negative-z background
+                                        // pseudo-elements remain visible in Android WebView.
                                         view.evaluateJavascript(
                                             """
                                             (function(){
@@ -1081,9 +1083,9 @@ private fun FlyInfinityApp(
                                               if(!style){
                                                 style=document.createElement('style');
                                                 style.id='fly-android-visual-compat';
+                                                var isFlyAi=location.pathname.indexOf('/fly-ai/')!==-1;
                                                 style.textContent=
-                                                  'html,body{isolation:isolate!important}' +
-                                                  'body::before{z-index:-1!important}' +
+                                                  (isFlyAi ? 'body{isolation:isolate!important}body::before{z-index:-1!important}body::after{z-index:-1!important}' : '') +
                                                   'html body #fi-games-neon-canvas,' +
                                                   'html body #hokm-neon-canvas{display:block!important;visibility:visible!important;opacity:1!important}';
                                                 (document.head||document.documentElement).appendChild(style);
