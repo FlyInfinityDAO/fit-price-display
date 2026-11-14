@@ -1,6 +1,5 @@
-/* Mobile scroll stability for Snakes & Ladders room-code entry.
-   Mirrors the proven Hokm behavior: preserve normal scrolling and repair only
-   an unexpected jump to the document top while the room input is focused. */
+/* Android-only scroll stability for Snakes & Ladders room-code entry.
+   Keep the same native focus and scrolling behavior as the proven Hokm page. */
 (function(){
  "use strict";
  if(!/Android/i.test(navigator.userAgent||""))return;
@@ -10,12 +9,11 @@
  const pageY=()=>window.scrollY||document.documentElement.scrollTop||document.body.scrollTop||0;
  function remember(){const y=pageY();if(y>0)savedScrollY=y;}
  function restoreIfReset(){
-  /* Persian and Arabic Android keyboards must keep native RTL scrolling.
-     The Hokm page uses this exact exception because forced scroll restoration
-     while the IME is open can itself trigger a jump to the document top. */
+  /* RTL Android uses native scrolling; never force a saved position while the IME is active. */
   if(["fa","ar"].includes(document.documentElement.lang))return;
   if(restoring)return;
-  const input=roomInput(),focused=input&&document.activeElement===input;
+  const input=roomInput();
+  const focused=input&&document.activeElement===input;
   if(!focused)return;
   const current=pageY();
   if(savedScrollY<120||current>Math.max(48,savedScrollY*.22))return;
@@ -29,18 +27,8 @@
  }
  document.addEventListener("scroll",()=>{if(!restoring&&!roomInputActive)remember();},{passive:true,capture:true});
  document.addEventListener("pointerdown",event=>{
-  const input=event.target&&event.target.closest&&event.target.closest("#roomCodeInput");
-  if(!input)return;
-  remember();
-  roomInputActive=true;
-  /* On Android Persian/Arabic, let the tap focus the field without the
-     WebView's native RTL scroll-to-focus adjustment. The keyboard still
-     opens from this user gesture; the browser's default action then only
-     places the caret in the already-focused input. */
-  if(["fa","ar"].includes(document.documentElement.lang)){
-   try{input.focus({preventScroll:true});}
-   catch{input.focus();}
-  }
+  const target=event.target;
+  if(target&&target.id==="roomCodeInput"){remember();roomInputActive=true;}
  },true);
  document.addEventListener("focusin",event=>{
   if(event.target&&event.target.id==="roomCodeInput"){
