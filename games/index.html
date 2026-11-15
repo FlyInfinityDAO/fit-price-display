@@ -1,27 +1,200 @@
 <!doctype html>
 <html lang="en" dir="ltr">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#111c35"><title>Fly Infinity Games</title><link rel="icon" href="../logo.png"><link rel="stylesheet" href="./fi-neon-games.css?v=fly-games-hub-2"><style>
-body.fi-games-hub{color:#f0f6ff}.fi-games-hub .arena{max-width:1180px}.fi-games-hub .hero h1{background:linear-gradient(105deg,#00d9ff,#456cff 48%,#8b5cf6);background-clip:text;-webkit-background-clip:text;color:transparent}.hub-intro{max-width:760px;margin:0 auto;color:#c1cde5;line-height:1.8}.games-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:22px 0}.game-card{position:relative;display:flex;flex-direction:column;gap:12px;min-height:240px;padding:24px;border:1px solid #456cff88;border-radius:22px;background:linear-gradient(135deg,#111c35f2,#18274ce8);box-shadow:0 14px 36px #03081966,inset 0 1px #ffffff12;transition:transform .2s,border-color .2s,box-shadow .2s}.game-card:hover{transform:translateY(-4px);border-color:#00d9ff;box-shadow:0 18px 40px #03081988,0 0 24px #456cff30}.game-icon{width:56px;height:56px;display:grid;place-items:center;border-radius:17px;background:linear-gradient(135deg,#00d9ff24,#8b5cf624);border:1px solid #00d9ff55;font-size:30px}.game-card h2{margin:0;font-size:23px;color:#f0f6ff}.game-card p{margin:0;color:#c1cde5;line-height:1.7;flex:1}.game-card a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 16px;border-radius:12px;text-decoration:none;font-weight:850;color:#07162c;background:linear-gradient(105deg,#00d9ff,#6c8dff 65%,#a78bfa)}.game-card .new-tag{position:absolute;top:17px;right:17px;padding:4px 9px;border-radius:99px;background:#8b5cf622;border:1px solid #8b5cf688;color:#d7c4ff;font-size:10px;font-weight:900;letter-spacing:.1em}.hub-notice{text-align:center;color:#9eafd0;font-size:12px;margin:18px 0}.fi-games-hub footer{text-align:center;color:#9eafd0;padding:20px;font-size:11px}
-@media(max-width:650px){body.fi-games-hub{padding:10px}.fi-games-hub .topbar{padding:10px}.fi-games-hub .topbar-actions{gap:6px}.fi-games-hub .network{display:none}.games-grid{grid-template-columns:1fr;gap:12px}.game-card{min-height:205px;padding:18px}.game-card h2{font-size:20px}.fi-games-hub .hero{padding:20px 14px}}
-</style><link rel="stylesheet" href="./fi-snakes-ui-theme.css?v=20261115-ui1"></head>
-<body class="fi-neon-chess fi-games-hub fi-snakes-ui"><main class="arena">
-<header class="topbar"><a class="brand" href="../index.html"><img src="../logo.png" class="brand-logo" alt=""><span class="brand-name">FLY INFINITY <small>GAMES</small></span></a><div class="topbar-actions"><div class="language-control fi-game-language"><button id="languageButton" class="language-button" type="button" aria-label="Change language" aria-haspopup="true" aria-expanded="false">🌐</button><div id="languageMenu" class="language-menu" role="menu"></div><select id="languageSelect" class="fi-game-language-select" aria-hidden="true" tabindex="-1"><option value="en">English</option><option value="fa">فارسی</option><option value="ar">العربية</option><option value="tr">Türkçe</option><option value="ru">Русский</option><option value="zh">中文</option><option value="es">Español</option><option value="pt">Português</option></select></div><a class="dashboard-link" href="../index.html">← <span data-i="dashboard">Dashboard</span></a></div></header>
-<section class="hero"><div class="eyebrow">FLY INFINITY ECOSYSTEM</div><h1 data-i="title">Fly Infinity Games</h1><p class="hub-intro" data-i="subtitle">Choose a game and enjoy the Fly Infinity Games experience. Connect your wallet inside each game to unlock play.</p></section>
-<section class="games-grid">
-<article class="game-card"><div class="game-icon">♟</div><h2>Chess Arena</h2><p data-i="chess">Live chess matches, private rooms and CPU challenges.</p><a href="./chess-arena/" data-i="open">Open game</a></article>
-<article class="game-card"><div class="game-icon">🎲</div><h2>Backgammon Fly Infinity</h2><p data-i="backgammon">Play classic backgammon with friends or against CPU.</p><a href="./backgammon/" data-i="open">Open game</a></article>
-<article class="game-card"><div class="game-icon">🂡</div><h2>Fly Infinity Hokm</h2><p data-i="hokm">A four-player trick-taking card game.</p><a href="./hokm/" data-i="open">Open game</a></article>
-<article class="game-card"><span class="new-tag">NEW</span><div class="game-icon">🎯</div><h2>Fly Ludo</h2><p data-i="ludo">Play locally, challenge CPU opponents or race with friends online.</p><a href="./ludo/" data-i="open">Open game</a></article>
-<article class="game-card"><span class="new-tag">NEW</span><div class="game-icon">🐍</div><h2>Fly Infinity Snakes &amp; Ladders</h2><p data-i="snakes">Climb ladders, avoid snakes and race to square 100.</p><a href="./snakes-and-ladders/" data-i="open">Open game</a></article></section><p class="hub-notice" data-i="notice">No entry fee. No token transfer. No financial rewards. Wallet access requires at least 1 FIT.</p><footer>Fly Infinity Games · Powered by Fly Infinity</footer></main>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111c35">
+  <meta name="description" content="Explore the Fly Infinity Games collection: Chess Arena, Backgammon, Hokm, Ludo, and Snakes & Ladders.">
+  <meta property="og:title" content="Fly Infinity Games">
+  <meta property="og:description" content="Five games. One Fly Infinity experience. Choose your next match.">
+  <meta property="og:type" content="website">
+  <title>Fly Infinity Games</title>
+  <link rel="icon" href="../logo.png">
+  <link rel="stylesheet" href="./fi-neon-games.css?v=fly-games-hub-3">
+  <link rel="stylesheet" href="./fi-snakes-ui-theme.css?v=20261115-hub2">
+  <style>
+    body.fi-games-hub{color:#f0f6ff}
+    .fi-games-hub .arena{width:min(100%,1180px);max-width:1180px}
+    .fi-games-hub .topbar{gap:16px;min-height:76px}
+    .fi-games-hub .brand{min-width:0;text-decoration:none}
+    .fi-games-hub .brand-name{letter-spacing:.045em}
+    .fi-games-hub .topbar-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap}
+    .fi-games-hub .dashboard-link{white-space:nowrap}
+    .fi-games-hub .hero{padding:clamp(28px,4vw,48px) 24px;text-align:center}
+    .fi-games-hub .hero .eyebrow{letter-spacing:.18em;font-size:12px;font-weight:850}
+    .fi-games-hub .hero h1{margin:10px 0 14px;font-size:clamp(34px,5vw,54px);line-height:1.12}
+    .fi-games-hub .hub-intro{max-width:720px;margin:0 auto;color:#c1cde5;font-size:clamp(15px,1.6vw,17px);line-height:1.85}
+    .fi-games-hub .games-heading{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:30px 4px 14px}
+    .fi-games-hub .games-heading h2{margin:0;color:#f0f6ff;font-size:clamp(20px,2.5vw,25px)}
+    .fi-games-hub .games-count{color:#aebfdf;font-size:13px;font-weight:700;white-space:nowrap}
+    .fi-games-hub .games-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:0 0 24px}
+    .fi-games-hub .game-card{position:relative;display:flex;min-width:0;min-height:252px;flex-direction:column;align-items:flex-start;gap:13px;padding:24px;border:1px solid rgba(190,225,255,.26);border-radius:22px;background:linear-gradient(135deg,rgba(17,28,53,.34),rgba(69,108,255,.14) 58%,rgba(139,92,246,.11));box-shadow:0 12px 30px rgba(3,8,25,.20),inset 0 1px 0 rgba(255,255,255,.18);-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+    .fi-games-hub .game-icon{width:58px;height:58px;display:grid;place-items:center;flex:0 0 auto;border-radius:18px;border:1px solid rgba(0,217,255,.38);background:linear-gradient(135deg,rgba(0,217,255,.17),rgba(139,92,246,.20));font-size:30px;line-height:1}
+    .fi-games-hub .game-card h3{margin:0;color:#f4f8ff;font-size:22px;line-height:1.3;font-weight:850}
+    .fi-games-hub .game-card p{margin:0;color:#c1cde5;line-height:1.75;font-size:14px;flex:1}
+    .fi-games-hub .game-action{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:46px;width:100%;margin-top:4px;padding:11px 16px;border:1px solid rgba(0,217,255,.68);border-radius:12px;color:#f5fbff;text-decoration:none;font-weight:850;background:linear-gradient(115deg,rgba(0,217,255,.78),rgba(69,108,255,.62),rgba(139,92,246,.48));box-shadow:0 7px 20px rgba(0,125,220,.16);transition:filter .18s ease,transform .18s ease,box-shadow .18s ease}
+    .fi-games-hub .game-action .action-arrow{font-size:18px;line-height:1}
+    .fi-games-hub .hub-notice{display:flex;align-items:flex-start;justify-content:center;gap:12px;margin:24px 0 18px;padding:17px 20px;border:1px solid rgba(139,92,246,.38);border-radius:16px;background:linear-gradient(135deg,rgba(17,28,53,.34),rgba(69,108,255,.13));color:#d7e3f8;font-size:13px;line-height:1.8;text-align:center}
+    .fi-games-hub .notice-icon{flex:0 0 auto;color:#00d9ff;font-size:18px}
+    .fi-games-hub footer{margin-top:26px;padding:22px 10px 12px;border-top:1px solid rgba(190,225,255,.18);text-align:center;color:#aebfdf}
+    .fi-games-hub .footer-brand{font-weight:850;letter-spacing:.04em;color:#e8f2ff}
+    .fi-games-hub .footer-links{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:10px 22px;margin:13px 0}
+    .fi-games-hub .footer-links a{color:#b9d8f5;text-decoration:none;font-size:13px;font-weight:700}
+    .fi-games-hub .footer-links a:hover{color:#00d9ff;text-decoration:underline;text-underline-offset:4px}
+    .fi-games-hub .footer-meta{font-size:11px;color:#91a5c7;line-height:1.7}
+    .fi-games-hub .skip-link{position:absolute;top:-100px;left:12px;z-index:10001;padding:10px 14px;border-radius:9px;background:#00d9ff;color:#07162c;font-weight:800}
+    .fi-games-hub .skip-link:focus{top:12px}
+    .fi-games-hub a:focus-visible,.fi-games-hub button:focus-visible{outline:2px solid #00d9ff!important;outline-offset:4px!important}
+    @media(hover:hover){
+      .fi-games-hub .game-card:hover{transform:translateY(-4px);border-color:rgba(0,217,255,.65);box-shadow:0 18px 38px rgba(3,8,25,.30),0 0 22px rgba(69,108,255,.14)}
+      .fi-games-hub .game-action:hover{transform:translateY(-1px);filter:brightness(1.12);box-shadow:0 10px 24px rgba(0,125,220,.24)}
+    }
+    @media(max-width:900px){.fi-games-hub .games-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:650px){
+      body.fi-games-hub{padding:10px}
+      .fi-games-hub .topbar{align-items:center;padding:12px 14px}
+      .fi-games-hub .topbar-actions{gap:8px}
+      .fi-games-hub .games-grid{grid-template-columns:1fr;gap:13px}
+      .fi-games-hub .game-card{min-height:0;padding:20px}
+      .fi-games-hub .game-card h3{font-size:20px}
+      .fi-games-hub .hero{padding:25px 15px}
+      .fi-games-hub .games-heading{margin-top:24px}
+      .fi-games-hub .hub-notice{padding:14px 12px;text-align:start}
+    }
+    @media(max-width:390px){
+      .fi-games-hub .topbar{flex-wrap:wrap}
+      .fi-games-hub .topbar-actions{width:100%;justify-content:space-between}
+      .fi-games-hub .brand-name{font-size:14px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .fi-games-hub *, .fi-games-hub *::before, .fi-games-hub *::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+    }
+  </style>
+</head>
+<body class="fi-neon-chess fi-games-hub fi-snakes-ui">
+<a class="skip-link" href="#games-list" data-i="skip">Skip to games</a>
+<main class="arena" id="top">
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Fly Infinity Games home">
+      <img src="../logo.png" class="brand-logo" alt="Fly Infinity logo">
+      <span class="brand-name">FLY INFINITY <small>GAMES</small></span>
+    </a>
+    <div class="topbar-actions">
+      <div class="language-control fi-game-language">
+        <button id="languageButton" class="language-button" type="button" aria-label="Change language" aria-haspopup="true" aria-expanded="false">🌐</button>
+        <div id="languageMenu" class="language-menu" role="menu" aria-label="Choose language"></div>
+        <select id="languageSelect" class="fi-game-language-select" aria-hidden="true" tabindex="-1">
+          <option value="en">English</option><option value="fa">فارسی</option><option value="ar">العربية</option><option value="tr">Türkçe</option><option value="ru">Русский</option><option value="zh">中文</option><option value="es">Español</option><option value="pt">Português</option>
+        </select>
+      </div>
+      <a class="dashboard-link" href="../index.html"><span class="dashboard-arrow" aria-hidden="true">←</span> <span data-i="dashboard">Dashboard</span></a>
+    </div>
+  </header>
+
+  <section class="hero" aria-labelledby="page-title">
+    <div class="eyebrow" data-i="eyebrow">THE FLY INFINITY GAME COLLECTION</div>
+    <h1 id="page-title" data-i="title">Fly Infinity Games</h1>
+    <p class="hub-intro" data-i="subtitle">Five familiar games, brought together in one place. Choose your next game and explore its play modes.</p>
+  </section>
+
+  <div class="games-heading">
+    <h2 data-i="collection">Choose your game</h2>
+    <span class="games-count" data-i="count">5 games available</span>
+  </div>
+
+  <section class="games-grid" id="games-list" aria-label="Available games">
+    <article class="game-card">
+      <div class="game-icon" role="img" aria-label="Chess icon" data-aria="chessIcon">♟</div>
+      <h3 data-i="chessTitle">Chess Arena</h3>
+      <p data-i="chess">Play classic chess against the CPU or challenge another player in a private match.</p>
+      <a class="game-action" href="./chess-arena/"><span data-i="play">Play now</span><span class="action-arrow" aria-hidden="true">→</span></a>
+    </article>
+    <article class="game-card">
+      <div class="game-icon" role="img" aria-label="Backgammon icon" data-aria="backgammonIcon">🎲</div>
+      <h3 data-i="backgammonTitle">Backgammon</h3>
+      <p data-i="backgammon">Play classic backgammon against the CPU or with another player online.</p>
+      <a class="game-action" href="./backgammon/"><span data-i="play">Play now</span><span class="action-arrow" aria-hidden="true">→</span></a>
+    </article>
+    <article class="game-card">
+      <div class="game-icon" role="img" aria-label="Hokm card game icon" data-aria="hokmIcon">🂡</div>
+      <h3 data-i="hokmTitle">Hokm</h3>
+      <p data-i="hokm">A four-player Persian trick-taking card game. Team up and win the hand.</p>
+      <a class="game-action" href="./hokm/"><span data-i="play">Play now</span><span class="action-arrow" aria-hidden="true">→</span></a>
+    </article>
+    <article class="game-card">
+      <div class="game-icon" role="img" aria-label="Ludo game icon" data-aria="ludoIcon">🎯</div>
+      <h3 data-i="ludoTitle">Ludo</h3>
+      <p data-i="ludo">Play locally, challenge CPU opponents or race with friends online.</p>
+      <a class="game-action" href="./ludo/"><span data-i="play">Play now</span><span class="action-arrow" aria-hidden="true">→</span></a>
+    </article>
+    <article class="game-card">
+      <div class="game-icon" role="img" aria-label="Snakes and Ladders game icon" data-aria="snakesIcon">🐍</div>
+      <h3 data-i="snakesTitle">Snakes &amp; Ladders</h3>
+      <p data-i="snakes">Climb ladders, avoid snakes and race to reach square 100.</p>
+      <a class="game-action" href="./snakes-and-ladders/"><span data-i="play">Play now</span><span class="action-arrow" aria-hidden="true">→</span></a>
+    </article>
+  </section>
+
+  <aside class="hub-notice" aria-label="Game access information">
+    <span class="notice-icon" aria-hidden="true">ⓘ</span>
+    <span data-i="notice">Free to enter. No entry fee, token transfer or financial rewards. Game access requires a wallet holding at least 1 FIT and a free signature. No transaction is required to enter.</span>
+  </aside>
+
+  <footer>
+    <div class="footer-brand">FLY INFINITY GAMES</div>
+    <nav class="footer-links" aria-label="Footer navigation">
+      <a href="../index.html" data-i="dashboard">Dashboard</a>
+      <a href="../privacy.html" data-i="privacy">Privacy Policy</a>
+      <a href="https://github.com/FlyInfinityDAO/fit-price-display" target="_blank" rel="noopener noreferrer" data-i="github">GitHub Repository</a>
+    </nav>
+    <div class="footer-meta" data-i="footerMeta">Part of the Fly Infinity ecosystem · Play fair and enjoy the game.</div>
+  </footer>
+</main>
+
 <script>
-(()=>{const dict={
-en:{dashboard:"Dashboard",title:"Fly Infinity Games",subtitle:"Choose a game and enjoy the Fly Infinity Games experience. Connect your wallet inside each game to unlock play.",chess:"Live chess matches, private rooms and CPU challenges.",backgammon:"Play classic backgammon with friends or against CPU.",hokm:"A four-player trick-taking card game.",ludo:"Play locally, challenge CPU opponents or race with friends online.",snakes:"Climb ladders, avoid snakes and race to square 100.",open:"Open game",notice:"No entry fee. No token transfer. No financial rewards. Wallet access requires at least 1 FIT."},
-fa:{dashboard:"داشبورد",title:"بازی‌های فلای اینفینیتی",subtitle:"بازی موردنظرت را انتخاب کن و از تجربه بازی‌های فلای اینفینیتی لذت ببر. برای ورود به هر بازی، کیف پولت را همان‌جا متصل کن.",chess:"مسابقات زنده شطرنج، اتاق خصوصی و بازی با کامپیوتر.",backgammon:"تخته‌نرد کلاسیک با دوستان یا در برابر کامپیوتر.",hokm:"بازی کارتی حکم برای چهار بازیکن.",ludo:"بازی محلی، رقابت با کامپیوتر یا مسابقه آنلاین با دوستان.",snakes:"از نردبان‌ها بالا برو، از مارها دوری کن و برای رسیدن به خانه ۱۰۰ رقابت کن.",open:"ورود به بازی",notice:"بدون هزینه ورود، انتقال توکن یا پاداش مالی. برای دسترسی به بازی حداقل ۱ FIT لازم است."},
-ar:{dashboard:"لوحة التحكم",title:"ألعاب Fly Infinity",subtitle:"اختر لعبة واستمتع بتجربة ألعاب Fly Infinity. اتصل بمحفظتك داخل كل لعبة لبدء اللعب.",chess:"مباريات شطرنج مباشرة وغرف خاصة وتحديات الكمبيوتر.",backgammon:"العب الطاولة الكلاسيكية مع الأصدقاء أو ضد الكمبيوتر.",hokm:"لعبة ورق لأربعة لاعبين.",ludo:"العب محلياً أو ضد الكمبيوتر أو عبر الإنترنت مع الأصدقاء.",snakes:"تسلّق السلالم وتجنب الثعابين وتسابق للوصول إلى المربع 100.",open:"افتح اللعبة",notice:"لا رسوم دخول ولا تحويل رموز ولا مكافآت مالية. يتطلب الوصول 1 FIT على الأقل."},
-tr:{dashboard:"Panel",title:"Fly Infinity Oyunları",subtitle:"Bir oyun seç ve Fly Infinity Games deneyiminin tadını çıkar. Oynamak için her oyunda cüzdanını bağla.",chess:"Canlı satranç maçları, özel odalar ve CPU mücadeleleri.",backgammon:"Arkadaşlarınla veya CPU'ya karşı tavla oyna.",hokm:"Dört oyunculu koz alma kart oyunu.",ludo:"Yerel oyna, CPU'ya meydan oku veya arkadaşlarınla çevrim içi yarış.",snakes:"Merdivenleri tırman, yılanlardan kaç ve 100. kareye ulaş.",open:"Oyunu aç",notice:"Giriş ücreti, token transferi veya finansal ödül yok. Erişim için en az 1 FIT gerekir."},
-ru:{dashboard:"Панель",title:"Игры Fly Infinity",subtitle:"Выберите игру и наслаждайтесь Fly Infinity Games. Для начала подключите кошелёк внутри игры.",chess:"Живые шахматные матчи, приватные комнаты и игра против CPU.",backgammon:"Играйте в нарды с друзьями или против компьютера.",hokm:"Карточная игра на взятки для четырёх игроков.",ludo:"Локальная игра, CPU-соперники или онлайн-матчи с друзьями.",snakes:"Поднимайтесь по лестницам, избегайте змей и первым доберитесь до клетки 100.",open:"Открыть игру",notice:"Без платы за вход, перевода токенов и финансовых наград. Требуется минимум 1 FIT."},
-zh:{dashboard:"控制面板",title:"Fly Infinity 游戏",subtitle:"选择一款游戏，体验 Fly Infinity Games。进入每款游戏后连接钱包即可开始。",chess:"实时国际象棋、私人房间和电脑挑战。",backgammon:"与朋友或电脑玩经典双陆棋。",hokm:"四人参与的吃墩纸牌游戏。",ludo:"本地游戏、挑战电脑，或与朋友在线竞赛。",snakes:"爬上梯子，避开蛇，率先到达第100格。",open:"开始游戏",notice:"无入场费、代币转账或金融奖励。访问至少需要 1 FIT。"},
-es:{dashboard:"Panel",title:"Juegos Fly Infinity",subtitle:"Elige un juego y disfruta de Fly Infinity Games. Conecta tu cartera dentro de cada juego para comenzar.",chess:"Partidas de ajedrez en vivo, salas privadas y desafíos CPU.",backgammon:"Juega al backgammon clásico con amigos o contra la CPU.",hokm:"Juego de bazas para cuatro jugadores.",ludo:"Juega localmente, contra la CPU o en línea con amigos.",snakes:"Sube por las escaleras, evita las serpientes y llega primero a la casilla 100.",open:"Abrir juego",notice:"Sin cuota de entrada, transferencias ni recompensas financieras. Se requiere al menos 1 FIT."},
-pt:{dashboard:"Painel",title:"Jogos Fly Infinity",subtitle:"Escolha um jogo e aproveite a experiência Fly Infinity Games. Conecte sua carteira dentro de cada jogo para começar.",chess:"Partidas de xadrez ao vivo, salas privadas e desafios contra CPU.",backgammon:"Jogue gamão clássico com amigos ou contra a CPU.",hokm:"Jogo de cartas de vazas para quatro jogadores.",ludo:"Jogue localmente, contra a CPU ou online com amigos.",snakes:"Suba pelas escadas, evite as cobras e chegue primeiro à casa 100.",open:"Abrir jogo",notice:"Sem taxa de entrada, transferência de token ou recompensas financeiras. É necessário pelo menos 1 FIT."}};
-let lang=localStorage.getItem("fit_lang")||localStorage.getItem("fi-game-language")||"en";const apply=()=>{const d=dict[lang]||dict.en;document.documentElement.lang=lang;document.documentElement.dir=lang==="fa"||lang==="ar"?"rtl":"ltr";document.querySelectorAll("[data-i]").forEach(el=>el.textContent=d[el.dataset.i]||dict.en[el.dataset.i]||el.textContent);$("languageSelect").value=lang;};const $=id=>document.getElementById(id);$("languageSelect").addEventListener("change",e=>{lang=e.target.value;localStorage.setItem("fit_lang",lang);localStorage.setItem("fi-game-language",lang);apply();});document.addEventListener("fi-language-updated",apply);apply();})();
-</script><script src="./shared-language-menu.js?v=fly-games-hub-2"></script><script src="./shared-neon-ambient.js?v=fly-games-hub-2"></script></body></html>
+(()=>{
+"use strict";
+const dict={
+en:{pageTitle:"Fly Infinity Games",skip:"Skip to games",dashboard:"Dashboard",eyebrow:"THE FLY INFINITY GAME COLLECTION",title:"Fly Infinity Games",subtitle:"Five familiar games, brought together in one place. Choose your next game and explore its play modes.",collection:"Choose your game",count:"5 games available",chessTitle:"Chess Arena",backgammonTitle:"Backgammon",hokmTitle:"Hokm",ludoTitle:"Ludo",snakesTitle:"Snakes & Ladders",chess:"Play classic chess against the CPU or challenge another player in a private match.",backgammon:"Play classic backgammon against the CPU or with another player online.",hokm:"A four-player Persian trick-taking card game. Team up and win the hand.",ludo:"Play locally, challenge CPU opponents or race with friends online.",snakes:"Climb ladders, avoid snakes and race to reach square 100.",play:"Play now",notice:"Free to enter. No entry fee, token transfer or financial rewards. Game access requires a wallet holding at least 1 FIT and a free signature. No transaction is required to enter.",privacy:"Privacy Policy",github:"GitHub Repository",footerMeta:"Part of the Fly Infinity ecosystem · Play fair and enjoy the game.",changeLanguage:"Change language",chessIcon:"Chess icon",backgammonIcon:"Backgammon icon",hokmIcon:"Hokm card game icon",ludoIcon:"Ludo game icon",snakesIcon:"Snakes and Ladders game icon"},
+fa:{pageTitle:"بازی‌های فلای اینفینیتی",skip:"رفتن به فهرست بازی‌ها",dashboard:"داشبورد",eyebrow:"مجموعه بازی‌های فلای اینفینیتی",title:"بازی‌های فلای اینفینیتی",subtitle:"پنج بازی محبوب در یک مجموعه؛ بازی بعدی خود را انتخاب کن و حالت‌های مختلف آن را ببین.",collection:"بازی موردنظرت را انتخاب کن",count:"۵ بازی در دسترس",chessTitle:"شطرنج",backgammonTitle:"تخته‌نرد",hokmTitle:"حکم",ludoTitle:"منچ",snakesTitle:"مار و پله",chess:"شطرنج کلاسیک را در برابر کامپیوتر بازی کن یا در یک مسابقه خصوصی با بازیکن دیگر رقابت کن.",backgammon:"تخته‌نرد کلاسیک را در برابر کامپیوتر یا به‌صورت آنلاین با بازیکن دیگر بازی کن.",hokm:"بازی کارتی ایرانی حکم برای چهار بازیکن؛ هم‌تیمی شو و دست‌ها را ببر.",ludo:"به‌صورت محلی بازی کن، با کامپیوتر رقابت کن یا با دوستانت آنلاین مسابقه بده.",snakes:"از نردبان‌ها بالا برو، از مارها دوری کن و برای رسیدن به خانه ۱۰۰ رقابت کن.",play:"شروع بازی",notice:"ورود رایگان است؛ بدون هزینه ورود، انتقال توکن یا پاداش مالی. برای دسترسی، کیف پول باید حداقل ۱ FIT داشته باشد و یک پیام رایگان امضا شود. برای ورود هیچ تراکنشی لازم نیست.",privacy:"حریم خصوصی",github:"مخزن گیت‌هاب",footerMeta:"بخشی از اکوسیستم فلای اینفینیتی · منصفانه بازی کن و لذت ببر.",changeLanguage:"تغییر زبان",chessIcon:"نماد شطرنج",backgammonIcon:"نماد تخته‌نرد",hokmIcon:"نماد بازی کارتی حکم",ludoIcon:"نماد بازی منچ",snakesIcon:"نماد بازی مار و پله"},
+ar:{pageTitle:"ألعاب فلاي إنفينيتي",skip:"انتقل إلى قائمة الألعاب",dashboard:"لوحة التحكم",eyebrow:"مجموعة ألعاب فلاي إنفينيتي",title:"ألعاب Fly Infinity",subtitle:"خمس ألعاب معروفة في مكان واحد. اختر لعبتك التالية واكتشف أوضاع اللعب المتاحة.",collection:"اختر لعبتك",count:"٥ ألعاب متاحة",chessTitle:"الشطرنج",backgammonTitle:"الطاولة",hokmTitle:"حكم",ludoTitle:"لودو",snakesTitle:"السلالم والثعابين",chess:"العب الشطرنج الكلاسيكي ضد الكمبيوتر أو تحدَّ لاعباً آخر في مباراة خاصة.",backgammon:"العب الطاولة الكلاسيكية ضد الكمبيوتر أو عبر الإنترنت مع لاعب آخر.",hokm:"لعبة ورق إيرانية لأربعة لاعبين تعتمد على أخذ الأكلات والعمل الجماعي.",ludo:"العب محلياً أو تحدَّ الكمبيوتر أو تسابق عبر الإنترنت مع أصدقائك.",snakes:"تسلّق السلالم وتجنب الثعابين وتسابق للوصول إلى المربع 100.",play:"العب الآن",notice:"اللعب مجاني؛ لا رسوم دخول ولا تحويل رموز ولا مكافآت مالية. يتطلب الوصول محفظة تحتوي على 1 FIT على الأقل وتوقيع رسالة مجاني. لا توجد معاملة مطلوبة للدخول.",privacy:"سياسة الخصوصية",github:"مستودع GitHub",footerMeta:"جزء من منظومة Fly Infinity · العب بنزاهة واستمتع.",changeLanguage:"تغيير اللغة",chessIcon:"أيقونة الشطرنج",backgammonIcon:"أيقونة الطاولة",hokmIcon:"أيقونة لعبة حكم",ludoIcon:"أيقونة لودو",snakesIcon:"أيقونة السلالم والثعابين"},
+tr:{pageTitle:"Fly Infinity Oyunları",skip:"Oyun listesine geç",dashboard:"Kontrol Paneli",eyebrow:"FLY INFINITY OYUN KOLEKSİYONU",title:"Fly Infinity Oyunları",subtitle:"Beş klasik oyun tek bir yerde. Sıradaki oyununuzu seçin ve oyun modlarını keşfedin.",collection:"Oyununuzu seçin",count:"5 oyun mevcut",chessTitle:"Satranç",backgammonTitle:"Tavla",hokmTitle:"Hokm",ludoTitle:"Ludo",snakesTitle:"Yılanlar ve Merdivenler",chess:"Bilgisayara karşı klasik satranç oynayın veya özel bir maçta başka bir oyuncuya meydan okuyun.",backgammon:"Bilgisayara karşı veya çevrimiçi başka bir oyuncuyla klasik tavla oynayın.",hokm:"Dört oyunculu, İran kökenli bir koz alma kart oyunu. Takım olun ve elleri kazanın.",ludo:"Yerel oynayın, CPU rakiplerine meydan okuyun veya arkadaşlarınızla çevrimiçi yarışın.",snakes:"Merdivenleri tırmanın, yılanlardan kaçının ve 100. kareye ulaşın.",play:"Hemen oyna",notice:"Giriş ücretsizdir; giriş ücreti, token transferi veya finansal ödül yoktur. Erişim için en az 1 FIT içeren bir cüzdan ve ücretsiz mesaj imzası gerekir. Giriş için işlem gerekmez.",privacy:"Gizlilik Politikası",github:"GitHub Deposu",footerMeta:"Fly Infinity ekosisteminin bir parçası · Adil oynayın ve keyfini çıkarın.",changeLanguage:"Dili değiştir",chessIcon:"Satranç simgesi",backgammonIcon:"Tavla simgesi",hokmIcon:"Hokm kart oyunu simgesi",ludoIcon:"Ludo oyun simgesi",snakesIcon:"Yılanlar ve Merdivenler oyun simgesi"},
+ru:{pageTitle:"Игры Fly Infinity",skip:"Перейти к списку игр",dashboard:"Панель управления",eyebrow:"КОЛЛЕКЦИЯ ИГР FLY INFINITY",title:"Игры Fly Infinity",subtitle:"Пять знакомых игр в одном месте. Выберите следующую игру и изучите доступные режимы.",collection:"Выберите игру",count:"Доступно 5 игр",chessTitle:"Шахматы",backgammonTitle:"Нарды",hokmTitle:"Хокм",ludoTitle:"Лудо",snakesTitle:"Змеи и лестницы",chess:"Играйте в классические шахматы против компьютера или с другим игроком в приватном матче.",backgammon:"Играйте в классические нарды против компьютера или онлайн с другим игроком.",hokm:"Персидская карточная игра на взятки для четырёх игроков. Играйте в команде и выигрывайте раунды.",ludo:"Играйте локально, против компьютера или соревнуйтесь онлайн с друзьями.",snakes:"Поднимайтесь по лестницам, избегайте змей и первым доберитесь до клетки 100.",play:"Играть",notice:"Вход бесплатный: без платы за вход, переводов токенов и финансовых наград. Для доступа нужен кошелёк минимум с 1 FIT и бесплатная подпись сообщения. Транзакция для входа не требуется.",privacy:"Политика конфиденциальности",github:"Репозиторий GitHub",footerMeta:"Часть экосистемы Fly Infinity · Играйте честно и получайте удовольствие.",changeLanguage:"Сменить язык",chessIcon:"Значок шахмат",backgammonIcon:"Значок нард",hokmIcon:"Значок карточной игры Хокм",ludoIcon:"Значок Лудо",snakesIcon:"Значок игры Змеи и лестницы"},
+zh:{pageTitle:"Fly Infinity 游戏",skip:"跳转到游戏列表",dashboard:"控制面板",eyebrow:"FLY INFINITY 游戏合集",title:"Fly Infinity 游戏",subtitle:"五款经典游戏汇聚一处。选择你想玩的游戏，了解可用的玩法模式。",collection:"选择游戏",count:"共 5 款游戏",chessTitle:"国际象棋",backgammonTitle:"双陆棋",hokmTitle:"霍克姆",ludoTitle:"飞行棋",snakesTitle:"蛇梯棋",chess:"与电脑进行经典国际象棋对战，或在私人对局中挑战其他玩家。",backgammon:"与电脑或在线玩家体验经典双陆棋。",hokm:"源自波斯的四人吃墩纸牌游戏，与队友合作赢得牌局。",ludo:"本地游玩、挑战电脑对手，或与朋友在线竞赛。",snakes:"爬上梯子，避开蛇，率先到达第 100 格。",play:"立即开始",notice:"免费游玩，无入场费、代币转账或金融奖励。访问需要至少持有 1 FIT 的钱包，并免费签署一条验证消息。进入游戏无需交易。",privacy:"隐私政策",github:"GitHub 仓库",footerMeta:"Fly Infinity 生态系统的一部分 · 公平游戏，享受乐趣。",changeLanguage:"切换语言",chessIcon:"国际象棋图标",backgammonIcon:"双陆棋图标",hokmIcon:"霍克姆纸牌游戏图标",ludoIcon:"飞行棋图标",snakesIcon:"蛇梯棋图标"},
+es:{pageTitle:"Juegos Fly Infinity",skip:"Ir a la lista de juegos",dashboard:"Panel",eyebrow:"COLECCIÓN DE JUEGOS FLY INFINITY",title:"Juegos Fly Infinity",subtitle:"Cinco juegos clásicos en un solo lugar. Elige tu próximo juego y descubre sus modos disponibles.",collection:"Elige tu juego",count:"5 juegos disponibles",chessTitle:"Ajedrez",backgammonTitle:"Backgammon",hokmTitle:"Hokm",ludoTitle:"Ludo",snakesTitle:"Serpientes y escaleras",chess:"Juega al ajedrez clásico contra la CPU o desafía a otra persona en una partida privada.",backgammon:"Juega al backgammon clásico contra la CPU o en línea con otra persona.",hokm:"Un juego persa de bazas para cuatro jugadores. Forma equipo y gana las manos.",ludo:"Juega en local, desafía a la CPU o compite en línea con tus amigos.",snakes:"Sube por las escaleras, evita las serpientes y llega primero a la casilla 100.",play:"Jugar ahora",notice:"Entrada gratuita: sin cuota de entrada, transferencias de tokens ni recompensas financieras. Se requiere una cartera con al menos 1 FIT y una firma gratuita. No se necesita ninguna transacción para entrar.",privacy:"Política de privacidad",github:"Repositorio de GitHub",footerMeta:"Parte del ecosistema Fly Infinity · Juega limpio y disfruta.",changeLanguage:"Cambiar idioma",chessIcon:"Icono de ajedrez",backgammonIcon:"Icono de backgammon",hokmIcon:"Icono del juego de cartas Hokm",ludoIcon:"Icono de Ludo",snakesIcon:"Icono de serpientes y escaleras"},
+pt:{pageTitle:"Jogos Fly Infinity",skip:"Ir para a lista de jogos",dashboard:"Painel",eyebrow:"COLEÇÃO DE JOGOS FLY INFINITY",title:"Jogos Fly Infinity",subtitle:"Cinco jogos clássicos reunidos num só lugar. Escolha o próximo jogo e descubra os modos disponíveis.",collection:"Escolha o seu jogo",count:"5 jogos disponíveis",chessTitle:"Xadrez",backgammonTitle:"Gamão",hokmTitle:"Hokm",ludoTitle:"Ludo",snakesTitle:"Cobras e escadas",chess:"Jogue xadrez clássico contra a CPU ou desafie outra pessoa numa partida privada.",backgammon:"Jogue gamão clássico contra a CPU ou online com outra pessoa.",hokm:"Um jogo persa de vazas para quatro jogadores. Forme uma equipa e vença as mãos.",ludo:"Jogue localmente, desafie a CPU ou dispute corridas online com amigos.",snakes:"Suba pelas escadas, evite as cobras e chegue primeiro à casa 100.",play:"Jogar agora",notice:"Entrada gratuita: sem taxa de entrada, transferência de tokens ou recompensas financeiras. É necessária uma carteira com pelo menos 1 FIT e uma assinatura gratuita. Não é necessária qualquer transação para entrar.",privacy:"Política de Privacidade",github:"Repositório GitHub",footerMeta:"Parte do ecossistema Fly Infinity · Jogue com fair play e divirta-se.",changeLanguage:"Alterar idioma",chessIcon:"Ícone de xadrez",backgammonIcon:"Ícone de gamão",hokmIcon:"Ícone do jogo de cartas Hokm",ludoIcon:"Ícone do jogo Ludo",snakesIcon:"Ícone do jogo Cobras e escadas"}
+};
+const $=id=>document.getElementById(id);
+const supported=Object.keys(dict);
+let lang=localStorage.getItem("fit_lang")||localStorage.getItem("fi-game-language")||"en";
+if(!supported.includes(lang))lang="en";
+function applyLanguage(){
+ const d=dict[lang]||dict.en;
+ document.documentElement.lang=lang;
+ document.documentElement.dir=(lang==="fa"||lang==="ar")?"rtl":"ltr";
+ document.title=d.pageTitle;
+ document.querySelectorAll("[data-i]").forEach(el=>{const key=el.dataset.i;if(d[key])el.textContent=d[key]});
+ document.querySelectorAll("[data-aria]").forEach(el=>{const key=el.dataset.aria;if(d[key])el.setAttribute("aria-label",d[key])});
+ $("languageSelect").value=lang;
+ $("languageButton").setAttribute("aria-label",d.changeLanguage);
+ document.querySelectorAll(".dashboard-arrow").forEach(el=>el.textContent=lang==="fa"||lang==="ar"?"→":"←");
+ document.querySelectorAll(".action-arrow").forEach(el=>el.textContent=lang==="fa"||lang==="ar"?"←":"→");
+}
+$("languageSelect").addEventListener("change",event=>{
+ lang=supported.includes(event.target.value)?event.target.value:"en";
+ localStorage.setItem("fit_lang",lang);
+ localStorage.setItem("fi-game-language",lang);
+ applyLanguage();
+});
+document.addEventListener("fi-language-updated",()=>{
+ const stored=localStorage.getItem("fit_lang")||localStorage.getItem("fi-game-language")||lang;
+ if(supported.includes(stored))lang=stored;
+ applyLanguage();
+});
+applyLanguage();
+})();
+</script>
+<script src="./shared-language-menu.js?v=fly-games-hub-3"></script>
+<script src="./shared-neon-ambient.js?v=fly-games-hub-3"></script>
+</body>
+</html>
