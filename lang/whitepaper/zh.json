@@ -193,7 +193,7 @@
     },
     "s2": {
       "title": "02 · FIT 代币架构",
-      "body": "FIT 基于 ERC-20，但当前合约有意禁用了常规 transfer、transferFrom 和 approve 调用。FIT 通过合约购买逻辑铸造，并通过出售逻辑赎回，出售的代币会被销毁。只有符合条件的 Network 所有者或 Network 合约才能调用这些功能。因此，该设计不支持通常意义上的自由代币转账。"
+      "body": "FIT 基于 ERC-20，但当前合约有意禁用了常规 transfer、transferFrom 和 approve 调用。FIT 通过合约的 Buy 逻辑铸造，并通过 Sell 逻辑赎回，出售的代币会被销毁。Buy 路径只能向 Network 认可的所有者地址铸造代币（或由 Network 合约调用）；Sell 路径会检查调用者是否为 Network 所有者，同时也允许 Network 合约调用。因此，该设计不支持通常意义上的自由代币转账。"
     },
     "s3": {
       "title": "03 · 链上价格公式",
