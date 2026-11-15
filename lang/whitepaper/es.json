@@ -193,7 +193,7 @@
     },
     "s2": {
       "title": "02 · Arquitectura del token FIT",
-      "body": "FIT se basa en ERC-20, pero el contrato actual deshabilita deliberadamente las funciones habituales transfer, transferFrom y approve. FIT se emite mediante la lógica de compra del contrato y se reembolsa mediante su lógica de venta, que quema los tokens vendidos. El acceso a estas funciones se limita a propietarios de Network que cumplan los requisitos o al propio contrato Network. Este diseño no es compatible con la transferencia libre habitual de tokens."
+      "body": "FIT se basa en ERC-20, pero el contrato actual deshabilita deliberadamente las funciones habituales transfer, transferFrom y approve. FIT se emite mediante la función Buy del contrato y se reembolsa mediante Sell, que quema los tokens vendidos. Buy solo puede emitir tokens a una dirección reconocida como propietaria por Network (o ser llamada por el propio contrato Network); Sell comprueba que quien llama sea propietario de Network, y también permite la llamada del contrato Network. Este diseño no es compatible con la transferencia libre habitual de tokens."
     },
     "s3": {
       "title": "03 · Fórmula de precio en cadena",
