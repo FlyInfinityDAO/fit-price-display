@@ -246,7 +246,8 @@
       "network": "Network",
       "products": "Products",
       "roadmap": "Roadmap",
-      "risk": "Risk"
+      "risk": "Risk",
+      "hosting": "Open-source hosting"
     },
     "pillars": {
       "networkTitle": "Network",
@@ -312,6 +313,10 @@
     },
     "closing": {
       "tagline": "Decentralized · Transparent · Built to evolve"
+    },
+    "s11": {
+      "title": "11 · Why we use GitHub Pages and a public GitHub address",
+      "body": "We chose GitHub Pages and the project’s public GitHub address as a deliberate infrastructure decision. The web application is published from the same public repository where its source code, versions and development history can be inspected. Participants, developers and independent reviewers can compare the published frontend with the source, follow changes over time and review the public record of updates. A personal server or private domain can be useful, but it is not a prerequisite for a credible, maintainable or transparent application. GitHub Pages lets us use an established hosting and HTTPS delivery platform while keeping the application’s source and change history publicly accessible, rather than depending on an opaque private hosting environment. Hosting on GitHub does not transfer ownership of Fly Infinity, its repository or product decisions to GitHub; these remain with the project maintainers. The public repository also enables community review, issue reporting and contributions through standard Git workflows. The frontend is only one layer of the ecosystem: blockchain operations are governed by the published smart contracts on BNB Smart Chain, while specific dynamic services may run on their respective infrastructure. Open source and public deployment improve inspectability and accountability, but they are not a security audit and do not guarantee software is free of vulnerabilities. We encourage users and independent reviewers to examine the source, contract addresses, on-chain activity and release history directly."
     }
   }
 }
