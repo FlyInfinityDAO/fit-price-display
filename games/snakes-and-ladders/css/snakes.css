@@ -248,11 +248,7 @@ body.fi-neon-ludo .hero:before{
 body.fi-neon-ludo .eyebrow{color:#00D9FF;font-size:10px;font-weight:900;letter-spacing:.2em;text-transform:uppercase}
 body.fi-neon-ludo .hero h1{
   position:relative;margin:6px 0 9px;font-size:clamp(32px,5vw,62px);line-height:1.08;font-weight:900;letter-spacing:.015em;
-  background-image:linear-gradient(105deg,#00D9FF 0%,#00D9FF 22%,#456CFF 58%,#8B5CF6 100%)!important;
-  background-size:240% 100%;background-position:0 50%;-webkit-background-clip:text;background-clip:text;
-  -webkit-text-fill-color:transparent;color:transparent;animation:fiSnakesTitleFlow 5.5s ease-in-out infinite alternate
 }
-@keyframes fiSnakesTitleFlow{to{background-position:100% 50%}}
 body.fi-neon-ludo .hero p{margin:0;color:#D2DDF1;font-size:clamp(14px,1.6vw,17px);letter-spacing:.025em;line-height:1.6}
 body.fi-neon-ludo .access-card{width:min(100%,860px);margin:0 auto 22px;padding:26px;border-radius:26px;border-color:rgba(0,217,255,.36)!important}
 body.fi-neon-ludo .card-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:12px}
@@ -363,7 +359,7 @@ body.fi-neon-ludo footer{text-align:center;font-size:12px;line-height:1.7;paddin
   body.fi-neon-ludo .room-join button{width:100%}
 }
 @media(prefers-reduced-motion:reduce){
-  body.fi-neon-ludo *,body.fi-neon-ludo *:before,body.fi-neon-ludo *:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+  body.fi-neon-ludo *:not(.hokm-title-word),body.fi-neon-ludo *:before,body.fi-neon-ludo *:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
 }
 
 
@@ -563,47 +559,31 @@ html.fi-android-webview body .arena{
 }
 
 
-/* Animated three-color title flow — matched to the Hokm title treatment. */
-.fi-snakes .hero h1[data-i="title"]{
-  background-image:linear-gradient(105deg,#00D9FF 0%,#456CFF 48%,#8B5CF6 100%)!important;
-  background-size:240% 100%!important;
-  background-position:0% 50%!important;
-  background-clip:text!important;
-  -webkit-background-clip:text!important;
-  -webkit-text-fill-color:transparent!important;
-  color:transparent!important;
-  animation:snakesTitleColorFlow 5.5s ease-in-out infinite alternate!important;
+/* v8 — same per-word animated title implementation used by Fly Infinity Hokm. */
+html body.fi-neon-ludo .arena > .hero h1[data-i="title"]{
+  background:none!important;
+  -webkit-text-fill-color:initial!important;
+  color:var(--fi-snakes-copy,#F0F6FF)!important;
 }
-@keyframes snakesTitleColorFlow{
+html body.fi-neon-ludo .arena > .hero h1[data-i="title"] .hokm-title-word{
+  display:inline-block;
+  background-image:linear-gradient(105deg,#00D9FF 0%,#456CFF 48%,#8B5CF6 100%);
+  background-size:220% 100%;
+  background-position:0% 50%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:transparent;
+  animation:hokmTitleWordFlow 4.8s ease-in-out infinite alternate;
+}
+html body.fi-neon-ludo .arena > .hero h1[data-i="title"] .hokm-title-word:nth-of-type(2){animation-delay:-1.6s}
+html body.fi-neon-ludo .arena > .hero h1[data-i="title"] .hokm-title-word:nth-of-type(3){animation-delay:-3.2s}
+@keyframes hokmTitleWordFlow{
   0%{background-position:0% 50%}
   100%{background-position:100% 50%}
 }
 @media(prefers-reduced-motion:reduce){
-  .fi-snakes .hero h1[data-i="title"]{
-    animation:none!important;
-    background-position:50% 50%!important;
+  html body.fi-neon-ludo .arena > .hero h1[data-i="title"] .hokm-title-word{
+    animation:none!important;background-position:50% 50%!important;
   }
-}
-
-
-/* Title motion hard override: keep the full-title color sweep active in embedded browsers. */
-body.fi-neon-ludo.fi-snakes .arena .hero h1[data-i="title"]{
-  background-image:linear-gradient(105deg,#00D9FF 0%,#456CFF 36%,#8B5CF6 68%,#00D9FF 100%)!important;
-  background-size:300% 100%!important;
-  background-position:0% 50%!important;
-  -webkit-background-clip:text!important;
-  background-clip:text!important;
-  -webkit-text-fill-color:transparent!important;
-  color:transparent!important;
-  animation-name:snakesTitleColorFlow!important;
-  animation-duration:4s!important;
-  animation-timing-function:linear!important;
-  animation-iteration-count:infinite!important;
-  animation-direction:alternate!important;
-  animation-play-state:running!important;
-  will-change:background-position;
-}
-@keyframes snakesTitleColorFlow{
-  0%{background-position:0% 50%}
-  100%{background-position:100% 50%}
 }
