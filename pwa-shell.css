@@ -1,9 +1,6 @@
-/* Fly Infinity PWA shell: safe-area support for all standalone pages. */
+/* Fly Infinity PWA shell: apply the iPhone safe area once at the page edge. */
 @media (display-mode: standalone), (display-mode: fullscreen) {
-  html {
-    min-height: 100%;
-    background: #0F0F0F;
-  }
+  html { min-height: 100%; background: #0F0F0F; }
   body {
     box-sizing: border-box;
     padding-top: env(safe-area-inset-top, 0px) !important;
@@ -11,19 +8,13 @@
     min-height: 100vh;
     min-height: 100dvh;
   }
-  /* Shared navigation headers must remain below the iPhone status area. */
-  .topbar {
-    box-sizing: border-box;
-    height: auto !important;
-    min-height: calc(70px + env(safe-area-inset-top, 0px));
-    padding-top: calc(12px + env(safe-area-inset-top, 0px)) !important;
-  }
-  .top-bar {
-    box-sizing: border-box;
-    padding-top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+  /* Headers keep their normal design spacing; safe area is already on body. */
+  .topbar, .top-bar, .header, .site-header, .main-header, .navbar {
     scroll-margin-top: env(safe-area-inset-top, 0px);
   }
-  .header, .site-header, .main-header, .navbar {
-    padding-top: env(safe-area-inset-top, 0px) !important;
+  /* Fixed drawers do not inherit body padding, so protect their own top edge. */
+  .sidebar {
+    box-sizing: border-box;
+    padding-top: calc(30px + env(safe-area-inset-top, 0px)) !important;
   }
 }
