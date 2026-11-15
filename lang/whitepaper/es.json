@@ -317,6 +317,90 @@
     "s11": {
       "title": "11 · Por qué utilizamos GitHub Pages y una dirección pública de GitHub",
       "body": "La elección de GitHub Pages y de la dirección pública del proyecto en GitHub es una decisión deliberada de infraestructura. La aplicación web se publica desde el mismo repositorio público donde cualquiera puede consultar el código fuente, las versiones y el historial de desarrollo. Los participantes, desarrolladores y revisores independientes pueden comparar la interfaz publicada con el código, seguir los cambios y consultar el registro público de actualizaciones. Un servidor propio o un dominio privado puede ser útil, pero no es un requisito para una aplicación fiable, mantenible o transparente. GitHub Pages nos permite utilizar una plataforma consolidada de alojamiento y distribución HTTPS, manteniendo el código y el historial accesibles públicamente. Alojar el sitio en GitHub no transfiere a GitHub la propiedad de Fly Infinity, del repositorio ni de las decisiones del producto; estas siguen bajo la responsabilidad del equipo del proyecto. El repositorio público facilita la revisión comunitaria, los informes de incidencias y las contribuciones mediante flujos Git estándar. La interfaz web es solo una capa: las operaciones blockchain se rigen por contratos inteligentes publicados en BNB Smart Chain, mientras que ciertos servicios dinámicos pueden ejecutarse en su propia infraestructura. El código abierto y la publicación pública mejoran la inspección y la rendición de cuentas, pero no constituyen una auditoría de seguridad ni garantizan que no existan vulnerabilidades. Invitamos a los usuarios y revisores independientes a examinar el código, las direcciones de los contratos, la actividad on-chain y el historial de versiones."
+    },
+    "purchaseLimits": {
+      "title": "06A · Límites de compra escalonados y crecimiento equilibrado de la red",
+      "body": "Diseñamos los límites de compra de FIT para que la capacidad de compra de cada cartera guarde proporción con su participación equilibrada en la Network. El contrato consulta los puntos acumulados de las ramas izquierda y derecha y utiliza la rama con menos puntos como criterio de elegibilidad. Al alcanzar cada umbral, se añade una cantidad determinada al límite acumulado de compra en DAI. Esta estructura escalonada busca reducir la concentración excesiva de compras en una sola cartera, fomentar el desarrollo equilibrado de la red y respaldar un flujo más ordenado de DAI hacia la reserva de FIT a medida que se realizan compras. El límite es acumulativo por cartera y no se reinicia en cada transacción. Es un mecanismo para gestionar la concentración, no una garantía absoluta de que las grandes tenencias no puedan distribuirse entre varias carteras. En las compras directas del propietario, el contrato registra el importe de DAI comprado dentro del límite acumulado de esa cartera.",
+      "threshold": "Puntos mínimos en ambos lados",
+      "cap": "Límite acumulado de compra (DAI)",
+      "rows": [
+        [
+          0,
+          "100"
+        ],
+        [
+          1,
+          "200"
+        ],
+        [
+          10,
+          "300"
+        ],
+        [
+          30,
+          "400"
+        ],
+        [
+          100,
+          "1,400"
+        ],
+        [
+          300,
+          "2,400"
+        ],
+        [
+          1000,
+          "12,400"
+        ],
+        [
+          3000,
+          "22,400"
+        ],
+        [
+          10000,
+          "122,400"
+        ],
+        [
+          30000,
+          "222,400"
+        ],
+        [
+          100000,
+          "1,222,400"
+        ],
+        [
+          300000,
+          "2,222,400"
+        ],
+        [
+          1000000,
+          "12,222,400"
+        ],
+        [
+          3000000,
+          "22,222,400"
+        ],
+        [
+          10000000,
+          "122,222,400"
+        ],
+        [
+          30000000,
+          "222,222,400"
+        ],
+        [
+          100000000,
+          "1,222,222,400"
+        ],
+        [
+          300000000,
+          "2,222,222,400"
+        ],
+        [
+          1000000000,
+          "12,222,222,400"
+        ]
+      ]
     }
   }
 }
