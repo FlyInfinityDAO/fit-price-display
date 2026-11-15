@@ -163,3 +163,13 @@ html[dir="rtl"] .fi-wallet-period { text-align:right; }
     0 24px 72px rgba(0, 0, 0, .42),
     inset 0 1px 0 rgba(255, 255, 255, .14) !important;
 }
+
+/* Read-only wallet address lookup, available with or without a connected wallet. */
+#fiWalletOverlay .fi-wallet-address-lookup{margin:0 0 14px;padding:13px;border:1px solid rgba(212,175,55,.28);border-radius:15px;background:linear-gradient(135deg,rgba(0,200,150,.07),rgba(212,175,55,.045))}
+#fiWalletOverlay .fi-wallet-address-lookup>label{color:#D4AF37;margin-bottom:9px}
+#fiWalletOverlay .fi-wallet-lookup-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:stretch}
+#fiWalletOverlay #fiWalletLookupInput{width:100%;min-width:0;min-height:44px;padding:10px 12px;border:1px solid rgba(0,200,150,.38);border-radius:11px;background:rgba(3,12,11,.42);color:#F2F7F5;font:inherit;font-size:13px;direction:ltr;text-align:left;outline:none}
+#fiWalletOverlay #fiWalletLookupInput:focus{border-color:#00C896;box-shadow:0 0 0 2px rgba(0,200,150,.12)}
+#fiWalletOverlay #fiWalletLookupButton{min-width:92px;min-height:44px;flex:none;padding:9px 13px;border-radius:11px;border-color:rgba(212,175,55,.6);background:linear-gradient(135deg,rgba(212,175,55,.22),rgba(0,200,150,.12));color:#F4E5B0}
+#fiWalletOverlay #fiWalletLookupButton:disabled{opacity:.55;cursor:wait}
+@media(max-width:360px){#fiWalletOverlay .fi-wallet-lookup-row{grid-template-columns:1fr}#fiWalletOverlay #fiWalletLookupButton{width:100%}}
