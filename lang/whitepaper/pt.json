@@ -246,7 +246,8 @@
       "network": "Rede",
       "products": "Produtos",
       "roadmap": "Roteiro",
-      "risk": "Riscos"
+      "risk": "Riscos",
+      "hosting": "Alojamento de código aberto"
     },
     "pillars": {
       "networkTitle": "Rede",
@@ -312,6 +313,10 @@
     },
     "closing": {
       "tagline": "Descentralizado · Transparente · Em evolução"
+    },
+    "s11": {
+      "title": "11 · Porque utilizamos o GitHub Pages e um endereço público do GitHub",
+      "body": "A escolha do GitHub Pages e do endereço público do projeto no GitHub é uma decisão deliberada de infraestrutura. A aplicação web é publicada a partir do mesmo repositório público onde todos podem consultar o código-fonte, as versões e o histórico de desenvolvimento. Participantes, programadores e revisores independentes podem comparar a interface publicada com o código, acompanhar alterações e consultar o registo público de atualizações. Um servidor próprio ou domínio privado pode ser útil, mas não é um requisito para uma aplicação credível, sustentável ou transparente. O GitHub Pages permite utilizar uma plataforma estabelecida de alojamento e distribuição HTTPS, mantendo o código e o histórico acessíveis publicamente. O alojamento no GitHub não transfere para o GitHub a propriedade da Fly Infinity, do repositório ou das decisões do produto; essas responsabilidades continuam com a equipa do projeto. O repositório público também permite revisão comunitária, comunicação de problemas e contribuições através dos fluxos Git habituais. A interface web é apenas uma camada: as operações blockchain são regidas pelos contratos inteligentes publicados na BNB Smart Chain, enquanto determinados serviços dinâmicos podem funcionar na sua própria infraestrutura. O código aberto e a publicação pública aumentam a capacidade de inspeção e responsabilização, mas não constituem uma auditoria de segurança nem garantem ausência de vulnerabilidades. Convidamos os utilizadores e revisores independentes a consultar o código-fonte, os endereços dos contratos, a atividade on-chain e o histórico de versões."
     }
   }
 }
