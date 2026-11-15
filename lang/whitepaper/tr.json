@@ -22,8 +22,8 @@
   },
   "whitepaper": {
     "title": "Beyaz Bülten",
-    "version": "Version 2.0",
-    "release": "Release Date: November 2026"
+    "version": "Sürüm 2.0",
+    "release": "Yayın tarihi: Kasım 2026"
   },
   "wp": {
     "s1": {
@@ -182,34 +182,136 @@
     "tagline": "Fly Infinity — Merkeziyetsiz. Şeffaf. Sonsuza Yükselen."
   },
   "wp2": {
-    "hero.title": "Birleşik ekosistem, akıllı sözleşmeyle tanımlanan token ekonomisi",
-    "hero.subtitle": "Fly Infinity için teknik ve ekonomik genel bakış: FIT rezerv modeli, zincir üstü fiyat kuralları, ağ, oyunlar, yapay zekâ ve planlanan girişimler.",
-    "s1.title": "01 · Yönetici özeti",
-    "s1.body": "Fly Infinity; ağ katılım katmanını, FIT token sözleşmesini, topluluk ve yönetişim bileşenlerini, oyunları ve yapay zekâ hizmetlerini BNB Smart Chain üzerinde bir araya getiren bir ekosistemdir. Bu belge, sözleşmede uygulanmış davranışları ürün açıklamalarından ve gelecek planlarından ayırır. Buradaki FIT fiyatı, rezervin arza oranından sözleşme tarafından hesaplanan değerdir; fiyat tahmini, harici borsa kotasyonu veya getiri garantisi değildir.",
-    "s2.title": "02 · FIT token mimarisi",
-    "s2.body": "FIT, ERC-20 tabanlıdır; ancak mevcut sözleşmede olağan transfer, transferFrom ve approve işlevleri bilerek devre dışı bırakılmıştır. FIT, sözleşmenin satın alma mantığıyla basılır ve satış mantığıyla geri alınırken satılan tokenler yakılır. Bu işlevlere erişim uygun Network sahipleri veya Network sözleşmesiyle sınırlandırılmıştır. Bu tasarım serbest ve olağan token transferiyle uyumlu değildir.",
-    "s3.title": "03 · Zincir üstü fiyat formülü",
-    "s3.body": "R, FIT token sözleşmesindeki DAI bakiyesini; S, toplam FIT arzını; W ise 10¹⁸ ondalık ölçeğini ifade eder. Sözleşme P = floor(R × W ÷ S) değerini döndürür; arz sıfırken Price() 1 DAI döndürür. İlk Genesis_Liquidity çağrısı 10 DAI gerektirir, sözleşmenin kendisine 10 FIT basar ve DAI yatırarak 1 DAI referans fiyatı oluşturur. Sonraki Genesis_Liquidity yatırımları yeni FIT basmadan rezervi artırır.",
-    "s4.title": "04 · Alım ve satımın matematiksel kanıtı",
-    "s4.body": "Alım: A DAI girdisinin tamamı rezerve eklenir; ücret f = floor(3A/100), basılan miktar m = floor((A−f)×W/P) olur. P×m ≤ (A−f)×W ≤ A×W ve P×S ≤ R×W olduğundan (R+A)×W ≥ P×(S+m) elde edilir; dolayısıyla alım sonrası hesaplanan tam sayı fiyatı P'nin altına düşmez. Satım: x FIT için brüt DAI g = floor(x×P/W), ücret h = floor(6g/100), ödeme q = g−h olur. q×W ≤ g×W ≤ x×P olduğundan (R−q)×W ≥ P×(S−x) ve satış sonrası fiyat da en az P olur. Kanıt, mevcut kaynak koddaki tam sayı işlemlerini izler; işlemin başarıyla tamamlandığını ve 18 ondalıklı standart DAI kullanıldığını varsayar.",
-    "s5.title": "05 · Sayısal örnek",
-    "s5.body": "Sonraki ağ rezerv yatırımları hariç, tam token miktarlarıyla örnek: Genesis 10 DAI rezerv ve 10 FIT arz ile 1,0000 DAI fiyatından başlar. 100 DAI alım rezervi 110 DAI'ye çıkarır ve %3 alım ücreti sonrası 97 FIT basar: 110 / 107 ≈ 1,0280. Ardından 50 FIT satışı 50 FIT'in tamamını yakar ve hesaplanan brüt değerin %94'ünü öder: rezerv yaklaşık 61,6822 DAI, arz 57 FIT, fiyat yaklaşık 1,0821 olur. Zincirdeki gerçek sonuçlar tam sayı birimleri ve Solidity yuvarlamasını kullanır.",
-    "s6.title": "06 · FIT neden harici borsalarda listelenmez?",
-    "s6.body": "Geleneksel bir borsa piyasası, varlıkların kullanıcı cüzdanları, borsa saklama hesapları veya likidite havuzları arasında aktarılabilmesini gerektirir. Mevcut FIT sözleşmesi olağan transfer ve onay çağrılarını engeller; bunun yerine kendi alım/satım yolunu sunar. Bu nedenle FIT bağımsız emir defterleri, AMM'ler veya üçüncü taraf borsa listelemeleri için tasarlanmamıştır. Projenin açıklanan politikası harici borsa listelemesi aramamaktır; amaçlanan alım, geri satış ve fiyat referansı özel FIT sözleşmesinde kalır. Bu, mevcut mimariyi ve proje politikasını açıklar; üçüncü tarafların FIT bilgilerini göstermesinin engellenebileceği anlamına gelmez.",
-    "s7.title": "07 · Ağ rezerv akışları ve yönetişim",
-    "s7.body": "Network sözleşmesi katılım ve ödül mantığını işler. Reward_Internal() içinde ödül transferleri ve uygun çağırana yapılabilecek ödeme tamamlandıktan sonra Network sözleşmesinde kalan DAI, FIT token sözleşmesine aktarılır. Belirlenmiş destek adreslerinde Check_Support() bazı ödül ödemelerini doğrudan FIT sözleşmesine yönlendirir. Bu yatırımlar o anda FIT basmadan R'yi artırır. DAO kaynak kodu, Network ve Gift sözleşme adreslerini değiştirmek için teklif ve Network sahiplerinin oylama süreçlerini tanımlar; bu, tüm proje kararlarının token sahiplerince oylandığı anlamına gelmez.",
-    "s8.title": "08 · Oyunlar ve yapay zekâ hizmetleri",
-    "s8.body": "Fly Infinity Games koleksiyonunda Chess Arena, Backgammon, Hokm, Ludo ve Snakes & Ladders bulunur. Oyun merkezi girişi ücretsiz olarak tanımlar: giriş ücreti, token transferi veya finansal ödül yoktur; erişim için en az 1 FIT tutan bir cüzdan ve ücretsiz imza gerekir. Fly Infinity AI, ekosistem, FIT, sözleşme ve işlem araçları sunan, cüzdan doğrulamalı bir asistan alanıdır. Açıklanan seviyeler Explorer (doğrulanmış Network sahibi), Advanced (sahip + en az 1 FIT) ve Elite (sahip + en az 10 FIT) şeklindedir. Yapay zekâ yanıtları hatalı olabilir ve doğrulanmalıdır.",
-    "s9.title": "09 · Planlanan ekosistem girişimleri",
-    "s9.body": "Kamuya açık Upcoming Projects sayfası Fly Infinity DEX, Marketplace, Lottery ve Fly Infinity Pay planlarını FIT sahibi sayısına bağlı hedeflerle açıklar. Bunlar henüz yayında olan ürünler değil, planlardır. Her girişim teknik uygulanabilirlik, finansman, yasal gereklilikler, güvenlik incelemesi ve ayrı bir lansman duyurusuna bağlıdır. Özellikle piyango fikri, her yargı bölgesinde ayrı hukuk incelemesi ve uygunluk kuralları gerektirir.",
-    "s10.title": "10 · Güvenlik, kapsam ve risk açıklaması",
-    "s10.body": "Sözleşme ve arayüz kaynak kodları projenin herkese açık GitHub deposunda yayımlanmıştır ve zincir üstü durum bağımsız olarak incelenebilir. Açık kaynak kod, bağımsız güvenlik denetimiyle aynı şey değildir. Riskler; akıllı sözleşme hataları, BNB Smart Chain veya DAI bağımlılıkları, stablecoin sabit kur veya ihraççı riski, işlem hataları, sözleşme mantığının izin verdiği yönetişim/adres değişiklikleri, cüzdan ele geçirilmesi, düzenleyici kısıtlamalar ve hizmet kesintilerini içerir. Rezerv/arz formülü sözleşmenin hesapladığı muhasebe değerini açıklar; herkesin her koşulda anında geri ödeme alacağını, DAI sabit kurunun korunacağını veya FIT alımının kârlı olacağını garanti etmez. Bu belge finansal, hukuki veya vergisel tavsiye değildir.",
-    "chart.reserve": "DAI rezervi",
-    "chart.supply": "FIT arzı",
-    "chart.price": "Sözleşme fiyatı",
-    "chart.initial": "Başlangıç",
-    "chart.afterBuy": "Alımdan sonra",
-    "chart.afterSell": "Satıştan sonra",
-    "chart.note": "Örnek hesaplamadaki gösterim değerleri; canlı piyasa verisi değildir."
+    "hero": {
+      "title": "Birleşik ekosistem, akıllı sözleşmeyle tanımlanan token ekonomisi",
+      "subtitle": "Fly Infinity için teknik ve ekonomik genel bakış: FIT rezerv modeli, zincir üstü fiyat kuralları, ağ, oyunlar, yapay zekâ ve planlanan girişimler.",
+      "kicker": "FLY INFINITY · KÜRESEL TEKNİK BELGE"
+    },
+    "s1": {
+      "title": "01 · Yönetici özeti",
+      "body": "Fly Infinity; ağ katılım katmanını, FIT token sözleşmesini, topluluk ve yönetişim bileşenlerini, oyunları ve yapay zekâ hizmetlerini BNB Smart Chain üzerinde bir araya getiren bir ekosistemdir. Bu belge, sözleşmede uygulanmış davranışları ürün açıklamalarından ve gelecek planlarından ayırır. Buradaki FIT fiyatı, rezervin arza oranından sözleşme tarafından hesaplanan değerdir; fiyat tahmini, harici borsa kotasyonu veya getiri garantisi değildir."
+    },
+    "s2": {
+      "title": "02 · FIT token mimarisi",
+      "body": "FIT, ERC-20 tabanlıdır; ancak mevcut sözleşmede olağan transfer, transferFrom ve approve işlevleri bilerek devre dışı bırakılmıştır. FIT, sözleşmenin satın alma mantığıyla basılır ve satış mantığıyla geri alınırken satılan tokenler yakılır. Bu işlevlere erişim uygun Network sahipleri veya Network sözleşmesiyle sınırlandırılmıştır. Bu tasarım serbest ve olağan token transferiyle uyumlu değildir."
+    },
+    "s3": {
+      "title": "03 · Zincir üstü fiyat formülü",
+      "body": "R, FIT token sözleşmesindeki DAI bakiyesini; S, toplam FIT arzını; W ise 10¹⁸ ondalık ölçeğini ifade eder. Sözleşme P = floor(R × W ÷ S) değerini döndürür; arz sıfırken Price() 1 DAI döndürür. İlk Genesis_Liquidity çağrısı 10 DAI gerektirir, sözleşmenin kendisine 10 FIT basar ve DAI yatırarak 1 DAI referans fiyatı oluşturur. Sonraki Genesis_Liquidity yatırımları yeni FIT basmadan rezervi artırır."
+    },
+    "s4": {
+      "title": "04 · Alım ve satımın matematiksel kanıtı",
+      "body": "Alım: A DAI girdisinin tamamı rezerve eklenir; ücret f = floor(3A/100), basılan miktar m = floor((A−f)×W/P) olur. P×m ≤ (A−f)×W ≤ A×W ve P×S ≤ R×W olduğundan (R+A)×W ≥ P×(S+m) elde edilir; dolayısıyla alım sonrası hesaplanan tam sayı fiyatı P'nin altına düşmez. Satım: x FIT için brüt DAI g = floor(x×P/W), ücret h = floor(6g/100), ödeme q = g−h olur. q×W ≤ g×W ≤ x×P olduğundan (R−q)×W ≥ P×(S−x) ve satış sonrası fiyat da en az P olur. Kanıt, mevcut kaynak koddaki tam sayı işlemlerini izler; işlemin başarıyla tamamlandığını ve 18 ondalıklı standart DAI kullanıldığını varsayar."
+    },
+    "s5": {
+      "title": "05 · Sayısal örnek",
+      "body": "Sonraki ağ rezerv yatırımları hariç, tam token miktarlarıyla örnek: Genesis 10 DAI rezerv ve 10 FIT arz ile 1,0000 DAI fiyatından başlar. 100 DAI alım rezervi 110 DAI'ye çıkarır ve %3 alım ücreti sonrası 97 FIT basar: 110 / 107 ≈ 1,0280. Ardından 50 FIT satışı 50 FIT'in tamamını yakar ve hesaplanan brüt değerin %94'ünü öder: rezerv yaklaşık 61,6822 DAI, arz 57 FIT, fiyat yaklaşık 1,0821 olur. Zincirdeki gerçek sonuçlar tam sayı birimleri ve Solidity yuvarlamasını kullanır."
+    },
+    "s6": {
+      "title": "06 · FIT neden harici borsalarda listelenmez?",
+      "body": "Geleneksel bir borsa piyasası, varlıkların kullanıcı cüzdanları, borsa saklama hesapları veya likidite havuzları arasında aktarılabilmesini gerektirir. Mevcut FIT sözleşmesi olağan transfer ve onay çağrılarını engeller; bunun yerine kendi alım/satım yolunu sunar. Bu nedenle FIT bağımsız emir defterleri, AMM'ler veya üçüncü taraf borsa listelemeleri için tasarlanmamıştır. Projenin açıklanan politikası harici borsa listelemesi aramamaktır; amaçlanan alım, geri satış ve fiyat referansı özel FIT sözleşmesinde kalır. Bu, mevcut mimariyi ve proje politikasını açıklar; üçüncü tarafların FIT bilgilerini göstermesinin engellenebileceği anlamına gelmez."
+    },
+    "s7": {
+      "title": "07 · Ağ rezerv akışları ve yönetişim",
+      "body": "Network sözleşmesi katılım ve ödül mantığını işler. Reward_Internal() içinde ödül transferleri ve uygun çağırana yapılabilecek ödeme tamamlandıktan sonra Network sözleşmesinde kalan DAI, FIT token sözleşmesine aktarılır. Belirlenmiş destek adreslerinde Check_Support() bazı ödül ödemelerini doğrudan FIT sözleşmesine yönlendirir. Bu yatırımlar o anda FIT basmadan R'yi artırır. DAO kaynak kodu, Network ve Gift sözleşme adreslerini değiştirmek için teklif ve Network sahiplerinin oylama süreçlerini tanımlar; bu, tüm proje kararlarının token sahiplerince oylandığı anlamına gelmez."
+    },
+    "s8": {
+      "title": "08 · Oyunlar ve yapay zekâ hizmetleri",
+      "body": "Fly Infinity Games koleksiyonunda Chess Arena, Backgammon, Hokm, Ludo ve Snakes & Ladders bulunur. Oyun merkezi girişi ücretsiz olarak tanımlar: giriş ücreti, token transferi veya finansal ödül yoktur; erişim için en az 1 FIT tutan bir cüzdan ve ücretsiz imza gerekir. Fly Infinity AI, ekosistem, FIT, sözleşme ve işlem araçları sunan, cüzdan doğrulamalı bir asistan alanıdır. Açıklanan seviyeler Explorer (doğrulanmış Network sahibi), Advanced (sahip + en az 1 FIT) ve Elite (sahip + en az 10 FIT) şeklindedir. Yapay zekâ yanıtları hatalı olabilir ve doğrulanmalıdır."
+    },
+    "s9": {
+      "title": "09 · Planlanan ekosistem girişimleri",
+      "body": "Kamuya açık Upcoming Projects sayfası Fly Infinity DEX, Marketplace, Lottery ve Fly Infinity Pay planlarını FIT sahibi sayısına bağlı hedeflerle açıklar. Bunlar henüz yayında olan ürünler değil, planlardır. Her girişim teknik uygulanabilirlik, finansman, yasal gereklilikler, güvenlik incelemesi ve ayrı bir lansman duyurusuna bağlıdır. Özellikle piyango fikri, her yargı bölgesinde ayrı hukuk incelemesi ve uygunluk kuralları gerektirir."
+    },
+    "s10": {
+      "title": "10 · Güvenlik, kapsam ve risk açıklaması",
+      "body": "Sözleşme ve arayüz kaynak kodları projenin herkese açık GitHub deposunda yayımlanmıştır ve zincir üstü durum bağımsız olarak incelenebilir. Açık kaynak kod, bağımsız güvenlik denetimiyle aynı şey değildir. Riskler; akıllı sözleşme hataları, BNB Smart Chain veya DAI bağımlılıkları, stablecoin sabit kur veya ihraççı riski, işlem hataları, sözleşme mantığının izin verdiği yönetişim/adres değişiklikleri, cüzdan ele geçirilmesi, düzenleyici kısıtlamalar ve hizmet kesintilerini içerir. Rezerv/arz formülü sözleşmenin hesapladığı muhasebe değerini açıklar; herkesin her koşulda anında geri ödeme alacağını, DAI sabit kurunun korunacağını veya FIT alımının kârlı olacağını garanti etmez. Bu belge finansal, hukuki veya vergisel tavsiye değildir."
+    },
+    "chart": {
+      "reserve": "DAI rezervi",
+      "supply": "FIT arzı",
+      "price": "Sözleşme fiyatı",
+      "initial": "Başlangıç",
+      "afterBuy": "Alımdan sonra",
+      "afterSell": "Satıştan sonra",
+      "note": "Örnek hesaplamadaki gösterim değerleri; canlı piyasa verisi değildir."
+    },
+    "toc": {
+      "overview": "Genel bakış",
+      "fit": "FIT tasarımı",
+      "formula": "Formül",
+      "proof": "Kanıt",
+      "example": "Örnek",
+      "exchange": "Borsa modeli",
+      "network": "Ağ",
+      "products": "Ürünler",
+      "roadmap": "Yol haritası",
+      "risk": "Risk"
+    },
+    "pillars": {
+      "networkTitle": "Ağ",
+      "networkText": "Katılım ve ekosistem koordinasyonu",
+      "fitTitle": "FIT",
+      "fitText": "Sözleşme tabanlı rezerv ve fiyat modeli",
+      "gamesTitle": "Oyunlar",
+      "gamesText": "Ücretsiz etkileşimli deneyimler",
+      "aiTitle": "Yapay zekâ",
+      "aiText": "Cüzdan doğrulamalı akıllı hizmetler"
+    },
+    "flow": {
+      "wallet": "Uygun cüzdan",
+      "walletSub": "Doğrulanmış Network sahibi",
+      "contract": "FIT sözleşmesi",
+      "contractSub": "Alım / Satım mantığı",
+      "supply": "Arz kontrolü",
+      "supplySub": "Basım / Yakım",
+      "note": "Mevcut kaynakta olağan transfer ve onay işlevleri hata verir. FIT bakiyeleri standart ERC-20 transfer yoluyla taşınamaz."
+    },
+    "equation": {
+      "label": "SÖZLEŞME PRICE()",
+      "reserve": "DAI rezervi",
+      "supply": "Toplam FIT arzı",
+      "scale": "18 ondalık ölçeği"
+    },
+    "genesis": {
+      "label": "GENESIS LİKİDİTESİ",
+      "description": "Sözleşmedeki ilk referans fiyat"
+    },
+    "proof": {
+      "buy": "ALIM · %3 ÜCRET",
+      "sell": "SATIŞ · %6 ÜCRET",
+      "note": "Eşitsizlikler mevcut FIT sözleşmesindeki tam sayı tabanlı aşağı yuvarlama işlemlerini izler. Başarılı alım ve satım işlemlerinden sonra sözleşme fiyatının düşmediğini gösterir; harici piyasa fiyatını veya her koşulda geri ödemeyi garanti etmez."
+    },
+    "exchange": {
+      "transfer": "Olağan transferler",
+      "transferDesc": "Mevcut token sözleşmesinde devre dışı",
+      "pools": "Harici likidite havuzları",
+      "poolsDesc": "Aktarılabilir varlık ve onay gerektirir",
+      "dedicated": "Özel FIT sözleşmesi",
+      "dedicatedDesc": "Tanımlı alım / satım işlevleri"
+    },
+    "network": {
+      "activity": "Ağ etkinliği",
+      "rewards": "Ödüller işlenir",
+      "reserve": "FIT DAI rezervi",
+      "reserveNote": "DAI girişi · bu adımda basım yok"
+    },
+    "roadmap": {
+      "dex": "Hedef: 5.000 FIT sahibi",
+      "market": "Hedef: 10.000 FIT sahibi",
+      "lottery": "Hedef: 20.000 FIT sahibi · hukuki incelemeye tabi",
+      "pay": "Hedef: 30.000 FIT sahibi"
+    },
+    "contracts": {
+      "title": "Sözleşme referansları · BNB Smart Chain",
+      "token": "FIT Token",
+      "network": "Network",
+      "gift": "Gift",
+      "dao": "DAO",
+      "source": "Kaynak kod"
+    },
+    "closing": {
+      "tagline": "Merkeziyetsiz · Şeffaf · Gelişime açık"
+    }
   }
 }
