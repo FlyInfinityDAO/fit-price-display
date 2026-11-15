@@ -1,10 +1,10 @@
 {
-  "id": "./",
+  "id": "/fit-price-display/",
   "name": "Fly Infinity",
   "short_name": "Fly Infinity",
   "description": "The Fly Infinity connected ecosystem.",
-  "start_url": "./index.html?source=pwa",
-  "scope": "./",
+  "start_url": "/fit-price-display/index.html?source=pwa",
+  "scope": "/fit-price-display/",
   "display": "standalone",
   "display_override": [
     "standalone"
