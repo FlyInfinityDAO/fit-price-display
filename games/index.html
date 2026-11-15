@@ -38,26 +38,35 @@
     body.fi-games-hub #languageMenu.open button{box-sizing:border-box}
     .fi-games-hub .brand-name{display:flex!important;flex-direction:column;align-items:flex-start;gap:4px;line-height:1.15}
     .fi-games-hub .brand-name small{display:block;margin:0!important;line-height:1.1}
-    /* Match Snakes & Ladders: independent flowing neon colors on both brand words. */
-    .fi-games-hub .brand-name .fi-hub-brand-word{
-      display:inline-block;
-      background-image:linear-gradient(105deg,#00D9FF 0%,#456CFF 48%,#8B5CF6 100%);
-      background-size:220% 100%;
-      background-position:0% 50%;
-      -webkit-background-clip:text;
-      background-clip:text;
+    /* Hub-only high-specificity override: prevent shared game themes from freezing the brand gradient. */
+    html body.fi-games-hub.fi-neon-chess.fi-snakes-ui .brand-name > .fi-hub-brand-word{
+      display:inline-block!important;
+      background-image:linear-gradient(105deg,#00D9FF 0%,#456CFF 34%,#8B5CF6 68%,#00D9FF 100%)!important;
+      background-size:400% 100%!important;
+      background-position:0% 50%!important;
+      -webkit-background-clip:text!important;
+      background-clip:text!important;
       -webkit-text-fill-color:transparent!important;
       color:transparent!important;
-      animation:fiHubBrandWordFlow 4.8s ease-in-out infinite alternate;
+      animation:fiGamesHubBrandFlow 5s linear infinite!important;
+      -webkit-animation:fiGamesHubBrandFlow 5s linear infinite!important;
+      will-change:background-position;
     }
-    .fi-games-hub .brand-name .fi-hub-brand-word:nth-child(2){animation-delay:-1.6s}
-    @keyframes fiHubBrandWordFlow{
+    html body.fi-games-hub.fi-neon-chess.fi-snakes-ui .brand-name > .fi-hub-brand-word:nth-child(2){
+      animation-delay:-1.6s!important;
+      -webkit-animation-delay:-1.6s!important;
+    }
+    @keyframes fiGamesHubBrandFlow{
+      0%{background-position:0% 50%}
+      100%{background-position:100% 50%}
+    }
+    @-webkit-keyframes fiGamesHubBrandFlow{
       0%{background-position:0% 50%}
       100%{background-position:100% 50%}
     }
     @media(prefers-reduced-motion:reduce){
-      .fi-games-hub .brand-name .fi-hub-brand-word{
-        animation:none!important;background-position:50% 50%!important;
+      html body.fi-games-hub.fi-neon-chess.fi-snakes-ui .brand-name > .fi-hub-brand-word{
+        animation:none!important;-webkit-animation:none!important;background-position:50% 50%!important;
       }
     }
     .fi-games-hub .game-action{box-sizing:border-box;width:100%;min-width:0;max-width:100%;align-self:stretch}
