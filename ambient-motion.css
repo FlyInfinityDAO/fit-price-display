@@ -1,0 +1,46 @@
+/* Fly Infinity — shared ambient background motion
+   Decorative layer only: existing desktop/mobile background artwork remains untouched. */
+body::after {
+    content: "";
+    position: fixed;
+    inset: -14%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.38;
+    background-image:
+        radial-gradient(42rem 34rem at 13% 22%, rgba(0, 211, 190, 0.16), transparent 70%),
+        radial-gradient(40rem 32rem at 87% 28%, rgba(65, 120, 255, 0.15), transparent 72%),
+        radial-gradient(44rem 36rem at 54% 88%, rgba(151, 83, 255, 0.13), transparent 72%);
+    background-repeat: no-repeat;
+    transform: translate3d(0, 0, 0) scale(1);
+    animation: fiAmbientDrift 34s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+@keyframes fiAmbientDrift {
+    0% {
+        transform: translate3d(-1.2%, -0.6%, 0) scale(1);
+    }
+    50% {
+        transform: translate3d(0.8%, 0.9%, 0) scale(1.025);
+    }
+    100% {
+        transform: translate3d(1.4%, -0.4%, 0) scale(1.01);
+    }
+}
+
+@media (max-width: 768px) {
+    body::after {
+        inset: -8%;
+        opacity: 0.25;
+        animation-duration: 42s;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body::after {
+        animation: none;
+        transform: none;
+        will-change: auto;
+    }
+}
