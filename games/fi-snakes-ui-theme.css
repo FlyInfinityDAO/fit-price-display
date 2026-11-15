@@ -172,3 +172,26 @@ html body.fi-snakes-ui.fi-games-hub .hub-notice{
   html body.fi-snakes-ui .arena .wallet-connect-options{grid-template-columns:1fr}
   html body.fi-snakes-ui .arena .game-heading-actions{flex-wrap:wrap}
 }
+
+/* Wallet entry actions: pin the exact shared Snakes & Ladders button treatment
+   against legacy page-specific wallet-option overrides. */
+html body.fi-snakes-ui .arena .wallet-connect-options #connectBrowserBtn.primary-btn{
+  min-height:44px!important;border:1px solid rgba(0,217,255,.76)!important;border-radius:12px!important;
+  color:#F5FBFF!important;
+  background:linear-gradient(115deg,rgba(0,217,255,.78),rgba(69,108,255,.58),rgba(139,92,246,.42))!important;
+  box-shadow:0 8px 22px rgba(0,125,220,.20),inset 0 1px 0 rgba(255,255,255,.30)!important;
+}
+html body.fi-snakes-ui .arena .wallet-connect-options #connectWalletBtn.secondary-btn{
+  min-height:44px!important;border:1px solid rgba(190,225,255,.34)!important;border-radius:12px!important;
+  color:#F0F6FF!important;
+  background:linear-gradient(125deg,rgba(69,108,255,.25),rgba(139,92,246,.19))!important;
+  box-shadow:0 7px 20px rgba(3,8,25,.16),inset 0 1px 0 rgba(255,255,255,.20)!important;
+}
+@media(hover:hover){
+  html body.fi-snakes-ui .arena .wallet-connect-options #connectBrowserBtn.primary-btn:not(:disabled):hover,
+  html body.fi-snakes-ui .arena .wallet-connect-options #connectWalletBtn.secondary-btn:not(:disabled):hover{
+    transform:translateY(-2px);filter:brightness(1.12);
+    border-color:rgba(0,217,255,.68)!important;
+    box-shadow:0 10px 25px rgba(3,8,25,.22),0 0 18px rgba(69,108,255,.14),inset 0 1px 0 rgba(255,255,255,.24)!important;
+  }
+}
