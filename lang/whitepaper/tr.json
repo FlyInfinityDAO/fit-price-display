@@ -189,7 +189,7 @@
     },
     "s1": {
       "title": "01 · Yönetici özeti",
-      "body": "Fly Infinity; ağ katılım katmanını, FIT token sözleşmesini, topluluk ve yönetişim bileşenlerini, oyunları ve yapay zekâ hizmetlerini BNB Smart Chain üzerinde bir araya getiren bir ekosistemdir. Bu belge, sözleşmede uygulanmış davranışları ürün açıklamalarından ve gelecek planlarından ayırır. Buradaki FIT fiyatı, rezervin arza oranından sözleşme tarafından hesaplanan değerdir; fiyat tahmini, harici borsa kotasyonu veya getiri garantisi değildir."
+      "body": "Biz, Fly Infinity'nin kurucuları olarak FIT tokenini, Network katılımını, topluluk yönetişimini, oyunları ve yapay zekâ hizmetlerini BNB Smart Chain üzerinde bir araya getirmek amacıyla bu ekosistemi oluşturduk. Bu white paper, vizyonumuzun, mimarimizin, ekonomik tasarımımızın ve geliştirdiğimiz ürünlerin resmî sunumudur. Yayındaki sözleşmelerin işleyişini ve geliştirme yol haritamızdaki girişimleri açıklar. Burada ele alınan FIT fiyatı, özel sözleşmenin DAI rezervi ve toplam FIT arzına göre hesapladığı değerdir."
     },
     "s2": {
       "title": "02 · FIT token mimarisi",
@@ -209,7 +209,7 @@
     },
     "s6": {
       "title": "06 · FIT neden harici borsalarda listelenmez?",
-      "body": "Geleneksel bir borsa piyasası, varlıkların kullanıcı cüzdanları, borsa saklama hesapları veya likidite havuzları arasında aktarılabilmesini gerektirir. Mevcut FIT sözleşmesi olağan transfer ve onay çağrılarını engeller; bunun yerine kendi alım/satım yolunu sunar. Bu nedenle FIT bağımsız emir defterleri, AMM'ler veya üçüncü taraf borsa listelemeleri için tasarlanmamıştır. Projenin açıklanan politikası harici borsa listelemesi aramamaktır; amaçlanan alım, geri satış ve fiyat referansı özel FIT sözleşmesinde kalır. Bu, mevcut mimariyi ve proje politikasını açıklar; üçüncü tarafların FIT bilgilerini göstermesinin engellenebileceği anlamına gelmez."
+      "body": "FIT için sözleşme tabanlı özel bir modeli bilinçli olarak seçtik. Geleneksel borsalar ve bağımsız likidite havuzları, varlıkların cüzdanlar, saklama hesapları ve havuzlar arasında aktarılmasına dayanır. FIT ise özel Buy ve Sell işlevlerini kullanır; standart transfer ve onay yolları tasarım gereği sınırlandırılmıştır. Bu nedenle FIT, harici borsa emir defterleri veya üçüncü taraf likidite havuzları yerine kendi sözleşme çerçevesinde çalışacak şekilde tasarlanmıştır. Politikamız nettir: FIT'in harici borsalarda listelenmesi için başvuru yapmayı veya bunu takip etmeyi planlamıyoruz. Alım, itfa ve fiyat referansı özel FIT sözleşmesinde tanımlanmıştır."
     },
     "s7": {
       "title": "07 · Ağ rezerv akışları ve yönetişim",
@@ -224,8 +224,8 @@
       "body": "Kamuya açık Upcoming Projects sayfası Fly Infinity DEX, Marketplace, Lottery ve Fly Infinity Pay planlarını FIT sahibi sayısına bağlı hedeflerle açıklar. Bunlar henüz yayında olan ürünler değil, planlardır. Her girişim teknik uygulanabilirlik, finansman, yasal gereklilikler, güvenlik incelemesi ve ayrı bir lansman duyurusuna bağlıdır. Özellikle piyango fikri, her yargı bölgesinde ayrı hukuk incelemesi ve uygunluk kuralları gerektirir."
     },
     "s10": {
-      "title": "10 · Güvenlik, kapsam ve risk açıklaması",
-      "body": "Sözleşme ve arayüz kaynak kodları projenin herkese açık GitHub deposunda yayımlanmıştır ve zincir üstü durum bağımsız olarak incelenebilir. Açık kaynak kod, bağımsız güvenlik denetimiyle aynı şey değildir. Riskler; akıllı sözleşme hataları, BNB Smart Chain veya DAI bağımlılıkları, stablecoin sabit kur veya ihraççı riski, işlem hataları, sözleşme mantığının izin verdiği yönetişim/adres değişiklikleri, cüzdan ele geçirilmesi, düzenleyici kısıtlamalar ve hizmet kesintilerini içerir. Rezerv/arz formülü sözleşmenin hesapladığı muhasebe değerini açıklar; herkesin her koşulda anında geri ödeme alacağını, DAI sabit kurunun korunacağını veya FIT alımının kârlı olacağını garanti etmez. Bu belge finansal, hukuki veya vergisel tavsiye değildir."
+      "title": "Güvenlik, şeffaflık ve katılımcı bilgileri",
+      "body": "Şeffaflık ve sorumlu geliştirme çalışmalarımıza yön verir. Sözleşme ve arayüz kaynak kodunu herkese açık GitHub depomuzda yayımlıyor, zincir üzerindeki durumun bağımsız biçimde incelenmesini sağlıyoruz. Fly Infinity; akıllı sözleşmelere, BNB Smart Chain'e, DAI'ye ve bağlı cüzdan altyapısına dayanır. Bu bileşenleri anlamak, cüzdan erişimini korumak ve ilgili gereklilikleri gözetmek bilinçli katılımın parçasıdır. Rezerv/arz formülü, sözleşmenin muhasebe fiyatını ve tanımlı alım-itfa süreçlerini açıklar. Bu white paper, projenin tasarımını ve geliştirme yönünü resmî olarak sunar."
     },
     "chart": {
       "reserve": "DAI rezervi",
@@ -234,7 +234,7 @@
       "initial": "Başlangıç",
       "afterBuy": "Alımdan sonra",
       "afterSell": "Satıştan sonra",
-      "note": "Örnek hesaplamadaki gösterim değerleri; canlı piyasa verisi değildir."
+      "note": "Sayısal örneğe dayalı açıklayıcı sözleşme değerleri."
     },
     "toc": {
       "overview": "Genel bakış",
@@ -265,7 +265,7 @@
       "contractSub": "Alım / Satım mantığı",
       "supply": "Arz kontrolü",
       "supplySub": "Basım / Yakım",
-      "note": "Mevcut kaynakta olağan transfer ve onay işlevleri hata verir. FIT bakiyeleri standart ERC-20 transfer yoluyla taşınamaz."
+      "note": "FIT bakiyeleri, özel sözleşmenin yetkili Buy ve Sell işlevleriyle yönetilir. Buy, Network yetkisi altında FIT basar; Sell itfayı işler ve iade edilen FIT'i yakar."
     },
     "equation": {
       "label": "SÖZLEŞME PRICE()",
@@ -280,7 +280,7 @@
     "proof": {
       "buy": "ALIM · %3 ÜCRET",
       "sell": "SATIŞ · %6 ÜCRET",
-      "note": "Eşitsizlikler mevcut FIT sözleşmesindeki tam sayı tabanlı aşağı yuvarlama işlemlerini izler. Başarılı alım ve satım işlemlerinden sonra sözleşme fiyatının düşmediğini gösterir; harici piyasa fiyatını veya her koşulda geri ödemeyi garanti etmez."
+      "note": "Türetim, mevcut FIT sözleşmesinde uygulanan tam sayı aritmetiği ve yuvarlama kurallarını izler. Tanımlı Buy ve Sell işlemleri başarıyla gerçekleştiğinde sözleşmenin hesapladığı fiyat düşmez."
     },
     "exchange": {
       "transfer": "Olağan transferler",
