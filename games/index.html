@@ -17,11 +17,17 @@
   <style>
     body.fi-games-hub{color:#f0f6ff}
     .fi-games-hub .arena{width:min(100%,1180px);max-width:1180px}
-    .fi-games-hub .topbar{gap:16px;min-height:76px}
-    .fi-games-hub .brand{min-width:0;text-decoration:none}
-    .fi-games-hub .brand-name{letter-spacing:.045em}
-    .fi-games-hub .topbar-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap}
-    .fi-games-hub .dashboard-link{white-space:nowrap}
+    .fi-games-hub .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:58px;padding:9px 18px;border:1px solid rgba(190,225,255,.14);border-radius:16px;background:rgba(10,20,42,.24);box-shadow:0 8px 24px rgba(3,8,25,.12);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+    .fi-games-hub .brand{display:inline-flex;align-items:center;gap:0;min-width:0;text-decoration:none}
+    .fi-games-hub .brand-logo{display:none!important}
+    .fi-games-hub .brand-name{display:inline-flex;align-items:baseline;gap:7px;margin:0;color:#edf5ff!important;font-size:14px;font-weight:850;letter-spacing:.12em;line-height:1}
+    .fi-games-hub .brand-name small{color:#72e4f5!important;font-size:10px;font-weight:800;letter-spacing:.2em}
+    .fi-games-hub .topbar-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+    .fi-games-hub .dashboard-link{display:none!important}
+    .fi-games-hub .fi-game-language .language-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:58px;height:34px;padding:0 11px;border:1px solid rgba(190,225,255,.2)!important;border-radius:10px;background:rgba(255,255,255,.035)!important;color:#d9e8fa!important;box-shadow:none!important;font-size:11px;font-weight:800;letter-spacing:.08em}
+    .fi-games-hub .fi-game-language .language-button:hover{border-color:rgba(0,217,255,.48)!important;background:rgba(0,217,255,.07)!important}
+    .fi-games-hub .fi-game-language .language-button::after{content:"⌄";font-size:12px;color:#78ddeb}
+    .fi-games-hub .language-menu{border-radius:13px!important;overflow:hidden}
     .fi-games-hub .hero{padding:clamp(28px,4vw,48px) 24px;text-align:center}
     .fi-games-hub .hero .eyebrow{letter-spacing:.18em;font-size:12px;font-weight:850}
     .fi-games-hub .hero h1{margin:10px 0 14px;font-size:clamp(34px,5vw,54px);line-height:1.12}
@@ -54,7 +60,7 @@
     @media(max-width:900px){.fi-games-hub .games-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:650px){
       body.fi-games-hub{padding:10px}
-      .fi-games-hub .topbar{align-items:center;padding:12px 14px}
+      .fi-games-hub .topbar{align-items:center;padding:9px 13px;min-height:52px}
       .fi-games-hub .topbar-actions{gap:8px}
       .fi-games-hub .games-grid{grid-template-columns:1fr;gap:13px}
       .fi-games-hub .game-card{min-height:0;padding:20px}
@@ -64,9 +70,9 @@
       .fi-games-hub .hub-notice{padding:14px 12px;text-align:start}
     }
     @media(max-width:390px){
-      .fi-games-hub .topbar{flex-wrap:wrap}
-      .fi-games-hub .topbar-actions{width:100%;justify-content:space-between}
-      .fi-games-hub .brand-name{font-size:14px}
+      .fi-games-hub .topbar{flex-wrap:nowrap}
+      .fi-games-hub .topbar-actions{width:auto;justify-content:flex-end}
+      .fi-games-hub .brand-name{font-size:12px}
     }
     @media(prefers-reduced-motion:reduce){
       .fi-games-hub *, .fi-games-hub *::before, .fi-games-hub *::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
@@ -78,7 +84,6 @@
 <main class="arena" id="top">
   <header class="topbar">
     <a class="brand" href="#top" aria-label="Fly Infinity Games home">
-      <img src="../logo.png" class="brand-logo" alt="Fly Infinity logo">
       <span class="brand-name">FLY INFINITY <small>GAMES</small></span>
     </a>
     <div class="topbar-actions">
@@ -89,7 +94,7 @@
           <option value="en">English</option><option value="fa">فارسی</option><option value="ar">العربية</option><option value="tr">Türkçe</option><option value="ru">Русский</option><option value="zh">中文</option><option value="es">Español</option><option value="pt">Português</option>
         </select>
       </div>
-      <a class="dashboard-link" href="../index.html"><span class="dashboard-arrow" aria-hidden="true">←</span> <span data-i="dashboard">Dashboard</span></a>
+
     </div>
   </header>
 
@@ -144,11 +149,6 @@
 
   <footer>
     <div class="footer-brand">FLY INFINITY GAMES</div>
-    <nav class="footer-links" aria-label="Footer navigation">
-      <a href="../index.html" data-i="dashboard">Dashboard</a>
-      <a href="../privacy.html" data-i="privacy">Privacy Policy</a>
-      <a href="https://github.com/FlyInfinityDAO/fit-price-display" target="_blank" rel="noopener noreferrer" data-i="github">GitHub Repository</a>
-    </nav>
     <div class="footer-meta" data-i="footerMeta">Part of the Fly Infinity ecosystem · Play fair and enjoy the game.</div>
   </footer>
 </main>
@@ -179,6 +179,8 @@ function applyLanguage(){
  document.querySelectorAll("[data-aria]").forEach(el=>{const key=el.dataset.aria;if(d[key])el.setAttribute("aria-label",d[key])});
  $("languageSelect").value=lang;
  $("languageButton").setAttribute("aria-label",d.changeLanguage);
+ const languageCode={en:"EN",fa:"FA",ar:"AR",tr:"TR",ru:"RU",zh:"中文",es:"ES",pt:"PT"}[lang]||"EN";
+ $("languageButton").textContent=languageCode;
  document.querySelectorAll(".dashboard-arrow").forEach(el=>el.textContent=lang==="fa"||lang==="ar"?"→":"←");
  document.querySelectorAll(".action-arrow").forEach(el=>el.textContent=lang==="fa"||lang==="ar"?"←":"→");
 }
