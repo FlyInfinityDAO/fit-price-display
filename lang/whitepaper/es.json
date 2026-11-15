@@ -246,7 +246,8 @@
       "network": "Red",
       "products": "Productos",
       "roadmap": "Hoja de ruta",
-      "risk": "Riesgos"
+      "risk": "Riesgos",
+      "hosting": "Alojamiento de código abierto"
     },
     "pillars": {
       "networkTitle": "Red",
@@ -312,6 +313,10 @@
     },
     "closing": {
       "tagline": "Descentralizado · Transparente · En evolución"
+    },
+    "s11": {
+      "title": "11 · Por qué utilizamos GitHub Pages y una dirección pública de GitHub",
+      "body": "La elección de GitHub Pages y de la dirección pública del proyecto en GitHub es una decisión deliberada de infraestructura. La aplicación web se publica desde el mismo repositorio público donde cualquiera puede consultar el código fuente, las versiones y el historial de desarrollo. Los participantes, desarrolladores y revisores independientes pueden comparar la interfaz publicada con el código, seguir los cambios y consultar el registro público de actualizaciones. Un servidor propio o un dominio privado puede ser útil, pero no es un requisito para una aplicación fiable, mantenible o transparente. GitHub Pages nos permite utilizar una plataforma consolidada de alojamiento y distribución HTTPS, manteniendo el código y el historial accesibles públicamente. Alojar el sitio en GitHub no transfiere a GitHub la propiedad de Fly Infinity, del repositorio ni de las decisiones del producto; estas siguen bajo la responsabilidad del equipo del proyecto. El repositorio público facilita la revisión comunitaria, los informes de incidencias y las contribuciones mediante flujos Git estándar. La interfaz web es solo una capa: las operaciones blockchain se rigen por contratos inteligentes publicados en BNB Smart Chain, mientras que ciertos servicios dinámicos pueden ejecutarse en su propia infraestructura. El código abierto y la publicación pública mejoran la inspección y la rendición de cuentas, pero no constituyen una auditoría de seguridad ni garantizan que no existan vulnerabilidades. Invitamos a los usuarios y revisores independientes a examinar el código, las direcciones de los contratos, la actividad on-chain y el historial de versiones."
     }
   }
 }
