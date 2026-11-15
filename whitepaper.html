@@ -1208,7 +1208,7 @@ html[dir="rtl"] .wp2-kicker{letter-spacing:0}
 
     <!-- ===== GLOBAL WHITE PAPER CONTENT ===== -->
     <header class="wp2-hero">
-      <div class="wp2-kicker"><i class="fa-solid fa-compass-drafting"></i> FLY INFINITY · GLOBAL WHITE PAPER</div>
+      <div class="wp2-kicker"><i class="fa-solid fa-compass-drafting"></i> <span data-i18n="wp2.hero.kicker">FLY INFINITY · GLOBAL WHITE PAPER</span></div>
       <h1 data-i18n="wp2.hero.title">A connected ecosystem. A contract-defined token economy.</h1>
       <p data-i18n="wp2.hero.subtitle">A technical and economic overview of Fly Infinity.</p>
       <div class="wp2-hero-meta"><span><i class="fa-solid fa-code-branch"></i> <span data-i18n="whitepaper.version">Version 2.0</span></span><span><i class="fa-regular fa-calendar"></i> <span data-i18n="whitepaper.release">Release Date: November 2026</span></span><span><i class="fa-brands fa-ethereum"></i> BNB Smart Chain</span></div>
@@ -1216,7 +1216,7 @@ html[dir="rtl"] .wp2-kicker{letter-spacing:0}
     </header>
 
     <nav class="wp2-toc" aria-label="White paper chapters">
-      <a href="#wp2-s1">01 <span>Overview</span></a><a href="#wp2-s2">02 <span>FIT design</span></a><a href="#wp2-s3">03 <span>Formula</span></a><a href="#wp2-s4">04 <span>Proof</span></a><a href="#wp2-s5">05 <span>Example</span></a><a href="#wp2-s6">06 <span>Exchange model</span></a><a href="#wp2-s7">07 <span>Network</span></a><a href="#wp2-s8">08 <span>Products</span></a><a href="#wp2-s9">09 <span>Roadmap</span></a><a href="#wp2-s10">10 <span>Risk</span></a>
+      <a href="#wp2-s1">01 <span data-i18n="wp2.toc.overview">Overview</span></a><a href="#wp2-s2">02 <span data-i18n="wp2.toc.fit">FIT design</span></a><a href="#wp2-s3">03 <span data-i18n="wp2.toc.formula">Formula</span></a><a href="#wp2-s4">04 <span data-i18n="wp2.toc.proof">Proof</span></a><a href="#wp2-s5">05 <span data-i18n="wp2.toc.example">Example</span></a><a href="#wp2-s6">06 <span data-i18n="wp2.toc.exchange">Exchange model</span></a><a href="#wp2-s7">07 <span data-i18n="wp2.toc.network">Network</span></a><a href="#wp2-s8">08 <span data-i18n="wp2.toc.products">Products</span></a><a href="#wp2-s9">09 <span data-i18n="wp2.toc.roadmap">Roadmap</span></a><a href="#wp2-s10">10 <span data-i18n="wp2.toc.risk">Risk</span></a>
     </nav>
 
     <main class="wp-content wp2-content">
@@ -1225,10 +1225,10 @@ html[dir="rtl"] .wp2-kicker{letter-spacing:0}
         <h2 data-i18n="wp2.s1.title">Executive overview</h2>
         <p data-i18n="wp2.s1.body"></p>
         <div class="wp2-pillars">
-          <article><i class="fa-solid fa-diagram-project"></i><b>Network</b><small>Participation and ecosystem coordination</small></article>
-          <article><i class="fa-solid fa-coins"></i><b>FIT</b><small>Contract-based reserve and pricing model</small></article>
-          <article><i class="fa-solid fa-gamepad"></i><b>Games</b><small>Free-to-enter interactive experiences</small></article>
-          <article><i class="fa-solid fa-brain"></i><b>AI</b><small>Wallet-gated intelligence services</small></article>
+          <article><i class="fa-solid fa-diagram-project"></i><b data-i18n="wp2.pillars.networkTitle">Network</b><small data-i18n="wp2.pillars.networkText">Participation and ecosystem coordination</small></article>
+          <article><i class="fa-solid fa-coins"></i><b data-i18n="wp2.pillars.fitTitle">FIT</b><small data-i18n="wp2.pillars.fitText">Contract-based reserve and pricing model</small></article>
+          <article><i class="fa-solid fa-gamepad"></i><b data-i18n="wp2.pillars.gamesTitle">Games</b><small data-i18n="wp2.pillars.gamesText">Free-to-enter interactive experiences</small></article>
+          <article><i class="fa-solid fa-brain"></i><b data-i18n="wp2.pillars.aiTitle">AI</b><small data-i18n="wp2.pillars.aiText">Wallet-gated intelligence services</small></article>
         </div>
       </section>
 
@@ -1237,11 +1237,11 @@ html[dir="rtl"] .wp2-kicker{letter-spacing:0}
         <h2 data-i18n="wp2.s2.title">FIT token architecture</h2>
         <p data-i18n="wp2.s2.body"></p>
         <div class="wp2-code-flow">
-          <div><i class="fa-solid fa-wallet"></i><b>Eligible wallet</b><small>Network owner</small></div><i class="fa-solid fa-arrow-right-long"></i>
-          <div><i class="fa-solid fa-file-contract"></i><b>FIT contract</b><small>Buy / Sell logic</small></div><i class="fa-solid fa-arrow-right-long"></i>
-          <div><i class="fa-solid fa-fire"></i><b>Supply control</b><small>Mint / Burn</small></div>
+          <div><i class="fa-solid fa-wallet"></i><b data-i18n="wp2.flow.wallet">Eligible wallet</b><small data-i18n="wp2.flow.walletSub">Verified Network owner</small></div><i class="fa-solid fa-arrow-right-long"></i>
+          <div><i class="fa-solid fa-file-contract"></i><b data-i18n="wp2.flow.contract">FIT contract</b><small data-i18n="wp2.flow.contractSub">Buy / Sell logic</small></div><i class="fa-solid fa-arrow-right-long"></i>
+          <div><i class="fa-solid fa-fire"></i><b data-i18n="wp2.flow.supply">Supply control</b><small data-i18n="wp2.flow.supplySub">Mint / Burn</small></div>
         </div>
-        <div class="wp2-note"><i class="fa-solid fa-circle-info"></i><span>In the current source, ordinary token transfer and approval functions revert. FIT balances therefore cannot be moved through the usual ERC-20 transfer route.</span></div>
+        <div class="wp2-note"><i class="fa-solid fa-circle-info"></i><span data-i18n="wp2.flow.note">Ordinary transfer and approval functions revert in the current source.</span></div>
       </section>
 
       <section class="wp2-section" id="wp2-s3">
@@ -1249,13 +1249,13 @@ html[dir="rtl"] .wp2-kicker{letter-spacing:0}
         <h2 data-i18n="wp2.s3.title">The on-chain price formula</h2>
         <p data-i18n="wp2.s3.body"></p>
         <div class="wp2-equation">
-          <span class="wp2-equation-label">CONTRACT PRICE()</span>
+          <span class="wp2-equation-label" data-i18n="wp2.equation.label">CONTRACT PRICE()</span>
           <strong>P = ⌊ (R × 10<sup>18</sup>) / S ⌋</strong>
-          <div class="wp2-equation-legend"><span><b>R</b> · DAI reserve</span><span><b>S</b> · FIT total supply</span><span><b>10<sup>18</sup></b> · decimal scale</span></div>
+          <div class="wp2-equation-legend"><span><b>R</b> · <span data-i18n="wp2.equation.reserve">DAI reserve</span></span><span><b>S</b> · <span data-i18n="wp2.equation.supply">FIT total supply</span></span><span><b>10<sup>18</sup></b> · <span data-i18n="wp2.equation.scale">18-decimal scale</span></span></div>
         </div>
         <div class="wp2-genesis">
           <div class="wp2-genesis-icon"><i class="fa-solid fa-seedling"></i></div>
-          <div><b>GENESIS LIQUIDITY</b><strong>10 DAI <span>→</span> 10 FIT</strong><small>Initial contract reference price: 1 DAI / FIT</small></div>
+          <div><b data-i18n="wp2.genesis.label">GENESIS LIQUIDITY</b><strong>10 DAI <span>→</span> 10 FIT</strong><small><span data-i18n="wp2.genesis.description">Initial contract reference price</span>: 1 DAI / FIT</small></div>
           <div class="wp2-genesis-price">1.0000 <small>DAI / FIT</small></div>
         </div>
       </section>
@@ -1266,7 +1266,7 @@ html[dir="rtl"] .wp2-kicker{letter-spacing:0}
         <p data-i18n="wp2.s4.body"></p>
         <div class="wp2-proof-grid">
           <article class="wp2-proof-card buy-proof">
-            <div class="wp2-proof-heading"><span><i class="fa-solid fa-arrow-down-to-line"></i></span><b>BUY · 3% FEE</b></div>
+            <div class="wp2-proof-heading"><span><i class="fa-solid fa-arrow-down-to-line"></i></span><b data-i18n="wp2.proof.buy">BUY · 3% FEE</b></div>
             <div class="wp2-math-line">f = ⌊3A / 100⌋</div>
             <div class="wp2-math-line">m = ⌊(A − f) × 10<sup>18</sup> / P⌋</div>
             <div class="wp2-proof-result">P × m ≤ A × 10<sup>18</sup></div>
@@ -1274,7 +1274,7 @@ html[dir="rtl"] .wp2-kicker{letter-spacing:0}
             <div class="wp2-proof-final">P′ = ⌊R′ × 10<sup>18</sup> / S′⌋ ≥ P</div>
           </article>
           <article class="wp2-proof-card sell-proof">
-            <div class="wp2-proof-heading"><span><i class="fa-solid fa-arrow-up-from-line"></i></span><b>SELL · 6% FEE</b></div>
+            <div class="wp2-proof-heading"><span><i class="fa-solid fa-arrow-up-from-line"></i></span><b data-i18n="wp2.proof.sell">SELL · 6% FEE</b></div>
             <div class="wp2-math-line">g = ⌊x × P / 10<sup>18</sup>⌋</div>
             <div class="wp2-math-line">q = g − ⌊6g / 100⌋</div>
             <div class="wp2-proof-result">q × 10<sup>18</sup> ≤ x × P</div>
@@ -1282,7 +1282,7 @@ html[dir="rtl"] .wp2-kicker{letter-spacing:0}
             <div class="wp2-proof-final">P′ = ⌊R′ × 10<sup>18</sup> / S′⌋ ≥ P</div>
           </article>
         </div>
-        <div class="wp2-proof-foot"><i class="fa-solid fa-shield-halved"></i><span>The inequality is based on the exact integer-floor operations used by the current FIT contract. It establishes a non-decreasing contract-calculated price for successful buy and sell operations; it does not establish a market price or guaranteed redemption in every circumstance.</span></div>
+        <div class="wp2-proof-foot"><i class="fa-solid fa-shield-halved"></i><span data-i18n="wp2.proof.note">The inequalities follow the exact integer-floor operations in the current FIT contract.</span></div>
       </section>
 
       <section class="wp2-section" id="wp2-s5">
@@ -1316,9 +1316,9 @@ html[dir="rtl"] .wp2-kicker{letter-spacing:0}
         <h2 data-i18n="wp2.s6.title">Why FIT is not listed on external exchanges</h2>
         <p data-i18n="wp2.s6.body"></p>
         <div class="wp2-exchange-grid">
-          <div class="wp2-exchange-no"><i class="fa-solid fa-arrow-right-arrow-left"></i><b>Ordinary transfers</b><small>Disabled in the current token contract</small><em><i class="fa-solid fa-xmark"></i></em></div>
-          <div class="wp2-exchange-no"><i class="fa-solid fa-water"></i><b>External liquidity pools</b><small>Require transferable assets and approvals</small><em><i class="fa-solid fa-xmark"></i></em></div>
-          <div class="wp2-exchange-yes"><i class="fa-solid fa-file-contract"></i><b>Dedicated FIT contract</b><small>Defined buy / sell functions</small><em><i class="fa-solid fa-check"></i></em></div>
+          <div class="wp2-exchange-no"><i class="fa-solid fa-arrow-right-arrow-left"></i><b data-i18n="wp2.exchange.transfer">Ordinary transfers</b><small data-i18n="wp2.exchange.transferDesc">Disabled in the current token contract</small><em><i class="fa-solid fa-xmark"></i></em></div>
+          <div class="wp2-exchange-no"><i class="fa-solid fa-water"></i><b data-i18n="wp2.exchange.pools">External liquidity pools</b><small data-i18n="wp2.exchange.poolsDesc">Require transferable assets and approvals</small><em><i class="fa-solid fa-xmark"></i></em></div>
+          <div class="wp2-exchange-yes"><i class="fa-solid fa-file-contract"></i><b data-i18n="wp2.exchange.dedicated">Dedicated FIT contract</b><small data-i18n="wp2.exchange.dedicatedDesc">Defined buy / sell functions</small><em><i class="fa-solid fa-check"></i></em></div>
         </div>
       </section>
 
@@ -1327,9 +1327,9 @@ html[dir="rtl"] .wp2-kicker{letter-spacing:0}
         <h2 data-i18n="wp2.s7.title">Network reserve flows and governance</h2>
         <p data-i18n="wp2.s7.body"></p>
         <div class="wp2-flow">
-          <div><i class="fa-solid fa-people-group"></i><b>Network activity</b></div><i class="fa-solid fa-arrow-right"></i>
-          <div><i class="fa-solid fa-hand-holding-dollar"></i><b>Rewards processed</b></div><i class="fa-solid fa-arrow-right"></i>
-          <div class="wp2-flow-target"><i class="fa-solid fa-vault"></i><b>FIT DAI reserve</b><small>DAI in · no mint in this step</small></div>
+          <div><i class="fa-solid fa-people-group"></i><b data-i18n="wp2.network.activity">Network activity</b></div><i class="fa-solid fa-arrow-right"></i>
+          <div><i class="fa-solid fa-hand-holding-dollar"></i><b data-i18n="wp2.network.rewards">Rewards processed</b></div><i class="fa-solid fa-arrow-right"></i>
+          <div class="wp2-flow-target"><i class="fa-solid fa-vault"></i><b data-i18n="wp2.network.reserve">FIT DAI reserve</b><small data-i18n="wp2.network.reserveNote">DAI in · no mint in this step</small></div>
         </div>
       </section>
 
@@ -1347,10 +1347,10 @@ html[dir="rtl"] .wp2-kicker{letter-spacing:0}
         <h2 data-i18n="wp2.s9.title">Planned ecosystem initiatives</h2>
         <p data-i18n="wp2.s9.body"></p>
         <div class="wp2-roadmap">
-          <article><i class="fa-solid fa-arrow-right-arrow-left"></i><b>Fly Infinity DEX</b><small>Target: 5,000 FIT holders</small></article>
-          <article><i class="fa-solid fa-store"></i><b>Fly Infinity Marketplace</b><small>Target: 10,000 FIT holders</small></article>
-          <article><i class="fa-solid fa-ticket"></i><b>Fly Infinity Lottery</b><small>Target: 20,000 FIT holders · subject to legal review</small></article>
-          <article><i class="fa-solid fa-credit-card"></i><b>Fly Infinity Pay</b><small>Target: 30,000 FIT holders</small></article>
+          <article><i class="fa-solid fa-arrow-right-arrow-left"></i><b>Fly Infinity DEX</b><small data-i18n="wp2.roadmap.dex">Target: 5,000 FIT holders</small></article>
+          <article><i class="fa-solid fa-store"></i><b>Fly Infinity Marketplace</b><small data-i18n="wp2.roadmap.market">Target: 10,000 FIT holders</small></article>
+          <article><i class="fa-solid fa-ticket"></i><b>Fly Infinity Lottery</b><small data-i18n="wp2.roadmap.lottery">Target: 20,000 FIT holders · subject to legal review</small></article>
+          <article><i class="fa-solid fa-credit-card"></i><b>Fly Infinity Pay</b><small data-i18n="wp2.roadmap.pay">Target: 30,000 FIT holders</small></article>
         </div>
       </section>
 
@@ -1359,15 +1359,15 @@ html[dir="rtl"] .wp2-kicker{letter-spacing:0}
         <h2 data-i18n="wp2.s10.title">Security, scope and risk disclosure</h2>
         <p data-i18n="wp2.s10.body"></p>
         <div class="wp2-contracts">
-          <h3><i class="fa-solid fa-link"></i> Contract references · BNB Smart Chain</h3>
-          <div><span>FIT Token</span><code>0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa</code><a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" rel="noopener">BscScan <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div>
-          <div><span>Network</span><code>0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B</code><a href="https://bscscan.com/address/0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B" target="_blank" rel="noopener">BscScan <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div>
-          <div><span>Gift</span><code>0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8</code><a href="https://bscscan.com/address/0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8" target="_blank" rel="noopener">BscScan <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div>
-          <div><span>DAO</span><code>0xB56c380287b7Fdc9940501f13Fc185A787a6F5D9</code><a href="https://bscscan.com/address/0xB56c380287b7Fdc9940501f13Fc185A787a6F5D9" target="_blank" rel="noopener">BscScan <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div>
-          <div><span>Source code</span><code>FlyInfinityDAO / fit-price-display</code><a href="https://github.com/FlyInfinityDAO/fit-price-display" target="_blank" rel="noopener">GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div>
+          <h3><i class="fa-solid fa-link"></i> <span data-i18n="wp2.contracts.title">Contract references · BNB Smart Chain</span></h3>
+          <div><span data-i18n="wp2.contracts.token">FIT Token</span><code>0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa</code><a href="https://bscscan.com/address/0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa" target="_blank" rel="noopener">BscScan <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div>
+          <div><span data-i18n="wp2.contracts.network">Network</span><code>0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B</code><a href="https://bscscan.com/address/0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B" target="_blank" rel="noopener">BscScan <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div>
+          <div><span data-i18n="wp2.contracts.gift">Gift</span><code>0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8</code><a href="https://bscscan.com/address/0x0fb7b50c57d7E7627a7C4584A5BbbbAb6ee17CE8" target="_blank" rel="noopener">BscScan <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div>
+          <div><span data-i18n="wp2.contracts.dao">DAO</span><code>0xB56c380287b7Fdc9940501f13Fc185A787a6F5D9</code><a href="https://bscscan.com/address/0xB56c380287b7Fdc9940501f13Fc185A787a6F5D9" target="_blank" rel="noopener">BscScan <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div>
+          <div><span data-i18n="wp2.contracts.source">Source code</span><code>FlyInfinityDAO / fit-price-display</code><a href="https://github.com/FlyInfinityDAO/fit-price-display" target="_blank" rel="noopener">GitHub <i class="fa-solid fa-arrow-up-right-from-square"></i></a></div>
         </div>
       </section>
-      <footer class="wp2-closing"><i class="fa-solid fa-infinity"></i><b>FLY INFINITY DAO</b><span>Decentralized · Transparent · Built to evolve</span></footer>
+      <footer class="wp2-closing"><i class="fa-solid fa-infinity"></i><b>FLY INFINITY DAO</b><span data-i18n="wp2.closing.tagline">Decentralized · Transparent · Built to evolve</span></footer>
     </main>
 
     <div class="footer">
