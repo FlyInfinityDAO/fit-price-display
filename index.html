@@ -2129,7 +2129,7 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
     ["whitepaper.html","fa-book-open"],["audit.html","fa-shield-halved"]
   ];
   const lang = () => (localStorage.getItem("fit_lang") || document.documentElement.lang || "en").toLowerCase().split("-")[0];
-  const current = location.pathname.split("/").pop() || "index.html";
+  const current = location.pathname.endsWith("/") ? "index.html" : (location.pathname.split("/").pop() || "index.html");
   function render(){
     const names = labels[lang()] || labels.en;
     const menu = document.querySelector(".sidebar-menu");
