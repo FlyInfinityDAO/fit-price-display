@@ -17,17 +17,19 @@
   <style>
     body.fi-games-hub{color:#f0f6ff}
     .fi-games-hub .arena{width:min(100%,1180px);max-width:1180px}
-    .fi-games-hub .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:58px;padding:9px 18px;border:1px solid rgba(190,225,255,.14);border-radius:16px;background:rgba(10,20,42,.24);box-shadow:0 8px 24px rgba(3,8,25,.12);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
-    .fi-games-hub .brand{display:inline-flex;align-items:center;gap:0;min-width:0;text-decoration:none}
-    .fi-games-hub .brand-logo{display:none!important}
-    .fi-games-hub .brand-name{display:inline-flex;align-items:baseline;gap:7px;margin:0;color:#edf5ff!important;font-size:14px;font-weight:850;letter-spacing:.12em;line-height:1}
-    .fi-games-hub .brand-name small{color:#72e4f5!important;font-size:10px;font-weight:800;letter-spacing:.2em}
-    .fi-games-hub .topbar-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
-    .fi-games-hub .dashboard-link{display:none!important}
-    .fi-games-hub .fi-game-language .language-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:58px;height:34px;padding:0 11px;border:1px solid rgba(190,225,255,.2)!important;border-radius:10px;background:rgba(255,255,255,.035)!important;color:#d9e8fa!important;box-shadow:none!important;font-size:11px;font-weight:800;letter-spacing:.08em}
-    .fi-games-hub .fi-game-language .language-button:hover{border-color:rgba(0,217,255,.48)!important;background:rgba(0,217,255,.07)!important}
-    .fi-games-hub .fi-game-language .language-button::after{content:"⌄";font-size:12px;color:#78ddeb}
-    .fi-games-hub .language-menu{border-radius:13px!important;overflow:hidden}
+    .fi-games-hub .topbar{min-height:68px;margin:0 0 24px;padding:11px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid rgba(0,217,255,.34)!important;border-radius:28px;background:rgba(10,20,42,.24);box-shadow:0 8px 24px rgba(3,8,25,.12);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+    .fi-games-hub .brand{display:inline-flex;align-items:center;gap:11px;text-decoration:none;min-width:0}
+    .fi-games-hub .brand-logo{display:block!important;width:36px;height:36px;object-fit:contain;border-radius:50%;border:2px solid #00D9FF;box-shadow:0 0 13px rgba(0,217,255,.22)}
+    .fi-games-hub .brand-name{display:inline-block;margin:0;color:#BFCBFF!important;font-size:17px;font-weight:800;letter-spacing:.035em;white-space:nowrap;line-height:1}
+    .fi-games-hub .brand-name small{display:block;margin-top:-3px;color:#00D9FF!important;font-size:9px;font-weight:900;letter-spacing:.22em}
+    .fi-games-hub .topbar-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;min-width:0}
+    .fi-games-hub .network,.fi-games-hub .dashboard-link{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 13px;border-radius:13px;border:1px solid rgba(0,217,255,.45)!important;background:rgba(17,28,53,.35)!important;color:#00D9FF!important;font-size:11px;font-weight:800;letter-spacing:.045em;text-decoration:none;white-space:nowrap}
+    .fi-games-hub .network i{width:8px;height:8px;display:inline-block;border-radius:50%;background:#00D9FF;box-shadow:0 0 10px #00D9FF}
+    .fi-games-hub .fi-game-language{position:relative;flex:0 0 auto}
+    .fi-games-hub .fi-game-language .language-button{width:40px;min-width:40px;min-height:40px;display:grid;place-items:center;color:#00D9FF!important;background:rgba(17,28,53,.35)!important;border:1px solid rgba(139,92,246,.72)!important;border-radius:12px;box-shadow:0 0 13px rgba(69,108,255,.14);font-size:19px;cursor:pointer}
+    .fi-games-hub .language-menu.fi-game-language-menu{background:rgba(17,28,53,.97)!important;border:1px solid rgba(0,217,255,.58)!important;border-radius:14px!important;box-shadow:0 18px 44px rgba(0,0,0,.44),0 0 20px rgba(69,108,255,.18)!important;padding:6px;gap:3px}
+    .fi-games-hub .language-menu.fi-game-language-menu button{display:flex;align-items:center;gap:10px;width:100%;min-height:38px;padding:7px 10px;color:#EAF5FF!important;background:transparent;border:1px solid transparent;border-radius:9px;text-align:start}
+    .fi-games-hub .language-menu.fi-game-language-menu button:hover,.fi-games-hub .language-menu.fi-game-language-menu button.active{background:rgba(69,108,255,.22)!important;border-color:rgba(0,217,255,.42)!important;color:#00D9FF!important}
     .fi-games-hub .hero{padding:clamp(28px,4vw,48px) 24px;text-align:center}
     .fi-games-hub .hero .eyebrow{letter-spacing:.18em;font-size:12px;font-weight:850}
     .fi-games-hub .hero h1{margin:10px 0 14px;font-size:clamp(34px,5vw,54px);line-height:1.12}
@@ -60,8 +62,13 @@
     @media(max-width:900px){.fi-games-hub .games-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:650px){
       body.fi-games-hub{padding:10px}
-      .fi-games-hub .topbar{align-items:center;padding:9px 13px;min-height:52px}
-      .fi-games-hub .topbar-actions{gap:8px}
+      .fi-games-hub .topbar{align-items:center;padding:9px;gap:6px;min-height:52px}
+      .fi-games-hub .topbar-actions{gap:6px;flex-wrap:nowrap}
+      .fi-games-hub .network{display:none}
+      .fi-games-hub .dashboard-link{min-height:36px;padding:7px 9px;font-size:10px}
+      .fi-games-hub .brand-logo{width:30px;height:30px}
+      .fi-games-hub .brand-name{font-size:14px}
+      .fi-games-hub .fi-game-language .language-button{width:40px;min-width:40px;min-height:40px}
       .fi-games-hub .games-grid{grid-template-columns:1fr;gap:13px}
       .fi-games-hub .game-card{min-height:0;padding:20px}
       .fi-games-hub .game-card h3{font-size:20px}
@@ -71,8 +78,10 @@
     }
     @media(max-width:390px){
       .fi-games-hub .topbar{flex-wrap:nowrap}
-      .fi-games-hub .topbar-actions{width:auto;justify-content:flex-end}
+      .fi-games-hub .topbar-actions{width:auto;justify-content:flex-end;gap:5px}
+      .fi-games-hub .brand{gap:7px}
       .fi-games-hub .brand-name{font-size:12px}
+      .fi-games-hub .dashboard-link{padding:6px 7px;font-size:9px}
     }
     @media(prefers-reduced-motion:reduce){
       .fi-games-hub *, .fi-games-hub *::before, .fi-games-hub *::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
@@ -83,7 +92,8 @@
 <a class="skip-link" href="#games-list" data-i="skip">Skip to games</a>
 <main class="arena" id="top">
   <header class="topbar">
-    <a class="brand" href="#top" aria-label="Fly Infinity Games home">
+    <a class="brand" href="../index.html" aria-label="Fly Infinity Games home">
+      <img src="../logo.png" class="brand-logo" alt="">
       <span class="brand-name">FLY INFINITY <small>GAMES</small></span>
     </a>
     <div class="topbar-actions">
@@ -94,7 +104,8 @@
           <option value="en">English</option><option value="fa">فارسی</option><option value="ar">العربية</option><option value="tr">Türkçe</option><option value="ru">Русский</option><option value="zh">中文</option><option value="es">Español</option><option value="pt">Português</option>
         </select>
       </div>
-
+      <span class="network"><i></i> BNB SMART CHAIN</span>
+      <a class="dashboard-link" href="../index.html"><span class="dashboard-arrow" aria-hidden="true">←</span> <span data-i="dashboard">Dashboard</span></a>
     </div>
   </header>
 
@@ -179,8 +190,7 @@ function applyLanguage(){
  document.querySelectorAll("[data-aria]").forEach(el=>{const key=el.dataset.aria;if(d[key])el.setAttribute("aria-label",d[key])});
  $("languageSelect").value=lang;
  $("languageButton").setAttribute("aria-label",d.changeLanguage);
- const languageCode={en:"EN",fa:"FA",ar:"AR",tr:"TR",ru:"RU",zh:"中文",es:"ES",pt:"PT"}[lang]||"EN";
- $("languageButton").textContent=languageCode;
+ $("languageButton").textContent="🌐";
  document.querySelectorAll(".dashboard-arrow").forEach(el=>el.textContent=lang==="fa"||lang==="ar"?"→":"←");
  document.querySelectorAll(".action-arrow").forEach(el=>el.textContent=lang==="fa"||lang==="ar"?"←":"→");
 }
