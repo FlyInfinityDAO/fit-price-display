@@ -32,13 +32,13 @@
     top: -95px;
     left: -145px;
     background: radial-gradient(circle, rgba(0, 220, 158, .82) 0%, rgba(0, 200, 150, .34) 34%, transparent 72%);
-    animation: fiMenuAuroraGreen 19s ease-in-out infinite alternate;
+    animation: fiMenuAuroraGreen 8s ease-in-out infinite alternate;
 }
 .sidebar::after {
     right: -155px;
     bottom: -90px;
     background: radial-gradient(circle, rgba(232, 190, 72, .82) 0%, rgba(212, 175, 55, .32) 36%, transparent 73%);
-    animation: fiMenuAuroraGold 23s ease-in-out infinite alternate;
+    animation: fiMenuAuroraGold 9s ease-in-out infinite alternate;
 }
 .sidebar > * {
     position: relative;
