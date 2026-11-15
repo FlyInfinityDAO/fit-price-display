@@ -317,6 +317,90 @@
     "s11": {
       "title": "11 · Neden GitHub Pages ve herkese açık GitHub adresi kullanıyoruz?",
       "body": "GitHub Pages ve projenin herkese açık GitHub adresini seçmemiz, Fly Infinity altyapısı için bilinçli bir karardır. Web uygulaması; kaynak kodunun, sürümlerin ve geliştirme geçmişinin herkesçe incelenebildiği aynı açık depodan yayımlanır. Kullanıcılar, geliştiriciler ve bağımsız inceleyiciler yayımlanan arayüzü kaynak koduyla karşılaştırabilir, değişiklikleri takip edebilir ve güncellemelerin herkese açık kaydını inceleyebilir. Kişisel sunucu veya özel alan adı yararlı olabilir; ancak güvenilir, sürdürülebilir ve şeffaf bir uygulama için zorunlu değildir. GitHub Pages, kaynak kodunu ve değişiklik geçmişini açık tutarken yerleşik bir barındırma ve HTTPS dağıtım platformundan yararlanmamızı sağlar. GitHub üzerinde barındırma, Fly Infinity’nin, deponun veya ürün kararlarının mülkiyetini GitHub’a devretmez; bunlar proje bakım ekibinin sorumluluğundadır. Açık depo ayrıca topluluk incelemesini, hata bildirimini ve standart Git iş akışlarıyla katkıyı destekler. Web arayüzü ekosistemin yalnızca bir katmanıdır: blokzincir işlemleri BNB Smart Chain üzerindeki yayımlanmış akıllı sözleşmelerce yönetilir; dinamik hizmetler kendi altyapılarında çalışabilir. Açık kaynak ve herkese açık yayın incelenebilirliği ve hesap verebilirliği artırır; ancak güvenlik denetimi değildir ve güvenlik açığı bulunmadığını garanti etmez. Kullanıcıları kaynak kodunu, sözleşme adreslerini, zincir üstü etkinliği ve sürüm geçmişini doğrudan incelemeye davet ediyoruz."
+    },
+    "purchaseLimits": {
+      "title": "06A · Kademeli satın alma limitleri ve dengeli ağ büyümesi",
+      "body": "FIT satın alma limitlerini, her cüzdanın satın alma kapasitesini Network içindeki dengeli katılımıyla uyumlu hâle getirecek şekilde tasarladık. Sözleşme sol ve sağ kolların birikimli puanlarını okur ve daha düşük puanlı tarafı yeterlilik ölçütü olarak kullanır. Her eşik aşıldığında, DAI cinsinden birikimli satın alma limitine belirli bir tutar eklenir. Bu kademeli yapı; tek bir cüzdanda aşırı satın alma yoğunlaşmasını azaltmayı, ağın dengeli gelişimini teşvik etmeyi ve alımlar gerçekleştikçe DAI'nin FIT rezervine daha düzenli akışını desteklemeyi amaçlar. Limit her cüzdan için birikimlidir; her işlemde yeniden başlamaz. Bu mekanizma yoğunlaşmayı yönetmek içindir; büyük varlıkların birden fazla cüzdana dağıtılmasını mutlak olarak engelleme garantisi değildir. Doğrudan sahip alımlarında sözleşme, satın alınan DAI tutarını ilgili cüzdanın birikimli limitine kaydeder.",
+      "threshold": "Her iki koldaki asgari puan",
+      "cap": "Birikimli satın alma limiti (DAI)",
+      "rows": [
+        [
+          0,
+          "100"
+        ],
+        [
+          1,
+          "200"
+        ],
+        [
+          10,
+          "300"
+        ],
+        [
+          30,
+          "400"
+        ],
+        [
+          100,
+          "1,400"
+        ],
+        [
+          300,
+          "2,400"
+        ],
+        [
+          1000,
+          "12,400"
+        ],
+        [
+          3000,
+          "22,400"
+        ],
+        [
+          10000,
+          "122,400"
+        ],
+        [
+          30000,
+          "222,400"
+        ],
+        [
+          100000,
+          "1,222,400"
+        ],
+        [
+          300000,
+          "2,222,400"
+        ],
+        [
+          1000000,
+          "12,222,400"
+        ],
+        [
+          3000000,
+          "22,222,400"
+        ],
+        [
+          10000000,
+          "122,222,400"
+        ],
+        [
+          30000000,
+          "222,222,400"
+        ],
+        [
+          100000000,
+          "1,222,222,400"
+        ],
+        [
+          300000000,
+          "2,222,222,400"
+        ],
+        [
+          1000000000,
+          "12,222,222,400"
+        ]
+      ]
     }
   }
 }
