@@ -7,7 +7,7 @@
     ["compare.html","comparison","fa-solid fa-scale-balanced"],
     ["dapp.html","dapp","fa-solid fa-cubes"],
     ["games/index.html","games","fa-solid fa-dice"],
-    ["fly-ai/index.html","ai","fa-solid fa-wand-magic-sparkles"],
+    ["fly-ai/index.html","ai","fa-solid fa-brain"],
     ["profit-simulator.html","profitCalculator","fa-solid fa-calculator"],
     ["next-projects.html","nextProjects","fa-solid fa-rocket"],
     ["transactions.html","transactions","fa-solid fa-arrow-right-arrow-left"],
@@ -15,7 +15,7 @@
     ["warnings.html","warnings","fa-solid fa-triangle-exclamation"],
     ["faq.html","faq","fa-solid fa-comments"],
     ["whitepaper.html","whitepaper","fa-solid fa-book-open"],
-    ["audit.html","audit","fa-solid fa-clipboard-check"]
+    ["audit.html","audit","fa-solid fa-shield"]
   ];
 
   function activePage() {
