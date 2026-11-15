@@ -1,4 +1,4 @@
-/* Fly Infinity PWA shell: safe-area support for every in-scope page. */
+/* Fly Infinity PWA shell: safe-area support for all standalone pages. */
 @media (display-mode: standalone), (display-mode: fullscreen) {
   html {
     min-height: 100%;
@@ -6,9 +6,24 @@
   }
   body {
     box-sizing: border-box;
-    padding-top: calc(20px + env(safe-area-inset-top, 0px)) !important;
-    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    padding-bottom: env(safe-area-inset-bottom, 0px) !important;
     min-height: 100vh;
     min-height: 100dvh;
+  }
+  /* Shared navigation headers must remain below the iPhone status area. */
+  .topbar {
+    box-sizing: border-box;
+    height: auto !important;
+    min-height: calc(70px + env(safe-area-inset-top, 0px));
+    padding-top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+  }
+  .top-bar {
+    box-sizing: border-box;
+    padding-top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+    scroll-margin-top: env(safe-area-inset-top, 0px);
+  }
+  .header, .site-header, .main-header, .navbar {
+    padding-top: env(safe-area-inset-top, 0px) !important;
   }
 }
