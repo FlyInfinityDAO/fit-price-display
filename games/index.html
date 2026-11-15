@@ -277,42 +277,7 @@ applyLanguage();
 </script>
 <script src="./shared-language-menu.js?v=fly-games-hub-3"></script>
 <script src="./shared-neon-ambient.js?v=fly-games-hub-3"></script>
-<script>
-(()=> {
-  const phrase = document.querySelector('.fi-games-hub .brand-name > .fi-hub-brand-word');
-  if (!phrase) return;
-  const gradient = 'linear-gradient(105deg,#00D9FF 0%,#456CFF 34%,#8B5CF6 68%,#00D9FF 100%)';
-  const styles = {
-    'display':'inline-block',
-    'background-image':gradient,
-    'background-size':'220% 100%',
-    'background-position':'0% 50%',
-    '-webkit-background-clip':'text',
-    'background-clip':'text',
-    '-webkit-text-fill-color':'transparent',
-    'color':'transparent',
-    'will-change':'background-position'
-  };
-  Object.entries(styles).forEach(([key,value])=>phrase.style.setProperty(key,value,'important'));
-  phrase.querySelectorAll('small').forEach(el=>{
-    el.style.setProperty('display','inline','important');
-    el.style.setProperty('color','transparent','important');
-    el.style.setProperty('-webkit-text-fill-color','transparent','important');
-    el.style.setProperty('font-size','9px','important');
-    el.style.setProperty('font-weight','900','important');
-    el.style.setProperty('letter-spacing','.22em','important');
-    el.style.setProperty('margin','0','important');
-  });
-  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (phrase.__fiColorWave) phrase.__fiColorWave.cancel();
-  if (!reduceMotion && typeof phrase.animate === 'function') {
-    phrase.__fiColorWave = phrase.animate(
-      [{backgroundPosition:'0% 50%'},{backgroundPosition:'100% 50%'}],
-      {duration:4200,iterations:Infinity,easing:'linear'}
-    );
-  }
-})();
-</script>
+
 
 </body>
 </html>
