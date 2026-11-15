@@ -189,7 +189,7 @@
     },
     "s1": {
       "title": "01 · Executive overview",
-      "body": "Fly Infinity is a BNB Smart Chain ecosystem combining a network participation layer, the FIT token contract, community and governance components, games and an AI service. This paper distinguishes implemented contract behaviour from product descriptions and future plans. The FIT price discussed here is the contract-calculated reserve-to-supply value—not a forecast, external exchange quote or guaranteed investment return."
+      "body": "We, the founders of Fly Infinity, created this ecosystem to bring together the FIT token, Network participation, community governance, games and AI services on BNB Smart Chain. This white paper is our official presentation of the vision, architecture, economic design and products we are building. It describes the operation of the deployed contracts and the initiatives in our development roadmap. The FIT price discussed here is the value calculated by its dedicated contract from the DAI reserve and total FIT supply."
     },
     "s2": {
       "title": "02 · FIT token architecture",
@@ -209,7 +209,7 @@
     },
     "s6": {
       "title": "06 · Why FIT is not listed on external exchanges",
-      "body": "A conventional exchange market requires transferable assets to move between user wallets, exchange custody or liquidity pools. The current FIT contract blocks ordinary transfer and approval calls and exposes its own buy/sell path instead. Accordingly, FIT is not designed for independent order books, AMMs or third-party exchange listings. The project's stated policy is not to pursue external exchange listings: the intended purchase, redemption and price reference remain within the dedicated FIT contract. This describes the current architecture and project policy; it is not a claim that every third-party platform can be prevented from displaying information about FIT."
+      "body": "We have deliberately chosen a contract-native model for FIT. Conventional exchanges and independent liquidity pools rely on assets moving between wallets, custody accounts and pools. FIT instead uses dedicated Buy and Sell functions, while standard transfer and approval routes are restricted by design. Accordingly, FIT is designed to operate within its own contract framework rather than external exchange order books or third-party liquidity pools. Our policy is clear: we do not plan to seek or pursue FIT listings on external exchanges. Its intended purchase, redemption and contract price reference remain within the dedicated FIT contract."
     },
     "s7": {
       "title": "07 · Network reserve flows and governance",
@@ -224,8 +224,8 @@
       "body": "The public Upcoming Projects page describes a proposed Fly Infinity DEX, Marketplace, Lottery and Fly Infinity Pay, with launch targets expressed as FIT-holder milestones. These are plans, not statements that the products are already live. Each initiative remains subject to technical feasibility, funding, legal requirements, security review and a separate public release announcement. In particular, any lottery concept would require jurisdiction-specific legal review and eligibility rules."
     },
     "s10": {
-      "title": "10 · Security, scope and risk disclosure",
-      "body": "The contracts and frontend source are published in the project's GitHub repository, and on-chain state can be independently inspected. Public source code is not the same as an independent security audit. Risks include smart-contract defects, BNB Smart Chain or DAI dependencies, stablecoin depeg or issuer risk, transaction failures, governance or address changes permitted by contract logic, wallet compromise, regulatory restrictions and operational outages. The reserve-to-supply formula describes a contract accounting value; it does not guarantee that every holder can redeem instantly under every condition, that DAI maintains its peg, or that purchasing FIT is profitable. This document is informational, not financial, legal or tax advice."
+      "title": "Security, transparency and participant information",
+      "body": "Transparency and responsible development guide our work. We publish the contract and frontend source in our public GitHub repository, and on-chain state can be independently inspected. Fly Infinity operates through smart contracts, BNB Smart Chain, DAI and connected wallet infrastructure; understanding these components, protecting wallet access and observing applicable requirements are part of informed participation. The reserve-to-supply formula describes the contract's accounting price and its defined purchase and redemption processes. This white paper is our official project overview of the design and development direction."
     },
     "chart": {
       "reserve": "DAI reserve",
@@ -234,7 +234,7 @@
       "initial": "Genesis",
       "afterBuy": "After buy",
       "afterSell": "After sell",
-      "note": "Illustrative values from the worked example; not live market data."
+      "note": "Illustrative contract values based on the worked example."
     },
     "toc": {
       "overview": "Overview",
@@ -265,7 +265,7 @@
       "contractSub": "Buy / Sell logic",
       "supply": "Supply control",
       "supplySub": "Mint / Burn",
-      "note": "Ordinary transfer and approval functions revert in the current source. FIT balances cannot be moved through the usual ERC-20 transfer route."
+      "note": "FIT balances are managed through the dedicated contract's authorized Buy and Sell functions. Buy issues FIT under Network authorization; Sell processes redemption and burns the returned FIT."
     },
     "equation": {
       "label": "CONTRACT PRICE()",
@@ -280,7 +280,7 @@
     "proof": {
       "buy": "BUY · 3% FEE",
       "sell": "SELL · 6% FEE",
-      "note": "The inequalities follow the exact integer-floor operations in the current FIT contract. They establish a non-decreasing contract-calculated price after successful buy and sell operations; they do not establish an external market price or guarantee redemption in every circumstance."
+      "note": "This derivation follows the integer arithmetic and rounding rules implemented in the current FIT contract. When the defined Buy and Sell operations execute successfully, the contract-calculated price is non-decreasing."
     },
     "exchange": {
       "transfer": "Ordinary transfers",
