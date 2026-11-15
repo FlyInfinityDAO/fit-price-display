@@ -79,8 +79,10 @@ function t(key) {
         if (value && value[k] !== undefined) {
             value = value[k];
         } else {
-            const navMatch = key.match(/^nav\\.(games|ai)$/);
-            if (navMatch) return SHARED_NAV_TRANSLATIONS[currentLang]?.[navMatch[1]] || key;
+            if (key === "nav.games" || key === "nav.ai") {
+                const navKey = key.slice(4);
+                return SHARED_NAV_TRANSLATIONS[currentLang]?.[navKey] || key;
+            }
             return key;
         }
     }
