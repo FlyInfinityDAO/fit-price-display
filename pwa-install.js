@@ -61,7 +61,7 @@
     .fi-pwa-steps b{flex:0 0 23px;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;background:rgba(0,200,150,.14);border:1px solid rgba(0,200,150,.5);color:#00d5a1;font-size:12px}
     .fi-pwa-hint{margin:12px 0 0;color:#aab7b1;font-size:11px;line-height:1.7}
     .fi-pwa-actions{display:flex;gap:10px;margin-top:18px}
-    .fi-pwa-primary,.fi-pwa-secondary{min-height:46px;padding:10px 15px;border-radius:13px;font:700 14px inherit;cursor:pointer}
+    .fi-pwa-primary,.fi-pwa-secondary{min-height:46px;padding:10px 15px;border-radius:13px;font:inherit;font-weight:700;font-size:14px;cursor:pointer}
     .fi-pwa-primary{flex:1;border:1px solid #00c896;background:linear-gradient(100deg,#00a87e,#00c896);color:#07110e;box-shadow:0 7px 20px rgba(0,200,150,.18)}
     .fi-pwa-secondary{border:1px solid rgba(255,255,255,.17);background:rgba(255,255,255,.04);color:#d7dfdb}
     .fi-pwa-overlay[dir="rtl"] .fi-pwa-steps{text-align:right}
