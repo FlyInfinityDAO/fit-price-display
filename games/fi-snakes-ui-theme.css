@@ -11,7 +11,7 @@
   --fi-ui-line:rgba(190,225,255,.26);
 }
 html body.fi-snakes-ui{
-  min-height:100vh;min-height:100dvh;padding:20px;margin:0;
+  min-height:100vh;min-height:100dvh;padding:20px;margin:0;isolation:isolate;
   color:var(--fi-ui-copy);background:#0F0F0F;
   font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
 }
