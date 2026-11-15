@@ -22,8 +22,8 @@
   },
   "whitepaper": {
     "title": "白皮书",
-    "version": "Version 2.0",
-    "release": "Release Date: November 2026"
+    "version": "版本 2.0",
+    "release": "发布日期：2026 年 11 月"
   },
   "wp": {
     "s1": {
@@ -182,34 +182,136 @@
     "tagline": "Fly Infinity — 去中心化。透明。永远上涨。"
   },
   "wp2": {
-    "hero.title": "互联生态系统与智能合约定义的代币经济",
-    "hero.subtitle": "Fly Infinity 技术与经济概览：FIT 储备模型、链上定价规则、网络、游戏、人工智能及规划中的项目。",
-    "s1.title": "01 · 执行摘要",
-    "s1.body": "Fly Infinity 是构建于 BNB Smart Chain 的生态系统，整合网络参与层、FIT 代币合约、社区与治理组件、游戏和人工智能服务。本文区分合约中已实现的行为、产品介绍与未来计划。本文所述 FIT 价格是合约按储备与供应量计算的数值，并非价格预测、外部交易所报价或收益保证。",
-    "s2.title": "02 · FIT 代币架构",
-    "s2.body": "FIT 基于 ERC-20，但当前合约有意禁用了常规 transfer、transferFrom 和 approve 调用。FIT 通过合约购买逻辑铸造，并通过出售逻辑赎回，出售的代币会被销毁。只有符合条件的 Network 所有者或 Network 合约才能调用这些功能。因此，该设计不支持通常意义上的自由代币转账。",
-    "s3.title": "03 · 链上价格公式",
-    "s3.body": "R 表示 FIT 代币合约持有的 DAI 余额，S 表示 FIT 总供应量，W = 10¹⁸ 为精度系数。合约返回 P = floor(R × W ÷ S)；当供应量为零时，Price() 返回 1 DAI。首次调用 Genesis_Liquidity 要求存入 10 DAI，并向代币合约自身铸造 10 FIT，从而建立 1 DAI 的初始参考价格。之后的 Genesis_Liquidity 存款只增加储备，不再铸造 FIT。",
-    "s4.title": "04 · 买入与卖出的数学证明",
-    "s4.body": "买入：全部 A DAI 进入储备；手续费 f = floor(3A/100)，铸造量 m = floor((A−f)×W/P)。由于 P×m ≤ (A−f)×W ≤ A×W，且 P×S ≤ R×W，因此 (R+A)×W ≥ P×(S+m)，买入后的整数价格不会低于 P。卖出：卖出 x FIT 时，DAI 毛额 g = floor(x×P/W)，手续费 h = floor(6g/100)，实际支付 q = g−h。由于 q×W ≤ g×W ≤ x×P，因此 (R−q)×W ≥ P×(S−x)，卖出后的整数价格同样不会低于 P。证明依据当前源码中的整数运算，并假设交易成功且使用 18 位小数的标准 DAI。",
-    "s5.title": "05 · 数值示例",
-    "s5.body": "以下使用整枚代币数量，且不计入后续 Network 储备存款：Genesis 初始储备为 10 DAI、供应量为 10 FIT，价格为 1.0000 DAI。买入 100 DAI 后，储备变为 110 DAI，扣除 3% 买入费后铸造 97 FIT：110 / 107 ≈ 1.0280。随后卖出 50 FIT，全部 50 FIT 被销毁，并支付计算毛额的 94%：储备约为 61.6822 DAI，供应量为 57 FIT，价格约为 1.0821。链上实际结果使用整数单位和 Solidity 舍入规则。",
-    "s6.title": "06 · 为什么 FIT 不在外部交易所上市",
-    "s6.body": "传统交易所市场要求资产能够在用户钱包、交易所托管账户或流动性池之间转移。当前 FIT 合约阻止常规转账和授权调用，而是提供专属的买入与卖出路径。因此，FIT 并非为独立订单簿、自动做市商或第三方交易所上市而设计。项目公开政策是不寻求外部交易所上市；预期的买入、赎回和价格参考均保留在 FIT 专属合约内。这描述的是当前架构和项目政策，并不意味着可以阻止所有第三方平台展示 FIT 相关信息。",
-    "s7.title": "07 · Network 储备流与治理",
-    "s7.body": "Network 合约负责处理参与和奖励逻辑。在 Reward_Internal() 中，奖励转账以及符合条件的调用者付款完成后，Network 合约剩余的 DAI 余额会转入 FIT 代币合约。对于指定支持地址，Check_Support() 还会将部分奖励直接转入 FIT 合约。这些存款在当时不会铸造 FIT，而是增加 R。DAO 源码规定了更改 Network 和 Gift 合约地址的提案与 Network 所有者投票流程；这不代表项目所有决策都由代币持有者投票决定。",
-    "s8.title": "08 · 游戏与人工智能服务",
-    "s8.body": "当前 Fly Infinity Games 包含 Chess Arena、Backgammon、Hokm、Ludo 和 Snakes & Ladders。游戏中心说明参与免费：无入场费、无代币转账、无现金奖励；访问需要持有至少 1 FIT 的钱包和免费签名。Fly Infinity AI 提供钱包验证的助手工作区，包含生态系统、FIT、合约和交易相关工具。公布的等级为 Explorer（已验证 Network 所有者）、Advanced（所有者且至少 1 FIT）和 Elite（所有者且至少 10 FIT）。AI 输出可能有误，重要信息应独立核实。",
-    "s9.title": "09 · 规划中的生态项目",
-    "s9.body": "公开的 Upcoming Projects 页面介绍了 Fly Infinity DEX、Marketplace、Lottery 和 Fly Infinity Pay 计划，并以 FIT 持有者数量作为目标里程碑。这些是规划项目，并非已经上线的产品。每项计划都取决于技术可行性、资金、法律要求、安全审查和单独的发布公告。尤其是抽奖概念，需要按司法辖区进行法律审查并公布参与资格规则。",
-    "s10.title": "10 · 安全、范围与风险披露",
-    "s10.body": "合约和前端源代码已发布在项目公开 GitHub 仓库中，链上状态也可独立检查。但公开源代码不等于独立安全审计。风险包括智能合约缺陷、对 BNB Smart Chain 或 DAI 的依赖、稳定币脱锚或发行方风险、交易失败、合约逻辑允许的治理或地址变更、钱包被盗、监管限制和服务中断。储备/供应公式描述的是合约计算的账面数值；它不保证任何情况下所有持有人都能即时赎回，不保证 DAI 始终锚定，也不保证购买 FIT 会盈利。本文不构成金融、法律或税务建议。",
-    "chart.reserve": "DAI 储备",
-    "chart.supply": "FIT 供应量",
-    "chart.price": "合约价格",
-    "chart.initial": "初始",
-    "chart.afterBuy": "买入后",
-    "chart.afterSell": "卖出后",
-    "chart.note": "示例计算的说明性数值，并非实时市场数据。"
+    "hero": {
+      "title": "互联生态系统与智能合约定义的代币经济",
+      "subtitle": "Fly Infinity 技术与经济概览：FIT 储备模型、链上定价规则、网络、游戏、人工智能及规划中的项目。",
+      "kicker": "FLY INFINITY · 全球白皮书"
+    },
+    "s1": {
+      "title": "01 · 执行摘要",
+      "body": "Fly Infinity 是构建于 BNB Smart Chain 的生态系统，整合网络参与层、FIT 代币合约、社区与治理组件、游戏和人工智能服务。本文区分合约中已实现的行为、产品介绍与未来计划。本文所述 FIT 价格是合约按储备与供应量计算的数值，并非价格预测、外部交易所报价或收益保证。"
+    },
+    "s2": {
+      "title": "02 · FIT 代币架构",
+      "body": "FIT 基于 ERC-20，但当前合约有意禁用了常规 transfer、transferFrom 和 approve 调用。FIT 通过合约购买逻辑铸造，并通过出售逻辑赎回，出售的代币会被销毁。只有符合条件的 Network 所有者或 Network 合约才能调用这些功能。因此，该设计不支持通常意义上的自由代币转账。"
+    },
+    "s3": {
+      "title": "03 · 链上价格公式",
+      "body": "R 表示 FIT 代币合约持有的 DAI 余额，S 表示 FIT 总供应量，W = 10¹⁸ 为精度系数。合约返回 P = floor(R × W ÷ S)；当供应量为零时，Price() 返回 1 DAI。首次调用 Genesis_Liquidity 要求存入 10 DAI，并向代币合约自身铸造 10 FIT，从而建立 1 DAI 的初始参考价格。之后的 Genesis_Liquidity 存款只增加储备，不再铸造 FIT。"
+    },
+    "s4": {
+      "title": "04 · 买入与卖出的数学证明",
+      "body": "买入：全部 A DAI 进入储备；手续费 f = floor(3A/100)，铸造量 m = floor((A−f)×W/P)。由于 P×m ≤ (A−f)×W ≤ A×W，且 P×S ≤ R×W，因此 (R+A)×W ≥ P×(S+m)，买入后的整数价格不会低于 P。卖出：卖出 x FIT 时，DAI 毛额 g = floor(x×P/W)，手续费 h = floor(6g/100)，实际支付 q = g−h。由于 q×W ≤ g×W ≤ x×P，因此 (R−q)×W ≥ P×(S−x)，卖出后的整数价格同样不会低于 P。证明依据当前源码中的整数运算，并假设交易成功且使用 18 位小数的标准 DAI。"
+    },
+    "s5": {
+      "title": "05 · 数值示例",
+      "body": "以下使用整枚代币数量，且不计入后续 Network 储备存款：Genesis 初始储备为 10 DAI、供应量为 10 FIT，价格为 1.0000 DAI。买入 100 DAI 后，储备变为 110 DAI，扣除 3% 买入费后铸造 97 FIT：110 / 107 ≈ 1.0280。随后卖出 50 FIT，全部 50 FIT 被销毁，并支付计算毛额的 94%：储备约为 61.6822 DAI，供应量为 57 FIT，价格约为 1.0821。链上实际结果使用整数单位和 Solidity 舍入规则。"
+    },
+    "s6": {
+      "title": "06 · 为什么 FIT 不在外部交易所上市",
+      "body": "传统交易所市场要求资产能够在用户钱包、交易所托管账户或流动性池之间转移。当前 FIT 合约阻止常规转账和授权调用，而是提供专属的买入与卖出路径。因此，FIT 并非为独立订单簿、自动做市商或第三方交易所上市而设计。项目公开政策是不寻求外部交易所上市；预期的买入、赎回和价格参考均保留在 FIT 专属合约内。这描述的是当前架构和项目政策，并不意味着可以阻止所有第三方平台展示 FIT 相关信息。"
+    },
+    "s7": {
+      "title": "07 · Network 储备流与治理",
+      "body": "Network 合约负责处理参与和奖励逻辑。在 Reward_Internal() 中，奖励转账以及符合条件的调用者付款完成后，Network 合约剩余的 DAI 余额会转入 FIT 代币合约。对于指定支持地址，Check_Support() 还会将部分奖励直接转入 FIT 合约。这些存款在当时不会铸造 FIT，而是增加 R。DAO 源码规定了更改 Network 和 Gift 合约地址的提案与 Network 所有者投票流程；这不代表项目所有决策都由代币持有者投票决定。"
+    },
+    "s8": {
+      "title": "08 · 游戏与人工智能服务",
+      "body": "当前 Fly Infinity Games 包含 Chess Arena、Backgammon、Hokm、Ludo 和 Snakes & Ladders。游戏中心说明参与免费：无入场费、无代币转账、无现金奖励；访问需要持有至少 1 FIT 的钱包和免费签名。Fly Infinity AI 提供钱包验证的助手工作区，包含生态系统、FIT、合约和交易相关工具。公布的等级为 Explorer（已验证 Network 所有者）、Advanced（所有者且至少 1 FIT）和 Elite（所有者且至少 10 FIT）。AI 输出可能有误，重要信息应独立核实。"
+    },
+    "s9": {
+      "title": "09 · 规划中的生态项目",
+      "body": "公开的 Upcoming Projects 页面介绍了 Fly Infinity DEX、Marketplace、Lottery 和 Fly Infinity Pay 计划，并以 FIT 持有者数量作为目标里程碑。这些是规划项目，并非已经上线的产品。每项计划都取决于技术可行性、资金、法律要求、安全审查和单独的发布公告。尤其是抽奖概念，需要按司法辖区进行法律审查并公布参与资格规则。"
+    },
+    "s10": {
+      "title": "10 · 安全、范围与风险披露",
+      "body": "合约和前端源代码已发布在项目公开 GitHub 仓库中，链上状态也可独立检查。但公开源代码不等于独立安全审计。风险包括智能合约缺陷、对 BNB Smart Chain 或 DAI 的依赖、稳定币脱锚或发行方风险、交易失败、合约逻辑允许的治理或地址变更、钱包被盗、监管限制和服务中断。储备/供应公式描述的是合约计算的账面数值；它不保证任何情况下所有持有人都能即时赎回，不保证 DAI 始终锚定，也不保证购买 FIT 会盈利。本文不构成金融、法律或税务建议。"
+    },
+    "chart": {
+      "reserve": "DAI 储备",
+      "supply": "FIT 供应量",
+      "price": "合约价格",
+      "initial": "初始",
+      "afterBuy": "买入后",
+      "afterSell": "卖出后",
+      "note": "示例计算的说明性数值，并非实时市场数据。"
+    },
+    "toc": {
+      "overview": "概览",
+      "fit": "FIT 设计",
+      "formula": "公式",
+      "proof": "证明",
+      "example": "示例",
+      "exchange": "交易所模式",
+      "network": "网络",
+      "products": "产品",
+      "roadmap": "路线图",
+      "risk": "风险"
+    },
+    "pillars": {
+      "networkTitle": "网络",
+      "networkText": "参与和生态协调",
+      "fitTitle": "FIT",
+      "fitText": "合约定义的储备与定价模型",
+      "gamesTitle": "游戏",
+      "gamesText": "免费互动体验",
+      "aiTitle": "人工智能",
+      "aiText": "钱包门控的智能服务"
+    },
+    "flow": {
+      "wallet": "符合条件的钱包",
+      "walletSub": "已验证的 Network 所有者",
+      "contract": "FIT 合约",
+      "contractSub": "买入 / 卖出逻辑",
+      "supply": "供应管理",
+      "supplySub": "铸造 / 销毁",
+      "note": "当前源码中的常规转账和授权函数会回退。FIT 余额不能通过标准 ERC-20 转账路径转移。"
+    },
+    "equation": {
+      "label": "合约 PRICE()",
+      "reserve": "DAI 储备",
+      "supply": "FIT 总供应量",
+      "scale": "18 位精度系数"
+    },
+    "genesis": {
+      "label": "初始流动性",
+      "description": "合约中的初始参考价格"
+    },
+    "proof": {
+      "buy": "买入 · 3% 费用",
+      "sell": "卖出 · 6% 费用",
+      "note": "这些不等式严格依据当前 FIT 合约中的整数向下取整运算。它们证明成功执行买入和卖出后，合约计算价格不会下降；但不代表外部市场价格，也不保证任何情况下都能赎回。"
+    },
+    "exchange": {
+      "transfer": "常规转账",
+      "transferDesc": "当前代币合约中已禁用",
+      "pools": "外部流动性池",
+      "poolsDesc": "需要可转移资产和授权",
+      "dedicated": "专用 FIT 合约",
+      "dedicatedDesc": "定义明确的买入 / 卖出函数"
+    },
+    "network": {
+      "activity": "网络活动",
+      "rewards": "奖励处理",
+      "reserve": "FIT 的 DAI 储备",
+      "reserveNote": "DAI 转入 · 此步骤不铸造代币"
+    },
+    "roadmap": {
+      "dex": "目标：5,000 名 FIT 持有者",
+      "market": "目标：10,000 名 FIT 持有者",
+      "lottery": "目标：20,000 名 FIT 持有者 · 须经法律审查",
+      "pay": "目标：30,000 名 FIT 持有者"
+    },
+    "contracts": {
+      "title": "合约地址 · BNB Smart Chain",
+      "token": "FIT 代币",
+      "network": "网络",
+      "gift": "礼赠",
+      "dao": "DAO",
+      "source": "源代码"
+    },
+    "closing": {
+      "tagline": "去中心化 · 透明 · 持续进化"
+    }
   }
 }
