@@ -18,6 +18,17 @@ let currentLang = 'en';
 let translations = {};
 let currentPage = '';
 
+const SHARED_NAV_TRANSLATIONS = {
+  en: { games: "Fly Infinity Games", ai: "Fly Infinity AI" },
+  fa: { games: "بازی‌های فلای اینفینیتی", ai: "هوش مصنوعی فلای اینفینیتی" },
+  ar: { games: "ألعاب فلاي إنفينيتي", ai: "ذكاء فلاي إنفينيتي الاصطناعي" },
+  tr: { games: "Fly Infinity Oyunları", ai: "Fly Infinity Yapay Zekâ" },
+  ru: { games: "Игры Fly Infinity", ai: "ИИ Fly Infinity" },
+  zh: { games: "Fly Infinity 游戏", ai: "Fly Infinity 人工智能" },
+  es: { games: "Juegos Fly Infinity", ai: "IA de Fly Infinity" },
+  pt: { games: "Jogos Fly Infinity", ai: "IA Fly Infinity" }
+};
+
 function getPageName() {
     const path = window.location.pathname;
     const page = path.split('/').pop().split('.')[0] || 'index';
@@ -68,6 +79,8 @@ function t(key) {
         if (value && value[k] !== undefined) {
             value = value[k];
         } else {
+            const navMatch = key.match(/^nav\\.(games|ai)$/);
+            if (navMatch) return SHARED_NAV_TRANSLATIONS[currentLang]?.[navMatch[1]] || key;
             return key;
         }
     }
