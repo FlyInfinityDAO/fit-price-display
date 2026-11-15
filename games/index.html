@@ -238,9 +238,9 @@ function animateHubHeroTitle(){
  if(!title)return;
  const value=title.textContent||"";
  title.replaceChildren();
- value.split(/(\\s+)/).forEach(part=>{
+ value.split(/(\s+)/).forEach(part=>{
   if(!part)return;
-  if(/^\\s+$/.test(part)){title.append(document.createTextNode(part));return;}
+  if(/^\s+$/.test(part)){title.append(document.createTextNode(part));return;}
   const word=document.createElement("span");
   word.className="hub-title-word";
   word.textContent=part;
