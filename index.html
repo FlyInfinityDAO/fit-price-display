@@ -1550,6 +1550,67 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
 .footer .footer-links a i{color:#00e6ad!important;filter:drop-shadow(0 0 5px rgba(0,230,173,.32))}
 .footer .footer-links a:hover,.footer .footer-links a:focus-visible,.footer .footer-links a:hover span,.footer .footer-links a:focus-visible span{color:#eafff8!important}
 .footer .footer-links a:hover i,.footer .footer-links a:focus-visible i{color:#a2ffe4!important;filter:drop-shadow(0 0 8px rgba(0,255,190,.9))}
+
+    /* Mobile ecosystem aurora: replace the radar sweep with the same green/gold
+       drifting halo language used by the navigation drawer. Desktop stays unchanged. */
+    @media (max-width:760px) {
+      .fi-ecosystem {
+        isolation:isolate;
+        overflow:hidden;
+        background:
+          radial-gradient(ellipse at 8% 12%,rgba(0,200,150,.075),transparent 42%),
+          radial-gradient(ellipse at 92% 78%,rgba(212,175,55,.075),transparent 44%),
+          linear-gradient(145deg,rgba(12,30,26,.48),rgba(10,16,18,.42) 55%,rgba(35,29,12,.38));
+      }
+      .fi-ecosystem:before,
+      .fi-ecosystem:after {
+        content:"";
+        position:absolute;
+        z-index:0;
+        width:280px;
+        height:280px;
+        border-radius:50%;
+        filter:blur(52px) saturate(155%);
+        opacity:.32;
+        pointer-events:none;
+        will-change:transform,opacity;
+        transform-origin:center;
+      }
+      .fi-ecosystem:before {
+        top:-95px;
+        left:-145px;
+        right:auto;
+        bottom:auto;
+        inset:auto;
+        background:radial-gradient(circle,rgba(0,220,158,.82) 0%,rgba(0,200,150,.34) 34%,transparent 72%);
+        animation:fiEcoMobileAuroraGreen 8s ease-in-out infinite alternate;
+      }
+      .fi-ecosystem:after {
+        right:-155px;
+        bottom:-90px;
+        left:auto;
+        top:auto;
+        background:radial-gradient(circle,rgba(232,190,72,.82) 0%,rgba(212,175,55,.32) 36%,transparent 73%);
+        animation:fiEcoMobileAuroraGold 9s ease-in-out infinite alternate;
+      }
+      .fi-ecosystem > * {position:relative;z-index:1}
+    }
+    @keyframes fiEcoMobileAuroraGreen {
+      0%{transform:translate3d(-12px,-8px,0) scale(.78);opacity:.20}
+      35%{transform:translate3d(95px,75px,0) scale(1.22);opacity:.48}
+      70%{transform:translate3d(35px,185px,0) scale(1.05);opacity:.30}
+      100%{transform:translate3d(125px,235px,0) scale(1.28);opacity:.46}
+    }
+    @keyframes fiEcoMobileAuroraGold {
+      0%{transform:translate3d(12px,10px,0) scale(1.18);opacity:.20}
+      40%{transform:translate3d(-105px,-85px,0) scale(.82);opacity:.47}
+      75%{transform:translate3d(-35px,-185px,0) scale(1.24);opacity:.31}
+      100%{transform:translate3d(-135px,-235px,0) scale(.88);opacity:.45}
+    }
+    @media(prefers-reduced-motion:reduce) {
+      .fi-ecosystem:before,.fi-ecosystem:after {animation:none!important}
+    }
+
 </style>
 
     <link rel="stylesheet" href="card-hover.css?v=4">
