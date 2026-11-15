@@ -2,7 +2,7 @@
 (() => {
   "use strict";
 
-  const INSTALLED_KEY = "fi_pwa_installed_v1";
+  const INSTALLED_KEY = "fi_pwa_installed_v2";
   const scriptUrl = document.currentScript && document.currentScript.src;
   const baseUrl = scriptUrl ? new URL("./", scriptUrl) : new URL("./", location.href);
   const isStandalone = () =>
@@ -153,7 +153,7 @@
       try {
         await promptEvent.prompt();
         const choice = await promptEvent.userChoice;
-        if (choice && choice.outcome === "accepted") safeSet(INSTALLED_KEY, "1");
+        // Only appinstalled or standalone mode confirms installation.\n        // Accepting the browser prompt alone does not prove installation completed.
       } catch (_) {
         // The browser may decline to show its prompt; allow another visit to retry.
       }
