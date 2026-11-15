@@ -9,6 +9,12 @@
     <!-- ===== FAVICON ===== -->
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
+    <link rel="icon" type="image/svg+xml" href="pwa-icon.svg">
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#0F0F0F">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Fly Infinity">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
@@ -2217,5 +2223,6 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
   window.addEventListener("storage", e => { if(e.key === "fit_lang") render(); });
 })();
 </script>
+    <script src="pwa-install.js?v=20261115-pwa-v1"></script>
 </body>
 </html>
