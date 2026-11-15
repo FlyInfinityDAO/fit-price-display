@@ -137,7 +137,7 @@
     resetMetrics();
     if(!targetAddress||!reader)return false;
     if(requireWalletNetwork&&chainId!==BSC_CHAIN){note(t().wrongNetwork);return false;}
-    note(t().loading);
+    note(requireWalletNetwork?t().loading:t().lookupLoading);
     const addressArg=padAddress(targetAddress);
     const core=await Promise.allSettled([
       ethCall(FIT,SEL.balanceOf+addressArg,reader),
@@ -188,7 +188,7 @@
     try{
       const ok=await loadContractData(value,readOnlyProvider,false);
       if(ok)note(t().lookupSuccess);
-      else if(!document.getElementById('fiWalletNote').textContent)note(t().lookupError);
+      else note(t().lookupError);
     }catch(error){console.warn('[Fly Infinity Wallet Panel] Address lookup failed:',error);note(t().lookupError);}
     finally{if(button)button.disabled=false;}
   }
