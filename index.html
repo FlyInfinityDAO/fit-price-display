@@ -1371,6 +1371,51 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
     @media(max-width:760px){.fi-ecosystem{padding:28px 13px 20px}.fi-eco-stage{height:auto;display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px 0}.fi-eco-lines,.fi-eco-orbit,.fi-eco-pulse{display:none}.fi-eco-core{position:relative;grid-column:1/-1;grid-row:1;width:128px;height:128px;margin:8px auto 15px}.fi-eco-node{position:relative;inset:auto!important;width:auto;min-height:175px;padding:14px;animation:none}.fi-eco-node p{font-size:10px}.fi-eco-node h3{font-size:15px}.fi-eco-explainer-grid{grid-template-columns:1fr}.fi-eco-info{padding:15px}}
     @media(max-width:420px){.fi-eco-stage{grid-template-columns:1fr}.fi-eco-node{min-height:0}.fi-eco-core{grid-column:1}.fi-eco-heading p{font-size:12px}}
     @media(prefers-reduced-motion:reduce){.fi-ecosystem:before,.eco-dash,.orbit-a,.orbit-b,.core-aura,.fi-eco-core,.fi-eco-node,.icon-ring,.fi-eco-pulse{animation:none!important;transition:none!important}}
+
+    /* Mobile ecosystem: one aligned vertical composition with synchronized motion. */
+    @media(max-width:760px){
+      .fi-ecosystem{padding:25px 14px 20px;margin:22px 0;border-radius:24px}
+      .fi-eco-heading{padding:0 5px}
+      .fi-eco-eyebrow{font-size:9px;letter-spacing:2.2px;margin-bottom:8px}
+      .fi-eco-heading h2{font-size:clamp(23px,6vw,30px);line-height:1.18;max-width:100%;overflow-wrap:anywhere}
+      .fi-eco-heading p{font-size:12px;line-height:1.55;max-width:32ch;margin:8px auto 0}
+      .fi-eco-stage{height:auto;max-width:520px;display:grid;grid-template-columns:minmax(0,1fr);gap:13px;padding:17px 0 8px;margin-top:8px}
+      .fi-eco-lines,.fi-eco-orbit,.fi-eco-pulse{display:none}
+      .fi-eco-core{position:relative;grid-column:1;grid-row:auto;width:126px;height:126px;margin:0 auto 7px;animation:coreFloat 5.2s ease-in-out infinite}
+      .fi-eco-core img{width:32px;height:32px}
+      .fi-eco-core strong{font-size:13px}
+      .fi-eco-node{position:relative;inset:auto!important;grid-column:1;width:100%;min-width:0;min-height:0;padding:15px 16px 14px 22px;display:grid;grid-template-columns:38px minmax(0,1fr);column-gap:11px;align-items:center;text-align:left!important;animation:ecoMobileNode 6.4s ease-in-out infinite;transform:none}
+      .fi-eco-node .node-icon{grid-column:1;grid-row:1 / span 3;width:35px;height:35px}
+      .fi-eco-node h3{grid-column:2;margin:0 0 4px;font-size:16px;line-height:1.25}
+      .fi-eco-node p{grid-column:2;max-width:none;font-size:11px;line-height:1.55;margin:0}
+      .fi-eco-node small{grid-column:2;margin-top:7px;font-size:8px;letter-spacing:1.5px}
+      .node-network{animation-delay:-.8s}
+      .node-fit{animation-delay:-2.4s}
+      .node-gift{animation-delay:-4s}
+      .node-dao{animation-delay:-5.2s}
+      .fi-eco-explainer-grid{grid-template-columns:minmax(0,1fr);gap:11px;margin-top:12px}
+      .fi-eco-info{padding:15px;gap:12px;min-width:0}
+      .fi-eco-info>div:last-child{min-width:0}
+      .fi-eco-info h3{font-size:15px;line-height:1.35}
+      .fi-eco-info p{font-size:11px;line-height:1.65}
+      .fi-formula{font-size:clamp(10px,3vw,12px);overflow-wrap:anywhere}
+      .fi-flow{justify-content:center;gap:5px;font-size:8px;letter-spacing:.6px}
+      .fi-eco-footnote{font-size:9px;padding:0 5px;line-height:1.6}
+    }
+    @media(max-width:380px){
+      .fi-ecosystem{padding-left:10px;padding-right:10px}
+      .fi-eco-node{padding:13px 12px 13px 17px;grid-template-columns:32px minmax(0,1fr);column-gap:9px}
+      .fi-eco-node .node-icon{width:30px;height:30px;font-size:16px}
+      .fi-eco-node h3{font-size:15px}
+      .fi-eco-node p{font-size:10px}
+      .fi-eco-info{padding:12px}
+      .info-symbol{flex-basis:36px;width:36px;height:36px}
+    }
+    @keyframes ecoMobileNode{
+      0%,100%{transform:translate3d(0,0,0);box-shadow:0 10px 24px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.14),0 0 0 rgba(0,200,150,0)}
+      50%{transform:translate3d(0,-3px,0);box-shadow:0 13px 28px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.18),0 0 17px rgba(0,200,150,.10)}
+    }
+
     
         /* ===== FLY INFINITY NAVIGATION REFRESH ===== */
         .sidebar-menu a {
