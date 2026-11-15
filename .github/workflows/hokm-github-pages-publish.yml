@@ -56,6 +56,8 @@ jobs:
           test -f site/logo.png || { echo "::error::The site logo.png is missing."; exit 1; }
           test -f site/manifest.webmanifest || { echo "::error::The PWA manifest is missing."; exit 1; }
           test -f site/pwa-icon.svg || { echo "::error::The PWA icon is missing."; exit 1; }
+          test -f site/pwa-icon-192.png || { echo "::error::The 192px PWA icon is missing."; exit 1; }
+          test -f site/pwa-icon-512.png || { echo "::error::The 512px PWA icon is missing."; exit 1; }
           test -f site/pwa-install.js || { echo "::error::The PWA install module is missing."; exit 1; }
           test -f site/sw.js || { echo "::error::The PWA service worker is missing."; exit 1; }
           node --check site/pwa-install.js

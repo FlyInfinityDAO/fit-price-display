@@ -15,6 +15,18 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Fly Infinity">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+      /* Standalone iPhone: keep dashboard controls below the system status area. */
+      @media (display-mode: standalone) {
+        html { min-height: 100%; background: #0F0F0F; }
+        body {
+          padding-top: calc(20px + env(safe-area-inset-top, 0px)) !important;
+          padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
+          min-height: 100vh;
+          min-height: 100dvh;
+        }
+      }
+    </style>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>

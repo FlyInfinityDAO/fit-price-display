@@ -29,14 +29,14 @@
   if (!isIOS && !isAndroidChrome) return;
 
   const translations = {
-    en: {title:"Install Fly Infinity",body:"Add the Fly Infinity app to your home screen for a faster, app-like experience.",install:"Install app",later:"Not now",iosTitle:"Add Fly Infinity to your Home Screen",iosBody:"Install the Fly Infinity web app in a few quick steps:",step1:"Tap the Share button in your browser.",step2:"Choose “Add to Home Screen”.",step3:"Confirm by tapping “Add”.",done:"Got it",hint:"If you are using an iPhone browser that does not show this option, open this page in Safari and use Share."},
-    fa: {title:"نصب اپلیکیشن Fly Infinity",body:"با افزودن اپلیکیشن فلای اینفینیتی به صفحه اصلی، سریع‌تر و مانند یک اپلیکیشن مستقل به اکوسیستم دسترسی داشته باشید.",install:"نصب اپلیکیشن",later:"فعلاً نه",iosTitle:"افزودن Fly Infinity به صفحه اصلی",iosBody:"برای نصب وب‌اپلیکیشن فلای اینفینیتی این مراحل را انجام دهید:",step1:"دکمه اشتراک‌گذاری (Share) مرورگر را لمس کنید.",step2:"گزینه Add to Home Screen را انتخاب کنید.",step3:"در پایان گزینه Add را تأیید کنید.",done:"متوجه شدم",hint:"اگر این گزینه را در مرورگر خود نمی‌بینید، صفحه را در Safari باز کنید و از منوی Share استفاده کنید."},
-    ar: {title:"تثبيت Fly Infinity",body:"أضف تطبيق Fly Infinity إلى الشاشة الرئيسية للوصول إلى المنظومة بسرعة وبطريقة تشبه التطبيقات.",install:"تثبيت التطبيق",later:"ليس الآن",iosTitle:"إضافة Fly Infinity إلى الشاشة الرئيسية",iosBody:"اتبع الخطوات التالية لتثبيت تطبيق الويب:",step1:"اضغط على زر المشاركة في المتصفح.",step2:"اختر Add to Home Screen.",step3:"أكد العملية بالضغط على Add.",done:"فهمت",hint:"إذا لم يظهر الخيار في متصفحك، افتح الصفحة في Safari واستخدم قائمة المشاركة."},
-    tr: {title:"Fly Infinity Uygulamasını Yükle",body:"Daha hızlı ve uygulama benzeri erişim için Fly Infinity'yi ana ekranınıza ekleyin.",install:"Uygulamayı yükle",later:"Şimdi değil",iosTitle:"Fly Infinity'yi Ana Ekrana Ekle",iosBody:"Web uygulamasını yüklemek için şu adımları izleyin:",step1:"Tarayıcınızdaki Paylaş düğmesine dokunun.",step2:"Add to Home Screen seçeneğini seçin.",step3:"Add düğmesine dokunarak onaylayın.",done:"Anladım",hint:"Bu seçenek görünmüyorsa sayfayı Safari'de açıp Paylaş menüsünü kullanın."},
-    ru: {title:"Установить Fly Infinity",body:"Добавьте Fly Infinity на главный экран для быстрого доступа в формате приложения.",install:"Установить",later:"Не сейчас",iosTitle:"Добавить Fly Infinity на экран Домой",iosBody:"Выполните несколько шагов для установки веб-приложения:",step1:"Нажмите кнопку «Поделиться» в браузере.",step2:"Выберите Add to Home Screen.",step3:"Подтвердите, нажав Add.",done:"Понятно",hint:"Если этот пункт недоступен, откройте страницу в Safari и воспользуйтесь меню «Поделиться»."},
-    zh: {title:"安装 Fly Infinity",body:"将 Fly Infinity 添加到主屏幕，享受更快捷、接近原生应用的体验。",install:"安装应用",later:"暂不",iosTitle:"将 Fly Infinity 添加到主屏幕",iosBody:"按照以下步骤安装网页应用：",step1:"点击浏览器中的分享按钮。",step2:"选择“添加到主屏幕”。",step3:"点击“添加”进行确认。",done:"知道了",hint:"如果浏览器中没有此选项，请在 Safari 中打开此页面并使用分享菜单。"},
-    es: {title:"Instalar Fly Infinity",body:"Añade Fly Infinity a tu pantalla de inicio para acceder más rápido con una experiencia similar a una app.",install:"Instalar app",later:"Ahora no",iosTitle:"Añadir Fly Infinity a la pantalla de inicio",iosBody:"Sigue estos pasos para instalar la aplicación web:",step1:"Toca el botón Compartir del navegador.",step2:"Elige “Añadir a pantalla de inicio”.",step3:"Confirma tocando “Añadir”.",done:"Entendido",hint:"Si no aparece esta opción, abre la página en Safari y usa el menú Compartir."},
-    pt: {title:"Instalar Fly Infinity",body:"Adicione o Fly Infinity à tela inicial para ter acesso rápido com uma experiência semelhante a um aplicativo.",install:"Instalar app",later:"Agora não",iosTitle:"Adicionar Fly Infinity à Tela de Início",iosBody:"Siga estas etapas para instalar o aplicativo web:",step1:"Toque no botão Compartilhar do navegador.",step2:"Escolha “Adicionar à Tela de Início”.",step3:"Confirme tocando em “Adicionar”.",done:"Entendi",hint:"Se essa opção não aparecer, abra esta página no Safari e use o menu Compartilhar."}
+    en: {title:"Install Fly Infinity",body:"Add the Fly Infinity app to your home screen for a faster, app-like experience.",install:"Install app",later:"Not now",iosTitle:"Add Fly Infinity to your Home Screen",iosBody:"Install the Fly Infinity web app in a few quick steps:",step1:"Tap the Share button in your browser.",step2:"Choose “Add to Home Screen”.",step3:"Confirm by tapping “Add”.",done:"Got it",hint:"If you are using an iPhone browser that does not show this option, open this page in Safari and use Share.",menuTitle:"Install Fly Infinity from Chrome",menuBody:"Chrome has not opened its direct install prompt yet. You can still install Fly Infinity from the browser menu:",menuStep1:"Open the Chrome menu (⋮) in the top corner.",menuStep2:"Choose “Install app” or “Add to Home screen”.",menuStep3:"Confirm the installation. The app should open without the browser address bar."},
+    fa: {title:"نصب اپلیکیشن Fly Infinity",body:"با افزودن اپلیکیشن فلای اینفینیتی به صفحه اصلی، سریع‌تر و مانند یک اپلیکیشن مستقل به اکوسیستم دسترسی داشته باشید.",install:"نصب اپلیکیشن",later:"فعلاً نه",iosTitle:"افزودن Fly Infinity به صفحه اصلی",iosBody:"برای نصب وب‌اپلیکیشن فلای اینفینیتی این مراحل را انجام دهید:",step1:"دکمه اشتراک‌گذاری (Share) مرورگر را لمس کنید.",step2:"گزینه Add to Home Screen را انتخاب کنید.",step3:"در پایان گزینه Add را تأیید کنید.",done:"متوجه شدم",hint:"اگر این گزینه را در مرورگر خود نمی‌بینید، صفحه را در Safari باز کنید و از منوی Share استفاده کنید.",menuTitle:"نصب Fly Infinity از منوی Chrome",menuBody:"مرورگر هنوز پنجره مستقیم نصب را فعال نکرده است. می‌توانید از منوی مرورگر نصب را انجام دهید:",menuStep1:"منوی سه‌نقطه Chrome را باز کنید.",menuStep2:"گزینه Install app یا Add to Home screen را انتخاب کنید.",menuStep3:"نصب را تأیید کنید؛ اپ باید بدون نوار آدرس مرورگر باز شود."},
+    ar: {title:"تثبيت Fly Infinity",body:"أضف تطبيق Fly Infinity إلى الشاشة الرئيسية للوصول إلى المنظومة بسرعة وبطريقة تشبه التطبيقات.",install:"تثبيت التطبيق",later:"ليس الآن",iosTitle:"إضافة Fly Infinity إلى الشاشة الرئيسية",iosBody:"اتبع الخطوات التالية لتثبيت تطبيق الويب:",step1:"اضغط على زر المشاركة في المتصفح.",step2:"اختر Add to Home Screen.",step3:"أكد العملية بالضغط على Add.",done:"فهمت",hint:"إذا لم يظهر الخيار في متصفحك، افتح الصفحة في Safari واستخدم قائمة المشاركة.",menuTitle:"تثبيت Fly Infinity من Chrome",menuBody:"لم يفتح Chrome نافذة التثبيت المباشرة بعد. يمكنك تثبيت التطبيق من قائمة المتصفح:",menuStep1:"افتح قائمة Chrome ذات النقاط الثلاث.",menuStep2:"اختر Install app أو Add to Home screen.",menuStep3:"أكد التثبيت. يجب أن يفتح التطبيق دون شريط عنوان المتصفح."},
+    tr: {title:"Fly Infinity Uygulamasını Yükle",body:"Daha hızlı ve uygulama benzeri erişim için Fly Infinity'yi ana ekranınıza ekleyin.",install:"Uygulamayı yükle",later:"Şimdi değil",iosTitle:"Fly Infinity'yi Ana Ekrana Ekle",iosBody:"Web uygulamasını yüklemek için şu adımları izleyin:",step1:"Tarayıcınızdaki Paylaş düğmesine dokunun.",step2:"Add to Home Screen seçeneğini seçin.",step3:"Add düğmesine dokunarak onaylayın.",done:"Anladım",hint:"Bu seçenek görünmüyorsa sayfayı Safari'de açıp Paylaş menüsünü kullanın.",menuTitle:"Fly Infinity uygulamasını Chrome menüsünden yükle",menuBody:"Chrome henüz doğrudan yükleme penceresini açmadı. Uygulamayı tarayıcı menüsünden yükleyebilirsiniz:",menuStep1:"Chrome üç nokta menüsünü açın.",menuStep2:"Install app veya Add to Home screen seçeneğini seçin.",menuStep3:"Yüklemeyi onaylayın. Uygulama adres çubuğu olmadan açılmalıdır."},
+    ru: {title:"Установить Fly Infinity",body:"Добавьте Fly Infinity на главный экран для быстрого доступа в формате приложения.",install:"Установить",later:"Не сейчас",iosTitle:"Добавить Fly Infinity на экран Домой",iosBody:"Выполните несколько шагов для установки веб-приложения:",step1:"Нажмите кнопку «Поделиться» в браузере.",step2:"Выберите Add to Home Screen.",step3:"Подтвердите, нажав Add.",done:"Понятно",hint:"Если этот пункт недоступен, откройте страницу в Safari и воспользуйтесь меню «Поделиться».",menuTitle:"Установка Fly Infinity через Chrome",menuBody:"Chrome пока не открыл прямое окно установки. Вы можете установить приложение через меню браузера:",menuStep1:"Откройте меню Chrome (три точки).",menuStep2:"Выберите Install app или Add to Home screen.",menuStep3:"Подтвердите установку. Приложение должно открываться без адресной строки."},
+    zh: {title:"安装 Fly Infinity",body:"将 Fly Infinity 添加到主屏幕，享受更快捷、接近原生应用的体验。",install:"安装应用",later:"暂不",iosTitle:"将 Fly Infinity 添加到主屏幕",iosBody:"按照以下步骤安装网页应用：",step1:"点击浏览器中的分享按钮。",step2:"选择“添加到主屏幕”。",step3:"点击“添加”进行确认。",done:"知道了",hint:"如果浏览器中没有此选项，请在 Safari 中打开此页面并使用分享菜单。",menuTitle:"通过 Chrome 菜单安装 Fly Infinity",menuBody:"Chrome 尚未显示直接安装窗口。您仍可通过浏览器菜单安装：",menuStep1:"打开 Chrome 右上角的三点菜单。",menuStep2:"选择“安装应用”或“添加到主屏幕”。",menuStep3:"确认安装。应用打开后应不再显示浏览器地址栏。"},
+    es: {title:"Instalar Fly Infinity",body:"Añade Fly Infinity a tu pantalla de inicio para acceder más rápido con una experiencia similar a una app.",install:"Instalar app",later:"Ahora no",iosTitle:"Añadir Fly Infinity a la pantalla de inicio",iosBody:"Sigue estos pasos para instalar la aplicación web:",step1:"Toca el botón Compartir del navegador.",step2:"Elige “Añadir a pantalla de inicio”.",step3:"Confirma tocando “Añadir”.",done:"Entendido",hint:"Si no aparece esta opción, abre la página en Safari y usa el menú Compartir.",menuTitle:"Instalar Fly Infinity desde Chrome",menuBody:"Chrome todavía no ha abierto el aviso directo de instalación. También puedes instalar desde el menú del navegador:",menuStep1:"Abre el menú de tres puntos de Chrome.",menuStep2:"Elige “Instalar aplicación” o “Añadir a pantalla de inicio”.",menuStep3:"Confirma la instalación. La app debería abrirse sin la barra de direcciones."},
+    pt: {title:"Instalar Fly Infinity",body:"Adicione o Fly Infinity à tela inicial para ter acesso rápido com uma experiência semelhante a um aplicativo.",install:"Instalar app",later:"Agora não",iosTitle:"Adicionar Fly Infinity à Tela de Início",iosBody:"Siga estas etapas para instalar o aplicativo web:",step1:"Toque no botão Compartilhar do navegador.",step2:"Escolha “Adicionar à Tela de Início”.",step3:"Confirme tocando em “Adicionar”.",done:"Entendi",hint:"Se essa opção não aparecer, abra esta página no Safari e use o menu Compartilhar.",menuTitle:"Instalar Fly Infinity pelo menu do Chrome",menuBody:"O Chrome ainda não abriu o aviso direto de instalação. Você também pode instalar pelo menu do navegador:",menuStep1:"Abra o menu de três pontos do Chrome.",menuStep2:"Escolha “Instalar app” ou “Adicionar à tela inicial”.",menuStep3:"Confirme a instalação. O app deverá abrir sem a barra de endereço."}
   };
 
   const getLang = () => {
@@ -47,6 +47,7 @@
 
   let deferredPrompt = null;
   let modal = null;
+  let modalKind = null;
   let opened = false;
 
   const styles = `
@@ -72,6 +73,7 @@
   function closeModal() {
     if (modal) modal.remove();
     modal = null;
+    modalKind = null;
     opened = false;
   }
 
@@ -103,16 +105,17 @@
     const title = document.createElement("h2");
     title.className = "fi-pwa-title";
     title.id = "fi-pwa-title";
-    title.textContent = kind === "ios" ? t.iosTitle : t.title;
+    title.textContent = kind === "ios" ? t.iosTitle : (kind === "android-help" ? t.menuTitle : t.title);
     const body = document.createElement("p");
     body.className = "fi-pwa-body";
-    body.textContent = kind === "ios" ? t.iosBody : t.body;
+    body.textContent = kind === "ios" ? t.iosBody : (kind === "android-help" ? t.menuBody : t.body);
     card.append(close, logo, title, body);
 
-    if (kind === "ios") {
+    if (kind === "ios" || kind === "android-help") {
       const list = document.createElement("ol");
       list.className = "fi-pwa-steps";
-      [t.step1,t.step2,t.step3].forEach((line,index) => {
+      const stepTexts = kind === "ios" ? [t.step1,t.step2,t.step3] : [t.menuStep1,t.menuStep2,t.menuStep3];
+      stepTexts.forEach((line,index) => {
         const li = document.createElement("li");
         const number = document.createElement("b");
         number.textContent = String(index + 1);
@@ -123,8 +126,9 @@
       });
       const hint = document.createElement("p");
       hint.className = "fi-pwa-hint";
-      hint.textContent = t.hint;
-      card.append(list,hint);
+      hint.textContent = kind === "ios" ? t.hint : "";
+      card.append(list);
+      if (hint.textContent) card.append(hint);
     }
 
     const actions = document.createElement("div");
@@ -132,14 +136,15 @@
     const primary = document.createElement("button");
     primary.type = "button";
     primary.className = "fi-pwa-primary";
-    primary.textContent = kind === "ios" ? t.done : t.install;
+    primary.textContent = (kind === "ios" || kind === "android-help") ? t.done : t.install;
     primary.addEventListener("click", async () => {
-      if (kind === "ios") {
+      if (kind === "ios" || kind === "android-help") {
         closeModal();
         return;
       }
       if (!deferredPrompt) {
         closeModal();
+        showModal("android-help");
         return;
       }
       const promptEvent = deferredPrompt;
@@ -168,6 +173,7 @@
     overlay.addEventListener("click", event => { if (event.target === overlay) closeModal(); });
     document.body.append(overlay);
     modal = overlay;
+    modalKind = kind;
     close.focus({preventScroll:true});
   }
 
@@ -179,8 +185,11 @@
     window.addEventListener("beforeinstallprompt", event => {
       event.preventDefault();
       deferredPrompt = event;
+      if (modalKind === "android-help") closeModal();
       showModal("android");
     });
+    // Provide an install entry point even if Chrome delays beforeinstallprompt.
+    window.setTimeout(() => { if (!opened) showModal("android"); }, 1400);
   }
 
   if ("serviceWorker" in navigator && location.protocol === "https:") {
