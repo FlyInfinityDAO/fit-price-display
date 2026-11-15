@@ -7,6 +7,8 @@ on:
       - main
     paths:
       - 'index.html'
+      - 'manifest.webmanifest'
+      - 'pwa-icon.svg'
       - 'logo.png'
       - 'walletconnect-bridge.js'
       - '*.html'
@@ -52,6 +54,10 @@ jobs:
 
           test -f site/index.html || { echo "::error::The site index.html is missing."; exit 1; }
           test -f site/logo.png || { echo "::error::The site logo.png is missing."; exit 1; }
+          test -f site/manifest.webmanifest || { echo "::error::The PWA manifest is missing."; exit 1; }
+          test -f site/pwa-icon.svg || { echo "::error::The PWA icon is missing."; exit 1; }
+          test -f site/pwa-install.js || { echo "::error::The PWA install module is missing."; exit 1; }
+          test -f site/sw.js || { echo "::error::The PWA service worker is missing."; exit 1; }
           test -f site/walletconnect-bridge.js || { echo "::error::The wallet bridge is missing."; exit 1; }
 
           for game in chess-arena backgammon hokm ludo snakes-and-ladders; do
