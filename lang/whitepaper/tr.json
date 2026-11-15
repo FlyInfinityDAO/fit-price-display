@@ -246,7 +246,8 @@
       "network": "Ağ",
       "products": "Ürünler",
       "roadmap": "Yol haritası",
-      "risk": "Risk"
+      "risk": "Risk",
+      "hosting": "Açık kaynaklı barındırma"
     },
     "pillars": {
       "networkTitle": "Ağ",
@@ -312,6 +313,10 @@
     },
     "closing": {
       "tagline": "Merkeziyetsiz · Şeffaf · Gelişime açık"
+    },
+    "s11": {
+      "title": "11 · Neden GitHub Pages ve herkese açık GitHub adresi kullanıyoruz?",
+      "body": "GitHub Pages ve projenin herkese açık GitHub adresini seçmemiz, Fly Infinity altyapısı için bilinçli bir karardır. Web uygulaması; kaynak kodunun, sürümlerin ve geliştirme geçmişinin herkesçe incelenebildiği aynı açık depodan yayımlanır. Kullanıcılar, geliştiriciler ve bağımsız inceleyiciler yayımlanan arayüzü kaynak koduyla karşılaştırabilir, değişiklikleri takip edebilir ve güncellemelerin herkese açık kaydını inceleyebilir. Kişisel sunucu veya özel alan adı yararlı olabilir; ancak güvenilir, sürdürülebilir ve şeffaf bir uygulama için zorunlu değildir. GitHub Pages, kaynak kodunu ve değişiklik geçmişini açık tutarken yerleşik bir barındırma ve HTTPS dağıtım platformundan yararlanmamızı sağlar. GitHub üzerinde barındırma, Fly Infinity’nin, deponun veya ürün kararlarının mülkiyetini GitHub’a devretmez; bunlar proje bakım ekibinin sorumluluğundadır. Açık depo ayrıca topluluk incelemesini, hata bildirimini ve standart Git iş akışlarıyla katkıyı destekler. Web arayüzü ekosistemin yalnızca bir katmanıdır: blokzincir işlemleri BNB Smart Chain üzerindeki yayımlanmış akıllı sözleşmelerce yönetilir; dinamik hizmetler kendi altyapılarında çalışabilir. Açık kaynak ve herkese açık yayın incelenebilirliği ve hesap verebilirliği artırır; ancak güvenlik denetimi değildir ve güvenlik açığı bulunmadığını garanti etmez. Kullanıcıları kaynak kodunu, sözleşme adreslerini, zincir üstü etkinliği ve sürüm geçmişini doğrudan incelemeye davet ediyoruz."
     }
   }
 }
