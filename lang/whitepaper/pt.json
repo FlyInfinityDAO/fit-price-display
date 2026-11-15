@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Fly Infinity - White Paper",
-    "description": "White Paper do Fly Infinity Token - Plataforma Financeira Descentralizada"
+    "description": "Visão técnica e económica da Fly Infinity: modelo de reserva FIT, regras de preço on-chain, rede, jogos, IA e iniciativas planeadas."
   },
   "header": {
     "title": "Fly Infinity DAO"
@@ -22,8 +22,8 @@
   },
   "whitepaper": {
     "title": "White Paper",
-    "version": "Versão 1.0",
-    "release": "Data de Lançamento: Junho 2026"
+    "version": "Version 2.0",
+    "release": "Release Date: November 2026"
   },
   "wp": {
     "s1": {
@@ -180,5 +180,36 @@
   },
   "footer": {
     "tagline": "Fly Infinity — Descentralizado. Transparente. Sempre Subindo."
+  },
+  "wp2": {
+    "hero.title": "Um ecossistema conectado e uma economia de tokens definida por contratos",
+    "hero.subtitle": "Visão técnica e económica da Fly Infinity: modelo de reserva FIT, regras de preço on-chain, rede, jogos, IA e iniciativas planeadas.",
+    "s1.title": "01 · Resumo executivo",
+    "s1.body": "Fly Infinity é um ecossistema na BNB Smart Chain que reúne uma camada de participação na rede, o contrato do token FIT, componentes comunitários e de governação, jogos e serviços de IA. Este documento distingue o comportamento implementado nos contratos das descrições de produtos e dos planos futuros. O preço FIT aqui apresentado é o valor calculado pelo contrato com base na relação entre reserva e oferta; não é uma previsão, cotação de uma exchange externa ou garantia de retorno.",
+    "s2.title": "02 · Arquitetura do token FIT",
+    "s2.body": "FIT é baseado em ERC-20, mas o contrato atual desativa deliberadamente as funções normais transfer, transferFrom e approve. FIT é emitido pela lógica de compra do contrato e resgatado pela lógica de venda, que queima os tokens vendidos. O acesso a estas funções está limitado a proprietários Network elegíveis ou ao próprio contrato Network. Este desenho não é compatível com a transferência livre habitual de tokens.",
+    "s3.title": "03 · Fórmula de preço on-chain",
+    "s3.body": "R representa o saldo de DAI detido pelo contrato do token FIT, S a oferta total de FIT e W = 10¹⁸ a escala decimal. O contrato devolve P = floor(R × W ÷ S); quando a oferta é zero, Price() devolve 1 DAI. A primeira chamada Genesis_Liquidity exige 10 DAI, emite 10 FIT para o próprio contrato e deposita o DAI, estabelecendo um preço de referência de 1 DAI. Os depósitos posteriores em Genesis_Liquidity aumentam a reserva sem emitir FIT adicional.",
+    "s4.title": "04 · Demonstração matemática de compras e vendas",
+    "s4.body": "Compra: todo o montante A em DAI entra na reserva; a taxa é f = floor(3A/100) e a emissão é m = floor((A−f)×W/P) FIT. Como P×m ≤ (A−f)×W ≤ A×W e P×S ≤ R×W, resulta (R+A)×W ≥ P×(S+m); assim, o preço inteiro calculado após a compra não pode ser inferior a P. Venda: para x FIT, o valor bruto g = floor(x×P/W), a taxa h = floor(6g/100) e o pagamento q = g−h. Como q×W ≤ g×W ≤ x×P, verifica-se (R−q)×W ≥ P×(S−x), pelo que o preço após a venda também não pode ser inferior a P. A demonstração segue as operações inteiras do código atual e pressupõe execução bem-sucedida e DAI padrão com 18 casas decimais.",
+    "s5.title": "05 · Exemplo numérico",
+    "s5.body": "Exemplo com quantidades inteiras de tokens, sem depósitos posteriores da Network: Genesis começa com reserva de 10 DAI e oferta de 10 FIT, ou seja, 1,0000 DAI por FIT. Uma compra de 100 DAI aumenta a reserva para 110 DAI e emite 97 FIT após a taxa de compra de 3%: 110 / 107 ≈ 1,0280. Depois, a venda de 50 FIT queima os 50 FIT e paga 94% do valor bruto calculado: reserva de aproximadamente 61,6822 DAI, oferta de 57 FIT e preço de aproximadamente 1,0821. Os resultados reais on-chain usam unidades inteiras e o arredondamento de Solidity.",
+    "s6.title": "06 · Porque é que FIT não é listado em exchanges externas",
+    "s6.body": "Um mercado de exchange convencional exige ativos transferíveis entre carteiras de utilizadores, custódia da exchange ou pools de liquidez. O contrato FIT atual bloqueia as chamadas normais de transferência e aprovação e disponibiliza, em alternativa, o seu próprio percurso de compra e venda. Por isso, FIT não foi concebido para livros de ordens independentes, AMMs ou listagens em exchanges de terceiros. A política declarada do projeto é não procurar listagens externas; a compra, o resgate e a referência de preço pretendidos permanecem no contrato FIT dedicado. Isto descreve a arquitetura atual e a política do projeto, não afirma que todas as plataformas externas possam ser impedidas de apresentar informações sobre FIT.",
+    "s7.title": "07 · Fluxos de reserva da Network e governação",
+    "s7.body": "O contrato Network processa a participação e a lógica de recompensas. Em Reward_Internal(), após as transferências de recompensas e qualquer pagamento elegível ao chamador, o saldo DAI restante da Network é transferido para o contrato do token FIT. Para determinados endereços de apoio, Check_Support() encaminha algumas recompensas diretamente para o contrato FIT. Estes depósitos aumentam R sem emitir FIT nesse momento. O código DAO define propostas e votação de proprietários Network para alterar os endereços dos contratos Network e Gift; isto não significa que todas as decisões do projeto sejam votadas pelos titulares do token.",
+    "s8.title": "08 · Jogos e serviços de IA",
+    "s8.body": "A coleção atual Fly Infinity Games inclui Chess Arena, Backgammon, Hokm, Ludo e Snakes & Ladders. O centro de jogos indica entrada gratuita: sem taxa de entrada, transferência de tokens ou prémios financeiros; o acesso exige uma carteira com pelo menos 1 FIT e uma assinatura gratuita. Fly Infinity AI oferece um espaço de assistente com acesso verificado por carteira e ferramentas sobre o ecossistema, FIT, contratos e transações. Os níveis publicados são Explorer (proprietário Network verificado), Advanced (proprietário mais pelo menos 1 FIT) e Elite (proprietário mais pelo menos 10 FIT). A IA pode cometer erros e as respostas devem ser verificadas.",
+    "s9.title": "09 · Iniciativas planeadas do ecossistema",
+    "s9.body": "A página pública Upcoming Projects descreve os planos Fly Infinity DEX, Marketplace, Lottery e Fly Infinity Pay, com metas de lançamento baseadas em marcos do número de titulares FIT. São planos, não produtos já disponíveis. Cada iniciativa depende de viabilidade técnica, financiamento, requisitos legais, revisão de segurança e anúncio de lançamento separado. Em particular, qualquer conceito de lotaria exige análise jurídica por jurisdição e regras de elegibilidade publicadas.",
+    "s10.title": "10 · Segurança, âmbito e divulgação de riscos",
+    "s10.body": "O código-fonte dos contratos e do frontend está publicado no repositório GitHub público do projeto, e o estado on-chain pode ser inspecionado de forma independente. Código aberto não equivale a uma auditoria de segurança independente. Os riscos incluem falhas de contratos inteligentes, dependência da BNB Smart Chain ou DAI, perda da paridade ou risco do emissor da stablecoin, falhas de transação, alterações de governação ou de endereços permitidas pela lógica do contrato, comprometimento da carteira, restrições regulamentares e interrupções do serviço. A fórmula reserva/oferta descreve um valor contabilístico calculado pelo contrato; não garante resgate imediato para todos em quaisquer condições, a paridade do DAI ou lucro na compra de FIT. Este documento não constitui aconselhamento financeiro, jurídico ou fiscal.",
+    "chart.reserve": "Reserva DAI",
+    "chart.supply": "Oferta FIT",
+    "chart.price": "Preço do contrato",
+    "chart.initial": "Início",
+    "chart.afterBuy": "Após compra",
+    "chart.afterSell": "Após venda",
+    "chart.note": "Valores ilustrativos do exemplo; não são dados de mercado em tempo real."
   }
 }
