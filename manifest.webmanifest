@@ -1,0 +1,27 @@
+{
+  "id": "./",
+  "name": "Fly Infinity",
+  "short_name": "Fly Infinity",
+  "description": "The Fly Infinity connected ecosystem.",
+  "start_url": "./index.html?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#0F0F0F",
+  "theme_color": "#0F0F0F",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "pwa-icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "240x240",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
