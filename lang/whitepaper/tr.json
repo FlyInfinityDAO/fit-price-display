@@ -193,7 +193,7 @@
     },
     "s2": {
       "title": "02 · FIT token mimarisi",
-      "body": "FIT, ERC-20 tabanlıdır; ancak mevcut sözleşmede olağan transfer, transferFrom ve approve işlevleri bilerek devre dışı bırakılmıştır. FIT, sözleşmenin satın alma mantığıyla basılır ve satış mantığıyla geri alınırken satılan tokenler yakılır. Bu işlevlere erişim uygun Network sahipleri veya Network sözleşmesiyle sınırlandırılmıştır. Bu tasarım serbest ve olağan token transferiyle uyumlu değildir."
+      "body": "FIT, ERC-20 tabanlıdır; ancak mevcut sözleşmede olağan transfer, transferFrom ve approve işlevleri bilerek devre dışı bırakılmıştır. FIT, sözleşmenin Buy mantığıyla basılır ve Sell mantığıyla geri alınırken satılan tokenler yakılır. Buy yolu yalnızca Network tarafından sahip olarak tanınan bir adrese basım yapabilir (veya Network sözleşmesi tarafından çağrılabilir); Sell yolu ise çağıranın Network sahibi olmasını kontrol eder ve Network sözleşmesine de izin verir. Bu tasarım serbest ve olağan token transferiyle uyumlu değildir."
     },
     "s3": {
       "title": "03 · Zincir üstü fiyat formülü",
