@@ -20,8 +20,8 @@
       @media (display-mode: standalone) {
         html { min-height: 100%; background: #0F0F0F; }
         body {
-          padding-top: calc(20px + env(safe-area-inset-top, 0px)) !important;
-          padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
+          padding-top: env(safe-area-inset-top, 0px) !important;
+          padding-bottom: env(safe-area-inset-bottom, 0px) !important;
           min-height: 100vh;
           min-height: 100dvh;
         }
@@ -1596,7 +1596,7 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
     <link rel="stylesheet" href="ambient-motion.css?v=20261115-3">
 
 <link rel="stylesheet" href="sidebar-motion.css?v=20261115-3">
-<link rel="stylesheet" href="pwa-shell.css?v=20261116-safe-area-r2">
+<link rel="stylesheet" href="pwa-shell.css?v=20261116-safe-area-r4">
 </head>
 <body>
 <div class="container">
