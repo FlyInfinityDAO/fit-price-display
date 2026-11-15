@@ -317,6 +317,90 @@
     "s11": {
       "title": "11 · Why we use GitHub Pages and a public GitHub address",
       "body": "We chose GitHub Pages and the project’s public GitHub address as a deliberate infrastructure decision. The web application is published from the same public repository where its source code, versions and development history can be inspected. Participants, developers and independent reviewers can compare the published frontend with the source, follow changes over time and review the public record of updates. A personal server or private domain can be useful, but it is not a prerequisite for a credible, maintainable or transparent application. GitHub Pages lets us use an established hosting and HTTPS delivery platform while keeping the application’s source and change history publicly accessible, rather than depending on an opaque private hosting environment. Hosting on GitHub does not transfer ownership of Fly Infinity, its repository or product decisions to GitHub; these remain with the project maintainers. The public repository also enables community review, issue reporting and contributions through standard Git workflows. The frontend is only one layer of the ecosystem: blockchain operations are governed by the published smart contracts on BNB Smart Chain, while specific dynamic services may run on their respective infrastructure. Open source and public deployment improve inspectability and accountability, but they are not a security audit and do not guarantee software is free of vulnerabilities. We encourage users and independent reviewers to examine the source, contract addresses, on-chain activity and release history directly."
+    },
+    "purchaseLimits": {
+      "title": "06A · Staged purchase limits and balanced network growth",
+      "body": "We designed FIT purchase limits to align an individual wallet’s purchase capacity with balanced activity across the Network. The contract reads the cumulative points on the left and right branches and uses the smaller side as the qualification measure. Each milestone unlocks an additional amount of cumulative DAI purchase capacity. This staged structure is intended to reduce excessive concentration of purchases in a single wallet, encourage balanced network development and support a more orderly flow of DAI into the FIT reserve as purchases take place. The limit is cumulative per wallet, not a separate allowance for every transaction. It is a concentration-management mechanism, not a guarantee that large holdings cannot be distributed across multiple wallets. For direct owner purchases, the contract records the DAI amount against the wallet’s cumulative limit.",
+      "threshold": "Minimum points on both sides",
+      "cap": "Cumulative purchase limit (DAI)",
+      "rows": [
+        [
+          0,
+          "100"
+        ],
+        [
+          1,
+          "200"
+        ],
+        [
+          10,
+          "300"
+        ],
+        [
+          30,
+          "400"
+        ],
+        [
+          100,
+          "1,400"
+        ],
+        [
+          300,
+          "2,400"
+        ],
+        [
+          1000,
+          "12,400"
+        ],
+        [
+          3000,
+          "22,400"
+        ],
+        [
+          10000,
+          "122,400"
+        ],
+        [
+          30000,
+          "222,400"
+        ],
+        [
+          100000,
+          "1,222,400"
+        ],
+        [
+          300000,
+          "2,222,400"
+        ],
+        [
+          1000000,
+          "12,222,400"
+        ],
+        [
+          3000000,
+          "22,222,400"
+        ],
+        [
+          10000000,
+          "122,222,400"
+        ],
+        [
+          30000000,
+          "222,222,400"
+        ],
+        [
+          100000000,
+          "1,222,222,400"
+        ],
+        [
+          300000000,
+          "2,222,222,400"
+        ],
+        [
+          1000000000,
+          "12,222,222,400"
+        ]
+      ]
     }
   }
 }
