@@ -17,6 +17,7 @@ on:
       - 'images/**'
       - 'games/**'
       - 'fly-ai/**'
+      - '.github/workflows/hokm-github-pages-publish.yml'
 
 permissions:
   contents: read
