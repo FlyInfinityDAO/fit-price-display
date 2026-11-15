@@ -1551,66 +1551,26 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
 .footer .footer-links a:hover,.footer .footer-links a:focus-visible,.footer .footer-links a:hover span,.footer .footer-links a:focus-visible span{color:#eafff8!important}
 .footer .footer-links a:hover i,.footer .footer-links a:focus-visible i{color:#a2ffe4!important;filter:drop-shadow(0 0 8px rgba(0,255,190,.9))}
 
-    /* Mobile ecosystem aurora: replace the radar sweep with the same green/gold
-       drifting halo language used by the navigation drawer. Desktop stays unchanged. */
+    /* Four independent green/gold aurora halos for the mobile ecosystem. */
     @media (max-width:760px) {
-      .fi-ecosystem {
-        isolation:isolate;
-        overflow:hidden;
-        background:
-          radial-gradient(ellipse at 8% 12%,rgba(0,200,150,.075),transparent 42%),
-          radial-gradient(ellipse at 92% 78%,rgba(212,175,55,.075),transparent 44%),
-          linear-gradient(145deg,rgba(12,30,26,.48),rgba(10,16,18,.42) 55%,rgba(35,29,12,.38));
+      .fi-ecosystem{isolation:isolate;overflow:hidden}
+      .fi-ecosystem:before,.fi-ecosystem:after{content:none!important;animation:none!important}
+      .fi-eco-halo{
+        position:absolute;display:block;z-index:0;width:230px;height:230px;
+        border-radius:50%;pointer-events:none;filter:blur(48px) saturate(160%);
+        opacity:.34;will-change:transform,opacity;transform-origin:center;
       }
-      .fi-ecosystem:before,
-      .fi-ecosystem:after {
-        content:"";
-        position:absolute;
-        z-index:0;
-        width:280px;
-        height:280px;
-        border-radius:50%;
-        filter:blur(52px) saturate(155%);
-        opacity:.32;
-        pointer-events:none;
-        will-change:transform,opacity;
-        transform-origin:center;
-      }
-      .fi-ecosystem:before {
-        top:-95px;
-        left:-145px;
-        right:auto;
-        bottom:auto;
-        inset:auto;
-        background:radial-gradient(circle,rgba(0,220,158,.82) 0%,rgba(0,200,150,.34) 34%,transparent 72%);
-        animation:fiEcoMobileAuroraGreen 8s ease-in-out infinite alternate;
-      }
-      .fi-ecosystem:after {
-        right:-155px;
-        bottom:-90px;
-        left:auto;
-        top:auto;
-        background:radial-gradient(circle,rgba(232,190,72,.82) 0%,rgba(212,175,55,.32) 36%,transparent 73%);
-        animation:fiEcoMobileAuroraGold 9s ease-in-out infinite alternate;
-      }
-      .fi-ecosystem > * {position:relative;z-index:1}
+      .fi-eco-halo-1{top:-95px;left:-105px;background:radial-gradient(circle,rgba(0,220,158,.86),rgba(0,200,150,.28) 42%,transparent 72%);animation:fiEcoHalo1 5.2s ease-in-out infinite alternate}
+      .fi-eco-halo-2{top:18%;right:-125px;background:radial-gradient(circle,rgba(232,190,72,.84),rgba(212,175,55,.28) 42%,transparent 72%);animation:fiEcoHalo2 6.1s ease-in-out infinite alternate}
+      .fi-eco-halo-3{bottom:12%;left:-120px;background:radial-gradient(circle,rgba(0,220,158,.78),rgba(0,200,150,.25) 42%,transparent 72%);animation:fiEcoHalo3 5.8s ease-in-out infinite alternate}
+      .fi-eco-halo-4{right:-105px;bottom:-115px;background:radial-gradient(circle,rgba(232,190,72,.82),rgba(212,175,55,.26) 42%,transparent 72%);animation:fiEcoHalo4 6.8s ease-in-out infinite alternate}
+      .fi-ecosystem>.fi-eco-heading,.fi-ecosystem>.fi-eco-stage,.fi-ecosystem>.fi-eco-explainer-grid,.fi-ecosystem>.fi-eco-footnote{position:relative;z-index:1}
     }
-    @keyframes fiEcoMobileAuroraGreen {
-      0%{transform:translate3d(-12px,-8px,0) scale(.78);opacity:.20}
-      35%{transform:translate3d(95px,75px,0) scale(1.22);opacity:.48}
-      70%{transform:translate3d(35px,185px,0) scale(1.05);opacity:.30}
-      100%{transform:translate3d(125px,235px,0) scale(1.28);opacity:.46}
-    }
-    @keyframes fiEcoMobileAuroraGold {
-      0%{transform:translate3d(12px,10px,0) scale(1.18);opacity:.20}
-      40%{transform:translate3d(-105px,-85px,0) scale(.82);opacity:.47}
-      75%{transform:translate3d(-35px,-185px,0) scale(1.24);opacity:.31}
-      100%{transform:translate3d(-135px,-235px,0) scale(.88);opacity:.45}
-    }
-    @media(prefers-reduced-motion:reduce) {
-      .fi-ecosystem:before,.fi-ecosystem:after {animation:none!important}
-    }
-
+    @keyframes fiEcoHalo1{0%{transform:translate3d(-8px,-8px,0) scale(.78);opacity:.22}100%{transform:translate3d(105px,145px,0) scale(1.24);opacity:.48}}
+    @keyframes fiEcoHalo2{0%{transform:translate3d(10px,-12px,0) scale(1.16);opacity:.24}100%{transform:translate3d(-125px,125px,0) scale(.82);opacity:.48}}
+    @keyframes fiEcoHalo3{0%{transform:translate3d(-12px,10px,0) scale(.84);opacity:.20}100%{transform:translate3d(115px,-145px,0) scale(1.22);opacity:.45}}
+    @keyframes fiEcoHalo4{0%{transform:translate3d(12px,12px,0) scale(1.12);opacity:.22}100%{transform:translate3d(-115px,-150px,0) scale(.86);opacity:.46}}
+    @media(prefers-reduced-motion:reduce){.fi-eco-halo{animation:none!important}}
 </style>
 
     <link rel="stylesheet" href="card-hover.css?v=4">
@@ -1797,6 +1757,7 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
 
     <!-- ===== FLY INFINITY ECOSYSTEM: ANIMATED OVERVIEW ===== -->
     <section class="fi-ecosystem" id="flyEcosystem" aria-labelledby="ecoTitle">
+      <span class="fi-eco-halo fi-eco-halo-1" aria-hidden="true"></span><span class="fi-eco-halo fi-eco-halo-2" aria-hidden="true"></span><span class="fi-eco-halo fi-eco-halo-3" aria-hidden="true"></span><span class="fi-eco-halo fi-eco-halo-4" aria-hidden="true"></span>
       <div class="fi-eco-heading">
         <span class="fi-eco-eyebrow" data-i18n="eco.eyebrow">ONE CONNECTED ECOSYSTEM</span>
         <h2 id="ecoTitle" data-i18n="eco.title">The Fly Infinity Ecosystem</h2>
