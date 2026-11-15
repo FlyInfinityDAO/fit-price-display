@@ -193,7 +193,7 @@
     },
     "s2": {
       "title": "02 · FIT token architecture",
-      "body": "FIT is an ERC-20-based token whose ordinary transfer, transferFrom and approve entry points are deliberately disabled in the current contract. FIT is minted through the contract's purchase logic and redeemed through its sell logic, where the seller's FIT is burned. Access to these functions is restricted to eligible Network owners or the Network contract. This design is incompatible with ordinary free-transfer trading."
+      "body": "FIT is an ERC-20-based token whose ordinary transfer, transferFrom and approve entry points are deliberately disabled in the current contract. FIT is minted through the contract's Buy logic and redeemed through Sell logic, where the seller's FIT is burned. The Buy path can mint only to an address recognized by the Network as an owner (or be called by the Network contract); the Sell path checks the caller as a Network owner, with the Network contract also permitted. This design is incompatible with ordinary free-transfer trading."
     },
     "s3": {
       "title": "03 · The on-chain price formula",
