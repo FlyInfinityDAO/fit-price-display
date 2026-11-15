@@ -1,47 +1,58 @@
-/* Fly Infinity — visible but restrained ambient background motion.
-   The existing background-desktop.png and background-mobile.png layers are untouched. */
+/* Fly Infinity — subtle orbital starfield. Original desktop/mobile background artwork remains untouched. */
 body::after {
     content: "";
     position: fixed;
-    inset: -18%;
+    inset: 0;
     z-index: 0;
     pointer-events: none;
-    opacity: 0.78;
-    mix-blend-mode: screen;
+    opacity: .72;
     background-image:
-        radial-gradient(48rem 38rem at 14% 24%, rgba(0, 224, 204, 0.30), transparent 69%),
-        radial-gradient(46rem 38rem at 86% 25%, rgba(70, 126, 255, 0.28), transparent 70%),
-        radial-gradient(48rem 40rem at 55% 88%, rgba(160, 91, 255, 0.25), transparent 70%);
-    background-repeat: no-repeat;
-    transform: translate3d(-2%, -1%, 0) scale(1);
-    animation: fiAmbientDrift 22s ease-in-out infinite alternate;
-    will-change: transform;
+        radial-gradient(circle, rgba(255,255,255,.95) 0 1px, transparent 1.7px),
+        radial-gradient(circle, rgba(255,220,145,.92) 0 1.1px, transparent 1.8px),
+        radial-gradient(circle, rgba(75,235,170,.9) 0 .9px, transparent 1.7px),
+        radial-gradient(circle, rgba(105,175,255,.95) 0 1px, transparent 1.8px),
+        radial-gradient(circle, rgba(255,255,255,.75) 0 .7px, transparent 1.5px),
+        radial-gradient(ellipse at center, rgba(255,255,255,.9) 0 1px, transparent 1.8px);
+    background-size:
+        173px 197px,
+        239px 263px,
+        307px 281px,
+        353px 331px,
+        97px 113px,
+        211px 227px;
+    background-position:
+        12px 28px,
+        73px 91px,
+        151px 37px,
+        29px 169px,
+        44px 61px,
+        109px 13px;
+    animation: fiStarDrift 58s linear infinite, fiStarTwinkle 5.5s ease-in-out infinite alternate;
+    will-change: background-position, opacity;
 }
-
-@keyframes fiAmbientDrift {
+@keyframes fiStarDrift {
     0% {
-        transform: translate3d(-3%, -1.5%, 0) scale(1);
-    }
-    50% {
-        transform: translate3d(2.5%, 2%, 0) scale(1.055);
+        background-position: 12px 28px, 73px 91px, 151px 37px, 29px 169px, 44px 61px, 109px 13px;
     }
     100% {
-        transform: translate3d(3.5%, -2%, 0) scale(1.025);
+        background-position: 185px 225px, -166px 354px, 458px -244px, -324px 500px, 141px -165px, -102px 240px;
     }
 }
-
+@keyframes fiStarTwinkle {
+    0% { opacity: .48; }
+    45% { opacity: .78; }
+    100% { opacity: .58; }
+}
 @media (max-width: 768px) {
     body::after {
-        inset: -10%;
-        opacity: 0.58;
-        animation-duration: 30s;
+        opacity: .58;
+        animation-duration: 72s, 6.5s;
     }
 }
-
 @media (prefers-reduced-motion: reduce) {
     body::after {
         animation: none;
-        transform: none;
         will-change: auto;
+        opacity: .58;
     }
 }
