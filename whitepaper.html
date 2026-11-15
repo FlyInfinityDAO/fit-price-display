@@ -10,7 +10,7 @@
     <link rel="apple-touch-icon" href="logo.png">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <script src="lang.js?v=20261115-hosting-contracts-contrast"></script>
+    <script src="lang.js?v=20261115-fit-purchase-limits"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -1113,6 +1113,17 @@ textarea:focus,
 .wp2-exchange-grid>div{position:relative;display:flex;flex-direction:column;gap:9px;padding:20px;border:1px solid rgba(255,100,100,.18);border-radius:16px;background:rgba(255,80,80,.035)}
 .wp2-exchange-grid>div>i{font-size:22px;color:#d99a9a}.wp2-exchange-grid b{color:#e4d9d0;font-size:13px}.wp2-exchange-grid small{color:#aebbb6;font-size:11px;line-height:1.6}.wp2-exchange-grid em{position:absolute;right:14px;top:14px;color:#ff8585;font-style:normal}
 .wp2-exchange-grid .wp2-exchange-yes{border-color:rgba(0,200,150,.22);background:rgba(0,200,150,.04)}.wp2-exchange-yes>i,.wp2-exchange-yes em{color:#00d3a0}
+
+.wp2-limits-section{margin-top:4px;padding-top:22px;border-top:1px solid rgba(0,200,150,.16)}
+.wp2-limits-section h3{margin:0 0 14px;color:#e4c56a;font-size:clamp(17px,2vw,21px);line-height:1.5}
+.wp2-limits-table-wrap{width:100%;overflow-x:auto;margin-top:18px;border:1px solid rgba(0,200,150,.2);border-radius:14px;background:rgba(4,20,17,.72);-webkit-overflow-scrolling:touch}
+.wp2-limits-table{width:100%;min-width:440px;border-collapse:collapse;color:#d9e6e0;font-size:13px;text-align:start}
+.wp2-limits-table th,.wp2-limits-table td{padding:10px 14px;border-bottom:1px solid rgba(180,210,195,.1);font-variant-numeric:tabular-nums}
+.wp2-limits-table th{color:#e4c56a;background:rgba(0,200,150,.09);font-weight:700}
+.wp2-limits-table td:last-child{color:#6de2bd;font-weight:650}
+.wp2-limits-table tbody tr:last-child td{border-bottom:0}
+.wp2-limits-table tbody tr:hover{background:rgba(0,200,150,.055)}
+
 .wp2-flow{margin-top:22px}.wp2-flow>div{min-width:170px}.wp2-flow-target{border-color:rgba(212,175,55,.32)!important;background:rgba(212,175,55,.055)!important}.wp2-flow-target i{color:#d4af37!important}
 .wp2-product-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.wp2-product-grid article{align-items:center;text-align:center;min-height:94px;justify-content:center}.wp2-product-grid .ai-product{border-color:rgba(212,175,55,.3);background:rgba(212,175,55,.045)}.wp2-product-grid .ai-product i{color:#d4af37}
 .wp2-roadmap{grid-template-columns:repeat(4,minmax(0,1fr))}.wp2-roadmap article{min-height:125px}
@@ -1327,6 +1338,27 @@ html[dir="rtl"] .wp2-kicker{letter-spacing:0}
           <div class="wp2-exchange-no"><i class="fa-solid fa-arrow-right-arrow-left"></i><b data-i18n="wp2.exchange.transfer">Ordinary transfers</b><small data-i18n="wp2.exchange.transferDesc">Disabled in the current token contract</small><em><i class="fa-solid fa-xmark"></i></em></div>
           <div class="wp2-exchange-no"><i class="fa-solid fa-water"></i><b data-i18n="wp2.exchange.pools">External liquidity pools</b><small data-i18n="wp2.exchange.poolsDesc">Require transferable assets and approvals</small><em><i class="fa-solid fa-xmark"></i></em></div>
           <div class="wp2-exchange-yes"><i class="fa-solid fa-file-contract"></i><b data-i18n="wp2.exchange.dedicated">Dedicated FIT contract</b><small data-i18n="wp2.exchange.dedicatedDesc">Defined buy / sell functions</small><em><i class="fa-solid fa-check"></i></em></div>
+        </div>
+      </section>
+
+      <section class="wp2-section wp2-limits-section" id="wp2-purchase-limits">
+        <div class="wp2-section-index"><i class="fa-solid fa-scale-balanced"></i> 06A</div>
+        <h3 data-i18n="wp2.purchaseLimits.title">06A · Staged purchase limits and balanced network growth</h3>
+        <p data-i18n="wp2.purchaseLimits.body"></p>
+        <div class="wp2-limits-table-wrap">
+          <table class="wp2-limits-table">
+            <thead><tr><th data-i18n="wp2.purchaseLimits.threshold">Minimum points on both sides</th><th data-i18n="wp2.purchaseLimits.cap">Cumulative purchase limit (DAI)</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>100</td></tr><tr><td>1</td><td>200</td></tr><tr><td>10</td><td>300</td></tr>
+              <tr><td>30</td><td>400</td></tr><tr><td>100</td><td>1,400</td></tr><tr><td>300</td><td>2,400</td></tr>
+              <tr><td>1,000</td><td>12,400</td></tr><tr><td>3,000</td><td>22,400</td></tr><tr><td>10,000</td><td>122,400</td></tr>
+              <tr><td>30,000</td><td>222,400</td></tr><tr><td>100,000</td><td>1,222,400</td></tr><tr><td>300,000</td><td>2,222,400</td></tr>
+              <tr><td>1,000,000</td><td>12,222,400</td></tr><tr><td>3,000,000</td><td>22,222,400</td></tr>
+              <tr><td>10,000,000</td><td>122,222,400</td></tr><tr><td>30,000,000</td><td>222,222,400</td></tr>
+              <tr><td>100,000,000</td><td>1,222,222,400</td></tr><tr><td>300,000,000</td><td>2,222,222,400</td></tr>
+              <tr><td>1,000,000,000</td><td>12,222,222,400</td></tr>
+            </tbody>
+          </table>
         </div>
       </section>
 
