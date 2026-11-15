@@ -189,7 +189,7 @@
     },
     "s1": {
       "title": "01 · Resumen ejecutivo",
-      "body": "Fly Infinity es un ecosistema en BNB Smart Chain que integra una capa de participación en la red, el contrato del token FIT, componentes comunitarios y de gobernanza, juegos y servicios de IA. Este documento distingue el comportamiento implementado en los contratos de las descripciones de productos y los planes futuros. El precio FIT aquí indicado es el valor calculado por el contrato según la relación entre reserva y suministro; no es una previsión, cotización de un exchange externo ni garantía de rentabilidad."
+      "body": "Fundamos Fly Infinity con el propósito de conectar el token FIT, la participación en Network, la gobernanza comunitaria, los juegos y los servicios de inteligencia artificial en BNB Smart Chain. Este white paper es nuestra presentación oficial de la visión, arquitectura, diseño económico y productos que estamos construyendo. Explica el funcionamiento de los contratos publicados y las iniciativas de nuestra hoja de ruta. El precio de FIT aquí descrito es el valor que calcula el contrato dedicado a partir de la reserva DAI y del suministro total de FIT."
     },
     "s2": {
       "title": "02 · Arquitectura del token FIT",
@@ -209,7 +209,7 @@
     },
     "s6": {
       "title": "06 · Por qué FIT no cotiza en exchanges externos",
-      "body": "Un mercado de exchange convencional requiere activos transferibles entre monederos de usuarios, custodia del exchange o pools de liquidez. El contrato FIT actual bloquea las llamadas ordinarias de transferencia y aprobación y ofrece en su lugar su propio mecanismo de compra y venta. Por ello, FIT no está diseñado para libros de órdenes independientes, AMM ni listados en exchanges de terceros. La política declarada del proyecto es no buscar listados externos; la compra, el reembolso y la referencia de precio previstos permanecen en el contrato FIT dedicado. Esto describe la arquitectura actual y la política del proyecto, no afirma que pueda impedirse a toda plataforma externa mostrar información sobre FIT."
+      "body": "Hemos elegido deliberadamente un modelo basado en el contrato dedicado para FIT. Los exchanges convencionales y los pools de liquidez independientes dependen de la transferencia de activos entre monederos, cuentas de custodia y pools. FIT utiliza sus propias funciones Buy y Sell, mientras que las rutas estándar de transferencia y aprobación están restringidas por diseño. Por ello, FIT está concebido para operar dentro de su propio marco contractual, no mediante libros de órdenes externos ni pools de terceros. Nuestra política es clara: no tenemos previsto solicitar ni promover listados de FIT en exchanges externos. La compra, el reembolso y la referencia de precio de FIT están definidos dentro de su contrato dedicado."
     },
     "s7": {
       "title": "07 · Flujos de reserva de Network y gobernanza",
@@ -224,8 +224,8 @@
       "body": "La página pública Upcoming Projects describe los planes Fly Infinity DEX, Marketplace, Lottery y Fly Infinity Pay, con objetivos de lanzamiento basados en hitos de titulares de FIT. Son planes, no productos ya disponibles. Cada iniciativa depende de viabilidad técnica, financiación, requisitos legales, revisión de seguridad y un anuncio de lanzamiento independiente. En particular, cualquier concepto de lotería requiere revisión legal por jurisdicción y reglas de elegibilidad publicadas."
     },
     "s10": {
-      "title": "10 · Seguridad, alcance y divulgación de riesgos",
-      "body": "El código fuente de los contratos y del frontend está publicado en el repositorio público de GitHub del proyecto, y el estado en cadena puede inspeccionarse de forma independiente. El código abierto no equivale a una auditoría de seguridad independiente. Los riesgos incluyen defectos de contratos inteligentes, dependencia de BNB Smart Chain o DAI, pérdida de paridad o riesgo del emisor de la stablecoin, fallos de transacción, cambios de gobernanza o direcciones permitidos por la lógica del contrato, compromiso del monedero, restricciones regulatorias e interrupciones del servicio. La fórmula reserva/suministro describe un valor contable calculado por el contrato; no garantiza el reembolso inmediato de todos en cualquier circunstancia, la paridad de DAI ni la rentabilidad de comprar FIT. Este documento no constituye asesoramiento financiero, legal ni fiscal."
+      "title": "Seguridad, transparencia e información para participantes",
+      "body": "La transparencia y el desarrollo responsable guían nuestro trabajo. Publicamos el código fuente de los contratos y del frontend en nuestro repositorio público de GitHub, y el estado en cadena puede consultarse de forma independiente. Fly Infinity funciona mediante contratos inteligentes, BNB Smart Chain, DAI e infraestructura de monederos conectados; conocer estos componentes, proteger el acceso al monedero y considerar los requisitos aplicables forma parte de una participación informada. La fórmula reserva/suministro describe el precio contable del contrato y sus procesos definidos de compra y reembolso. Este white paper es la presentación oficial del diseño del proyecto y su dirección de desarrollo."
     },
     "chart": {
       "reserve": "Reserva DAI",
@@ -234,7 +234,7 @@
       "initial": "Inicio",
       "afterBuy": "Tras comprar",
       "afterSell": "Tras vender",
-      "note": "Valores ilustrativos del ejemplo; no son datos de mercado en directo."
+      "note": "Valores ilustrativos del contrato basados en el ejemplo numérico."
     },
     "toc": {
       "overview": "Resumen",
@@ -265,7 +265,7 @@
       "contractSub": "Lógica de compra / venta",
       "supply": "Control del suministro",
       "supplySub": "Emisión / quema",
-      "note": "Las funciones ordinarias de transferencia y aprobación revierten en el código actual. Los saldos FIT no pueden moverse mediante la ruta habitual de transferencia ERC-20."
+      "note": "Los saldos FIT se gestionan mediante las funciones Buy y Sell autorizadas del contrato dedicado. Buy emite FIT bajo la autorización de Network; Sell procesa el reembolso y quema los FIT devueltos."
     },
     "equation": {
       "label": "FUNCIÓN PRICE()",
@@ -280,7 +280,7 @@
     "proof": {
       "buy": "COMPRA · COMISIÓN 3%",
       "sell": "VENTA · COMISIÓN 6%",
-      "note": "Las desigualdades siguen exactamente las operaciones enteras con redondeo hacia abajo del contrato FIT actual. Demuestran que el precio calculado por el contrato no disminuye tras compras y ventas ejecutadas correctamente; no establecen un precio de mercado externo ni garantizan el reembolso en cualquier circunstancia."
+      "note": "La derivación sigue la aritmética entera y las reglas de redondeo implementadas en el contrato FIT actual. Cuando las operaciones definidas de Buy y Sell se ejecutan correctamente, el precio calculado por el contrato no disminuye."
     },
     "exchange": {
       "transfer": "Transferencias ordinarias",
