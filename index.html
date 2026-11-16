@@ -502,6 +502,8 @@
         }
         
         .header-with-logo { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 15px; }
+        .fi-dashboard-clock { margin: 0 auto 16px; color: #cbd5d1; font-size: 13px; line-height: 1.7; letter-spacing: .2px; font-variant-numeric: tabular-nums; }
+        .fi-dashboard-clock .clock-time { color: #D4AF37; font-size: 17px; font-weight: 700; }
         .token-logo { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #D4AF37; }
         h1 { font-size: 28px; background: linear-gradient(135deg, #D4AF37, #00C896); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .chain-badge { background: #00C896; color: #0F0F0F; padding: 4px 12px; border-radius: 30px; font-size: 11px; display: inline-block; }
@@ -1698,12 +1700,12 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
         <div class="card" style="text-align:center">
             <div class="header-with-logo">
                 <img src="logo.png" alt="FIT Logo" class="token-logo" onerror="this.style.display='none'">
-                <h1 data-i18n="dashboard.title">Fly Infinity Token (FIT)</h1>
+                <h1>FIT</h1>
             </div>
+            <div id="fi-dashboard-clock" class="fi-dashboard-clock" aria-live="off"><div class="clock-time" id="fi-dashboard-time">—</div><div id="fi-dashboard-date">—</div></div>
             <div style="background: #D4AF37; color: #0F0F0F; padding: 4px 12px; border-radius: 30px; font-size: 11px; display: inline-block;" data-i18n="dashboard.chain"> BNB Smart Chain (BSC) Mainnet</div>
             <div style="margin: 20px 0 10px 0; color: #00C896;" data-i18n="dashboard.currentPrice">Current Price</div>
             <div class="live-price" id="fit-price">—</div>
-            <div class="usd-price" id="usd-price">≈ $— </div>
             <button class="refresh-btn" id="refreshBtn"><i class="fa-solid fa-arrows-rotate"></i> <span data-i18n="btn.refresh">Refresh Price</span></button>
         </div>
         
@@ -2235,6 +2237,43 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
   render();
   document.addEventListener("fi-language-updated", render);
   window.addEventListener("storage", e => { if(e.key === "fit_lang") render(); });
+})();
+</script>
+    <!-- Dashboard clock: locale, calendar and timezone follow the selected site language. -->
+<script>
+(() => {
+  const settings = {
+    en: { locale: "en-GB", timeZone: "Europe/London", calendar: "gregory" },
+    fa: { locale: "fa-IR", timeZone: "Asia/Tehran", calendar: "persian" },
+    ar: { locale: "ar-SA", timeZone: "Asia/Riyadh", calendar: "islamic-umalqura" },
+    tr: { locale: "tr-TR", timeZone: "Europe/Istanbul", calendar: "gregory" },
+    ru: { locale: "ru-RU", timeZone: "Europe/Moscow", calendar: "gregory" },
+    zh: { locale: "zh-CN", timeZone: "Asia/Shanghai", calendar: "gregory" },
+    es: { locale: "es-ES", timeZone: "Europe/Madrid", calendar: "gregory" },
+    pt: { locale: "pt-PT", timeZone: "Europe/Lisbon", calendar: "gregory" }
+  };
+  const timeNode = document.getElementById("fi-dashboard-time");
+  const dateNode = document.getElementById("fi-dashboard-date");
+  if (!timeNode || !dateNode) return;
+  function renderClock() {
+    const lang = (localStorage.getItem("fit_lang") || document.documentElement.lang || "en").toLowerCase().split("-")[0];
+    const cfg = settings[lang] || settings.en;
+    const now = new Date();
+    try {
+      timeNode.textContent = new Intl.DateTimeFormat(cfg.locale, {
+        timeZone: cfg.timeZone, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
+      }).format(now);
+      dateNode.textContent = new Intl.DateTimeFormat(cfg.locale, {
+        timeZone: cfg.timeZone, calendar: cfg.calendar, dateStyle: "full"
+      }).format(now);
+    } catch (_) {
+      timeNode.textContent = now.toLocaleTimeString(cfg.locale, { timeZone: cfg.timeZone });
+      dateNode.textContent = now.toLocaleDateString(cfg.locale, { timeZone: cfg.timeZone });
+    }
+  }
+  renderClock();
+  setInterval(renderClock, 1000);
+  document.addEventListener("fi-language-updated", renderClock);
 })();
 </script>
     <script src="pwa-install.js?v=20261116-install-fix-r2"></script>
