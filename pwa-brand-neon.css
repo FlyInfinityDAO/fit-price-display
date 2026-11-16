@@ -1,0 +1,50 @@
+/* Fly Infinity DAO — pulsing gold neon around the shared brand mark and wordmark. */
+:root {
+  --fi-brand-neon-gold: #f0c94f;
+  --fi-brand-neon-soft: rgba(240, 201, 79, .58);
+}
+.sidebar-header .logo-text img,
+.brand-logo,
+.brand > img {
+  border-color: var(--fi-brand-neon-gold) !important;
+  animation: fiBrandIconNeon 2.7s ease-in-out infinite;
+  will-change: filter, box-shadow;
+}
+.sidebar-header .logo-text > span,
+.brand-name,
+.brand > span {
+  text-shadow: 0 0 3px rgba(240,201,79,.34), 0 0 8px rgba(240,201,79,.18);
+  animation: fiBrandTextNeon 2.7s ease-in-out infinite;
+  will-change: text-shadow, opacity;
+}
+@keyframes fiBrandIconNeon {
+  0%, 100% {
+    box-shadow: 0 0 2px rgba(240,201,79,.28), 0 0 7px rgba(240,201,79,.18), inset 0 0 2px rgba(240,201,79,.12);
+    filter: drop-shadow(0 0 2px rgba(240,201,79,.18));
+  }
+  50% {
+    box-shadow: 0 0 5px rgba(255,218,104,.95), 0 0 13px rgba(240,201,79,.72), 0 0 23px rgba(240,201,79,.38), inset 0 0 6px rgba(240,201,79,.30);
+    filter: drop-shadow(0 0 7px rgba(255,218,104,.72));
+  }
+}
+@keyframes fiBrandTextNeon {
+  0%, 100% {
+    text-shadow: 0 0 2px rgba(240,201,79,.28), 0 0 5px rgba(240,201,79,.14);
+    opacity: .91;
+  }
+  50% {
+    text-shadow: 0 0 3px rgba(255,226,132,.95), 0 0 8px rgba(240,201,79,.78), 0 0 17px rgba(240,201,79,.48), 0 0 25px rgba(240,201,79,.22);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-header .logo-text img,
+  .brand-logo,
+  .brand > img,
+  .sidebar-header .logo-text > span,
+  .brand-name,
+  .brand > span {
+    animation: none !important;
+    will-change: auto;
+  }
+}
