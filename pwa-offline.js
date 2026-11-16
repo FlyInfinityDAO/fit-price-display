@@ -11,7 +11,7 @@
   // Load the shared pulsing brand neon on every Fly Infinity page.
   const brandNeon = document.createElement("link");
   brandNeon.rel = "stylesheet";
-  brandNeon.href = new URL("pwa-brand-neon.css?v=20261116-neon1", appBase).href;
+  brandNeon.href = new URL("pwa-brand-neon.css?v=20261116-neon2", appBase).href;
   document.head.appendChild(brandNeon);
 
   let wasOffline = !navigator.onLine;
