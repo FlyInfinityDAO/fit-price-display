@@ -2104,8 +2104,8 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
             let priceDAI = parseFloat(ethers.utils.formatEther(raw));
             currentPriceDAI = priceDAI;
             
-            document.getElementById("fit-price").innerHTML = currentPriceDAI.toFixed(6);
-            document.getElementById("usd-price").innerHTML = `≈ $${currentPriceDAI.toFixed(4)}`;
+            document.getElementById("fit-price").textContent = `${currentPriceDAI.toFixed(6)} $`;
+
             
             let totalSup = parseFloat(ethers.utils.formatEther(await contract.totalSupply()));
             document.getElementById("totalSupply").innerHTML = totalSup.toLocaleString(undefined, {maximumFractionDigits:0});
