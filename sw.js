@@ -189,6 +189,7 @@ const PRECACHE_URLS = [
   "./pwa-icon.svg",
   "./pwa-install.js",
   "./pwa-offline.js",
+  "./pwa-brand-neon.css",
   "./pwa-shell.css",
   "./sidebar-motion.css",
   "./site-navigation.js",
