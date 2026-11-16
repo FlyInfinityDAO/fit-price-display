@@ -225,8 +225,16 @@ async function cacheOne(cache, path) {
 
 async function precacheAll() {
   const cache = await caches.open(SHELL_CACHE);
-  const results = await Promise.allSettled(PRECACHE_URLS.map(path => cacheOne(cache, path)));
-  return results.filter(result => result.status === "fulfilled" && result.value).length;
+  let cursor = 0;
+  let successful = 0;
+  const worker = async () => {
+    while (cursor < PRECACHE_URLS.length) {
+      const path = PRECACHE_URLS[cursor++];
+      if (await cacheOne(cache, path)) successful++;
+    }
+  };
+  await Promise.all(Array.from({length: 6}, () => worker()));
+  return successful;
 }
 
 self.addEventListener("install", event => {
