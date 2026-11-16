@@ -4,6 +4,8 @@
   --fi-brand-neon-soft: rgba(240, 201, 79, .58);
 }
 .sidebar-header .logo-text img,
+.top-bar .logo img,
+.topbar .logo img,
 .brand-logo,
 .brand > img {
   border-color: var(--fi-brand-neon-gold) !important;
@@ -11,6 +13,8 @@
   will-change: filter, box-shadow;
 }
 .sidebar-header .logo-text > span,
+.top-bar .logo > span,
+.topbar .logo > span,
 .brand-name,
 .brand > span {
   text-shadow: 0 0 3px rgba(240,201,79,.34), 0 0 8px rgba(240,201,79,.18);
@@ -39,9 +43,13 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .sidebar-header .logo-text img,
+  .top-bar .logo img,
+  .topbar .logo img,
   .brand-logo,
   .brand > img,
   .sidebar-header .logo-text > span,
+  .top-bar .logo > span,
+  .topbar .logo > span,
   .brand-name,
   .brand > span {
     animation: none !important;
