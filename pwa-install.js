@@ -19,11 +19,11 @@
     wasOffline = false;
     window.__fiOfflineReloadPending = true;
     const requestUpdate = () => {
-      if (navigator.serviceWorker.controller) {
-        navigator.serviceWorker.controller.postMessage({type:"FI_CHECK_UPDATES"});
-      } else {
-        navigator.serviceWorker.ready.then(registration => registration.update()).catch(() => {});
-      }
+      navigator.serviceWorker.ready.then(registration => {
+        const worker = navigator.serviceWorker.controller || registration.active;
+        if (worker) worker.postMessage({type:"FI_CHECK_UPDATES"});
+        else registration.update();
+      }).catch(() => {});
     };
     requestUpdate();
   });
