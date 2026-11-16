@@ -5,6 +5,37 @@
   const INSTALLED_KEY = "fi_pwa_installed_v2";
   const scriptUrl = document.currentScript && document.currentScript.src;
   const baseUrl = scriptUrl ? new URL("./", scriptUrl) : new URL("./", location.href);
+  // Register the offline service worker even when the app is already installed.
+  if ("serviceWorker" in navigator && location.protocol === "https:") {
+    navigator.serviceWorker.register(new URL("sw.js", baseUrl).href, {scope: baseUrl.pathname})
+      .catch(error => console.warn("[Fly Infinity PWA] Service worker registration failed:", error));
+  }
+
+  let wasOffline = !navigator.onLine;
+  window.__fiOfflineReloadPending = false;
+  window.addEventListener("offline", () => { wasOffline = true; });
+  window.addEventListener("online", () => {
+    if (!wasOffline) return;
+    wasOffline = false;
+    window.__fiOfflineReloadPending = true;
+    const requestUpdate = () => {
+      if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({type:"FI_CHECK_UPDATES"});
+      } else {
+        navigator.serviceWorker.ready.then(registration => registration.update()).catch(() => {});
+      }
+    };
+    requestUpdate();
+  });
+  navigator.serviceWorker && navigator.serviceWorker.addEventListener("message", event => {
+    if (event.data && event.data.type === "FI_CONTENT_UPDATED" && event.data.ready && wasOffline === false) {
+      if (window.__fiOfflineReloadPending) {
+        window.__fiOfflineReloadPending = false;
+        location.reload();
+      }
+    }
+  });
+
   const isStandalone = () =>
     (window.matchMedia && (
       window.matchMedia("(display-mode: standalone)").matches ||
@@ -192,8 +223,4 @@
     window.setTimeout(() => { if (!opened) showModal("android"); }, 1400);
   }
 
-  if ("serviceWorker" in navigator && location.protocol === "https:") {
-    navigator.serviceWorker.register(new URL("sw.js", baseUrl).href, {scope: baseUrl.pathname})
-      .catch(error => console.warn("[Fly Infinity PWA] Service worker registration failed:", error));
-  }
 })();
