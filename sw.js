@@ -4,7 +4,7 @@
 "use strict";
 
 const CACHE_PREFIX = "fly-infinity-pwa-";
-const CACHE_VERSION = "v4";
+const CACHE_VERSION = "v5";
 const SHELL_CACHE = CACHE_PREFIX + CACHE_VERSION;
 const SCOPE_URL = self.registration.scope;
 const PRECACHE_URLS = [
