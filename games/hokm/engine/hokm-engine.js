@@ -133,7 +133,7 @@ function chooseVeryHardCard(game,player,legal,pool,weakest){
  const played=new Set((game.playedCards||[]).map(c=>c.id));
  const own=new Set((game.hands[player]||[]).map(c=>c.id));
  const unseenHigher=(card,suit)=>RANKS.slice(rankValue(card.rank)+1).filter(rank=>{const id=rank+suit;return !played.has(id)&&!own.has(id)}).length;
- const unseenSuit=(suit)=>RANKS.filter(rank=>{const id=rank+suit;return !played.has(id)&&!own.has(id)}).length;
+ const unseenSuit=suit=>RANKS.filter(rank=>{const id=rank+suit;return !played.has(id)&&!own.has(id)}).length;
  const lead=game.trick[0]?.card.suit;
  if(!game.trick.length){
   const candidates=legal.filter(c=>c.suit!==game.trump),source=candidates.length?candidates:legal;
@@ -144,20 +144,27 @@ function chooseVeryHardCard(game,player,legal,pool,weakest){
   })[0];
  }
  const best=game.trick.reduce((a,b)=>cardStrength(b.card,lead,game.trump)>cardStrength(a.card,lead,game.trump)?b:a);
- if(best.player%2===player%2)return weakest(pool);
- const strength=cardStrength(best.card,lead,game.trump),finalSeat=game.trick.length===3;
+ const strength=cardStrength(best.card,lead,game.trump),finalSeat=game.trick.length===3,partnerWinning=best.player%2===player%2;
  const ranked=pool.filter(c=>cardStrength(c,lead,game.trump)>strength).map(card=>{
-  const higherTrump=unseenHigher(card,game.trump),higherLead=card.suit===game.trump?0:unseenHigher(card,lead);
+  const higherTrump=card.suit===game.trump?unseenHigher(card,game.trump):unseenSuit(game.trump);
+  const higherLead=card.suit===game.trump?0:unseenHigher(card,lead);
   const risk=higherTrump+higherLead,cost=rankValue(card)+(card.suit===game.trump?15:0);
   return {card,risk,score:cost+risk*(finalSeat?0:7)};
  }).sort((a,b)=>a.score-b.score);
+ if(partnerWinning){
+  let futureOpponent=false,seat=nextSeat(player);
+  for(let i=0;i<4-game.trick.length-1;i++){if(seat%2!==player%2)futureOpponent=true;seat=nextSeat(seat)}
+  const partnerRisk=best.card.suit===game.trump?unseenHigher(best.card,game.trump):unseenHigher(best.card,lead)+unseenSuit(game.trump);
+  if(!futureOpponent||partnerRisk===0)return weakest(pool);
+  const safeProtection=ranked.find(x=>x.risk===0);
+  return safeProtection?safeProtection.card:weakest(pool);
+ }
  if(!ranked.length)return weakest(pool);
  if(finalSeat)return ranked[0].card;
  const safeLead=ranked.find(x=>x.card.suit===lead&&x.risk===0);if(safeLead)return safeLead.card;
  const safeTrump=ranked.find(x=>x.card.suit===game.trump&&x.risk===0);if(safeTrump)return safeTrump.card;
  return weakest(pool);
 }
-
 function seatMap(mode="solo",humanSeat=0){
  if(mode!=="solo")return [0,1,2,3].map(seat=>({seat,kind:"human",team:seat%2}));
  return [0,1,2,3].map(seat=>({seat,kind:seat===humanSeat?"human":"cpu",team:seat%2}));
