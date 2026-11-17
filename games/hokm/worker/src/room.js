@@ -55,6 +55,9 @@ export class HokmRoom extends DurableObject {
         roundsPlayed: room.match.roundsPlayed,
         matchPoints: room.match.matchPoints,
         hakemCounts: room.match.hakemCounts || [0,0],
+        matchWinner: room.match.finished
+          ? ((room.match.hakemCounts || [0,0])[0] >= room.match.maxRounds ? 0 : 1)
+          : null,
         accessTier: room.match.accessTier,
         finished: room.match.finished
       } : null,
