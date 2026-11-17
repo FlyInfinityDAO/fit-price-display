@@ -94,6 +94,32 @@ test("solo CPU match completes three real rounds using legal card plays",()=>{
 });
 
 test("match ends when a team has been Hakem the required number of times, independent of hand wins",()=>{const m=H.createMatch({mode:"solo",players:[{seat:0,kind:"human",balance:1},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}]});assert.deepEqual(m.hakemCounts,[0,0],"initial Ace selection does not count as a Hakem assignment");for(let i=0;i<2;i++){const g=H.startRound(m,{hakem:0});g.finished=true;H.finishRound(m,g,1)}assert.equal(m.finished,false);const last=H.startRound(m,{hakem:0});last.finished=true;const result=H.finishRound(m,last,1);assert.equal(result.matchFinished,true);assert.equal(result.matchWinner,0);assert.deepEqual(m.hakemCounts,[3,0]);assert.deepEqual(m.matchPoints,[0,3])});
+test("all CPU difficulty levels complete full legal rounds without stalling",()=>{
+ for(const difficulty of ["easy","normal","hard","veryhard"]){
+  const match=H.createMatch({mode:"solo",difficulty,players:[{seat:0,kind:"human",balance:1},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}]});
+  for(let round=0;round<3;round++){
+   const g=H.startRound(match,{humanSeat:0,hakem:0,rng:()=>0.29+round*0.09});
+   const trump=H.chooseCpuTrump(g,g.hakem,difficulty,()=>0.41);
+   assert.ok(H.SUITS.includes(trump),difficulty+" must choose a valid trump suit");
+   H.chooseTrump(g,trump);
+   let moves=0;
+   while(!g.finished&&moves<52){
+    const player=g.currentPlayer,legal=H.legalCards(g,player);
+    const card=H.chooseCpuCard(g,player,difficulty,()=>0.37);
+    assert.ok(legal.some(candidate=>candidate.id===card.id),difficulty+" must only select legal cards");
+    H.playCard(g,player,card.id);
+    moves++;
+   }
+   assert.equal(g.finished,true,difficulty+" round should finish within 52 card plays");
+   assert.ok(moves>=28&&moves<=52,difficulty+" should finish after a valid number of card plays");
+   const winner=g.teamTricks[0]>g.teamTricks[1]?0:1;
+   H.finishRound(match,g,winner);
+  }
+  assert.equal(match.finished,true,difficulty+" should complete a three-Hakem match");
+  assert.equal(match.roundsPlayed,3);
+ }
+});
+
 test("Hokm turn order is counterclockwise: south, east, north, west",()=>{assert.deepEqual([0,H.nextSeat(0),H.nextSeat(H.nextSeat(0)),H.nextSeat(H.nextSeat(H.nextSeat(0)))],[0,3,2,1]);assert.equal(H.nextSeat(1),0)});
 test("trick-card slots stay aligned with the physical south, west, north and east seats",()=>{assert.deepEqual([0,1,2,3].map(H.trickSlot),[0,1,2,3])});
 test("each card advances the turn counterclockwise",()=>{const g=H.createGame({hakem:0,rng:()=>0.37});H.chooseTrump(g,"♠");const order=[];for(let i=0;i<4;i++){const player=g.currentPlayer;order.push(player);const card=H.legalCards(g,player)[0];H.playCard(g,player,card.id)}assert.deepEqual(order,[0,3,2,1])});
