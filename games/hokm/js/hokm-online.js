@@ -208,6 +208,7 @@ function cardNode(card,playable){
 function renderState(s){
  if(!$("hokmOnlinePanel"))return;
  const players=s.players||[],me=players.find(p=>p.you),game=s.game;
+ const activeSeat=game?(game.phase==="choose-trump"?game.hakem:game.currentPlayer):null;
  const waitingCount=players.filter(p=>p.connected).length;
  $("hokmRoomInvite").hidden=false;$("hokmRoomCode").textContent=s.code;
  const occupied=new Set(players.map(p=>p.seat));
@@ -271,14 +272,19 @@ function renderState(s){
   nodes.forEach((node,index)=>{if(!activeTrickSeats.has(index)){node.classList.remove("hokm-card-arriving");node.dataset.playedCardKey="";node.removeAttribute("data-player-label");}});
   const trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent=game.trump||"—";
   const hakem=document.getElementById("tableHakem"),hakemActual=game.hakem, hakemVisual=displaySeat(hakemActual),hakemChip=document.querySelector(seatEls(hakemVisual).chip+" b");if(hakem)hakem.textContent=hakemChip?hakemChip.textContent:(players.find(p=>p.seat===hakemActual)?.cpu?t("cpu"):t("seat")+" "+(hakemActual+1));
+  const team0Label=ownSeat%2===0?t("whiteTeam"):t("blackTeam"),team1Label=ownSeat%2===0?t("blackTeam"):t("whiteTeam");
+  const roundTeamLabels=document.querySelectorAll(".hokm-round-score > span");
+  if(roundTeamLabels.length>=2){roundTeamLabels[0].textContent=team0Label;roundTeamLabels[1].textContent=team1Label;}
+  const bottomTeamLabels=document.querySelectorAll(".game-bottom .team-score > small");
+  if(bottomTeamLabels.length>=2){bottomTeamLabels[0].textContent=team0Label;bottomTeamLabels[1].textContent=team1Label;}
   const currentScores=document.querySelectorAll(".hokm-round-score b");
   if(currentScores.length){currentScores[0].textContent=String((game.teamTricks||[0,0])[0]||0);currentScores[1].textContent=String((game.teamTricks||[0,0])[1]||0)}
   const score=document.querySelectorAll(".game-bottom .team-score b");
   if(score.length&&s.match){score[0].textContent=s.match.matchPoints[0];score[1].textContent=s.match.matchPoints[1]}
   const hakemStats=document.querySelectorAll(".team-hakem-count");
   if(hakemStats.length&&s.match){hakemStats[0].textContent=String((s.match.hakemCounts||[0,0])[0]||0);hakemStats[1].textContent=String((s.match.hakemCounts||[0,0])[1]||0)}
-  const tierLabel=$("hokmMatchTier");if(tierLabel&&s.match){const tierFit=s.match.accessTier>=2?10:1;tierLabel.textContent=(tierFit===10?"10 FIT":"1 FIT")+" · "+s.match.maxRounds+" "+t("hands")}
-  const round=document.querySelector(".round-info b");if(round&&s.match){const completed=s.status==="round-break"||s.status==="finished";round.textContent=(s.match.roundsPlayed+(completed?0:1))+" / "+s.match.maxRounds;}
+  const tierLabel=$("hokmMatchTier");if(tierLabel&&s.match){const tierFit=s.match.accessTier>=2?10:1;tierLabel.textContent=(tierFit===10?"10 FIT":"1 FIT")+" · "+s.match.maxRounds+" "+t("hakemTimes")}
+  const round=document.querySelector(".round-info b");if(round&&s.match){const completed=s.status==="round-break"||s.status==="finished";round.textContent=String(s.match.roundsPlayed+(completed?0:1));}
   const picker=$("hokmOnlineTrump");
   const mayChoose=s.status==="playing"&&game.phase==="choose-trump"&&game.hakem===ownSeat;
   picker.hidden=!mayChoose;
