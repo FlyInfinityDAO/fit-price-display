@@ -4,10 +4,11 @@ set -euo pipefail
 # Cloudflare Pages build for the standalone Chess Arena site.
 # Run from the repository root; publish only the game frontend and its shared wallet bridge.
 rm -rf dist
-mkdir -p dist/games/hokm/assets/music dist/games/chess-arena/music dist/games/chess-arena/css dist/games/chess-arena/js dist/games/backgammon/css dist/games/backgammon/js dist/games/hokm/css dist/games/hokm/js dist/games/hokm/engine dist/games/ludo/css dist/games/ludo/js
+mkdir -p dist/games/hokm/assets/music dist/games/chess-arena/music dist/games/chess-arena/css dist/games/chess-arena/js dist/games/backgammon/music dist/games/backgammon/css dist/games/backgammon/js dist/games/hokm/css dist/games/hokm/js dist/games/hokm/engine dist/games/ludo/css dist/games/ludo/js
 
 cp games/chess-arena/index.html dist/games/chess-arena/index.html
 cp games/chess-arena/music/Chess-music.mp3 dist/games/chess-arena/music/Chess-music.mp3
+cp games/chess-arena/music/Chess-music.mp3 dist/games/backgammon/music/Chess-music.mp3
 cp games/chess-arena/css/chess-arena.css dist/games/chess-arena/css/chess-arena.css
 cp games/chess-arena/js/chess-arena.js dist/games/chess-arena/js/chess-arena.js
 cp games/chess-arena/js/language.js dist/games/chess-arena/js/language.js
