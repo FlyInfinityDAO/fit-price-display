@@ -335,7 +335,7 @@ export class HokmRoom extends DurableObject {
         if (room.status !== "playing" || room.lastTrick?.length || (room.cardFlightUntil && Date.now() < room.cardFlightUntil)) throw new Error("Please wait for the current card animation to finish");
         const game = room.match?.round;
         if (!game || game.currentPlayer !== player.seat) throw new Error("It is not your turn");
-        const result = H.playCardWithClock(game, player.seat, String(data.cardId || ""));
+        const result = H.playCardWithClock(game, player.seat, String(data.cardId || ""), Date.now(), room.match?.difficulty || "normal");
         await this.applyResult(room, result);
         this.queueCpuTurn(room);
       } else if (data.type === "leave") {
