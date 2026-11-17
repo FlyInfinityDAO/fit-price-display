@@ -1,6 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 import "../../engine/hokm-engine.js";
-import { createRoomSnapshot, scheduleCpuTurnAt } from "./room-logic.js";
+import { createRoomSnapshot, isCpuTurn, scheduleCpuTurnAt } from "./room-logic.js";
 
 const H = globalThis.HokmEngine;
 const ROOM_TTL = 6 * 60 * 60;
@@ -374,14 +374,21 @@ export class HokmRoom extends DurableObject {
       changed = true;
     }
     if (room.status === "playing" && game?.phase === "playing" && Number.isFinite(game.turnDeadlineAt) && now >= game.turnDeadlineAt) {
-      try {
-        const result = H.resolveTurnTimeout(game, { now, difficulty: room.match?.difficulty || "normal" });
-        await this.applyResult(room, result);
+      if (isCpuTurn(room)) {
+        // A seat that just expired its reconnect grace must enter the normal
+        // difficulty-aware CPU queue, not bypass it through the human timeout path.
         this.queueCpuTurn(room);
         changed = true;
-      } catch (error) {
-        room.error = error.message || "Turn timeout failed";
-        changed = true;
+      } else {
+        try {
+          const result = H.resolveTurnTimeout(game, { now, difficulty: room.match?.difficulty || "normal" });
+          await this.applyResult(room, result);
+          this.queueCpuTurn(room);
+          changed = true;
+        } catch (error) {
+          room.error = error.message || "Turn timeout failed";
+          changed = true;
+        }
       }
     }
     await this.saveRoom(room);
