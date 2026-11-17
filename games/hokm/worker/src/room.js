@@ -262,7 +262,9 @@ export class HokmRoom extends DurableObject {
     const cpu = room.match.players.find(p => p.seat === cpuSeat)?.kind === "cpu";
     if (cpu) {
       delete room.trumpDeadlineAt;
-      room.cpuTurnAt = Math.max(room.cpuTurnAt || 0, Date.now() + 650, (room.cardFlightUntil || 0) + 650, (room.lastTrickClearAt || 0) + 650);
+      const difficulty = room.match.difficulty || "normal";
+      const thinkDelay = difficulty === "veryhard" ? 850 : difficulty === "hard" ? 650 : difficulty === "normal" ? 520 : 380;
+      room.cpuTurnAt = Math.max(room.cpuTurnAt || 0, Date.now() + thinkDelay, (room.cardFlightUntil || 0) + thinkDelay, (room.lastTrickClearAt || 0) + thinkDelay);
     } else {
       delete room.cpuTurnAt;
     }
