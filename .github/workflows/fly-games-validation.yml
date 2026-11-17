@@ -60,6 +60,8 @@ jobs:
         run: node --experimental-default-type=module --test games/ludo/js/ludo-engine.test.js
       - name: Run Backgammon rules-engine tests
         run: node --experimental-default-type=module --test games/backgammon/js/backgammon-engine.test.js
+      - name: Run Hokm rules-engine tests
+        run: node --test games/hokm/tests/hokm-engine.test.cjs
       - name: Build standalone Pages frontend and verify shared assets
         run: bash games/chess-arena/build-pages.sh
 
