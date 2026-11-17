@@ -118,6 +118,7 @@ function chooseVeryHardCard(game,player,legal,pool,weakest){
  const played=new Set((game.playedCards||[]).map(c=>c.id));
  const own=new Set((game.hands[player]||[]).map(c=>c.id));
  const unseenHigher=(card,suit)=>RANKS.slice(rankValue(card.rank)+1).filter(rank=>{const id=rank+suit;return !played.has(id)&&!own.has(id)}).length;
+ const unseenSuit=(suit)=>RANKS.filter(rank=>{const id=rank+suit;return !played.has(id)&&!own.has(id)}).length;
  const lead=game.trick[0]?.card.suit;
  if(!game.trick.length){
   const candidates=legal.filter(c=>c.suit!==game.trump),source=candidates.length?candidates:legal;
