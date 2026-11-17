@@ -29,11 +29,11 @@
   let chessMusicAutoStart = true;
   let chessMusicVolume = (() => {
     try {
-      const saved = localStorage.getItem('fi-chess-music-volume');
-      if (saved === null) return 5;
+      const saved = localStorage.getItem('fi-chess-music-volume-v2');
+      if (saved === null) return 30;
       const value = Number(saved);
-      return Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 5;
-    } catch { return 5; }
+      return Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 30;
+    } catch { return 30; }
   })();
 
   function prepareChessAudio() {
@@ -54,7 +54,7 @@
 
   function getChessMusicAudio() {
     if (!chessMusicAudio) {
-      chessMusicAudio = new Audio('../hokm/assets/music/art_roseman-jazz-swing-573323.mp3');
+      chessMusicAudio = new Audio('music/Chess-music.mp3');
       chessMusicAudio.loop = true;
       chessMusicAudio.preload = 'none';
       chessMusicAudio.volume = chessMusicVolume / 100;
@@ -80,7 +80,7 @@
   function setChessMusicVolume(value) {
     const parsed = Number(value);
     chessMusicVolume = Number.isFinite(parsed) ? Math.max(0, Math.min(100, parsed)) : 5;
-    try { localStorage.setItem('fi-chess-music-volume', String(chessMusicVolume)); } catch {}
+    try { localStorage.setItem('fi-chess-music-volume-v2', String(chessMusicVolume)); } catch {}
     const slider = $('musicVolume');
     if (slider && slider.value !== String(chessMusicVolume)) slider.value = String(chessMusicVolume);
     const player = getChessMusicAudio();
