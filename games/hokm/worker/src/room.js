@@ -1,6 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 import "../../engine/hokm-engine.js";
-import { createRoomSnapshot, isCpuTurn, nextHakemAfterRound, queueCpuTurnState, scheduleCpuRetryAt } from "./room-logic.js";
+import { clearCpuRetryState, createRoomSnapshot, isCpuTurn, nextHakemAfterRound, queueCpuTurnState, scheduleCpuRetryAt } from "./room-logic.js";
 
 const H = globalThis.HokmEngine;
 const ROOM_TTL = 6 * 60 * 60;
