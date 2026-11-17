@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createRoomSnapshot, scheduleCpuTurnAt } from "../src/room-logic.js";
+import { createRoomSnapshot, isCpuTurn, scheduleCpuTurnAt } from "../src/room-logic.js";
 
 function makeRoom(difficulty = "normal", currentPlayer = 1, cpuSeats = [1]) {
   return {
@@ -26,6 +26,18 @@ test("online CPU think delay follows the configured difficulty", () => {
 test("online scheduler clears stale CPU timers when the next seat is human", () => {
   const room = makeRoom("veryhard", 2, [1]);
   assert.equal(scheduleCpuTurnAt(room, 1000), null);
+});
+
+test("expired reconnect replacement is recognized as a CPU turn, not a human timeout", () => {
+  const room = makeRoom("veryhard", 1, [1]);
+  room.match.players[1].kind = "cpu";
+  assert.equal(isCpuTurn(room), true);
+  assert.equal(scheduleCpuTurnAt(room, 30000), 30850);
+});
+
+test("human turns remain on the ordinary turn-timeout path", () => {
+  const room = makeRoom("veryhard", 2, [1]);
+  assert.equal(isCpuTurn(room), false);
 });
 
 test("online snapshots expose only the viewer's hand and persist room difficulty", () => {
