@@ -20,7 +20,7 @@ function resolveAccessPolicy({mode="solo",players=[],allowCpuSeats=false}={}){
 function createMatch({mode="solo",players=[],difficulty="normal",allowCpuSeats=false}={}){
  const policy=resolveAccessPolicy({mode,players,allowCpuSeats});
  if(!policy.allowed)throw new Error(policy.reason==="player-count"?"Invalid human player count":"Every human player needs at least 1 FIT");
- if(!["easy","normal","hard"].includes(difficulty))throw new Error("Invalid CPU difficulty");
+ if(!["easy","normal","hard","veryhard"].includes(difficulty))throw new Error("Invalid CPU difficulty");
  return {mode,players:players.map(p=>({...p})),difficulty,accessTier:policy.tier,maxRounds:policy.maxRounds,roundsPlayed:0,matchPoints:[0,0],hakemCounts:[0,0],finished:false,round:null};
 }
 function hakemFromDealtDeck(deck){
@@ -32,7 +32,7 @@ function createGame({mode="solo",humanSeat=0,hakem,rng=Math.random}={}){
  const deck=shuffle(makeDeck(),rng),hands=[[],[],[],[]];
  const selectedHakem=Number.isInteger(hakem)&&hakem>=0&&hakem<4?hakem:hakemFromDealtDeck(deck);
  for(let n=0;n<5;n++)for(let p=0;p<4;p++)hands[p].push(deck.pop());
- return {mode,humanSeat,hakem:selectedHakem,hands,remaining:deck,phase:"choose-trump",trump:null,leader:selectedHakem,currentPlayer:selectedHakem,trick:[],tricksWon:[0,0,0,0],teamTricks:[0,0],teamPoints:[0,0],round:1,finished:false};
+ return {mode,humanSeat,hakem:selectedHakem,hands,remaining:deck,phase:"choose-trump",trump:null,leader:selectedHakem,currentPlayer:selectedHakem,trick:[],tricksWon:[0,0,0,0],playedCards:[],teamTricks:[0,0],teamPoints:[0,0],round:1,finished:false};
 }
 function startRound(match,{humanSeat=0,hakem,rng=Math.random}={}){
  if(match.finished)throw new Error("Match has already finished");
@@ -72,7 +72,7 @@ function playCard(game,player,cardId){
  if(player!==game.currentPlayer)throw new Error("Not this player's turn");
  const card=game.hands[player].find(c=>c.id===cardId);if(!card)throw new Error("Card not in hand");
  if(!legalCards(game,player).some(c=>c.id===cardId))throw new Error("Must follow the lead suit when possible");
- game.hands[player]=game.hands[player].filter(c=>c.id!==cardId);game.trick.push({player,card});
+ game.hands[player]=game.hands[player].filter(c=>c.id!==cardId);game.playedCards ||= [];game.playedCards.push({...card,player});game.trick.push({player,card});
  if(game.trick.length<4){game.currentPlayer=nextSeat(player);return {game,completed:false}}
  const winner=trickWinner(game.trick,game.trump),team=winner%2===0?0:1;
  game.tricksWon[winner]++;game.teamTricks[team]++;game.leader=winner;game.currentPlayer=winner;
@@ -88,6 +88,7 @@ function chooseCpuCard(game,player=game.currentPlayer,difficulty="normal",rng=Ma
  const following=lead?legal.filter(c=>c.suit===lead):legal;
  const pool=following.length?following:legal;
  const weakest=(cards)=>cards.slice().sort((a,b)=>rankValue(a.rank)-rankValue(b.rank))[0];
+ if(difficulty==="veryhard")return chooseVeryHardCard(game,player,legal,pool,weakest);
  if(difficulty!=="hard")return weakest(pool);
  // Lead from a long non-trump suit and establish control with a high card.
  if(!game.trick.length){
@@ -113,6 +114,34 @@ function chooseCpuCard(game,player=game.currentPlayer,difficulty="normal",rng=Ma
  }
  return weakest(pool);
 }
+function chooseVeryHardCard(game,player,legal,pool,weakest){
+ const played=new Set((game.playedCards||[]).map(c=>c.id));
+ const own=new Set((game.hands[player]||[]).map(c=>c.id));
+ const unseenHigher=(card,suit)=>RANKS.slice(rankValue(card.rank)+1).filter(rank=>{const id=rank+suit;return !played.has(id)&&!own.has(id)}).length;
+ const lead=game.trick[0]?.card.suit;
+ if(!game.trick.length){
+  const candidates=legal.filter(c=>c.suit!==game.trump),source=candidates.length?candidates:legal;
+  const counts=new Map();for(const c of source)counts.set(c.suit,(counts.get(c.suit)||0)+1);
+  return source.slice().sort((a,b)=>{
+   const am=unseenHigher(a,a.suit)===0?1:0,bm=unseenHigher(b,b.suit)===0?1:0;
+   return ((counts.get(b.suit)||0)*8+bm*14+rankValue(b.rank))-((counts.get(a.suit)||0)*8+am*14+rankValue(a.rank));
+  })[0];
+ }
+ const best=game.trick.reduce((a,b)=>cardStrength(b.card,lead,game.trump)>cardStrength(a.card,lead,game.trump)?b:a);
+ if(best.player%2===player%2)return weakest(pool);
+ const strength=cardStrength(best.card,lead,game.trump),finalSeat=game.trick.length===3;
+ const ranked=pool.filter(c=>cardStrength(c,lead,game.trump)>strength).map(card=>{
+  const higherTrump=unseenHigher(card,game.trump),higherLead=card.suit===game.trump?0:unseenHigher(card,lead);
+  const risk=higherTrump+higherLead,cost=rankValue(card)+(card.suit===game.trump?15:0);
+  return {card,risk,score:cost+risk*(finalSeat?0:7)};
+ }).sort((a,b)=>a.score-b.score);
+ if(!ranked.length)return weakest(pool);
+ if(finalSeat)return ranked[0].card;
+ const safeLead=ranked.find(x=>x.card.suit===lead&&x.risk===0);if(safeLead)return safeLead.card;
+ const safeTrump=ranked.find(x=>x.card.suit===game.trump&&x.risk===0);if(safeTrump)return safeTrump.card;
+ return weakest(pool);
+}
+
 function seatMap(mode="solo",humanSeat=0){
  if(mode!=="solo")return [0,1,2,3].map(seat=>({seat,kind:"human",team:seat%2}));
  return [0,1,2,3].map(seat=>({seat,kind:seat===humanSeat?"human":"cpu",team:seat%2}));
