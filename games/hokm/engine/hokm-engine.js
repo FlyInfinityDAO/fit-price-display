@@ -81,6 +81,21 @@ function playCard(game,player,cardId){
  if(game.teamTricks[0]+game.teamTricks[1]===13){game.finished=true;game.phase="finished";const winningTeam=game.teamTricks[0]>game.teamTricks[1]?0:1;game.teamPoints[winningTeam]++;return {game,completed:true,winner,trick:completedTrick,roundWinner:winningTeam}}
  return {game,completed:true,winner,trick:completedTrick};
 }
+function chooseCpuTrump(game,player=game.hakem,difficulty="normal",rng=Math.random){
+ const hand=game.hands[player]||[];
+ if(difficulty==="easy")return SUITS[Math.min(SUITS.length-1,Math.floor(rng()*SUITS.length))];
+ const scoreSuit=suit=>{
+  const cards=hand.filter(c=>c.suit===suit),ranks=cards.map(c=>rankValue(c.rank)).sort((a,b)=>b-a);
+  if(difficulty!=="veryhard")return cards.reduce((v,c)=>v+(c.rank==="A"?5:c.rank==="K"?3:c.rank==="Q"?2:c.rank==="J"?1:0),0)+cards.length*3;
+  const honors=cards.reduce((v,c)=>v+(c.rank==="A"?8:c.rank==="K"?5:c.rank==="Q"?3:c.rank==="J"?1:0),0);
+  const lengthBonus=cards.length>=4?8:cards.length===3?4:cards.length===2?1:0;
+  const topRun=ranks.reduce((n,value,index)=>index===n&&value>=9?n+1:n,0);
+  const combo=(cards.some(c=>c.rank==="A")&&cards.some(c=>c.rank==="K")?4:0)+(cards.some(c=>c.rank==="Q")&&cards.some(c=>c.rank==="J")?2:0);
+  return cards.length*4+honors+lengthBonus+topRun*2+combo;
+ };
+ return SUITS.map((suit,index)=>({suit,index,score:scoreSuit(suit)})).sort((a,b)=>b.score-a.score||a.index-b.index)[0].suit;
+}
+
 function chooseCpuCard(game,player=game.currentPlayer,difficulty="normal",rng=Math.random){
  const legal=legalCards(game,player);if(!legal.length)throw new Error("CPU has no legal card");
  const lead=game.trick[0]?.card.suit;
@@ -198,6 +213,6 @@ function expireDisconnectedPlayers(match,now=Date.now()){
  return replaced;
 }
 
-const api={SUITS,RANKS,TEAMS,nextSeat,trickSlot,TURN_TIMEOUT_MS,RECONNECT_GRACE_MS,makeDeck,shuffle,selectHakemByFirstAce,tierForBalance,resolveAccessPolicy,createMatch,startRound,createGame,chooseTrump,legalCards,cardStrength,trickWinner,finishRound,playCard,playCardWithClock,startTurnClock,resolveTurnTimeout,markPlayerDisconnected,reconnectPlayer,expireDisconnectedPlayers,chooseCpuCard,seatMap};
+const api={SUITS,RANKS,TEAMS,nextSeat,trickSlot,TURN_TIMEOUT_MS,RECONNECT_GRACE_MS,makeDeck,shuffle,selectHakemByFirstAce,tierForBalance,resolveAccessPolicy,createMatch,startRound,createGame,chooseTrump,chooseCpuTrump,legalCards,cardStrength,trickWinner,finishRound,playCard,playCardWithClock,startTurnClock,resolveTurnTimeout,markPlayerDisconnected,reconnectPlayer,expireDisconnectedPlayers,chooseCpuCard,seatMap};
 if(typeof module!=="undefined"&&module.exports)module.exports=api;root.HokmEngine=api;
 })(typeof globalThis!=="undefined"?globalThis:this);
