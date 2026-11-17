@@ -147,7 +147,7 @@ export class HokmRoom extends DurableObject {
     let body;
     try { body = await request.json(); } catch { return json({ ok: false, error: "Invalid JSON body" }, 400); }
     const seats = body?.seats;
-    const difficulty = ["easy", "normal", "hard"].includes(body?.difficulty) ? body.difficulty : "normal";
+    const difficulty = ["easy", "normal", "hard", "veryhard"].includes(body?.difficulty) ? body.difficulty : "normal";
     if (!Array.isArray(seats) || !([2, 3].every((s, i) => seats.length === 2 && seats[i] === s) && seats.length === 2) && !(seats.length === 1 && seats[0] === 3)) {
       return json({ ok: false, error: "Choose CPU seats 3 and 4, or seat 4 only" }, 400);
     }
