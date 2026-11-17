@@ -154,9 +154,9 @@ function startTurnClock(game,now=Date.now()){
  game.turnStartedAt=now;game.turnDeadlineAt=now+TURN_TIMEOUT_MS;
  return {startedAt:game.turnStartedAt,deadlineAt:game.turnDeadlineAt,timeoutMs:TURN_TIMEOUT_MS};
 }
-function playCardWithClock(game,player,cardId,now=Date.now()){
+function playCardWithClock(game,player,cardId,now=Date.now(),difficulty="normal"){
  if(!Number.isFinite(game.turnDeadlineAt))startTurnClock(game,now);
- if(now>=game.turnDeadlineAt)return resolveTurnTimeout(game,{now});
+ if(now>=game.turnDeadlineAt)return resolveTurnTimeout(game,{now,difficulty});
  const result=playCard(game,player,cardId);
  if(!game.finished)startTurnClock(game,now);
  else {delete game.turnStartedAt;delete game.turnDeadlineAt}
