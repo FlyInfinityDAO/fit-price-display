@@ -89,7 +89,7 @@ function chooseCpuCard(game,player=game.currentPlayer,difficulty="normal",rng=Ma
  const pool=following.length?following:legal;
  const weakest=(cards)=>cards.slice().sort((a,b)=>rankValue(a.rank)-rankValue(b.rank))[0];
  if(difficulty!=="hard")return weakest(pool);
- // When leading, establish control with a high card from a long suit while preserving trump.
+ // Lead from a long non-trump suit and establish control with a high card.
  if(!game.trick.length){
   const nonTrump=legal.filter(c=>c.suit!==game.trump),candidates=nonTrump.length?nonTrump:legal;
   const suitCounts=new Map();for(const card of candidates)suitCounts.set(card.suit,(suitCounts.get(card.suit)||0)+1);
@@ -98,17 +98,19 @@ function chooseCpuCard(game,player=game.currentPlayer,difficulty="normal",rng=Ma
    return countDiff||rankValue(b.rank)-rankValue(a.rank);
   })[0];
  }
- // Track the strongest card already played in this trick.
  const best=game.trick.reduce((a,b)=>cardStrength(b.card,lead,game.trump)>cardStrength(a.card,lead,game.trump)?b:a);
  const partnerCurrentlyWinning=best.player%2===player%2;
- if(game.trick.length===3){
-  if(partnerCurrentlyWinning)return weakest(pool);
-  const winning=pool.filter(card=>trickWinner([...game.trick,{player,card}],game.trump)===player);
-  if(winning.length)return winning.slice().sort((a,b)=>cardStrength(a,lead,game.trump)-cardStrength(b,lead,game.trump))[0];
-  return weakest(pool);
- }
- // Do not waste a high card overtaking a partner when another player still has to act.
  if(partnerCurrentlyWinning)return weakest(pool);
+ const bestStrength=cardStrength(best.card,lead,game.trump);
+ const winning=pool.filter(card=>cardStrength(card,lead,game.trump)>bestStrength)
+  .sort((a,b)=>cardStrength(a,lead,game.trump)-cardStrength(b,lead,game.trump));
+ if(game.trick.length===3)return winning[0]||weakest(pool);
+ // Before the last seat, overtake an opponent only with a cheaper card in the led suit.
+ // Keep trump for later unless this is the final card of the trick.
+ if(lead){
+  const safeWinners=winning.filter(card=>card.suit===lead);
+  if(safeWinners.length)return safeWinners[0];
+ }
  return weakest(pool);
 }
 function seatMap(mode="solo",humanSeat=0){
