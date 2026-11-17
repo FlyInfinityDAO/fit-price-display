@@ -220,7 +220,7 @@ function renderState(s){
  cpuControls.hidden=$("hokmAddTwoCpu").hidden&&$("hokmAddLastCpu").hidden;
  if(s.status==="waiting")status(t("waiting")+" · "+waitingCount+"/4 · "+t("start"));
  else if(s.status==="round-break")status((s.roundWinner===ownSeat%2?t("won"):t("lost"))+" · "+(s.match?.matchPoints||[0,0]).join(" : "));
- else if(s.status==="finished")status(t("finished")+" · "+(s.match?.matchPoints||[0,0]).join(" : "));
+ else if(s.status==="finished"){const counts=s.match?.hakemCounts||[0,0],winner=s.match?.matchWinner;status((winner===ownSeat%2?t("won"):t("lost"))+" · "+t("finished")+" · "+counts.join(" : "));}
  else status(game&&game.currentPlayer===ownSeat?t("yourTurn"):t("opponent"));
  if(game){
   const hands=game.handCounts||[0,0,0,0];
