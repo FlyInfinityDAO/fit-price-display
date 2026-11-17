@@ -89,7 +89,7 @@ function chooseCpuTrump(game,player=game.hakem,difficulty="normal",rng=Math.rand
   if(difficulty!=="veryhard")return cards.reduce((v,c)=>v+(c.rank==="A"?5:c.rank==="K"?3:c.rank==="Q"?2:c.rank==="J"?1:0),0)+cards.length*3;
   const honors=cards.reduce((v,c)=>v+(c.rank==="A"?8:c.rank==="K"?5:c.rank==="Q"?3:c.rank==="J"?1:0),0);
   const lengthBonus=cards.length>=4?8:cards.length===3?4:cards.length===2?1:0;
-  const topRun=ranks.reduce((n,value,index)=>index===n&&value>=9?n+1:n,0);
+  const rankSet=new Set(ranks);let topRun=0;for(let value=12;rankSet.has(value);value--)topRun++;
   const combo=(cards.some(c=>c.rank==="A")&&cards.some(c=>c.rank==="K")?4:0)+(cards.some(c=>c.rank==="Q")&&cards.some(c=>c.rank==="J")?2:0);
   return cards.length*4+honors+lengthBonus+topRun*2+combo;
  };
