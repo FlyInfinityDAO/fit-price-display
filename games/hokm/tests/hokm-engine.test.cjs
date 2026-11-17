@@ -24,6 +24,7 @@ test("hard CPU preserves trump before the final seat when only a trump can overt
  assert.equal(card.id,"2♣");
 });
 
+test("Very Hard CPU chooses a long trump suit with strong top honors",()=>{const g={hakem:1,hands:[[],[{id:"A♠",suit:"♠",rank:"A"},{id:"K♠",suit:"♠",rank:"K"},{id:"2♠",suit:"♠",rank:"2"},{id:"A♥",suit:"♥",rank:"A"},{id:"2♦",suit:"♦",rank:"2"}],[],[]]};assert.equal(H.chooseCpuTrump(g,1,"veryhard"),"♠")});
 test("Very Hard CPU is an accepted match difficulty",()=>{const m=H.createMatch({mode:"solo",difficulty:"veryhard",players:[{seat:0,kind:"human",balance:10},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}]});assert.equal(m.difficulty,"veryhard")});
 test("played-card history records every played card",()=>{const g=H.createGame({hakem:0,rng:()=>0.43});H.chooseTrump(g,"♦");const c=H.legalCards(g,0)[0];H.playCard(g,0,c.id);assert.equal(g.playedCards.length,1);assert.equal(g.playedCards[0].id,c.id);assert.equal(g.playedCards[0].player,0)});
 test("Very Hard CPU leads from a long non-trump suit",()=>{const g={hands:[[{id:"A♠",suit:"♠",rank:"A"},{id:"K♠",suit:"♠",rank:"K"},{id:"Q♠",suit:"♠",rank:"Q"},{id:"2♦",suit:"♦",rank:"2"}],[],[],[]],trick:[],trump:"♥",playedCards:[]};const c=H.chooseCpuCard(g,0,"veryhard");assert.equal(c.suit,"♠");assert.equal(c.rank,"A")});
