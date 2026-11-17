@@ -248,8 +248,8 @@ export class HokmRoom extends DurableObject {
       H.startTurnClock(game);
       this.queueCpuTurn(room);
     } else if (room.match.players.find(p => p.seat === game.hakem)?.kind === "cpu") {
-      room.cpuTurnAt = Date.now() + 650;
       delete room.trumpDeadlineAt;
+      this.queueCpuTurn(room);
     } else {
       room.trumpDeadlineAt = Date.now() + TURN_TIMEOUT_MS;
     }
@@ -387,6 +387,7 @@ export class HokmRoom extends DurableObject {
           const player = room.players.find(p => p.seat === seat);
           if (player) { player.connected = false; player.replaced = true; }
         }
+        this.queueCpuTurn(room);
         changed = true;
       }
     } else {
