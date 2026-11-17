@@ -1602,6 +1602,24 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
 <link rel="stylesheet" href="sidebar-motion.css?v=20261115-3">
 <link rel="stylesheet" href="pwa-shell.css?v=20261116-safe-area-r4">
     <script src="pwa-offline.js" defer></script>
+
+<style id="mission-title-color-motion">
+/* Animate only the Fly Infinity DAO title; preserve its existing gold-green palette. */
+.mission-title {
+    background-image: linear-gradient(90deg, #E0B92F 7%, #C6D66A 48%, #00C896 94%) !important;
+    background-size: 250% 100% !important;
+    background-position: 0% 50%;
+    background-repeat: repeat;
+    animation: missionTitleColorFlow 5.2s linear infinite;
+}
+@keyframes missionTitleColorFlow {
+    from { background-position: 0% 50%; }
+    to { background-position: 100% 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .mission-title { animation: none !important; }
+}
+</style>
 </head>
 <body data-ambient="dashboard">
 <div class="container">
