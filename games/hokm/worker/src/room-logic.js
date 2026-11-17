@@ -55,6 +55,17 @@ export function queueCpuTurnState(room, now = Date.now()) {
   return cpuTurnAt;
 }
 
+// The winning team keeps the Hakem; otherwise the next seat in turn order becomes Hakem.
+export function nextHakemAfterRound(previousHakem, roundWinner) {
+  if (!Number.isInteger(previousHakem) || previousHakem < 0 || previousHakem > 3) {
+    throw new Error("Invalid previous Hakem seat");
+  }
+  if (roundWinner !== 0 && roundWinner !== 1) {
+    throw new Error("Invalid round-winning team");
+  }
+  return roundWinner === previousHakem % 2 ? previousHakem : H.nextSeat(previousHakem);
+}
+
 export function createRoomSnapshot(room, wallet) {
   const seat = room.players.find(p => p.wallet === wallet)?.seat ?? -1;
   const game = room.match?.round || null;
