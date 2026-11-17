@@ -1,6 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 import "../../engine/hokm-engine.js";
-import { createRoomSnapshot, isCpuTurn, nextHakemAfterRound, queueCpuTurnState } from "./room-logic.js";
+import { createRoomSnapshot, isCpuTurn, nextHakemAfterRound, queueCpuTurnState, scheduleCpuRetryAt } from "./room-logic.js";
 
 const H = globalThis.HokmEngine;
 const ROOM_TTL = 6 * 60 * 60;
@@ -357,7 +357,7 @@ export class HokmRoom extends DurableObject {
     if (room.status === "playing" && room.cpuTurnAt && now >= room.cpuTurnAt) {
       delete room.cpuTurnAt;
       try { await this.playCpuTurn(room, now); changed = true; }
-      catch (error) { room.error = error.message || "CPU turn failed"; changed = true; }
+      catch (error) {\n        const retryAt = scheduleCpuRetryAt(room, now);\n        room.error = retryAt\n          ? `CPU turn failed; retry ${room.cpuTurnFailures}/3 scheduled`\n          : (error.message || "CPU turn failed after 3 retries");\n        changed = true;\n      }
     }
     if (room.status === "playing" && game?.phase === "choose-trump" && room.trumpDeadlineAt && now >= room.trumpDeadlineAt) {
       const suit = H.chooseCpuTrump(game, game.hakem, room.match?.difficulty || "normal");
