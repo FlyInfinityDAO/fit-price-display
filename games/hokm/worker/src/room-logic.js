@@ -107,3 +107,15 @@ export function createRoomSnapshot(room, wallet) {
     error: room.error || null
   };
 }
+
+export function scheduleCpuRetryAt(room, now = Date.now(), maxRetries = 3) {
+  const failures = (room.cpuTurnFailures || 0) + 1;
+  room.cpuTurnFailures = failures;
+  if (failures > maxRetries) {
+    delete room.cpuTurnAt;
+    return null;
+  }
+  const retryAt = now + failures * 1000;
+  room.cpuTurnAt = retryAt;
+  return retryAt;
+}
