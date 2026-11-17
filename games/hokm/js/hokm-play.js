@@ -153,9 +153,15 @@ function beginRound(hakem){
  setStatus(tr("cpuTrump"));setMessage(tr("cpuTrump"));
  turnTimer=setTimeout(()=>{if(!game||game.phase!=="choose-trump")return;const suit=chooseCpuTrump();H.chooseTrump(game,suit);cardFxSafe("deal-more");render();setStatus(tr("playing"));setMessage(tr("playing"));advance();},700);
 }
-function startMatch(){
+function setSoloDifficultyLock(locked){
+  const select=$("cpuDifficulty");if(!select)return;
+  if(locked)select.dataset.soloLocked="true";else delete select.dataset.soloLocked;
+  select.disabled=locked||select.dataset.onlineLocked==="true";
+ }
+ function startMatch(){
  if(!tier){setStatus(tr("needAuth"));return}
  stopTimers();match=H.createMatch({mode:"solo",players:[{seat:0,kind:"human",balance:tier>=2?10:1},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}],difficulty});
+  setSoloDifficultyLock(true);
  $("hokmGameControls").hidden=false;$("hokmStartBtn").hidden=true;$("hokmNextBtn").hidden=true;$("hokmRestartBtn").hidden=true;
  beginRound();
 }
@@ -217,6 +223,7 @@ function completeRound(winner){
  setStatus(message+" · "+match.matchPoints[0]+" : "+match.matchPoints[1]);
  setMessage(message);
  if(result.matchFinished){
+   setSoloDifficultyLock(false);
   const final=result.matchWinner===0?tr("finished"):result.matchWinner===1?tr("matchLost"):tr("tie");
   setStatus(tr("matchWon")+" · "+final);setMessage(final);
   $("hokmRestartBtn").textContent=tr("restart");$("hokmRestartBtn").hidden=false;
