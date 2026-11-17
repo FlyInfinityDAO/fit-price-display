@@ -224,6 +224,7 @@ export class HokmRoom extends DurableObject {
       else { delete game.turnStartedAt; delete game.turnDeadlineAt; }
       await this.applyResult(room, result);
     }
+    clearCpuRetryState(room);
     this.queueCpuTurn(room);
   }
   async scheduleAlarm(room) {
