@@ -271,12 +271,8 @@ export class HokmRoom extends DurableObject {
     const game = room.match?.round;
     if (!game || room.status !== "playing") return;
     if (game.phase === "choose-trump") {
-      const hand = game.hands[game.hakem] || [];
-      const scores = H.SUITS.map(suit => ({
-        suit,
-        score: hand.filter(card => card.suit === suit).reduce((sum, card) => sum + (card.rank === "A" ? 5 : card.rank === "K" ? 3 : card.rank === "Q" ? 2 : card.rank === "J" ? 1 : 0) + 3, 0)
-      })).sort((a, b) => b.score - a.score);
-      H.chooseTrump(game, scores[0]?.suit || H.SUITS[0]);
+      const suit = H.chooseCpuTrump(game, game.hakem, room.match.difficulty || "normal");
+      H.chooseTrump(game, suit);
       H.startTurnClock(game, now);
     } else if (game.phase === "playing") {
       const seat = game.currentPlayer;
@@ -421,12 +417,8 @@ export class HokmRoom extends DurableObject {
       catch (error) { room.error = error.message || "CPU turn failed"; changed = true; }
     }
     if (room.status === "playing" && game?.phase === "choose-trump" && room.trumpDeadlineAt && now >= room.trumpDeadlineAt) {
-      const hand = game.hands[game.hakem] || [];
-      const scores = H.SUITS.map(suit => ({
-        suit,
-        score: hand.filter(card => card.suit === suit).reduce((sum, card) => sum + (card.rank === "A" ? 5 : card.rank === "K" ? 3 : card.rank === "Q" ? 2 : card.rank === "J" ? 1 : 0) + 3, 0)
-      })).sort((a, b) => b.score - a.score);
-      H.chooseTrump(game, scores[0]?.suit || H.SUITS[0]);
+      const suit = H.chooseCpuTrump(game, game.hakem, room.match?.difficulty || "normal");
+      H.chooseTrump(game, suit);
       delete room.trumpDeadlineAt;
       H.startTurnClock(game);
       this.queueCpuTurn(room);
