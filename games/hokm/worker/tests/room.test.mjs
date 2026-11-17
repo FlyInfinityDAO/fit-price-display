@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createRoomSnapshot, isCpuTurn, nextHakemAfterRound, queueCpuTurnState, scheduleCpuTurnAt } from "../src/room-logic.js";
+import { createRoomSnapshot, isCpuTurn, nextHakemAfterRound, queueCpuTurnState, scheduleCpuRetryAt, scheduleCpuTurnAt } from "../src/room-logic.js";
 
 function makeRoom(difficulty = "normal", currentPlayer = 1, cpuSeats = [1]) {
   return {
@@ -106,4 +106,22 @@ test("online snapshots expose only the viewer's hand and persist room difficulty
   assert.deepEqual(state.game.ownHand, [ownCard]);
   assert.equal("hands" in state.game, false);
   assert.equal(JSON.stringify(state).includes(hiddenCard.id), false);
+});
+
+test("CPU failures retry with bounded backoff and stop after the configured limit", () => {
+  const room = makeRoom("veryhard", 1, [1]);
+  assert.equal(scheduleCpuRetryAt(room, 10000), 11000);
+  assert.equal(scheduleCpuRetryAt(room, 10000), 12000);
+  assert.equal(scheduleCpuRetryAt(room, 10000), 13000);
+  assert.equal(scheduleCpuRetryAt(room, 10000), null);
+  assert.equal(room.cpuTurnFailures, 4);
+  assert.equal(room.cpuTurnAt, undefined);
+});
+
+test("a fresh CPU turn can clear the retry counter after recovery", () => {
+  const room = makeRoom("hard", 1, [1]);
+  room.cpuTurnFailures = 2;
+  delete room.cpuTurnFailures;
+  assert.equal(scheduleCpuTurnAt(room, 10000), 10000 + 650);
+  assert.equal(room.cpuTurnFailures, undefined);
 });
