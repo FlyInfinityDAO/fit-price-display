@@ -22,6 +22,8 @@
   // a real MP3 background track, independent move effects, and user volume controls.
   let chessAudioContext = null;
   let chessMusicAudio = null;
+  let chessMusicSource = null;
+  let chessMusicGain = null;
   let chessMusicEnabled = false;
   let chessMoveSoundEnabled = true;
   let chessMusicAutoStart = true;
@@ -82,14 +84,40 @@
     const slider = $('musicVolume');
     if (slider && slider.value !== String(chessMusicVolume)) slider.value = String(chessMusicVolume);
     const player = getChessMusicAudio();
-    player.volume = chessMusicVolume / 100;
+    player.volume = chessMusicGain ? 1 : chessMusicVolume / 100;
+    if (chessMusicGain && chessAudioContext) {
+      chessMusicGain.gain.setTargetAtTime(chessMusicVolume / 100, chessAudioContext.currentTime, 0.015);
+    }
     updateChessAudioControls();
+  }
+
+  async function configureChessMusicOutput() {
+    const player = getChessMusicAudio();
+    const context = prepareChessAudio();
+    if (!context) {
+      player.volume = chessMusicVolume / 100;
+      return;
+    }
+    try {
+      if (!chessMusicSource) {
+        chessMusicSource = context.createMediaElementSource(player);
+        chessMusicGain = context.createGain();
+        chessMusicSource.connect(chessMusicGain);
+        chessMusicGain.connect(context.destination);
+      }
+      chessMusicGain.gain.setValueAtTime(chessMusicVolume / 100, context.currentTime);
+      player.volume = 1;
+      if (context.state === 'suspended') await context.resume();
+    } catch (error) {
+      console.warn('[Chess music] Web Audio output unavailable; using media volume.', error);
+      player.volume = chessMusicVolume / 100;
+    }
   }
 
   async function startChessMusic() {
     const player = getChessMusicAudio();
-    player.volume = chessMusicVolume / 100;
     try {
+      await configureChessMusicOutput();
       await player.play();
       chessMusicEnabled = true;
     } catch (error) {
@@ -590,33 +618,44 @@
     renderBoard();
   });
 
-  // Delegate audio controls at document level so they remain active even if
-  // the sound panel is moved or re-rendered independently of the game board.
-  document.addEventListener('click', event => {
-    const soundButton = event.target.closest('#soundToggle');
-    const musicButton = event.target.closest('#musicToggle');
-    if (soundButton) {
-      event.preventDefault();
-      chessMoveSoundEnabled = !chessMoveSoundEnabled;
-      if (chessMoveSoundEnabled) playChessMoveSound();
-      updateChessAudioControls();
-      return;
-    }
-    if (musicButton) {
-      event.preventDefault();
-      toggleChessMusic();
-    }
-  });
-  document.addEventListener('input', event => {
-    if (event.target && event.target.id === 'musicVolume') setChessMusicVolume(event.target.value);
-  });
-  document.addEventListener('change', event => {
-    if (event.target && event.target.id === 'musicVolume') setChessMusicVolume(event.target.value);
-  });
+  // Bind directly to the controls. This avoids mobile browsers or other
+  // document-level handlers intercepting delegated clicks and range events.
+  const soundToggle = $('soundToggle');
+  const musicToggle = $('musicToggle');
   const musicVolume = $('musicVolume');
-  if (musicVolume) musicVolume.value = String(chessMusicVolume);
+  if (soundToggle) soundToggle.addEventListener('click', event => {
+    event.preventDefault();
+    chessMoveSoundEnabled = !chessMoveSoundEnabled;
+    if (chessMoveSoundEnabled) {
+      unlockChessAudio();
+      playChessMoveSound();
+    }
+    updateChessAudioControls();
+  });
+  if (musicToggle) musicToggle.addEventListener('click', event => {
+    event.preventDefault();
+    chessMusicAutoStart = false;
+    toggleChessMusic();
+  });
+  if (musicVolume) {
+    musicVolume.value = String(chessMusicVolume);
+    musicVolume.style.touchAction = 'pan-y';
+    const applyVolume = event => setChessMusicVolume(event.currentTarget.value);
+    musicVolume.addEventListener('input', applyVolume);
+    musicVolume.addEventListener('change', applyVolume);
+    // Fallback for mobile browsers that do not emit range input reliably
+    // while a finger is dragging across the control.
+    musicVolume.addEventListener('touchmove', event => {
+      const touch = event.touches && event.touches[0];
+      const rect = musicVolume.getBoundingClientRect();
+      if (!touch || !rect.width) return;
+      const ratio = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width));
+      setChessMusicVolume(Math.round(ratio * 100));
+    }, { passive: true });
+  }
   updateChessAudioControls();
   document.addEventListener('fi-language-updated', updateChessAudioControls);
+  document.addEventListener('languagechange', updateChessAudioControls);
 
   $('createRoomBtn').addEventListener('click', createRoom);
   $('createCpuBtn').addEventListener('click', createCpuGame);
