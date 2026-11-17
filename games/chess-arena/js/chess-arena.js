@@ -66,7 +66,7 @@
   }
 
   function updateChessAudioControls() {
-    const translate = key => typeof window.t === 'function' ? window.t(key) : key;
+    const translate = key => (window.FIChessLang && typeof window.FIChessLang.t === 'function') ? window.FIChessLang.t(key) : (typeof window.t === 'function' ? window.t(key) : key);
     const soundButton = $('soundToggle');
     const musicButton = $('musicToggle');
     const volumeValue = $('musicVolumeValue');
@@ -167,8 +167,8 @@
 
   document.addEventListener('pointerdown', event => {
     unlockChessAudio();
-    if (!chessMusicAutoStart || !currentGame || currentGame.status !== 'active') return;
-    if (event.target.closest('#musicToggle, #soundToggle, #musicVolume')) return;
+    if (!chessMusicAutoStart) return;
+    if (event.target.closest('#musicToggle, #soundToggle, #musicVolume, #connectBrowserBtn, #connectWalletBtn')) return;
     chessMusicAutoStart = false;
     startChessMusic();
   }, { capture: true, passive: true });
@@ -590,20 +590,31 @@
     renderBoard();
   });
 
-  const soundToggle = $('soundToggle');
-  const musicToggle = $('musicToggle');
-  const musicVolume = $('musicVolume');
-  if (soundToggle) soundToggle.addEventListener('click', () => {
-    chessMoveSoundEnabled = !chessMoveSoundEnabled;
-    if (chessMoveSoundEnabled) playChessMoveSound();
-    updateChessAudioControls();
+  // Delegate audio controls at document level so they remain active even if
+  // the sound panel is moved or re-rendered independently of the game board.
+  document.addEventListener('click', event => {
+    const soundButton = event.target.closest('#soundToggle');
+    const musicButton = event.target.closest('#musicToggle');
+    if (soundButton) {
+      event.preventDefault();
+      chessMoveSoundEnabled = !chessMoveSoundEnabled;
+      if (chessMoveSoundEnabled) playChessMoveSound();
+      updateChessAudioControls();
+      return;
+    }
+    if (musicButton) {
+      event.preventDefault();
+      toggleChessMusic();
+    }
   });
-  if (musicToggle) musicToggle.addEventListener('click', toggleChessMusic);
-  if (musicVolume) {
-    musicVolume.value = String(chessMusicVolume);
-    musicVolume.addEventListener('input', event => setChessMusicVolume(event.currentTarget.value));
-    musicVolume.addEventListener('change', event => setChessMusicVolume(event.currentTarget.value));
-  }
+  document.addEventListener('input', event => {
+    if (event.target && event.target.id === 'musicVolume') setChessMusicVolume(event.target.value);
+  });
+  document.addEventListener('change', event => {
+    if (event.target && event.target.id === 'musicVolume') setChessMusicVolume(event.target.value);
+  });
+  const musicVolume = $('musicVolume');
+  if (musicVolume) musicVolume.value = String(chessMusicVolume);
   updateChessAudioControls();
   document.addEventListener('fi-language-updated', updateChessAudioControls);
 
