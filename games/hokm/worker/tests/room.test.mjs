@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createRoomSnapshot, isCpuTurn, nextHakemAfterRound, queueCpuTurnState, scheduleCpuRetryAt, scheduleCpuTurnAt } from "../src/room-logic.js";
+import { clearCpuRetryState, createRoomSnapshot, isCpuTurn, nextHakemAfterRound, queueCpuTurnState, scheduleCpuRetryAt, scheduleCpuTurnAt } from "../src/room-logic.js";
 
 function makeRoom(difficulty = "normal", currentPlayer = 1, cpuSeats = [1]) {
   return {
