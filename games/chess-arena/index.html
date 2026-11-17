@@ -7,7 +7,7 @@
   <title>Fly Infinity Chess | Fly Infinity Games</title>
   <link rel="icon" type="image/png" href="../../logo.png">
   <link rel="apple-touch-icon" href="../../logo.png">
-  <link rel="stylesheet" href="./css/chess-arena.css?v=fi-chess-sound-panel-20261117a">
+  <link rel="stylesheet" href="./css/chess-arena.css?v=fi-chess-sound-panel-20261117b">
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <script src="../../walletconnect-bridge.js"></script>
   <link rel="stylesheet" href="../fi-neon-games.css?v=fi-neon-title-motion-20261112d">
@@ -41,6 +41,32 @@
       <h1 data-i18n="gameTitle">Fly Infinity Chess</h1>
       <p data-i18n="tagline">Think ahead. Play your next move.</p>
     </section>
+
+      <section class="chess-sound-panel" aria-label="Chess sound settings">
+        <div class="chess-sound-copy">
+          <div class="eyebrow" data-i18n="soundExperience">SOUND EXPERIENCE</div>
+          <h3 data-i18n="soundTitle">A calm chess atmosphere</h3>
+          <p data-i18n="soundDescription">Soft background music and a subtle wooden sound for each confirmed chess move. Adjust the music volume or mute either sound.</p>
+        </div>
+        <div class="chess-sound-controls">
+          <div class="chess-sound-buttons">
+            <button id="soundToggle" class="small-btn" type="button" data-i18n="soundOn">♫ Move sound on</button>
+            <button id="musicToggle" class="small-btn" type="button" data-i18n="musicOff">♫ Music off</button>
+          </div>
+          <label class="chess-volume-control">
+            <span data-i18n="musicVolume">Music volume</span>
+            <input id="musicVolume" type="range" min="0" max="100" value="5" aria-label="Music volume" data-i18n-aria="musicVolume">
+            <b id="musicVolumeValue">5%</b>
+          </label>
+        </div>
+      </section>
+      <section id="finalResultPanel" class="final-result-panel" hidden aria-live="polite">
+        <div class="eyebrow" data-i18n="finalResult">FINAL RESULT</div>
+        <h3 id="finalResultTitle" data-i18n="gameFinished">Game finished</h3>
+        <p id="finalResultReason"></p>
+        <div class="final-score-row"><span data-i18n="white">WHITE</span><strong id="finalWhiteWallet">—</strong><b id="finalWhitePoints">0 FIGS</b></div>
+        <div class="final-score-row"><span data-i18n="black">BLACK</span><strong id="finalBlackWallet">—</strong><b id="finalBlackPoints">0 FIGS</b></div>
+      </sectio
     <section class="access-card" aria-labelledby="access-title">
       <div class="card-heading">
         <div><div class="eyebrow" data-i18n="playerAccess">PLAYER ACCESS</div><h2 id="access-title" data-i18n="connectToEnter">Connect to enter</h2></div>
@@ -104,31 +130,7 @@
         <button id="resignBtn" class="small-btn danger-btn" type="button" data-i18n="resign">Resign</button>
       </div>
       <div id="gameMessage" class="room-status" role="status" aria-live="polite"></div>
-      <section class="chess-sound-panel" aria-label="Chess sound settings">
-        <div class="chess-sound-copy">
-          <div class="eyebrow" data-i18n="soundExperience">SOUND EXPERIENCE</div>
-          <h3 data-i18n="soundTitle">A calm chess atmosphere</h3>
-          <p data-i18n="soundDescription">Soft background music and a subtle wooden sound for each confirmed chess move. Adjust the music volume or mute either sound.</p>
-        </div>
-        <div class="chess-sound-controls">
-          <div class="chess-sound-buttons">
-            <button id="soundToggle" class="small-btn" type="button" data-i18n="soundOn">♫ Move sound on</button>
-            <button id="musicToggle" class="small-btn" type="button" data-i18n="musicOff">♫ Music off</button>
-          </div>
-          <label class="chess-volume-control">
-            <span data-i18n="musicVolume">Music volume</span>
-            <input id="musicVolume" type="range" min="0" max="100" value="5" aria-label="Music volume" data-i18n-aria="musicVolume">
-            <b id="musicVolumeValue">5%</b>
-          </label>
-        </div>
-      </section>
-      <section id="finalResultPanel" class="final-result-panel" hidden aria-live="polite">
-        <div class="eyebrow" data-i18n="finalResult">FINAL RESULT</div>
-        <h3 id="finalResultTitle" data-i18n="gameFinished">Game finished</h3>
-        <p id="finalResultReason"></p>
-        <div class="final-score-row"><span data-i18n="white">WHITE</span><strong id="finalWhiteWallet">—</strong><b id="finalWhitePoints">0 FIGS</b></div>
-        <div class="final-score-row"><span data-i18n="black">BLACK</span><strong id="finalBlackWallet">—</strong><b id="finalBlackPoints">0 FIGS</b></div>
-      </section>
+n>
     </section>
 
     <section id="statsPanel" class="stats-panel" hidden>
@@ -155,7 +157,7 @@
     <footer><span data-i18n="footerBrand">Fly Infinity Chess Arena</span> <span>•</span> <span data-i18n="footerNotice">No entry fee. No token transfer. No financial rewards.</span></footer>
   </main>
   <script src="./js/language.js?v=fi-persian-title-motion-20261112d"></script>
-  <script src="./js/chess-arena.js?v=fi-chess-hokm-audio-20261117a"></script>
+  <script src="./js/chess-arena.js?v=fi-chess-hokm-audio-20261117b"></script>
   <script src="../shared-language-menu.js?v=fly-ai-language-menu-20261112b"></script>
   <script src="../shared-neon-ambient.js?v=fi-neon-ambient-20261112b"></script>
 </body>
