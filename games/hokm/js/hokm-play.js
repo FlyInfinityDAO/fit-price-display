@@ -245,7 +245,7 @@ window.addEventListener("hokm:authenticated",e=>activateAuthenticated(e.detail||
 // Recover authentication if wallet verification completed before this controller attached its listener.
 if(window.hokmAuthState)activateAuthenticated(window.hokmAuthState);
 window.addEventListener("hokm:access-revoked",()=>{
- stopTimers();tier=0;match=null;game=null;visibleTrick=[];$("hokmGameControls").hidden=false;$("hokmStartBtn").disabled=true;$("hokmStartBtn").hidden=false;setStatus(tr("needAuth"));
+ stopTimers();tier=0;match=null;game=null;visibleTrick=[];setSoloDifficultyLock(false);$("hokmGameControls").hidden=false;$("hokmStartBtn").disabled=true;$("hokmStartBtn").hidden=false;setStatus(tr("needAuth"));
  document.querySelectorAll(".hand").forEach(el=>{el.replaceChildren(...Array.from({length:13},()=>makeBack()))});
  document.querySelectorAll(".trick-cards .played-card").forEach(el=>{el.classList.add("empty");el.textContent="·"});
  const trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent="—";const hakem=document.getElementById("tableHakem");if(hakem)hakem.textContent="—";
