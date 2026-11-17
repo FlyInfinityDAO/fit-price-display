@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createRoomSnapshot, isCpuTurn, queueCpuTurnState, scheduleCpuTurnAt } from "../src/room-logic.js";
+import { createRoomSnapshot, isCpuTurn, nextHakemAfterRound, queueCpuTurnState, scheduleCpuTurnAt } from "../src/room-logic.js";
 
 function makeRoom(difficulty = "normal", currentPlayer = 1, cpuSeats = [1]) {
   return {
@@ -58,6 +58,18 @@ test("queuing a CPU turn does not erase the active human player's clock", () => 
   assert.equal(room.match.round.turnStartedAt, 10000);
   assert.equal(room.match.round.turnDeadlineAt, 40000);
   assert.equal(room.cpuTurnAt, undefined);
+});
+
+test("Hakem stays with the winning team and passes counterclockwise after a loss", () => {
+  for (const seat of [0, 1, 2, 3]) {
+    assert.equal(nextHakemAfterRound(seat, seat % 2), seat, "winning Hakem team keeps the same seat");
+    assert.equal(nextHakemAfterRound(seat, 1 - (seat % 2)), (seat + 3) % 4, "losing Hakem team passes to the previous seat");
+  }
+});
+
+test("Hakem transition rejects invalid seat and winner data", () => {
+  assert.throws(() => nextHakemAfterRound(4, 0), /Hakem/);
+  assert.throws(() => nextHakemAfterRound(0, 2), /team/);
 });
 
 test("online snapshots expose only the viewer's hand and persist room difficulty", () => {
