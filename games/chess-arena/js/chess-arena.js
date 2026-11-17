@@ -18,6 +18,115 @@
   let clockTimer = null;
   let lastStatsRoom = null;
 
+  // Chess-only audio: move effects are triggered only after the server
+  // confirms a changed FEN. Ambient music is gated by a user gesture.
+  let chessAudioContext = null;
+  let chessMusicGain = null;
+  let chessMoveGain = null;
+  let chessMusicTimer = null;
+  let chessAudioUnlocked = false;
+  let chessMusicActive = false;
+  let chessChordIndex = 0;
+
+  function prepareChessAudio() {
+    if (chessAudioContext) return;
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+    chessAudioContext = new AudioContextClass();
+    chessMusicGain = chessAudioContext.createGain();
+    chessMusicGain.gain.value = 0.05;
+    chessMusicGain.connect(chessAudioContext.destination);
+    chessMoveGain = chessAudioContext.createGain();
+    chessMoveGain.gain.value = 0.22;
+    chessMoveGain.connect(chessAudioContext.destination);
+  }
+
+  function unlockChessAudio() {
+    chessAudioUnlocked = true;
+    prepareChessAudio();
+    if (!chessAudioContext) return;
+    chessAudioContext.resume().then(() => {
+      if (currentGame && currentGame.status === 'active') startChessMusic();
+    }).catch(() => {});
+  }
+
+  function playChessMoveSound() {
+    if (!chessAudioUnlocked || !chessAudioContext || !chessMoveGain) return;
+    const now = chessAudioContext.currentTime;
+    const body = chessAudioContext.createOscillator();
+    const bodyGain = chessAudioContext.createGain();
+    body.type = 'triangle';
+    body.frequency.setValueAtTime(205, now);
+    body.frequency.exponentialRampToValueAtTime(112, now + 0.095);
+    bodyGain.gain.setValueAtTime(0.0001, now);
+    bodyGain.gain.linearRampToValueAtTime(0.42, now + 0.008);
+    bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
+    body.connect(bodyGain);
+    bodyGain.connect(chessMoveGain);
+    body.start(now);
+    body.stop(now + 0.15);
+
+    const tap = chessAudioContext.createOscillator();
+    const tapGain = chessAudioContext.createGain();
+    tap.type = 'sine';
+    tap.frequency.setValueAtTime(680, now);
+    tapGain.gain.setValueAtTime(0.0001, now);
+    tapGain.gain.linearRampToValueAtTime(0.12, now + 0.004);
+    tapGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
+    tap.connect(tapGain);
+    tapGain.connect(chessMoveGain);
+    tap.start(now);
+    tap.stop(now + 0.04);
+  }
+
+  function playChessAmbientChord() {
+    if (!chessAudioContext || !chessMusicGain || !chessMusicActive) return;
+    const progression = [
+      [146.83, 174.61, 220.00, 261.63, 329.63],
+      [116.54, 146.83, 174.61, 220.00, 261.63],
+      [130.81, 164.81, 196.00, 261.63, 293.66],
+      [130.81, 164.81, 196.00, 220.00, 293.66]
+    ];
+    const chord = progression[chessChordIndex++ % progression.length];
+    const now = chessAudioContext.currentTime;
+    chord.forEach((frequency, index) => {
+      const oscillator = chessAudioContext.createOscillator();
+      const voiceGain = chessAudioContext.createGain();
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(frequency, now);
+      voiceGain.gain.setValueAtTime(0.0001, now);
+      voiceGain.gain.linearRampToValueAtTime(index === 0 ? 0.16 : 0.105, now + 1.8);
+      voiceGain.gain.setTargetAtTime(0.0001, now + 5.9, 0.8);
+      oscillator.connect(voiceGain);
+      voiceGain.connect(chessMusicGain);
+      oscillator.start(now);
+      oscillator.stop(now + 8);
+    });
+  }
+
+  function startChessMusic() {
+    if (!chessAudioUnlocked || !chessAudioContext || chessMusicActive) return;
+    chessMusicActive = true;
+    chessMusicGain.gain.cancelScheduledValues(chessAudioContext.currentTime);
+    chessMusicGain.gain.setTargetAtTime(0.05, chessAudioContext.currentTime, 0.25);
+    playChessAmbientChord();
+    chessMusicTimer = setInterval(playChessAmbientChord, 7200);
+  }
+
+  function stopChessMusic() {
+    chessMusicActive = false;
+    if (chessMusicTimer) clearInterval(chessMusicTimer);
+    chessMusicTimer = null;
+    if (chessAudioContext && chessMusicGain) {
+      chessMusicGain.gain.cancelScheduledValues(chessAudioContext.currentTime);
+      chessMusicGain.gain.setTargetAtTime(0.0001, chessAudioContext.currentTime, 0.18);
+    }
+  }
+
+  document.addEventListener('pointerdown', unlockChessAudio, { once: true, capture: true });
+  document.addEventListener('keydown', unlockChessAudio, { once: true, capture: true });
+  window.addEventListener('pagehide', stopChessMusic);
+
   function status(message, isError) {
     $('status').textContent = message;
     $('status').style.color = isError ? '#ff9999' : '';
@@ -33,6 +142,7 @@
       roomSocket = null;
     }
     currentGame = null;
+    stopChessMusic();
     activeRoomCode = null;
     selectedSquare = null;
     $('gamePanel').hidden = true;
@@ -327,7 +437,11 @@
     }));
   }
   function renderGame(game, eventType) {
+    const previousFen = currentGame && currentGame.fen;
     currentGame = game;
+    if (previousFen && previousFen !== game.fen) playChessMoveSound();
+    if (game.status === 'active') startChessMusic();
+    else stopChessMusic();
     myColor = currentWallet === (game.players.white || '').toLowerCase() ? 'w' :
       currentWallet === (game.players.black || '').toLowerCase() ? 'b' : null;
     $('activeRoomCode').textContent = game.roomCode || activeRoomCode;
