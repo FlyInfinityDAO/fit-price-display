@@ -42,11 +42,11 @@
   }
 
   function unlockChessAudio() {
-    chessAudioUnlocked = true;
     prepareChessAudio();
     if (!chessAudioContext) return;
     chessAudioContext.resume().then(() => {
-      if (currentGame && currentGame.status === 'active') startChessMusic();
+      chessAudioUnlocked = chessAudioContext.state === 'running';
+      if (chessAudioUnlocked && currentGame && currentGame.status === 'active') startChessMusic();
     }).catch(() => {});
   }
 
@@ -59,7 +59,7 @@
     body.frequency.setValueAtTime(205, now);
     body.frequency.exponentialRampToValueAtTime(112, now + 0.095);
     bodyGain.gain.setValueAtTime(0.0001, now);
-    bodyGain.gain.linearRampToValueAtTime(0.42, now + 0.008);
+    bodyGain.gain.linearRampToValueAtTime(0.78, now + 0.008);
     bodyGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.14);
     body.connect(bodyGain);
     bodyGain.connect(chessMoveGain);
@@ -71,7 +71,7 @@
     tap.type = 'sine';
     tap.frequency.setValueAtTime(680, now);
     tapGain.gain.setValueAtTime(0.0001, now);
-    tapGain.gain.linearRampToValueAtTime(0.12, now + 0.004);
+    tapGain.gain.linearRampToValueAtTime(0.3, now + 0.004);
     tapGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
     tap.connect(tapGain);
     tapGain.connect(chessMoveGain);
@@ -95,7 +95,7 @@
       oscillator.type = 'sine';
       oscillator.frequency.setValueAtTime(frequency, now);
       voiceGain.gain.setValueAtTime(0.0001, now);
-      voiceGain.gain.linearRampToValueAtTime(index === 0 ? 0.16 : 0.105, now + 1.8);
+      voiceGain.gain.linearRampToValueAtTime(index === 0 ? 0.72 : 0.48, now + 1.8);
       voiceGain.gain.setTargetAtTime(0.0001, now + 5.9, 0.8);
       oscillator.connect(voiceGain);
       voiceGain.connect(chessMusicGain);
@@ -106,11 +106,19 @@
 
   function startChessMusic() {
     if (!chessAudioUnlocked || !chessAudioContext || chessMusicActive) return;
-    chessMusicActive = true;
-    chessMusicGain.gain.cancelScheduledValues(chessAudioContext.currentTime);
-    chessMusicGain.gain.setTargetAtTime(0.05, chessAudioContext.currentTime, 0.25);
-    playChessAmbientChord();
-    chessMusicTimer = setInterval(playChessAmbientChord, 7200);
+    const begin = () => {
+      if (!chessAudioUnlocked || !chessAudioContext || chessMusicActive) return;
+      chessMusicActive = true;
+      chessMusicGain.gain.cancelScheduledValues(chessAudioContext.currentTime);
+      chessMusicGain.gain.setTargetAtTime(0.05, chessAudioContext.currentTime, 0.25);
+      playChessAmbientChord();
+      chessMusicTimer = setInterval(playChessAmbientChord, 7200);
+    };
+    if (chessAudioContext.state !== 'running') {
+      chessAudioContext.resume().then(begin).catch(() => {});
+      return;
+    }
+    begin();
   }
 
   function stopChessMusic() {
@@ -123,8 +131,11 @@
     }
   }
 
-  document.addEventListener('pointerdown', unlockChessAudio, { once: true, capture: true });
-  document.addEventListener('keydown', unlockChessAudio, { once: true, capture: true });
+  // Retry the browser audio unlock on user gestures; some mobile browsers
+  // create the AudioContext before the game is ready and need a later resume.
+  document.addEventListener('pointerdown', unlockChessAudio, { capture: true });
+  document.addEventListener('click', unlockChessAudio, { capture: true });
+  document.addEventListener('keydown', unlockChessAudio, { capture: true });
   window.addEventListener('pagehide', stopChessMusic);
 
   function status(message, isError) {
