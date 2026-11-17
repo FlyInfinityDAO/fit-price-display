@@ -121,7 +121,7 @@ test("CPU failures retry with bounded backoff and stop after the configured limi
 test("a fresh CPU turn can clear the retry counter after recovery", () => {
   const room = makeRoom("hard", 1, [1]);
   room.cpuTurnFailures = 2;
-  delete room.cpuTurnFailures;
+  clearCpuRetryState(room);
   assert.equal(scheduleCpuTurnAt(room, 10000), 10000 + 650);
   assert.equal(room.cpuTurnFailures, undefined);
 });
