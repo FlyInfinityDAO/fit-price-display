@@ -141,3 +141,33 @@ test("reconnection is rejected exactly at the grace deadline before CPU replacem
  assert.deepEqual(H.expireDisconnectedPlayers(match,disconnected.deadlineAt),[0]);
  assert.equal(match.players[0].kind,"cpu");
 });
+
+test("all CPU difficulties complete seeded matches across varied shuffled deals",()=>{
+ for(const difficulty of ["easy","normal","hard","veryhard"]){
+  for(let seed=1;seed<=8;seed++){
+   let state=seed*7919;
+   const rng=()=>{state=(state*48271)%2147483647;return state/2147483647};
+   const match=H.createMatch({mode:"solo",difficulty,players:[{seat:0,kind:"human",balance:1},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}]});
+   for(let round=0;round<3;round++){
+    const game=H.startRound(match,{humanSeat:0,hakem:0,rng});
+    const trump=H.chooseCpuTrump(game,game.hakem,difficulty,rng);
+    assert.ok(H.SUITS.includes(trump),difficulty+" must choose a valid trump suit");
+    H.chooseTrump(game,trump);
+    let moves=0;
+    while(!game.finished&&moves<52){
+     const player=game.currentPlayer;
+     const legal=H.legalCards(game,player);
+     const card=H.chooseCpuCard(game,player,difficulty,rng);
+     assert.ok(legal.some(candidate=>candidate.id===card.id),difficulty+" selected an illegal card in seed "+seed);
+     H.playCard(game,player,card.id);
+     moves++;
+    }
+    assert.equal(game.finished,true,difficulty+" stalled in seed "+seed);
+    assert.equal(game.playedCards.length,moves);
+    assert.ok(moves>=28&&moves<=52);
+    H.finishRound(match,game,game.teamTricks[0]>game.teamTricks[1]?0:1);
+   }
+   assert.equal(match.finished,true,difficulty+" did not finish in seed "+seed);
+  }
+ }
+});
