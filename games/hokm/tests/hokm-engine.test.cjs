@@ -24,6 +24,7 @@ test("hard CPU preserves trump before the final seat when only a trump can overt
  assert.equal(card.id,"2♣");
 });
 
+test("Very Hard CPU overtakes a vulnerable partner with a safe trump to protect the trick",()=>{const g={hands:[[],[],[{id:"Q♥",suit:"♥",rank:"Q"},{id:"2♣",suit:"♣",rank:"2"}],[]],trick:[{player:0,card:{id:"2♠",suit:"♠",rank:"2"}},{player:3,card:{id:"10♠",suit:"♠",rank:"10"}}],trump:"♥",playedCards:[{id:"2♠",suit:"♠",rank:"2",player:0},{id:"10♠",suit:"♠",rank:"10",player:3},{id:"A♥",suit:"♥",rank:"A",player:1},{id:"K♥",suit:"♥",rank:"K",player:1}]};assert.equal(H.chooseCpuCard(g,2,"veryhard").id,"Q♥")});
 test("Very Hard CPU chooses a long trump suit with strong top honors",()=>{const g={hakem:1,hands:[[],[{id:"A♠",suit:"♠",rank:"A"},{id:"K♠",suit:"♠",rank:"K"},{id:"2♠",suit:"♠",rank:"2"},{id:"A♥",suit:"♥",rank:"A"},{id:"2♦",suit:"♦",rank:"2"}],[],[]]};assert.equal(H.chooseCpuTrump(g,1,"veryhard"),"♠")});
 test("Very Hard CPU is an accepted match difficulty",()=>{const m=H.createMatch({mode:"solo",difficulty:"veryhard",players:[{seat:0,kind:"human",balance:10},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}]});assert.equal(m.difficulty,"veryhard")});
 test("played-card history records every played card",()=>{const g=H.createGame({hakem:0,rng:()=>0.43});H.chooseTrump(g,"♦");const c=H.legalCards(g,0)[0];H.playCard(g,0,c.id);assert.equal(g.playedCards.length,1);assert.equal(g.playedCards[0].id,c.id);assert.equal(g.playedCards[0].player,0)});
