@@ -23,19 +23,19 @@ function createMatch({mode="solo",players=[],difficulty="normal",allowCpuSeats=f
  if(!["easy","normal","hard"].includes(difficulty))throw new Error("Invalid CPU difficulty");
  return {mode,players:players.map(p=>({...p})),difficulty,accessTier:policy.tier,maxRounds:policy.maxRounds,roundsPlayed:0,matchPoints:[0,0],hakemCounts:[0,0],finished:false,round:null};
 }
-function selectHakemByFirstAce(rng=Math.random){
- const draw=shuffle(makeDeck(),rng);
- for(let i=0;i<draw.length;i++)if(draw[i].rank==="A")return i%4;
+function hakemFromDealtDeck(deck){
+ for(let dealIndex=0;dealIndex<deck.length;dealIndex++)if(deck[deck.length-1-dealIndex].rank==="A")return dealIndex%4;
  return 0;
 }
+function selectHakemByFirstAce(rng=Math.random){return hakemFromDealtDeck(shuffle(makeDeck(),rng))}
 function createGame({mode="solo",humanSeat=0,hakem,rng=Math.random}={}){
- const selectedHakem=Number.isInteger(hakem)&&hakem>=0&&hakem<4?hakem:selectHakemByFirstAce(rng);
  const deck=shuffle(makeDeck(),rng),hands=[[],[],[],[]];
+ const selectedHakem=Number.isInteger(hakem)&&hakem>=0&&hakem<4?hakem:hakemFromDealtDeck(deck);
  for(let n=0;n<5;n++)for(let p=0;p<4;p++)hands[p].push(deck.pop());
  return {mode,humanSeat,hakem:selectedHakem,hands,remaining:deck,phase:"choose-trump",trump:null,leader:selectedHakem,currentPlayer:selectedHakem,trick:[],tricksWon:[0,0,0,0],teamTricks:[0,0],teamPoints:[0,0],round:1,finished:false};
 }
 function startRound(match,{humanSeat=0,hakem,rng=Math.random}={}){
- if(match.finished||match.roundsPlayed>=match.maxRounds)throw new Error("Match has reached its round limit");
+ if(match.finished)throw new Error("Match has already finished");
  match.round=createGame({mode:match.mode,humanSeat,hakem,rng});
  match.roundNo=match.roundsPlayed+1;
  return match.round;
