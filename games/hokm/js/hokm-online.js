@@ -297,7 +297,7 @@ function renderState(s){
   const now=Date.now();
   for(let actual=0;actual<4;actual++){const visual=displaySeat(actual),chip=document.querySelector(seatEls(visual).chip),player=players.find(p=>p.seat===actual);if(!chip)continue;renderSeatRing(chip,"turn",s.status==="playing"&&activeSeat===actual?game.turnDeadlineAt:null,now);renderSeatRing(chip,"disconnect",player&&!player.connected&&!player.cpu?player.reconnectDeadlineAt:null,now);}
   if(s.status==="round-break"&&s.roundWinner!==null)status((s.roundWinner===ownSeat%2?t("won"):t("lost"))+" · "+(s.match?.matchPoints||[0,0]).join(" : "));
-  if(s.status==="finished")status(t("finished")+" · "+(s.match?.matchPoints||[0,0]).join(" : "));
+  if(s.status==="finished"){const counts=s.match?.hakemCounts||[0,0],winner=s.match?.matchWinner;status((winner===ownSeat%2?t("won"):t("lost"))+" · "+t("finished")+" · "+counts.join(" : "));}
  }else{
   stopCountdown();
   document.querySelectorAll(".hand").forEach(hand=>{hand.replaceChildren(...Array.from({length:13},()=>{const back=document.createElement("span");back.className="hokm-card-back";return back}))});
