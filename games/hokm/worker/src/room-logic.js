@@ -119,3 +119,7 @@ export function scheduleCpuRetryAt(room, now = Date.now(), maxRetries = 3) {
   room.cpuTurnAt = retryAt;
   return retryAt;
 }
+
+export function clearCpuRetryState(room) {
+  delete room.cpuTurnFailures;
+}
