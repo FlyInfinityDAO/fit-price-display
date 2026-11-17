@@ -84,18 +84,32 @@ function playCard(game,player,cardId){
 function chooseCpuCard(game,player=game.currentPlayer,difficulty="normal",rng=Math.random){
  const legal=legalCards(game,player);if(!legal.length)throw new Error("CPU has no legal card");
  const lead=game.trick[0]?.card.suit;
- if(difficulty==="easy")return legal[Math.floor(rng()*legal.length)];
+ if(difficulty==="easy")return legal[Math.min(legal.length-1,Math.floor(rng()*legal.length))];
  const following=lead?legal.filter(c=>c.suit===lead):legal;
  const pool=following.length?following:legal;
- if(difficulty==="normal")return pool.slice().sort((a,b)=>rankValue(a.rank)-rankValue(b.rank))[0];
- const currentWinner=game.trick.length?trickWinner(game.trick,game.trump):null;
- const winning=pool.filter(c=>{
-  const hypothetical=[...game.trick,{player,card:c}];
-  if(hypothetical.length<4)return false;
-  return trickWinner(hypothetical,game.trump)%2===player%2;
- });
- if(winning.length)return winning.slice().sort((a,b)=>cardStrength(a,lead||a.suit,game.trump)-cardStrength(b,lead||b.suit,game.trump))[0];
- return pool.slice().sort((a,b)=>rankValue(a.rank)-rankValue(b.rank))[0];
+ const weakest=(cards)=>cards.slice().sort((a,b)=>rankValue(a.rank)-rankValue(b.rank))[0];
+ if(difficulty!=="hard")return weakest(pool);
+ // When leading, establish control with a high card from a long suit while preserving trump.
+ if(!game.trick.length){
+  const nonTrump=legal.filter(c=>c.suit!==game.trump),candidates=nonTrump.length?nonTrump:legal;
+  const suitCounts=new Map();for(const card of candidates)suitCounts.set(card.suit,(suitCounts.get(card.suit)||0)+1);
+  return candidates.slice().sort((a,b)=>{
+   const countDiff=(suitCounts.get(b.suit)||0)-(suitCounts.get(a.suit)||0);
+   return countDiff||rankValue(b.rank)-rankValue(a.rank);
+  })[0];
+ }
+ // Track the strongest card already played in this trick.
+ const best=game.trick.reduce((a,b)=>cardStrength(b.card,lead,game.trump)>cardStrength(a.card,lead,game.trump)?b:a);
+ const partnerCurrentlyWinning=best.player%2===player%2;
+ if(game.trick.length===3){
+  if(partnerCurrentlyWinning)return weakest(pool);
+  const winning=pool.filter(card=>trickWinner([...game.trick,{player,card}],game.trump)===player);
+  if(winning.length)return winning.slice().sort((a,b)=>cardStrength(a,lead,game.trump)-cardStrength(b,lead,game.trump))[0];
+  return weakest(pool);
+ }
+ // Do not waste a high card overtaking a partner when another player still has to act.
+ if(partnerCurrentlyWinning)return weakest(pool);
+ return weakest(pool);
 }
 function seatMap(mode="solo",humanSeat=0){
  if(mode!=="solo")return [0,1,2,3].map(seat=>({seat,kind:"human",team:seat%2}));
