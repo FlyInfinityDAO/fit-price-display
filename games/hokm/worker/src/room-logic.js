@@ -122,7 +122,7 @@ export function scheduleCpuRetryAt(room, now = Date.now(), maxRetries = 3) {
 
 export function clearCpuRetryState(room) {
   delete room.cpuTurnFailures;
-  if (typeof room.error === "string" && room.error.startsWith("CPU turn failed; retry ")) {
+  if (typeof room.error === "string" && room.error.startsWith("CPU turn failed")) {
     delete room.error;
   }
 }
