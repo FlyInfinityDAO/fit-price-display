@@ -4,7 +4,7 @@
 "use strict";
 
 const CACHE_PREFIX = "fly-infinity-pwa-";
-const CACHE_VERSION = "v7";
+const CACHE_VERSION = "v8";
 const SHELL_CACHE = CACHE_PREFIX + CACHE_VERSION;
 const SCOPE_URL = self.registration.scope;
 const PRECACHE_URLS = [
@@ -276,12 +276,34 @@ async function networkFirst(request) {
 
 async function staleWhileRevalidate(request) {
   const cache = await caches.open(SHELL_CACHE);
-  const cached = await cache.match(request, {ignoreSearch: true});
+
+  // Match the complete URL first, including its query string. Versioned
+  // assets (for example app.js?v=2) must not be satisfied by an older
+  // app.js?v=1 entry from Cache Storage.
+  const cachedExact = await cache.match(request);
+
   const update = fetch(request).then(response => {
-    if (response && response.ok) cache.put(request, response.clone()).catch(() => {});
+    if (response && response.ok) {
+      return cache.put(request, response.clone()).then(() => response);
+    }
     return response;
   }).catch(() => null);
-  return cached || await update || new Response("", {status: 504});
+
+  // Keep the normal stale-while-revalidate behavior for an exact URL match.
+  if (cachedExact) {
+    update.catch(() => {});
+    return cachedExact;
+  }
+
+  // A newly versioned URL is not in the precache. Wait for its network
+  // response instead of returning a different version from the old cache.
+  const freshResponse = await update;
+  if (freshResponse) return freshResponse;
+
+  // Ignore the query string only as an offline fallback, never as the
+  // preferred response while the network is available.
+  const offlineFallback = await cache.match(request, {ignoreSearch: true});
+  return offlineFallback || new Response("", {status: 504});
 }
 
 async function networkFirstData(request) {
