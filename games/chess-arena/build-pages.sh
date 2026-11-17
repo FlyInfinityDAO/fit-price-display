@@ -4,7 +4,7 @@ set -euo pipefail
 # Cloudflare Pages build for the standalone Chess Arena site.
 # Run from the repository root; publish only the game frontend and its shared wallet bridge.
 rm -rf dist
-mkdir -p dist/games/chess-arena/css dist/games/chess-arena/js dist/games/backgammon/css dist/games/backgammon/js dist/games/hokm/css dist/games/hokm/js dist/games/hokm/engine dist/games/ludo/css dist/games/ludo/js
+mkdir -p dist/games/hokm/assets/music dist/games/chess-arena/css dist/games/chess-arena/js dist/games/backgammon/css dist/games/backgammon/js dist/games/hokm/css dist/games/hokm/js dist/games/hokm/engine dist/games/ludo/css dist/games/ludo/js
 
 cp games/chess-arena/index.html dist/games/chess-arena/index.html
 cp games/chess-arena/css/chess-arena.css dist/games/chess-arena/css/chess-arena.css
@@ -20,6 +20,7 @@ cp games/backgammon/js/backgammon-engine.js dist/games/backgammon/js/backgammon-
 cp games/index.html dist/games/index.html
 cp games/hokm/index.html dist/games/hokm/index.html
 cp games/hokm/css/hokm.css games/hokm/css/hokm-neon-theme.css dist/games/hokm/css/
+cp games/hokm/assets/music/art_roseman-jazz-swing-573323.mp3 dist/games/hokm/assets/music/
 cp games/hokm/engine/hokm-engine.js dist/games/hokm/engine/hokm-engine.js
 cp games/hokm/js/hokm-wallet-bridge.js games/hokm/js/hokm.js games/hokm/js/hokm-play.js games/hokm/js/hokm-online.js games/hokm/js/hokm-android-scroll.js games/hokm/js/hokm-neon-ambient.js dist/games/hokm/js/
 
