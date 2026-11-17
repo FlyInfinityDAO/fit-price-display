@@ -17,12 +17,16 @@ function publicPlayer(p, viewer, match) {
   };
 }
 
+export function isCpuTurn(room) {
+  const game = room.match?.round;
+  if (room.status !== "playing" || !game) return false;
+  const seat = game.phase === "choose-trump" ? game.hakem : game.currentPlayer;
+  return room.match.players.find(player => player.seat === seat)?.kind === "cpu";
+}
+
 export function scheduleCpuTurnAt(room, now = Date.now()) {
   const game = room.match?.round;
-  if (room.status !== "playing" || !game) return null;
-  const cpuSeat = game.phase === "choose-trump" ? game.hakem : game.currentPlayer;
-  const cpu = room.match.players.find(p => p.seat === cpuSeat)?.kind === "cpu";
-  if (!cpu) return null;
+  if (!isCpuTurn(room)) return null;
   const difficulty = room.match.difficulty || "normal";
   const thinkDelay = difficulty === "veryhard" ? 850
     : difficulty === "hard" ? 650
