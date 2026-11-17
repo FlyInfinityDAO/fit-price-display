@@ -102,6 +102,8 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Syntax validation
         run: npm run check
+      - name: Run Hokm Worker behavior tests
+        run: npm test
       - name: Security tests
         run: npm run test:security
 
