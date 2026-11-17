@@ -1,6 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 import "../../engine/hokm-engine.js";
-import { createRoomSnapshot, isCpuTurn, queueCpuTurnState } from "./room-logic.js";
+import { createRoomSnapshot, isCpuTurn, nextHakemAfterRound, queueCpuTurnState } from "./room-logic.js";
 
 const H = globalThis.HokmEngine;
 const ROOM_TTL = 6 * 60 * 60;
@@ -339,7 +339,7 @@ export class HokmRoom extends DurableObject {
     }
     if (room.status === "round-break" && room.match && !room.match.finished && room.nextRoundAt && now >= room.nextRoundAt) {
       const previousHakem = room.match.round.hakem;
-      const hakem = room.roundWinner === previousHakem % 2 ? previousHakem : H.nextSeat(previousHakem);
+      const hakem = nextHakemAfterRound(previousHakem, room.roundWinner);
       delete room.nextRoundAt;
       await this.startRound(room, hakem);
       changed = true;
