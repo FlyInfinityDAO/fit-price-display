@@ -12,6 +12,18 @@ test("CPU selects only a legal card at every difficulty",()=>{const g=H.createGa
 test("hard CPU leads from a non-trump suit when possible and chooses its highest card in that suit",()=>{const g={hands:[[{id:"A♠",suit:"♠",rank:"A"},{id:"K♠",suit:"♠",rank:"K"},{id:"2♥",suit:"♥",rank:"2"},{id:"A♦",suit:"♦",rank:"A"}],[],[],[]],trick:[],trump:"♥"};const card=H.chooseCpuCard(g,0,"hard");assert.equal(card.suit,"♠");assert.equal(card.rank,"A")});
 test("hard CPU does not overtake a winning partner on the final card",()=>{const g={hands:[[],[],[],[{id:"2♠",suit:"♠",rank:"2"},{id:"A♠",suit:"♠",rank:"A"}]],trick:[{player:0,card:{id:"K♠",suit:"♠",rank:"K"}},{player:1,card:{id:"2♥",suit:"♥",rank:"2"}},{player:2,card:{id:"3♠",suit:"♠",rank:"3"}}],trump:"♥"};const card=H.chooseCpuCard(g,3,"hard");assert.equal(card.rank,"2")});
 test("hard CPU takes the trick with the cheapest winning trump when opponents lead",()=>{const g={hands:[[],[],[],[{id:"4♠",suit:"♠",rank:"4"},{id:"2♥",suit:"♥",rank:"2"},{id:"A♥",suit:"♥",rank:"A"}]],trick:[{player:0,card:{id:"A♠",suit:"♠",rank:"A"}},{player:1,card:{id:"2♠",suit:"♠",rank:"2"}},{player:2,card:{id:"3♠",suit:"♠",rank:"3"}}],trump:"♥"};const card=H.chooseCpuCard(g,3,"hard");assert.equal(card.id,"2♥");assert.equal(H.trickWinner([...g.trick,{player:3,card}],g.trump),3)});
+
+test("hard CPU overtakes a currently winning opponent with the cheapest lead-suit card before the final seat",()=>{
+ const g={hands:[[],[{id:"Q♠",suit:"♠",rank:"Q"},{id:"A♠",suit:"♠",rank:"A"},{id:"2♥",suit:"♥",rank:"2"}],[],[]],trick:[{player:0,card:{id:"J♠",suit:"♠",rank:"J"}}],trump:"♥"};
+ const card=H.chooseCpuCard(g,1,"hard");
+ assert.equal(card.id,"Q♠");
+});
+test("hard CPU preserves trump before the final seat when only a trump can overtake",()=>{
+ const g={hands:[[],[{id:"2♥",suit:"♥",rank:"2"},{id:"A♥",suit:"♥",rank:"A"},{id:"2♣",suit:"♣",rank:"2"}],[],[]],trick:[{player:0,card:{id:"A♠",suit:"♠",rank:"A"}}],trump:"♥"};
+ const card=H.chooseCpuCard(g,1,"hard");
+ assert.equal(card.id,"2♣");
+});
+
 test("playCard rejects wrong turn",()=>{const g=H.createGame({rng:()=>0.51});H.chooseTrump(g,"♠");assert.throws(()=>H.playCard(g,1,g.hands[1][0].id),/turn/)});
 test("four cards complete a trick and winner leads next",()=>{const g=H.createGame({rng:()=>0.71});H.chooseTrump(g,"♠");let result;for(let i=0;i<4;i++){const p=g.currentPlayer;const c=H.chooseCpuCard(g,p,"normal");result=H.playCard(g,p,c.id)}assert.equal(result.completed,true);assert.equal(g.tricksWon.reduce((a,b)=>a+b,0),1);assert.equal(g.currentPlayer,result.winner)});
 test("1 FIT grants three rounds in solo; 10 FIT grants seven",()=>{const one=H.resolveAccessPolicy({mode:"solo",players:[{seat:0,kind:"human",balance:1},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}]});const ten=H.resolveAccessPolicy({mode:"solo",players:[{seat:0,kind:"human",balance:10},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}]});assert.equal(one.maxRounds,3);assert.equal(ten.maxRounds,7)});
