@@ -209,6 +209,12 @@ function cardNode(card,playable){
 function renderState(s){
  if(!$("hokmOnlinePanel"))return;
  const players=s.players||[],me=players.find(p=>p.you),game=s.game;
+ const difficultySelect=$("cpuDifficulty");
+ const onlineDifficultyLocked=players.some(p=>p.cpu)||!!s.match;
+ if(difficultySelect){
+  if(["easy","normal","hard","veryhard"].includes(s.cpuDifficulty))difficultySelect.value=s.cpuDifficulty;
+  difficultySelect.disabled=onlineDifficultyLocked;
+ }
  const activeSeat=game?(game.phase==="choose-trump"?game.hakem:game.currentPlayer):null;
  const waitingCount=players.filter(p=>p.connected).length;
  $("hokmRoomInvite").hidden=false;$("hokmRoomCode").textContent=s.code;
@@ -318,6 +324,7 @@ function reset(){
  intentionalClose=true;if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null}if(socket){socket.close();socket=null}
  sessionStorage.removeItem(ROOM_SESSION_KEY);stopCountdown();lastState=null;roomCode="";ownSeat=-1;auth=null;
  if($("hokmOnlinePanel")){$("hokmOnlinePanel").hidden=true;$("hokmRoomInvite").hidden=true;$("hokmCpuControls").hidden=true;$("hokmOnlineTrump").hidden=true;status(t("need"))}
+ const difficultySelect=$("cpuDifficulty");if(difficultySelect)difficultySelect.disabled=false;
 }
 function activate(d){
  auth=d||null;
