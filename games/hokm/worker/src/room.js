@@ -1,6 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 import "../../engine/hokm-engine.js";
-import { createRoomSnapshot, isCpuTurn, scheduleCpuTurnAt } from "./room-logic.js";
+import { createRoomSnapshot, isCpuTurn, queueCpuTurnState } from "./room-logic.js";
 
 const H = globalThis.HokmEngine;
 const ROOM_TTL = 6 * 60 * 60;
@@ -207,13 +207,7 @@ export class HokmRoom extends DurableObject {
     await this.scheduleAlarm(room);
   }
   queueCpuTurn(room) {
-    const cpuTurnAt = scheduleCpuTurnAt(room);
-    if (cpuTurnAt === null) {
-      delete room.cpuTurnAt;
-      return;
-    }
-    delete room.trumpDeadlineAt;
-    room.cpuTurnAt = cpuTurnAt;
+    queueCpuTurnState(room);
   }
   async playCpuTurn(room, now) {
     const game = room.match?.round;
