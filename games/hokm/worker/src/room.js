@@ -144,6 +144,7 @@ export class HokmRoom extends DurableObject {
     let body;
     try { body = await request.json(); } catch { return json({ ok: false, error: "Invalid JSON body" }, 400); }
     const seats = body?.seats;
+    const difficulty = ["easy", "normal", "hard"].includes(body?.difficulty) ? body.difficulty : "normal";
     if (!Array.isArray(seats) || !([2, 3].every((s, i) => seats.length === 2 && seats[i] === s) && seats.length === 2) && !(seats.length === 1 && seats[0] === 3)) {
       return json({ ok: false, error: "Choose CPU seats 3 and 4, or seat 4 only" }, 400);
     }
@@ -153,6 +154,7 @@ export class HokmRoom extends DurableObject {
     if (!owner || owner.wallet !== wallet) return json({ ok: false, error: "Only the room creator can add CPU players" }, 403);
     const occupied = new Set(room.players.map(p => p.seat));
     if (seats.some(seat => occupied.has(seat))) return json({ ok: false, error: "One or more selected seats are already occupied" }, 409);
+    room.cpuDifficulty = difficulty;
     for (const seat of seats) {
       room.players.push({ wallet: "cpu-seat-" + seat, seat, tier: 0, kind: "cpu", connected: true, replaced: true, joinedAt: Date.now() });
     }
@@ -221,7 +223,7 @@ export class HokmRoom extends DurableObject {
       room.match = H.createMatch({
         mode: "online",
         players: room.players.map(p => ({ seat: p.seat, kind: p.kind || "human", balance: p.kind === "cpu" ? 0 : (p.tier >= 2 ? 10 : 1), wallet: p.wallet, connectionStatus: p.kind === "cpu" ? "replaced" : "connected" })),
-        difficulty: "normal",
+        difficulty: room.cpuDifficulty || "normal",
         allowCpuSeats: true
       });
       room.status = "playing";
@@ -429,7 +431,7 @@ export class HokmRoom extends DurableObject {
     }
     if (room.status === "playing" && game?.phase === "playing" && Number.isFinite(game.turnDeadlineAt) && now >= game.turnDeadlineAt) {
       try {
-        const result = H.resolveTurnTimeout(game, { now, difficulty: "normal" });
+        const result = H.resolveTurnTimeout(game, { now, difficulty: room.match?.difficulty || "normal" });
         await this.applyResult(room, result);
         this.queueCpuTurn(room);
         changed = true;
