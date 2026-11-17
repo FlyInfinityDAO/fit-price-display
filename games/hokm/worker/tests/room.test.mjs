@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createRoomSnapshot, isCpuTurn, scheduleCpuTurnAt } from "../src/room-logic.js";
+import { createRoomSnapshot, isCpuTurn, queueCpuTurnState, scheduleCpuTurnAt } from "../src/room-logic.js";
 
 function makeRoom(difficulty = "normal", currentPlayer = 1, cpuSeats = [1]) {
   return {
@@ -38,6 +38,26 @@ test("expired reconnect replacement is recognized as a CPU turn, not a human tim
 test("human turns remain on the ordinary turn-timeout path", () => {
   const room = makeRoom("veryhard", 2, [1]);
   assert.equal(isCpuTurn(room), false);
+});
+
+test("queuing a CPU turn clears an expired human clock to prevent immediate alarm loops", () => {
+  const room = makeRoom("veryhard", 1, [1]);
+  room.match.round.turnStartedAt = 0;
+  room.match.round.turnDeadlineAt = 30000;
+  assert.equal(queueCpuTurnState(room, 30000), 30850);
+  assert.equal(room.match.round.turnStartedAt, undefined);
+  assert.equal(room.match.round.turnDeadlineAt, undefined);
+  assert.equal(room.cpuTurnAt, 30850);
+});
+
+test("queuing a CPU turn does not erase the active human player's clock", () => {
+  const room = makeRoom("veryhard", 2, [1]);
+  room.match.round.turnStartedAt = 10000;
+  room.match.round.turnDeadlineAt = 40000;
+  assert.equal(queueCpuTurnState(room, 30000), null);
+  assert.equal(room.match.round.turnStartedAt, 10000);
+  assert.equal(room.match.round.turnDeadlineAt, 40000);
+  assert.equal(room.cpuTurnAt, undefined);
 });
 
 test("online snapshots expose only the viewer's hand and persist room difficulty", () => {
