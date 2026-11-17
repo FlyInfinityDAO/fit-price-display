@@ -137,12 +137,7 @@ function render(){
  const round=document.querySelector(".round-info b");if(round&&match)round.textContent=match.roundNo+" / "+match.maxRounds;
  $("hokmHandCaption").textContent=game.phase==="choose-trump"?tr("selectTrump"):tr("playing");return flights;
 }
-function chooseCpuTrump(){
- const hand=game.hands[game.hakem];
- const scores=H.SUITS.map(s=>({s,score:hand.filter(c=>c.suit===s).reduce((v,c)=>v+(c.rank==="A"?5:c.rank==="K"?3:c.rank==="Q"?2:c.rank==="J"?1:0),0)+hand.filter(c=>c.suit===s).length*3}));
- scores.sort((a,b)=>b.score-a.score);
- return scores[0].s;
-}
+function chooseCpuTrump(){return H.chooseCpuTrump(game,game.hakem,difficulty)}
 function updateTrumpOptions(){
  const picker=$("hokmTrumpPicker");
  picker.hidden=false;$("hokmTrumpTitle").textContent=tr("choose");
