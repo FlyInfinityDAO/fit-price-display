@@ -19,7 +19,7 @@ test("hard CPU overtakes a currently winning opponent with the cheapest lead-sui
  assert.equal(card.id,"Q♠");
 });
 test("hard CPU preserves trump before the final seat when only a trump can overtake",()=>{
- const g={hands:[[],[{id:"2♥",suit:"♥",rank:"2"},{id:"A♥",suit:"♥",rank:"A"},{id:"2♣",suit:"♣",rank:"2"}],[],[]],trick:[{player:0,card:{id:"A♠",suit:"♠",rank:"A"}}],trump:"♥"};
+ const g={hands:[[],[{id:"2♣",suit:"♣",rank:"2"},{id:"2♥",suit:"♥",rank:"2"},{id:"A♥",suit:"♥",rank:"A"}],[],[]],trick:[{player:0,card:{id:"A♠",suit:"♠",rank:"A"}}],trump:"♥"};
  const card=H.chooseCpuCard(g,1,"hard");
  assert.equal(card.id,"2♣");
 });
