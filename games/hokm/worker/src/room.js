@@ -46,6 +46,7 @@ export class HokmRoom extends DurableObject {
     return {
       code: room.code,
       status: room.status,
+      cpuDifficulty: room.match?.difficulty || room.cpuDifficulty || null,
       cardFlightUntil: room.cardFlightUntil || null,
       players: room.players.map(p => publicPlayer(p, wallet, room.match)),
       seat,
