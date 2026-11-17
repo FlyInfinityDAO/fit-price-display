@@ -45,6 +45,7 @@ test("turn clock grants exactly 30 seconds and automatically plays a legal card 
  assert.equal(result.automatic,true);assert.equal(result.automaticPlayer,0);assert.ok(!g.hands[0].some(c=>c.id===result.automaticCardId));
  assert.equal(g.turnDeadlineAt,61000);
 });
+test("late card submission resolves timeout using the selected CPU difficulty",()=>{const g=H.createGame({hakem:0,rng:()=>0.31});g.phase="playing";g.trump="♥";g.hands[0]=[{id:"A♠",suit:"♠",rank:"A"},{id:"2♥",suit:"♥",rank:"2"}];g.turnDeadlineAt=100;const result=H.playCardWithClock(g,0,"A♠",100,"veryhard");assert.equal(result.automatic,true);assert.equal(result.automaticCardId,"A♠")});
 test("a timely human card resets the 30-second turn clock",()=>{
  const g=H.createGame({hakem:0,rng:()=>0.28});H.chooseTrump(g,"♥");H.startTurnClock(g,5000);
  const card=H.legalCards(g,0)[0],result=H.playCardWithClock(g,0,card.id,9000);
