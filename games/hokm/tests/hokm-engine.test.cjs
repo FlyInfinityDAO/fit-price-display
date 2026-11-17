@@ -123,3 +123,21 @@ test("all CPU difficulty levels complete full legal rounds without stalling",()=
 test("Hokm turn order is counterclockwise: south, east, north, west",()=>{assert.deepEqual([0,H.nextSeat(0),H.nextSeat(H.nextSeat(0)),H.nextSeat(H.nextSeat(H.nextSeat(0)))],[0,3,2,1]);assert.equal(H.nextSeat(1),0)});
 test("trick-card slots stay aligned with the physical south, west, north and east seats",()=>{assert.deepEqual([0,1,2,3].map(H.trickSlot),[0,1,2,3])});
 test("each card advances the turn counterclockwise",()=>{const g=H.createGame({hakem:0,rng:()=>0.37});H.chooseTrump(g,"♠");const order=[];for(let i=0;i<4;i++){const player=g.currentPlayer;order.push(player);const card=H.legalCards(g,player)[0];H.playCard(g,player,card.id)}assert.deepEqual(order,[0,3,2,1])});
+
+test("repeated disconnect events do not extend the original reconnect grace deadline",()=>{
+ const match={players:[{seat:0,kind:"human",connectionStatus:"connected"}]};
+ const first=H.markPlayerDisconnected(match,0,1000);
+ const repeated=H.markPlayerDisconnected(match,0,20000);
+ assert.equal(first.deadlineAt,1000+H.RECONNECT_GRACE_MS);
+ assert.equal(repeated.deadlineAt,first.deadlineAt);
+ assert.deepEqual(H.expireDisconnectedPlayers(match,first.deadlineAt),[0]);
+ assert.deepEqual(H.expireDisconnectedPlayers(match,first.deadlineAt+1),[]);
+});
+
+test("reconnection is rejected exactly at the grace deadline before CPU replacement",()=>{
+ const match={players:[{seat:0,kind:"human",connectionStatus:"connected"}]};
+ const disconnected=H.markPlayerDisconnected(match,0,5000);
+ assert.deepEqual(H.reconnectPlayer(match,0,disconnected.deadlineAt),{reconnected:false,reason:"grace-expired"});
+ assert.deepEqual(H.expireDisconnectedPlayers(match,disconnected.deadlineAt),[0]);
+ assert.equal(match.players[0].kind,"cpu");
+});
