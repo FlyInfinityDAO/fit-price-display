@@ -273,6 +273,8 @@ function renderState(s){
   const trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent=game.trump||"—";
   const hakem=document.getElementById("tableHakem"),hakemActual=game.hakem, hakemVisual=displaySeat(hakemActual),hakemChip=document.querySelector(seatEls(hakemVisual).chip+" b");if(hakem)hakem.textContent=hakemChip?hakemChip.textContent:(players.find(p=>p.seat===hakemActual)?.cpu?t("cpu"):t("seat")+" "+(hakemActual+1));
   const team0Label=ownSeat%2===0?t("whiteTeam"):t("blackTeam"),team1Label=ownSeat%2===0?t("blackTeam"):t("whiteTeam");
+  const roundTeamBoxes=document.querySelectorAll(".hokm-round-score");
+  if(roundTeamBoxes.length>=2){roundTeamBoxes[0].classList.toggle("white",ownSeat%2===0);roundTeamBoxes[0].classList.toggle("black",ownSeat%2!==0);roundTeamBoxes[1].classList.toggle("white",ownSeat%2!==0);roundTeamBoxes[1].classList.toggle("black",ownSeat%2===0);}
   const roundTeamLabels=document.querySelectorAll(".hokm-round-score > span");
   if(roundTeamLabels.length>=2){roundTeamLabels[0].textContent=team0Label;roundTeamLabels[1].textContent=team1Label;}
   const bottomTeamLabels=document.querySelectorAll(".game-bottom .team-score > small");
