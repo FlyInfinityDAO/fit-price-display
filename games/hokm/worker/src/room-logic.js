@@ -39,6 +39,22 @@ export function scheduleCpuTurnAt(room, now = Date.now()) {
   );
 }
 
+export function queueCpuTurnState(room, now = Date.now()) {
+  const cpuTurnAt = scheduleCpuTurnAt(room, now);
+  if (cpuTurnAt === null) {
+    delete room.cpuTurnAt;
+    return null;
+  }
+  delete room.trumpDeadlineAt;
+  room.cpuTurnAt = cpuTurnAt;
+  const game = room.match?.round;
+  if (game?.phase === "playing") {
+    delete game.turnStartedAt;
+    delete game.turnDeadlineAt;
+  }
+  return cpuTurnAt;
+}
+
 export function createRoomSnapshot(room, wallet) {
   const seat = room.players.find(p => p.wallet === wallet)?.seat ?? -1;
   const game = room.match?.round || null;
