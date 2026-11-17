@@ -147,7 +147,8 @@ async function addCpuSeats(seats){
  connecting=true;
  $("hokmAddTwoCpu").disabled=$("hokmAddLastCpu").disabled=true;
  status(t("addingCpu"));
- try{await request("/api/rooms/"+roomCode+"/cpu",{seats});status(t("cpuAdded"));}
+ const selectedDifficulty=document.getElementById("cpuDifficulty")?.value||"normal";
+ try{await request("/api/rooms/"+roomCode+"/cpu",{seats,difficulty:selectedDifficulty});status(t("cpuAdded"));}
  catch(error){status(friendlyError(error),true)}
  finally{connecting=false;$("hokmAddTwoCpu").disabled=$("hokmAddLastCpu").disabled=false}
 }
