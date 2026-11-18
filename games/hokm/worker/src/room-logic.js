@@ -43,6 +43,11 @@ export function queueCpuTurnState(room, now = Date.now()) {
   const cpuTurnAt = scheduleCpuTurnAt(room, now);
   if (cpuTurnAt === null) {
     delete room.cpuTurnAt;
+    if (!isCpuTurn(room)) {
+      delete room.cpuTurnBlocked;
+      delete room.cpuTurnFailures;
+      if (typeof room.error === "string" && room.error.startsWith("CPU turn failed")) delete room.error;
+    }
     return null;
   }
   delete room.trumpDeadlineAt;
@@ -105,6 +110,9 @@ export function createRoomSnapshot(room, wallet) {
       reconnectGraceMs: H.RECONNECT_GRACE_MS,
       roundWinner: room.roundWinner ?? null
     } : null,
+    cpuTurnAt: room.cpuTurnAt || null,
+    cpuTurnBlocked: !!room.cpuTurnBlocked,
+    cpuTurnFailures: room.cpuTurnFailures || 0,
     error: room.error || null
   };
 }
