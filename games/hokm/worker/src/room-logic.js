@@ -46,6 +46,7 @@ export function queueCpuTurnState(room, now = Date.now()) {
     return null;
   }
   delete room.trumpDeadlineAt;
+  delete room.cpuTurnBlocked;
   room.cpuTurnAt = cpuTurnAt;
   const game = room.match?.round;
   if (game?.phase === "playing") {
@@ -113,6 +114,7 @@ export function scheduleCpuRetryAt(room, now = Date.now(), maxRetries = 3) {
   room.cpuTurnFailures = failures;
   if (failures > maxRetries) {
     delete room.cpuTurnAt;
+    room.cpuTurnBlocked = true;
     return null;
   }
   const retryAt = now + failures * 1000;
@@ -122,6 +124,7 @@ export function scheduleCpuRetryAt(room, now = Date.now(), maxRetries = 3) {
 
 export function clearCpuRetryState(room) {
   delete room.cpuTurnFailures;
+  delete room.cpuTurnBlocked;
   if (typeof room.error === "string" && room.error.startsWith("CPU turn failed")) {
     delete room.error;
   }
