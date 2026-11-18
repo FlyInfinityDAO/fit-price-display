@@ -53,6 +53,7 @@ export function queueCpuTurnState(room, now = Date.now()) {
   delete room.trumpDeadlineAt;
   delete room.cpuTurnBlocked;
   room.cpuTurnAt = cpuTurnAt;
+  delete room.pausedTrumpRemainingMs;
   const game = room.match?.round;
   if (game?.phase === "playing") {
     delete game.turnStartedAt;
@@ -74,7 +75,15 @@ export function nextHakemAfterRound(previousHakem, roundWinner) {
 
 export function pauseTurnClockForDisconnectedPlayer(room, seat, now = Date.now()) {
   const game = room.match?.round;
-  if (!game || game.phase !== "playing" || game.finished || game.currentPlayer !== seat) return false;
+  if (!game || game.finished) return false;
+  if (game.phase === "choose-trump" && game.hakem === seat) {
+    room.pausedTrumpRemainingMs = Number.isFinite(room.trumpDeadlineAt)
+      ? Math.max(0, room.trumpDeadlineAt - now)
+      : H.TURN_TIMEOUT_MS;
+    delete room.trumpDeadlineAt;
+    return true;
+  }
+  if (game.phase !== "playing" || game.currentPlayer !== seat) return false;
   const remaining = Number.isFinite(game.turnDeadlineAt)
     ? Math.max(0, game.turnDeadlineAt - now)
     : H.TURN_TIMEOUT_MS;
@@ -87,7 +96,16 @@ export function pauseTurnClockForDisconnectedPlayer(room, seat, now = Date.now()
 export function resumeTurnClockForReconnectedPlayer(room, seat, now = Date.now()) {
   const game = room.match?.round;
   const player = room.match?.players.find(item => item.seat === seat);
-  if (!game || game.phase !== "playing" || game.finished || game.currentPlayer !== seat || !player || player.kind === "cpu") return false;
+  if (!game || game.finished || !player || player.kind === "cpu") return false;
+  if (game.phase === "choose-trump" && game.hakem === seat) {
+    const remaining = Number.isFinite(room.pausedTrumpRemainingMs)
+      ? Math.max(0, room.pausedTrumpRemainingMs)
+      : H.TURN_TIMEOUT_MS;
+    room.trumpDeadlineAt = now + remaining;
+    delete room.pausedTrumpRemainingMs;
+    return true;
+  }
+  if (game.phase !== "playing" || game.currentPlayer !== seat) return false;
   const remaining = Number.isFinite(game.pausedTurnRemainingMs)
     ? Math.max(0, game.pausedTurnRemainingMs)
     : H.TURN_TIMEOUT_MS;
