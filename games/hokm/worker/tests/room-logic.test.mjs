@@ -190,3 +190,26 @@ test("CPU Hakem turn exposes an automatic thinking deadline in the room snapshot
   assert.equal(snapshot.cpuTurnAt,1650);
   assert.equal(snapshot.cpuTurnDelayMs,520);
 });
+
+
+test("duplicate disconnect events do not reset a paused human turn clock", () => {
+  const state = room({seat:2,now:1000});
+  state.match.players[2].kind = "human";
+  state.match.round.currentPlayer = 2;
+  state.match.round.turnDeadlineAt = 31000;
+  assert.equal(pauseTurnClockForDisconnectedPlayer(state,2,11000),true);
+  assert.equal(pauseTurnClockForDisconnectedPlayer(state,2,15000),true);
+  assert.equal(state.match.round.pausedTurnRemainingMs,20000);
+});
+
+test("disconnecting the Hakem pauses trump selection and reconnect resumes the remaining choice time", () => {
+  const state = room({phase:"choose-trump",seat:2,now:1000});
+  state.match.players[2].kind = "human";
+  state.trumpDeadlineAt = 21000;
+  assert.equal(pauseTurnClockForDisconnectedPlayer(state,2,11000),true);
+  assert.equal(state.pausedTrumpRemainingMs,10000);
+  assert.equal(state.trumpDeadlineAt,undefined);
+  assert.equal(resumeTurnClockForReconnectedPlayer(state,2,50000),true);
+  assert.equal(state.trumpDeadlineAt,60000);
+  assert.equal(state.pausedTrumpRemainingMs,undefined);
+});
