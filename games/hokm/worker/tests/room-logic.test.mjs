@@ -71,8 +71,14 @@ test("CPU queue clears stale blocked state and does not schedule for a human tur
   assert.equal(state.cpuTurnBlocked,undefined);
   state.match.players[2].kind="human";
   state.cpuTurnAt=2000;
+  state.cpuTurnFailures=2;
+  state.cpuTurnBlocked=true;
+  state.error="CPU turn failed after retries";
   assert.equal(queueCpuTurnState(state,3000),null);
   assert.equal(state.cpuTurnAt,undefined);
+  assert.equal(state.cpuTurnFailures,undefined);
+  assert.equal(state.cpuTurnBlocked,undefined);
+  assert.equal(state.error,undefined);
 });
 
 test("Hakem stays with the winning team and rotates counterclockwise after a loss",()=>{
@@ -94,7 +100,12 @@ test("room snapshots expose only the requesting player's hand",()=>{
     [{id:"Q♠",secret:"seat2"}],
     [{id:"J♠",secret:"seat3"}]
   ];
+  state.cpuTurnAt=4567;
+  state.cpuTurnFailures=1;
   const snapshot=createRoomSnapshot(state,state.players[2].wallet);
+  assert.equal(snapshot.cpuTurnAt,4567);
+  assert.equal(snapshot.cpuTurnFailures,1);
+  assert.equal(snapshot.cpuTurnBlocked,false);
   assert.equal(snapshot.seat,2);
   assert.deepEqual(snapshot.game.ownHand,[{id:"Q♠",secret:"seat2"}]);
   assert.deepEqual(snapshot.game.handCounts,[1,1,1,1]);
