@@ -146,13 +146,13 @@ body{
  .table-inner{min-height:590px!important}
  .seat-west,.seat-east{z-index:2}
  .seat-north,.seat-south{z-index:3}
- .table-center{width:55%!important}
+ .table-center{width:calc(100% - 164px)!important}
  .hokm-card{box-shadow:0 3px 8px rgba(0,0,0,.42)!important}
 }
 @media(max-width:420px){
  .velvet-table{min-height:580px!important;border-radius:42% / 10%!important}
  .table-inner{min-height:550px!important}
- .table-center{width:54%!important}
+ .table-center{width:calc(100% - 142px)!important}
  .trick-cards{gap:3px!important}
  .played-card{width:32px!important;height:48px!important;font-size:19px!important}
 }
