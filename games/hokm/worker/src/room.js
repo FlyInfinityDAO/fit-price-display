@@ -146,9 +146,10 @@ export class HokmRoom extends DurableObject {
     const deadline = matchPlayer?.reconnectDeadlineAt || player.reconnectUntil;
     if (deadline && Date.now() >= deadline) return json({ ok: false, error: "Reconnect window expired" }, 409);
     if (room.match && matchPlayer?.connectionStatus === "disconnected") {
-      const resumed = H.reconnectPlayer(room.match, player.seat, Date.now());
+      const now = Date.now();
+      const resumed = H.reconnectPlayer(room.match, player.seat, now);
       if (!resumed.reconnected) return json({ ok: false, error: "Reconnect window expired" }, 409);
-      resumeTurnClockForReconnectedPlayer(room, player.seat, Date.now());
+      resumeTurnClockForReconnectedPlayer(room, player.seat, now);
     }
     const pair = new WebSocketPair();
     const [client, server] = Object.values(pair);
@@ -201,7 +202,14 @@ export class HokmRoom extends DurableObject {
       delete room.trumpDeadlineAt;
       this.queueCpuTurn(room);
     } else {
-      room.trumpDeadlineAt = Date.now() + TURN_TIMEOUT_MS;
+      const hakemPlayer = room.match.players.find(player => player.seat === game.hakem);
+      if (hakemPlayer?.connectionStatus === "disconnected") {
+        room.pausedTrumpRemainingMs = TURN_TIMEOUT_MS;
+        delete room.trumpDeadlineAt;
+      } else {
+        delete room.pausedTrumpRemainingMs;
+        room.trumpDeadlineAt = Date.now() + TURN_TIMEOUT_MS;
+      }
     }
     await this.scheduleAlarm(room);
   }
