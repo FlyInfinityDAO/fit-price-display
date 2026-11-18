@@ -116,14 +116,19 @@ test("CPU failures retry with bounded backoff and stop after the configured limi
   assert.equal(scheduleCpuRetryAt(room, 10000), null);
   assert.equal(room.cpuTurnFailures, 4);
   assert.equal(room.cpuTurnAt, undefined);
+  assert.equal(room.cpuTurnBlocked, true);
+  assert.equal(queueCpuTurnState(room, 20000), 20850, "a later fresh CPU turn can be queued");
+  assert.equal(room.cpuTurnBlocked, undefined);
 });
 
 test("a fresh CPU turn can clear the retry counter after recovery", () => {
   const room = makeRoom("hard", 1, [1]);
   room.cpuTurnFailures = 2;
+  room.cpuTurnBlocked = true;
   room.error = "CPU turn failed; retry 2/3 scheduled";
   clearCpuRetryState(room);
   assert.equal(scheduleCpuTurnAt(room, 10000), 10000 + 650);
   assert.equal(room.cpuTurnFailures, undefined);
+  assert.equal(room.cpuTurnBlocked, undefined);
   assert.equal(room.error, undefined);
 });
