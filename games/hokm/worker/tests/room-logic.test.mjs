@@ -78,7 +78,7 @@ test("CPU queue clears stale blocked state and does not schedule for a human tur
 test("Hakem stays with the winning team and rotates counterclockwise after a loss",()=>{
   assert.equal(nextHakemAfterRound(0,0),0);
   assert.equal(nextHakemAfterRound(2,0),2);
-  assert.equal(nextHakemAfterRound(0,1),1);
+  assert.equal(nextHakemAfterRound(0,1),3);
   assert.equal(nextHakemAfterRound(2,1),1);
   assert.equal(nextHakemAfterRound(1,0),0);
   assert.equal(nextHakemAfterRound(3,0),2);
