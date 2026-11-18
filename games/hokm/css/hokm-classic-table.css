@@ -1,0 +1,159 @@
+/* Fly Infinity Hokm — classic Persian card-room theme.
+   Scoped to the Hokm page; gameplay markup and engine behavior remain unchanged. */
+:root{
+  --hokm-burgundy:#350711;
+  --hokm-wine:#570d1b;
+  --hokm-wine-light:#781528;
+  --hokm-gold:#d9b45c;
+  --hokm-gold-light:#f6dfa0;
+  --hokm-felt:#075477;
+  --hokm-felt-deep:#043b59;
+  --hokm-card-ink:#151515;
+}
+html,body{min-height:100%;background-color:var(--hokm-burgundy)!important}
+body{
+  color:#fff1d5!important;
+  background:
+    repeating-linear-gradient(45deg,transparent 0 24px,rgba(255,211,129,.025) 24px 26px,transparent 26px 50px),
+    repeating-linear-gradient(-45deg,transparent 0 24px,rgba(255,211,129,.022) 24px 26px,transparent 26px 50px),
+    radial-gradient(ellipse at 50% 42%,#681020 0%,#430914 58%,#21040b 100%)!important;
+  background-attachment:fixed!important;
+}
+#hokm-neon-canvas{display:none!important}
+.arena{max-width:1180px}
+.topbar,.hero,.access-card,.match-settings,.game-shell,.sound-panel{
+  border:1px solid rgba(226,190,105,.66)!important;
+  background:linear-gradient(145deg,rgba(76,10,25,.97),rgba(39,4,13,.97))!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.42),inset 0 1px rgba(255,240,198,.12)!important;
+}
+.brand-name,.eyebrow,.access-mark,.minimum>span,.minimum strong,
+.team-score b,.round-info b,.volume-control b{color:var(--hokm-gold-light)!important}
+.brand-logo{border-color:var(--hokm-gold)!important}
+.hero h1{
+  background:linear-gradient(100deg,#f8e5ad,#c99b3f 48%,#fff0c4)!important;
+  color:transparent!important;background-clip:text!important;-webkit-background-clip:text!important;
+}
+.hero p,.access-card>p,.settings-copy p,.tier-note,.sound-panel p,.status,
+.control-hint,footer,.minimum small,.tier-rules span,.player-chip small,
+.team-score small,.round-info span,.team-stat{color:#e4c8bd!important}
+.primary-btn{
+  color:#310711!important;border:1px solid #f7df9e!important;
+  background:linear-gradient(120deg,#b9852f,#f4d98d 52%,#bd8b39)!important;
+  box-shadow:0 5px 16px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.5)!important;
+}
+.secondary-btn,.icon-btn,.small-btn,.hokm-trump-options button,
+.hokm-online-trump button,.hokm-cpu-controls button,.hokm-game-buttons button{
+  color:#ffedc9!important;border:1px solid rgba(224,185,94,.82)!important;
+  background:linear-gradient(145deg,#711326,#430914)!important;
+}
+.network,.dashboard-link,.topbar select,.difficulty-control select{
+  color:#f8e6bc!important;border:1px solid rgba(222,185,96,.7)!important;
+  background:#3d0915!important;
+}
+.network i{background:#72d59a!important;box-shadow:0 0 9px #72d59a}
+.minimum,.tier-rules article,.hokm-online-panel,.hokm-game-controls,
+.team-score,.round-info,.player-chip,.hokm-round-score,.hokm-room-invite,
+.hokm-turn-clock,.hakem-pill,.trump-pill,.hokm-won-pile{
+  color:#fff0d1!important;border:1px solid rgba(221,183,95,.54)!important;
+  background:linear-gradient(145deg,rgba(91,15,31,.96),rgba(48,6,17,.96))!important;
+  box-shadow:inset 0 1px rgba(255,240,200,.1),0 7px 20px rgba(0,0,0,.25)!important;
+}
+.hokm-round-score.white{border-color:#d8b55e!important}
+.hokm-round-score.black{border-color:#a96d39!important}
+.velvet-table{
+  position:relative;isolation:isolate;overflow:hidden;
+  min-height:760px!important;padding:22px!important;
+  border:9px solid #b98c43!important;border-radius:48% / 13%!important;
+  background:
+    radial-gradient(ellipse at 50% 40%,rgba(36,126,157,.58),transparent 65%),
+    radial-gradient(ellipse at 50% 55%,#075477 0%,#064564 58%,#032c45 100%)!important;
+  box-shadow:
+    0 0 0 4px #242126,0 0 0 7px #d5ad5a,
+    inset 0 0 0 3px rgba(243,208,126,.72),
+    inset 0 0 0 8px rgba(0,20,33,.72),
+    inset 0 0 55px rgba(0,12,25,.6),
+    0 18px 35px rgba(0,0,0,.48)!important;
+}
+.velvet-table:before{
+  content:"";position:absolute;inset:12px;border:1px solid rgba(237,204,127,.28);
+  border-radius:inherit;pointer-events:none;z-index:-0;
+}
+.velvet-table:after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.16;
+  background:radial-gradient(ellipse at 50% 45%,transparent 40%,#001927 100%);
+}
+.table-inner{position:relative;z-index:1;min-height:710px!important}
+.table-center{z-index:2}
+.table-meta{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}
+.hakem-pill,.trump-pill{border-color:rgba(237,203,119,.85)!important}
+.hakem-pill b,.trump-pill b{color:#f5d98d!important}
+.player-chip{
+  border:1px solid #d8b15b!important;border-radius:9px!important;
+  background:linear-gradient(145deg,#78172a,#3e0713)!important;
+  box-shadow:0 5px 12px rgba(0,0,0,.4),inset 0 1px rgba(255,239,197,.16)!important;
+}
+.player-chip.active{
+  border-color:#fff0b5!important;
+  box-shadow:0 0 0 2px rgba(231,191,91,.42),0 0 18px rgba(246,211,126,.38)!important;
+  animation:hokmClassicTurn 1.8s ease-in-out infinite;
+}
+.avatar{background:linear-gradient(145deg,#bd8d3d,#6e3b18)!important;color:#fff4d7!important}
+@keyframes hokmClassicTurn{0%,100%{filter:brightness(1)}50%{filter:brightness(1.22)}}
+.hand i,.hokm-card-back{
+  border:1px solid #e4d5b5!important;border-radius:4px!important;
+  background-color:#172a43!important;
+  background-image:
+    repeating-linear-gradient(45deg,transparent 0 4px,rgba(245,239,221,.78) 4px 5px,transparent 5px 8px),
+    repeating-linear-gradient(-45deg,transparent 0 7px,rgba(245,239,221,.32) 7px 8px,transparent 8px 13px),
+    linear-gradient(135deg,#243c5a,#0a172b)!important;
+  box-shadow:0 3px 8px rgba(0,0,0,.5),inset 0 0 0 2px rgba(255,255,255,.14)!important;
+}
+.hand i:after{content:"✥";color:#e9e0c9!important;text-shadow:0 1px 3px #07101c}
+.hokm-card{
+  border:1px solid #e9e2d5!important;border-radius:5px!important;
+  background:linear-gradient(145deg,#fffefa,#f3eee4 78%,#e4dfd5)!important;
+  color:var(--hokm-card-ink)!important;
+  box-shadow:0 4px 11px rgba(0,0,0,.42),inset 0 0 0 1px rgba(255,255,255,.8)!important;
+}
+.hokm-card.red{color:#bd1d2d!important}
+.hokm-card .card-corner{font-family:Georgia,serif;font-weight:900}
+.hokm-card .card-center{font-family:Georgia,serif;font-size:27px!important}
+.hokm-card.playable:hover,.hokm-card.playable:focus-visible{
+  transform:translateY(-12px)!important;border-color:#e6bd61!important;
+  outline:2px solid #e6bd61!important;z-index:20;
+}
+.played-card{
+  border:1px solid #f3e8d4!important;border-radius:5px!important;
+  background:linear-gradient(145deg,#fffefa,#eee8db)!important;
+  color:#171717!important;box-shadow:0 7px 15px rgba(0,0,0,.42)!important;
+}
+.played-card:nth-child(2){transform:rotate(-3deg)}
+.played-card:nth-child(3){transform:rotate(3deg)}
+.played-card:nth-child(4){transform:rotate(-2deg)}
+.played-card.red{color:#bd1d2d!important}
+.played-card.empty{background:rgba(2,31,48,.55)!important;border:1px dashed rgba(231,198,125,.5)!important;color:rgba(241,211,148,.5)!important}
+.trick-cards{gap:8px!important}
+.hokm-game-controls{border-color:#d6ae59!important}
+.hokm-game-status,.hokm-hand-caption,.hokm-trump-picker>strong{color:#f4d98e!important}
+.hokm-trump-options button[data-suit="♥"],.hokm-trump-options button[data-suit="♦"]{color:#ff9eaa!important}
+.hokm-turn-clock{border-color:#e3c06e!important;color:#ffe8a8!important}
+.team-stat em,.hokm-round-score b{color:#f1d48b!important}
+.volume-control input{accent-color:#d9b45c!important}
+.control-bar{border-top-color:rgba(224,188,105,.38)!important}
+:focus-visible{outline:2px solid #f3d78d!important;outline-offset:3px}
+@media(max-width:760px){
+ .velvet-table{min-height:620px!important;padding:12px!important;border-width:6px!important}
+ .table-inner{min-height:590px!important}
+ .seat-west,.seat-east{z-index:2}
+ .seat-north,.seat-south{z-index:3}
+ .table-center{width:55%!important}
+ .hokm-card{box-shadow:0 3px 8px rgba(0,0,0,.42)!important}
+}
+@media(max-width:420px){
+ .velvet-table{min-height:580px!important;border-radius:42% / 10%!important}
+ .table-inner{min-height:550px!important}
+ .table-center{width:54%!important}
+ .trick-cards{gap:3px!important}
+ .played-card{width:32px!important;height:48px!important;font-size:19px!important}
+}
+@media(prefers-reduced-motion:reduce){.player-chip.active{animation:none!important}}
