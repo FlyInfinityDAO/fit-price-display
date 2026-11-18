@@ -282,7 +282,7 @@ function renderState(s){
     if(em)em.textContent=String((game.tricksWon||[])[actual]||0);
     chip.classList.toggle("active",activeSeat===actual&&s.status==="playing");
     chip.classList.toggle("hakem-seat",game.hakem===actual);
-    let crown=chip.querySelector(".hokm-hakem-crown");if(game.hakem===actual){if(!crown){crown=document.createElement("span");crown.className="hokm-hakem-crown";crown.textContent="♛";crown.title=t("hakem");chip.appendChild(crown)}}else crown?.remove();
+    let crown=chip.querySelector(".hokm-hakem-crown");if(game.hakem===actual){if(!crown){crown=document.createElement("span");crown.className="hokm-hakem-crown";crown.textContent="♛";crown.setAttribute("aria-hidden","true");chip.appendChild(crown)}crown.title=t("hakem")}else crown?.remove();
    }
    if(hand){
     const cards=actual===ownSeat?(game.ownHand||[]):Array.from({length:hands[actual]||0},()=>null);
