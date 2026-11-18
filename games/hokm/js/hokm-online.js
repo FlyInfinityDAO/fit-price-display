@@ -84,7 +84,7 @@ function openSocket(ticket){
  if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null}
  const wsUrl=API.replace(/^https:/,"wss:").replace(/^http:/,"ws:")+"/api/rooms/"+roomCode+"/ws?ticket="+encodeURIComponent(ticket);
  const ws=new WebSocket(wsUrl);socket=ws;
- ws.addEventListener("open",()=>{if(socket!==ws)return;reconnectAttempt=0;status(t("room")+" "+roomCode+" · "+t("connected"))});
+ ws.addEventListener("open",()=>{if(socket!==ws)return;reconnectAttempt=0;if(ownSeat>=0){const ownChip=document.querySelector(seatEls(displaySeat(ownSeat)).chip);ownChip?.querySelector(".hokm-seat-ring.disconnect")?.remove();}status(t("room")+" "+roomCode+" · "+t("connected"))});
  ws.addEventListener("message",event=>{
   let data;try{data=JSON.parse(event.data)}catch{return}
   if(data.type==="state"){
@@ -180,29 +180,30 @@ function animateOnlineTrickCollection(trick,trump){
  const jobs=nodes.map((node,index)=>{
   const from=node.getBoundingClientRect();
   if(!from.width||!from.height)return Promise.resolve();
-  const clone=node.cloneNode(true),oldOpacity=node.style.opacity;
+  const clone=node.cloneNode(true);
   clone.removeAttribute("id");clone.removeAttribute("data-player-label");
   Object.assign(clone.style,{position:"fixed",left:from.left+"px",top:from.top+"px",width:from.width+"px",height:from.height+"px",margin:"0",zIndex:"10001",pointerEvents:"none",transformOrigin:"center center"});
   document.body.appendChild(clone);
-  node.style.opacity="0";
   return new Promise(resolve=>{
    let done=false,animation;
-   const finish=()=>{if(done)return;done=true;node.style.opacity=oldOpacity;clone.remove();try{animation&&animation.cancel()}catch{}resolve()};
+   const finish=()=>{if(done)return;done=true;clone.remove();try{animation&&animation.cancel()}catch{}resolve()};
    const dx=(to.left+to.width/2)-(from.left+from.width/2);
    const dy=(to.top+to.height/2)-(from.top+from.height/2);
+   try{
    animation=clone.animate([
     {opacity:1,transform:"translate3d(0,0,0) scale(1) rotate(0deg)"},
     {opacity:1,transform:"translate3d("+dx*.45+"px,"+dy*.45+"px,0) scale(.78) rotate("+(index%2?7:-7)+"deg)",offset:.58},
     {opacity:0,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(.18) rotate("+(index%2?16:-16)+"deg)"}
    ],{duration:620,easing:"cubic-bezier(.3,.05,.65,1)",delay:index*45,fill:"both"});
    animation.onfinish=finish;animation.oncancel=finish;
+   }catch{finish()}
   });
  });
  Promise.all(jobs).then(()=>target.classList.remove("hokm-trick-winner"));
 }
 
 function makeSeatRing(kind){const ring=document.createElement("span");ring.className="hokm-seat-ring "+kind;ring.setAttribute("aria-hidden","true");return ring}
-function renderSeatRing(chip,kind,deadline,now){let ring=chip.querySelector(".hokm-seat-ring."+kind);if(!deadline){ring?.remove();return}if(!ring){ring=makeSeatRing(kind);chip.appendChild(ring)}const total=kind==="turn"?30000:(lastState?.game?.reconnectGraceMs||60000);const left=Math.max(0,deadline-now);ring.style.setProperty("--ring-progress",String(Math.max(0,Math.min(1,left/total))));ring.textContent=String(Math.ceil(left/1000));ring.title=kind==="turn"?t("turnCountdown"):t("reconnectCountdown");}
+function renderSeatRing(chip,kind,deadline,now,totalOverride){let ring=chip.querySelector(".hokm-seat-ring."+kind);if(!deadline){ring?.remove();return}if(!ring){ring=makeSeatRing(kind);chip.appendChild(ring)}const total=totalOverride||(kind==="turn"?30000:(lastState?.game?.reconnectGraceMs||60000));const left=Math.max(0,deadline-now);ring.style.setProperty("--ring-progress",String(Math.max(0,Math.min(1,left/total))));ring.textContent=String(Math.ceil(left/1000));ring.title=kind==="turn"?t("turnCountdown"):t("reconnectCountdown");}
 function shortWalletLabel(wallet){const value=String(wallet||"");return value.length>12?value.slice(0,6)+"…"+value.slice(-4).toUpperCase():value||"—"}
 function animateCardFlight(node,source){
  if(!node||!source||typeof node.getBoundingClientRect!=="function")return;
@@ -349,10 +350,21 @@ function renderState(s){
   const mayChoose=s.status==="playing"&&game.phase==="choose-trump"&&game.hakem===ownSeat;
   picker.hidden=!mayChoose;
   if(game.phase==="choose-trump"&&!mayChoose&&s.status==="playing"){const chosen=players.find(p=>p.seat===game.hakem);const label=chosen?.cpu?t("cpu")+" · "+t("seat")+" "+(game.hakem+1):t("seat")+" "+(game.hakem+1);status(t("hakemChosen").replace("{player}",label));}
-  if(game.phase==="playing"&&Number.isFinite(game.turnDeadlineAt))startCountdown(game.turnDeadlineAt);
+  const activePlayer=players.find(p=>p.seat===activeSeat);
+  const activeLabel=activePlayer?.cpu?t("cpu")+" · "+t("seat")+" "+(activeSeat+1):activePlayer?.you?t("you"):shortWalletLabel(activePlayer?.wallet)||t("seat")+" "+(activeSeat+1);
+  const cpuThinking=!!(s.status==="playing"&&activePlayer?.cpu&&Number.isFinite(s.cpuTurnAt));
+  if(cpuThinking)startCountdown(s.cpuTurnAt,"cpu",activeLabel);
+  else if(s.status==="playing"&&Number.isFinite(game.turnDeadlineAt))startCountdown(game.turnDeadlineAt,"turn",activeLabel);
   else stopCountdown();
   const now=Date.now();
-  for(let actual=0;actual<4;actual++){const visual=displaySeat(actual),chip=document.querySelector(seatEls(visual).chip),player=players.find(p=>p.seat===actual);if(!chip)continue;renderSeatRing(chip,"turn",s.status==="playing"&&activeSeat===actual?game.turnDeadlineAt:null,now);renderSeatRing(chip,"disconnect",player&&!player.connected&&!player.cpu?player.reconnectDeadlineAt:null,now);}
+  for(let actual=0;actual<4;actual++){
+   const visual=displaySeat(actual),chip=document.querySelector(seatEls(visual).chip),player=players.find(p=>p.seat===actual);
+   if(!chip)continue;
+   const cpuDeadline=actual===activeSeat&&player?.cpu?s.cpuTurnAt:null;
+   const turnDeadline=actual===activeSeat?(cpuDeadline||game.turnDeadlineAt):null;
+   renderSeatRing(chip,"turn",s.status==="playing"?turnDeadline:null,now,player?.cpu?s.cpuTurnDelayMs:30000);
+   renderSeatRing(chip,"disconnect",player&&!player.connected&&!player.cpu?player.reconnectDeadlineAt:null,now);
+  }
   if(s.status==="round-break"&&s.roundWinner!==null)status((s.roundWinner===ownSeat%2?t("won"):t("lost"))+" · "+(s.match?.matchPoints||[0,0]).join(" : "));
   if(s.status==="finished"){const counts=s.match?.hakemCounts||[0,0],winner=s.match?.matchWinner;status((winner===ownSeat%2?t("won"):t("lost"))+" · "+t("finished")+" · "+counts.join(" : "));}
  }else{
@@ -365,9 +377,21 @@ function renderState(s){
   const round=document.querySelector(".round-info b");if(round)round.textContent="—";
  }
 }
-function startCountdown(deadline){
+function startCountdown(deadline,kind="turn",label=""){
  if(timer)clearInterval(timer);
- const tick=()=>{const now=Date.now(),left=Math.max(0,Math.ceil((deadline-now)/1000));const base=lastState?.status==="playing"&&lastState?.game?.currentPlayer===ownSeat?t("yourTurn"):t("opponent");status(base+" · "+left+" "+t("seconds"));const players=lastState?.players||[],game=lastState?.game;for(let actual=0;actual<4;actual++){const chip=document.querySelector(seatEls(displaySeat(actual)).chip),player=players.find(p=>p.seat===actual);if(!chip)continue;renderSeatRing(chip,"turn",lastState?.status==="playing"&&(game?.phase==="choose-trump"?game.hakem:game?.currentPlayer)===actual?game.turnDeadlineAt:null,now);renderSeatRing(chip,"disconnect",player&&!player.connected&&!player.cpu?player.reconnectDeadlineAt:null,now)}};
+ const tick=()=>{
+  const now=Date.now(),left=Math.max(0,Math.ceil((deadline-now)/1000));
+  const base=kind==="cpu"?t("cpuTurn").replace("{player}",label||t("cpu")):(lastState?.status==="playing"&&lastState?.game?.currentPlayer===ownSeat?t("yourTurn"):t("opponent"));
+  status(base+" · "+left+" "+t("seconds"));
+  const players=lastState?.players||[],game=lastState?.game,activeSeat=game?.phase==="choose-trump"?game.hakem:game?.currentPlayer;
+  for(let actual=0;actual<4;actual++){
+   const chip=document.querySelector(seatEls(displaySeat(actual)).chip),player=players.find(p=>p.seat===actual);
+   if(!chip)continue;
+   const cpuDeadline=actual===activeSeat&&player?.cpu?lastState?.cpuTurnAt:null;
+   renderSeatRing(chip,"turn",lastState?.status==="playing"&&actual===activeSeat?(cpuDeadline||game?.turnDeadlineAt):null,now,player?.cpu?lastState?.cpuTurnDelayMs:30000);
+   renderSeatRing(chip,"disconnect",player&&!player.connected&&!player.cpu?player.reconnectDeadlineAt:null,now);
+  }
+ };
  tick();timer=setInterval(tick,200);
 }
 function stopCountdown(){if(timer)clearInterval(timer);timer=null}

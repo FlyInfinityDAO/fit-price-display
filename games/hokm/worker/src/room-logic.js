@@ -53,15 +53,39 @@ export function queueCpuTurnState(room, now = Date.now()) {
   delete room.trumpDeadlineAt;
   delete room.cpuTurnBlocked;
   room.cpuTurnAt = cpuTurnAt;
+  delete room.pausedTrumpRemainingMs;
   const game = room.match?.round;
   if (game?.phase === "playing") {
     delete game.turnStartedAt;
     delete game.turnDeadlineAt;
+    delete game.pausedTurnRemainingMs;
   }
   return cpuTurnAt;
 }
 
 // The winning team keeps the Hakem; otherwise the next seat in turn order becomes Hakem.
+export function executeCpuTurn(room, now = Date.now(), rng = Math.random) {
+  const game = room.match?.round;
+  if (!game || room.status !== "playing" || !isCpuTurn(room)) return null;
+  const difficulty = room.match.difficulty || "normal";
+  if (game.phase === "choose-trump") {
+    const suit = H.chooseCpuTrump(game, game.hakem, difficulty, rng);
+    if (!H.SUITS.includes(suit)) throw new Error("CPU selected an invalid trump suit");
+    H.chooseTrump(game, suit);
+    H.startTurnClock(game, now);
+    return { kind: "trump", suit };
+  }
+  if (game.phase === "playing") {
+    const seat = game.currentPlayer;
+    const card = H.chooseCpuCard(game, seat, difficulty, rng);
+    if (!card || !H.legalCards(game, seat).some(legal => legal.id === card.id)) {
+      throw new Error("CPU did not select a legal card");
+    }
+    return { kind: "card", result: H.playCard(game, seat, card.id), card };
+  }
+  throw new Error("CPU turn reached an unsupported game phase");
+}
+
 export function nextHakemAfterRound(previousHakem, roundWinner) {
   if (!Number.isInteger(previousHakem) || previousHakem < 0 || previousHakem > 3) {
     throw new Error("Invalid previous Hakem seat");
@@ -70,6 +94,66 @@ export function nextHakemAfterRound(previousHakem, roundWinner) {
     throw new Error("Invalid round-winning team");
   }
   return roundWinner === previousHakem % 2 ? previousHakem : H.nextSeat(previousHakem);
+}
+
+export function pauseTurnClockForDisconnectedPlayer(room, seat, now = Date.now()) {
+  const game = room.match?.round;
+  if (!game || game.finished) return false;
+  if (game.phase === "choose-trump" && game.hakem === seat) {
+    if (Number.isFinite(room.pausedTrumpRemainingMs)) return true;
+    room.pausedTrumpRemainingMs = Number.isFinite(room.trumpDeadlineAt)
+      ? Math.max(0, room.trumpDeadlineAt - now)
+      : H.TURN_TIMEOUT_MS;
+    delete room.trumpDeadlineAt;
+    return true;
+  }
+  if (game.phase !== "playing" || game.currentPlayer !== seat) return false;
+  if (Number.isFinite(game.pausedTurnRemainingMs)) return true;
+  const remaining = Number.isFinite(game.turnDeadlineAt)
+    ? Math.max(0, game.turnDeadlineAt - now)
+    : H.TURN_TIMEOUT_MS;
+  game.pausedTurnRemainingMs = remaining;
+  delete game.turnStartedAt;
+  delete game.turnDeadlineAt;
+  return true;
+}
+
+export function resumeTurnClockForReconnectedPlayer(room, seat, now = Date.now()) {
+  const game = room.match?.round;
+  const player = room.match?.players.find(item => item.seat === seat);
+  if (!game || game.finished || !player || player.kind === "cpu") return false;
+  if (game.phase === "choose-trump" && game.hakem === seat) {
+    const remaining = Number.isFinite(room.pausedTrumpRemainingMs)
+      ? Math.max(0, room.pausedTrumpRemainingMs)
+      : H.TURN_TIMEOUT_MS;
+    room.trumpDeadlineAt = now + remaining;
+    delete room.pausedTrumpRemainingMs;
+    return true;
+  }
+  if (game.phase !== "playing" || game.currentPlayer !== seat) return false;
+  const remaining = Number.isFinite(game.pausedTurnRemainingMs)
+    ? Math.max(0, game.pausedTurnRemainingMs)
+    : H.TURN_TIMEOUT_MS;
+  const startAt = Math.max(now, room.cardFlightUntil || 0, room.lastTrickClearAt || 0);
+  game.turnStartedAt = startAt;
+  game.turnDeadlineAt = startAt + remaining;
+  delete game.pausedTurnRemainingMs;
+  return true;
+}
+
+export function prepareNextTurnClock(room, nextTurnAt) {
+  const game = room.match?.round;
+  if (!game || game.phase !== "playing" || game.finished) return;
+  const player = room.match.players.find(item => item.seat === game.currentPlayer);
+  if (!player || player.kind === "cpu" || player.connectionStatus === "disconnected" || player.connectionStatus === "replaced") {
+    delete game.turnStartedAt;
+    delete game.turnDeadlineAt;
+    delete game.pausedTurnRemainingMs;
+    return;
+  }
+  game.turnStartedAt = nextTurnAt;
+  game.turnDeadlineAt = nextTurnAt + H.TURN_TIMEOUT_MS;
+  delete game.pausedTurnRemainingMs;
 }
 
 export function createRoomSnapshot(room, wallet) {
@@ -111,6 +195,9 @@ export function createRoomSnapshot(room, wallet) {
       roundWinner: room.roundWinner ?? null
     } : null,
     cpuTurnAt: room.cpuTurnAt || null,
+    cpuTurnDelayMs: room.match?.difficulty === "veryhard" ? 850
+      : room.match?.difficulty === "hard" ? 650
+      : room.match?.difficulty === "normal" ? 520 : 380,
     cpuTurnBlocked: !!room.cpuTurnBlocked,
     cpuTurnFailures: room.cpuTurnFailures || 0,
     error: room.error || null

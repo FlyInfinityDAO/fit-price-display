@@ -7,7 +7,10 @@ import {
   nextHakemAfterRound,
   createRoomSnapshot,
   scheduleCpuRetryAt,
-  clearCpuRetryState
+  clearCpuRetryState,
+  pauseTurnClockForDisconnectedPlayer,
+  resumeTurnClockForReconnectedPlayer,
+  prepareNextTurnClock
 } from "../src/room-logic.js";
 
 function room({difficulty="normal",phase="playing",seat=2,now=1000}={}) {
@@ -150,4 +153,63 @@ test("successful CPU retry state cleanup preserves unrelated room errors",()=>{
   assert.equal(state.cpuTurnFailures,undefined);
   assert.equal(state.cpuTurnBlocked,undefined);
   assert.equal(state.error,"A different room warning");
+});
+
+
+test("disconnect pauses only the active human turn and reconnect resumes its remaining time", () => {
+  const state = room({seat:2,now:1000});
+  state.match.players[2].kind = "human";
+  state.match.round.currentPlayer = 2;
+  state.match.round.turnStartedAt = 1000;
+  state.match.round.turnDeadlineAt = 31000;
+  assert.equal(pauseTurnClockForDisconnectedPlayer(state,2,11000),true);
+  assert.equal(state.match.round.pausedTurnRemainingMs,20000);
+  assert.equal(state.match.round.turnDeadlineAt,undefined);
+  assert.equal(resumeTurnClockForReconnectedPlayer(state,2,51000),true);
+  assert.equal(state.match.round.turnStartedAt,51000);
+  assert.equal(state.match.round.turnDeadlineAt,71000);
+  assert.equal(state.match.round.pausedTurnRemainingMs,undefined);
+});
+
+test("a disconnected human receives no active-turn deadline until reconnect or CPU takeover", () => {
+  const state = room({seat:2,now:1000});
+  state.match.players[1].kind = "human";
+  state.match.players[1].connectionStatus = "disconnected";
+  state.match.round.currentPlayer = 1;
+  prepareNextTurnClock(state,5000);
+  assert.equal(state.match.round.turnDeadlineAt,undefined);
+  assert.equal(state.match.round.turnStartedAt,undefined);
+  assert.equal(resumeTurnClockForReconnectedPlayer(state,1,9000),true);
+  assert.equal(state.match.round.turnDeadlineAt,39000);
+});
+
+test("CPU Hakem turn exposes an automatic thinking deadline in the room snapshot", () => {
+  const state = room({phase:"choose-trump",seat:2,now:1000});
+  state.cpuTurnAt = 1650;
+  const snapshot = createRoomSnapshot(state,state.players[0].wallet);
+  assert.equal(snapshot.cpuTurnAt,1650);
+  assert.equal(snapshot.cpuTurnDelayMs,520);
+});
+
+
+test("duplicate disconnect events do not reset a paused human turn clock", () => {
+  const state = room({seat:2,now:1000});
+  state.match.players[2].kind = "human";
+  state.match.round.currentPlayer = 2;
+  state.match.round.turnDeadlineAt = 31000;
+  assert.equal(pauseTurnClockForDisconnectedPlayer(state,2,11000),true);
+  assert.equal(pauseTurnClockForDisconnectedPlayer(state,2,15000),true);
+  assert.equal(state.match.round.pausedTurnRemainingMs,20000);
+});
+
+test("disconnecting the Hakem pauses trump selection and reconnect resumes the remaining choice time", () => {
+  const state = room({phase:"choose-trump",seat:2,now:1000});
+  state.match.players[2].kind = "human";
+  state.trumpDeadlineAt = 21000;
+  assert.equal(pauseTurnClockForDisconnectedPlayer(state,2,11000),true);
+  assert.equal(state.pausedTrumpRemainingMs,10000);
+  assert.equal(state.trumpDeadlineAt,undefined);
+  assert.equal(resumeTurnClockForReconnectedPlayer(state,2,50000),true);
+  assert.equal(state.trumpDeadlineAt,60000);
+  assert.equal(state.pausedTrumpRemainingMs,undefined);
 });
