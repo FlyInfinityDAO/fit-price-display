@@ -63,6 +63,28 @@ export function queueCpuTurnState(room, now = Date.now()) {
 }
 
 // The winning team keeps the Hakem; otherwise the next seat in turn order becomes Hakem.
+export function executeCpuTurn(room, now = Date.now(), rng = Math.random) {
+  const game = room.match?.round;
+  if (!game || room.status !== "playing" || !isCpuTurn(room)) return null;
+  const difficulty = room.match.difficulty || "normal";
+  if (game.phase === "choose-trump") {
+    const suit = H.chooseCpuTrump(game, game.hakem, difficulty, rng);
+    if (!H.SUITS.includes(suit)) throw new Error("CPU selected an invalid trump suit");
+    H.chooseTrump(game, suit);
+    H.startTurnClock(game, now);
+    return { kind: "trump", suit };
+  }
+  if (game.phase === "playing") {
+    const seat = game.currentPlayer;
+    const card = H.chooseCpuCard(game, seat, difficulty, rng);
+    if (!card || !H.legalCards(game, seat).some(legal => legal.id === card.id)) {
+      throw new Error("CPU did not select a legal card");
+    }
+    return { kind: "card", result: H.playCard(game, seat, card.id), card };
+  }
+  throw new Error("CPU turn reached an unsupported game phase");
+}
+
 export function nextHakemAfterRound(previousHakem, roundWinner) {
   if (!Number.isInteger(previousHakem) || previousHakem < 0 || previousHakem > 3) {
     throw new Error("Invalid previous Hakem seat");
