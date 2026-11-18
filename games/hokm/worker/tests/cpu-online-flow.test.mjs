@@ -122,7 +122,7 @@ test("the real CPU turn executor completes CPU Hakem selection and the opening c
     assert.equal(match.round.currentPlayer, 2);
     const opening = executeCpuTurn(room, 11000, seeded(seed + 200));
     assert.equal(opening.kind, "card");
-    assert.ok(H.legalCards({ ...match.round, trick: [] }, 2).length >= 0);
+    assert.equal(match.round.hands[2].some(card => card.id === opening.card.id), false);
     assert.equal(match.round.trick.length, 1);
     assert.equal(match.round.trick[0].player, 2);
     assert.equal(match.round.trick[0].card.id, opening.card.id);
