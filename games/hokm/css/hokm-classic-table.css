@@ -292,8 +292,8 @@ body{
  45%{filter:brightness(1.32);transform:scale(1.045)}
 }
 .trick-cards .played-card{will-change:transform,opacity}
-@media(prefers-reduced-motion:reduce){
-/* Clear Hakem identity without competing with the active-turn highlight. */
+
+/* Hakem identity is visible in normal motion mode as well. */
 .player-chip{position:relative}
 .player-chip.hakem-seat:not(.active){
  border-color:#e8c66f!important;
@@ -312,8 +312,7 @@ body{
  .hokm-hakem-crown{inset-block-start:-9px;inset-inline-end:3px;width:19px;height:19px;font-size:11px}
 }
 @media(prefers-reduced-motion:reduce){
- .player-chip.hakem-seat,.player-chip.hakem-seat:not(.active){animation:none!important}
-}
+ .player-chip.hakem-seat,.player-chip.hakem-seat:not(.active),
  .player-chip.hokm-trick-winner{animation:none!important}
  .trick-cards .played-card{will-change:auto}
 }
