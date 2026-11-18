@@ -235,7 +235,7 @@ export class HokmRoom extends DurableObject {
     if (room.cardFlightUntil) times.push(room.cardFlightUntil);
     if (room.trumpDeadlineAt) times.push(room.trumpDeadlineAt);
     if (room.cpuTurnAt) times.push(room.cpuTurnAt);
-    if (game?.phase === "playing" && Number.isFinite(game.turnDeadlineAt)) times.push(game.turnDeadlineAt);
+    if (game?.phase === "playing" && Number.isFinite(game.turnDeadlineAt) && !isCpuTurn(room) && !room.cpuTurnBlocked) times.push(game.turnDeadlineAt);
     for (const p of room.players) {
       const mp = room.match?.players.find(x => x.seat === p.seat);
       const deadline = mp?.connectionStatus === "disconnected" ? mp.reconnectDeadlineAt : (!room.match ? p.reconnectUntil : null);
@@ -360,6 +360,7 @@ export class HokmRoom extends DurableObject {
       try { await this.playCpuTurn(room, now); changed = true; }
       catch (error) {
         const retryAt = scheduleCpuRetryAt(room, now);
+        if (!retryAt) room.cpuTurnBlocked = true;
         room.error = retryAt
           ? `CPU turn failed; retry ${room.cpuTurnFailures}/3 scheduled`
           : (error.message || "CPU turn failed after 3 retries");
@@ -378,8 +379,12 @@ export class HokmRoom extends DurableObject {
       if (isCpuTurn(room)) {
         // A seat that just expired its reconnect grace must enter the normal
         // difficulty-aware CPU queue, not bypass it through the human timeout path.
-        this.queueCpuTurn(room);
-        changed = true;
+        // If all bounded recovery attempts failed, keep the room visible but do
+        // not immediately re-arm the same expired deadline in an alarm loop.
+        if (!room.cpuTurnBlocked) {
+          this.queueCpuTurn(room);
+          changed = true;
+        }
       } else {
         try {
           const result = H.resolveTurnTimeout(game, { now, difficulty: room.match?.difficulty || "normal" });
