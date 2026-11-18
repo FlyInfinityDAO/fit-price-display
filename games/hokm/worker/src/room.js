@@ -1,6 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 import "../../engine/hokm-engine.js";
-import { clearCpuRetryState, createRoomSnapshot, isCpuTurn, nextHakemAfterRound, pauseTurnClockForDisconnectedPlayer, prepareNextTurnClock, queueCpuTurnState, resumeTurnClockForReconnectedPlayer, scheduleCpuRetryAt } from "./room-logic.js";
+import { clearCpuRetryState, createRoomSnapshot, executeCpuTurn, isCpuTurn, nextHakemAfterRound, pauseTurnClockForDisconnectedPlayer, prepareNextTurnClock, queueCpuTurnState, resumeTurnClockForReconnectedPlayer, scheduleCpuRetryAt } from "./room-logic.js";
 
 const H = globalThis.HokmEngine;
 const ROOM_TTL = 6 * 60 * 60;
@@ -217,25 +217,9 @@ export class HokmRoom extends DurableObject {
     queueCpuTurnState(room);
   }
   async playCpuTurn(room, now) {
-    const game = room.match?.round;
-    if (!game || room.status !== "playing" || !isCpuTurn(room)) return false;
-    if (game.phase === "choose-trump") {
-      const seat = game.hakem;
-      const suit = H.chooseCpuTrump(game, seat, room.match.difficulty || "normal");
-      if (!H.SUITS.includes(suit)) throw new Error("CPU selected an invalid trump suit");
-      H.chooseTrump(game, suit);
-      H.startTurnClock(game, now);
-    } else if (game.phase === "playing") {
-      const seat = game.currentPlayer;
-      const card = H.chooseCpuCard(game, seat, room.match.difficulty || "normal");
-      if (!card || !H.legalCards(game, seat).some(legal => legal.id === card.id)) {
-        throw new Error("CPU did not select a legal card");
-      }
-      const result = H.playCard(game, seat, card.id);
-      await this.applyResult(room, result);
-    } else {
-      throw new Error("CPU turn reached an unsupported game phase");
-    }
+    const action = executeCpuTurn(room, now);
+    if (!action) return false;
+    if (action.kind === "card") await this.applyResult(room, action.result);
     clearCpuRetryState(room);
     this.queueCpuTurn(room);
     return true;
