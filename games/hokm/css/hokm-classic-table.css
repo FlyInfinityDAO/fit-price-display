@@ -6,8 +6,8 @@
   --hokm-wine-light:#781528;
   --hokm-gold:#d9b45c;
   --hokm-gold-light:#f6dfa0;
-  --hokm-felt:#075477;
-  --hokm-felt-deep:#043b59;
+  --hokm-felt:#641326;
+  --hokm-felt-deep:#390914;
   --hokm-card-ink:#151515;
 }
 html,body{min-height:100%;background-color:var(--hokm-burgundy)!important}
@@ -65,8 +65,8 @@ body{
   min-height:760px!important;padding:22px!important;
   border:9px solid #b98c43!important;border-radius:48% / 13%!important;
   background:
-    radial-gradient(ellipse at 50% 40%,rgba(36,126,157,.58),transparent 65%),
-    radial-gradient(ellipse at 50% 55%,#075477 0%,#064564 58%,#032c45 100%)!important;
+    radial-gradient(ellipse at 50% 40%,rgba(151,48,67,.34),transparent 65%),
+    radial-gradient(ellipse at 50% 55%,#74172b 0%,#591020 58%,#350711 100%)!important;
   box-shadow:
     0 0 0 4px #242126,0 0 0 7px #d5ad5a,
     inset 0 0 0 3px rgba(243,208,126,.72),
@@ -161,12 +161,12 @@ body{
 /* Center engraving and the card-flight language from the reference table. */
 .table-center{isolation:isolate}
 .table-center:before{
-  content:"سلطان حکم";
+  content:none;
   position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);
   z-index:0;white-space:nowrap;pointer-events:none;
-  color:rgba(204,228,237,.38);font-family:Tahoma,"Segoe UI",sans-serif;
+  color:rgba(237,206,170,.25);font-family:Tahoma,"Segoe UI",sans-serif;
   font-size:clamp(21px,4.2vw,43px);font-weight:800;letter-spacing:.02em;
-  text-shadow:0 2px 3px rgba(0,20,35,.8),0 0 18px rgba(190,224,236,.18);
+  text-shadow:0 2px 3px rgba(35,0,8,.65),0 0 18px rgba(230,185,145,.12);
 }
 .table-center:after{
   content:"♛";position:absolute;left:73%;top:32%;z-index:0;
