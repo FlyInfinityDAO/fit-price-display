@@ -58,6 +58,7 @@ export function queueCpuTurnState(room, now = Date.now()) {
   if (game?.phase === "playing") {
     delete game.turnStartedAt;
     delete game.turnDeadlineAt;
+    delete game.pausedTurnRemainingMs;
   }
   return cpuTurnAt;
 }
@@ -99,6 +100,7 @@ export function pauseTurnClockForDisconnectedPlayer(room, seat, now = Date.now()
   const game = room.match?.round;
   if (!game || game.finished) return false;
   if (game.phase === "choose-trump" && game.hakem === seat) {
+    if (Number.isFinite(room.pausedTrumpRemainingMs)) return true;
     room.pausedTrumpRemainingMs = Number.isFinite(room.trumpDeadlineAt)
       ? Math.max(0, room.trumpDeadlineAt - now)
       : H.TURN_TIMEOUT_MS;
@@ -106,6 +108,7 @@ export function pauseTurnClockForDisconnectedPlayer(room, seat, now = Date.now()
     return true;
   }
   if (game.phase !== "playing" || game.currentPlayer !== seat) return false;
+  if (Number.isFinite(game.pausedTurnRemainingMs)) return true;
   const remaining = Number.isFinite(game.turnDeadlineAt)
     ? Math.max(0, game.turnDeadlineAt - now)
     : H.TURN_TIMEOUT_MS;
@@ -131,8 +134,9 @@ export function resumeTurnClockForReconnectedPlayer(room, seat, now = Date.now()
   const remaining = Number.isFinite(game.pausedTurnRemainingMs)
     ? Math.max(0, game.pausedTurnRemainingMs)
     : H.TURN_TIMEOUT_MS;
-  game.turnStartedAt = now;
-  game.turnDeadlineAt = now + remaining;
+  const startAt = Math.max(now, room.cardFlightUntil || 0, room.lastTrickClearAt || 0);
+  game.turnStartedAt = startAt;
+  game.turnDeadlineAt = startAt + remaining;
   delete game.pausedTurnRemainingMs;
   return true;
 }
