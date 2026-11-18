@@ -211,21 +211,27 @@ export class HokmRoom extends DurableObject {
   }
   async playCpuTurn(room, now) {
     const game = room.match?.round;
-    if (!game || room.status !== "playing") return;
+    if (!game || room.status !== "playing" || !isCpuTurn(room)) return false;
     if (game.phase === "choose-trump") {
-      const suit = H.chooseCpuTrump(game, game.hakem, room.match.difficulty || "normal");
+      const seat = game.hakem;
+      const suit = H.chooseCpuTrump(game, seat, room.match.difficulty || "normal");
+      if (!H.SUITS.includes(suit)) throw new Error("CPU selected an invalid trump suit");
       H.chooseTrump(game, suit);
       H.startTurnClock(game, now);
     } else if (game.phase === "playing") {
       const seat = game.currentPlayer;
       const card = H.chooseCpuCard(game, seat, room.match.difficulty || "normal");
+      if (!card || !H.legalCards(game, seat).some(legal => legal.id === card.id)) {
+        throw new Error("CPU did not select a legal card");
+      }
       const result = H.playCard(game, seat, card.id);
-      if (!game.finished) H.startTurnClock(game, now);
-      else { delete game.turnStartedAt; delete game.turnDeadlineAt; }
       await this.applyResult(room, result);
+    } else {
+      throw new Error("CPU turn reached an unsupported game phase");
     }
     clearCpuRetryState(room);
     this.queueCpuTurn(room);
+    return true;
   }
   async scheduleAlarm(room) {
     const times = [];
@@ -355,6 +361,11 @@ export class HokmRoom extends DurableObject {
       changed = true;
     }
     const game = room.match?.round;
+    // Self-heal a lost CPU alarm: every active CPU turn must have a queued alarm.
+    if (room.status === "playing" && isCpuTurn(room) && !room.cpuTurnAt && !room.cpuTurnBlocked) {
+      this.queueCpuTurn(room);
+      changed = true;
+    }
     if (room.status === "playing" && room.cpuTurnAt && now >= room.cpuTurnAt) {
       delete room.cpuTurnAt;
       try { await this.playCpuTurn(room, now); changed = true; }
