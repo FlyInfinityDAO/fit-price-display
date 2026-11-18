@@ -1,6 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 import "../../engine/hokm-engine.js";
-import { clearCpuRetryState, createRoomSnapshot, isCpuTurn, nextHakemAfterRound, queueCpuTurnState, scheduleCpuRetryAt } from "./room-logic.js";
+import { clearCpuRetryState, createRoomSnapshot, isCpuTurn, nextHakemAfterRound, pauseTurnClockForDisconnectedPlayer, prepareNextTurnClock, queueCpuTurnState, resumeTurnClockForReconnectedPlayer, scheduleCpuRetryAt } from "./room-logic.js";
 
 const H = globalThis.HokmEngine;
 const ROOM_TTL = 6 * 60 * 60;
@@ -145,6 +145,11 @@ export class HokmRoom extends DurableObject {
     if (matchPlayer?.connectionStatus === "replaced") return json({ ok: false, error: "Reconnect window expired; this seat is now controlled by CPU" }, 409);
     const deadline = matchPlayer?.reconnectDeadlineAt || player.reconnectUntil;
     if (deadline && Date.now() >= deadline) return json({ ok: false, error: "Reconnect window expired" }, 409);
+    if (room.match && matchPlayer?.connectionStatus === "disconnected") {
+      const resumed = H.reconnectPlayer(room.match, player.seat, Date.now());
+      if (!resumed.reconnected) return json({ ok: false, error: "Reconnect window expired" }, 409);
+      resumeTurnClockForReconnectedPlayer(room, player.seat, Date.now());
+    }
     const pair = new WebSocketPair();
     const [client, server] = Object.values(pair);
     this.ctx.acceptWebSocket(server);
@@ -158,13 +163,7 @@ export class HokmRoom extends DurableObject {
         try { existing.close(4001, "Reconnected on another client"); } catch {}
       }
     }
-    if (room.match) {
-      if (matchPlayer) {
-        matchPlayer.connectionStatus = "connected";
-        delete matchPlayer.disconnectedAt;
-        delete matchPlayer.reconnectDeadlineAt;
-      }
-    }
+
     await this.maybeStart(room);
     await this.saveRoom(room);
     await this.scheduleAlarm(room);
@@ -284,9 +283,13 @@ export class HokmRoom extends DurableObject {
         await this.applyResult(room, result);
         this.queueCpuTurn(room);
       } else if (data.type === "leave") {
+        const now = Date.now();
         player.connected = false;
-        player.reconnectUntil = Date.now() + H.RECONNECT_GRACE_MS;
-        if (room.match) H.markPlayerDisconnected(room.match, player.seat);
+        player.reconnectUntil = now + H.RECONNECT_GRACE_MS;
+        if (room.match) {
+          H.markPlayerDisconnected(room.match, player.seat, now);
+          pauseTurnClockForDisconnectedPlayer(room, player.seat, now);
+        }
       } else {
         throw new Error("Unknown game action");
       }
@@ -317,8 +320,7 @@ export class HokmRoom extends DurableObject {
     }
     if (!game.finished) {
       const nextTurnAt = result.completed ? room.lastTrickClearAt : room.cardFlightUntil;
-      game.turnStartedAt = nextTurnAt;
-      game.turnDeadlineAt = nextTurnAt + H.TURN_TIMEOUT_MS;
+      prepareNextTurnClock(room, nextTurnAt);
     }
     await this.scheduleAlarm(room);
   }
@@ -423,10 +425,14 @@ export class HokmRoom extends DurableObject {
       return cleanWallet(current.wallet) === cleanWallet(attachment.wallet) && current.seat === attachment.seat;
     });
     if (anotherLiveSocket) return;
+    const now = Date.now();
     player.connected = false;
-    player.reconnectUntil = Date.now() + H.RECONNECT_GRACE_MS;
+    player.reconnectUntil = now + H.RECONNECT_GRACE_MS;
     if (room.match) {
-      try { H.markPlayerDisconnected(room.match, player.seat); } catch {}
+      try {
+        H.markPlayerDisconnected(room.match, player.seat, now);
+        pauseTurnClockForDisconnectedPlayer(room, player.seat, now);
+      } catch {}
     }
     await this.saveRoom(room);
     await this.scheduleAlarm(room);
