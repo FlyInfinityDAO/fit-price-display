@@ -351,6 +351,7 @@ function renderState(s){
   picker.hidden=!mayChoose;
   if(game.phase==="choose-trump"&&!mayChoose&&s.status==="playing"){const chosen=players.find(p=>p.seat===game.hakem);const label=chosen?.cpu?t("cpu")+" · "+t("seat")+" "+(game.hakem+1):t("seat")+" "+(game.hakem+1);status(t("hakemChosen").replace("{player}",label));}
   const activePlayer=players.find(p=>p.seat===activeSeat);
+  const activeLabel=activePlayer?.cpu?t("cpu")+" · "+t("seat")+" "+(activeSeat+1):activePlayer?.you?t("you"):shortWalletLabel(activePlayer?.wallet)||t("seat")+" "+(activeSeat+1);
   const cpuThinking=!!(s.status==="playing"&&activePlayer?.cpu&&Number.isFinite(s.cpuTurnAt));
   if(cpuThinking)startCountdown(s.cpuTurnAt,"cpu",activeLabel);
   else if(s.status==="playing"&&Number.isFinite(game.turnDeadlineAt))startCountdown(game.turnDeadlineAt,"turn",activeLabel);
