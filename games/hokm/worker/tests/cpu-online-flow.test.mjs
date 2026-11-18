@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import "../../engine/hokm-engine.js";
-import { isCpuTurn, queueCpuTurnState } from "../src/room-logic.js";
+import { executeCpuTurn, isCpuTurn, queueCpuTurnState } from "../src/room-logic.js";
 
 const H = globalThis.HokmEngine;
 
@@ -99,4 +99,48 @@ test("CPU turn queue recovers when a CPU becomes active without a pre-existing a
   assert.equal(scheduled, 5650);
   assert.equal(room.cpuTurnAt, scheduled);
   assert.equal(isCpuTurn(room), true);
+});
+
+
+test("the real CPU turn executor completes CPU Hakem selection and the opening card", () => {
+  for (let seed = 1; seed <= 12; seed++) {
+    const players = [
+      { seat: 0, kind: "human", balance: 1, wallet: "human-0", connectionStatus: "connected" },
+      { seat: 1, kind: "human", balance: 1, wallet: "human-1", connectionStatus: "connected" },
+      { seat: 2, kind: "cpu", balance: 0, wallet: "cpu-2", connectionStatus: "replaced" },
+      { seat: 3, kind: "cpu", balance: 0, wallet: "cpu-3", connectionStatus: "replaced" }
+    ];
+    const match = H.createMatch({ mode: "online", players, difficulty: "hard", allowCpuSeats: true });
+    H.startRound(match, { humanSeat: 0, hakem: 2, rng: seeded(seed) });
+    const room = { status: "playing", players, match };
+    assert.equal(isCpuTurn(room), true);
+    const selected = executeCpuTurn(room, 10000, seeded(seed + 100));
+    assert.equal(selected.kind, "trump");
+    assert.ok(H.SUITS.includes(selected.suit));
+    assert.equal(match.round.phase, "playing");
+    assert.equal(match.round.trump, selected.suit);
+    assert.equal(match.round.currentPlayer, 2);
+    const opening = executeCpuTurn(room, 11000, seeded(seed + 200));
+    assert.equal(opening.kind, "card");
+    assert.ok(H.legalCards({ ...match.round, trick: [] }, 2).length >= 0);
+    assert.equal(match.round.trick.length, 1);
+    assert.equal(match.round.trick[0].player, 2);
+    assert.equal(match.round.trick[0].card.id, opening.card.id);
+  }
+});
+
+test("Hakem is the seat receiving the first Ace in the complete dealing order", () => {
+  for (let seed = 1; seed <= 30; seed++) {
+    const game = H.createGame({ mode: "online", humanSeat: 0, rng: seeded(seed) });
+    const deal = [];
+    for (let round = 0; round < 5; round++) {
+      for (let seat = 0; seat < 4; seat++) deal.push({ seat, card: game.hands[seat][round] });
+    }
+    for (let index = game.remaining.length - 1; index >= 0; index--) {
+      deal.push({ seat: (deal.length % 4), card: game.remaining[index] });
+    }
+    const firstAce = deal.find(entry => entry.card.rank === "A");
+    assert.ok(firstAce);
+    assert.equal(game.hakem, firstAce.seat);
+  }
 });
