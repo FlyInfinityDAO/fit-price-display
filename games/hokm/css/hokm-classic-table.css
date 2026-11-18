@@ -280,3 +280,19 @@ body{
  .seat-north .hand-north{width:92vw}
  .hand-side .hokm-card-back{flex-basis:23px;height:34px}
 }
+
+/* Winning seat acknowledgement after the four-card trick is collected. */
+.player-chip.hokm-trick-winner{
+ border-color:#fff0ae!important;
+ box-shadow:0 0 0 2px rgba(246,218,142,.55),0 0 24px rgba(246,211,126,.72),inset 0 1px rgba(255,255,255,.3)!important;
+ animation:hokmTrickWinner 1.05s ease-in-out 2;
+}
+@keyframes hokmTrickWinner{
+ 0%,100%{filter:brightness(1);transform:scale(1)}
+ 45%{filter:brightness(1.32);transform:scale(1.045)}
+}
+.trick-cards .played-card{will-change:transform,opacity}
+@media(prefers-reduced-motion:reduce){
+ .player-chip.hokm-trick-winner{animation:none!important}
+ .trick-cards .played-card{will-change:auto}
+}
