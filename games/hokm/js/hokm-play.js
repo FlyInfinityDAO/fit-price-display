@@ -84,6 +84,12 @@ function renderSeats(){
   if(small){small.textContent=seat===0?(game&&game.currentPlayer===0?tr("yourTurn"):tr("yourHand")):((game&&game.currentPlayer===seat)?tr("thinking"):"CPU");}
   if(em)em.textContent=String(counts[seat]||0);
   node.classList.toggle("active",!!game&&!game.finished&&game.currentPlayer===seat);
+  const isHakem=!!game&&game.hakem===seat;
+  node.classList.toggle("hakem-seat",isHakem);
+  let crown=node.querySelector(".hokm-hakem-crown");
+  if(isHakem){
+   if(!crown){crown=document.createElement("span");crown.className="hokm-hakem-crown";crown.textContent="♛";crown.title="Hakem";crown.setAttribute("aria-hidden","true");node.appendChild(crown)}
+  }else crown?.remove();
  }
 }
 function animateCardFlight(node,source){
@@ -132,7 +138,7 @@ function animateTrickCollection(winnerSeat){
   document.body.appendChild(clone);node.style.opacity="0";
   return new Promise(resolve=>{
    let done=false,animation;
-   const finish=()=>{if(done)return;done=true;node.style.opacity="";clone.remove();try{animation&&animation.cancel()}catch{}resolve()};
+   const oldOpacity=node.style.opacity;const finish=()=>{if(done)return;done=true;node.style.opacity=oldOpacity;clone.remove();try{animation&&animation.cancel()}catch{}resolve()};
    animation=clone.animate([
     {opacity:1,transform:"translate3d(0,0,0) scale(1) rotate(0deg)"},
     {opacity:1,transform:"translate3d("+dx*.45+"px,"+dy*.45+"px,0) scale(.78) rotate("+(index%2?7:-7)+"deg)",offset:.58},
