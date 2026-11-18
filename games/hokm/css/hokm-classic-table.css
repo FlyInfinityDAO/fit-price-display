@@ -157,3 +157,35 @@ body{
  .played-card{width:32px!important;height:48px!important;font-size:19px!important}
 }
 @media(prefers-reduced-motion:reduce){.player-chip.active{animation:none!important}}
+
+/* Center engraving and the card-flight language from the reference table. */
+.table-center{isolation:isolate}
+.table-center:before{
+  content:"سلطان حکم";
+  position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);
+  z-index:0;white-space:nowrap;pointer-events:none;
+  color:rgba(204,228,237,.38);font-family:Tahoma,"Segoe UI",sans-serif;
+  font-size:clamp(21px,4.2vw,43px);font-weight:800;letter-spacing:.02em;
+  text-shadow:0 2px 3px rgba(0,20,35,.8),0 0 18px rgba(190,224,236,.18);
+}
+.table-center:after{
+  content:"♛";position:absolute;left:73%;top:32%;z-index:0;
+  color:rgba(218,194,144,.25);font-size:clamp(30px,5vw,52px);
+  transform:rotate(18deg);pointer-events:none;
+}
+.table-center .table-meta,.table-center .trick-cards,.table-center .table-message{z-index:1}
+.trick-cards .played-card:not(.empty){
+  animation:hokmClassicCardSettle .28s cubic-bezier(.18,.8,.25,1) both;
+}
+@keyframes hokmClassicCardSettle{
+  from{opacity:.45;filter:brightness(1.25);scale:.9}
+  to{opacity:1;filter:brightness(1);scale:1}
+}
+.hokm-card-source-active{
+  border-color:#f4d98d!important;
+  box-shadow:0 0 0 2px rgba(244,217,141,.5),0 0 22px rgba(244,217,141,.7)!important;
+  filter:brightness(1.12);
+}
+@media(prefers-reduced-motion:reduce){
+ .trick-cards .played-card:not(.empty){animation:none!important}
+}
