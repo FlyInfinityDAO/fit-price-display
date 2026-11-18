@@ -5,14 +5,14 @@ if(!H)return;
 const CARD_FLIGHT_MS=1600,TRICK_HOLD_MS=1300;
 const $=id=>document.getElementById(id);
 const I={
-en:{start:"Start solo match",next:"Start next round",restart:"New match",choose:"Choose Hokm suit",yourHand:"Your cards",thinking:"CPU is thinking…",yourTurn:"Your turn · play a legal card",turn:"Turn",seconds:"sec",round:"Round",tricks:"Tricks",team0:"SOUTH · NORTH",team1:"WEST · EAST",won:"Team won the round",matchWon:"Match complete",lost:"The other team won the round",finished:"You won the match!",matchLost:"Match finished · CPU team wins",tie:"Match drawn",needAuth:"Connect your wallet and verify at least 1 FIT to start.",selectTrump:"You are the Hakem. Choose the Hokm suit from your first five cards.",playing:"Follow suit when possible. Your turn is highlighted.",cpuTrump:"CPU Hakem is choosing the Hokm suit…",nextRound:"Round complete. Start the next round when ready.",access:"Access verified. You can now start a solo match.",easy:"Easy",normal:"Normal",hard:"Hard",noCards:"No legal cards available.",auto:"Time expired — a legal card was played automatically.",roundCount:"of",limit:"rounds",trump:"Hokm suit"},
-fa:{start:"شروع بازی تک‌نفره",next:"شروع دست بعدی",restart:"مسابقه جدید",choose:"انتخاب خال حکم",yourHand:"کارت‌های شما",thinking:"هوش مصنوعی در حال بازی است…",yourTurn:"نوبت شماست · یک کارت مجاز انتخاب کنید",turn:"نوبت",seconds:"ثانیه",round:"دست",tricks:"دست‌های برده",team0:"تیم جنوب · شمال",team1:"تیم غرب · شرق",won:"این دست را تیم شما برد",matchWon:"مسابقه تمام شد",lost:"تیم مقابل این دست را برد",finished:"شما برنده مسابقه شدید!",matchLost:"مسابقه تمام شد · تیم هوش مصنوعی برنده شد",tie:"مسابقه مساوی شد",needAuth:"برای شروع، کیف پول را متصل و حداقل ۱ FIT را تأیید کنید.",selectTrump:"شما حاکم هستید. از پنج کارت اول خود خال حکم را انتخاب کنید.",playing:"در صورت امکان باید از خال شروع‌شده پیروی کنید. نوبت شما مشخص شده است.",cpuTrump:"حاکمِ هوش مصنوعی در حال انتخاب خال حکم است…",nextRound:"این دست تمام شد. هر زمان آماده بودید دست بعدی را شروع کنید.",access:"دسترسی تأیید شد. اکنون می‌توانید بازی تک‌نفره را شروع کنید.",easy:"آسان",normal:"متوسط",hard:"سخت",noCards:"کارت مجازی برای بازی وجود ندارد.",auto:"زمان تمام شد؛ یک کارت مجاز به‌صورت خودکار بازی شد.",roundCount:"از",limit:"دست",trump:"حکم"},
-ar:{start:"ابدأ مباراة فردية",next:"ابدأ الجولة التالية",restart:"مباراة جديدة",choose:"اختر نوع الحكم",yourHand:"أوراقك",thinking:"الذكاء الاصطناعي يفكر…",yourTurn:"دورك · اختر ورقة قانونية",turn:"الدور",seconds:"ث",round:"الجولة",tricks:"الأكلات",team0:"فريق الجنوب · الشمال",team1:"فريق الغرب · الشرق",won:"فاز فريقك بالجولة",matchWon:"اكتملت المباراة",lost:"فاز الفريق الآخر بالجولة",finished:"لقد فزت بالمباراة!",matchLost:"انتهت المباراة · فاز فريق الكمبيوتر",tie:"تعادل",needAuth:"اربط محفظتك وتحقق من امتلاك 1 FIT على الأقل للبدء.",selectTrump:"أنت الحاكم. اختر الحكم من أوراقك الخمس الأولى.",playing:"اتبع النوع إذا أمكن. دورك مميز.",cpuTrump:"الحاكم الآلي يختار الحكم…",nextRound:"انتهت الجولة. ابدأ التالية عندما تكون جاهزاً.",access:"تم التحقق من الوصول. يمكنك بدء مباراة فردية.",easy:"سهل",normal:"متوسط",hard:"صعب",noCards:"لا توجد أوراق قانونية.",auto:"انتهى الوقت — تم لعب ورقة قانونية تلقائياً.",roundCount:"من",limit:"جولات",trump:"الحكم"},
-tr:{start:"Tek kişilik oyunu başlat",next:"Sonraki eli başlat",restart:"Yeni maç",choose:"Koz rengini seç",yourHand:"Kartların",thinking:"Yapay zekâ düşünüyor…",yourTurn:"Senin sıran · yasal bir kart seç",turn:"Sıra",seconds:"sn",round:"El",tricks:"Alınan eller",team0:"GÜNEY · KUZEY",team1:"BATI · DOĞU",won:"Bu eli takımın kazandı",matchWon:"Maç tamamlandı",lost:"Bu eli diğer takım kazandı",finished:"Maçı kazandın!",matchLost:"Maç bitti · bilgisayar kazandı",tie:"Maç berabere",needAuth:"Başlamak için cüzdanını bağla ve en az 1 FIT doğrula.",selectTrump:"Hakem sensin. İlk beş kartından kozu seç.",playing:"Mümkünse renge uy. Sıran vurgulanır.",cpuTrump:"Bilgisayar hakemi koz seçiyor…",nextRound:"El bitti. Hazır olduğunda sonraki eli başlat.",access:"Erişim doğrulandı. Tek kişilik maçı başlatabilirsin.",easy:"Kolay",normal:"Normal",hard:"Zor",noCards:"Yasal kart yok.",auto:"Süre doldu — yasal bir kart otomatik oynandı.",roundCount:" / ",limit:"el",trump:"KOZ"},
-ru:{start:"Начать одиночную игру",next:"Следующий раунд",restart:"Новый матч",choose:"Выберите козырь",yourHand:"Ваши карты",thinking:"Компьютер думает…",yourTurn:"Ваш ход · выберите допустимую карту",turn:"Ход",seconds:"сек",round:"Раунд",tricks:"Взятки",team0:"ЮГ · СЕВЕР",team1:"ЗАПАД · ВОСТОК",won:"Команда выиграла раунд",matchWon:"Матч завершён",lost:"Другая команда выиграла раунд",finished:"Вы выиграли матч!",matchLost:"Матч завершён · победил компьютер",tie:"Ничья",needAuth:"Подключите кошелёк и подтвердите минимум 1 FIT.",selectTrump:"Вы раздающий. Выберите козырь из первых пяти карт.",playing:"Следуйте масти, если можете. Ваш ход выделен.",cpuTrump:"Компьютер выбирает козырь…",nextRound:"Раунд завершён. Начните следующий, когда будете готовы.",access:"Доступ подтверждён. Можно начать одиночную игру.",easy:"Легко",normal:"Средне",hard:"Сложно",noCards:"Нет допустимых карт.",auto:"Время вышло — карта сыграна автоматически.",roundCount:"из",limit:"раундов",trump:"КОЗЫРЬ"},
-zh:{start:"开始单人游戏",next:"开始下一局",restart:"新比赛",choose:"选择主牌花色",yourHand:"你的手牌",thinking:"电脑正在思考…",yourTurn:"轮到你 · 请选择合法牌",turn:"回合",seconds:"秒",round:"局",tricks:"赢得墩数",team0:"南 · 北队",team1:"西 · 东队",won:"你的队伍赢得本局",matchWon:"比赛结束",lost:"另一队赢得本局",finished:"你赢得了比赛！",matchLost:"比赛结束 · 电脑队获胜",tie:"平局",needAuth:"连接钱包并验证至少持有 1 FIT 后开始。",selectTrump:"你是庄家。从前五张牌中选择主牌花色。",playing:"如果可能，请跟随首张牌的花色。",cpuTrump:"电脑庄家正在选择主牌…",nextRound:"本局结束。准备好后开始下一局。",easy:"简单",normal:"普通",hard:"困难",noCards:"没有合法的牌。",auto:"时间到 — 已自动打出一张合法牌。",roundCount:"共",limit:"局",trump:"主牌"},
-es:{start:"Iniciar partida individual",next:"Iniciar siguiente ronda",restart:"Nueva partida",choose:"Elegir triunfo",yourHand:"Tus cartas",thinking:"La CPU está pensando…",yourTurn:"Tu turno · juega una carta válida",turn:"Turno",seconds:"s",round:"Ronda",tricks:"Bazas",team0:"SUR · NORTE",team1:"OESTE · ESTE",won:"Tu equipo ganó la ronda",matchWon:"Partida completada",lost:"El otro equipo ganó la ronda",finished:"¡Ganaste la partida!",matchLost:"Partida terminada · gana la CPU",tie:"Empate",needAuth:"Conecta tu cartera y verifica al menos 1 FIT para empezar.",selectTrump:"Eres el hakim. Elige el triunfo entre tus cinco primeras cartas.",playing:"Debes asistir al palo si puedes. Tu turno está resaltado.",cpuTrump:"El hakim de la CPU está eligiendo triunfo…",nextRound:"Ronda terminada. Inicia la siguiente cuando quieras.",access:"Acceso verificado. Ya puedes iniciar una partida individual.",easy:"Fácil",normal:"Normal",hard:"Difícil",noCards:"No hay cartas legales.",auto:"Se acabó el tiempo: se jugó una carta legal automáticamente.",roundCount:"de",limit:"rondas",trump:"TRIUNFO"},
-pt:{start:"Iniciar partida solo",next:"Iniciar próxima rodada",restart:"Nova partida",choose:"Escolher trunfo",yourHand:"Suas cartas",thinking:"A CPU está pensando…",yourTurn:"Sua vez · jogue uma carta válida",turn:"Vez",seconds:"s",round:"Rodada",tricks:"Vazas",team0:"SUL · NORTE",team1:"OESTE · LESTE",won:"Sua equipe venceu a rodada",matchWon:"Partida concluída",lost:"A outra equipe venceu a rodada",finished:"Você venceu a partida!",matchLost:"Partida encerrada · CPU venceu",tie:"Empate",needAuth:"Conecte sua carteira e verifique pelo menos 1 FIT para começar.",selectTrump:"Você é o hakim. Escolha o trunfo entre suas cinco primeiras cartas.",playing:"Siga o naipe se possível. Sua vez fica destacada.",cpuTrump:"O hakim da CPU está escolhendo o trunfo…",nextRound:"Rodada concluída. Inicie a próxima quando estiver pronto.",access:"Acesso verificado. Você já pode iniciar uma partida solo.",easy:"Fácil",normal:"Normal",hard:"Difícil",noCards:"Não há cartas válidas.",auto:"O tempo acabou — uma carta válida foi jogada automaticamente.",roundCount:"de",limit:"rodadas",trump:"TRUNFO"}
+en:{start:"Start solo match",next:"Start next round",restart:"New match",choose:"Choose Hokm suit",yourHand:"Your cards",thinking:"CPU is thinking…",yourTurn:"Your turn · play a legal card",turn:"Turn",seconds:"sec",round:"Round",tricks:"Tricks",team0:"SOUTH · NORTH",team1:"WEST · EAST",won:"Team won the round",matchWon:"Match complete",lost:"The other team won the round",finished:"You won the match!",matchLost:"Match finished · CPU team wins",tie:"Match drawn",needAuth:"Connect your wallet and verify at least 1 FIT to start.",selectTrump:"You are the Hakem. Choose the Hokm suit from your first five cards.",playing:"Follow suit when possible. Your turn is highlighted.",cpuTrump:"CPU Hakem is choosing the Hokm suit…",nextRound:"Round complete. Start the next round when ready.",access:"Access verified. You can now start a solo match.",easy:"Easy",normal:"Normal",hard:"Hard",veryHard:"Very Hard",noCards:"No legal cards available.",auto:"Time expired — a legal card was played automatically.",roundCount:"of",limit:"rounds",trump:"Hokm suit"},
+fa:{start:"شروع بازی تک‌نفره",next:"شروع دست بعدی",restart:"مسابقه جدید",choose:"انتخاب خال حکم",yourHand:"کارت‌های شما",thinking:"هوش مصنوعی در حال بازی است…",yourTurn:"نوبت شماست · یک کارت مجاز انتخاب کنید",turn:"نوبت",seconds:"ثانیه",round:"دست",tricks:"دست‌های برده",team0:"تیم جنوب · شمال",team1:"تیم غرب · شرق",won:"این دست را تیم شما برد",matchWon:"مسابقه تمام شد",lost:"تیم مقابل این دست را برد",finished:"شما برنده مسابقه شدید!",matchLost:"مسابقه تمام شد · تیم هوش مصنوعی برنده شد",tie:"مسابقه مساوی شد",needAuth:"برای شروع، کیف پول را متصل و حداقل ۱ FIT را تأیید کنید.",selectTrump:"شما حاکم هستید. از پنج کارت اول خود خال حکم را انتخاب کنید.",playing:"در صورت امکان باید از خال شروع‌شده پیروی کنید. نوبت شما مشخص شده است.",cpuTrump:"حاکمِ هوش مصنوعی در حال انتخاب خال حکم است…",nextRound:"این دست تمام شد. هر زمان آماده بودید دست بعدی را شروع کنید.",access:"دسترسی تأیید شد. اکنون می‌توانید بازی تک‌نفره را شروع کنید.",easy:"آسان",normal:"متوسط",hard:"سخت",veryHard:"بسیار سخت",noCards:"کارت مجازی برای بازی وجود ندارد.",auto:"زمان تمام شد؛ یک کارت مجاز به‌صورت خودکار بازی شد.",roundCount:"از",limit:"دست",trump:"حکم"},
+ar:{start:"ابدأ مباراة فردية",next:"ابدأ الجولة التالية",restart:"مباراة جديدة",choose:"اختر نوع الحكم",yourHand:"أوراقك",thinking:"الذكاء الاصطناعي يفكر…",yourTurn:"دورك · اختر ورقة قانونية",turn:"الدور",seconds:"ث",round:"الجولة",tricks:"الأكلات",team0:"فريق الجنوب · الشمال",team1:"فريق الغرب · الشرق",won:"فاز فريقك بالجولة",matchWon:"اكتملت المباراة",lost:"فاز الفريق الآخر بالجولة",finished:"لقد فزت بالمباراة!",matchLost:"انتهت المباراة · فاز فريق الكمبيوتر",tie:"تعادل",needAuth:"اربط محفظتك وتحقق من امتلاك 1 FIT على الأقل للبدء.",selectTrump:"أنت الحاكم. اختر الحكم من أوراقك الخمس الأولى.",playing:"اتبع النوع إذا أمكن. دورك مميز.",cpuTrump:"الحاكم الآلي يختار الحكم…",nextRound:"انتهت الجولة. ابدأ التالية عندما تكون جاهزاً.",access:"تم التحقق من الوصول. يمكنك بدء مباراة فردية.",easy:"سهل",normal:"متوسط",hard:"صعب",veryHard:"صعب جداً",noCards:"لا توجد أوراق قانونية.",auto:"انتهى الوقت — تم لعب ورقة قانونية تلقائياً.",roundCount:"من",limit:"جولات",trump:"الحكم"},
+tr:{start:"Tek kişilik oyunu başlat",next:"Sonraki eli başlat",restart:"Yeni maç",choose:"Koz rengini seç",yourHand:"Kartların",thinking:"Yapay zekâ düşünüyor…",yourTurn:"Senin sıran · yasal bir kart seç",turn:"Sıra",seconds:"sn",round:"El",tricks:"Alınan eller",team0:"GÜNEY · KUZEY",team1:"BATI · DOĞU",won:"Bu eli takımın kazandı",matchWon:"Maç tamamlandı",lost:"Bu eli diğer takım kazandı",finished:"Maçı kazandın!",matchLost:"Maç bitti · bilgisayar kazandı",tie:"Maç berabere",needAuth:"Başlamak için cüzdanını bağla ve en az 1 FIT doğrula.",selectTrump:"Hakem sensin. İlk beş kartından kozu seç.",playing:"Mümkünse renge uy. Sıran vurgulanır.",cpuTrump:"Bilgisayar hakemi koz seçiyor…",nextRound:"El bitti. Hazır olduğunda sonraki eli başlat.",access:"Erişim doğrulandı. Tek kişilik maçı başlatabilirsin.",easy:"Kolay",normal:"Normal",hard:"Zor",veryHard:"Çok Zor",noCards:"Yasal kart yok.",auto:"Süre doldu — yasal bir kart otomatik oynandı.",roundCount:" / ",limit:"el",trump:"KOZ"},
+ru:{start:"Начать одиночную игру",next:"Следующий раунд",restart:"Новый матч",choose:"Выберите козырь",yourHand:"Ваши карты",thinking:"Компьютер думает…",yourTurn:"Ваш ход · выберите допустимую карту",turn:"Ход",seconds:"сек",round:"Раунд",tricks:"Взятки",team0:"ЮГ · СЕВЕР",team1:"ЗАПАД · ВОСТОК",won:"Команда выиграла раунд",matchWon:"Матч завершён",lost:"Другая команда выиграла раунд",finished:"Вы выиграли матч!",matchLost:"Матч завершён · победил компьютер",tie:"Ничья",needAuth:"Подключите кошелёк и подтвердите минимум 1 FIT.",selectTrump:"Вы раздающий. Выберите козырь из первых пяти карт.",playing:"Следуйте масти, если можете. Ваш ход выделен.",cpuTrump:"Компьютер выбирает козырь…",nextRound:"Раунд завершён. Начните следующий, когда будете готовы.",access:"Доступ подтверждён. Можно начать одиночную игру.",easy:"Легко",normal:"Средне",hard:"Сложно",veryHard:"Очень сложно",noCards:"Нет допустимых карт.",auto:"Время вышло — карта сыграна автоматически.",roundCount:"из",limit:"раундов",trump:"КОЗЫРЬ"},
+zh:{start:"开始单人游戏",next:"开始下一局",restart:"新比赛",choose:"选择主牌花色",yourHand:"你的手牌",thinking:"电脑正在思考…",yourTurn:"轮到你 · 请选择合法牌",turn:"回合",seconds:"秒",round:"局",tricks:"赢得墩数",team0:"南 · 北队",team1:"西 · 东队",won:"你的队伍赢得本局",matchWon:"比赛结束",lost:"另一队赢得本局",finished:"你赢得了比赛！",matchLost:"比赛结束 · 电脑队获胜",tie:"平局",needAuth:"连接钱包并验证至少持有 1 FIT 后开始。",selectTrump:"你是庄家。从前五张牌中选择主牌花色。",playing:"如果可能，请跟随首张牌的花色。",cpuTrump:"电脑庄家正在选择主牌…",nextRound:"本局结束。准备好后开始下一局。",easy:"简单",normal:"普通",hard:"困难",veryHard:"极难",noCards:"没有合法的牌。",auto:"时间到 — 已自动打出一张合法牌。",roundCount:"共",limit:"局",trump:"主牌"},
+es:{start:"Iniciar partida individual",next:"Iniciar siguiente ronda",restart:"Nueva partida",choose:"Elegir triunfo",yourHand:"Tus cartas",thinking:"La CPU está pensando…",yourTurn:"Tu turno · juega una carta válida",turn:"Turno",seconds:"s",round:"Ronda",tricks:"Bazas",team0:"SUR · NORTE",team1:"OESTE · ESTE",won:"Tu equipo ganó la ronda",matchWon:"Partida completada",lost:"El otro equipo ganó la ronda",finished:"¡Ganaste la partida!",matchLost:"Partida terminada · gana la CPU",tie:"Empate",needAuth:"Conecta tu cartera y verifica al menos 1 FIT para empezar.",selectTrump:"Eres el hakim. Elige el triunfo entre tus cinco primeras cartas.",playing:"Debes asistir al palo si puedes. Tu turno está resaltado.",cpuTrump:"El hakim de la CPU está eligiendo triunfo…",nextRound:"Ronda terminada. Inicia la siguiente cuando quieras.",access:"Acceso verificado. Ya puedes iniciar una partida individual.",easy:"Fácil",normal:"Normal",hard:"Difícil",veryHard:"Muy difícil",noCards:"No hay cartas legales.",auto:"Se acabó el tiempo: se jugó una carta legal automáticamente.",roundCount:"de",limit:"rondas",trump:"TRIUNFO"},
+pt:{start:"Iniciar partida solo",next:"Iniciar próxima rodada",restart:"Nova partida",choose:"Escolher trunfo",yourHand:"Suas cartas",thinking:"A CPU está pensando…",yourTurn:"Sua vez · jogue uma carta válida",turn:"Vez",seconds:"s",round:"Rodada",tricks:"Vazas",team0:"SUL · NORTE",team1:"OESTE · LESTE",won:"Sua equipe venceu a rodada",matchWon:"Partida concluída",lost:"A outra equipe venceu a rodada",finished:"Você venceu a partida!",matchLost:"Partida encerrada · CPU venceu",tie:"Empate",needAuth:"Conecte sua carteira e verifique pelo menos 1 FIT para começar.",selectTrump:"Você é o hakim. Escolha o trunfo entre suas cinco primeiras cartas.",playing:"Siga o naipe se possível. Sua vez fica destacada.",cpuTrump:"O hakim da CPU está escolhendo o trunfo…",nextRound:"Rodada concluída. Inicie a próxima quando estiver pronto.",access:"Acesso verificado. Você já pode iniciar uma partida solo.",easy:"Fácil",normal:"Normal",hard:"Difícil",veryHard:"Muito difícil",noCards:"Não há cartas válidas.",auto:"O tempo acabou — uma carta válida foi jogada automaticamente.",roundCount:"de",limit:"rodadas",trump:"TRUNFO"}
 };
 let lang="en",tier=0,difficulty="normal",match=null,game=null,visibleTrick=[],roundResult=null,turnTimer=null,turnDeadline=0,turnInterval=null,locked=false;
 const tr=k=>(I[lang]&&I[lang][k])||I.en[k]||k;
@@ -84,6 +84,12 @@ function renderSeats(){
   if(small){small.textContent=seat===0?(game&&game.currentPlayer===0?tr("yourTurn"):tr("yourHand")):((game&&game.currentPlayer===seat)?tr("thinking"):"CPU");}
   if(em)em.textContent=String(counts[seat]||0);
   node.classList.toggle("active",!!game&&!game.finished&&game.currentPlayer===seat);
+  const isHakem=!!game&&game.hakem===seat;
+  node.classList.toggle("hakem-seat",isHakem);
+  let crown=node.querySelector(".hokm-hakem-crown");
+  if(isHakem){
+   if(!crown){crown=document.createElement("span");crown.className="hokm-hakem-crown";crown.textContent="♛";crown.title="Hakem";crown.setAttribute("aria-hidden","true");node.appendChild(crown)}
+  }else crown?.remove();
  }
 }
 function animateCardFlight(node,source){
@@ -118,6 +124,31 @@ function animatePlayedCard(node,entry,seat){
  if(label)node.dataset.playerLabel=label;else delete node.dataset.playerLabel;
  return animateCardFlight(node,source);
 }
+function animateTrickCollection(winnerSeat){
+ const nodes=[...document.querySelectorAll(".trick-cards .played-card:not(.empty)")];
+ const target=document.querySelector(seatElements(winnerSeat).chip);
+ if(!nodes.length||!target||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return Promise.resolve();
+ const to=target.getBoundingClientRect();if(!to.width||!to.height)return Promise.resolve();
+ target.classList.add("hokm-trick-winner");
+ const jobs=nodes.map((node,index)=>{
+  const from=node.getBoundingClientRect();if(!from.width||!from.height)return Promise.resolve();
+  const clone=node.cloneNode(true),dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+to.height/2)-(from.top+from.height/2);
+  clone.removeAttribute("id");clone.removeAttribute("data-player-label");
+  Object.assign(clone.style,{position:"fixed",left:from.left+"px",top:from.top+"px",width:from.width+"px",height:from.height+"px",margin:"0",zIndex:"10001",pointerEvents:"none",transformOrigin:"center center"});
+  document.body.appendChild(clone);node.style.opacity="0";
+  return new Promise(resolve=>{
+   let done=false,animation;
+   const oldOpacity=node.style.opacity;const finish=()=>{if(done)return;done=true;node.style.opacity=oldOpacity;clone.remove();try{animation&&animation.cancel()}catch{}resolve()};
+   animation=clone.animate([
+    {opacity:1,transform:"translate3d(0,0,0) scale(1) rotate(0deg)"},
+    {opacity:1,transform:"translate3d("+dx*.45+"px,"+dy*.45+"px,0) scale(.78) rotate("+(index%2?7:-7)+"deg)",offset:.58},
+    {opacity:0,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(.18) rotate("+(index%2?16:-16)+"deg)"}
+   ],{duration:560,easing:"cubic-bezier(.3,.05,.65,1)",delay:index*55,fill:"both"});
+   animation.onfinish=finish;animation.oncancel=finish;
+  });
+ });
+ return Promise.all(jobs).then(()=>{target.classList.remove("hokm-trick-winner")});
+}
 function renderTrick(){
  const nodes=[...document.querySelectorAll(".trick-cards .played-card")],entries=visibleTrick.length?visibleTrick:(game?game.trick:[]);
  nodes.forEach(node=>{node.classList.add("empty");node.classList.remove("red","black");node.removeAttribute("data-player-label");node.textContent="·"});
@@ -137,12 +168,7 @@ function render(){
  const round=document.querySelector(".round-info b");if(round&&match)round.textContent=match.roundNo+" / "+match.maxRounds;
  $("hokmHandCaption").textContent=game.phase==="choose-trump"?tr("selectTrump"):tr("playing");return flights;
 }
-function chooseCpuTrump(){
- const hand=game.hands[game.hakem];
- const scores=H.SUITS.map(s=>({s,score:hand.filter(c=>c.suit===s).reduce((v,c)=>v+(c.rank==="A"?5:c.rank==="K"?3:c.rank==="Q"?2:c.rank==="J"?1:0),0)+hand.filter(c=>c.suit===s).length*3}));
- scores.sort((a,b)=>b.score-a.score);
- return scores[0].s;
-}
+function chooseCpuTrump(){return H.chooseCpuTrump(game,game.hakem,difficulty)}
 function updateTrumpOptions(){
  const picker=$("hokmTrumpPicker");
  picker.hidden=false;$("hokmTrumpTitle").textContent=tr("choose");
@@ -158,9 +184,15 @@ function beginRound(hakem){
  setStatus(tr("cpuTrump"));setMessage(tr("cpuTrump"));
  turnTimer=setTimeout(()=>{if(!game||game.phase!=="choose-trump")return;const suit=chooseCpuTrump();H.chooseTrump(game,suit);cardFxSafe("deal-more");render();setStatus(tr("playing"));setMessage(tr("playing"));advance();},700);
 }
-function startMatch(){
+function setSoloDifficultyLock(locked){
+  const select=$("cpuDifficulty");if(!select)return;
+  if(locked)select.dataset.soloLocked="true";else delete select.dataset.soloLocked;
+  select.disabled=locked||select.dataset.onlineLocked==="true";
+ }
+ function startMatch(){
  if(!tier){setStatus(tr("needAuth"));return}
  stopTimers();match=H.createMatch({mode:"solo",players:[{seat:0,kind:"human",balance:tier>=2?10:1},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}],difficulty});
+  setSoloDifficultyLock(true);
  $("hokmGameControls").hidden=false;$("hokmStartBtn").hidden=true;$("hokmNextBtn").hidden=true;$("hokmRestartBtn").hidden=true;
  beginRound();
 }
@@ -189,15 +221,15 @@ function startClock(){
 function playHumanCard(id){
  if(!game||game.phase!=="playing"||game.currentPlayer!==0||locked)return;
  try{
-  clearClock();const result=H.playCardWithClock(game,0,id);onCardPlayed(result,false);
+  clearClock();const result=H.playCardWithClock(game,0,id,Date.now(),difficulty);onCardPlayed(result,false);
  }catch(e){setStatus(e.message)}
 }
 function onCardPlayed(result,automatic){
  locked=true;if(result.completed){visibleTrick=result.trick;cardFxSafe("collect")}else{visibleTrick=[];cardFxSafe("play")}
  const flight=render();if(automatic){setStatus(tr("auto"));setMessage(tr("auto"))}
  flight.then(()=>{
-  if(result.roundWinner!==undefined){turnTimer=setTimeout(()=>completeRound(result.roundWinner),TRICK_HOLD_MS);return}
-  if(result.completed){setStatus(tr("playing"));setMessage(tr("playing"));turnTimer=setTimeout(()=>{visibleTrick=[];locked=false;render();advance()},TRICK_HOLD_MS);return}
+  if(result.roundWinner!==undefined){turnTimer=setTimeout(()=>{animateTrickCollection(result.winner).then(()=>completeRound(result.roundWinner))},TRICK_HOLD_MS);return}
+  if(result.completed){setStatus(tr("playing"));setMessage(tr("playing"));turnTimer=setTimeout(()=>{animateTrickCollection(result.winner).then(()=>{visibleTrick=[];locked=false;render();advance()})},TRICK_HOLD_MS);return}
   locked=false;
   if(game.currentPlayer===0){startClock();setStatus(tr("yourTurn"));setMessage(tr("yourTurn"));render()}
   else{setStatus(tr("thinking"));setMessage(tr("thinking"));advance()}
@@ -211,7 +243,7 @@ function advance(){
  turnTimer=setTimeout(()=>{
   if(!game||game.finished||game.currentPlayer!==seat||locked)return;
   try{const card=H.chooseCpuCard(game,seat,difficulty);const result=H.playCard(game,seat,card.id);onCardPlayed(result,false)}catch(e){setStatus(e.message)}
- },difficulty==="hard"?650:difficulty==="normal"?520:380);
+ },difficulty==="veryhard"?850:difficulty==="hard"?650:difficulty==="normal"?520:380);
 }
 function completeRound(winner){
  stopTimers();visibleTrick=[];render();
@@ -222,6 +254,7 @@ function completeRound(winner){
  setStatus(message+" · "+match.matchPoints[0]+" : "+match.matchPoints[1]);
  setMessage(message);
  if(result.matchFinished){
+   setSoloDifficultyLock(false);
   const final=result.matchWinner===0?tr("finished"):result.matchWinner===1?tr("matchLost"):tr("tie");
   setStatus(tr("matchWon")+" · "+final);setMessage(final);
   $("hokmRestartBtn").textContent=tr("restart");$("hokmRestartBtn").hidden=false;
@@ -240,7 +273,7 @@ ensureControls();
 $("hokmGameControls").hidden=true;
 $("languageSelect").addEventListener("change",e=>setLanguage(e.target.value));
 window.addEventListener("hokm:language-changed",e=>setLanguage(e.detail?.lang||$("languageSelect").value));
-$("cpuDifficulty").addEventListener("change",e=>{difficulty=["easy","normal","hard"].includes(e.target.value)?e.target.value:"normal"});
+$("cpuDifficulty").addEventListener("change",e=>{difficulty=["easy","normal","hard","veryhard"].includes(e.target.value)?e.target.value:"normal"});
 function activateAuthenticated(d){
  tier=Number(d&&d.tier)||0;setLanguage($("languageSelect").value||"en");
  $("hokmGameControls").hidden=false;$("hokmStartBtn").hidden=false;$("hokmStartBtn").disabled=!tier;$("hokmStartBtn").textContent=tr("start");$("hokmNextBtn").hidden=true;$("hokmRestartBtn").hidden=true;
@@ -250,7 +283,7 @@ window.addEventListener("hokm:authenticated",e=>activateAuthenticated(e.detail||
 // Recover authentication if wallet verification completed before this controller attached its listener.
 if(window.hokmAuthState)activateAuthenticated(window.hokmAuthState);
 window.addEventListener("hokm:access-revoked",()=>{
- stopTimers();tier=0;match=null;game=null;visibleTrick=[];$("hokmGameControls").hidden=false;$("hokmStartBtn").disabled=true;$("hokmStartBtn").hidden=false;setStatus(tr("needAuth"));
+ stopTimers();tier=0;match=null;game=null;visibleTrick=[];setSoloDifficultyLock(false);$("hokmGameControls").hidden=false;$("hokmStartBtn").disabled=true;$("hokmStartBtn").hidden=false;setStatus(tr("needAuth"));
  document.querySelectorAll(".hand").forEach(el=>{el.replaceChildren(...Array.from({length:13},()=>makeBack()))});
  document.querySelectorAll(".trick-cards .played-card").forEach(el=>{el.classList.add("empty");el.textContent="·"});
  const trump=document.getElementById("tableTrumpSuit");if(trump)trump.textContent="—";const hakem=document.getElementById("tableHakem");if(hakem)hakem.textContent="—";

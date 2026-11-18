@@ -18,7 +18,7 @@ Object.entries(EXTRA_WORDS).forEach(([locale,values])=>Object.assign(words[local
 const t=k=>(words[$("languageSelect")?.value]||words.en)[k]||(words.en[k])||k;
 const ROOM_SESSION_KEY="hokmFlyInfinityRoom";
 let auth=null, socket=null, roomCode="", ownSeat=-1, lastState=null, timer=null, connecting=false, intentionalClose=false;
-let reconnectTimer=null,reconnectAttempt=0,reconnecting=false;
+let reconnectTimer=null,reconnectAttempt=0,reconnecting=false,collectionTimer=null,lastCollectedTrickKey="";
 function ensurePanel(){
  if($("hokmOnlinePanel"))return;
  const settings=document.querySelector(".match-settings");
@@ -99,6 +99,7 @@ function openSocket(ticket){
     else if(afterTrick>beforeTrick)window.HokmAudio?.card("play");
    }else if(next.status==="playing"&&next.game)window.HokmAudio?.card("deal");
    lastState=next;ownSeat=next.seat;renderState(next);
+   queueOnlineTrickCollection(next);
   }
   else if(data.type==="error")status(friendlyError(data.error),true);
  });
@@ -158,6 +159,47 @@ async function copyRoomCode(){
  catch{const input=$("hokmRoomCodeInput");input.value=roomCode;input.select();status(t("copyFallback"))}
 }
 function displaySeat(seat){return (seat-ownSeat+4)%4}
+function queueOnlineTrickCollection(state){
+ const trick=state?.game?.lastTrick;
+ if(!Array.isArray(trick)||trick.length!==4||!state.game.trump)return;
+ const key=trick.map(entry=>String(entry.card?.id||entry.card?.rank+entry.card?.suit)+"@"+entry.player).join("|")+"#"+state.game.trump;
+ if(key===lastCollectedTrickKey)return;
+ lastCollectedTrickKey=key;
+ if(collectionTimer)clearTimeout(collectionTimer);
+ collectionTimer=setTimeout(()=>animateOnlineTrickCollection(trick,state.game.trump),CARD_FLIGHT_MS+250);
+}
+function animateOnlineTrickCollection(trick,trump){
+ if(!Array.isArray(trick)||trick.length!==4||!window.HokmEngine?.trickWinner)return;
+ const winnerSeat=window.HokmEngine.trickWinner(trick,trump);
+ const target=document.querySelector(seatEls(displaySeat(winnerSeat)).chip);
+ const nodes=[...document.querySelectorAll(".trick-cards .played-card:not(.empty)")];
+ if(!target||nodes.length!==4||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+ const to=target.getBoundingClientRect();
+ if(!to.width||!to.height)return;
+ target.classList.add("hokm-trick-winner");
+ const jobs=nodes.map((node,index)=>{
+  const from=node.getBoundingClientRect();
+  if(!from.width||!from.height)return Promise.resolve();
+  const clone=node.cloneNode(true),oldOpacity=node.style.opacity;
+  clone.removeAttribute("id");clone.removeAttribute("data-player-label");
+  Object.assign(clone.style,{position:"fixed",left:from.left+"px",top:from.top+"px",width:from.width+"px",height:from.height+"px",margin:"0",zIndex:"10001",pointerEvents:"none",transformOrigin:"center center"});
+  document.body.appendChild(clone);
+  node.style.opacity="0";
+  return new Promise(resolve=>{
+   let done=false,animation;
+   const finish=()=>{if(done)return;done=true;node.style.opacity=oldOpacity;clone.remove();try{animation&&animation.cancel()}catch{}resolve()};
+   const dx=(to.left+to.width/2)-(from.left+from.width/2);
+   const dy=(to.top+to.height/2)-(from.top+from.height/2);
+   animation=clone.animate([
+    {opacity:1,transform:"translate3d(0,0,0) scale(1) rotate(0deg)"},
+    {opacity:1,transform:"translate3d("+dx*.45+"px,"+dy*.45+"px,0) scale(.78) rotate("+(index%2?7:-7)+"deg)",offset:.58},
+    {opacity:0,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(.18) rotate("+(index%2?16:-16)+"deg)"}
+   ],{duration:620,easing:"cubic-bezier(.3,.05,.65,1)",delay:index*45,fill:"both"});
+   animation.onfinish=finish;animation.oncancel=finish;
+  });
+ });
+ Promise.all(jobs).then(()=>target.classList.remove("hokm-trick-winner"));
+}
 
 function makeSeatRing(kind){const ring=document.createElement("span");ring.className="hokm-seat-ring "+kind;ring.setAttribute("aria-hidden","true");return ring}
 function renderSeatRing(chip,kind,deadline,now){let ring=chip.querySelector(".hokm-seat-ring."+kind);if(!deadline){ring?.remove();return}if(!ring){ring=makeSeatRing(kind);chip.appendChild(ring)}const total=kind==="turn"?30000:(lastState?.game?.reconnectGraceMs||60000);const left=Math.max(0,deadline-now);ring.style.setProperty("--ring-progress",String(Math.max(0,Math.min(1,left/total))));ring.textContent=String(Math.ceil(left/1000));ring.title=kind==="turn"?t("turnCountdown"):t("reconnectCountdown");}
@@ -209,6 +251,13 @@ function cardNode(card,playable){
 function renderState(s){
  if(!$("hokmOnlinePanel"))return;
  const players=s.players||[],me=players.find(p=>p.you),game=s.game;
+ const difficultySelect=$("cpuDifficulty");
+ const onlineDifficultyLocked=players.some(p=>p.cpu)||!!s.match;
+ if(difficultySelect){
+  if(["easy","normal","hard","veryhard"].includes(s.cpuDifficulty))difficultySelect.value=s.cpuDifficulty;
+  difficultySelect.dataset.onlineLocked=String(onlineDifficultyLocked);
+   difficultySelect.disabled=onlineDifficultyLocked||difficultySelect.dataset.soloLocked==="true";
+ }
  const activeSeat=game?(game.phase==="choose-trump"?game.hakem:game.currentPlayer):null;
  const waitingCount=players.filter(p=>p.connected).length;
  $("hokmRoomInvite").hidden=false;$("hokmRoomCode").textContent=s.code;
@@ -233,7 +282,7 @@ function renderState(s){
     if(em)em.textContent=String((game.tricksWon||[])[actual]||0);
     chip.classList.toggle("active",activeSeat===actual&&s.status==="playing");
     chip.classList.toggle("hakem-seat",game.hakem===actual);
-    let crown=chip.querySelector(".hokm-hakem-crown");if(game.hakem===actual){if(!crown){crown=document.createElement("span");crown.className="hokm-hakem-crown";crown.textContent="♛";crown.title=t("hakem");chip.appendChild(crown)}}else crown?.remove();
+    let crown=chip.querySelector(".hokm-hakem-crown");if(game.hakem===actual){if(!crown){crown=document.createElement("span");crown.className="hokm-hakem-crown";crown.textContent="♛";crown.setAttribute("aria-hidden","true");chip.appendChild(crown)}crown.title=t("hakem")}else crown?.remove();
    }
    if(hand){
     const cards=actual===ownSeat?(game.ownHand||[]):Array.from({length:hands[actual]||0},()=>null);
@@ -316,8 +365,9 @@ function startCountdown(deadline){
 function stopCountdown(){if(timer)clearInterval(timer);timer=null}
 function reset(){
  intentionalClose=true;if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null}if(socket){socket.close();socket=null}
- sessionStorage.removeItem(ROOM_SESSION_KEY);stopCountdown();lastState=null;roomCode="";ownSeat=-1;auth=null;
+ if(collectionTimer){clearTimeout(collectionTimer);collectionTimer=null}lastCollectedTrickKey=""; sessionStorage.removeItem(ROOM_SESSION_KEY);stopCountdown();lastState=null;roomCode="";ownSeat=-1;auth=null;
  if($("hokmOnlinePanel")){$("hokmOnlinePanel").hidden=true;$("hokmRoomInvite").hidden=true;$("hokmCpuControls").hidden=true;$("hokmOnlineTrump").hidden=true;status(t("need"))}
+ const difficultySelect=$("cpuDifficulty");if(difficultySelect){delete difficultySelect.dataset.onlineLocked;difficultySelect.disabled=difficultySelect.dataset.soloLocked==="true";}
 }
 function activate(d){
  auth=d||null;

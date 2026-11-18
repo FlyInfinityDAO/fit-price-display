@@ -1,5 +1,6 @@
 import { DurableObject } from "cloudflare:workers";
 import "../../engine/hokm-engine.js";
+import { clearCpuRetryState, createRoomSnapshot, isCpuTurn, nextHakemAfterRound, queueCpuTurnState, scheduleCpuRetryAt } from "./room-logic.js";
 
 const H = globalThis.HokmEngine;
 const ROOM_TTL = 6 * 60 * 60;
@@ -12,19 +13,6 @@ const json = (data, status = 200) => new Response(JSON.stringify(data), {
   status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" }
 });
 const cleanWallet = value => typeof value === "string" ? value.toLowerCase() : "";
-const publicPlayer = (p, viewer, match) => {
-  const matchPlayer = match?.players.find(x => x.seat === p.seat);
-  return {
-    seat: p.seat,
-    wallet: p.kind === "cpu" ? null : p.wallet.slice(0, 6) + "…" + p.wallet.slice(-4).toUpperCase(),
-    you: p.wallet === viewer,
-    tier: p.tier,
-    connected: !!p.connected,
-    cpu: p.kind === "cpu" || !!p.replaced,
-    reconnectDeadlineAt: matchPlayer?.connectionStatus === "disconnected" ? (matchPlayer.reconnectDeadlineAt || null) : (!match && !p.connected ? (p.reconnectUntil || null) : null)
-  };
-};
-
 export class HokmRoom extends DurableObject {
   constructor(ctx, env) {
     super(ctx, env);
@@ -41,44 +29,7 @@ export class HokmRoom extends DurableObject {
   }
   // Team Hakem counts and access tier are match-level stats shared by every seat.
   snapshot(room, wallet) {
-    const seat = room.players.find(p => p.wallet === wallet)?.seat ?? -1;
-    const game = room.match?.round || null;
-    return {
-      code: room.code,
-      status: room.status,
-      cardFlightUntil: room.cardFlightUntil || null,
-      players: room.players.map(p => publicPlayer(p, wallet, room.match)),
-      seat,
-      maxPlayers: 4,
-      match: room.match ? {
-        maxRounds: room.match.maxRounds,
-        roundsPlayed: room.match.roundsPlayed,
-        matchPoints: room.match.matchPoints,
-        hakemCounts: room.match.hakemCounts || [0,0],
-        matchWinner: room.match.finished
-          ? ((room.match.hakemCounts || [0,0])[0] >= room.match.maxRounds ? 0 : 1)
-          : null,
-        accessTier: room.match.accessTier,
-        finished: room.match.finished
-      } : null,
-      game: game ? {
-        phase: game.phase,
-        hakem: game.hakem,
-        currentPlayer: game.currentPlayer,
-        trump: game.trump,
-        ownHand: game.hands[seat] || [],
-        handCounts: game.hands.map(hand => hand.length),
-        tricksWon: game.tricksWon,
-        trick: game.trick,
-        lastTrick: room.lastTrick || [],
-        teamTricks: game.teamTricks,
-        finished: game.finished,
-        turnDeadlineAt: game.turnDeadlineAt || room.trumpDeadlineAt || null,
-        reconnectGraceMs: H.RECONNECT_GRACE_MS,
-        roundWinner: room.roundWinner ?? null
-      } : null,
-      error: room.error || null
-    };
+    return createRoomSnapshot(room, wallet);
   }
   send(ws, payload) {
     try { ws.send(JSON.stringify(payload)); } catch {}
@@ -147,7 +98,7 @@ export class HokmRoom extends DurableObject {
     let body;
     try { body = await request.json(); } catch { return json({ ok: false, error: "Invalid JSON body" }, 400); }
     const seats = body?.seats;
-    const difficulty = ["easy", "normal", "hard"].includes(body?.difficulty) ? body.difficulty : "normal";
+    const difficulty = ["easy", "normal", "hard", "veryhard"].includes(body?.difficulty) ? body.difficulty : "normal";
     if (!Array.isArray(seats) || !([2, 3].every((s, i) => seats.length === 2 && seats[i] === s) && seats.length === 2) && !(seats.length === 1 && seats[0] === 3)) {
       return json({ ok: false, error: "Choose CPU seats 3 and 4, or seat 4 only" }, 400);
     }
@@ -248,35 +199,22 @@ export class HokmRoom extends DurableObject {
       H.startTurnClock(game);
       this.queueCpuTurn(room);
     } else if (room.match.players.find(p => p.seat === game.hakem)?.kind === "cpu") {
-      room.cpuTurnAt = Date.now() + 650;
       delete room.trumpDeadlineAt;
+      this.queueCpuTurn(room);
     } else {
       room.trumpDeadlineAt = Date.now() + TURN_TIMEOUT_MS;
     }
     await this.scheduleAlarm(room);
   }
   queueCpuTurn(room) {
-    const game = room.match?.round;
-    if (room.status !== "playing" || !game) { delete room.cpuTurnAt; return; }
-    const cpuSeat = game.phase === "choose-trump" ? game.hakem : game.currentPlayer;
-    const cpu = room.match.players.find(p => p.seat === cpuSeat)?.kind === "cpu";
-    if (cpu) {
-      delete room.trumpDeadlineAt;
-      room.cpuTurnAt = Math.max(room.cpuTurnAt || 0, Date.now() + 650, (room.cardFlightUntil || 0) + 650, (room.lastTrickClearAt || 0) + 650);
-    } else {
-      delete room.cpuTurnAt;
-    }
+    queueCpuTurnState(room);
   }
   async playCpuTurn(room, now) {
     const game = room.match?.round;
     if (!game || room.status !== "playing") return;
     if (game.phase === "choose-trump") {
-      const hand = game.hands[game.hakem] || [];
-      const scores = H.SUITS.map(suit => ({
-        suit,
-        score: hand.filter(card => card.suit === suit).reduce((sum, card) => sum + (card.rank === "A" ? 5 : card.rank === "K" ? 3 : card.rank === "Q" ? 2 : card.rank === "J" ? 1 : 0) + 3, 0)
-      })).sort((a, b) => b.score - a.score);
-      H.chooseTrump(game, scores[0]?.suit || H.SUITS[0]);
+      const suit = H.chooseCpuTrump(game, game.hakem, room.match.difficulty || "normal");
+      H.chooseTrump(game, suit);
       H.startTurnClock(game, now);
     } else if (game.phase === "playing") {
       const seat = game.currentPlayer;
@@ -286,6 +224,7 @@ export class HokmRoom extends DurableObject {
       else { delete game.turnStartedAt; delete game.turnDeadlineAt; }
       await this.applyResult(room, result);
     }
+    clearCpuRetryState(room);
     this.queueCpuTurn(room);
   }
   async scheduleAlarm(room) {
@@ -296,7 +235,7 @@ export class HokmRoom extends DurableObject {
     if (room.cardFlightUntil) times.push(room.cardFlightUntil);
     if (room.trumpDeadlineAt) times.push(room.trumpDeadlineAt);
     if (room.cpuTurnAt) times.push(room.cpuTurnAt);
-    if (game?.phase === "playing" && Number.isFinite(game.turnDeadlineAt)) times.push(game.turnDeadlineAt);
+    if (game?.phase === "playing" && Number.isFinite(game.turnDeadlineAt) && !isCpuTurn(room) && !room.cpuTurnBlocked) times.push(game.turnDeadlineAt);
     for (const p of room.players) {
       const mp = room.match?.players.find(x => x.seat === p.seat);
       const deadline = mp?.connectionStatus === "disconnected" ? mp.reconnectDeadlineAt : (!room.match ? p.reconnectUntil : null);
@@ -335,7 +274,7 @@ export class HokmRoom extends DurableObject {
         if (room.status !== "playing" || room.lastTrick?.length || (room.cardFlightUntil && Date.now() < room.cardFlightUntil)) throw new Error("Please wait for the current card animation to finish");
         const game = room.match?.round;
         if (!game || game.currentPlayer !== player.seat) throw new Error("It is not your turn");
-        const result = H.playCardWithClock(game, player.seat, String(data.cardId || ""));
+        const result = H.playCardWithClock(game, player.seat, String(data.cardId || ""), Date.now(), room.match?.difficulty || "normal");
         await this.applyResult(room, result);
         this.queueCpuTurn(room);
       } else if (data.type === "leave") {
@@ -389,6 +328,7 @@ export class HokmRoom extends DurableObject {
           const player = room.players.find(p => p.seat === seat);
           if (player) { player.connected = false; player.replaced = true; }
         }
+        this.queueCpuTurn(room);
         changed = true;
       }
     } else {
@@ -400,7 +340,7 @@ export class HokmRoom extends DurableObject {
     }
     if (room.status === "round-break" && room.match && !room.match.finished && room.nextRoundAt && now >= room.nextRoundAt) {
       const previousHakem = room.match.round.hakem;
-      const hakem = room.roundWinner === previousHakem % 2 ? previousHakem : H.nextSeat(previousHakem);
+      const hakem = nextHakemAfterRound(previousHakem, room.roundWinner);
       delete room.nextRoundAt;
       await this.startRound(room, hakem);
       changed = true;
@@ -418,29 +358,43 @@ export class HokmRoom extends DurableObject {
     if (room.status === "playing" && room.cpuTurnAt && now >= room.cpuTurnAt) {
       delete room.cpuTurnAt;
       try { await this.playCpuTurn(room, now); changed = true; }
-      catch (error) { room.error = error.message || "CPU turn failed"; changed = true; }
+      catch (error) {
+        const retryAt = scheduleCpuRetryAt(room, now);
+        if (!retryAt) room.cpuTurnBlocked = true;
+        room.error = retryAt
+          ? `CPU turn failed; retry ${room.cpuTurnFailures}/3 scheduled`
+          : (error.message || "CPU turn failed after 3 retries");
+        changed = true;
+      }
     }
     if (room.status === "playing" && game?.phase === "choose-trump" && room.trumpDeadlineAt && now >= room.trumpDeadlineAt) {
-      const hand = game.hands[game.hakem] || [];
-      const scores = H.SUITS.map(suit => ({
-        suit,
-        score: hand.filter(card => card.suit === suit).reduce((sum, card) => sum + (card.rank === "A" ? 5 : card.rank === "K" ? 3 : card.rank === "Q" ? 2 : card.rank === "J" ? 1 : 0) + 3, 0)
-      })).sort((a, b) => b.score - a.score);
-      H.chooseTrump(game, scores[0]?.suit || H.SUITS[0]);
+      const suit = H.chooseCpuTrump(game, game.hakem, room.match?.difficulty || "normal");
+      H.chooseTrump(game, suit);
       delete room.trumpDeadlineAt;
       H.startTurnClock(game);
       this.queueCpuTurn(room);
       changed = true;
     }
     if (room.status === "playing" && game?.phase === "playing" && Number.isFinite(game.turnDeadlineAt) && now >= game.turnDeadlineAt) {
-      try {
-        const result = H.resolveTurnTimeout(game, { now, difficulty: room.match?.difficulty || "normal" });
-        await this.applyResult(room, result);
-        this.queueCpuTurn(room);
-        changed = true;
-      } catch (error) {
-        room.error = error.message || "Turn timeout failed";
-        changed = true;
+      if (isCpuTurn(room)) {
+        // A seat that just expired its reconnect grace must enter the normal
+        // difficulty-aware CPU queue, not bypass it through the human timeout path.
+        // If all bounded recovery attempts failed, keep the room visible but do
+        // not immediately re-arm the same expired deadline in an alarm loop.
+        if (!room.cpuTurnBlocked) {
+          this.queueCpuTurn(room);
+          changed = true;
+        }
+      } else {
+        try {
+          const result = H.resolveTurnTimeout(game, { now, difficulty: room.match?.difficulty || "normal" });
+          await this.applyResult(room, result);
+          this.queueCpuTurn(room);
+          changed = true;
+        } catch (error) {
+          room.error = error.message || "Turn timeout failed";
+          changed = true;
+        }
       }
     }
     await this.saveRoom(room);
