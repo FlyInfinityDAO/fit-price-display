@@ -118,6 +118,31 @@ function animatePlayedCard(node,entry,seat){
  if(label)node.dataset.playerLabel=label;else delete node.dataset.playerLabel;
  return animateCardFlight(node,source);
 }
+function animateTrickCollection(winnerSeat){
+ const nodes=[...document.querySelectorAll(".trick-cards .played-card:not(.empty)")];
+ const target=document.querySelector(seatElements(winnerSeat).chip);
+ if(!nodes.length||!target||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return Promise.resolve();
+ const to=target.getBoundingClientRect();if(!to.width||!to.height)return Promise.resolve();
+ target.classList.add("hokm-trick-winner");
+ const jobs=nodes.map((node,index)=>{
+  const from=node.getBoundingClientRect();if(!from.width||!from.height)return Promise.resolve();
+  const clone=node.cloneNode(true),dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+to.height/2)-(from.top+from.height/2);
+  clone.removeAttribute("id");clone.removeAttribute("data-player-label");
+  Object.assign(clone.style,{position:"fixed",left:from.left+"px",top:from.top+"px",width:from.width+"px",height:from.height+"px",margin:"0",zIndex:"10001",pointerEvents:"none",transformOrigin:"center center"});
+  document.body.appendChild(clone);node.style.opacity="0";
+  return new Promise(resolve=>{
+   let done=false,animation;
+   const finish=()=>{if(done)return;done=true;node.style.opacity="";clone.remove();try{animation&&animation.cancel()}catch{}resolve()};
+   animation=clone.animate([
+    {opacity:1,transform:"translate3d(0,0,0) scale(1) rotate(0deg)"},
+    {opacity:1,transform:"translate3d("+dx*.45+"px,"+dy*.45+"px,0) scale(.78) rotate("+(index%2?7:-7)+"deg)",offset:.58},
+    {opacity:0,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(.18) rotate("+(index%2?16:-16)+"deg)"}
+   ],{duration:560,easing:"cubic-bezier(.3,.05,.65,1)",delay:index*55,fill:"both"});
+   animation.onfinish=finish;animation.oncancel=finish;
+  });
+ });
+ return Promise.all(jobs).then(()=>{target.classList.remove("hokm-trick-winner")});
+}
 function renderTrick(){
  const nodes=[...document.querySelectorAll(".trick-cards .played-card")],entries=visibleTrick.length?visibleTrick:(game?game.trick:[]);
  nodes.forEach(node=>{node.classList.add("empty");node.classList.remove("red","black");node.removeAttribute("data-player-label");node.textContent="·"});
@@ -197,8 +222,8 @@ function onCardPlayed(result,automatic){
  locked=true;if(result.completed){visibleTrick=result.trick;cardFxSafe("collect")}else{visibleTrick=[];cardFxSafe("play")}
  const flight=render();if(automatic){setStatus(tr("auto"));setMessage(tr("auto"))}
  flight.then(()=>{
-  if(result.roundWinner!==undefined){turnTimer=setTimeout(()=>completeRound(result.roundWinner),TRICK_HOLD_MS);return}
-  if(result.completed){setStatus(tr("playing"));setMessage(tr("playing"));turnTimer=setTimeout(()=>{visibleTrick=[];locked=false;render();advance()},TRICK_HOLD_MS);return}
+  if(result.roundWinner!==undefined){turnTimer=setTimeout(()=>{animateTrickCollection(result.winner).then(()=>completeRound(result.roundWinner))},TRICK_HOLD_MS);return}
+  if(result.completed){setStatus(tr("playing"));setMessage(tr("playing"));turnTimer=setTimeout(()=>{animateTrickCollection(result.winner).then(()=>{visibleTrick=[];locked=false;render();advance()})},TRICK_HOLD_MS);return}
   locked=false;
   if(game.currentPlayer===0){startClock();setStatus(tr("yourTurn"));setMessage(tr("yourTurn"));render()}
   else{setStatus(tr("thinking"));setMessage(tr("thinking"));advance()}
