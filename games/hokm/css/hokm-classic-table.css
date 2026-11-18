@@ -189,3 +189,94 @@ body{
 @media(prefers-reduced-motion:reduce){
  .trick-cards .played-card:not(.empty){animation:none!important}
 }
+
+/* Refined player seats and the traditional patterned card-back fan. */
+.player-chip{
+  position:relative;min-width:154px!important;min-height:62px;
+  padding:8px 12px 8px 9px!important;border-radius:9px!important;
+  border:1px solid #d7b45f!important;
+  background:linear-gradient(145deg,#80182a 0%,#5b0c1c 56%,#390611 100%)!important;
+  box-shadow:0 5px 12px rgba(0,0,0,.42),inset 0 1px rgba(255,240,194,.18),inset 0 -2px rgba(20,0,5,.28)!important;
+}
+.player-chip:before{
+  content:"";position:absolute;inset:3px;border:1px solid rgba(246,216,145,.2);
+  border-radius:6px;pointer-events:none;
+}
+.player-chip .avatar{
+  width:42px!important;height:42px!important;flex:0 0 42px;
+  border:2px solid #d5ae58;border-radius:4px!important;
+  background:linear-gradient(145deg,#a77b3a,#573018)!important;
+  box-shadow:0 2px 6px rgba(0,0,0,.4);
+}
+.player-chip b{color:#fff0d0!important;font-size:13px!important;font-weight:850}
+.player-chip small{color:#e5c7a8!important;font-size:9px!important}
+.player-chip em{
+  min-width:38px;padding:3px 6px;border:1px solid rgba(239,203,113,.75);
+  border-radius:999px;background:linear-gradient(180deg,#6d4515,#3a210b);
+  color:#ffdf83!important;text-align:center;font-size:11px;
+}
+.seat-north .hand-north{max-width:none!important;width:min(76vw,650px);justify-content:center;overflow:visible}
+.seat-north .hand-north .hokm-card-back{
+  flex:0 0 clamp(25px,3vw,36px);width:clamp(25px,3vw,36px);
+  height:clamp(38px,4.2vw,52px);margin-left:clamp(-14px,-1.1vw,-7px);
+}
+.seat-north .hand-north .hokm-card-back:first-child{margin-left:0}
+.hand-side .hokm-card-back{
+  position:relative;flex:0 0 31px;
+  border:1px solid #eee4ce!important;border-radius:3px!important;
+  outline:1px solid rgba(12,26,46,.8);outline-offset:-3px;
+}
+.hand-side .hokm-card-back:nth-child(4n+1){transform:translateX(-3px) rotate(-4deg)}
+.hand-side .hokm-card-back:nth-child(4n+2){transform:translateX(-1px) rotate(-2deg)}
+.hand-side .hokm-card-back:nth-child(4n+3){transform:translateX(2px) rotate(2deg)}
+.hand-side .hokm-card-back:nth-child(4n){transform:translateX(4px) rotate(4deg)}
+.hokm-card-back:before{
+  content:"";position:absolute;inset:4px;border:1px solid rgba(241,235,219,.82);
+  background:
+   repeating-linear-gradient(45deg,transparent 0 3px,rgba(241,235,219,.2) 3px 4px,transparent 4px 7px),
+   repeating-linear-gradient(-45deg,transparent 0 5px,rgba(241,235,219,.15) 5px 6px,transparent 6px 10px);
+  pointer-events:none;
+}
+.hokm-card-back:after{
+  content:"✥";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  display:grid;place-items:center;width:14px;height:14px;border:1px solid rgba(244,231,199,.9);
+  border-radius:50%;background:#172b46;color:#f0e4c7;font-size:9px;line-height:1;
+  text-shadow:0 1px 2px #07101c;
+}
+.hand-north .hokm-card-back:after{width:12px;height:12px}
+.hand-south .hokm-card{
+  border-radius:5px!important;
+  background:linear-gradient(145deg,#fffefa 0%,#f7f3eb 72%,#e5dfd4 100%)!important;
+}
+.hand-south .hokm-card .card-corner{font-size:13px!important}
+.hand-south .hokm-card .card-center{font-size:25px!important}
+.hand-south .hokm-card.playable{box-shadow:0 5px 12px rgba(0,0,0,.38),inset 0 0 0 1px #fff!important}
+.hand-south .hokm-card.playable:hover,.hand-south .hokm-card.playable:focus-visible{
+  transform:translateY(-13px)!important;z-index:40!important;
+}
+.table-center .played-card{
+  border-radius:4px!important;
+  box-shadow:0 7px 15px rgba(0,0,0,.46),inset 0 0 0 1px rgba(255,255,255,.85)!important;
+}
+.table-center .played-card:before{
+  border-color:rgba(224,190,108,.88)!important;
+  background:linear-gradient(145deg,#6a1022,#3b0713)!important;
+}
+@media(max-width:760px){
+ .player-chip{min-width:0!important;min-height:50px;padding:5px 6px!important}
+ .player-chip .avatar{width:30px!important;height:30px!important;flex-basis:30px}
+ .player-chip b{font-size:10px!important}
+ .player-chip em{min-width:25px;font-size:9px;padding:2px 4px}
+ .seat-north .hand-north{width:88vw}
+ .seat-north .hand-north .hokm-card-back{flex-basis:clamp(21px,5.4vw,29px);width:clamp(21px,5.4vw,29px);height:clamp(32px,8vw,42px);margin-left:-10px}
+ .seat-north .hand-north .hokm-card-back:first-child{margin-left:0}
+ .hand-side .hokm-card-back{flex-basis:25px;height:37px}
+ .hand-side .hokm-card-back:after{width:10px;height:10px;font-size:7px}
+ .hand-south .hokm-card .card-center{font-size:20px!important}
+}
+@media(max-width:420px){
+ .player-chip{min-height:44px!important}
+ .player-chip .avatar{width:25px!important;height:25px!important;flex-basis:25px}
+ .seat-north .hand-north{width:92vw}
+ .hand-side .hokm-card-back{flex-basis:23px;height:34px}
+}
