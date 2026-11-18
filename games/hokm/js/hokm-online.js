@@ -84,7 +84,7 @@ function openSocket(ticket){
  if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null}
  const wsUrl=API.replace(/^https:/,"wss:").replace(/^http:/,"ws:")+"/api/rooms/"+roomCode+"/ws?ticket="+encodeURIComponent(ticket);
  const ws=new WebSocket(wsUrl);socket=ws;
- ws.addEventListener("open",()=>{if(socket!==ws)return;reconnectAttempt=0;const ownChip=document.querySelector(seatEls(displaySeat(ownSeat)).chip);ownChip?.querySelector(".hokm-seat-ring.disconnect")?.remove();status(t("room")+" "+roomCode+" · "+t("connected"))});
+ ws.addEventListener("open",()=>{if(socket!==ws)return;reconnectAttempt=0;if(ownSeat>=0){const ownChip=document.querySelector(seatEls(displaySeat(ownSeat)).chip);ownChip?.querySelector(".hokm-seat-ring.disconnect")?.remove();}status(t("room")+" "+roomCode+" · "+t("connected"))});
  ws.addEventListener("message",event=>{
   let data;try{data=JSON.parse(event.data)}catch{return}
   if(data.type==="state"){
