@@ -72,6 +72,46 @@ export function nextHakemAfterRound(previousHakem, roundWinner) {
   return roundWinner === previousHakem % 2 ? previousHakem : H.nextSeat(previousHakem);
 }
 
+export function pauseTurnClockForDisconnectedPlayer(room, seat, now = Date.now()) {
+  const game = room.match?.round;
+  if (!game || game.phase !== "playing" || game.finished || game.currentPlayer !== seat) return false;
+  const remaining = Number.isFinite(game.turnDeadlineAt)
+    ? Math.max(0, game.turnDeadlineAt - now)
+    : H.TURN_TIMEOUT_MS;
+  game.pausedTurnRemainingMs = remaining;
+  delete game.turnStartedAt;
+  delete game.turnDeadlineAt;
+  return true;
+}
+
+export function resumeTurnClockForReconnectedPlayer(room, seat, now = Date.now()) {
+  const game = room.match?.round;
+  const player = room.match?.players.find(item => item.seat === seat);
+  if (!game || game.phase !== "playing" || game.finished || game.currentPlayer !== seat || !player || player.kind === "cpu") return false;
+  const remaining = Number.isFinite(game.pausedTurnRemainingMs)
+    ? Math.max(0, game.pausedTurnRemainingMs)
+    : H.TURN_TIMEOUT_MS;
+  game.turnStartedAt = now;
+  game.turnDeadlineAt = now + remaining;
+  delete game.pausedTurnRemainingMs;
+  return true;
+}
+
+export function prepareNextTurnClock(room, nextTurnAt) {
+  const game = room.match?.round;
+  if (!game || game.phase !== "playing" || game.finished) return;
+  const player = room.match.players.find(item => item.seat === game.currentPlayer);
+  if (!player || player.kind === "cpu" || player.connectionStatus === "disconnected" || player.connectionStatus === "replaced") {
+    delete game.turnStartedAt;
+    delete game.turnDeadlineAt;
+    delete game.pausedTurnRemainingMs;
+    return;
+  }
+  game.turnStartedAt = nextTurnAt;
+  game.turnDeadlineAt = nextTurnAt + H.TURN_TIMEOUT_MS;
+  delete game.pausedTurnRemainingMs;
+}
+
 export function createRoomSnapshot(room, wallet) {
   const seat = room.players.find(p => p.wallet === wallet)?.seat ?? -1;
   const game = room.match?.round || null;
@@ -111,6 +151,9 @@ export function createRoomSnapshot(room, wallet) {
       roundWinner: room.roundWinner ?? null
     } : null,
     cpuTurnAt: room.cpuTurnAt || null,
+    cpuTurnDelayMs: room.match?.difficulty === "veryhard" ? 850
+      : room.match?.difficulty === "hard" ? 650
+      : room.match?.difficulty === "normal" ? 520 : 380,
     cpuTurnBlocked: !!room.cpuTurnBlocked,
     cpuTurnFailures: room.cpuTurnFailures || 0,
     error: room.error || null
