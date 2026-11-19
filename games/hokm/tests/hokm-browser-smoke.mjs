@@ -1,11 +1,16 @@
 import { chromium, webkit } from "playwright";
 
-const baseURL = process.env.HOKM_PREVIEW_URL || "https://hokm-preview.fly-hokm-preview.pages.dev/games/hokm/";
+const baseURL = process.env.HOKM_PREVIEW_URL ||
+  "https://hokm-fix-layout-261119.fly-hokm-preview.pages.dev/games/hokm/";
 const failures = [];
-const browser = await chromium.launch({ headless: true });
 
-async function runViewport(browserType, name, viewport, mobile = false, language = "en") {
-  const context = await browserType.newContext({ viewport, isMobile: mobile && browserType === chromium, hasTouch: mobile });
+async function runViewport(browserType, name, viewport, mobile = false, language = "en", disableWebAnimations = false) {
+  const context = await browserType.newContext({
+    viewport,
+    serviceWorkers: "block",
+    isMobile: mobile && browserType === chromium,
+    hasTouch: mobile
+  });
   const page = await context.newPage();
   const pageErrors = [];
   const consoleErrors = [];
@@ -15,8 +20,33 @@ async function runViewport(browserType, name, viewport, mobile = false, language
   });
 
   try {
-    await page.addInitScript(() => {
-      window.hokmAuthState = { wallet: "0x0000000000000000000000000000000000000001", tier: 2 };
+    await page.addInitScript((disableAnimations) => {
+      if (disableAnimations) {
+        Object.defineProperty(Element.prototype, "animate", {
+          configurable: true,
+          writable: true,
+          value: undefined
+        });
+      }
+      const qaAuthState = {
+        wallet: "0x0000000000000000000000000000000000000001",
+        tier: 2,
+        expiresAt: Math.floor(Date.now() / 1000) + 3600,
+        sessionToken: "qa-only-browser-session"
+      };
+      // Keep the synthetic wallet confined to this Playwright page context.
+      // Production wallet initialization may clear an early assignment.
+      Object.defineProperty(window, "hokmAuthState", {
+        configurable: false,
+        enumerable: true,
+        get() { return qaAuthState; },
+        set(value) {
+          if (value && typeof value === "object") Object.assign(qaAuthState, value);
+        }
+      });
+      window.addEventListener("load", () => {
+        window.dispatchEvent(new CustomEvent("hokm:authenticated", { detail: qaAuthState }));
+      }, { once: true });
       window.__hokmCardClicks = 0;
       window.__hokmCardTouchEnds = 0;
       document.addEventListener("click", event => {
@@ -25,7 +55,8 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       document.addEventListener("touchend", event => {
         if (event.target.closest(".hand-south .hokm-card")) window.__hokmCardTouchEnds++;
       }, true);
-    });
+    }, disableWebAnimations);
+
     await page.goto(baseURL, { waitUntil: "domcontentloaded", timeout: 45000 });
     if (language !== "en") await page.locator("#languageSelect").selectOption(language);
     await page.waitForSelector("#hokmStartBtn:not([disabled])", { timeout: 15000 });
@@ -35,33 +66,83 @@ async function runViewport(browserType, name, viewport, mobile = false, language
     if (await trumpPicker.isVisible().catch(() => false)) {
       await trumpPicker.locator("[data-suit]").first().click();
     }
+    await page.waitForFunction(
+      () => {
+        const suit = document.getElementById("tableTrumpSuit")?.textContent?.trim();
+        return !!suit && suit !== "—";
+      },
+      null,
+      { timeout: 15000 }
+    );
+
+    // The start button is below the table. Center the felt before taking
+    // viewport-relative measurements; clicking controls can otherwise scroll
+    // the table above the viewport and create false negative coordinates.
+    await page.locator(".velvet-table").evaluate(element =>
+      element.scrollIntoView({ block: "center", inline: "center" })
+    );
+    await page.waitForTimeout(80);
 
     const seatLayout = await page.evaluate(() => {
-      const rect = selector => {
-        const element = document.querySelector(selector);
-        if (!element) throw new Error("Missing table element: " + selector);
+      const felt = document.querySelector(".velvet-table");
+      const center = document.querySelector(".table-center");
+      const trick = document.querySelector(".table-center .trick-cards");
+      if (!felt || !center || !trick) throw new Error("Missing Hokm table/felt/card area");
+      const box = element => {
         const r = element.getBoundingClientRect();
-        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+        return { x: r.x, y: r.y, width: r.width, height: r.height,
+          cx: r.left + r.width / 2, cy: r.top + r.height / 2 };
       };
-      const center = rect(".table-center");
-      const north = rect(".seat-north .player-chip");
-      const south = rect(".seat-south .player-chip");
-      const west = rect(".seat-west .player-chip");
-      const east = rect(".seat-east .player-chip");
-      const cards = [1, 2, 3, 4].map(index => rect(".trick-cards .played-card:nth-child(" + index + ")"));
+      const c = box(center);
+      const cards = [0, 1, 2, 3].map(slot => {
+        const node = document.querySelector(
+          '.table-center .played-card[data-trick-slot="' + slot + '"]'
+        );
+        if (!node) throw new Error("Missing directional card slot " + slot);
+        return { ...box(node), before: getComputedStyle(node, "::before").content };
+      });
+      const seats = {
+        north: box(document.querySelector(".seat-north .player-chip")),
+        west: box(document.querySelector(".seat-west .player-chip")),
+        east: box(document.querySelector(".seat-east .player-chip")),
+        south: box(document.querySelector(".seat-south .player-chip"))
+      };
+      const gridDisplay = getComputedStyle(trick).display;
+      const gridDirection = getComputedStyle(trick).direction;
+      const insideCenter = cards.every(card =>
+        card.width > 0 && card.height > 0 &&
+        card.x >= c.x - 1 && card.y >= c.y - 1 &&
+        card.x + card.width <= c.x + c.width + 1 &&
+        card.y + card.height <= c.y + c.height + 1
+      );
       return {
-        seats: north.y < center.y && south.y > center.y && west.x < center.x && east.x > center.x,
-        cards: cards[0].y > center.y && cards[1].x < center.x && cards[2].y < center.y && cards[3].x > center.x,
+        gridDisplay,
+        gridDirection,
+        seats: seats.north.cy < c.cy && seats.south.cy > c.cy &&
+          seats.west.cx < c.cx && seats.east.cx > c.cx,
+        slots: cards[0].cy > c.cy && cards[1].cx < c.cx &&
+          cards[2].cy < c.cy && cards[3].cx > c.cx,
+        insideCenter,
+        duplicateBeforeLabels: cards.some(card => card.before !== "none"),
+        center: c,
+        cards,
         direction: document.documentElement.dir
       };
     });
-    if (!seatLayout.seats || !seatLayout.cards) {
-      throw new Error("Physical seat/card positions are inconsistent: " + JSON.stringify(seatLayout));
+    if (
+      seatLayout.gridDisplay !== "grid" ||
+      seatLayout.gridDirection !== "ltr" ||
+      !seatLayout.seats ||
+      !seatLayout.slots ||
+      !seatLayout.insideCenter ||
+      seatLayout.duplicateBeforeLabels
+    ) {
+      throw new Error("Directional table/card layout failed: " + JSON.stringify(seatLayout));
     }
 
     const hand = page.locator(".hand-south .hokm-card");
     const playable = page.locator(".hand-south .hokm-card.playable");
-    await playable.first().waitFor({ state: "visible", timeout: 20000 });
+    await playable.first().waitFor({ state: "visible", timeout: 25000 });
 
     const before = await hand.count();
     const firstCard = playable.first();
@@ -74,13 +155,13 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       return {
         card: el.dataset.cardId,
         rect: { x: r.x, y: r.y, width: r.width, height: r.height },
-        topTag: top?.tagName || null,
-        topClass: top?.className?.toString?.() || "",
-        topCardId: top?.closest?.(".hokm-card")?.dataset?.cardId || null,
-        cardPointerEvents: getComputedStyle(el).pointerEvents,
-        topPointerEvents: top ? getComputedStyle(top).pointerEvents : null
+        hitCardId: top?.closest?.(".hokm-card")?.dataset?.cardId || null,
+        cardPointerEvents: getComputedStyle(el).pointerEvents
       };
     });
+    if (hitTest.hitCardId !== hitTest.card || hitTest.cardPointerEvents === "none") {
+      throw new Error("Human card is not the pointer hit target: " + JSON.stringify(hitTest));
+    }
 
     if (mobile) await firstCard.tap({ timeout: 10000 });
     else await firstCard.click({ timeout: 10000 });
@@ -91,8 +172,45 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       { timeout: 10000 }
     );
 
+    const humanLabel = await page.locator(".seat-south .player-chip b").innerText();
+    await page.waitForFunction(
+      label => [...document.querySelectorAll(".table-center .played-card[data-player-label]")]
+        .some(card => card.dataset.playerLabel === label),
+      humanLabel,
+      { timeout: 10000 }
+    );
+
+    const playedCardCheck = await page.evaluate(label => {
+      const card = [...document.querySelectorAll(".table-center .played-card[data-player-label]")]
+        .find(node => node.dataset.playerLabel === label);
+      if (!card) return { found: false };
+      const r = card.getBoundingClientRect();
+      const center = document.querySelector(".table-center").getBoundingClientRect();
+      return {
+        found: true,
+        slot: card.dataset.trickSlot,
+        playOrder: card.dataset.playOrder,
+        x: r.x, y: r.y, width: r.width, height: r.height,
+        belowCenter: r.top + r.height / 2 > center.top + center.height / 2,
+        before: getComputedStyle(card, "::before").content,
+        after: getComputedStyle(card, "::after").content,
+        ariaLabel: card.getAttribute("aria-label")
+      };
+    }, humanLabel);
+    if (
+      !playedCardCheck.found ||
+      playedCardCheck.slot !== "0" ||
+      !playedCardCheck.belowCenter ||
+      playedCardCheck.before !== "none" ||
+      playedCardCheck.after === "none" ||
+      !playedCardCheck.playOrder
+    ) {
+      throw new Error("Played card attribution/position failed: " + JSON.stringify(playedCardCheck));
+    }
+
     await page.waitForFunction(
       () => document.querySelectorAll(".hand-south .hokm-card.playable").length > 0,
+      null,
       { timeout: 25000 }
     );
     const secondBefore = await hand.count();
@@ -100,40 +218,77 @@ async function runViewport(browserType, name, viewport, mobile = false, language
     await secondCard.scrollIntoViewIfNeeded();
     if (mobile) await secondCard.tap({ timeout: 10000 });
     else await secondCard.click({ timeout: 10000 });
-
     await page.waitForFunction(
       expected => document.querySelectorAll(".hand-south .hokm-card").length === expected,
       secondBefore - 1,
       { timeout: 10000 }
     );
 
+    // Let the CPU seats finish the current trick, then verify the four-card
+    // collection completes and the original center slots are restored.
+    await page.waitForFunction(
+      () => document.querySelectorAll(".table-center .played-card:not(.empty)").length === 4,
+      null,
+      { timeout: 25000 }
+    );
+    await page.waitForFunction(
+      () => document.querySelectorAll(".table-center .played-card:not(.empty)").length === 0,
+      null,
+      { timeout: 9000 }
+    );
+    const collectionState = await page.evaluate(() => ({
+      visibleCards: document.querySelectorAll(".table-center .played-card:not(.empty)").length,
+      hiddenInlineCards: [...document.querySelectorAll(".table-center .played-card")]
+        .filter(card => card.style.opacity === "0").length,
+      winnerHighlights: document.querySelectorAll(".player-chip.hokm-trick-winner").length
+    }));
+    if (collectionState.visibleCards !== 0 || collectionState.hiddenInlineCards !== 0 ||
+        collectionState.winnerHighlights !== 0) {
+      throw new Error("Trick collection did not restore the table: " + JSON.stringify(collectionState));
+    }
+
     const activationCounts = await page.evaluate(() => ({
       clicks: window.__hokmCardClicks,
       touchEnds: window.__hokmCardTouchEnds
     }));
     const observedActivations = mobile ? activationCounts.touchEnds : activationCounts.clicks;
-    if (observedActivations < 2) throw new Error(`Only ${observedActivations} card activation events were observed`);
+    if (observedActivations < 2) {
+      throw new Error(`Only ${observedActivations} card activation events were observed`);
+    }
     if (pageErrors.length) throw new Error("Browser runtime errors: " + pageErrors.join(" | "));
 
-    console.log(JSON.stringify({ viewport: name, result: "PASS", firstHitTest: hitTest, activationCounts, consoleErrors }));
+    console.log(JSON.stringify({
+      viewport: name, result: "PASS", seatLayout, hitTest, playedCardCheck,
+      collectionState, fallbackAnimations: disableWebAnimations,
+      activationCounts, consoleErrors
+    }));
   } catch (error) {
     const diagnostics = await page.evaluate(() => {
       const hand = document.querySelector(".hand-south");
-      const card = document.querySelector(".hand-south .hokm-card.playable");
+      const center = document.querySelector(".table-center");
       if (!hand) return { handFound: false };
+      const card = hand.querySelector(".hokm-card.playable");
       const r = card?.getBoundingClientRect();
-      const top = r ? document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2) : null;
+      const top = r ? document.elementFromPoint(
+        Math.max(0, Math.min(innerWidth - 1, r.left + r.width / 2)),
+        Math.max(0, Math.min(innerHeight - 1, r.top + r.height / 2))
+      ) : null;
+      const cr = center?.getBoundingClientRect();
       return {
-        handFound: true,
         handRect: (() => { const h = hand.getBoundingClientRect(); return { x: h.x, y: h.y, width: h.width, height: h.height }; })(),
+        centerRect: cr ? { x: cr.x, y: cr.y, width: cr.width, height: cr.height } : null,
         totalCards: hand.querySelectorAll(".hokm-card").length,
         playableCards: hand.querySelectorAll(".hokm-card.playable").length,
         firstCard: card?.dataset.cardId || null,
         hitTarget: top ? { tag: top.tagName, className: top.className?.toString?.() || "", cardId: top.closest?.(".hokm-card")?.dataset?.cardId || null } : null,
-        seatZ: getComputedStyle(document.querySelector(".seat-south")).zIndex,
-        handPointer: getComputedStyle(hand).pointerEvents,
-        centerPointer: getComputedStyle(document.querySelector(".table-center")).pointerEvents,
-        clicks: window.__hokmCardClicks
+        slotRects: [0, 1, 2, 3].map(slot => {
+          const node = document.querySelector('.table-center .played-card[data-trick-slot="' + slot + '"]');
+          if (!node) return null;
+          const b = node.getBoundingClientRect();
+          return { x: b.x, y: b.y, width: b.width, height: b.height };
+        }),
+        gridDisplay: center ? getComputedStyle(center.querySelector(".trick-cards")).display : null,
+        pageErrors
       };
     }).catch(() => ({}));
     const failure = { viewport: name, result: "FAIL", error: error.message, diagnostics, pageErrors };
@@ -144,12 +299,14 @@ async function runViewport(browserType, name, viewport, mobile = false, language
   }
 }
 
-await runViewport(browser, "desktop-chromium", { width: 1365, height: 900 }, false);
-await runViewport(browser, "mobile-chromium-touch", { width: 390, height: 844 }, true);
+const chromiumBrowser = await chromium.launch({ headless: true });
+await runViewport(chromiumBrowser, "desktop-chromium", { width: 1365, height: 900 }, false);
+await runViewport(chromiumBrowser, "mobile-chromium-touch", { width: 390, height: 844 }, true);
+await chromiumBrowser.close();
+
 const safari = await webkit.launch({ headless: true });
 await runViewport(safari, "mobile-webkit-touch-en", { width: 390, height: 844 }, true);
-await runViewport(safari, "mobile-webkit-touch-fa-rtl", { width: 390, height: 844 }, true, "fa");
+await runViewport(safari, "mobile-webkit-touch-fa-rtl-fallback", { width: 390, height: 844 }, true, "fa", true);
 await safari.close();
-await browser.close();
 
 if (failures.length) process.exit(1);

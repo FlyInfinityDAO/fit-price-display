@@ -1,0 +1,127 @@
+name: Hokm Card Layout and Rules QA
+
+on:
+  push:
+    branches:
+      - fix/hokm-card-layout-scoring-20261119
+    paths:
+      - 'games/hokm/**'
+      - 'games/chess-arena/build-pages.sh'
+      - '.github/workflows/hokm-fix-preview.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'games/hokm/**'
+      - 'games/chess-arena/build-pages.sh'
+      - '.github/workflows/hokm-fix-preview.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hokm-fix-preview
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      PREVIEW_BRANCH: hokm-fix-layout-261119
+      PREVIEW_URL: https://hokm-fix-layout-261119.fly-hokm-preview.pages.dev
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/hokm-card-layout-scoring-20261119
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check Hokm frontend JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in games/hokm/engine/hokm-engine.js games/hokm/js/hokm.js games/hokm/js/hokm-play.js games/hokm/js/hokm-online.js games/hokm/js/hokm-wallet-bridge.js games/hokm/js/hokm-qa-access.js; do
+            node --input-type=module --check < "$file"
+            echo "Syntax OK: $file"
+          done
+          node --check games/hokm/tests/hokm-browser-smoke.mjs
+
+      - name: Run Hokm rules tests
+        run: node --test games/hokm/tests/hokm-engine.test.cjs
+
+      - name: Run Hokm Worker tests
+        working-directory: games/hokm/worker
+        run: |
+          npm install --no-audit --no-fund
+          npm run check
+          npm test
+
+      - name: Build standalone Pages site and verify shared assets
+        run: |
+          set -euo pipefail
+          bash games/chess-arena/build-pages.sh
+          test -s dist/games/hokm/index.html
+          test -s dist/games/hokm/css/hokm-classic-table.css
+          test -s dist/games/fi-snakes-ui-theme.css
+          grep -q 'hokm-directional-slots-20261119-v1' dist/games/hokm/index.html
+
+      - name: Install Playwright browsers
+        run: |
+          npm install --no-save --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium webkit
+
+      - name: Prepare isolated Hokm preview
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hokm-preview/games"
+          cp -R games/hokm "$RUNNER_TEMP/hokm-preview/games/hokm"
+          cp games/fi-snakes-ui-theme.css games/shared-language-menu.js "$RUNNER_TEMP/hokm-preview/games/"
+          cp logo.png background-desktop.png background-mobile.png walletconnect-bridge.js pwa-shell.css pwa-brand-neon.css pwa-offline.js manifest.webmanifest sw.js "$RUNNER_TEMP/hokm-preview/"
+          cat > "$RUNNER_TEMP/hokm-preview/index.html" <<'HTML'
+          <!doctype html>
+          <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url=/games/hokm/"><title>Fly Infinity Hokm QA</title></head>
+          <body><p>Opening <a href="/games/hokm/">Fly Infinity Hokm QA</a>…</p></body></html>
+          HTML
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const file = process.env.RUNNER_TEMP + "/hokm-preview/games/hokm/index.html";
+            const html = fs.readFileSync(file, "utf8");
+            if (!html.includes("</body>")) throw new Error("Hokm body close tag missing");
+            fs.writeFileSync(file, html.replace("</body>", "<script src=\"./js/hokm-qa-access.js?v=fix-preview-20261119\"></script></body>"));
+          '
+          test -s "$RUNNER_TEMP/hokm-preview/games/hokm/js/hokm-qa-access.js"
+
+      - name: Verify Cloudflare preview credentials
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN"
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
+
+      - name: Deploy isolated Pages preview
+        working-directory: games/hokm/worker
+        run: |
+          set -euo pipefail
+          if ! ./node_modules/.bin/wrangler pages project list | grep -q 'fly-hokm-preview'; then
+            ./node_modules/.bin/wrangler pages project create fly-hokm-preview --production-branch main
+          fi
+          ./node_modules/.bin/wrangler pages deploy "$RUNNER_TEMP/hokm-preview" --project-name=fly-hokm-preview --branch="$PREVIEW_BRANCH"
+
+      - name: Verify preview assets and preview-only access guard
+        run: |
+          set -euo pipefail
+          curl --silent --show-error --fail --retry 12 --retry-delay 5 "$PREVIEW_URL/games/hokm/?hokmTest=1" -o /tmp/hokm.html
+          grep -q 'Fly Infinity Hokm' /tmp/hokm.html
+          grep -q 'hokm-qa-access.js' /tmp/hokm.html
+          curl --silent --show-error --fail "$PREVIEW_URL/games/hokm/css/hokm-classic-table.css" -o /tmp/hokm.css
+          grep -q 'data-trick-slot' /tmp/hokm.css
+          curl --silent --show-error --fail "$PREVIEW_URL/games/fi-snakes-ui-theme.css" -o /tmp/shared-theme.css
+
+      - name: Run desktop and mobile browser gameplay tests
+        env:
+          HOKM_PREVIEW_URL: ${{ env.PREVIEW_URL }}/games/hokm/?hokmTest=1
+        run: node games/hokm/tests/hokm-browser-smoke.mjs

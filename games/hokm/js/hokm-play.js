@@ -136,19 +136,44 @@ function animateTrickCollection(winnerSeat){
  target.classList.add("hokm-trick-winner");
  const jobs=nodes.map((node,index)=>{
   const from=node.getBoundingClientRect();if(!from.width||!from.height)return Promise.resolve();
-  const clone=node.cloneNode(true),dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+to.height/2)-(from.top+from.height/2);
+  const clone=node.cloneNode(true);
+  const dx=(to.left+to.width/2)-(from.left+from.width/2);
+  const dy=(to.top+to.height/2)-(from.top+from.height/2);
+  const rotation=index%2?16:-16,duration=560,delay=index*55;
   clone.removeAttribute("id");clone.removeAttribute("data-player-label");
   Object.assign(clone.style,{position:"fixed",left:from.left+"px",top:from.top+"px",width:from.width+"px",height:from.height+"px",margin:"0",zIndex:"10001",pointerEvents:"none",transformOrigin:"center center"});
-  document.body.appendChild(clone);node.style.opacity="0";
+  const oldOpacity=node.style.opacity;
+  document.body.appendChild(clone);
+  node.style.opacity="0";
   return new Promise(resolve=>{
    let done=false,animation;
-   const oldOpacity=node.style.opacity;const finish=()=>{if(done)return;done=true;node.style.opacity=oldOpacity;clone.remove();try{animation&&animation.cancel()}catch{}resolve()};
-   animation=clone.animate([
-    {opacity:1,transform:"translate3d(0,0,0) scale(1) rotate(0deg)"},
-    {opacity:1,transform:"translate3d("+dx*.45+"px,"+dy*.45+"px,0) scale(.78) rotate("+(index%2?7:-7)+"deg)",offset:.58},
-    {opacity:0,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(.18) rotate("+(index%2?16:-16)+"deg)"}
-   ],{duration:560,easing:"cubic-bezier(.3,.05,.65,1)",delay:index*55,fill:"both"});
-   animation.onfinish=finish;animation.oncancel=finish;
+   const finish=()=>{
+    if(done)return;
+    done=true;
+    node.style.opacity=oldOpacity;
+    clone.remove();
+    try{animation&&animation.cancel()}catch{}
+    resolve();
+   };
+   if(typeof clone.animate==="function"){
+    try{
+     animation=clone.animate([
+      {opacity:1,transform:"translate3d(0,0,0) scale(1) rotate(0deg)"},
+      {opacity:1,transform:"translate3d("+dx*.45+"px,"+dy*.45+"px,0) scale(.78) rotate("+(index%2?7:-7)+"deg)",offset:.58},
+      {opacity:0,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(.18) rotate("+rotation+"deg)"}
+     ],{duration,easing:"cubic-bezier(.3,.05,.65,1)",delay,fill:"both"});
+     animation.onfinish=finish;animation.oncancel=finish;
+     return;
+    }catch{animation=null}
+   }
+   // Graceful CSS-transition fallback for WebViews without Web Animations API.
+   const begin=()=>{
+    clone.style.transition="transform "+duration+"ms cubic-bezier(.3,.05,.65,1) "+delay+"ms, opacity "+duration+"ms ease "+delay+"ms";
+    clone.style.transform="translate3d("+dx+"px,"+dy+"px,0) scale(.18) rotate("+rotation+"deg)";
+    clone.style.opacity="0";
+   };
+   if(typeof requestAnimationFrame==="function")requestAnimationFrame(begin);else setTimeout(begin,0);
+   setTimeout(finish,duration+delay+120);
   });
  });
  return Promise.all(jobs).then(()=>{target.classList.remove("hokm-trick-winner")});
@@ -157,7 +182,7 @@ function renderTrick(){
  const nodes=[...document.querySelectorAll(".trick-cards .played-card")],entries=visibleTrick.length?visibleTrick:(game?game.trick:[]);
  nodes.forEach(node=>{node.classList.add("empty");node.classList.remove("red","black");node.removeAttribute("data-player-label");node.textContent="·"});
  const active=new Set(),flights=[];
- entries.forEach((entry,index)=>{const slot=H.trickSlot(entry.player),node=nodes[slot];if(!node)return;active.add(slot);node.classList.remove("empty");node.classList.toggle("red",isRed(entry.card));node.classList.toggle("black",!isRed(entry.card));node.textContent=entry.card.rank+entry.card.suit;const source=document.querySelector(seatElements(entry.player).chip),label=source?.querySelector("b")?.textContent?.trim()||(entry.player===0?tr("you"):"CPU "+(entry.player+1));node.dataset.playerLabel=label;node.dataset.playOrder=String(index+1);node.setAttribute("aria-label",entry.card.rank+" "+suitName(entry.card.suit)+" · "+label+" · "+(index+1));flights.push(animatePlayedCard(node,entry,entry.player))});
+ entries.forEach((entry,index)=>{const slot=H.trickSlot(entry.player),node=document.querySelector('.trick-cards .played-card[data-trick-slot="'+slot+'"]')||nodes[slot];if(!node)return;active.add(slot);node.classList.remove("empty");node.classList.toggle("red",isRed(entry.card));node.classList.toggle("black",!isRed(entry.card));node.textContent=entry.card.rank+entry.card.suit;const source=document.querySelector(seatElements(entry.player).chip),label=source?.querySelector("b")?.textContent?.trim()||(entry.player===0?tr("you"):"CPU "+(entry.player+1));node.dataset.playerLabel=label;node.dataset.playOrder=String(index+1);node.setAttribute("aria-label",entry.card.rank+" "+suitName(entry.card.suit)+" · "+label+" · "+(index+1));flights.push(animatePlayedCard(node,entry,entry.player))});
  nodes.forEach((node,index)=>{if(!active.has(index)){node.classList.remove("hokm-card-arriving");node.dataset.playedCardKey="";node.removeAttribute("data-player-label");node.removeAttribute("data-play-order")}});
  return Promise.all(flights);
 }
@@ -169,7 +194,8 @@ function render(){
  const trickScores=document.querySelectorAll(".hokm-round-score b");if(trickScores.length){trickScores[0].textContent=String(game.teamTricks[0]||0);trickScores[1].textContent=String(game.teamTricks[1]||0)}
  const bottom=document.querySelectorAll(".game-bottom .team-score b");if(bottom.length&&match){bottom[0].textContent=match.matchPoints[0];bottom[1].textContent=match.matchPoints[1]}
  const hakemStats=document.querySelectorAll(".team-hakem-count");if(hakemStats.length&&match){hakemStats[0].textContent=String((match.hakemCounts||[0,0])[0]||0);hakemStats[1].textContent=String((match.hakemCounts||[0,0])[1]||0)}
- const round=document.querySelector(".round-info b");if(round&&match)round.textContent=match.roundNo+" / "+match.maxRounds;
+ const round=document.querySelector(".round-info b");if(round&&match)round.textContent=String(match.roundNo);
+ const tierLabel=$("hokmMatchTier");if(tierLabel&&match){const hakemLabel=window.hokmTranslate?.("hakemTimes")||"Hakem calls";tierLabel.textContent=(match.accessTier>=2?"10 FIT":"1 FIT")+" · "+match.maxRounds+" "+hakemLabel;}
  $("hokmHandCaption").textContent=game.phase==="choose-trump"?tr("selectTrump"):tr("playing");return flights;
 }
 function chooseCpuTrump(){return H.chooseCpuTrump(game,game.hakem,difficulty)}
