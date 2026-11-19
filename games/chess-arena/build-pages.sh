@@ -33,7 +33,7 @@ cp games/ludo/js/ludo.js dist/games/ludo/js/ludo.js
 cp games/ludo/js/ludo-engine.js dist/games/ludo/js/ludo-engine.js
 
 # Reuse the exact brand assets from the main Fly Infinity website.
-cp logo.png background-desktop.png background-mobile.png dist/
+cp logo.png background-desktop.png background-mobile.png pwa-shell.css pwa-offline.js pwa-brand-neon.css dist/
 cp walletconnect-bridge.js dist/walletconnect-bridge.js
 
 # Shared game chrome and language/ambient scripts are referenced by both game pages
