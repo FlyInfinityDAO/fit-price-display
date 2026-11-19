@@ -311,15 +311,15 @@ async function runViewport(browserType, name, viewport, mobile = false, language
 
       trick.push({ player: seat, card });
       const next = makeNextState(current, seat, trick);
-      const previousCloneCount = await page.locator(".hokm-online-card-flight").count();
-      flightDiagnostic = { seat, sourceInfo, previousCloneCount, handSelector: sourceSelector };
+      const cardText = card.rank + card.suit;
+      flightDiagnostic = { seat, cardText, sourceInfo, handSelector: sourceSelector };
       await sendState(next);
 
       try {
-        await page.waitForFunction(count =>
-          document.querySelectorAll(".hokm-online-card-flight").length > count,
-          previousCloneCount,
-          { timeout: 7000 }
+        await page.waitForFunction(text =>
+          [...document.querySelectorAll(".hokm-online-card-flight")].some(node => node.textContent.trim() === text),
+          cardText,
+          { timeout: 5000 }
         );
       } catch (error) {
         const domState = await page.evaluate(({ selector }) => {
@@ -333,20 +333,23 @@ async function runViewport(browserType, name, viewport, mobile = false, language
             text: node.textContent, className: node.className, rect: rect(node),
             slot: node.dataset.trickSlot, key: node.dataset.playedCardKey
           }));
+          const flights = [...document.querySelectorAll(".hokm-online-card-flight")].map(node => ({
+            text: node.textContent, left: node.style.left, top: node.style.top
+          }));
           return {
             handCount: hand?.children.length,
             handDataset: hand ? { cardCount: hand.dataset.cardCount, signature: hand.dataset.handSignature } : null,
             handRect: rect(hand),
             sourceRect: rect(hand?.lastElementChild),
             sourceActive: !!hand?.querySelector(".hokm-card-source-active"),
-            cloneCount: document.querySelectorAll(".hokm-online-card-flight").length,
+            flights,
             targets: targetCards
           };
         }, { selector: sourceSelector });
-        throw new Error("Seat " + seat + " card-flight clone did not appear: " +
+        throw new Error("Seat " + seat + " card-flight animation was not observed: " +
           JSON.stringify({ flightDiagnostic, domState, cause: error.message }));
       }
-      const flight = await page.locator(".hokm-online-card-flight").last().evaluate(node => {
+      const flight = await page.locator(".hokm-online-card-flight").filter({ hasText: cardText }).last().evaluate(node => {
         const left = parseFloat(node.style.left);
         const top = parseFloat(node.style.top);
         const width = parseFloat(node.style.width);
