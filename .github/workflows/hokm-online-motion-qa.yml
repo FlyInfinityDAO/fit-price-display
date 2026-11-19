@@ -1,0 +1,103 @@
+name: Hokm Online Card Motion QA
+
+on:
+  push:
+    branches:
+      - fix/hokm-online-card-motion-20261119
+    paths:
+      - 'games/hokm/**'
+      - 'games/chess-arena/build-pages.sh'
+      - '.github/workflows/hokm-online-motion-qa.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'games/hokm/**'
+      - 'games/chess-arena/build-pages.sh'
+      - '.github/workflows/hokm-online-motion-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hokm-online-motion-qa
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      CLOUDFLARE_API_TOKEN: \${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: \${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      PREVIEW_BRANCH: hokm-online-motion-qa-261119
+      PREVIEW_URL: https://hokm-online-motion-qa-261119.fly-hokm-preview.pages.dev
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check Hokm frontend and regression test syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in games/hokm/engine/hokm-engine.js games/hokm/js/hokm.js games/hokm/js/hokm-play.js games/hokm/js/hokm-online.js games/hokm/js/hokm-wallet-bridge.js games/hokm/tests/hokm-online-motion-smoke.mjs; do
+            node --input-type=module --check < "$file"
+            echo "Syntax OK: $file"
+          done
+
+      - name: Run Hokm rules tests
+        run: node --test games/hokm/tests/hokm-engine.test.cjs
+
+      - name: Run Hokm Worker checks and tests
+        working-directory: games/hokm/worker
+        run: |
+          npm install --no-audit --no-fund
+          npm run check
+          npm test
+
+      - name: Build standalone Pages site and verify online assets
+        run: |
+          set -euo pipefail
+          bash games/chess-arena/build-pages.sh
+          test -s dist/games/hokm/index.html
+          test -s dist/games/hokm/js/hokm-online.js
+          test -s dist/games/hokm/css/hokm-classic-table.css
+          grep -q 'hokm-online-motion-20261119-v1' dist/games/hokm/index.html
+
+      - name: Install Playwright browsers
+        run: |
+          npm install --no-save --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium webkit
+
+      - name: Verify Cloudflare preview credentials
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN"
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
+
+      - name: Deploy isolated Hokm multiplayer QA preview
+        working-directory: games/hokm/worker
+        run: |
+          set -euo pipefail
+          if ! ./node_modules/.bin/wrangler pages project list | grep -q 'fly-hokm-preview'; then
+            ./node_modules/.bin/wrangler pages project create fly-hokm-preview --production-branch main
+          fi
+          ./node_modules/.bin/wrangler pages deploy ../../dist --project-name=fly-hokm-preview --branch="$PREVIEW_BRANCH"
+
+      - name: Verify preview page and multiplayer script
+        run: |
+          set -euo pipefail
+          curl --silent --show-error --fail --retry 12 --retry-delay 5 "$PREVIEW_URL/games/hokm/" -o /tmp/hokm-online.html
+          grep -q 'Fly Infinity Hokm' /tmp/hokm-online.html
+          grep -q 'hokm-online-motion-20261119-v1' /tmp/hokm-online.html
+          curl --silent --show-error --fail "$PREVIEW_URL/games/hokm/js/hokm-online.js?v=hokm-online-motion-20261119-v1" -o /tmp/hokm-online.js
+          grep -q 'collectedTrickKey' /tmp/hokm-online.js
+          grep -q 'hokm-online-collect-flight' /tmp/hokm-online.js
+
+      - name: Run multiplayer card-deal, card-flight and collection tests
+        env:
+          HOKM_ONLINE_PREVIEW_URL: \${{ env.PREVIEW_URL }}/games/hokm/
+        run: node games/hokm/tests/hokm-online-motion-smoke.mjs
