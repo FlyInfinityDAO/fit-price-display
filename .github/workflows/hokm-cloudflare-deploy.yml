@@ -71,5 +71,5 @@ jobs:
             --header "Access-Control-Request-Method: POST" \
             --header "Access-Control-Request-Headers: content-type" \
             https://fly-hokm-api.flyinfinityplatform.workers.dev/api/auth/challenge)"
-          printf '%s\\n' "$headers"
-          printf '%s' "$headers" | tr -d '\\r' | grep -Fxi "access-control-allow-origin: https://fly-hokm-preview.pages.dev"
+          printf '%s\n' "$headers"
+          printf '%s' "$headers" | tr -d '\r' | grep -Fxi "access-control-allow-origin: https://fly-hokm-preview.pages.dev"
