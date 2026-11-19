@@ -534,3 +534,23 @@ body{
     max-width:calc(100vw - 28px);
   }
 }
+
+/* Reuse the same animated neon ambient background as Chess Arena and Backgammon.
+   The canvas is visual-only and remains behind the entire Hokm interface/table. */
+#fi-games-neon-canvas{
+  position:fixed!important;
+  inset:0!important;
+  width:100vw!important;
+  height:100vh!important;
+  height:100dvh!important;
+  display:block!important;
+  z-index:0!important;
+  pointer-events:none!important;
+  opacity:.92!important;
+}
+@media(max-width:760px){
+  #fi-games-neon-canvas{opacity:.78!important}
+}
+@media(prefers-reduced-motion:reduce){
+  #fi-games-neon-canvas{display:none!important}
+}
