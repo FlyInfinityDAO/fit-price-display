@@ -163,6 +163,45 @@ async function runViewport(browserType, name, viewport, mobile = false, language
     };
 
     const firstHitTest = await playOne();
+    // Observe the complete four-card trick while it is still on the felt,
+    // before the collection animation clears it.
+    await page.waitForFunction(
+      () => document.querySelectorAll(".trick-cards .played-card:not(.empty)").length === 4,
+      undefined,
+      { timeout: 20000 }
+    );
+    const firstCompleteTrick = await page.evaluate(() => {
+      const inner = document.querySelector(".table-inner").getBoundingClientRect();
+      const center = document.querySelector(".table-center").getBoundingClientRect();
+      const cards = [1, 2, 3, 4].map(index => {
+        const el = document.querySelector(".trick-cards .played-card:nth-child(" + index + ")");
+        const rect = el.getBoundingClientRect();
+        return {
+          card: el.textContent.trim(),
+          player: el.dataset.playerLabel || "",
+          order: Number(el.dataset.playOrder || 0),
+          left: rect.left - inner.left,
+          top: rect.top - inner.top,
+          right: rect.right - inner.left,
+          bottom: rect.bottom - inner.top,
+          x: rect.left + rect.width / 2 - inner.left,
+          y: rect.top + rect.height / 2 - inner.top
+        };
+      });
+      const centerX = center.left + center.width / 2 - inner.left;
+      const centerY = center.top + center.height / 2 - inner.top;
+      const orders = cards.map(card => card.order).sort((a, b) => a - b);
+      return {
+        cards,
+        allNamed: cards.every(card => !!card.player),
+        orderComplete: orders.every((value, index) => value === index + 1),
+        directionalSlots: cards[0].y > centerY && cards[1].x < centerX &&
+          cards[2].y < centerY && cards[3].x > centerX
+      };
+    });
+    if (!firstCompleteTrick.allNamed || !firstCompleteTrick.orderComplete || !firstCompleteTrick.directionalSlots) {
+      throw new Error("The four played cards lost their player/order labels or seat positions: " + JSON.stringify(firstCompleteTrick));
+    }
     await playable.last().waitFor({ state: "visible", timeout: 30000 });
     const secondHitTest = await playOne();
 
@@ -178,7 +217,7 @@ async function runViewport(browserType, name, viewport, mobile = false, language
 
     console.log(JSON.stringify({
       viewport: name, result: "PASS", seatLayout,
-      firstHitTest, secondHitTest, activationCounts,
+      firstHitTest, firstCompleteTrick, secondHitTest, activationCounts,
       consoleErrors
     }));
   } catch (error) {
