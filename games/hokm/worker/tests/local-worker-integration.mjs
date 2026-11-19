@@ -255,7 +255,11 @@ async function playOneHumanTrick(clients) {
 }
 
 async function waitForCpuCard(clients, cpuSeats) {
-  const startingCounts = roomState(clients).game.handCounts.slice();
+  // The Durable Object can run a CPU turn immediately after the last socket
+  // connects, before this test receives its first complete room snapshot.
+  // New Hokm rounds always start with 13 cards per seat, so compare with the
+  // round's true starting point rather than a possibly already-advanced view.
+  const startingCounts = [13, 13, 13, 13];
   const deadline = Date.now() + 35000;
   while (Date.now() < deadline) {
     const state = roomState(clients);
