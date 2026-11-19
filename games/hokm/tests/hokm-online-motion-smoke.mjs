@@ -449,6 +449,9 @@ async function runViewport(browserType, name, viewport, mobile = false, language
     );
     const onlinePlayable = page.locator(".hand-south .hokm-card.playable").first();
     await onlinePlayable.waitFor({ state: "visible", timeout: 10000 });
+    // This room panel sits above the felt. Bring the actual card into the viewport
+    // before using viewport-relative elementFromPoint coordinates.
+    await onlinePlayable.scrollIntoViewIfNeeded();
     const onlineCardHit = await onlinePlayable.evaluate(button => {
       const r = button.getBoundingClientRect();
       const x = Math.max(0, Math.min(innerWidth - 1, r.left + r.width / 2));
