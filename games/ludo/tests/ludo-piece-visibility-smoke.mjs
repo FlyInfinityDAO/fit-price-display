@@ -84,7 +84,6 @@ for (const scenario of scenarios) {
     assert.equal(styles.ordinaryDisabledButton.opacity, "0.42",
       "Unrelated disabled controls must keep the shared dimmed appearance");
     assert.ok(styles.ordinaryDisabledButton.filter.includes("saturate(0.65)"), "Unrelated disabled controls must keep their original desaturation");
-      "Unrelated disabled controls must keep their original desaturation");
 
     console.log(JSON.stringify({ scenario: scenario.name, ok: true, styles }));
   } finally {
