@@ -195,9 +195,36 @@ async function chooseTrumpIfHuman(clients, cpuSeats = []) {
 
 async function waitForCardGate(clients) {
   await waitUntil(() => {
-    const until = roomState(clients)?.cardFlightUntil || 0;
-    return Date.now() >= until;
-  }, 8000, "card animation gate to clear");
+    const deadlines = clients.map(client => client.latest?.cardFlightUntil || 0);
+    const latestDeadline = Math.max(0, ...deadlines);
+    return deadlines.every(deadline => deadline === latestDeadline) && Date.now() >= latestDeadline;
+  }, 10000, "all room snapshots to clear the card animation gate");
+}
+
+function snapshotCounts(clients) {
+  return clients.map(client => ({
+    seat: client.seat,
+    status: client.latest?.status,
+    phase: client.latest?.game?.phase,
+    currentPlayer: client.latest?.game?.currentPlayer,
+    handCounts: client.latest?.game?.handCounts,
+    cardFlightUntil: client.latest?.cardFlightUntil,
+    errors: client.errors.slice(-3)
+  }));
+}
+
+async function waitForHumanCardAccepted(clients, player, seat, before, label) {
+  const errorCounts = clients.map(client => client.errors.length);
+  await waitUntil(() => {
+    const accepted = clients.some(client => Number(client.latest?.game?.handCounts?.[seat]) < before);
+    const rejected = clients.some((client, index) => client.errors.length > errorCounts[index]);
+    return accepted || rejected;
+  }, 7000, label + " response");
+  if (!clients.some(client => Number(client.latest?.game?.handCounts?.[seat]) < before)) {
+    throw new Error(label + " was rejected by Worker: " + JSON.stringify(snapshotCounts(clients)));
+  }
+  await waitUntil(() => clients.every(client => Number(client.latest?.game?.handCounts?.[seat]) < before),
+    3000, label + " broadcast synchronization: " + JSON.stringify(snapshotCounts(clients)));
 }
 
 async function playOneHumanTrick(clients) {
@@ -215,7 +242,7 @@ async function playOneHumanTrick(clients) {
     const before = player.latest.game.handCounts[seat];
     const card = chooseLegalCard(player.latest.game);
     player.socket.send(JSON.stringify({ type: "play_card", cardId: card.id }));
-    await waitUntil(() => clients.every(client => client.latest?.game?.handCounts?.[seat] < before), 10000, "seat " + seat + " card to be accepted by all room views");
+    await waitForHumanCardAccepted(clients, player, seat, before, "seat " + seat + " card");
     lastPlayedSeat = seat;
     if (player.latest.game.lastTrick?.length === 4) break;
   }
@@ -257,7 +284,7 @@ async function waitForCpuCard(clients, cpuSeats) {
     const before = active.handCounts[seat];
     const card = chooseLegalCard(active);
     player.socket.send(JSON.stringify({ type: "play_card", cardId: card.id }));
-    await waitUntil(() => clients.every(client => client.latest?.game?.handCounts?.[seat] < before), 10000, "human card before a CPU turn");
+    await waitForHumanCardAccepted(clients, player, seat, before, "human card before a CPU turn");
   }
   throw new Error("No CPU card was played within 35 seconds");
 }
