@@ -1,11 +1,21 @@
 import { chromium, webkit } from "playwright";
 
-const baseURL = process.env.HOKM_PREVIEW_URL || "https://hokm-preview.fly-hokm-preview.pages.dev/games/hokm/";
+const baseURL = process.env.HOKM_PREVIEW_URL || "https://hokm-current-main-20261119.fly-hokm-preview.pages.dev/games/hokm/";
 const failures = [];
-const browser = await chromium.launch({ headless: true });
+
+function testURL(language) {
+  const url = new URL(baseURL);
+  url.searchParams.set("hokmTest", "1");
+  if (language && language !== "en") url.searchParams.set("qaLanguage", language);
+  return url.toString();
+}
 
 async function runViewport(browserType, name, viewport, mobile = false, language = "en") {
-  const context = await browserType.newContext({ viewport, isMobile: mobile && browserType === chromium, hasTouch: mobile });
+  const context = await browserType.newContext({
+    viewport,
+    isMobile: mobile && browserType === chromium,
+    hasTouch: mobile
+  });
   const page = await context.newPage();
   const pageErrors = [];
   const consoleErrors = [];
@@ -19,10 +29,11 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       const qaAuthState = {
         wallet: "0x0000000000000000000000000000000000000001",
         tier: 2,
+        expiresAt: Math.floor(Date.now() / 1000) + 3600,
         sessionToken: "qa-only-playwright-session"
       };
-      // The production wallet bridge clears hokmAuthState during startup.
-      // Keep this synthetic identity confined to the Playwright page context.
+      // The synthetic identity exists only in this isolated Playwright context.
+      // Preserve it if the production bridge attempts to clear the startup value.
       Object.defineProperty(window, "hokmAuthState", {
         configurable: false,
         enumerable: true,
@@ -43,125 +54,161 @@ async function runViewport(browserType, name, viewport, mobile = false, language
         if (event.target.closest(".hand-south .hokm-card")) window.__hokmCardTouchEnds++;
       }, true);
     });
-    await page.goto(baseURL, { waitUntil: "domcontentloaded", timeout: 45000 });
+
+    await page.goto(testURL(language), { waitUntil: "domcontentloaded", timeout: 45000 });
+    await page.locator(".game-shell:not([hidden])").waitFor({ state: "visible", timeout: 15000 });
     if (language !== "en") await page.locator("#languageSelect").selectOption(language);
-    await page.waitForSelector("#hokmStartBtn:not([disabled])", { timeout: 15000 });
+    await page.locator("#hokmStartBtn:not([disabled])").waitFor({ state: "visible", timeout: 15000 });
     await page.locator("#hokmStartBtn").click();
 
     const trumpPicker = page.locator("#hokmTrumpPicker");
     if (await trumpPicker.isVisible().catch(() => false)) {
       await trumpPicker.locator("[data-suit]").first().click();
+    } else {
+      // When a CPU is Hakem, wait for its delayed suit choice before measuring or clicking.
+      await page.waitForFunction(() => {
+        const suit = document.querySelector("#tableTrumpSuit")?.textContent?.trim();
+        return !!suit && suit !== "—";
+      }, { timeout: 15000 });
     }
 
+    await page.locator(".hand-south .hokm-card.playable").last().waitFor({ state: "visible", timeout: 20000 });
+
     const seatLayout = await page.evaluate(() => {
+      const inner = document.querySelector(".table-inner");
+      if (!inner) throw new Error("Missing .table-inner");
+      const origin = inner.getBoundingClientRect();
       const rect = selector => {
         const element = document.querySelector(selector);
         if (!element) throw new Error("Missing table element: " + selector);
         const r = element.getBoundingClientRect();
-        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+        return {
+          left: r.left - origin.left,
+          top: r.top - origin.top,
+          right: r.right - origin.left,
+          bottom: r.bottom - origin.top,
+          x: r.left - origin.left + r.width / 2,
+          y: r.top - origin.top + r.height / 2,
+          width: r.width,
+          height: r.height
+        };
       };
       const center = rect(".table-center");
-      const north = rect(".seat-north .player-chip");
-      const south = rect(".seat-south .player-chip");
-      const west = rect(".seat-west .player-chip");
-      const east = rect(".seat-east .player-chip");
-      const centerRect = document.querySelector(".table-center").getBoundingClientRect();
-      const cardRects = [1, 2, 3, 4].map(index => {
-        const element = document.querySelector(".trick-cards .played-card:nth-child(" + index + ")");
-        const r = element.getBoundingClientRect();
-        return { x: r.left + r.width / 2, y: r.top + r.height / 2, width: r.width, height: r.height };
-      });
-      const centerPoint = { x: centerRect.left + centerRect.width / 2, y: centerRect.top + centerRect.height / 2, width: centerRect.width, height: centerRect.height };
+      const seats = {
+        north: rect(".seat-north .player-chip"),
+        south: rect(".seat-south .player-chip"),
+        west: rect(".seat-west .player-chip"),
+        east: rect(".seat-east .player-chip")
+      };
+      const cards = [1, 2, 3, 4].map(index =>
+        rect(".trick-cards .played-card:nth-child(" + index + ")")
+      );
+      const overlaps = (a, b) =>
+        a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top;
+      const inside = center.left >= 0 && center.top >= 0 &&
+        center.right <= origin.width && center.bottom <= origin.height;
       return {
-        seats: north.y < center.y && south.y > center.y && west.x < center.x && east.x > center.x,
-        cards: cardRects[0].y > center.y && cardRects[1].x < center.x && cardRects[2].y < center.y && cardRects[3].x > center.x,
-        centerPoint,
-        cardRects,
-        direction: document.documentElement.dir
+        seats: seats.north.y < center.y && seats.south.y > center.y &&
+          seats.west.x < center.x && seats.east.x > center.x,
+        cards: cards[0].y > center.y && cards[1].x < center.x &&
+          cards[2].y < center.y && cards[3].x > center.x,
+        centerInsideTable: inside,
+        sideCardsClearOfSideSeats: !overlaps(cards[1], seats.west) && !overlaps(cards[3], seats.east),
+        center: { x: center.x, y: center.y, width: center.width, height: center.height },
+        cards: cards.map(({ x, y, width, height }) => ({ x, y, width, height }))
       };
     });
-    if (!seatLayout.seats || !seatLayout.cards) {
-      throw new Error("Physical seat/card positions are inconsistent: " + JSON.stringify(seatLayout));
+
+    if (!seatLayout.seats || !seatLayout.cards || !seatLayout.centerInsideTable || !seatLayout.sideCardsClearOfSideSeats) {
+      throw new Error("Table/card positions overlap or are out of bounds: " + JSON.stringify(seatLayout));
     }
 
     const hand = page.locator(".hand-south .hokm-card");
     const playable = page.locator(".hand-south .hokm-card.playable");
-    await playable.first().waitFor({ state: "visible", timeout: 20000 });
+    const playOne = async () => {
+      await playable.last().waitFor({ state: "visible", timeout: 25000 });
+      const before = await hand.count();
+      const card = playable.last();
+      await card.scrollIntoViewIfNeeded();
+      const hitTest = await card.evaluate(element => {
+        const r = element.getBoundingClientRect();
+        const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+        return {
+          cardId: element.dataset.cardId,
+          rect: { x: r.x, y: r.y, width: r.width, height: r.height },
+          topTag: top?.tagName || null,
+          topCardId: top?.closest?.(".hokm-card")?.dataset?.cardId || null,
+          cardPointerEvents: getComputedStyle(element).pointerEvents,
+          topPointerEvents: top ? getComputedStyle(top).pointerEvents : null
+        };
+      });
+      if (hitTest.topCardId !== hitTest.cardId || hitTest.cardPointerEvents === "none") {
+        throw new Error("The selected human card is covered or not clickable: " + JSON.stringify(hitTest));
+      }
+      if (mobile) await card.tap({ timeout: 10000 });
+      else await card.click({ timeout: 10000 });
 
-    const before = await hand.count();
-    const firstCard = playable.first();
-    await firstCard.scrollIntoViewIfNeeded();
-    const hitTest = await firstCard.evaluate(el => {
-      const r = el.getBoundingClientRect();
-      const x = Math.max(0, Math.min(innerWidth - 1, r.left + r.width / 2));
-      const y = Math.max(0, Math.min(innerHeight - 1, r.top + r.height / 2));
-      const top = document.elementFromPoint(x, y);
-      return {
-        card: el.dataset.cardId,
-        rect: { x: r.x, y: r.y, width: r.width, height: r.height },
-        topTag: top?.tagName || null,
-        topClass: top?.className?.toString?.() || "",
-        topCardId: top?.closest?.(".hokm-card")?.dataset?.cardId || null,
-        cardPointerEvents: getComputedStyle(el).pointerEvents,
-        topPointerEvents: top ? getComputedStyle(top).pointerEvents : null
-      };
-    });
+      await page.waitForFunction(
+        expected => document.querySelectorAll(".hand-south .hokm-card").length === expected,
+        before - 1,
+        { timeout: 12000 }
+      );
+      await page.waitForFunction(
+        () => [...document.querySelectorAll(".trick-cards .played-card")].some(card =>
+          !card.classList.contains("empty") && card.dataset.playerLabel && card.dataset.playOrder
+        ),
+        { timeout: 6000 }
+      );
+      return hitTest;
+    };
 
-    if (mobile) await firstCard.tap({ timeout: 10000 });
-    else await firstCard.click({ timeout: 10000 });
-
-    await page.waitForFunction(
-      expected => document.querySelectorAll(".hand-south .hokm-card").length === expected,
-      before - 1,
-      { timeout: 10000 }
-    );
-
-    await page.waitForFunction(
-      () => document.querySelectorAll(".hand-south .hokm-card.playable").length > 0,
-      { timeout: 25000 }
-    );
-    const secondBefore = await hand.count();
-    const secondCard = playable.first();
-    await secondCard.scrollIntoViewIfNeeded();
-    if (mobile) await secondCard.tap({ timeout: 10000 });
-    else await secondCard.click({ timeout: 10000 });
-
-    await page.waitForFunction(
-      expected => document.querySelectorAll(".hand-south .hokm-card").length === expected,
-      secondBefore - 1,
-      { timeout: 10000 }
-    );
+    const firstHitTest = await playOne();
+    await playable.last().waitFor({ state: "visible", timeout: 30000 });
+    const secondHitTest = await playOne();
 
     const activationCounts = await page.evaluate(() => ({
       clicks: window.__hokmCardClicks,
       touchEnds: window.__hokmCardTouchEnds
     }));
     const observedActivations = mobile ? activationCounts.touchEnds : activationCounts.clicks;
-    if (observedActivations < 2) throw new Error(`Only ${observedActivations} card activation events were observed`);
+    if (observedActivations < 2) {
+      throw new Error("Only " + observedActivations + " card activation events were observed");
+    }
     if (pageErrors.length) throw new Error("Browser runtime errors: " + pageErrors.join(" | "));
 
-    console.log(JSON.stringify({ viewport: name, result: "PASS", firstHitTest: hitTest, activationCounts, consoleErrors }));
+    console.log(JSON.stringify({
+      viewport: name, result: "PASS", seatLayout,
+      firstHitTest, secondHitTest, activationCounts,
+      consoleErrors
+    }));
   } catch (error) {
     const diagnostics = await page.evaluate(() => {
+      const inner = document.querySelector(".table-inner");
       const hand = document.querySelector(".hand-south");
       const card = document.querySelector(".hand-south .hokm-card.playable");
-      if (!hand) return { handFound: false };
-      const r = card?.getBoundingClientRect();
-      const top = r ? document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2) : null;
+      const rect = element => {
+        if (!element || !inner) return null;
+        const a = element.getBoundingClientRect(), b = inner.getBoundingClientRect();
+        return { x: a.x - b.x, y: a.y - b.y, width: a.width, height: a.height };
+      };
       return {
-        handFound: true,
-        handRect: (() => { const h = hand.getBoundingClientRect(); return { x: h.x, y: h.y, width: h.width, height: h.height }; })(),
-        totalCards: hand.querySelectorAll(".hokm-card").length,
-        playableCards: hand.querySelectorAll(".hokm-card.playable").length,
+        gameShellVisible: !!document.querySelector(".game-shell:not([hidden])"),
+        inner: rect(inner),
+        hand: rect(hand),
+        totalCards: hand?.querySelectorAll(".hokm-card").length || 0,
+        playableCards: hand?.querySelectorAll(".hokm-card.playable").length || 0,
         firstCard: card?.dataset.cardId || null,
-        hitTarget: top ? { tag: top.tagName, className: top.className?.toString?.() || "", cardId: top.closest?.(".hokm-card")?.dataset?.cardId || null } : null,
-        seatZ: getComputedStyle(document.querySelector(".seat-south")).zIndex,
-        handPointer: getComputedStyle(hand).pointerEvents,
-        centerPointer: getComputedStyle(document.querySelector(".table-center")).pointerEvents,
-        clicks: window.__hokmCardClicks
+        center: rect(document.querySelector(".table-center")),
+        centerStyle: document.querySelector(".table-center") ? {
+          display: getComputedStyle(document.querySelector(".table-center")).display,
+          width: getComputedStyle(document.querySelector(".table-center")).width,
+          height: getComputedStyle(document.querySelector(".table-center")).height
+        } : null,
+        clicks: window.__hokmCardClicks,
+        touchEnds: window.__hokmCardTouchEnds
       };
     }).catch(() => ({}));
-    const failure = { viewport: name, result: "FAIL", error: error.message, diagnostics, pageErrors };
+    const failure = { viewport: name, result: "FAIL", error: error.message, diagnostics, pageErrors, consoleErrors };
     failures.push(failure);
     console.error(JSON.stringify(failure));
   } finally {
@@ -169,12 +216,15 @@ async function runViewport(browserType, name, viewport, mobile = false, language
   }
 }
 
-await runViewport(browser, "desktop-chromium", { width: 1365, height: 900 }, false);
-await runViewport(browser, "mobile-chromium-touch", { width: 390, height: 844 }, true);
-const safari = await webkit.launch({ headless: true });
-await runViewport(safari, "mobile-webkit-touch-en", { width: 390, height: 844 }, true);
-await runViewport(safari, "mobile-webkit-touch-fa-rtl", { width: 390, height: 844 }, true, "fa");
-await safari.close();
-await browser.close();
+const chromiumBrowser = await chromium.launch({ headless: true });
+await runViewport(chromiumBrowser, "desktop-chromium", { width: 1365, height: 900 });
+await runViewport(chromiumBrowser, "mobile-chromium-touch", { width: 390, height: 844 }, true);
+await runViewport(chromiumBrowser, "small-mobile-chromium-touch", { width: 320, height: 740 }, true, "fa");
+await chromiumBrowser.close();
+
+const webkitBrowser = await webkit.launch({ headless: true });
+await runViewport(webkitBrowser, "mobile-webkit-touch", { width: 390, height: 844 }, true);
+await runViewport(webkitBrowser, "mobile-webkit-touch-fa-rtl", { width: 390, height: 844 }, true, "fa");
+await webkitBrowser.close();
 
 if (failures.length) process.exit(1);
