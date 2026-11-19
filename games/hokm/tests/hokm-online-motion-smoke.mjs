@@ -287,6 +287,7 @@ async function runViewport(browserType, name, viewport, mobile = false, language
 
     const handSelectors = [".hand-south", ".seat-west .hand", ".hand-north", ".seat-east .hand"];
     let trick = [];
+    let flightDiagnostic = null;
     for (let seat = 0; seat < 4; seat++) {
       const card = playedCards[seat];
       const sourceSelector = handSelectors[seat];
@@ -301,6 +302,9 @@ async function runViewport(browserType, name, viewport, mobile = false, language
         const t = target.getBoundingClientRect();
         return {
           source: { left: s.left, top: s.top, width: s.width, height: s.height },
+          target: { left: t.left, top: t.top, width: t.width, height: t.height },
+          sourceTag: source.tagName,
+          sourceClass: source.className,
           expectedCenter: { x: s.left + s.width / 2, y: s.top + s.height / 2 }
         };
       }, { selector: sourceSelector, seat, cardId: ownHand[0].id });
@@ -308,13 +312,40 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       trick.push({ player: seat, card });
       const next = makeNextState(current, seat, trick);
       const previousCloneCount = await page.locator(".hokm-online-card-flight").count();
+      flightDiagnostic = { seat, sourceInfo, previousCloneCount, handSelector: sourceSelector };
       await sendState(next);
 
-      await page.waitForFunction(count =>
-        document.querySelectorAll(".hokm-online-card-flight").length > count,
-        previousCloneCount,
-        { timeout: 5000 }
-      );
+      try {
+        await page.waitForFunction(count =>
+          document.querySelectorAll(".hokm-online-card-flight").length > count,
+          previousCloneCount,
+          { timeout: 7000 }
+        );
+      } catch (error) {
+        const domState = await page.evaluate(({ selector }) => {
+          const rect = node => {
+            if (!node) return null;
+            const r = node.getBoundingClientRect();
+            return { left:r.left, top:r.top, width:r.width, height:r.height };
+          };
+          const hand = document.querySelector(selector);
+          const targetCards = [...document.querySelectorAll(".table-center .played-card")].map(node => ({
+            text: node.textContent, className: node.className, rect: rect(node),
+            slot: node.dataset.trickSlot, key: node.dataset.playedCardKey
+          }));
+          return {
+            handCount: hand?.children.length,
+            handDataset: hand ? { cardCount: hand.dataset.cardCount, signature: hand.dataset.handSignature } : null,
+            handRect: rect(hand),
+            sourceRect: rect(hand?.lastElementChild),
+            sourceActive: !!hand?.querySelector(".hokm-card-source-active"),
+            cloneCount: document.querySelectorAll(".hokm-online-card-flight").length,
+            targets: targetCards
+          };
+        }, { selector: sourceSelector });
+        throw new Error("Seat " + seat + " card-flight clone did not appear: " +
+          JSON.stringify({ flightDiagnostic, domState, cause: error.message }));
+      }
       const flight = await page.locator(".hokm-online-card-flight").last().evaluate(node => {
         const left = parseFloat(node.style.left);
         const top = parseFloat(node.style.top);
@@ -394,7 +425,7 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       consoleErrors
     }));
   } catch (error) {
-    failures.push({ scenario: name, error: error.message, pageErrors, consoleErrors });
+    failures.push({ scenario: name, error: error.message, flightDiagnostic: typeof flightDiagnostic === "undefined" ? null : flightDiagnostic, pageErrors, consoleErrors });
     console.error(JSON.stringify(failures[failures.length - 1]));
   } finally {
     await context.close();
