@@ -41,6 +41,21 @@ jobs:
           npm run check
           npm test
 
+      - name: Check Hokm frontend, engine and browser-test syntax
+        run: |
+          set -euo pipefail
+          for file in \
+            games/hokm/engine/hokm-engine.js \
+            games/hokm/js/hokm.js \
+            games/hokm/js/hokm-play.js \
+            games/hokm/js/hokm-online.js \
+            games/hokm/tests/hokm-browser-smoke.mjs; do
+            node --check "$file"
+          done
+
+      - name: Run Hokm rules-engine tests
+        run: node --test games/hokm/tests/hokm-engine.test.cjs
+
       - name: Install Playwright browser tests
         run: |
           npm install --no-save --no-audit --no-fund playwright
