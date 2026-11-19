@@ -230,6 +230,24 @@ async function runViewport(browserType, name, viewport, mobile = false, language
         const a = element.getBoundingClientRect(), b = inner.getBoundingClientRect();
         return { x: a.x - b.x, y: a.y - b.y, width: a.width, height: a.height };
       };
+      const center = document.querySelector(".table-center");
+      const trick = document.querySelector(".table-center .trick-cards");
+      const style = element => {
+        if (!element) return null;
+        const css = getComputedStyle(element);
+        return {
+          display: css.display, position: css.position, direction: css.direction,
+          width: css.width, height: css.height, minWidth: css.minWidth,
+          gridColumns: css.gridTemplateColumns, gridRows: css.gridTemplateRows,
+          left: css.left, right: css.right, top: css.top, bottom: css.bottom,
+          transform: css.transform, gap: css.gap
+        };
+      };
+      const cardGeometry = [...(trick?.querySelectorAll(".played-card") || [])].map(el => ({
+        rect: rect(el), style: style(el),
+        gridColumn: getComputedStyle(el).gridColumn,
+        gridRow: getComputedStyle(el).gridRow
+      }));
       return {
         gameShellVisible: !!document.querySelector(".game-shell:not([hidden])"),
         inner: rect(inner),
@@ -237,12 +255,15 @@ async function runViewport(browserType, name, viewport, mobile = false, language
         totalCards: hand?.querySelectorAll(".hokm-card").length || 0,
         playableCards: hand?.querySelectorAll(".hokm-card.playable").length || 0,
         firstCard: card?.dataset.cardId || null,
-        center: rect(document.querySelector(".table-center")),
-        centerStyle: document.querySelector(".table-center") ? {
-          display: getComputedStyle(document.querySelector(".table-center")).display,
-          width: getComputedStyle(document.querySelector(".table-center")).width,
-          height: getComputedStyle(document.querySelector(".table-center")).height
-        } : null,
+        center: rect(center), centerStyle: style(center),
+        trick: rect(trick), trickStyle: style(trick),
+        cardGeometry,
+        westChip: rect(document.querySelector(".seat-west .player-chip")),
+        westChipStyle: style(document.querySelector(".seat-west .player-chip")),
+        eastChip: rect(document.querySelector(".seat-east .player-chip")),
+        eastChipStyle: style(document.querySelector(".seat-east .player-chip")),
+        westSeat: rect(document.querySelector(".seat-west")),
+        eastSeat: rect(document.querySelector(".seat-east")),
         clicks: window.__hokmCardClicks,
         touchEnds: window.__hokmCardTouchEnds
       };
