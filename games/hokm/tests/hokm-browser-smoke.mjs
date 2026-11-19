@@ -69,7 +69,7 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       await page.waitForFunction(() => {
         const suit = document.querySelector("#tableTrumpSuit")?.textContent?.trim();
         return !!suit && suit !== "—";
-      }, { timeout: 15000 });
+      }, undefined, { timeout: 15000 });
     }
 
     await page.locator(".hand-south .hokm-card.playable").last().waitFor({ state: "visible", timeout: 20000 });
@@ -110,16 +110,16 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       return {
         seats: seats.north.y < center.y && seats.south.y > center.y &&
           seats.west.x < center.x && seats.east.x > center.x,
-        cards: cards[0].y > center.y && cards[1].x < center.x &&
+        cardDirections: cards[0].y > center.y && cards[1].x < center.x &&
           cards[2].y < center.y && cards[3].x > center.x,
         centerInsideTable: inside,
         sideCardsClearOfSideSeats: !overlaps(cards[1], seats.west) && !overlaps(cards[3], seats.east),
         center: { x: center.x, y: center.y, width: center.width, height: center.height },
-        cards: cards.map(({ x, y, width, height }) => ({ x, y, width, height }))
+        cardRects: cards.map(({ x, y, width, height }) => ({ x, y, width, height }))
       };
     });
 
-    if (!seatLayout.seats || !seatLayout.cards || !seatLayout.centerInsideTable || !seatLayout.sideCardsClearOfSideSeats) {
+    if (!seatLayout.seats || !seatLayout.cardDirections || !seatLayout.centerInsideTable || !seatLayout.sideCardsClearOfSideSeats) {
       throw new Error("Table/card positions overlap or are out of bounds: " + JSON.stringify(seatLayout));
     }
 
