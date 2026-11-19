@@ -85,6 +85,36 @@ for (const scenario of scenarios) {
       "Unrelated disabled controls must keep the shared dimmed appearance");
     assert.ok(styles.ordinaryDisabledButton.filter.includes("saturate(0.65)"), "Unrelated disabled controls must keep their original desaturation");
 
+    // Verify both wallet buttons are wired to their own provider entry points.
+    await page.evaluate(() => {
+      window.fiSelectWalletProvider = () => new Promise(() => {});
+      window.ethereum = { request: () => new Promise(() => {}) };
+    });
+    await page.locator("#connectBrowserBtn").click();
+    await page.waitForFunction(() =>
+      document.querySelector("#accessStatus")?.textContent !==
+      document.querySelector("[data-i='notConnected']")?.textContent
+    ).catch(() => {});
+    const browserButtonState = await page.evaluate(() => ({
+      status: document.querySelector("#accessStatus")?.textContent,
+      disabled: document.querySelector("#connectBrowserBtn")?.disabled
+    }));
+    assert.equal(browserButtonState.disabled, true,
+      "Browser wallet button must invoke its connection handler");
+
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await page.evaluate(() => {
+      window.ethereum = { request: () => new Promise(() => {}) };
+    });
+    await page.locator("#connectWalletBtn").click();
+    await page.waitForFunction(() => document.querySelector("#connectWalletBtn")?.disabled === true);
+    const walletButtonState = await page.evaluate(() => ({
+      status: document.querySelector("#accessStatus")?.textContent,
+      disabled: document.querySelector("#connectWalletBtn")?.disabled
+    }));
+    assert.equal(walletButtonState.disabled, true,
+      "Wallet button must invoke its connection handler");
+
     console.log(JSON.stringify({ scenario: scenario.name, ok: true, styles }));
   } finally {
     await browser.close();
