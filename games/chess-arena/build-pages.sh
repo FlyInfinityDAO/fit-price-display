@@ -21,7 +21,7 @@ cp games/backgammon/js/backgammon-engine.js dist/games/backgammon/js/backgammon-
 # Publish the Games hub and existing Hokm frontend.
 cp games/index.html dist/games/index.html
 cp games/hokm/index.html dist/games/hokm/index.html
-cp games/hokm/css/hokm.css games/hokm/css/hokm-neon-theme.css dist/games/hokm/css/
+cp games/hokm/css/hokm.css games/hokm/css/hokm-classic-table.css games/hokm/css/hokm-neon-theme.css dist/games/hokm/css/
 cp games/hokm/assets/music/art_roseman-jazz-swing-573323.mp3 dist/games/hokm/assets/music/
 cp games/hokm/engine/hokm-engine.js dist/games/hokm/engine/hokm-engine.js
 cp games/hokm/js/hokm-wallet-bridge.js games/hokm/js/hokm.js games/hokm/js/hokm-play.js games/hokm/js/hokm-online.js games/hokm/js/hokm-android-scroll.js games/hokm/js/hokm-neon-ambient.js dist/games/hokm/js/
