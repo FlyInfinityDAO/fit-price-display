@@ -261,7 +261,7 @@ async function runViewport(browserType, name, viewport, mobile = false, language
         const t = target.getBoundingClientRect();
         return {
           source: { left: s.left, top: s.top, width: s.width, height: s.height },
-          expected: { left: s.left + s.width / 2 - t.width / 2, top: s.top + s.height / 2 - t.height / 2 }
+          expectedCenter: { x: s.left + s.width / 2, y: s.top + s.height / 2 }
         };
       }, { selector: sourceSelector, seat, cardId: ownHand[0].id });
 
@@ -275,14 +275,17 @@ async function runViewport(browserType, name, viewport, mobile = false, language
         previousCloneCount,
         { timeout: 5000 }
       );
-      const flight = await page.locator(".hokm-online-card-flight").last().evaluate(node => ({
-        left: parseFloat(node.style.left),
-        top: parseFloat(node.style.top)
-      }));
-      if (Math.abs(flight.left - sourceInfo.expected.left) > 2 ||
-          Math.abs(flight.top - sourceInfo.expected.top) > 2) {
-        throw new Error("Seat " + seat + " card flight did not start from the hand: " +
-          JSON.stringify({ expected: sourceInfo.expected, actual: flight }));
+      const flight = await page.locator(".hokm-online-card-flight").last().evaluate(node => {
+        const left = parseFloat(node.style.left);
+        const top = parseFloat(node.style.top);
+        const width = parseFloat(node.style.width);
+        const height = parseFloat(node.style.height);
+        return { left, top, width, height, center: { x: left + width / 2, y: top + height / 2 } };
+      });
+      if (Math.abs(flight.center.x - sourceInfo.expectedCenter.x) > 2 ||
+          Math.abs(flight.center.y - sourceInfo.expectedCenter.y) > 2) {
+        throw new Error("Seat " + seat + " card flight did not start at the hand card center: " +
+          JSON.stringify({ expectedCenter: sourceInfo.expectedCenter, actual: flight }));
       }
       current = next;
       if (seat < 3) await page.waitForTimeout(1700);
