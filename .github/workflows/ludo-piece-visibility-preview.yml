@@ -21,8 +21,6 @@ concurrency:
 jobs:
   preview-and-verify:
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.64.1-noble
     timeout-minutes: 25
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -39,8 +37,10 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install browser test dependency
-        run: npm install --no-save --no-audit --no-fund playwright@1.64.1
+      - name: Install browser test dependency and browsers
+        run: |
+          npm install --no-save --no-audit --no-fund playwright@1.64.1
+          npx playwright install --with-deps chromium webkit
 
       - name: Install Wrangler
         working-directory: games/hokm/worker
