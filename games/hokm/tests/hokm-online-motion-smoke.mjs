@@ -96,6 +96,9 @@ async function runViewport(browserType, name, viewport, mobile = false, language
     isMobile: mobile && browserType === chromium,
     hasTouch: mobile
   });
+  // The ambient canvas intentionally disables itself for OS-level reduced motion.
+  // Keep visual-regression runs deterministic; reduced-motion behavior is handled by app CSS/JS.
+  await context.emulateMedia({ reducedMotion: "no-preference" });
   const page = await context.newPage();
   const pageErrors = [];
   const consoleErrors = [];
