@@ -312,6 +312,27 @@ function cardNode(card,playable){
 function renderState(s,previousState=null){
  if(!$("hokmOnlinePanel"))return;
  const players=s.players||[],me=players.find(p=>p.you),game=s.game;
+ // Capture each departing card before player-chip text/status updates can reflow the table.
+ const flightOrigins=new Map();
+ if(game){
+  const currentHands=game.handCounts||[0,0,0,0];
+  for(let actual=0;actual<4;actual++){
+   const visual=displaySeat(actual),hand=document.querySelector(seatEls(visual).hand);
+   if(!hand)continue;
+   const cards=actual===ownSeat?(game.ownHand||[]):Array.from({length:currentHands[actual]||0},()=>null);
+   const previousCount=Number(previousState?.game?.handCounts?.[actual]??hand.dataset.cardCount??0);
+   if(cards.length<previousCount){
+    let sourceNode=null;
+    if(actual===ownSeat){
+     const nextIds=new Set(cards.map(card=>String(card.id)));
+     sourceNode=[...hand.querySelectorAll(".hokm-card[data-card-id]")].find(card=>!nextIds.has(card.dataset.cardId));
+    }
+    sourceNode ||= hand.querySelector(".hokm-card-back:last-child")||hand.lastElementChild;
+    const rect=sourceNode?.getBoundingClientRect();
+    if(rect?.width&&rect?.height)flightOrigins.set(actual,{left:rect.left,top:rect.top,width:rect.width,height:rect.height});
+   }
+  }
+ }
  const difficultySelect=$("cpuDifficulty");
  const onlineDifficultyLocked=players.some(p=>p.cpu)||!!s.match;
  if(difficultySelect){
@@ -339,7 +360,7 @@ function renderState(s,previousState=null){
  }else status(t("opponent"));
  if(s.error)status((s.cpuTurnBlocked?t("cpuBlocked"):t("cpuRetry"))+" · "+s.error,true);
  if(game){
-  const hands=game.handCounts||[0,0,0,0],flightOrigins=new Map();
+  const hands=game.handCounts||[0,0,0,0];
   for(let actual=0;actual<4;actual++){
    const visual=displaySeat(actual),els=seatEls(visual),player=players.find(p=>p.seat===actual),chip=document.querySelector(els.chip),hand=document.querySelector(els.hand);
    if(chip){
@@ -353,17 +374,6 @@ function renderState(s,previousState=null){
    }
    if(hand){
     const cards=actual===ownSeat?(game.ownHand||[]):Array.from({length:hands[actual]||0},()=>null);
-    const previousCount=Number(previousState?.game?.handCounts?.[actual]??hand.dataset.cardCount??0);
-    if(cards.length<previousCount){
-     let sourceNode=null;
-     if(actual===ownSeat){
-      const nextIds=new Set(cards.map(card=>String(card.id)));
-      sourceNode=[...hand.querySelectorAll(".hokm-card[data-card-id]")].find(card=>!nextIds.has(card.dataset.cardId));
-     }
-     sourceNode ||= hand.querySelector(".hokm-card-back:last-child")||hand.lastElementChild;
-     const rect=sourceNode?.getBoundingClientRect();
-     if(rect?.width&&rect?.height)flightOrigins.set(actual,{left:rect.left,top:rect.top,width:rect.width,height:rect.height});
-    }
     const canPlay=s.status==="playing"&&game.phase==="playing"&&game.currentPlayer===ownSeat&&(!s.cardFlightUntil||Date.now()>=s.cardFlightUntil)&&!(game.lastTrick&&game.lastTrick.length);
     const signature=(actual===ownSeat?cards.map(card=>card.id).join("|"):String(cards.length))+"|"+(canPlay?"play":"wait");
     if(hand.dataset.handSignature!==signature){
