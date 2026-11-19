@@ -66,7 +66,10 @@ jobs:
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/hokm-preview/games"
           cp -R games/hokm "$RUNNER_TEMP/hokm-preview/games/hokm"
-          cp logo.png walletconnect-bridge.js "$RUNNER_TEMP/hokm-preview/"
+          cp games/fi-snakes-ui-theme.css games/shared-language-menu.js "$RUNNER_TEMP/hokm-preview/games/"
+          cp logo.png walletconnect-bridge.js background-desktop.png background-mobile.png \
+            pwa-shell.css pwa-offline.js manifest.webmanifest pwa-icon.svg \
+            pwa-icon-192.png pwa-icon-512.png "$RUNNER_TEMP/hokm-preview/"
           cat > "$RUNNER_TEMP/hokm-preview/index.html" <<'HTML'
           <!doctype html>
           <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url=/games/hokm/"><title>Fly Infinity Hokm QA</title></head>
