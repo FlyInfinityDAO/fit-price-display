@@ -486,3 +486,9 @@ body{
   }
   .seat-west .player-chip em,.seat-east .player-chip em{display:none!important}
 }
+
+
+/* Grid columns must retain physical west/east positions even in RTL languages. */
+.velvet-table .table-inner .table-center .trick-cards{
+  direction:ltr!important;
+}
