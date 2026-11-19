@@ -36,8 +36,8 @@ test("1 FIT grants three rounds in solo; 10 FIT grants seven",()=>{const one=H.r
 test("online table is limited to three rounds if any wallet has only 1 FIT",()=>{const players=[1,10,10,10].map((balance,seat)=>({seat,kind:"human",balance}));assert.equal(H.resolveAccessPolicy({mode:"online",players}).maxRounds,3)});
 test("online seven-round tier requires all four wallets to hold 10 FIT",()=>{const players=[10,12,10,25].map((balance,seat)=>({seat,kind:"human",balance}));assert.equal(H.resolveAccessPolicy({mode:"online",players}).maxRounds,7);players[2].balance=9.99;assert.equal(H.resolveAccessPolicy({mode:"online",players}).maxRounds,3)});
 test("wallet below 1 FIT is denied and online requires four wallets",()=>{assert.equal(H.resolveAccessPolicy({mode:"solo",players:[{seat:0,kind:"human",balance:.99}]}).allowed,false);assert.equal(H.resolveAccessPolicy({mode:"online",players:[{seat:0,kind:"human",balance:10}]}).allowed,false)});
-test("Hakem target, not a fixed hand cap, ends a three-count match",()=>{const m=H.createMatch({mode:"solo",players:[{seat:0,kind:"human",balance:1},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}]});assert.equal(m.maxRounds,3);for(const hakem of [0,3,0]){const g=H.startRound(m,{hakem});g.finished=true;H.finishRound(m,g,1)}assert.equal(m.finished,false);assert.equal(m.roundsPlayed,3);const fourth=H.startRound(m,{hakem:3});fourth.finished=true;H.finishRound(m,fourth,0);assert.equal(m.finished,false);const fifth=H.startRound(m,{hakem:0});fifth.finished=true;const result=H.finishRound(m,fifth,1);assert.equal(result.matchFinished,true);assert.equal(result.matchWinner,0);assert.deepEqual(m.hakemCounts,[3,2]);assert.equal(m.roundsPlayed,5)});
-test("seven-round match finishes exactly after round seven",()=>{const m=H.createMatch({mode:"online",players:[10,10,11,14].map((balance,seat)=>({seat,kind:"human",balance}))});for(let i=0;i<7;i++){const g=H.startRound(m,{hakem:0});g.finished=true;H.finishRound(m,g,i%2)}assert.equal(m.finished,true);assert.equal(m.roundsPlayed,7);assert.deepEqual(m.hakemCounts,[7,0])});
+test("best-of-three match is decided by round wins, not Hakem counts",()=>{const m=H.createMatch({mode:"solo",players:[{seat:0,kind:"human",balance:1},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}]});assert.equal(m.maxRounds,3);assert.equal(m.targetWins,2);for(let i=0;i<2;i++){const g=H.startRound(m,{hakem:0});g.finished=true;H.finishRound(m,g,1)}assert.equal(m.finished,true);assert.equal(m.roundsPlayed,2);assert.deepEqual(m.matchPoints,[0,2]);assert.deepEqual(m.hakemCounts,[2,0]);});
+test("best-of-seven match is decided by four round wins and finishes no later than round seven",()=>{const m=H.createMatch({mode:"online",players:[10,10,11,14].map((balance,seat)=>({seat,kind:"human",balance}))});assert.equal(m.maxRounds,7);assert.equal(m.targetWins,4);for(let i=0;i<7&&!m.finished;i++){const g=H.startRound(m,{hakem:0});g.finished=true;H.finishRound(m,g,i%2)}assert.equal(m.finished,true);assert.equal(m.roundsPlayed,7);assert.deepEqual(m.matchPoints,[4,3]);assert.deepEqual(m.hakemCounts,[7,0]);});
 test("easy, normal, hard and Very Hard CPU levels are accepted",()=>{for(const difficulty of ["easy","normal","hard","veryhard"])assert.equal(H.createMatch({mode:"solo",difficulty,players:[{seat:0,kind:"human",balance:10},{kind:"cpu"},{kind:"cpu"},{kind:"cpu"}]}).difficulty,difficulty)});
 
 test("turn clock grants exactly 30 seconds and automatically plays a legal card after expiry",()=>{
@@ -74,7 +74,7 @@ test("disconnect grace period uses inclusive 60-second deadline",()=>{
 
 test("solo CPU match completes three real rounds using legal card plays",()=>{
  const match=H.createMatch({mode:"solo",difficulty:"normal",players:[{seat:0,kind:"human",balance:1},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}]});
- for(let round=0;round<3;round++){
+ for(let round=0;round<match.maxRounds&&!match.finished;round++){
   const g=H.startRound(match,{humanSeat:0,hakem:0,rng:()=>0.31+round*0.07});
   H.chooseTrump(g,H.SUITS[round%H.SUITS.length]);
   let moves=0;
@@ -89,7 +89,7 @@ test("solo CPU match completes three real rounds using legal card plays",()=>{
   H.finishRound(match,g,g.teamTricks[0]>g.teamTricks[1]?0:1);
  }
  assert.equal(match.finished,true);
- assert.equal(match.roundsPlayed,3);
+ assert.ok(match.roundsPlayed<=3);
  assert.equal(match.matchPoints[0]+match.matchPoints[1],3);
 });
 
@@ -97,7 +97,7 @@ test("match ends when a team has been Hakem the required number of times, indepe
 test("all CPU difficulty levels complete full legal rounds without stalling",()=>{
  for(const difficulty of ["easy","normal","hard","veryhard"]){
   const match=H.createMatch({mode:"solo",difficulty,players:[{seat:0,kind:"human",balance:1},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}]});
-  for(let round=0;round<3;round++){
+  for(let round=0;round<match.maxRounds&&!match.finished;round++){
    const g=H.startRound(match,{humanSeat:0,hakem:0,rng:()=>0.29+round*0.09});
    const trump=H.chooseCpuTrump(g,g.hakem,difficulty,()=>0.41);
    assert.ok(H.SUITS.includes(trump),difficulty+" must choose a valid trump suit");
@@ -115,8 +115,8 @@ test("all CPU difficulty levels complete full legal rounds without stalling",()=
    const winner=g.teamTricks[0]>g.teamTricks[1]?0:1;
    H.finishRound(match,g,winner);
   }
-  assert.equal(match.finished,true,difficulty+" should complete a three-Hakem match");
-  assert.equal(match.roundsPlayed,3);
+  assert.equal(match.finished,true,difficulty+" should complete a best-of-three match");
+  assert.ok(match.roundsPlayed<=3);
  }
 });
 
@@ -148,7 +148,7 @@ test("all CPU difficulties complete seeded matches across varied shuffled deals"
    let state=seed*7919;
    const rng=()=>{state=(state*48271)%2147483647;return state/2147483647};
    const match=H.createMatch({mode:"solo",difficulty,players:[{seat:0,kind:"human",balance:1},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}]});
-   for(let round=0;round<3;round++){
+   for(let round=0;round<match.maxRounds&&!match.finished;round++){
     const game=H.startRound(match,{humanSeat:0,hakem:0,rng});
     const trump=H.chooseCpuTrump(game,game.hakem,difficulty,rng);
     assert.ok(H.SUITS.includes(trump),difficulty+" must choose a valid trump suit");
