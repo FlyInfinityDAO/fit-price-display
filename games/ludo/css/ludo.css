@@ -1104,3 +1104,9 @@ html.fi-android-webview body .arena{
     will-change:auto!important;
   }
 }
+
+/* Keep Ludo pieces vivid when disabled; the shared game theme dims all disabled buttons. */
+html body.fi-neon-ludo .arena .piece-token:disabled{
+  opacity:1!important;
+  filter:saturate(1.65) contrast(1.08)!important;
+}
