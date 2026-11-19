@@ -359,3 +359,19 @@ body{
  .table-center .hakem-pill b,
  .table-center .trump-pill b{font-size:12px!important}
 }
+
+
+/* Always identify the owner and chronological order of each played card. */
+.trick-cards .played-card{position:relative;overflow:visible!important}
+.trick-cards .played-card[data-player-label]:after{
+ content:attr(data-play-order) " · " attr(data-player-label);
+ position:absolute;left:50%;top:-17px;transform:translateX(-50%);
+ z-index:8;display:block;width:max-content;max-width:92px;overflow:hidden;text-overflow:ellipsis;
+ padding:2px 5px;border:1px solid rgba(236,205,132,.82);border-radius:5px;
+ background:linear-gradient(135deg,#5b1025,#2d0713);color:#fff0ca;
+ font:800 8px/1.25 Tahoma,"Segoe UI",sans-serif;letter-spacing:0;white-space:nowrap;
+ box-shadow:0 2px 6px rgba(0,0,0,.5);pointer-events:none
+}
+.hokm-card-source-active{outline:2px solid #ffe6a0!important;outline-offset:3px;filter:brightness(1.28)!important}
+@media(max-width:760px){.trick-cards .played-card[data-player-label]:after{top:-15px;max-width:72px;padding:2px 3px;font-size:7px}}
+@media(max-width:420px){.trick-cards .played-card[data-player-label]:after{top:-14px;max-width:58px;font-size:6px;padding:2px}}
