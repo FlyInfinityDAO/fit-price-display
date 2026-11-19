@@ -2,6 +2,8 @@
 "use strict";
 const API=(window.HOKM_API_URL||"https://fly-hokm-api.flyinfinityplatform.workers.dev").replace(/\/$/,"");
 const $=id=>document.getElementById(id);
+const H=window.HokmEngine;
+if(!H)return;
 const CARD_FLIGHT_MS=1600;
 const words={
  en:{title:"ONLINE FOUR-PLAYER TABLE",create:"Create private room",code:"Room code",join:"Join room",copy:"Copy invite code",waiting:"Waiting for players",connected:"Connected",yourTurn:"Your turn",opponent:"Waiting for opponent",choose:"Choose Hokm suit",round:"Round",won:"Your team won this round",lost:"Opponents won this round",finished:"Match finished",need:"Connect and verify your wallet to use online rooms.",copyOk:"Room code copied.",copied:"Copied",seat:"Seat",start:"Waiting for all four players",error:"Online room error",creating:"Creating a private room…",joining:"Joining the room…",invalidCode:"Enter a valid 6-character room code.",room:"Room",connectionLost:"Connection lost. Rejoin with the same wallet and room code.",wsFail:"WebSocket connection failed. Please retry.",roomInactive:"Room connection is not active.",copyFallback:"Select and copy the room code.",chooseBy:"Player {seat} is choosing the Hokm suit…",seconds:"s",walletVerified:"Wallet verified · online rooms unlocked.",cpu:"CPU",addTwoCpu:"Add CPUs to seats 3 & 4",addLastCpu:"Add CPU to seat 4",addingCpu:"Adding CPU players…",cpuAdded:"CPU players added.",partner:"Partner",you:"You",openSeat:"Open seat",disconnected:"Disconnected",hands:"hands",whiteTeam:"WHITE TEAM · NORTH / SOUTH",blackTeam:"BLACK TEAM · EAST / WEST",handWins:"Hands won",hakemTimes:"Hakem calls",matchWins:"Rounds won"},
