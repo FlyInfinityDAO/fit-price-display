@@ -18,7 +18,7 @@ Object.entries(EXTRA_WORDS).forEach(([locale,values])=>Object.assign(words[local
 const t=k=>(words[$("languageSelect")?.value]||words.en)[k]||(words.en[k])||k;
 const ROOM_SESSION_KEY="hokmFlyInfinityRoom";
 let auth=null, socket=null, roomCode="", ownSeat=-1, lastState=null, timer=null, connecting=false, intentionalClose=false;
-let reconnectTimer=null,reconnectAttempt=0,reconnecting=false,collectionTimer=null,lastCollectedTrickKey="";
+let reconnectTimer=null,reconnectAttempt=0,reconnecting=false,collectionTimer=null,lastCollectedTrickKey="",collectedTrickKey="";
 function ensurePanel(){
  if($("hokmOnlinePanel"))return;
  const settings=document.querySelector(".match-settings");
@@ -98,7 +98,7 @@ function openSocket(ticket){
     if(afterLast&&afterLast!==beforeLast&&(next.game.lastTrick||[]).length===4)window.HokmAudio?.card("collect");
     else if(afterTrick>beforeTrick)window.HokmAudio?.card("play");
    }else if(next.status==="playing"&&next.game)window.HokmAudio?.card("deal");
-   lastState=next;ownSeat=next.seat;renderState(next);
+   lastState=next;ownSeat=next.seat;renderState(next,previous);
    queueOnlineTrickCollection(next);
   }
   else if(data.type==="error")status(friendlyError(data.error),true);
@@ -159,43 +159,65 @@ async function copyRoomCode(){
  catch{const input=$("hokmRoomCodeInput");input.value=roomCode;input.select();status(t("copyFallback"))}
 }
 function displaySeat(seat){return (seat-ownSeat+4)%4}
+function onlineTrickKey(trick,trump){
+ if(!Array.isArray(trick)||trick.length!==4||!trump)return "";
+ return trick.map(entry=>String(entry.card?.id||entry.card?.rank+entry.card?.suit)+"@"+entry.player).join("|")+"#"+trump;
+}
+function clearOnlineTrickSlots(){
+ document.querySelectorAll(".trick-cards .played-card").forEach(node=>{
+  node.style.opacity="";
+  node.classList.add("empty");node.classList.remove("red","black");
+  node.removeAttribute("data-player-label");node.removeAttribute("data-play-order");
+  node.dataset.playedCardKey="";node.textContent="·";
+ });
+}
 function queueOnlineTrickCollection(state){
- const trick=state?.game?.lastTrick;
- if(!Array.isArray(trick)||trick.length!==4||!state.game.trump)return;
- const key=trick.map(entry=>String(entry.card?.id||entry.card?.rank+entry.card?.suit)+"@"+entry.player).join("|")+"#"+state.game.trump;
- if(key===lastCollectedTrickKey)return;
+ const trick=state?.game?.lastTrick,key=onlineTrickKey(trick,state?.game?.trump);
+ if(!key){
+  if(collectionTimer){clearTimeout(collectionTimer);collectionTimer=null}
+  lastCollectedTrickKey="";collectedTrickKey="";
+  return;
+ }
+ if(key===lastCollectedTrickKey||key===collectedTrickKey)return;
  lastCollectedTrickKey=key;
  if(collectionTimer)clearTimeout(collectionTimer);
- collectionTimer=setTimeout(()=>animateOnlineTrickCollection(trick,state.game.trump),CARD_FLIGHT_MS+250);
+ // The Worker keeps the last card in flight for 1,600 ms plus a 300 ms safety buffer.
+ collectionTimer=setTimeout(()=>{
+  collectionTimer=null;
+  animateOnlineTrickCollection(trick,state.game.trump,key);
+ },CARD_FLIGHT_MS+300);
 }
-function animateOnlineTrickCollection(trick,trump){
- if(!Array.isArray(trick)||trick.length!==4||!window.HokmEngine?.trickWinner)return;
+function animateOnlineTrickCollection(trick,trump,key=onlineTrickKey(trick,trump)){
+ if(!Array.isArray(trick)||trick.length!==4||!window.HokmEngine?.trickWinner)return Promise.resolve();
  const winnerSeat=window.HokmEngine.trickWinner(trick,trump);
  const target=document.querySelector(seatEls(displaySeat(winnerSeat)).chip);
  const nodes=[...document.querySelectorAll(".trick-cards .played-card:not(.empty)")];
- if(!target||nodes.length!==4)return;
+ const finishWithoutMotion=()=>{
+  collectedTrickKey=key||onlineTrickKey(trick,trump);
+  clearOnlineTrickSlots();target?.classList.remove("hokm-trick-winner");
+  return Promise.resolve();
+ };
+ if(!target||nodes.length!==4||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return finishWithoutMotion();
  const to=target.getBoundingClientRect();
- if(!to.width||!to.height)return;
+ if(!to.width||!to.height)return finishWithoutMotion();
  target.classList.add("hokm-trick-winner");
  const jobs=nodes.map((node,index)=>{
   const from=node.getBoundingClientRect();
   if(!from.width||!from.height)return Promise.resolve();
   const clone=node.cloneNode(true);
+  clone.classList.add("hokm-online-collect-flight");
   clone.removeAttribute("id");clone.removeAttribute("data-player-label");
   const dx=(to.left+to.width/2)-(from.left+from.width/2);
   const dy=(to.top+to.height/2)-(from.top+from.height/2);
   const rotation=index%2?16:-16,duration=620,delay=index*45;
   Object.assign(clone.style,{position:"fixed",left:from.left+"px",top:from.top+"px",width:from.width+"px",height:from.height+"px",margin:"0",zIndex:"10001",pointerEvents:"none",transformOrigin:"center center"});
-  const oldOpacity=node.style.opacity;
   document.body.appendChild(clone);
   node.style.opacity="0";
   return new Promise(resolve=>{
    let done=false,animation;
    const finish=()=>{
     if(done)return;
-    done=true;
-    node.style.opacity=oldOpacity;
-    clone.remove();
+    done=true;clone.remove();
     try{animation&&animation.cancel()}catch{}
     resolve();
    };
@@ -210,39 +232,48 @@ function animateOnlineTrickCollection(trick,trump){
      return;
     }catch{animation=null}
    }
-   // Keep the original slot hidden until the fallback clone reaches the winner.
    const begin=()=>{
     clone.style.transition="transform "+duration+"ms cubic-bezier(.3,.05,.65,1) "+delay+"ms, opacity "+duration+"ms ease "+delay+"ms";
     clone.style.transform="translate3d("+dx+"px,"+dy+"px,0) scale(.18) rotate("+rotation+"deg)";
     clone.style.opacity="0";
    };
    if(typeof requestAnimationFrame==="function")requestAnimationFrame(begin);else setTimeout(begin,0);
-   setTimeout(finish,duration+delay+120);
+   setTimeout(finish,duration+delay+140);
   });
  });
- Promise.all(jobs).then(()=>target.classList.remove("hokm-trick-winner"));
+ return Promise.all(jobs).then(()=>{
+  // Keep the center clear until the Worker actually clears lastTrick.
+  collectedTrickKey=key||onlineTrickKey(trick,trump);
+  clearOnlineTrickSlots();
+  setTimeout(()=>target.classList.remove("hokm-trick-winner"),1400);
+ });
 }
 function makeSeatRing(kind){const ring=document.createElement("span");ring.className="hokm-seat-ring "+kind;ring.setAttribute("aria-hidden","true");return ring}
 function renderSeatRing(chip,kind,deadline,now,totalOverride){let ring=chip.querySelector(".hokm-seat-ring."+kind);if(!deadline){ring?.remove();return}if(!ring){ring=makeSeatRing(kind);chip.appendChild(ring)}const total=totalOverride||(kind==="turn"?30000:(lastState?.game?.reconnectGraceMs||60000));const left=Math.max(0,deadline-now);ring.style.setProperty("--ring-progress",String(Math.max(0,Math.min(1,left/total))));ring.textContent=String(Math.ceil(left/1000));ring.title=kind==="turn"?t("turnCountdown"):t("reconnectCountdown");}
 function shortWalletLabel(wallet){const value=String(wallet||"");return value.length>12?value.slice(0,6)+"…"+value.slice(-4).toUpperCase():value||"—"}
 function animateCardFlight(node,source){
  if(!node||!source||typeof node.getBoundingClientRect!=="function")return;
- if(typeof node.getBoundingClientRect!=="function")return;
- const from=source.getBoundingClientRect(),to=node.getBoundingClientRect();
- if(!from.width||!from.height||!to.width||!to.height)return;
+ const from=typeof source.getBoundingClientRect==="function"?source.getBoundingClientRect():source;
+ const to=node.getBoundingClientRect();
+ if(!from||!Number.isFinite(from.left)||!Number.isFinite(from.top)||!from.width||!from.height||!to.width||!to.height)return;
  const card=node.cloneNode(true),oldOpacity=node.style.opacity;
  node.style.opacity="0";
  const dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+to.height/2)-(from.top+from.height/2);
- card.removeAttribute("id");card.removeAttribute("data-player-label");card.classList.remove("empty","hokm-card-arriving");
- Object.assign(card.style,{position:"fixed",left:(from.left+from.width/2-to.width/2)+"px",top:(from.top+from.height/2-to.height/2)+"px",width:to.width+"px",height:to.height+"px",margin:"0",zIndex:"10000",pointerEvents:"none",transformOrigin:"center center",opacity:"1"});
+ card.removeAttribute("id");card.removeAttribute("data-player-label");card.classList.remove("empty","hokm-card-arriving");card.classList.add("hokm-online-card-flight");
+ Object.assign(card.style,{position:"fixed",left:(from.left+from.width/2-to.width/2)+"px",top:(from.top+from.height/2-to.height/2)+"px",width:to.width+"px",height:to.height+"px",margin:"0",zIndex:"10000",pointerEvents:"none",transformOrigin:"center center",opacity:"0"});
  document.body.appendChild(card);
- source.classList.add("hokm-card-source-active");
- let motion;
- const cleanup=()=>{node.style.opacity=oldOpacity;source.classList.remove("hokm-card-source-active");card.remove();};
+ const sourceElement=typeof source.getBoundingClientRect==="function"?source:null;
+ sourceElement?.classList.add("hokm-card-source-active");
+ let motion,cleaned=false;
+ const cleanup=()=>{
+  if(cleaned)return;
+  cleaned=true;node.style.opacity=oldOpacity;sourceElement?.classList.remove("hokm-card-source-active");card.remove();
+ };
  try{
   if(typeof card.animate!=="function"){
    card.style.transition="transform 1450ms cubic-bezier(.22,.72,.25,1),opacity 180ms ease";
-   requestAnimationFrame(()=>{card.style.transform="translate3d("+dx+"px,"+dy+"px,0) scale(1) rotate(0)"});
+   const begin=()=>{card.style.transform="translate3d("+dx+"px,"+dy+"px,0) scale(1) rotate(0)";card.style.opacity="1"};
+   if(typeof requestAnimationFrame==="function")requestAnimationFrame(begin);else setTimeout(begin,0);
    setTimeout(cleanup,1500);return;
   }
   motion=card.animate([
@@ -252,8 +283,7 @@ function animateCardFlight(node,source){
    {opacity:1,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(1.06) rotate(1deg)",offset:.9},
    {opacity:1,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(1) rotate(0)",offset:1}
   ],{duration:CARD_FLIGHT_MS,easing:"cubic-bezier(.22,.72,.25,1)",fill:"both"});
-  motion.onfinish=()=>{cleanup();motion.cancel()};
-  motion.oncancel=cleanup;
+  motion.onfinish=cleanup;motion.oncancel=cleanup;
  }catch{cleanup()}
 }
 function seatEls(seat){
@@ -261,7 +291,7 @@ function seatEls(seat){
 }
 function cardNode(card,playable){
  const el=document.createElement(playable?"button":"span");
- el.className="hokm-card"+(["♥","♦"].includes(card.suit)?" red":"")+(playable?" playable":"");
+ el.className="hokm-card"+(["♥","♦"].includes(card.suit)?" red":"")+(playable?" playable":"");el.dataset.cardId=String(card.id);
  if(playable){
   el.type="button";let touchStart=null,lastTouchAt=0;
   el.addEventListener("touchstart",event=>{const point=event.changedTouches&&event.changedTouches[0];if(point)touchStart={x:point.clientX,y:point.clientY}},{passive:true});
@@ -277,7 +307,7 @@ function cardNode(card,playable){
  const center=document.createElement("span");center.className="card-center";center.textContent=card.suit;
  el.append(corner,center);return el;
 }
-function renderState(s){
+function renderState(s,previousState=null){
  if(!$("hokmOnlinePanel"))return;
  const players=s.players||[],me=players.find(p=>p.you),game=s.game;
  const difficultySelect=$("cpuDifficulty");
@@ -307,7 +337,7 @@ function renderState(s){
  }else status(t("opponent"));
  if(s.error)status((s.cpuTurnBlocked?t("cpuBlocked"):t("cpuRetry"))+" · "+s.error,true);
  if(game){
-  const hands=game.handCounts||[0,0,0,0];
+  const hands=game.handCounts||[0,0,0,0],flightOrigins=new Map();
   for(let actual=0;actual<4;actual++){
    const visual=displaySeat(actual),els=seatEls(visual),player=players.find(p=>p.seat===actual),chip=document.querySelector(els.chip),hand=document.querySelector(els.hand);
    if(chip){
@@ -321,25 +351,45 @@ function renderState(s){
    }
    if(hand){
     const cards=actual===ownSeat?(game.ownHand||[]):Array.from({length:hands[actual]||0},()=>null);
+    const previousCount=Number(previousState?.game?.handCounts?.[actual]??hand.dataset.cardCount??0);
+    if(cards.length<previousCount){
+     let sourceNode=null;
+     if(actual===ownSeat){
+      const nextIds=new Set(cards.map(card=>String(card.id)));
+      sourceNode=[...hand.querySelectorAll(".hokm-card[data-card-id]")].find(card=>!nextIds.has(card.dataset.cardId));
+     }
+     sourceNode ||= hand.querySelector(".hokm-card-back:last-child")||hand.lastElementChild;
+     const rect=sourceNode?.getBoundingClientRect();
+     if(rect?.width&&rect?.height)flightOrigins.set(actual,{left:rect.left,top:rect.top,width:rect.width,height:rect.height});
+    }
     const canPlay=s.status==="playing"&&game.phase==="playing"&&game.currentPlayer===ownSeat&&(!s.cardFlightUntil||Date.now()>=s.cardFlightUntil)&&!(game.lastTrick&&game.lastTrick.length);
     const signature=(actual===ownSeat?cards.map(card=>card.id).join("|"):String(cards.length))+"|"+(canPlay?"play":"wait");
     if(hand.dataset.handSignature!==signature){
      const previous=Number(hand.dataset.cardCount||0),dealing=cards.length>previous;
      hand.classList.remove("dealing");hand.replaceChildren();
-     if(dealing){hand.classList.add("dealing");hand.style.setProperty("--deal-x",visual===0?"0px":visual===2?"0px":visual===1?"clamp(70px,14vw,170px)":"clamp(-170px,-14vw,-70px)");hand.style.setProperty("--deal-y",visual===0?"clamp(55px,13vw,145px)":visual===2?"clamp(-145px,-13vw,-55px)":"0px")}
+     if(dealing){hand.classList.add("dealing");hand.style.setProperty("--deal-x",visual===0?"0px":visual===2?"0px":visual===1?"clamp(70px,14vw,170px)":"clamp(-170px,-14vw,-70px)");hand.style.setProperty("--deal-y",visual===0?"clamp(-145px,-13vw,-55px)":visual===2?"clamp(55px,13vw,145px)":"0px")}
      cards.forEach((card,index)=>{
       const node=card?cardNode(card,canPlay):document.createElement("span");
       if(!card){node.className="hokm-card-back";node.setAttribute("aria-hidden","true")}
       node.style.setProperty("--deal-index",index);hand.appendChild(node);
      });
      hand.dataset.cardCount=String(cards.length);hand.dataset.handSignature=signature;
+     if(dealing){
+      const dealSignature=signature,finishDeal=()=>{if(hand.dataset.handSignature===dealSignature)hand.classList.remove("dealing")};
+      if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)finishDeal();
+      else{
+       hand.lastElementChild?.addEventListener("animationend",finishDeal,{once:true});
+       setTimeout(finishDeal,1400);
+      }
+     }
     }
    }
   }
   const nodes=[...document.querySelectorAll(".trick-cards .played-card")];
   nodes.forEach(n=>{n.classList.add("empty");n.classList.remove("red","black");n.removeAttribute("data-player-label");n.textContent="·"});
   const activeTrickSeats=new Set();
-  const entries=(game.lastTrick&&game.lastTrick.length?game.lastTrick:game.trick)||[];
+  const lastTrickKey=onlineTrickKey(game.lastTrick,game.trump),showLastTrick=!!lastTrickKey&&lastTrickKey!==collectedTrickKey;
+  const entries=(showLastTrick?game.lastTrick:game.trick)||[];
   entries.forEach((entry,index)=>{
    const visual=displaySeat(entry.player),slot=H.trickSlot(visual),node=document.querySelector('.trick-cards .played-card[data-trick-slot="'+slot+'"]')||nodes[slot];if(!node)return;activeTrickSeats.add(slot);
    const red=["♥","♦"].includes(entry.card.suit);
@@ -352,7 +402,7 @@ function renderState(s){
    const key=String(entry.card.id||entry.card.rank+entry.card.suit)+"@"+slot;
    if(node.dataset.playedCardKey!==key){
     node.dataset.playedCardKey=key;
-    const source=document.querySelector(seatEls(visual).chip);
+    const source=flightOrigins.get(entry.player)||document.querySelector(seatEls(visual).chip);
     animateCardFlight(node,source);
    }
   });
@@ -425,7 +475,7 @@ function startCountdown(deadline,kind="turn",label=""){
 function stopCountdown(){if(timer)clearInterval(timer);timer=null}
 function reset(){
  intentionalClose=true;if(reconnectTimer){clearTimeout(reconnectTimer);reconnectTimer=null}if(socket){socket.close();socket=null}
- if(collectionTimer){clearTimeout(collectionTimer);collectionTimer=null}lastCollectedTrickKey=""; sessionStorage.removeItem(ROOM_SESSION_KEY);stopCountdown();lastState=null;roomCode="";ownSeat=-1;auth=null;
+ if(collectionTimer){clearTimeout(collectionTimer);collectionTimer=null}lastCollectedTrickKey="";collectedTrickKey=""; sessionStorage.removeItem(ROOM_SESSION_KEY);stopCountdown();lastState=null;roomCode="";ownSeat=-1;auth=null;
  if($("hokmOnlinePanel")){$("hokmOnlinePanel").hidden=true;$("hokmRoomInvite").hidden=true;$("hokmCpuControls").hidden=true;$("hokmOnlineTrump").hidden=true;status(t("need"))}
  const difficultySelect=$("cpuDifficulty");if(difficultySelect){delete difficultySelect.dataset.onlineLocked;difficultySelect.disabled=difficultySelect.dataset.soloLocked==="true";}
 }
