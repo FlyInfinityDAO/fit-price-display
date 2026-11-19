@@ -96,15 +96,15 @@ jobs:
           for attempt in $(seq 1 12); do
             curl --silent --show-error --fail "$PREVIEW_URL/games/hokm/" -o /tmp/hokm.html || true
             if grep -q 'Fly Infinity Hokm' /tmp/hokm.html 2>/dev/null && \
-               grep -q 'hokm-trick-layout-best-of-20261119-v4' /tmp/hokm.html 2>/dev/null; then
+               grep -q 'hokm-trick-layout-best-of-20261119-v5' /tmp/hokm.html 2>/dev/null; then
               break
             fi
             echo "Waiting for the latest Pages HTML to propagate ($attempt/12)..."
             sleep 5
           done
           grep -q 'Fly Infinity Hokm' /tmp/hokm.html
-          grep -q 'hokm-trick-layout-best-of-20261119-v4' /tmp/hokm.html
-          curl --silent --show-error --fail "$PREVIEW_URL/games/hokm/css/hokm-classic-table.css?v=hokm-trick-layout-best-of-20261119-v4" -o /tmp/hokm-classic.css
+          grep -q 'hokm-trick-layout-best-of-20261119-v5' /tmp/hokm.html
+          curl --silent --show-error --fail "$PREVIEW_URL/games/hokm/css/hokm-classic-table.css?v=hokm-trick-layout-best-of-20261119-v5" -o /tmp/hokm-classic.css
           grep -q 'grid-template-columns:minmax(0,1fr)' /tmp/hokm-classic.css
 
       - name: Run solo gameplay browser smoke tests
