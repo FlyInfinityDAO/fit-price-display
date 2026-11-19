@@ -29,8 +29,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 40
     env:
-      CLOUDFLARE_API_TOKEN: \${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: \${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
       PREVIEW_BRANCH: hokm-online-motion-qa-261119
       PREVIEW_URL: https://hokm-online-motion-qa-261119.fly-hokm-preview.pages.dev
 
@@ -119,5 +119,5 @@ jobs:
 
       - name: Run multiplayer card-deal, card-flight and collection tests
         env:
-          HOKM_ONLINE_PREVIEW_URL: \${{ env.PREVIEW_URL }}/games/hokm/
+          HOKM_ONLINE_PREVIEW_URL: ${{ env.PREVIEW_URL }}/games/hokm/
         run: node games/hokm/tests/hokm-online-motion-smoke.mjs
