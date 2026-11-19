@@ -157,7 +157,7 @@ function renderTrick(){
  const nodes=[...document.querySelectorAll(".trick-cards .played-card")],entries=visibleTrick.length?visibleTrick:(game?game.trick:[]);
  nodes.forEach(node=>{node.classList.add("empty");node.classList.remove("red","black");node.removeAttribute("data-player-label");node.textContent="·"});
  const active=new Set(),flights=[];
- entries.forEach((entry,index)=>{const slot=H.trickSlot(entry.player),node=nodes[slot];if(!node)return;active.add(slot);node.classList.remove("empty");node.classList.toggle("red",isRed(entry.card));node.classList.toggle("black",!isRed(entry.card));node.textContent=entry.card.rank+entry.card.suit;const source=document.querySelector(seatElements(entry.player).chip),label=source?.querySelector("b")?.textContent?.trim()||(entry.player===0?tr("you"):"CPU "+(entry.player+1));node.dataset.playerLabel=label;node.dataset.playOrder=String(index+1);node.setAttribute("aria-label",entry.card.rank+" "+suitName(entry.card.suit)+" · "+label+" · "+(index+1));flights.push(animatePlayedCard(node,entry,entry.player))});
+ entries.forEach((entry,index)=>{const slot=H.trickSlot(entry.player),node=document.querySelector('.trick-cards .played-card[data-trick-slot="'+slot+'"]')||nodes[slot];if(!node)return;active.add(slot);node.classList.remove("empty");node.classList.toggle("red",isRed(entry.card));node.classList.toggle("black",!isRed(entry.card));node.textContent=entry.card.rank+entry.card.suit;const source=document.querySelector(seatElements(entry.player).chip),label=source?.querySelector("b")?.textContent?.trim()||(entry.player===0?tr("you"):"CPU "+(entry.player+1));node.dataset.playerLabel=label;node.dataset.playOrder=String(index+1);node.setAttribute("aria-label",entry.card.rank+" "+suitName(entry.card.suit)+" · "+label+" · "+(index+1));flights.push(animatePlayedCard(node,entry,entry.player))});
  nodes.forEach((node,index)=>{if(!active.has(index)){node.classList.remove("hokm-card-arriving");node.dataset.playedCardKey="";node.removeAttribute("data-player-label");node.removeAttribute("data-play-order")}});
  return Promise.all(flights);
 }
@@ -169,7 +169,7 @@ function render(){
  const trickScores=document.querySelectorAll(".hokm-round-score b");if(trickScores.length){trickScores[0].textContent=String(game.teamTricks[0]||0);trickScores[1].textContent=String(game.teamTricks[1]||0)}
  const bottom=document.querySelectorAll(".game-bottom .team-score b");if(bottom.length&&match){bottom[0].textContent=match.matchPoints[0];bottom[1].textContent=match.matchPoints[1]}
  const hakemStats=document.querySelectorAll(".team-hakem-count");if(hakemStats.length&&match){hakemStats[0].textContent=String((match.hakemCounts||[0,0])[0]||0);hakemStats[1].textContent=String((match.hakemCounts||[0,0])[1]||0)}
- const round=document.querySelector(".round-info b");if(round&&match)round.textContent=match.roundNo+" / "+match.maxRounds;
+ const round=document.querySelector(".round-info b");if(round&&match)round.textContent=String(match.roundNo);\n const tierLabel=$("hokmMatchTier");if(tierLabel&&match){const hakemLabel=window.hokmTranslate?.("hakemTimes")||"Hakem calls";tierLabel.textContent=(match.accessTier>=2?"10 FIT":"1 FIT")+" · "+match.maxRounds+" "+hakemLabel;}
  $("hokmHandCaption").textContent=game.phase==="choose-trump"?tr("selectTrump"):tr("playing");return flights;
 }
 function chooseCpuTrump(){return H.chooseCpuTrump(game,game.hakem,difficulty)}
