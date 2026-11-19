@@ -492,3 +492,19 @@ body{
 .velvet-table .table-inner .table-center .trick-cards{
   direction:ltr!important;
 }
+
+
+/* Prevent min-content labels from widening the trick grid beyond the felt on narrow phones. */
+@media(max-width:760px){
+  .velvet-table .table-inner .table-center{
+    min-width:0!important;
+    grid-template-columns:minmax(0,1fr)!important;
+  }
+  .velvet-table .table-inner .table-center>.trick-cards{
+    min-width:0!important;
+    max-width:100%!important;
+    width:100%!important;
+    justify-self:stretch!important;
+    overflow:visible!important;
+  }
+}
