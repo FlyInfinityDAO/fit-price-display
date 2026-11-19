@@ -1,6 +1,11 @@
 name: Hokm Cloudflare Deploy
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'games/hokm/worker/wrangler.toml'
   workflow_dispatch:
     inputs:
       confirm_deploy:
@@ -17,8 +22,8 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy isolated Hokm Worker code only
-    if: github.ref == 'refs/heads/main' && inputs.confirm_deploy == 'DEPLOY_HOKM_WORKER'
+    name: Sync Hokm Worker configuration from main
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || inputs.confirm_deploy == 'DEPLOY_HOKM_WORKER')
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -54,5 +59,17 @@ jobs:
       - name: Install Worker dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Deploy Worker code only
+      - name: Deploy Worker configuration and code (no D1 migrations)
         run: npx wrangler deploy
+
+      - name: Verify Cloudflare Pages production origin is allowed by CORS
+        shell: bash
+        run: |
+          set -euo pipefail
+          headers="$(curl --silent --show-error --dump-header - --output /dev/null --request OPTIONS \
+            --header "Origin: https://fly-hokm-preview.pages.dev" \
+            --header "Access-Control-Request-Method: POST" \
+            --header "Access-Control-Request-Headers: content-type" \
+            https://fly-hokm-api.flyinfinityplatform.workers.dev/api/auth/challenge)"
+          printf '%s\\n' "$headers"
+          printf '%s' "$headers" | tr -d '\\r' | grep -Fxi "access-control-allow-origin: https://fly-hokm-preview.pages.dev"
