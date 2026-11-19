@@ -3,7 +3,7 @@
   // This test-only identity is restricted to the isolated Cloudflare Pages
   // preview hostname and an explicit query flag. It is never loaded by the
   // production Hokm page or accepted by the production Worker.
-  if (location.hostname !== "hokm-fix-card-layout-20261119.fly-hokm-preview.pages.dev") return;
+  if (location.hostname !== "hokm-fix-layout-261119.fly-hokm-preview.pages.dev") return;
   if (new URLSearchParams(location.search).get("hokmTest") !== "1") return;
   const auth = {
     wallet: "0x0000000000000000000000000000000000000001",
