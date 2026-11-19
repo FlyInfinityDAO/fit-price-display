@@ -7,6 +7,7 @@ const failures = [];
 async function runViewport(browserType, name, viewport, mobile = false, language = "en") {
   const context = await browserType.newContext({
     viewport,
+    serviceWorkers: "block",
     isMobile: mobile && browserType === chromium,
     hasTouch: mobile
   });
@@ -63,6 +64,7 @@ async function runViewport(browserType, name, viewport, mobile = false, language
         const suit = document.getElementById("tableTrumpSuit")?.textContent?.trim();
         return !!suit && suit !== "—";
       },
+      null,
       { timeout: 15000 }
     );
 
@@ -198,6 +200,7 @@ async function runViewport(browserType, name, viewport, mobile = false, language
 
     await page.waitForFunction(
       () => document.querySelectorAll(".hand-south .hokm-card.playable").length > 0,
+      null,
       { timeout: 25000 }
     );
     const secondBefore = await hand.count();
