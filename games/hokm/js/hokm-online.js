@@ -321,7 +321,7 @@ function renderState(s){
   const activeTrickSeats=new Set();
   const entries=(game.lastTrick&&game.lastTrick.length?game.lastTrick:game.trick)||[];
   entries.forEach((entry,index)=>{
-   const visual=displaySeat(entry.player),slot=H.trickSlot(visual),node=nodes[slot];if(!node)return;activeTrickSeats.add(slot);
+   const visual=displaySeat(entry.player),slot=H.trickSlot(visual),node=document.querySelector('.trick-cards .played-card[data-trick-slot="'+slot+'"]')||nodes[slot];if(!node)return;activeTrickSeats.add(slot);
    const red=["♥","♦"].includes(entry.card.suit);
    node.classList.remove("empty");node.classList.toggle("red",red);node.classList.toggle("black",!red);node.textContent=entry.card.rank+entry.card.suit;
    const playerChip=document.querySelector(seatEls(visual).chip);
