@@ -14,7 +14,7 @@ for (const scenario of scenarios) {
   try {
     const page = await browser.newPage({ viewport: scenario.viewport });
     await page.goto(new URL("/games/ludo/", baseUrl).href, { waitUntil: "domcontentloaded" });
-    await page.locator("#ludoBoard").waitFor();
+    await page.locator("#ludoBoard").waitFor({ state: "attached" });
     await page.waitForFunction(() =>
       Array.from(document.styleSheets).some(sheet => sheet.href?.includes("/games/ludo/css/ludo.css") && sheet.cssRules.length > 0)
     );
