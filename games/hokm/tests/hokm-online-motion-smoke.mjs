@@ -298,16 +298,96 @@ async function runViewport(browserType, name, viewport, mobile = false, language
 
     if (language !== "en") await page.locator("#languageSelect").selectOption(language);
 
-    await page.evaluate(() => {
-      const detail = {
-        wallet: "0x0000000000000000000000000000000000000001",
-        tier: 2,
-        expiresAt: Math.floor(Date.now() / 1000) + 3600,
-        sessionToken: "qa-online-motion-session"
-      };
+    const qaAuth = {
+      wallet: "0x0000000000000000000000000000000000000001",
+      tier: 2,
+      expiresAt: Math.floor(Date.now() / 1000) + 3600,
+      sessionToken: "qa-online-motion-session"
+    };
+    await page.evaluate(detail => {
       window.hokmAuthState = detail;
       window.dispatchEvent(new CustomEvent("hokm:authenticated", { detail }));
+      const originalStartRound = window.HokmEngine.startRound;
+      window.HokmEngine.startRound = (match, options = {}) =>
+        originalStartRound(match, { ...options, hakem: 0 });
+    }, qaAuth);
+
+    // Exercise the actual solo-mode suit and card click handlers in a simulated,
+    // wallet-gated session. This is browser UI QA only; no wallet is connected.
+    await page.locator("#hokmStartBtn:not([disabled])").waitFor({ state: "visible", timeout: 10000 });
+    await page.locator("#hokmStartBtn").click();
+    const soloSuit = page.locator("#hokmTrumpPicker [data-suit]").first();
+    await soloSuit.waitFor({ state: "visible", timeout: 10000 });
+    const soloSuitHit = await soloSuit.evaluate(button => {
+      const r = button.getBoundingClientRect();
+      const x = Math.max(0, Math.min(innerWidth - 1, r.left + r.width / 2));
+      const y = Math.max(0, Math.min(innerHeight - 1, r.top + r.height / 2));
+      const top = document.elementFromPoint(x, y);
+      return {
+        suit: button.dataset.suit,
+        pointerEvents: getComputedStyle(button).pointerEvents,
+        disabled: button.disabled,
+        hitButton: top?.closest?.("button") === button,
+        hitTag: top?.tagName || null,
+        hitClass: typeof top?.className === "string" ? top.className : ""
+      };
     });
+    if (!soloSuitHit.hitButton || soloSuitHit.pointerEvents === "none" || soloSuitHit.disabled) {
+      throw new Error("Desktop/mobile solo trump control missed its hit target: " + JSON.stringify(soloSuitHit));
+    }
+    if (mobile) await soloSuit.tap({ timeout: 10000 });
+    else await soloSuit.click({ timeout: 10000 });
+    await page.waitForFunction(
+      expected => document.getElementById("tableTrumpSuit")?.textContent?.trim() === expected,
+      soloSuitHit.suit,
+      { timeout: 10000 }
+    );
+
+    await page.waitForFunction(
+      () => !document.querySelector(".hand-south")?.classList.contains("dealing"),
+      null,
+      { timeout: 10000 }
+    );
+    const soloCards = page.locator(".hand-south .hokm-card.playable");
+    await soloCards.first().waitFor({ state: "visible", timeout: 10000 });
+    const soloCardCount = await page.locator(".hand-south .hokm-card").count();
+    const soloCard = soloCards.first();
+    const soloCardHit = await soloCard.evaluate(button => {
+      const r = button.getBoundingClientRect();
+      const x = Math.max(0, Math.min(innerWidth - 1, r.left + r.width / 2));
+      const y = Math.max(0, Math.min(innerHeight - 1, r.top + r.height / 2));
+      const top = document.elementFromPoint(x, y);
+      return {
+        cardId: button.dataset.cardId,
+        pointerEvents: getComputedStyle(button).pointerEvents,
+        disabled: button.disabled,
+        hitCardId: top?.closest?.(".hokm-card")?.dataset?.cardId || null,
+        hitTag: top?.tagName || null,
+        hitClass: typeof top?.className === "string" ? top.className : ""
+      };
+    });
+    if (soloCardHit.hitCardId !== soloCardHit.cardId ||
+        soloCardHit.pointerEvents === "none" || soloCardHit.disabled) {
+      throw new Error("Solo human card missed its hit target: " + JSON.stringify(soloCardHit));
+    }
+    if (mobile) await soloCard.tap({ timeout: 10000 });
+    else await soloCard.click({ timeout: 10000 });
+    await page.waitForFunction(
+      expected => document.querySelectorAll(".hand-south .hokm-card").length === expected,
+      soloCardCount - 1,
+      { timeout: 10000 }
+    );
+    const soloClickChecks = { soloSuitHit, soloCardHit, cardsBefore: soloCardCount, cardsAfter: soloCardCount - 1 };
+
+    // Reset the page so solo-mode CPU timers cannot overlap online-room UI tests.
+    await page.reload({ waitUntil: "domcontentloaded", timeout: 45000 });
+    if (language !== "en") await page.locator("#languageSelect").selectOption(language);
+    await page.evaluate(detail => {
+      window.hokmAuthState = detail;
+      window.dispatchEvent(new CustomEvent("hokm:authenticated", { detail }));
+    }, qaAuth);
+    pageErrors.length = 0;
+    consoleErrors.length = 0;
 
     await page.locator("#hokmCreateRoom").waitFor({ state: "visible", timeout: 10000 });
     await page.locator("#hokmCreateRoom").click();
@@ -318,6 +398,83 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       if (!socket) throw new Error("Mock WebSocket was not created");
       socket.emit("message", { data: JSON.stringify({ type: "state", state: value }) });
     }, state);
+
+    // Exercise the actual multiplayer trump and card button handlers with a mock
+    // WebSocket, then continue the existing motion regression scenario unchanged.
+    const onlineChoose = initialState();
+    onlineChoose.game.phase = "choose-trump";
+    onlineChoose.game.trump = null;
+    onlineChoose.game.currentPlayer = 0;
+    onlineChoose.game.ownHand = ownHand.slice(0, 5);
+    onlineChoose.game.handCounts = [5, 5, 5, 5];
+    onlineChoose.game.trick = [];
+    onlineChoose.game.lastTrick = [];
+    onlineChoose.cardFlightUntil = 0;
+    await sendState(onlineChoose);
+    const onlineSuit = page.locator("#hokmOnlineTrump [data-online-suit]").first();
+    await onlineSuit.waitFor({ state: "visible", timeout: 10000 });
+    const onlineSuitHit = await onlineSuit.evaluate(button => {
+      const r = button.getBoundingClientRect();
+      const x = Math.max(0, Math.min(innerWidth - 1, r.left + r.width / 2));
+      const y = Math.max(0, Math.min(innerHeight - 1, r.top + r.height / 2));
+      const top = document.elementFromPoint(x, y);
+      return {
+        suit: button.dataset.onlineSuit,
+        pointerEvents: getComputedStyle(button).pointerEvents,
+        disabled: button.disabled,
+        hitButton: top?.closest?.("button") === button,
+        hitTag: top?.tagName || null,
+        hitClass: typeof top?.className === "string" ? top.className : ""
+      };
+    });
+    if (!onlineSuitHit.hitButton || onlineSuitHit.pointerEvents === "none" || onlineSuitHit.disabled) {
+      throw new Error("Online trump control missed its hit target: " + JSON.stringify(onlineSuitHit));
+    }
+    if (mobile) await onlineSuit.tap({ timeout: 10000 });
+    else await onlineSuit.click({ timeout: 10000 });
+    const onlineSuitCommand = await page.evaluate(() => {
+      try { return JSON.parse(window.__hokmMockLastSent || "null"); } catch { return null; }
+    });
+    if (onlineSuitCommand?.type !== "choose_trump" || onlineSuitCommand?.suit !== onlineSuitHit.suit) {
+      throw new Error("Online trump click did not send the expected action: " + JSON.stringify({ onlineSuitHit, onlineSuitCommand }));
+    }
+
+    const onlinePlaying = initialState();
+    onlinePlaying.cardFlightUntil = 0;
+    await sendState(onlinePlaying);
+    await page.waitForFunction(
+      () => !document.querySelector(".hand-south")?.classList.contains("dealing"),
+      null,
+      { timeout: 10000 }
+    );
+    const onlinePlayable = page.locator(".hand-south .hokm-card.playable").first();
+    await onlinePlayable.waitFor({ state: "visible", timeout: 10000 });
+    const onlineCardHit = await onlinePlayable.evaluate(button => {
+      const r = button.getBoundingClientRect();
+      const x = Math.max(0, Math.min(innerWidth - 1, r.left + r.width / 2));
+      const y = Math.max(0, Math.min(innerHeight - 1, r.top + r.height / 2));
+      const top = document.elementFromPoint(x, y);
+      return {
+        cardId: button.dataset.cardId,
+        pointerEvents: getComputedStyle(button).pointerEvents,
+        disabled: button.disabled,
+        hitCardId: top?.closest?.(".hokm-card")?.dataset?.cardId || null,
+        hitTag: top?.tagName || null,
+        hitClass: typeof top?.className === "string" ? top.className : ""
+      };
+    });
+    if (onlineCardHit.hitCardId !== onlineCardHit.cardId ||
+        onlineCardHit.pointerEvents === "none" || onlineCardHit.disabled) {
+      throw new Error("Online human card missed its hit target: " + JSON.stringify(onlineCardHit));
+    }
+    if (mobile) await onlinePlayable.tap({ timeout: 10000 });
+    else await onlinePlayable.click({ timeout: 10000 });
+    const onlineCardCommand = await page.evaluate(() => {
+      try { return JSON.parse(window.__hokmMockLastSent || "null"); } catch { return null; }
+    });
+    if (onlineCardCommand?.type !== "play_card" || onlineCardCommand?.cardId !== onlineCardHit.cardId) {
+      throw new Error("Online card click did not send the expected action: " + JSON.stringify({ onlineCardHit, onlineCardCommand }));
+    }
 
     let current = initialState();
     await sendState(current);
@@ -527,6 +684,8 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       ok: true,
       walletButtons,
       walletAuthProbe,
+      soloClickChecks,
+      onlineClickChecks: { onlineSuitHit, onlineSuitCommand, onlineCardHit, onlineCardCommand },
       tableChromeLayout,
       dealState,
       flightsStartedFromEachHand: 4,
