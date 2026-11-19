@@ -24,8 +24,8 @@ jobs:
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-      PREVIEW_BRANCH: hokm-fix-card-layout-20261119
-      PREVIEW_URL: https://hokm-fix-card-layout-20261119.fly-hokm-preview.pages.dev
+      PREVIEW_BRANCH: hokm-fix-layout-261119
+      PREVIEW_URL: https://hokm-fix-layout-261119.fly-hokm-preview.pages.dev
     steps:
       - uses: actions/checkout@v4
         with:
