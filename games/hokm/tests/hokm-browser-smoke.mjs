@@ -16,7 +16,24 @@ async function runViewport(browserType, name, viewport, mobile = false, language
 
   try {
     await page.addInitScript(() => {
-      window.hokmAuthState = { wallet: "0x0000000000000000000000000000000000000001", tier: 2 };
+      const qaAuthState = {
+        wallet: "0x0000000000000000000000000000000000000001",
+        tier: 2,
+        sessionToken: "qa-only-playwright-session"
+      };
+      // The production wallet bridge clears hokmAuthState during startup.
+      // Keep this synthetic identity confined to the Playwright page context.
+      Object.defineProperty(window, "hokmAuthState", {
+        configurable: false,
+        enumerable: true,
+        get() { return qaAuthState; },
+        set(value) {
+          if (value && typeof value === "object") Object.assign(qaAuthState, value);
+        }
+      });
+      window.addEventListener("load", () => {
+        window.dispatchEvent(new CustomEvent("hokm:authenticated", { detail: qaAuthState }));
+      }, { once: true });
       window.__hokmCardClicks = 0;
       window.__hokmCardTouchEnds = 0;
       document.addEventListener("click", event => {
@@ -48,10 +65,18 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       const south = rect(".seat-south .player-chip");
       const west = rect(".seat-west .player-chip");
       const east = rect(".seat-east .player-chip");
-      const cards = [1, 2, 3, 4].map(index => rect(".trick-cards .played-card:nth-child(" + index + ")"));
+      const centerRect = document.querySelector(".table-center").getBoundingClientRect();
+      const cardRects = [1, 2, 3, 4].map(index => {
+        const element = document.querySelector(".trick-cards .played-card:nth-child(" + index + ")");
+        const r = element.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2, width: r.width, height: r.height };
+      });
+      const centerPoint = { x: centerRect.left + centerRect.width / 2, y: centerRect.top + centerRect.height / 2, width: centerRect.width, height: centerRect.height };
       return {
         seats: north.y < center.y && south.y > center.y && west.x < center.x && east.x > center.x,
-        cards: cards[0].y > center.y && cards[1].x < center.x && cards[2].y < center.y && cards[3].x > center.x,
+        cards: cardRects[0].y > center.y && cardRects[1].x < center.x && cardRects[2].y < center.y && cardRects[3].x > center.x,
+        centerPoint,
+        cardRects,
         direction: document.documentElement.dir
       };
     });
