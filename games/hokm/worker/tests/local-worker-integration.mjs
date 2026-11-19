@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
+import { randomBytes } from "node:crypto";
 import { createServer } from "node:http";
 import net from "node:net";
 import { mkdtempSync, mkdirSync, rmSync } from "node:fs";
@@ -214,7 +215,7 @@ async function playOneHumanTrick(clients) {
     const before = player.latest.game.handCounts[seat];
     const card = chooseLegalCard(player.latest.game);
     player.socket.send(JSON.stringify({ type: "play_card", cardId: card.id }));
-    await waitUntil(() => player.latest?.game?.handCounts?.[seat] < before, 10000, "seat " + seat + " card to be accepted");
+    await waitUntil(() => clients.every(client => client.latest?.game?.handCounts?.[seat] < before), 10000, "seat " + seat + " card to be accepted by all room views");
     lastPlayedSeat = seat;
     if (player.latest.game.lastTrick?.length === 4) break;
   }
@@ -252,13 +253,11 @@ async function waitForCpuCard(clients, cpuSeats) {
     await waitForCardGate(clients);
     const current = roomState(clients);
     const active = player.latest.game;
-    if (active.currentPlayer !== seat || current.game.handCounts[seat] !== startingCounts[seat] - (13 - active.handCounts[seat])) {
-      continue;
-    }
+    if (active.currentPlayer !== seat) continue;
     const before = active.handCounts[seat];
     const card = chooseLegalCard(active);
     player.socket.send(JSON.stringify({ type: "play_card", cardId: card.id }));
-    await waitUntil(() => player.latest?.game?.handCounts?.[seat] < before, 10000, "human card before a CPU turn");
+    await waitUntil(() => clients.every(client => client.latest?.game?.handCounts?.[seat] < before), 10000, "human card before a CPU turn");
   }
   throw new Error("No CPU card was played within 35 seconds");
 }
@@ -275,7 +274,7 @@ async function run() {
 
   const stateDir = mkdtempSync(join(tmpdir(), "hokm-local-worker-"));
   mkdirSync(stateDir, { recursive: true });
-  const secret = Buffer.from(crypto.getRandomValues(new Uint8Array(32))).toString("hex");
+  const secret = randomBytes(32).toString("hex");
   const child = spawn(process.execPath, [
     WRANGLER_BIN, "dev", "--local", "--ip", "127.0.0.1", "--port", String(workerPort),
     "--persist-to", stateDir, "--log-level", "error",
