@@ -255,6 +255,41 @@ async function runViewport(browserType, name, viewport, mobile = false, language
         return hand && hand.children.length === 13 && hand.classList.contains("dealing");
       }), null, { timeout: 10000 });
 
+    // Layout QA after simulated authentication: no real wallet is connected or signed.
+    const tableChromeLayout = await page.evaluate(() => {
+      const rect = selector => {
+        const node = document.querySelector(selector);
+        if (!node) return null;
+        const r = node.getBoundingClientRect();
+        return { left:r.left, top:r.top, right:r.right, bottom:r.bottom, width:r.width, height:r.height };
+      };
+      const toolbar = rect(".table-toolbar");
+      const heading = rect(".table-toolbar h2");
+      const sound = rect("#soundToggle");
+      const scoreboard = rect(".hokm-round-scoreboard");
+      const felt = rect(".velvet-table");
+      const hakem = rect(".table-center .hakem-pill");
+      const trump = rect(".table-center .trump-pill");
+      const intervalGap = hakem && trump
+        ? Math.max(hakem.left, trump.left) - Math.min(hakem.right, trump.right)
+        : null;
+      return {
+        toolbar, heading, sound, scoreboard, felt, hakem, trump, intervalGap,
+        scoreboardPosition: getComputedStyle(document.querySelector(".hokm-round-scoreboard")).position
+      };
+    });
+    if (!tableChromeLayout.heading?.width || !tableChromeLayout.sound?.width) {
+      throw new Error("The Hokm table title or sound toggle is missing: " + JSON.stringify(tableChromeLayout));
+    }
+    if (tableChromeLayout.scoreboardPosition === "absolute" ||
+        tableChromeLayout.scoreboard.top < tableChromeLayout.toolbar.bottom + 4 ||
+        tableChromeLayout.scoreboard.bottom > tableChromeLayout.felt.top) {
+      throw new Error("The score boxes overlap the title/sound controls or the table: " + JSON.stringify(tableChromeLayout));
+    }
+    if (mobile && tableChromeLayout.intervalGap < 10) {
+      throw new Error("The mobile Hakem and trump indicators are too close or overlap: " + JSON.stringify(tableChromeLayout));
+    }
+
     const dealState = await page.evaluate(() => {
       const read = selector => {
         const hand = document.querySelector(selector);
@@ -420,6 +455,7 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       ok: true,
       walletButtons,
       walletAuthProbe,
+      tableChromeLayout,
       dealState,
       flightsStartedFromEachHand: 4,
       collection: afterCollection,
