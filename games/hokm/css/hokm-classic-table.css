@@ -473,3 +473,64 @@ body{
     font-size:6px!important;
   }
 }
+
+
+/* Final table chrome spacing: keep the title and sound toggle clear of score cards. */
+.hokm-round-scoreboard{
+  position:relative!important;
+  inset:auto!important;
+  width:100%;
+  margin:0 0 14px!important;
+  display:flex!important;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+.table-toolbar{
+  position:relative;
+  z-index:4;
+  margin-bottom:12px!important;
+}
+@media(max-width:760px){
+  .hokm-round-scoreboard{
+    top:auto!important;
+    inset-inline:auto!important;
+    margin-bottom:12px!important;
+    gap:8px;
+  }
+
+  /* Give Hakem and trump their own grid columns with a visible gutter. */
+  .table-center .table-meta{
+    left:50%!important;
+    right:auto!important;
+    top:-50px!important;
+    transform:translateX(-50%)!important;
+    display:grid!important;
+    grid-template-columns:max-content max-content;
+    justify-content:center;
+    align-items:center;
+    column-gap:14px!important;
+    row-gap:0!important;
+    width:max-content!important;
+    max-width:calc(100vw - 32px);
+    height:auto!important;
+    white-space:nowrap!important;
+  }
+  .table-center .hakem-pill,
+  .table-center .trump-pill{
+    position:relative!important;
+    top:auto!important;
+    left:auto!important;
+    right:auto!important;
+    min-width:0;
+    max-width:calc((100vw - 46px)/2);
+    white-space:nowrap!important;
+  }
+}
+@media(max-width:420px){
+  .hokm-round-scoreboard{margin-bottom:10px!important}
+  .table-center .table-meta{
+    column-gap:14px!important;
+    max-width:calc(100vw - 28px);
+  }
+}
