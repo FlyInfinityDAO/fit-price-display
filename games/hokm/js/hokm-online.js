@@ -182,26 +182,46 @@ function animateOnlineTrickCollection(trick,trump){
   if(!from.width||!from.height)return Promise.resolve();
   const clone=node.cloneNode(true);
   clone.removeAttribute("id");clone.removeAttribute("data-player-label");
+  const dx=(to.left+to.width/2)-(from.left+from.width/2);
+  const dy=(to.top+to.height/2)-(from.top+from.height/2);
+  const rotation=index%2?16:-16,duration=620,delay=index*45;
   Object.assign(clone.style,{position:"fixed",left:from.left+"px",top:from.top+"px",width:from.width+"px",height:from.height+"px",margin:"0",zIndex:"10001",pointerEvents:"none",transformOrigin:"center center"});
+  const oldOpacity=node.style.opacity;
   document.body.appendChild(clone);
+  node.style.opacity="0";
   return new Promise(resolve=>{
    let done=false,animation;
-   const finish=()=>{if(done)return;done=true;clone.remove();try{animation&&animation.cancel()}catch{}resolve()};
-   const dx=(to.left+to.width/2)-(from.left+from.width/2);
-   const dy=(to.top+to.height/2)-(from.top+from.height/2);
-   try{
-   animation=clone.animate([
-    {opacity:1,transform:"translate3d(0,0,0) scale(1) rotate(0deg)"},
-    {opacity:1,transform:"translate3d("+dx*.45+"px,"+dy*.45+"px,0) scale(.78) rotate("+(index%2?7:-7)+"deg)",offset:.58},
-    {opacity:0,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(.18) rotate("+(index%2?16:-16)+"deg)"}
-   ],{duration:620,easing:"cubic-bezier(.3,.05,.65,1)",delay:index*45,fill:"both"});
-   animation.onfinish=finish;animation.oncancel=finish;
-   }catch{finish()}
+   const finish=()=>{
+    if(done)return;
+    done=true;
+    node.style.opacity=oldOpacity;
+    clone.remove();
+    try{animation&&animation.cancel()}catch{}
+    resolve();
+   };
+   if(typeof clone.animate==="function"){
+    try{
+     animation=clone.animate([
+      {opacity:1,transform:"translate3d(0,0,0) scale(1) rotate(0deg)"},
+      {opacity:1,transform:"translate3d("+dx*.45+"px,"+dy*.45+"px,0) scale(.78) rotate("+(index%2?7:-7)+"deg)",offset:.58},
+      {opacity:0,transform:"translate3d("+dx+"px,"+dy+"px,0) scale(.18) rotate("+rotation+"deg)"}
+     ],{duration,easing:"cubic-bezier(.3,.05,.65,1)",delay,fill:"both"});
+     animation.onfinish=finish;animation.oncancel=finish;
+     return;
+    }catch{animation=null}
+   }
+   // Keep the original slot hidden until the fallback clone reaches the winner.
+   const begin=()=>{
+    clone.style.transition="transform "+duration+"ms cubic-bezier(.3,.05,.65,1) "+delay+"ms, opacity "+duration+"ms ease "+delay+"ms";
+    clone.style.transform="translate3d("+dx+"px,"+dy+"px,0) scale(.18) rotate("+rotation+"deg)";
+    clone.style.opacity="0";
+   };
+   if(typeof requestAnimationFrame==="function")requestAnimationFrame(begin);else setTimeout(begin,0);
+   setTimeout(finish,duration+delay+120);
   });
  });
  Promise.all(jobs).then(()=>target.classList.remove("hokm-trick-winner"));
 }
-
 function makeSeatRing(kind){const ring=document.createElement("span");ring.className="hokm-seat-ring "+kind;ring.setAttribute("aria-hidden","true");return ring}
 function renderSeatRing(chip,kind,deadline,now,totalOverride){let ring=chip.querySelector(".hokm-seat-ring."+kind);if(!deadline){ring?.remove();return}if(!ring){ring=makeSeatRing(kind);chip.appendChild(ring)}const total=totalOverride||(kind==="turn"?30000:(lastState?.game?.reconnectGraceMs||60000));const left=Math.max(0,deadline-now);ring.style.setProperty("--ring-progress",String(Math.max(0,Math.min(1,left/total))));ring.textContent=String(Math.ceil(left/1000));ring.title=kind==="turn"?t("turnCountdown"):t("reconnectCountdown");}
 function shortWalletLabel(wallet){const value=String(wallet||"");return value.length>12?value.slice(0,6)+"…"+value.slice(-4).toUpperCase():value||"—"}
