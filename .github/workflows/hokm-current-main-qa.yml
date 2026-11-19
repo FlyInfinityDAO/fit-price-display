@@ -95,7 +95,7 @@ jobs:
           set -euo pipefail
           curl --silent --show-error --fail --retry 12 --retry-delay 5 "$PREVIEW_URL/games/hokm/" -o /tmp/hokm.html
           grep -q 'Fly Infinity Hokm' /tmp/hokm.html
-          grep -q 'hokm-trick-layout-best-of-20261119-v3' /tmp/hokm.html
+          grep -q 'hokm-trick-layout-best-of-20261119-v4' /tmp/hokm.html
 
       - name: Run solo gameplay browser smoke tests
         env:
