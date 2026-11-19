@@ -387,6 +387,7 @@ body{
 .table-center .table-meta{top:-38px!important}
 .table-center .trick-cards{
   position:absolute!important;
+  direction:ltr!important;
   inset:42px 0 18px!important;
   display:grid!important;
   grid-template-columns:repeat(3,minmax(0,1fr))!important;
@@ -429,6 +430,7 @@ body{
 /* Use one player/order label per card; the older ::before label duplicated ::after. */
 .table-center .trick-cards .played-card::before{content:none!important}
 .table-center .trick-cards .played-card[data-player-label]::after{
+  direction:ltr!important;
   top:-17px!important;
   max-width:min(112px,calc(100vw - 28px))!important;
   font-size:8px!important;
