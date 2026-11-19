@@ -554,3 +554,53 @@ body{
 @media(prefers-reduced-motion:reduce){
   #fi-games-neon-canvas{display:none!important}
 }
+
+
+/* Desktop-only input hit targets.
+   Keep the human hand and the two trump selectors above decorative table layers.
+   The mobile layout and its touch-specific stacking remain unchanged. */
+@media(min-width:761px){
+  .game-shell .seat-south{
+    z-index:90!important;
+    pointer-events:auto!important;
+  }
+  .game-shell .seat-south .hand-south{
+    position:relative!important;
+    z-index:91!important;
+    pointer-events:auto!important;
+  }
+  .game-shell .seat-south .hand-south .hokm-card.playable{
+    position:relative!important;
+    pointer-events:auto!important;
+    cursor:pointer!important;
+  }
+  .game-shell .table-center{
+    z-index:2!important;
+    pointer-events:none!important;
+  }
+  .game-shell .hokm-game-controls{
+    position:relative!important;
+    z-index:20!important;
+    isolation:isolate;
+    pointer-events:auto!important;
+  }
+  .game-shell .hokm-trump-picker,
+  .game-shell .hokm-trump-options,
+  .game-shell .hokm-trump-options button{
+    position:relative!important;
+    z-index:21!important;
+    pointer-events:auto!important;
+  }
+  .match-settings .hokm-online-panel{
+    position:relative!important;
+    z-index:20!important;
+    isolation:isolate;
+    pointer-events:auto!important;
+  }
+  .match-settings .hokm-online-trump,
+  .match-settings .hokm-online-trump button{
+    position:relative!important;
+    z-index:21!important;
+    pointer-events:auto!important;
+  }
+}
