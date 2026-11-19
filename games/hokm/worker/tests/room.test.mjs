@@ -108,6 +108,27 @@ test("online snapshots expose only the viewer's hand and persist room difficulty
   assert.equal(JSON.stringify(state).includes(hiddenCard.id), false);
 });
 
+test("finished online snapshot reports the round-score winner, not the Hakem-count leader", () => {
+  const players = [0, 1, 2, 3].map(seat => ({
+    seat, wallet: "0x" + String(seat + 1).repeat(40), tier: 1,
+    kind: "human", connected: true
+  }));
+  const room = {
+    code: "SCORE1", status: "finished", players, lastTrick: [],
+    match: {
+      difficulty: "normal", maxRounds: 3, roundsPlayed: 2,
+      matchPoints: [0, 2], hakemCounts: [2, 0], accessTier: 1,
+      finished: true, players: players.map(p => ({ seat: p.seat, connectionStatus: "connected" })),
+      round: null
+    }
+  };
+  const state = createRoomSnapshot(room, players[0].wallet);
+  assert.equal(state.match.targetWins, 2);
+  assert.equal(state.match.matchWinner, 1);
+  assert.deepEqual(state.match.matchPoints, [0, 2]);
+  assert.deepEqual(state.match.hakemCounts, [2, 0]);
+});
+
 test("CPU failures retry with bounded backoff and stop after the configured limit", () => {
   const room = makeRoom("veryhard", 1, [1]);
   assert.equal(scheduleCpuRetryAt(room, 10000), 11000);

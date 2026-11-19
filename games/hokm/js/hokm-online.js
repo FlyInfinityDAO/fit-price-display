@@ -181,7 +181,7 @@ function animateOnlineTrickCollection(trick,trump){
   const from=node.getBoundingClientRect();
   if(!from.width||!from.height)return Promise.resolve();
   const clone=node.cloneNode(true);
-  clone.removeAttribute("id");clone.removeAttribute("data-player-label");
+  clone.removeAttribute("id");clone.removeAttribute("data-player-label");clone.removeAttribute("data-play-order");
   Object.assign(clone.style,{position:"fixed",left:from.left+"px",top:from.top+"px",width:from.width+"px",height:from.height+"px",margin:"0",zIndex:"10001",pointerEvents:"none",transformOrigin:"center center"});
   document.body.appendChild(clone);
   return new Promise(resolve=>{
@@ -353,7 +353,7 @@ function renderState(s){
   const hakemStats=document.querySelectorAll(".team-hakem-count");
   if(hakemStats.length&&s.match){hakemStats[0].textContent=String((s.match.hakemCounts||[0,0])[0]||0);hakemStats[1].textContent=String((s.match.hakemCounts||[0,0])[1]||0)}
   const tierLabel=$("hokmMatchTier");if(tierLabel&&s.match){const tierFit=s.match.accessTier>=2?10:1;tierLabel.textContent=(tierFit===10?"10 FIT":"1 FIT")+" · "+s.match.maxRounds+" "+t("hakemTimes")}
-  const round=document.querySelector(".round-info b");if(round&&s.match){const completed=s.status==="round-break"||s.status==="finished";round.textContent=String(s.match.roundsPlayed+(completed?0:1));}
+  const round=document.querySelector(".round-info b");if(round&&s.match){const completed=s.status==="round-break"||s.status==="finished";round.textContent=String(s.match.roundsPlayed+(completed?0:1))+" / "+String(s.match.maxRounds);}
   const picker=$("hokmOnlineTrump");
   const mayChoose=s.status==="playing"&&game.phase==="choose-trump"&&game.hakem===ownSeat;
   picker.hidden=!mayChoose;

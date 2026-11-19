@@ -137,7 +137,7 @@ function animateTrickCollection(winnerSeat){
  const jobs=nodes.map((node,index)=>{
   const from=node.getBoundingClientRect();if(!from.width||!from.height)return Promise.resolve();
   const clone=node.cloneNode(true),dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+to.height/2)-(from.top+from.height/2);
-  clone.removeAttribute("id");clone.removeAttribute("data-player-label");
+  clone.removeAttribute("id");clone.removeAttribute("data-player-label");clone.removeAttribute("data-play-order");
   Object.assign(clone.style,{position:"fixed",left:from.left+"px",top:from.top+"px",width:from.width+"px",height:from.height+"px",margin:"0",zIndex:"10001",pointerEvents:"none",transformOrigin:"center center"});
   document.body.appendChild(clone);node.style.opacity="0";
   return new Promise(resolve=>{
