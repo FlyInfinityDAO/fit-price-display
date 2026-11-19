@@ -31,8 +31,8 @@ jobs:
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-      PREVIEW_BRANCH: hokm-online-motion-qa-261119
-      PREVIEW_URL: https://hokm-online-motion-qa-261119.fly-hokm-preview.pages.dev
+      PREVIEW_BRANCH: hokm-m-${{ github.sha }}
+      PREVIEW_URL: https://hokm-m-${{ github.sha }}.fly-hokm-preview.pages.dev
 
     steps:
       - uses: actions/checkout@v4
@@ -111,11 +111,26 @@ jobs:
         run: |
           set -euo pipefail
           curl --silent --show-error --fail --retry 12 --retry-delay 5 "$PREVIEW_URL/games/hokm/" -o /tmp/hokm-online.html
-          grep -q 'Fly Infinity Hokm' /tmp/hokm-online.html
-          grep -q 'hokm-online-motion-20261119-v2' /tmp/hokm-online.html
+          if ! grep -Fq 'Fly Infinity Hokm' /tmp/hokm-online.html; then
+            echo "Preview page title marker is missing from $PREVIEW_URL"
+            grep -Eo '<title>[^<]*</title>' /tmp/hokm-online.html || true
+            exit 1
+          fi
+          if ! grep -Fq 'hokm-online-motion-20261119-v2' /tmp/hokm-online.html; then
+            echo "Preview HTML does not reference the expected multiplayer script cache key."
+            grep -Eo 'hokm[^"]+\.js[^"]*' /tmp/hokm-online.html || true
+            exit 1
+          fi
           curl --silent --show-error --fail "$PREVIEW_URL/games/hokm/js/hokm-online.js?v=hokm-online-motion-20261119-v2" -o /tmp/hokm-online.js
-          grep -q 'collectedTrickKey' /tmp/hokm-online.js
-          grep -q 'hokm-online-collect-flight' /tmp/hokm-online.js
+          echo "Downloaded multiplayer script: $(wc -c < /tmp/hokm-online.js) bytes"
+          for marker in collectedTrickKey hokm-online-collect-flight; do
+            if ! grep -Fq "$marker" /tmp/hokm-online.js; then
+              echo "Multiplayer script is missing expected marker: $marker"
+              grep -Eo 'collect(ed)?Trick[^" ]*|hokm-online-[a-z-]+' /tmp/hokm-online.js | sort -u | head -40 || true
+              exit 1
+            fi
+            echo "Verified multiplayer script marker: $marker"
+          done
 
       - name: Run multiplayer card-deal, card-flight and collection tests
         env:
