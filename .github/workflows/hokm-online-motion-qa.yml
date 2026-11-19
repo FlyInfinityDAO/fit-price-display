@@ -37,7 +37,6 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
       PREVIEW_BRANCH: hokm-m-${{ github.sha }}
-      PREVIEW_URL: https://hokm-m-${{ github.sha }}.fly-hokm-preview.pages.dev
 
     steps:
       - uses: actions/checkout@v4
@@ -108,7 +107,15 @@ jobs:
           if ! ./node_modules/.bin/wrangler pages project list | grep -q 'fly-hokm-preview'; then
             ./node_modules/.bin/wrangler pages project create fly-hokm-preview --production-branch main
           fi
-          ./node_modules/.bin/wrangler pages deploy ../../../dist --project-name=fly-hokm-preview --branch="$PREVIEW_BRANCH"
+          deploy_output="$(./node_modules/.bin/wrangler pages deploy ../../../dist --project-name=fly-hokm-preview --branch="$PREVIEW_BRANCH" 2>&1)"
+          printf '%s\n' "$deploy_output"
+          preview_url="$(printf '%s\n' "$deploy_output" | sed -E 's/\x1B\[[0-9;]*[[:alpha:]]//g' | sed -nE 's/^.*Deployment alias URL: (https:\/\/[^[:space:]]+).*$/\1/p' | tail -n 1)"
+          if [[ -z "$preview_url" ]]; then
+            echo "Cloudflare did not return a deployment alias URL."
+            exit 1
+          fi
+          echo "PREVIEW_URL=$preview_url" >> "$GITHUB_ENV"
+          echo "Using isolated preview URL: $preview_url"
 
       - name: Verify preview page and multiplayer script
         run: |
@@ -136,6 +143,5 @@ jobs:
           done
 
       - name: Run multiplayer card-deal, card-flight and collection tests
-        env:
-          HOKM_ONLINE_PREVIEW_URL: ${{ env.PREVIEW_URL }}/games/hokm/
-        run: node games/hokm/tests/hokm-online-motion-smoke.mjs
+        run: |
+          HOKM_ONLINE_PREVIEW_URL="$PREVIEW_URL/games/hokm/" node games/hokm/tests/hokm-online-motion-smoke.mjs
