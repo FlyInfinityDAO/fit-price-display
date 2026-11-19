@@ -8,6 +8,13 @@ on:
       - 'games/hokm/**'
       - 'games/chess-arena/build-pages.sh'
       - '.github/workflows/hokm-fix-preview.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'games/hokm/**'
+      - 'games/chess-arena/build-pages.sh'
+      - '.github/workflows/hokm-fix-preview.yml'
   workflow_dispatch:
 
 permissions:
