@@ -312,7 +312,7 @@ async function run() {
     const blockedChallenge = await api(baseUrl, "/api/auth/challenge", {
       method: "POST", body: { address: blockedWallet.address }
     });
-    assert.equal(blockedChallenge.status, 200);
+    assert.equal(blockedChallenge.status, 200, "wallet challenge failed: " + JSON.stringify(blockedChallenge.data) + "\n" + workerOutput.slice(-3500));
     const blockedSignature = await blockedWallet.signMessage(blockedChallenge.data.message);
     const blockedVerify = await api(baseUrl, "/api/auth/verify", {
       method: "POST",
