@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { createServer } from "node:http";
 import net from "node:net";
@@ -190,7 +190,7 @@ async function chooseTrumpIfHuman(clients, cpuSeats = []) {
   const suit = suitWithMostCards(player.latest.game.ownHand);
   assert.ok(suit, "the Hakem must have cards to select a trump suit");
   player.socket.send(JSON.stringify({ type: "choose_trump", suit }));
-  await waitUntil(() => roomState(clients)?.game?.phase === "playing", 10000, "trump selection to be applied");
+  await waitUntil(() => clients.every(client => client.latest?.game?.phase === "playing"), 10000, "trump selection to be applied to all room views");
 }
 
 async function waitForCardGate(clients) {
@@ -274,6 +274,20 @@ async function run() {
 
   const stateDir = mkdtempSync(join(tmpdir(), "hokm-local-worker-"));
   mkdirSync(stateDir, { recursive: true });
+  const migration = spawnSync(process.execPath, [
+    WRANGLER_BIN, "d1", "migrations", "apply", "fly-hokm-db", "--local", "--persist-to", stateDir
+  ], {
+    cwd: WORKER_DIR,
+    env: { ...process.env, CI: "1", NO_COLOR: "1" },
+    input: "y\\n",
+    encoding: "utf8"
+  });
+  if (migration.status !== 0) {
+    rpc.close();
+    rmSync(stateDir, { recursive: true, force: true });
+    throw new Error("Could not apply isolated local D1 migrations: " + (migration.stderr || migration.stdout || "unknown migration error"));
+  }
+
   const secret = randomBytes(32).toString("hex");
   const child = spawn(process.execPath, [
     WRANGLER_BIN, "dev", "--local", "--ip", "127.0.0.1", "--port", String(workerPort),
