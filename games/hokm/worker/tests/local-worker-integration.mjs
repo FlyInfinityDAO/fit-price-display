@@ -195,10 +195,13 @@ async function chooseTrumpIfHuman(clients, cpuSeats = []) {
 
 async function waitForCardGate(clients) {
   await waitUntil(() => {
-    const deadlines = clients.map(client => client.latest?.cardFlightUntil || 0);
+    const snapshots = clients.map(client => client.latest);
+    const deadlines = snapshots.map(state => state?.cardFlightUntil || 0);
     const latestDeadline = Math.max(0, ...deadlines);
-    return deadlines.every(deadline => deadline === latestDeadline) && Date.now() >= latestDeadline;
-  }, 10000, "all room snapshots to clear the card animation gate");
+    const snapshotsSynchronized = deadlines.every(deadline => deadline === latestDeadline);
+    const trickCollectionFinished = snapshots.every(state => state && !(state.game?.lastTrick?.length));
+    return snapshotsSynchronized && trickCollectionFinished && Date.now() >= latestDeadline;
+  }, 12000, "all players to finish card flight and completed-trick collection");
 }
 
 function snapshotCounts(clients) {
