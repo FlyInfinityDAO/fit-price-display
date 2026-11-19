@@ -1,10 +1,10 @@
 import { chromium, webkit } from "playwright";
 
 const baseURL = process.env.HOKM_PREVIEW_URL ||
-  "https://hokm-fix-card-layout-20261119.fly-hokm-preview.pages.dev/games/hokm/";
+  "https://hokm-fix-layout-261119.fly-hokm-preview.pages.dev/games/hokm/";
 const failures = [];
 
-async function runViewport(browserType, name, viewport, mobile = false, language = "en") {
+async function runViewport(browserType, name, viewport, mobile = false, language = "en", disableWebAnimations = false) {
   const context = await browserType.newContext({
     viewport,
     serviceWorkers: "block",
@@ -20,7 +20,14 @@ async function runViewport(browserType, name, viewport, mobile = false, language
   });
 
   try {
-    await page.addInitScript(() => {
+    await page.addInitScript((disableAnimations) => {
+      if (disableAnimations) {
+        Object.defineProperty(Element.prototype, "animate", {
+          configurable: true,
+          writable: true,
+          value: undefined
+        });
+      }
       const qaAuthState = {
         wallet: "0x0000000000000000000000000000000000000001",
         tier: 2,
@@ -48,7 +55,7 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       document.addEventListener("touchend", event => {
         if (event.target.closest(".hand-south .hokm-card")) window.__hokmCardTouchEnds++;
       }, true);
-    });
+    }, disableWebAnimations);
 
     await page.goto(baseURL, { waitUntil: "domcontentloaded", timeout: 45000 });
     if (language !== "en") await page.locator("#languageSelect").selectOption(language);
@@ -101,6 +108,7 @@ async function runViewport(browserType, name, viewport, mobile = false, language
         south: box(document.querySelector(".seat-south .player-chip"))
       };
       const gridDisplay = getComputedStyle(trick).display;
+      const gridDirection = getComputedStyle(trick).direction;
       const insideCenter = cards.every(card =>
         card.width > 0 && card.height > 0 &&
         card.x >= c.x - 1 && card.y >= c.y - 1 &&
@@ -109,6 +117,7 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       );
       return {
         gridDisplay,
+        gridDirection,
         seats: seats.north.cy < c.cy && seats.south.cy > c.cy &&
           seats.west.cx < c.cx && seats.east.cx > c.cx,
         slots: cards[0].cy > c.cy && cards[1].cx < c.cx &&
@@ -122,6 +131,7 @@ async function runViewport(browserType, name, viewport, mobile = false, language
     });
     if (
       seatLayout.gridDisplay !== "grid" ||
+      seatLayout.gridDirection !== "ltr" ||
       !seatLayout.seats ||
       !seatLayout.slots ||
       !seatLayout.insideCenter ||
@@ -214,6 +224,29 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       { timeout: 10000 }
     );
 
+    // Let the CPU seats finish the current trick, then verify the four-card
+    // collection completes and the original center slots are restored.
+    await page.waitForFunction(
+      () => document.querySelectorAll(".table-center .played-card:not(.empty)").length === 4,
+      null,
+      { timeout: 25000 }
+    );
+    await page.waitForFunction(
+      () => document.querySelectorAll(".table-center .played-card:not(.empty)").length === 0,
+      null,
+      { timeout: 9000 }
+    );
+    const collectionState = await page.evaluate(() => ({
+      visibleCards: document.querySelectorAll(".table-center .played-card:not(.empty)").length,
+      hiddenInlineCards: [...document.querySelectorAll(".table-center .played-card")]
+        .filter(card => card.style.opacity === "0").length,
+      winnerHighlights: document.querySelectorAll(".player-chip.hokm-trick-winner").length
+    }));
+    if (collectionState.visibleCards !== 0 || collectionState.hiddenInlineCards !== 0 ||
+        collectionState.winnerHighlights !== 0) {
+      throw new Error("Trick collection did not restore the table: " + JSON.stringify(collectionState));
+    }
+
     const activationCounts = await page.evaluate(() => ({
       clicks: window.__hokmCardClicks,
       touchEnds: window.__hokmCardTouchEnds
@@ -226,6 +259,7 @@ async function runViewport(browserType, name, viewport, mobile = false, language
 
     console.log(JSON.stringify({
       viewport: name, result: "PASS", seatLayout, hitTest, playedCardCheck,
+      collectionState, fallbackAnimations: disableWebAnimations,
       activationCounts, consoleErrors
     }));
   } catch (error) {
@@ -272,7 +306,7 @@ await chromiumBrowser.close();
 
 const safari = await webkit.launch({ headless: true });
 await runViewport(safari, "mobile-webkit-touch-en", { width: 390, height: 844 }, true);
-await runViewport(safari, "mobile-webkit-touch-fa-rtl", { width: 390, height: 844 }, true, "fa");
+await runViewport(safari, "mobile-webkit-touch-fa-rtl-fallback", { width: 390, height: 844 }, true, "fa", true);
 await safari.close();
 
 if (failures.length) process.exit(1);
