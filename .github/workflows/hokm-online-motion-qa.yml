@@ -62,6 +62,11 @@ jobs:
           npm install --no-audit --no-fund
           npm run check
           npm test
+          node --check tests/local-worker-integration.mjs
+
+      - name: Run isolated real Worker integration with D1, Durable Objects and WebSockets
+        working-directory: games/hokm/worker
+        run: node tests/local-worker-integration.mjs
 
       - name: Build standalone Pages site and verify online assets
         run: |
