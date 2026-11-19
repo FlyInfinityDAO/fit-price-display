@@ -191,6 +191,39 @@ async function runViewport(browserType, name, viewport, mobile = false, language
 
     await page.goto(baseURL, { waitUntil: "domcontentloaded", timeout: 45000 });
 
+    // The same shared cyan/blue/violet ambient canvas used by Chess Arena and Backgammon
+    // must render behind Hokm without intercepting game interaction or changing layout.
+    const ambientBackground = await page.evaluate(() => {
+      const canvas = document.querySelector("#fi-games-neon-canvas");
+      const arena = document.querySelector(".arena");
+      if (!canvas || !arena) return { exists: !!canvas, arena: !!arena };
+      const style = getComputedStyle(canvas);
+      const arenaStyle = getComputedStyle(arena);
+      return {
+        exists: true,
+        width: canvas.width,
+        height: canvas.height,
+        display: style.display,
+        position: style.position,
+        zIndex: style.zIndex,
+        pointerEvents: style.pointerEvents,
+        opacity: style.opacity,
+        arenaPosition: arenaStyle.position,
+        arenaZIndex: arenaStyle.zIndex
+      };
+    });
+    if (!ambientBackground.exists ||
+        ambientBackground.display === "none" ||
+        ambientBackground.position !== "fixed" ||
+        ambientBackground.zIndex !== "0" ||
+        ambientBackground.pointerEvents !== "none" ||
+        !ambientBackground.width || !ambientBackground.height ||
+        Number(ambientBackground.arenaZIndex) <= Number(ambientBackground.zIndex)) {
+      throw new Error("Shared animated game background is missing or layered above Hokm: " +
+        JSON.stringify(ambientBackground));
+    }
+
+
     const walletButtons = await page.evaluate(() => ({
       browser: !!document.querySelector("#connectBrowserBtn") &&
         !document.querySelector("#connectBrowserBtn").disabled,
