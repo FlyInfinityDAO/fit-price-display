@@ -162,6 +162,12 @@ async function runViewport(browserType, name, viewport, mobile = false, language
 
     await page.route("https://fly-hokm-api.flyinfinityplatform.workers.dev/**", async route => {
       const url = new URL(route.request().url());
+      // Let the wallet-auth probe reach the real Worker. The deliberately invalid
+      // address is rejected before D1 is touched, while verifying this preview's CORS origin.
+      if (url.pathname === "/api/auth/challenge" &&
+          ["OPTIONS", "POST"].includes(route.request().method())) {
+        return route.continue();
+      }
       if (url.pathname === "/api/rooms") {
         return route.fulfill({
           status: 200,
@@ -184,6 +190,40 @@ async function runViewport(browserType, name, viewport, mobile = false, language
     });
 
     await page.goto(baseURL, { waitUntil: "domcontentloaded", timeout: 45000 });
+
+    const walletButtons = await page.evaluate(() => ({
+      browser: !!document.querySelector("#connectBrowserBtn") &&
+        !document.querySelector("#connectBrowserBtn").disabled,
+      wallet: !!document.querySelector("#connectWalletBtn") &&
+        !document.querySelector("#connectWalletBtn").disabled
+    }));
+    if (!walletButtons.browser || !walletButtons.wallet) {
+      throw new Error("Both wallet connection options must be present and enabled: " + JSON.stringify(walletButtons));
+    }
+
+    // This request uses an invalid address so the Worker returns 400 before any
+    // nonce is created or D1 is written. A CORS failure means the preview origin is not allowlisted.
+    const walletAuthProbe = await page.evaluate(async () => {
+      const response = await fetch(
+        "https://fly-hokm-api.flyinfinityplatform.workers.dev/api/auth/challenge",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ address: "not-a-valid-wallet" })
+        }
+      );
+      return {
+        status: response.status,
+        body: await response.json(),
+        origin: window.location.origin
+      };
+    });
+    if (walletAuthProbe.status !== 400 ||
+        walletAuthProbe.body?.error !== "A valid wallet address is required") {
+      throw new Error("Wallet-auth API rejected the preview origin or failed its safe validation probe: " +
+        JSON.stringify(walletAuthProbe));
+    }
+
     if (language !== "en") await page.locator("#languageSelect").selectOption(language);
 
     await page.evaluate(() => {
@@ -344,6 +384,8 @@ async function runViewport(browserType, name, viewport, mobile = false, language
     console.log(JSON.stringify({
       scenario: name,
       ok: true,
+      walletButtons,
+      walletAuthProbe,
       dealState,
       flightsStartedFromEachHand: 4,
       collection: afterCollection,
