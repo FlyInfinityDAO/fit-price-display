@@ -169,11 +169,12 @@ export function createRoomSnapshot(room, wallet) {
     maxPlayers: 4,
     match: room.match ? {
       maxRounds: room.match.maxRounds,
+      targetWins: room.match.targetWins || Math.ceil(room.match.maxRounds / 2),
       roundsPlayed: room.match.roundsPlayed,
       matchPoints: room.match.matchPoints,
       hakemCounts: room.match.hakemCounts || [0, 0],
       matchWinner: room.match.finished
-        ? ((room.match.hakemCounts || [0, 0])[0] >= room.match.maxRounds ? 0 : 1)
+        ? ((room.match.matchPoints || [0, 0])[0] > (room.match.matchPoints || [0, 0])[1] ? 0 : 1)
         : null,
       accessTier: room.match.accessTier,
       finished: room.match.finished
