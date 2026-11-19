@@ -169,7 +169,8 @@ function render(){
  const trickScores=document.querySelectorAll(".hokm-round-score b");if(trickScores.length){trickScores[0].textContent=String(game.teamTricks[0]||0);trickScores[1].textContent=String(game.teamTricks[1]||0)}
  const bottom=document.querySelectorAll(".game-bottom .team-score b");if(bottom.length&&match){bottom[0].textContent=match.matchPoints[0];bottom[1].textContent=match.matchPoints[1]}
  const hakemStats=document.querySelectorAll(".team-hakem-count");if(hakemStats.length&&match){hakemStats[0].textContent=String((match.hakemCounts||[0,0])[0]||0);hakemStats[1].textContent=String((match.hakemCounts||[0,0])[1]||0)}
- const round=document.querySelector(".round-info b");if(round&&match)round.textContent=String(match.roundNo);\n const tierLabel=$("hokmMatchTier");if(tierLabel&&match){const hakemLabel=window.hokmTranslate?.("hakemTimes")||"Hakem calls";tierLabel.textContent=(match.accessTier>=2?"10 FIT":"1 FIT")+" · "+match.maxRounds+" "+hakemLabel;}
+ const round=document.querySelector(".round-info b");if(round&&match)round.textContent=String(match.roundNo);
+ const tierLabel=$("hokmMatchTier");if(tierLabel&&match){const hakemLabel=window.hokmTranslate?.("hakemTimes")||"Hakem calls";tierLabel.textContent=(match.accessTier>=2?"10 FIT":"1 FIT")+" · "+match.maxRounds+" "+hakemLabel;}
  $("hokmHandCaption").textContent=game.phase==="choose-trump"?tr("selectTrump"):tr("playing");return flights;
 }
 function chooseCpuTrump(){return H.chooseCpuTrump(game,game.hakem,difficulty)}
