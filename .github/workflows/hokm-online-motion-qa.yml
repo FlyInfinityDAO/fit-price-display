@@ -105,7 +105,7 @@ jobs:
           if ! ./node_modules/.bin/wrangler pages project list | grep -q 'fly-hokm-preview'; then
             ./node_modules/.bin/wrangler pages project create fly-hokm-preview --production-branch main
           fi
-          ./node_modules/.bin/wrangler pages deploy ../../dist --project-name=fly-hokm-preview --branch="$PREVIEW_BRANCH"
+          ./node_modules/.bin/wrangler pages deploy ../../../dist --project-name=fly-hokm-preview --branch="$PREVIEW_BRANCH"
 
       - name: Verify preview page and multiplayer script
         run: |
