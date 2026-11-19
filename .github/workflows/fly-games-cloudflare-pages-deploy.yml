@@ -102,7 +102,7 @@ jobs:
               --header "Access-Control-Request-Method: POST" \
               --header "Access-Control-Request-Headers: content-type" \
               https://fly-hokm-api.flyinfinityplatform.workers.dev/api/auth/challenge)"
-            if printf '%s' "$headers" | tr -d '\\r' | grep -Fqi "access-control-allow-origin: $CF_PAGES_ORIGIN"; then
+            if printf '%s' "$headers" | tr -d '\r' | grep -Fqi "access-control-allow-origin: $CF_PAGES_ORIGIN"; then
               cors_ok=true
               break
             fi
