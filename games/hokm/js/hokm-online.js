@@ -353,7 +353,7 @@ function renderState(s){
   const hakemStats=document.querySelectorAll(".team-hakem-count");
   if(hakemStats.length&&s.match){hakemStats[0].textContent=String((s.match.hakemCounts||[0,0])[0]||0);hakemStats[1].textContent=String((s.match.hakemCounts||[0,0])[1]||0)}
   const tierLabel=$("hokmMatchTier");if(tierLabel&&s.match){const tierFit=s.match.accessTier>=2?10:1;tierLabel.textContent=(tierFit===10?"10 FIT":"1 FIT")+" · "+s.match.maxRounds+" "+t("hakemTimes")}
-  const round=document.querySelector(".round-info b");if(round&&s.match){const completed=s.status==="round-break"||s.status==="finished";round.textContent=String(s.match.roundsPlayed+(completed?0:1));}
+  const round=document.querySelector(".round-info b");if(round&&s.match){const completed=s.status==="round-break"||s.status==="finished";round.textContent=String(s.match.roundsPlayed+(completed?0:1))+" / "+String(s.match.maxRounds);}
   const picker=$("hokmOnlineTrump");
   const mayChoose=s.status==="playing"&&game.phase==="choose-trump"&&game.hakem===ownSeat;
   picker.hidden=!mayChoose;
