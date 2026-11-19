@@ -1,0 +1,85 @@
+name: Hokm Current Main Isolated QA
+
+on:
+  push:
+    branches:
+      - qa/hokm-current-main-20261119
+    paths:
+      - 'games/hokm/**'
+      - '.github/workflows/hokm-current-main-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hokm-current-main-qa
+  cancel-in-progress: false
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      PREVIEW_BRANCH: hokm-current-main-20261119
+      PREVIEW_URL: https://hokm-current-main-20261119.fly-hokm-preview.pages.dev
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: qa/hokm-current-main-20261119
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install and run Hokm Worker tests
+        working-directory: games/hokm/worker
+        run: |
+          npm install --no-audit --no-fund
+          npm run check
+          npm test
+
+      - name: Install Playwright browser tests
+        run: |
+          npm install --no-save --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium webkit
+
+      - name: Prepare isolated Hokm preview
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hokm-preview/games"
+          cp -R games/hokm "$RUNNER_TEMP/hokm-preview/games/hokm"
+          cp logo.png walletconnect-bridge.js "$RUNNER_TEMP/hokm-preview/"
+          cat > "$RUNNER_TEMP/hokm-preview/index.html" <<'HTML'
+          <!doctype html>
+          <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url=/games/hokm/"><title>Fly Infinity Hokm QA</title></head>
+          <body><p>Opening <a href="/games/hokm/">Fly Infinity Hokm QA</a>…</p></body></html>
+          HTML
+
+      - name: Validate Cloudflare preview credentials
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN"
+          test -n "$CLOUDFLARE_ACCOUNT_ID"
+
+      - name: Deploy isolated QA Pages branch
+        working-directory: games/hokm/worker
+        run: |
+          set -euo pipefail
+          if ! ./node_modules/.bin/wrangler pages project list | grep -q 'fly-hokm-preview'; then
+            ./node_modules/.bin/wrangler pages project create fly-hokm-preview --production-branch main
+          fi
+          ./node_modules/.bin/wrangler pages deploy "$RUNNER_TEMP/hokm-preview" --project-name=fly-hokm-preview --branch="$PREVIEW_BRANCH"
+
+      - name: Verify latest QA preview deployment
+        run: |
+          set -euo pipefail
+          curl --silent --show-error --fail --retry 12 --retry-delay 5 "$PREVIEW_URL/games/hokm/" -o /tmp/hokm.html
+          grep -q 'Fly Infinity Hokm' /tmp/hokm.html
+          grep -q 'hokm-card-motion-attribution-20261119' /tmp/hokm.html
+
+      - name: Run solo gameplay browser smoke tests
+        env:
+          HOKM_PREVIEW_URL: ${{ env.PREVIEW_URL }}/games/hokm/
+        run: node games/hokm/tests/hokm-browser-smoke.mjs
