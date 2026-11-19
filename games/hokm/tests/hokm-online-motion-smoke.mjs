@@ -89,7 +89,8 @@ function makeNextState(previous, seat, trick) {
 }
 
 async function runViewport(browserType, name, viewport, mobile = false, language = "en", disableWebAnimations = false) {
-  const context = await browserType.newContext({
+  const browser = await browserType.launch({ headless: true });
+  const context = await browser.newContext({
     viewport,
     serviceWorkers: "block",
     isMobile: mobile && browserType === chromium,
@@ -352,6 +353,7 @@ async function runViewport(browserType, name, viewport, mobile = false, language
     console.error(JSON.stringify(failures[failures.length - 1]));
   } finally {
     await context.close();
+    await browser.close();
   }
 }
 
