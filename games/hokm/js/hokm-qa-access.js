@@ -2,7 +2,7 @@
   "use strict";
   // Test-only wallet gate bypass. It is active only on this exact Pages preview
   // hostname and only with the explicit hokmTest=1 query parameter.
-  if (location.hostname !== "qa-hokm-current-main-20261119.fly-hokm-preview.pages.dev") return;
+  if (location.hostname !== "hokm-current-main-20261119.fly-hokm-preview.pages.dev") return;
   if (new URLSearchParams(location.search).get("hokmTest") !== "1") return;
   const auth = {
     wallet: "0x0000000000000000000000000000000000000001",
