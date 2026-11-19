@@ -66,7 +66,7 @@ jobs:
           test -s dist/games/hokm/index.html
           test -s dist/games/hokm/js/hokm-online.js
           test -s dist/games/hokm/css/hokm-classic-table.css
-          grep -q 'hokm-online-motion-20261119-v1' dist/games/hokm/index.html
+          grep -q 'hokm-online-motion-20261119-v2' dist/games/hokm/index.html
 
       - name: Install Playwright browsers
         run: |
@@ -112,8 +112,8 @@ jobs:
           set -euo pipefail
           curl --silent --show-error --fail --retry 12 --retry-delay 5 "$PREVIEW_URL/games/hokm/" -o /tmp/hokm-online.html
           grep -q 'Fly Infinity Hokm' /tmp/hokm-online.html
-          grep -q 'hokm-online-motion-20261119-v1' /tmp/hokm-online.html
-          curl --silent --show-error --fail "$PREVIEW_URL/games/hokm/js/hokm-online.js?v=hokm-online-motion-20261119-v1" -o /tmp/hokm-online.js
+          grep -q 'hokm-online-motion-20261119-v2' /tmp/hokm-online.html
+          curl --silent --show-error --fail "$PREVIEW_URL/games/hokm/js/hokm-online.js?v=hokm-online-motion-20261119-v2" -o /tmp/hokm-online.js
           grep -q 'collectedTrickKey' /tmp/hokm-online.js
           grep -q 'hokm-online-collect-flight' /tmp/hokm-online.js
 
