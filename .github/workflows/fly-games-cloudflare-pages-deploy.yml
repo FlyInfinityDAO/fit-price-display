@@ -1,0 +1,116 @@
+name: Fly Infinity Games Cloudflare Pages Deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'games/**'
+      - 'walletconnect-bridge.js'
+      - 'logo.png'
+      - 'background-desktop.png'
+      - 'background-mobile.png'
+      - 'pwa-shell.css'
+      - 'pwa-brand-neon.css'
+      - 'pwa-offline.js'
+      - 'games/chess-arena/build-pages.sh'
+      - '.github/workflows/fly-games-cloudflare-pages-deploy.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fly-infinity-games-cloudflare-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build and publish integrated games to Cloudflare Pages main
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      CF_PAGES_PROJECT: fly-hokm-preview
+      CF_PAGES_ORIGIN: https://fly-hokm-preview.pages.dev
+    steps:
+      - name: Checkout integrated games from main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate Cloudflare credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Missing CLOUDFLARE_API_TOKEN secret."; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Missing CLOUDFLARE_ACCOUNT_ID repository variable."; exit 1; }
+
+      - name: Install Wrangler
+        working-directory: games/hokm/worker
+        run: npm install --no-audit --no-fund
+
+      - name: Build integrated games Pages site
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash games/chess-arena/build-pages.sh
+          test -s dist/games/index.html
+          test -s dist/games/hokm/index.html
+          test -s dist/games/hokm/css/hokm-classic-table.css
+          test -s dist/games/chess-arena/index.html
+          test -s dist/games/backgammon/index.html
+          test -s dist/games/ludo/index.html
+
+      - name: Verify the dedicated Cloudflare Pages project exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./games/hokm/worker/node_modules/.bin/wrangler pages project list | grep -F "$CF_PAGES_PROJECT"
+
+      - name: Deploy integrated games to the Cloudflare Pages production branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./games/hokm/worker/node_modules/.bin/wrangler pages deploy dist \
+            --project-name="$CF_PAGES_PROJECT" \
+            --branch=main
+
+      - name: Verify Hokm assets and Worker CORS origin
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --silent --show-error --fail --retry 12 --retry-delay 5 \
+            "$CF_PAGES_ORIGIN/games/hokm/" -o /tmp/hokm-cloudflare.html
+          grep -Fq 'Fly Infinity Hokm' /tmp/hokm-cloudflare.html
+          grep -Fq 'hokm-desktop-click-targets-20261120-v1' /tmp/hokm-cloudflare.html
+          curl --silent --show-error --fail \
+            "$CF_PAGES_ORIGIN/games/hokm/css/hokm-classic-table.css" -o /tmp/hokm-cloudflare.css
+          grep -Fq 'Desktop-only input hit targets' /tmp/hokm-cloudflare.css
+
+          cors_ok=false
+          for attempt in $(seq 1 12); do
+            headers="$(curl --silent --show-error --dump-header - --output /dev/null --request OPTIONS \
+              --header "Origin: $CF_PAGES_ORIGIN" \
+              --header "Access-Control-Request-Method: POST" \
+              --header "Access-Control-Request-Headers: content-type" \
+              https://fly-hokm-api.flyinfinityplatform.workers.dev/api/auth/challenge)"
+            if printf '%s' "$headers" | tr -d '\\r' | grep -Fqi "access-control-allow-origin: $CF_PAGES_ORIGIN"; then
+              cors_ok=true
+              break
+            fi
+            echo "Waiting for Hokm Worker CORS configuration to finish deploying (attempt $attempt/12)."
+            sleep 5
+          done
+          test "$cors_ok" = true || {
+            echo "::error::The Hokm API does not yet allow the Cloudflare Pages production origin."
+            exit 1
+          }
+          echo "Cloudflare Pages assets and Hokm API CORS origin verified."
