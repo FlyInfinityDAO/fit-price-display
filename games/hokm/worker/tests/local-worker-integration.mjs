@@ -279,7 +279,7 @@ async function run() {
   ], {
     cwd: WORKER_DIR,
     env: { ...process.env, CI: "1", NO_COLOR: "1" },
-    input: "y\\n",
+    input: "y\n",
     encoding: "utf8"
   });
   if (migration.status !== 0) {
