@@ -181,7 +181,7 @@ function animateOnlineTrickCollection(trick,trump){
   const from=node.getBoundingClientRect();
   if(!from.width||!from.height)return Promise.resolve();
   const clone=node.cloneNode(true);
-  clone.removeAttribute("id");clone.removeAttribute("data-player-label");
+  clone.removeAttribute("id");clone.removeAttribute("data-player-label");clone.removeAttribute("data-play-order");
   Object.assign(clone.style,{position:"fixed",left:from.left+"px",top:from.top+"px",width:from.width+"px",height:from.height+"px",margin:"0",zIndex:"10001",pointerEvents:"none",transformOrigin:"center center"});
   document.body.appendChild(clone);
   return new Promise(resolve=>{
