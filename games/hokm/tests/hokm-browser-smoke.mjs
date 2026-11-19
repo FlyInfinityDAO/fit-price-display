@@ -65,10 +65,18 @@ async function runViewport(browserType, name, viewport, mobile = false, language
       const south = rect(".seat-south .player-chip");
       const west = rect(".seat-west .player-chip");
       const east = rect(".seat-east .player-chip");
-      const cards = [1, 2, 3, 4].map(index => rect(".trick-cards .played-card:nth-child(" + index + ")"));
+      const centerRect = document.querySelector(".table-center").getBoundingClientRect();
+      const cardRects = [1, 2, 3, 4].map(index => {
+        const element = document.querySelector(".trick-cards .played-card:nth-child(" + index + ")");
+        const r = element.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2, width: r.width, height: r.height };
+      });
+      const centerPoint = { x: centerRect.left + centerRect.width / 2, y: centerRect.top + centerRect.height / 2, width: centerRect.width, height: centerRect.height };
       return {
         seats: north.y < center.y && south.y > center.y && west.x < center.x && east.x > center.x,
-        cards: cards[0].y > center.y && cards[1].x < center.x && cards[2].y < center.y && cards[3].x > center.x,
+        cards: cardRects[0].y > center.y && cardRects[1].x < center.x && cardRects[2].y < center.y && cardRects[3].x > center.x,
+        centerPoint,
+        cardRects,
         direction: document.documentElement.dir
       };
     });
