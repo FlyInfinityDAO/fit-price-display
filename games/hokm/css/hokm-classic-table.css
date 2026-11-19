@@ -375,3 +375,99 @@ body{
 .hokm-card-source-active{outline:2px solid #ffe6a0!important;outline-offset:3px;filter:brightness(1.28)!important}
 @media(max-width:760px){.trick-cards .played-card[data-player-label]:after{top:-15px;max-width:72px;padding:2px 3px;font-size:7px}}
 @media(max-width:420px){.trick-cards .played-card[data-player-label]:after{top:-14px;max-width:58px;font-size:6px;padding:2px}}
+
+
+/* Stable four-direction trick layout.
+   Each played card occupies a dedicated grid slot aligned with its player's seat.
+   This replaces competing absolute-position and legacy grid declarations. */
+.table-center{
+  width:min(78%,760px)!important;
+  height:300px!important;
+}
+.table-center .table-meta{top:-38px!important}
+.table-center .trick-cards{
+  position:absolute!important;
+  inset:42px 0 18px!important;
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-template-rows:repeat(3,minmax(0,1fr))!important;
+  align-items:center!important;
+  justify-items:center!important;
+  gap:0!important;
+  width:100%!important;
+  height:auto!important;
+  margin:0!important;
+  pointer-events:none!important;
+}
+.table-center .trick-cards .played-card{
+  position:relative!important;
+  inset:auto!important;
+  width:clamp(48px,4.7vw,62px)!important;
+  height:clamp(64px,5.7vw,76px)!important;
+  min-width:0!important;
+  max-width:100%!important;
+  margin:0!important;
+  transform:none!important;
+  display:grid!important;
+  place-items:center!important;
+  overflow:visible!important;
+}
+.table-center .trick-cards .played-card[data-trick-slot="0"]{
+  grid-area:3/2;
+  align-self:end!important;
+}
+.table-center .trick-cards .played-card[data-trick-slot="1"]{
+  grid-area:2/1;
+}
+.table-center .trick-cards .played-card[data-trick-slot="2"]{
+  grid-area:1/2;
+  align-self:start!important;
+}
+.table-center .trick-cards .played-card[data-trick-slot="3"]{
+  grid-area:2/3;
+}
+/* Use one player/order label per card; the older ::before label duplicated ::after. */
+.table-center .trick-cards .played-card::before{content:none!important}
+.table-center .trick-cards .played-card[data-player-label]::after{
+  top:-17px!important;
+  max-width:min(112px,calc(100vw - 28px))!important;
+  font-size:8px!important;
+  line-height:1.25!important;
+}
+@media(max-width:760px){
+  .table-center{
+    width:calc(100% - 164px)!important;
+    height:236px!important;
+  }
+  .table-center .table-meta{top:-50px!important}
+  .table-center .trick-cards{inset:38px 0 14px!important}
+  .table-center .trick-cards .played-card{
+    width:clamp(32px,9vw,42px)!important;
+    height:clamp(46px,12vw,56px)!important;
+    font-size:clamp(17px,4.8vw,22px)!important;
+  }
+  .table-center .trick-cards .played-card[data-player-label]::after{
+    top:-14px!important;
+    max-width:68px!important;
+    padding:2px 3px!important;
+    font-size:7px!important;
+  }
+}
+@media(max-width:420px){
+  .table-center{
+    width:calc(100% - 142px)!important;
+    height:218px!important;
+  }
+  .table-center .trick-cards{inset:36px 0 12px!important}
+  .table-center .trick-cards .played-card{
+    width:clamp(28px,8.7vw,36px)!important;
+    height:clamp(42px,12vw,50px)!important;
+    font-size:clamp(16px,4.8vw,20px)!important;
+  }
+  .table-center .trick-cards .played-card[data-player-label]::after{
+    top:-13px!important;
+    max-width:54px!important;
+    padding:2px!important;
+    font-size:6px!important;
+  }
+}
