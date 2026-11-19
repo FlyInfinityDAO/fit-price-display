@@ -96,10 +96,10 @@ async function runViewport(browserType, name, viewport, mobile = false, language
     isMobile: mobile && browserType === chromium,
     hasTouch: mobile
   });
+  const page = await context.newPage();
   // The ambient canvas intentionally disables itself for OS-level reduced motion.
   // Keep visual-regression runs deterministic; reduced-motion behavior is handled by app CSS/JS.
-  await context.emulateMedia({ reducedMotion: "no-preference" });
-  const page = await context.newPage();
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   const pageErrors = [];
   const consoleErrors = [];
   page.on("pageerror", error => pageErrors.push(error.message));
@@ -193,15 +193,47 @@ async function runViewport(browserType, name, viewport, mobile = false, language
     });
 
     await page.goto(baseURL, { waitUntil: "domcontentloaded", timeout: 45000 });
+    await page.waitForFunction(
+      () => !!document.querySelector("#fi-games-neon-canvas"),
+      null,
+      { timeout: 5000 }
+    ).catch(() => {});
+
 
     // The same shared cyan/blue/violet ambient canvas used by Chess Arena and Backgammon
     // must render behind Hokm without intercepting game interaction or changing layout.
     const ambientBackground = await page.evaluate(() => {
       const canvas = document.querySelector("#fi-games-neon-canvas");
       const arena = document.querySelector(".arena");
-      if (!canvas || !arena) return { exists: !!canvas, arena: !!arena };
+      if (!canvas || !arena) {
+        let canvas2d = false;
+        try { canvas2d = !!document.createElement("canvas").getContext("2d"); } catch {}
+        const ambientScript = [...document.scripts].find(script =>
+          script.src.includes("shared-neon-ambient.js")
+        );
+        const resource = performance.getEntriesByType("resource").find(entry =>
+          entry.name.includes("shared-neon-ambient.js")
+        );
+        return {
+          exists: !!canvas,
+          arena: !!arena,
+          readyState: document.readyState,
+          reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+          ambientScriptSrc: ambientScript?.src || null,
+          ambientResourceLoaded: !!resource,
+          canvas2d
+        };
+      }
       const style = getComputedStyle(canvas);
       const arenaStyle = getComputedStyle(arena);
+      const ambientScript = [...document.scripts].find(script =>
+        script.src.includes("shared-neon-ambient.js")
+      );
+      const resource = performance.getEntriesByType("resource").find(entry =>
+        entry.name.includes("shared-neon-ambient.js")
+      );
+      let canvas2d = false;
+      try { canvas2d = !!document.createElement("canvas").getContext("2d"); } catch {}
       return {
         exists: true,
         width: canvas.width,
@@ -212,7 +244,11 @@ async function runViewport(browserType, name, viewport, mobile = false, language
         pointerEvents: style.pointerEvents,
         opacity: style.opacity,
         arenaPosition: arenaStyle.position,
-        arenaZIndex: arenaStyle.zIndex
+        arenaZIndex: arenaStyle.zIndex,
+        reducedMotion: matchMedia("(prefers-reduced-motion: reduce)").matches,
+        ambientScriptSrc: ambientScript?.src || null,
+        ambientResourceLoaded: !!resource,
+        canvas2d
       };
     });
     if (!ambientBackground.exists ||
