@@ -27,6 +27,8 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
     timeout-minutes: 40
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -68,10 +70,8 @@ jobs:
           test -s dist/games/hokm/css/hokm-classic-table.css
           grep -q 'hokm-online-motion-20261119-v2' dist/games/hokm/index.html
 
-      - name: Install Playwright browsers
-        run: |
-          npm install --no-save --no-audit --no-fund playwright
-          npx playwright install --with-deps chromium webkit
+      - name: Install matching Playwright package
+        run: npm install --no-save --no-audit --no-fund playwright@1.64.1
 
       - name: Normalize Cloudflare credentials
         shell: bash
