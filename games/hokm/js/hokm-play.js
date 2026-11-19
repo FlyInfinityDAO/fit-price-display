@@ -94,7 +94,6 @@ function renderSeats(){
 }
 function animateCardFlight(node,source){
  if(!node||!source||typeof node.getBoundingClientRect!=="function")return Promise.resolve();
- if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return Promise.resolve();
  const from=source.getBoundingClientRect(),to=node.getBoundingClientRect();
  if(!from.width||!from.height||!to.width||!to.height)return Promise.resolve();
  const card=node.cloneNode(true),dx=(to.left+to.width/2)-(from.left+from.width/2),dy=(to.top+to.height/2)-(from.top+from.height/2);
@@ -105,6 +104,11 @@ function animateCardFlight(node,source){
  return new Promise(resolve=>{
   let settled=false,motion;
   const finish=()=>{if(settled)return;settled=true;node.style.opacity=oldOpacity;source.classList.remove("hokm-card-source-active");card.remove();try{motion&&motion.cancel()}catch{}resolve()};
+  if(typeof card.animate!=="function"){
+   card.style.transition="transform 1450ms cubic-bezier(.22,.72,.25,1),opacity 180ms ease";
+   requestAnimationFrame(()=>{card.style.transform="translate3d("+dx+"px,"+dy+"px,0) scale(1) rotate(0)"});
+   setTimeout(finish,1500);return;
+  }
   motion=card.animate([
    {opacity:0,transform:"translate3d(0,0,0) scale(.72) rotate(-7deg)",offset:0},
    {opacity:1,transform:"translate3d(0,0,0) scale(.9) rotate(-4deg)",offset:.12},
@@ -153,8 +157,8 @@ function renderTrick(){
  const nodes=[...document.querySelectorAll(".trick-cards .played-card")],entries=visibleTrick.length?visibleTrick:(game?game.trick:[]);
  nodes.forEach(node=>{node.classList.add("empty");node.classList.remove("red","black");node.removeAttribute("data-player-label");node.textContent="·"});
  const active=new Set(),flights=[];
- entries.forEach(entry=>{const slot=H.trickSlot(entry.player),node=nodes[slot];if(!node)return;active.add(slot);node.classList.remove("empty");node.classList.toggle("red",isRed(entry.card));node.classList.toggle("black",!isRed(entry.card));node.textContent=entry.card.rank+entry.card.suit;flights.push(animatePlayedCard(node,entry,entry.player))});
- nodes.forEach((node,index)=>{if(!active.has(index)){node.classList.remove("hokm-card-arriving");node.dataset.playedCardKey="";node.removeAttribute("data-player-label")}});
+ entries.forEach((entry,index)=>{const slot=H.trickSlot(entry.player),node=nodes[slot];if(!node)return;active.add(slot);node.classList.remove("empty");node.classList.toggle("red",isRed(entry.card));node.classList.toggle("black",!isRed(entry.card));node.textContent=entry.card.rank+entry.card.suit;const source=document.querySelector(seatElements(entry.player).chip),label=source?.querySelector("b")?.textContent?.trim()||(entry.player===0?tr("you"):"CPU "+(entry.player+1));node.dataset.playerLabel=label;node.dataset.playOrder=String(index+1);node.setAttribute("aria-label",entry.card.rank+" "+suitName(entry.card.suit)+" · "+label+" · "+(index+1));flights.push(animatePlayedCard(node,entry,entry.player))});
+ nodes.forEach((node,index)=>{if(!active.has(index)){node.classList.remove("hokm-card-arriving");node.dataset.playedCardKey="";node.removeAttribute("data-player-label");node.removeAttribute("data-play-order")}});
  return Promise.all(flights);
 }
 function render(){
