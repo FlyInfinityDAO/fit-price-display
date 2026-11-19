@@ -114,12 +114,13 @@ async function runViewport(browserType, name, viewport, mobile = false, language
           cards[2].y < center.y && cards[3].x > center.x,
         centerInsideTable: inside,
         sideCardsClearOfSideSeats: !overlaps(cards[1], seats.west) && !overlaps(cards[3], seats.east),
+        cardsReadable: cards.every(card => card.width >= 30 && card.height >= 48),
         center: { x: center.x, y: center.y, width: center.width, height: center.height },
         cardRects: cards.map(({ x, y, width, height }) => ({ x, y, width, height }))
       };
     });
 
-    if (!seatLayout.seats || !seatLayout.cardDirections || !seatLayout.centerInsideTable || !seatLayout.sideCardsClearOfSideSeats) {
+    if (!seatLayout.seats || !seatLayout.cardDirections || !seatLayout.centerInsideTable || !seatLayout.sideCardsClearOfSideSeats || !seatLayout.cardsReadable) {
       throw new Error("Table/card positions overlap or are out of bounds: " + JSON.stringify(seatLayout));
     }
 
