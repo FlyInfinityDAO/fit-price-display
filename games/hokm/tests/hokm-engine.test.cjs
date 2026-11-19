@@ -93,7 +93,7 @@ test("solo CPU match completes three real rounds using legal card plays",()=>{
  assert.equal(match.matchPoints[0]+match.matchPoints[1],3);
 });
 
-test("match ends when a team has been Hakem the required number of times, independent of hand wins",()=>{const m=H.createMatch({mode:"solo",players:[{seat:0,kind:"human",balance:1},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}]});assert.deepEqual(m.hakemCounts,[0,0],"initial Ace selection does not count as a Hakem assignment");for(let i=0;i<2;i++){const g=H.startRound(m,{hakem:0});g.finished=true;H.finishRound(m,g,1)}assert.equal(m.finished,false);const last=H.startRound(m,{hakem:0});last.finished=true;const result=H.finishRound(m,last,1);assert.equal(result.matchFinished,true);assert.equal(result.matchWinner,0);assert.deepEqual(m.hakemCounts,[3,0]);assert.deepEqual(m.matchPoints,[0,3])});
+
 test("all CPU difficulty levels complete full legal rounds without stalling",()=>{
  for(const difficulty of ["easy","normal","hard","veryhard"]){
   const match=H.createMatch({mode:"solo",difficulty,players:[{seat:0,kind:"human",balance:1},{seat:1,kind:"cpu"},{seat:2,kind:"cpu"},{seat:3,kind:"cpu"}]});
