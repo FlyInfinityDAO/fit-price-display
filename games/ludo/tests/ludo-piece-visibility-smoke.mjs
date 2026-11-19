@@ -77,13 +77,13 @@ for (const scenario of scenarios) {
     })) {
       assert.equal(piece.disabled, true, `${name} piece must remain non-interactive when disabled`);
       assert.equal(piece.opacity, "1", `${name} piece opacity must remain fully visible`);
-      assert.match(piece.filter, /saturate\\(1\\.65\\)/, `${name} piece saturation must match active tokens`);
-      assert.match(piece.filter, /contrast\\(1\\.08\\)/, `${name} piece contrast must match active tokens`);
+      assert.ok(piece.filter.includes("saturate(1.65)"), name + " piece saturation must match active tokens");
+      assert.ok(piece.filter.includes("contrast(1.08)"), name + " piece contrast must match active tokens");
     }
 
     assert.equal(styles.ordinaryDisabledButton.opacity, "0.42",
       "Unrelated disabled controls must keep the shared dimmed appearance");
-    assert.match(styles.ordinaryDisabledButton.filter, /saturate\\(0\\.65\\)/,
+    assert.ok(styles.ordinaryDisabledButton.filter.includes("saturate(0.65)"), "Unrelated disabled controls must keep their original desaturation");
       "Unrelated disabled controls must keep their original desaturation");
 
     console.log(JSON.stringify({ scenario: scenario.name, ok: true, styles }));
