@@ -21,7 +21,7 @@ function createMatch({mode="solo",players=[],difficulty="normal",allowCpuSeats=f
  const policy=resolveAccessPolicy({mode,players,allowCpuSeats});
  if(!policy.allowed)throw new Error(policy.reason==="player-count"?"Invalid human player count":"Every human player needs at least 1 FIT");
  if(!["easy","normal","hard","veryhard"].includes(difficulty))throw new Error("Invalid CPU difficulty");
- return {mode,players:players.map(p=>({...p})),difficulty,accessTier:policy.tier,maxRounds:policy.maxRounds,roundsPlayed:0,matchPoints:[0,0],hakemCounts:[0,0],finished:false,round:null};
+ return {mode,players:players.map(p=>({...p})),difficulty,accessTier:policy.tier,maxRounds:policy.maxRounds,targetWins:Math.ceil(policy.maxRounds/2),roundsPlayed:0,matchPoints:[0,0],hakemCounts:[0,0],finished:false,round:null};
 }
 function hakemFromDealtDeck(deck){
  for(let dealIndex=0;dealIndex<deck.length;dealIndex++)if(deck[deck.length-1-dealIndex].rank==="A")return dealIndex%4;
@@ -59,13 +59,19 @@ function trickWinner(trick,trump){
 }
 function finishRound(match,game,winningTeam){
  if(match.round!==game||!game.finished)throw new Error("Round is not complete or does not belong to this match");
+ if(winningTeam!==0&&winningTeam!==1)throw new Error("Invalid round winner");
  match.roundsPlayed++;match.matchPoints[winningTeam]++;
  match.hakemCounts ||= [0,0];
  const hakemTeam=game.hakem%2;
  match.hakemCounts[hakemTeam]++;
- const matchWinner=match.hakemCounts[hakemTeam]>=match.maxRounds?hakemTeam:null;
+ // maxRounds is the total best-of series length (3 or 7); Hakem counts are statistics only.
+ const targetWins=match.targetWins||Math.ceil(match.maxRounds/2);
+ let matchWinner=match.matchPoints[winningTeam]>=targetWins?winningTeam:null;
+ if(matchWinner===null&&match.roundsPlayed>=match.maxRounds){
+  matchWinner=match.matchPoints[0]===match.matchPoints[1]?null:(match.matchPoints[0]>match.matchPoints[1]?0:1);
+ }
  if(matchWinner!==null)match.finished=true;
- return {roundsPlayed:match.roundsPlayed,maxRounds:match.maxRounds,matchPoints:[...match.matchPoints],hakemCounts:[...match.hakemCounts],matchWinner,matchFinished:match.finished};
+ return {roundsPlayed:match.roundsPlayed,maxRounds:match.maxRounds,targetWins,matchPoints:[...match.matchPoints],hakemCounts:[...match.hakemCounts],matchWinner,matchFinished:match.finished};
 }
 function playCard(game,player,cardId){
  if(game.phase!=="playing"||game.finished)throw new Error("Game is not accepting cards");
