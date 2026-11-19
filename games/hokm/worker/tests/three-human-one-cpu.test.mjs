@@ -74,6 +74,6 @@ test("three humans and one CPU complete a full online round without a stalled CP
     assert.equal(game.finished, true, "round should finish within 52 legal card plays");
     assert.ok(cpuCards > 0, "the single CPU seat must take turns");
     assert.ok(humanCards > 0, "all human seats must participate");
-    assert.equal(totalCards, 52);
+    assert.ok(totalCards >= 28 && totalCards <= 52 && totalCards % 4 === 0, "the round ends after a complete trick once a team reaches seven tricks");
   }
 });
