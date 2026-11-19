@@ -480,6 +480,14 @@ async function runViewport(browserType, name, viewport, mobile = false, language
     }
 
     let current = initialState();
+    // Clear the click-test hand before starting the existing deal-motion test.
+    // Otherwise the same 13-card signature is already rendered and no new
+    // dealing animation is expected to start on the next identical snapshot.
+    const emptyHands = clone(current);
+    emptyHands.game.ownHand = [];
+    emptyHands.game.handCounts = [0, 0, 0, 0];
+    emptyHands.cardFlightUntil = 0;
+    await sendState(emptyHands);
     await sendState(current);
     await page.waitForFunction(() =>
       [".hand-south", ".seat-west .hand", ".hand-north", ".seat-east .hand"].every(selector => {
