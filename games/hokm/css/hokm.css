@@ -845,3 +845,34 @@ footer span{color:var(--fi-gold)}
 .table-center .table-message{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:100%;font-size:11px}
 @media(max-width:760px){.table-center{width:76%;height:238px}.table-center .trick-cards{inset:36px 0 30px}.table-center .played-card{width:clamp(36px,10vw,48px);height:clamp(52px,14vw,68px);font-size:22px}.table-center .played-card::before{top:-21px;max-width:86px;font-size:8px;padding:1px 5px}.table-center .table-message{font-size:9px}}
 @media(max-width:420px){.table-center{width:74%;height:218px}.table-center .trick-cards{inset:34px 0 28px}.table-center .played-card{width:34px;height:50px;font-size:19px}.table-center .played-card::before{max-width:70px;font-size:7px}}
+
+/* Animated word-by-word color flow for the Hokm hero title only. */
+html body.fi-snakes-ui .hero h1[data-i="title"]{
+  background:none!important;
+  -webkit-text-fill-color:initial!important;
+  color:#EAF5FF!important;
+}
+html body.fi-snakes-ui .hero h1[data-i="title"] .hokm-title-word{
+  display:inline-block;
+  background-image:linear-gradient(105deg,#00D9FF 0%,#456CFF 48%,#8B5CF6 100%);
+  background-size:220% 100%;
+  background-position:0% 50%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:transparent;
+  animation:hokmTitleWordFlow 4.8s ease-in-out infinite alternate;
+}
+html body.fi-snakes-ui .hero h1[data-i="title"] .hokm-title-word:nth-of-type(2){animation-delay:-1.6s}
+html body.fi-snakes-ui .hero h1[data-i="title"] .hokm-title-word:nth-of-type(3){animation-delay:-3.2s}
+@keyframes hokmTitleWordFlow{
+  0%{background-position:0% 50%}
+  100%{background-position:100% 50%}
+}
+@media(prefers-reduced-motion:reduce){
+  html body.fi-snakes-ui .hero h1[data-i="title"] .hokm-title-word{
+    animation:none!important;
+    background-position:50% 50%!important;
+  }
+}
+
