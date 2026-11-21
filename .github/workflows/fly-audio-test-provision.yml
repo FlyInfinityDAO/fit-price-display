@@ -61,7 +61,7 @@ jobs:
             created="$(curl --silent --show-error --fail-with-body --request POST \
               --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
               --header "Content-Type: application/json" \
-              --data "{\\"name\\":\\"$AUDIO_TEST_D1_NAME\\",\\"jurisdiction\\":\\"eu\\"}" "$api")"
+              --data "{\"name\":\"$AUDIO_TEST_D1_NAME\",\"jurisdiction\":\"eu\"}" "$api")"
             echo "$created" | jq -e '.success == true' >/dev/null
             database_id="$(echo "$created" | jq -r '.result.uuid')"
           fi
