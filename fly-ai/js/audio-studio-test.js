@@ -58,34 +58,36 @@ function pcmToWav(bytes,sampleRate=24000,channels=1){
  view.setUint16(32,channels*2,true);view.setUint16(34,16,true);write(36,'data');view.setUint32(40,bytes.byteLength,true);
  return new Blob([header,bytes],{type:'audio/wav'});
 }
-async function generateGeminiSpeech({apiKey,text,locale,voiceName='Kore'}){
+async function generateGeminiSpeech({apiKey,text,locale,voiceName='Sulafat'}){
  const key=String(apiKey||'').trim(),spoken=String(text||'').trim();
  if(!key)throw new Error('Paste a Google AI Studio API key first. The key is not saved.');
  if(!spoken)throw new Error('Enter text to speak first.');
  if(spoken.length>1200)throw new Error('Keep this test text under 1,200 characters.');
  const language=({'en-US':'English','fa-IR':'Iranian Persian','ar-SA':'Arabic','tr-TR':'Turkish','ru-RU':'Russian','zh-CN':'Chinese','es-ES':'Spanish','pt-PT':'Portuguese'})[locale]||locale;
- const response=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash-tts:generateContent',{
+ const style='Warm, gentle, calm studio narration. Soft dynamics, medium-low pitch, slow-to-moderate pace, smooth and clear pronunciation. Avoid sharp, shrill or exaggerated intonation. Read the transcript exactly as written in '+language+'.';
+ const response=await fetch('https://generativelanguage.googleapis.com/v1beta/interactions',{
   method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},
-  body:JSON.stringify({contents:[{parts:[{text:spoken,speechMetadata:{style:'Warm, calm, natural studio narration. Soft dynamics, moderate pace, clear pronunciation, neutral and friendly delivery.'}}]}],
-   generationConfig:{responseModalities:['AUDIO'],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName}},languageCode:locale}}})
+  body:JSON.stringify({
+   model:'gemini-3.8-flash-tts',
+   input:[{type:'user_input',content:[{type:'text',text:spoken,annotations:[{type:'speech_metadata',style}]}]}],
+   response_format:{type:'audio',mime_type:'audio/wav',sample_rate:24000},
+   generation_config:{speech_config:[{voice:voiceName}]}
+  })
  });
  const data=await response.json().catch(()=>({}));
  if(!response.ok){
   const detail=data.error?.message||('HTTP '+response.status);
   if(response.status===400||response.status===403)throw new Error('Google rejected the API key or request: '+detail);
-  if(response.status===404)throw new Error('Gemini TTS model is not available to this API key yet: '+detail);
+  if(response.status===404)throw new Error('Gemini 3.8 Flash TTS is not available to this API key yet: '+detail);
   if(response.status===429)throw new Error('Google free-tier rate limit reached. Wait before trying again. '+detail);
   throw new Error('Gemini TTS request failed: '+detail);
  }
- const parts=data.candidates?.[0]?.content?.parts||[];
- const audioPart=parts.find(part=>part.inlineData?.data);
- if(!audioPart)throw new Error('Google returned no audio data. Try again with a shorter text.');
- const mime=audioPart.inlineData.mimeType||'audio/L16;codec=pcm;rate=24000';
- const raw=Uint8Array.from(atob(audioPart.inlineData.data),c=>c.charCodeAt(0));
- const isWav=String.fromCharCode(...raw.slice(0,4))==='RIFF';
- const rateMatch=mime.match(/rate=(\d+)/i),sampleRate=rateMatch?Number(rateMatch[1]):24000;
- const wav=isWav?new Blob([raw],{type:'audio/wav'}):pcmToWav(raw,sampleRate,1);
- if(wav.size<1000)throw new Error('The generated audio file is unexpectedly small.');
+ const audioData=data.output_audio?.data||data.steps?.filter(step=>step.type==='model_output')
+  .flatMap(step=>step.content||[]).find(part=>part.type==='audio'&&part.data)?.data;
+ if(!audioData)throw new Error(data.error?.message||'Google returned no audio data. Try again with a shorter text.');
+ const raw=Uint8Array.from(atob(audioData),c=>c.charCodeAt(0));
+ const wav=new Blob([raw],{type:'audio/wav'});
+ await assertWav(wav);
  return wav;
 }
 document.querySelectorAll('[data-tool]').forEach(button=>button.addEventListener('click',()=>{const tool=button.dataset.tool;document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('active',b===button));['voice','music','effects'].forEach(n=>$(''+n+'Tool').classList.toggle('hidden',n!==tool));}));
