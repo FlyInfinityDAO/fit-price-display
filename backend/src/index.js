@@ -90,7 +90,8 @@ async function route(req,env,ctx){const url=new URL(req.url),path=url.pathname;c
 if(path==='/api/image/test'&&req.method==='POST'){
  if(env.IMAGE_TEST_ENABLED!=='true')return json({error:'Not found'},404);
  const suppliedKey=req.headers.get('X-Fly-Image-Test-Key')||'';
- if(!env.IMAGE_TEST_AUTH_KEY||!constantTimeEqual(suppliedKey,env.IMAGE_TEST_AUTH_KEY))return json({error:'Unauthorized'},401);
+ if(!env.IMAGE_TEST_AUTH_KEY)return json({error:'Image test secret is not configured'},503);
+ if(!constantTimeEqual(suppliedKey,env.IMAGE_TEST_AUTH_KEY))return json({error:'Image test key mismatch'},401);
  if(!env.AI||typeof env.AI.run!=='function')return json({error:'Image generation is not configured'},503);
  let body;try{body=await req.json()}catch{return json({error:'Request body must be valid JSON'},400)}
  const prompt=typeof body?.prompt==='string'?body.prompt.trim():'';
