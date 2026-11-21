@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101329">
+<title>Fly Infinity Audio Studio — Preview</title>
+<link rel="stylesheet" href="css/audio-studio-test.css?v=1">
+<script defer src="js/audio-studio.js?v=1"></script>
+<script defer src="js/audio-studio-test.js?v=1"></script>
+</head>
+<body>
+<main class="studio-shell">
+<header class="studio-header"><span class="studio-mark">♫</span><div><small>FLY INFINITY · PRIVATE PREVIEW</small><h1>Audio Studio</h1><p>Voice, original music and sound effects</p></div></header>
+<div class="notice"><strong>Test environment — no wallet required.</strong><span>This preview uses a separate test Worker and database. Voice preview is limited to 3 short generations per UTC day. It does not use the production wallet quota.</span></div>
+<nav class="tool-tabs" aria-label="Audio tools"><button class="active" data-tool="voice">Voice-over</button><button data-tool="music">Music Maker</button><button data-tool="effects">Sound Effects</button></nav>
+<section id="voiceTool" class="tool-panel">
+<h2>AI voice preview</h2><p class="muted">The free Cloudflare Aura voice preview is English-only.</p>
+<form id="voiceForm" class="form">
+<label for="voiceText">Text (max 160 characters)</label><textarea id="voiceText" maxlength="160" required placeholder="Hello from Fly Infinity Audio Studio."></textarea>
+<label for="voiceSpeaker">Voice</label><select id="voiceSpeaker"><option value="luna">Luna</option><option value="athena">Athena</option><option value="orion">Orion</option><option value="hera">Hera</option></select>
+<button id="voiceButton" type="submit">Generate speech</button>
+</form><p id="voiceStatus" class="status" role="status"></p>
+<div id="voiceResult" class="result hidden"><audio id="voicePlayer" controls></audio><a id="voiceDownload" download="fly-infinity-audio-preview.mp3">Download MP3</a></div>
+</section>
+<section id="musicTool" class="tool-panel hidden">
+<h2>Original instrumental composer</h2><p class="muted">Runs locally in this browser; no external API or upload.</p>
+<form id="musicForm" class="form">
+<label for="musicPrompt">Mood / inspiration</label><textarea id="musicPrompt" maxlength="500" placeholder="A hopeful cinematic journey at sunrise…"></textarea>
+<div class="controls"><div><label for="musicStyle">Style</label><select id="musicStyle"><option value="cinematic">Cinematic</option><option value="calm">Calm ambient</option><option value="electronic">Electronic</option><option value="lofi">Lo-fi</option><option value="upbeat">Upbeat</option></select></div><div><label for="musicTempo">Tempo</label><input id="musicTempo" type="number" min="65" max="150" value="96"></div><div><label for="musicDuration">Length</label><select id="musicDuration"><option value="15">15 seconds</option><option value="30" selected>30 seconds</option><option value="45">45 seconds</option></select></div></div>
+<button type="submit">Compose music</button>
+</form>
+</section>
+<section id="effectsTool" class="tool-panel hidden">
+<h2>Sound effect generator</h2><form id="effectForm" class="form">
+<label for="effectType">Effect</label><select id="effectType"><option value="chime">Chime</option><option value="magic">Magic sparkle</option><option value="whoosh">Whoosh</option><option value="laser">Laser</option><option value="impact">Impact</option><option value="rain">Rain ambience</option></select>
+<button type="submit">Create sound effect</button></form>
+</section>
+<p id="localStatus" class="status" role="status"></p>
+<div id="localResult" class="result hidden"><audio id="localPlayer" controls></audio><a id="localDownload" download="fly-infinity-audio.wav">Download WAV</a></div>
+<footer>Fly Infinity Audio Studio · Isolated preview only</footer>
+</main>
+</body>
+</html>
