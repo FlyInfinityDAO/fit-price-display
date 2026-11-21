@@ -165,7 +165,7 @@ export default {
       console.error('Fly Infinity Audio API:', error?.message || error);
       const message = String(error?.message || error || 'Internal error');
       const status = /invalid wallet address|valid JSON|characters/i.test(message) ? 400 :
-        /quota reached|too many audio sign-in/i.test(message) ? 429 :
+        /quota reached|capacity reached|too many audio sign-in/i.test(message) ? 429 :
         /not configured/i.test(message) ? 503 :
         /RPC|network|timeout|fetch failed/i.test(message) ? 503 : 500;
       return json({ error: status === 500 ? 'Audio service temporarily unavailable' : message }, status, headers);
