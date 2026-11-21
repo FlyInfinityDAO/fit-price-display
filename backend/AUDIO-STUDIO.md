@@ -1,37 +1,23 @@
 # Fly Infinity Audio Studio
 
-## Deployment layout
-- Production Worker: `fly-infinity-audio-api`
-- Production D1: `fly-infinity-audio-db`
-- No-wallet test Worker: `fly-infinity-audio-test`
-- No-wallet test D1: `fly-infinity-audio-test-db`
-- Production site integration: `fly-ai/index.html`, card `data-assistant="audio-studio"`
+## Production integration
+- Frontend: `fly-ai/index.html`
+- Specialist card: `data-assistant="audio-studio"`
+- Workspace script: `fly-ai/js/audio-studio.js`
+- UI logic: `fly-ai/js/app.js`
+- Supported interface languages: English, Persian, Arabic, Turkish, Russian, Chinese, Spanish and Portuguese.
 
-The audio service has its own wallet challenge, one-use nonce, short-lived session and D1 usage tables. It verifies BNB Smart Chain `Owner_Exists` and the live FIT balance independently from Fly AI chat and the Image Studio. Wallet signatures are free and do not authorize transactions.
+Audio Studio remains behind the existing Fly Infinity wallet verification gate. Wallet signatures are free and do not authorize transactions.
 
-## Current capabilities
-1. **AI voice-over:** Cloudflare Workers AI `@cf/deepgram/aura-1`. It currently supports English speech only. The audio bytes are streamed to the browser; no generated recordings are stored in D1.
-2. **Music Maker:** original algorithmic instrumental compositions rendered locally with the browser Web Audio API and exported as WAV. This does not call an AI music model or consume model API credits.
-3. **Sound Effects:** locally synthesized chime, magic sparkle, whoosh, laser, impact and rain ambience; exported as WAV.
+## Free capabilities
+1. **Browser voice-over:** uses the browser's built-in Web Speech API. The selected Fly AI interface language determines the requested speech locale. Actual voices and language coverage depend on voices installed or made available by the user's browser/device. This feature runs locally and does not call an API, consume cloud credits, or create a downloadable recording.
+2. **Music Maker:** renders original short algorithmic instrumental compositions in the browser with Web Audio API and exports WAV. It is not a generative AI music model; the prompt is used as a deterministic variation seed rather than interpreted semantically.
+3. **Sound Effects:** locally synthesizes chime, magic sparkle, whoosh, laser, impact and rain ambience; exports WAV.
 
-The audio UI is translated into the eight Fly AI interface languages. This does not mean the current free voice model speaks all eight languages; voice-over is explicitly English-only in this initial release.
+## Full AI music (external service)
+The Music Maker panel links to ACE Music's hosted ACE-Step page: https://acemusic.ai/ace-step/. Users must sign in to ACE Music and explicitly select **ACE-Step v1.5 XL**. ACE Music's current Terms state that this model does not consume generation credits and permits commercial use under those Terms. Other models may consume credits and have different use rights. This is an external service; no API integration, account sharing or automated generation is performed by Fly Infinity.
 
-## Quotas and free-capacity guard
-- Tier 1: 2 voice generations/day
-- Tier 2: 4 voice generations/day
-- Tier 3: 8 voice generations/day
-- Each cloud voice request: maximum 300 characters
-- Shared cloud voice budget: 1,200 characters/day
+## No paid or metered audio API
+Cloudflare Workers AI speech generation and the no-wallet preview endpoint are disabled. The production and test Wrangler configurations no longer bind Workers AI. The legacy Audio Worker routes return HTTP 410 and cannot invoke a speech model. The local browser tools do not depend on the Audio Worker or D1 database.
 
-Cloudflare Workers AI has a shared 10,000-Neuron daily free allocation. The audio character cap is deliberately conservative because it shares that account-level allowance with the separately deployed Image Studio. The exact available capacity can vary with other Workers AI usage on the account.
-
-## Paid AI music boundary
-Full-song AI music providers are not activated. Google Lyria 3.5 is currently listed at $0.08 per full track and has no free tier in the Gemini API pricing. `POST /api/audio/music` returns HTTP 402 with an explicit message until a paid provider and its budget are approved. The local Music Maker remains available without a paid API.
-
-Meta MusicGen is not used in production: its model weights are published under CC-BY-NC 4.0, which is not suitable for an ordinary commercial production service.
-
-## No-wallet test environment
-The isolated test Worker exposes `POST /api/audio/preview` only when `AUDIO_PREVIEW_ENABLED=true` and only from the exact test origin. It has a separate D1 and a small daily preview allowance. The production Worker does not enable this route.
-
-## Data handling
-D1 stores short-lived authentication nonces, SHA-256 hashes of session tokens, wallet/day quota counters and global daily character usage. Generated audio is streamed back; the service does not persist user narration text or resulting audio files.
+No voice text, audio recording, or generated local audio is uploaded to Fly Infinity servers by these browser-only tools.
