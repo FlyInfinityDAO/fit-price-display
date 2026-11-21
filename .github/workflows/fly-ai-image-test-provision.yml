@@ -89,6 +89,7 @@ jobs:
           set -euo pipefail
           npx wrangler d1 execute "$TEST_D1_NAME" --remote --file=migrations/0001_init.sql --config=wrangler.image-test.toml
           npx wrangler d1 execute "$TEST_D1_NAME" --remote --file=migrations/0004_image_test_usage.sql --config=wrangler.image-test.toml
+          npx wrangler d1 execute "$TEST_D1_NAME" --remote --file=migrations/0005_image_generation_usage.sql --config=wrangler.image-test.toml
 
       - name: Deploy the isolated Workers AI test Worker
         shell: bash
