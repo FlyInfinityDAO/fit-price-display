@@ -4,7 +4,7 @@ const API=(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.apiBase||'').replace(/\/$/
 const IMAGE_API_BASE=(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.imageApiBase||'').replace(/\/$/,'');
 const IMAGE_GENERATION_ENABLED=Boolean(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.imageGenerationEnabled===true);
 const IMAGE_STUDIO_TEST_MODE=Boolean(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.imageStudioTestMode===true);
-const AUDIO_API_BASE=(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.audioApiBase||'').replace(/\\/$/,'');
+const AUDIO_API_BASE=(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.audioApiBase||'').replace(/\/$/,'');
 const AUDIO_SPEECH_ENABLED=Boolean(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.audioSpeechEnabled===true);
 const FIT='0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa',CHAIN='0x38';
 let provider=null,address='',token='',busy=false,history=[],profile=null,assistantId='general',conversationId=null,conversations=[],memoryEnabled=true,memoryItems=[],historyUiBound=false;let imageBusy=false,generatedImageUrl=null,generatedImageExtension='jpg',imageSessionToken='',imageSessionExpiresAt=0;let audioBusy=false,audioSessionToken='',audioSessionExpiresAt=0,voiceAudioUrl=null,localAudioUrl=null;
