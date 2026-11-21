@@ -7,7 +7,7 @@ This branch adds a separately named test Worker and a disabled-by-default test e
 - `backend/wrangler.image-test.toml`: a separate Worker named `fly-ai-image-test` with its own D1 database placeholder and Workers AI binding.
 - Model adapter for `@cf/black-forest-labs/flux-2-klein-4b`.
 - `POST /api/image/test`, protected by the existing Fly AI wallet JWT and Network Owner entitlement check.
-- A separate D1 table, `image_test_usage`, with a maximum of 25 attempts in total per UTC day across the test Worker. Failed model calls release their quota reservation.
+- A separate D1 table, `image_test_usage`, with a maximum of 50 attempts in total per UTC day across the test Worker. Failed model calls release their quota reservation.
 - The endpoint is disabled unless `IMAGE_TEST_ENABLED=true` is set in the Worker environment.
 - Unit tests for model invocation, output decoding, and fail-closed behavior.
 
