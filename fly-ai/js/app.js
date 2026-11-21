@@ -1,6 +1,7 @@
 (function(){'use strict';
 const $=id=>document.getElementById(id);
 const API=(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.apiBase||'').replace(/\/$/,'');
+const IMAGE_GENERATION_ENABLED=Boolean(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.imageGenerationEnabled===true);
 const FIT='0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa',CHAIN='0x38';
 let provider=null,address='',token='',busy=false,history=[],profile=null,assistantId='general',conversationId=null,conversations=[],memoryEnabled=true,memoryItems=[],historyUiBound=false;let imageBusy=false,generatedImageUrl=null,generatedImageExtension='jpg';
 const t=k=>window.FlyI18n.t(k);
@@ -137,6 +138,7 @@ function setWorkspaceMode(mode){
  if(imageMode)window.setTimeout(()=>$('imagePrompt')?.focus(),40);
 }
 async function generateImageFromPrompt(){
+ if(!IMAGE_GENERATION_ENABLED){toast(t('imageNotEnabled'));return}
  const promptText=$('imagePrompt').value.trim();
  if(!promptText){toast(t('imageEmpty'));$('imagePrompt').focus();return}
  if(!token){toast(t('backendMissing'));return}
@@ -182,6 +184,11 @@ async function generateImageFromPrompt(){
   button.disabled=false;
   if(buttonLabel)buttonLabel.textContent=t('imageGenerate');
  }
+}
+if(!IMAGE_GENERATION_ENABLED){
+ $('generateImageBtn').disabled=true;
+ $('imageStatus').dataset.i18n='imageNotEnabled';
+ $('imageStatus').textContent=t('imageNotEnabled');
 }
 $('chatModeButton')?.addEventListener('click',()=>setWorkspaceMode('chat'));
 $('imageModeButton')?.addEventListener('click',()=>setWorkspaceMode('image'));
