@@ -149,6 +149,7 @@ async function route(req, env) {
   if (url.pathname === '/api/auth/challenge' && req.method === 'POST') return issueChallenge(req, env);
   if (url.pathname === '/api/auth/verify' && req.method === 'POST') return verifyChallenge(req, env);
   if (url.pathname === '/api/audio/tts' && req.method === 'POST') return generateSpeech(req, env);
+  if (url.pathname === '/api/audio/preview' && req.method === 'POST') return generatePreviewSpeech(req, env);
   if (url.pathname === '/api/audio/music' && req.method === 'POST') return json({ error: 'AI music generation is disabled until a paid provider is explicitly approved. Use the built-in free music composer.' }, 402);
   return json({ error: 'Not found' }, 404);
 }
