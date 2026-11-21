@@ -91,6 +91,9 @@ async function generateGeminiSpeech({apiKey,text,locale,voiceName='Kore'}){
 document.querySelectorAll('[data-tool]').forEach(button=>button.addEventListener('click',()=>{const tool=button.dataset.tool;document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('active',b===button));['voice','music','effects'].forEach(n=>$(''+n+'Tool').classList.toggle('hidden',n!==tool));}));
 $('musicForm').addEventListener('submit',async e=>{e.preventDefault();try{const blob=await window.FlyAudioComposer.generateMusic({prompt:$('musicPrompt').value,style:$('musicStyle').value,tempo:$('musicTempo').value,duration:$('musicDuration').value});setLocal(blob,'fly-infinity-music-'+$('musicStyle').value+'.wav')}catch(error){$('localStatus').textContent=error.message}});
 $('effectForm').addEventListener('submit',async e=>{e.preventDefault();try{const blob=await window.FlyAudioComposer.generateEffect($('effectType').value);setLocal(blob,'fly-infinity-'+$('effectType').value+'.wav')}catch(error){$('localStatus').textContent=error.message}});
+function updateVoiceTextDirection(){const rtl=['fa-IR','ar-SA'].includes($('voiceLanguage').value);$('voiceText').dir=rtl?'rtl':'ltr';$('voiceText').style.textAlign=rtl?'right':'left'}
+$('voiceLanguage').addEventListener('change',updateVoiceTextDirection);
+updateVoiceTextDirection();
 $('voiceForm').addEventListener('submit',async e=>{e.preventDefault();try{const result=await speak($('voiceLanguage').value,$('voiceText').value,$('voiceRate').value,$('voicePitch').value);$('voiceAvailability').textContent=result.unavailable?'No installed voice for '+$('voiceLanguage').value+' on this device.':'Played with '+result.voice+' ('+result.lang+').'}catch(err){$('voiceAvailability').textContent=err.message;}});
 $('geminiSpeakButton').addEventListener('click',async()=>{
  const button=$('geminiSpeakButton');button.disabled=true;$('voiceAvailability').textContent='Generating natural voice…';
