@@ -59,7 +59,12 @@ const cases = [
 ];
 
 // The first two prompt pairs were already generated and saved in earlier runs.
-const remainingCases = cases.slice(Number(process.env.IMAGE_TEST_START_INDEX || 0));
+const startIndex = Number(process.env.IMAGE_TEST_START_INDEX || 0);
+const remainingCases = cases.slice(startIndex);
+if (remainingCases.length === 0) {
+  console.log('All comparison cases are already covered; no image requests sent.');
+  process.exit(0);
+}
 const outDir = path.resolve('image-test-results');
 await fs.mkdir(outDir, { recursive: true });
 const manifest = {
