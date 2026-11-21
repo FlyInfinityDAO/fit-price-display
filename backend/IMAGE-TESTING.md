@@ -7,7 +7,7 @@ This branch adds a separately named test Worker and a disabled-by-default test e
 - `backend/wrangler.image-test.toml`: a separate Worker named `fly-ai-image-test` with its own D1 database placeholder and Workers AI binding.
 - Model adapter for `@cf/black-forest-labs/flux-2-klein-4b`.
 - `POST /api/image/test`, protected by the existing Fly AI wallet JWT and Network Owner entitlement check.
-- A separate D1 table, `image_test_usage`, with a maximum of 25 attempts per wallet per UTC day. Failed model calls release their quota reservation.
+- A separate D1 table, `image_test_usage`, with a maximum of 25 attempts in total per UTC day across the test Worker. Failed model calls release their quota reservation.
 - The endpoint is disabled unless `IMAGE_TEST_ENABLED=true` is set in the Worker environment.
 - Unit tests for model invocation, output decoding, and fail-closed behavior.
 
@@ -30,7 +30,7 @@ The production `backend/wrangler.toml` is intentionally unchanged. Do not deploy
 - JSON body: `{"prompt":"A professional product photograph of a watch on black marble","seed":42}`
 - Output: raw image bytes; response headers include `X-Image-Model`, `X-Image-Quota-Remaining`, width and height.
 
-The test endpoint fixes output to 512×512 to control free Neurons consumption while comparing Persian and English prompts. It accepts one prompt per request. The image-test quota is independent from the production chat quota.
+The test endpoint fixes output to 512×512 to control free Neurons consumption while comparing Persian and English prompts. It accepts one prompt per request. The image-test quota is account-wide for this isolated test Worker, is capped at 25 attempts per UTC day across all test wallets, and is independent from the production chat quota.
 
 ## Validation
 
