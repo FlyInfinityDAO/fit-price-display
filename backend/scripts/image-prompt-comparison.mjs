@@ -58,6 +58,8 @@ const cases = [
   }
 ];
 
+// The first two prompt pairs were already generated and saved in earlier runs.
+const remainingCases = cases.slice(Number(process.env.IMAGE_TEST_START_INDEX || 0));
 const outDir = path.resolve('image-test-results');
 await fs.mkdir(outDir, { recursive: true });
 const manifest = {
@@ -69,9 +71,10 @@ const manifest = {
 };
 
 let failed = false;
-for (let i = 0; i < cases.length && !failed; i++) {
-  const item = cases[i];
-  const seed = 20261121 + i;
+for (let i = 0; i < remainingCases.length && !failed; i++) {
+  const item = remainingCases[i];
+  const originalIndex = cases.findIndex(entry => entry.id === item.id);
+  const seed = 20261121 + originalIndex;
   for (const language of ['fa', 'en']) {
     const prompt = item[language];
     const record = {
