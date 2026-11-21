@@ -1,7 +1,7 @@
 name: Fly Infinity Audio Studio sandbox
 on:
   push:
-    branches: [feature/fly-infinity-audio-studio]
+    branches: [main]
     paths:
       - 'backend/audio-api/**'
       - 'backend/src/audio-quota.js'
@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   test-and-deploy:
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/feature/fly-infinity-audio-studio') || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/feature/fly-infinity-audio-studio')
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/feature/fly-infinity-audio-studio')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     defaults:
@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: feature/fly-infinity-audio-studio
+          ref: main
       - uses: actions/setup-node@v4
         with:
           node-version: 22
