@@ -20,5 +20,3 @@ MIN_TIER3_FIT = "10"
 [ai]
 binding = "AI"
 
-[triggers]
-crons = ["17 * * * *"]

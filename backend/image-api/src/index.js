@@ -20,6 +20,7 @@ async function entitlement(address,env){
 async function readJson(req){try{return await req.json()}catch{throw new Error('Request body must be valid JSON')}}
 async function challenge(req,env){
  const body=await readJson(req);let address;try{address=normalizeAddress(body?.address)}catch(e){return json({error:e.message},400)}
+ await env.DB.prepare('DELETE FROM image_auth_nonces WHERE expires_at<?').bind(now()).run();
  const recent=await env.DB.prepare('SELECT COUNT(*) AS n FROM image_auth_nonces WHERE address=? AND created_at>?').bind(address,now()-300).first();
  if(Number(recent?.n||0)>=10)return json({error:'Too many image sign-in attempts. Please wait five minutes.'},429);
  const issuedAt=new Date().toISOString(),expires=now()+300,nonce=crypto.randomUUID().replace(/-/g,'');
@@ -36,6 +37,7 @@ async function verify(req,env){
  const used=await env.DB.prepare('UPDATE image_auth_nonces SET consumed_at=? WHERE nonce=? AND address=? AND consumed_at IS NULL AND expires_at>?').bind(now(),body.nonce,address,now()).run();
  if(Number(used.meta?.changes||0)!==1)return json({error:'Image Studio sign-in challenge expired or was already used'},401);
  const access=await entitlement(address,env);if(!access.owner)return json({error:'This wallet is not a registered Fly Infinity Network Owner'},403);
+ await env.DB.prepare('DELETE FROM image_sessions WHERE expires_at<?').bind(now()).run();
  const token=createOpaqueSessionToken(),hash=await hashSessionToken(token),expires=now()+1800;
  await env.DB.prepare('INSERT INTO image_sessions(token_hash,address,created_at,expires_at) VALUES(?,?,?,?)').bind(hash,address,now(),expires).run();
  return json({token,address,tier:access.tier,balance:access.balance,expiresAt:expires,expiresIn:1800});
@@ -56,6 +58,11 @@ async function generate(req,env){
  if(prompt.length<8||prompt.length>1500)return json({error:'Prompt must contain 8–1500 characters'},400);
  if((body?.width!==undefined&&body.width!==512)||(body?.height!==undefined&&body.height!==512))return json({error:'Image output is fixed at 512×512'},400);
  const seed=body?.seed;if(seed!==undefined&&(!Number.isInteger(seed)||seed<0||seed>2147483647))return json({error:'Seed must be an integer between 0 and 2147483647'},400);
+ const today=new Date().toISOString().slice(0,10);
+ await Promise.all([
+  env.DB.prepare("DELETE FROM image_generation_usage WHERE day<date(?, '-90 days')").bind(today).run(),
+  env.DB.prepare("DELETE FROM image_generation_daily_usage WHERE day<date(?, '-90 days')").bind(today).run()
+ ]);
  const quota=await reserveImageQuota({db:env.DB,address:session.address,tier:session.tier});let image;
  try{image=await generateImage({ai:env.AI,prompt,seed})}
  catch(e){
@@ -89,13 +96,4 @@ export default {
    return json({error:status===500?'Image service temporarily unavailable':message},status,headers);
   }
  },
- async scheduled(event,env){
-  const today=new Date().toISOString().slice(0,10),cutoff=now();
-  await Promise.all([
-   env.DB.prepare('DELETE FROM image_auth_nonces WHERE expires_at<?').bind(cutoff).run(),
-   env.DB.prepare('DELETE FROM image_sessions WHERE expires_at<?').bind(cutoff).run(),
-   env.DB.prepare("DELETE FROM image_generation_usage WHERE day<date(?, '-90 days')").bind(today).run(),
-   env.DB.prepare("DELETE FROM image_generation_daily_usage WHERE day<date(?, '-90 days')").bind(today).run()
-  ]);
- }
 };
