@@ -67,7 +67,7 @@ async function generateGeminiSpeech({apiKey,text,locale,voiceName='Kore'}){
  const instruction='Read the following text verbatim in '+language+'. Use a natural, warm, calm studio-narration voice, clear pronunciation, moderate pace, soft dynamics and no exaggerated pitch or theatrical effects. Do not translate, summarize, or add words. Text:';
  const response=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash-tts:generateContent',{
   method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},
-  body:JSON.stringify({contents:[{parts:[{text:instruction+'\n\n'+spoken}]}],
+  body:JSON.stringify({contents:[{parts:[{text:spoken,speechMetadata:{style:'Warm, calm, natural studio narration. Soft dynamics, moderate pace, clear pronunciation, neutral and friendly delivery.'}}]}],
    generationConfig:{responseModalities:['AUDIO'],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName}},languageCode:locale}}})
  });
  const data=await response.json().catch(()=>({}));
