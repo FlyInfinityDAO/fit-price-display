@@ -47,10 +47,11 @@ export async function generateImage({ ai, prompt, seed }) {
   }
 
   const form = new FormData();
+  const validSeed = Number.isInteger(seed) && seed >= 0 && seed <= 2147483647;
   form.set('prompt', prompt.trim());
   form.set('width', '512');
   form.set('height', '512');
-  if (Number.isInteger(seed) && seed >= 0 && seed <= 2147483647) {
+  if (validSeed) {
     form.set('seed', String(seed));
   }
 
@@ -72,5 +73,5 @@ export async function generateImage({ ai, prompt, seed }) {
   });
 
   const image = decodeImage(result?.image);
-  return { ...image, model: IMAGE_MODEL, seed: Number.isInteger(seed) ? seed : null };
+  return { ...image, model: IMAGE_MODEL, seed: validSeed ? seed : null };
 }
