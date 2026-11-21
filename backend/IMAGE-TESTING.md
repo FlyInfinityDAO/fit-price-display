@@ -54,3 +54,24 @@ These checks validate code and test scaffolding. Live image generation is verifi
 ## Frontend
 
 The existing Fly AI workspace now includes an Image Studio tab alongside the original AI Chat tab. All eight supported languages have translations. The prompt is sent in its original language, the first release is fixed at 512×512, and generated images are previewed and downloadable. The frontend image feature flag remains disabled by default until the Worker route is deliberately enabled during a coordinated test/release.
+
+
+## No-wallet Image Studio browser sandbox
+
+A second, user-facing preview path is available for visual and live image-generation testing without connecting a wallet:
+
+- Page: `fly-ai/image-studio-test.html`
+- Test-only frontend config: `fly-ai/js/config.image-test.js`
+- Test-only API path: `POST /api/image/preview` on the isolated `fly-ai-image-test` Worker.
+- Allowed browser origin: `https://raw.githack.com` only.
+- The page uses the shared Image Studio UI and eight-language translations, but switches to a clearly labeled sandbox mode. It does not enable the normal chat interface or call the wallet challenge/signature flow.
+- The preview route does not accept production JWTs and does not call `requireAuth`. It is separate from `POST /api/image/generate` and from the private `/api/image/test` automation route.
+- Client IP addresses are combined with an ephemeral Worker secret and SHA-256 hashed before any quota record is stored. Raw IP addresses are not written to D1.
+- Preview limits: 4 successful or attempted reservations per client IP per UTC day and 25 per day globally across the isolated preview Worker. A failed model call releases the reserved quota.
+- The test Worker enables `IMAGE_PREVIEW_ENABLED=true`; `IMAGE_GENERATION_ENABLED=false` remains in place. The production `fly-ai-api` Worker, `fly-ai-db`, production config, and wallet/JWT route are not modified or enabled.
+
+The preview can be opened from the feature branch at:
+
+`https://raw.githack.com/FlyInfinityDAO/fit-price-display/feature/fly-ai-image-test-api/fly-ai/image-studio-test.html`
+
+To disable public no-wallet preview after testing, set `IMAGE_PREVIEW_ENABLED=false` on the isolated Worker (do not change the production Worker). The endpoint is a deliberately capped sandbox, not the production authentication policy.
