@@ -141,6 +141,44 @@ async function generateSpeech(req, env) {
   }
 }
 
+
+async function generatePreviewSpeech(req, env) {
+  if (env.AUDIO_PREVIEW_ENABLED !== 'true') return json({ error: 'Audio preview is disabled' }, 404);
+  const origin = req.headers.get('Origin');
+  const allowedOrigin = env.APP_ORIGIN || DEFAULT_APP_ORIGIN;
+  if (!origin || origin !== allowedOrigin) return json({ error: 'Preview origin not allowed' }, 403);
+  if (!env.AI || typeof env.AI.run !== 'function') return json({ error: 'Workers AI binding is not configured' }, 503);
+
+  const body = await readJson(req);
+  const text = typeof body?.text === 'string' ? body.text.trim() : '';
+  if (!text || text.length > 160) return json({ error: 'Preview text must contain 1–160 characters' }, 400);
+  const today = new Date().toISOString().slice(0, 10);
+  const reserved = await env.DB.prepare(
+    'INSERT INTO audio_preview_usage(day,requests,characters,updated_at) VALUES(?,1,?,?) ' +
+    'ON CONFLICT(day) DO UPDATE SET requests=requests+1,characters=characters+excluded.characters,updated_at=excluded.updated_at WHERE requests < 3 AND characters + excluded.characters <= 480'
+  ).bind(today, text.length, now()).run();
+  if (Number(reserved.meta?.changes || 0) !== 1) return json({ error: 'The no-wallet audio preview limit has been reached for today' }, 429);
+
+  try {
+    const speakers = new Set(['angus','asteria','arcas','orion','orpheus','athena','luna','zeus','perseus','helios','hera','stella']);
+    const speaker = typeof body?.speaker === 'string' && speakers.has(body.speaker) ? body.speaker : 'luna';
+    const response = await env.AI.run(MODEL, { text, speaker, encoding: 'mp3' }, { returnRawResponse: true });
+    if (!(response instanceof Response) || !response.ok) throw new Error('Unexpected audio model response');
+    const bytes = await response.arrayBuffer();
+    if (!bytes.byteLength) throw new Error('The audio model returned an empty file');
+    return new Response(bytes, {
+      status: 200,
+      headers: { 'Content-Type': response.headers.get('Content-Type') || 'audio/mpeg', 'Cache-Control': 'no-store', 'X-Audio-Model': MODEL }
+    });
+  } catch (error) {
+    await env.DB.prepare(
+      'UPDATE audio_preview_usage SET requests=CASE WHEN requests>0 THEN requests-1 ELSE 0 END,characters=CASE WHEN characters>=? THEN characters-? ELSE 0 END,updated_at=? WHERE day=?'
+    ).bind(text.length, text.length, now(), today).run();
+    console.error('Audio preview failed:', error?.message || error);
+    return json({ error: 'Audio preview generation failed; the test quota was released.' }, 503);
+  }
+}
+
 async function route(req, env) {
   const url = new URL(req.url), origin = req.headers.get('Origin'), allowedOrigin = env.APP_ORIGIN || DEFAULT_APP_ORIGIN;
   if (origin && origin !== allowedOrigin) return json({ error: 'Origin not allowed' }, 403);
