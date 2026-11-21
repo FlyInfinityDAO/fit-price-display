@@ -7,6 +7,12 @@ const COUNTRY_CODES=new Set('AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA 
 const DEFAULT_APP_ORIGIN='https://flyinfinitydao.github.io';
 const cors=(env)=>({ 'Access-Control-Allow-Origin':env.APP_ORIGIN||DEFAULT_APP_ORIGIN,'Access-Control-Allow-Methods':'GET,POST,PUT,DELETE,OPTIONS','Access-Control-Allow-Headers':'Content-Type,Authorization','Vary':'Origin' });
 const json=(data,status=200,headers={})=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8',...headers}});
+function constantTimeEqual(left,right){
+ const a=new TextEncoder().encode(String(left||'')),b=new TextEncoder().encode(String(right||''));
+ if(a.length!==b.length)return false;
+ let diff=0;for(let i=0;i<a.length;i++)diff|=a[i]^b[i];
+ return diff===0;
+}
 const now=()=>Math.floor(Date.now()/1000);
 function b64u(bytes){return btoa(String.fromCharCode(...new Uint8Array(bytes))).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_')}
 async function signToken(payload,secret){const head=b64u(new TextEncoder().encode(JSON.stringify({alg:'HS256',typ:'JWT'}))),body=b64u(new TextEncoder().encode(JSON.stringify(payload))),data=head+'.'+body,key=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']),sig=await crypto.subtle.sign('HMAC',key,new TextEncoder().encode(data));return data+'.'+b64u(sig)}
@@ -83,7 +89,8 @@ async function extractUserMemories(address,conversationId,env){
 async function route(req,env,ctx){const url=new URL(req.url),path=url.pathname;const origin=req.headers.get('Origin');if(origin&&origin!==(env.APP_ORIGIN||DEFAULT_APP_ORIGIN))return json({error:'Origin not allowed'},403);if(req.method==='OPTIONS')return new Response(null,{status:204});if(path==='/api/health')return json({ok:true,service:'Fly AI API',version:'1.0.0'});
 if(path==='/api/image/test'&&req.method==='POST'){
  if(env.IMAGE_TEST_ENABLED!=='true')return json({error:'Not found'},404);
- const session=await requireAuth(req,env);
+ const suppliedKey=req.headers.get('X-Fly-Image-Test-Key')||'';
+ if(!env.IMAGE_TEST_AUTH_KEY||!constantTimeEqual(suppliedKey,env.IMAGE_TEST_AUTH_KEY))return json({error:'Unauthorized'},401);
  if(!env.AI||typeof env.AI.run!=='function')return json({error:'Image generation is not configured'},503);
  let body;try{body=await req.json()}catch{return json({error:'Request body must be valid JSON'},400)}
  const prompt=typeof body?.prompt==='string'?body.prompt.trim():'';
