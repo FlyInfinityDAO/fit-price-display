@@ -18,16 +18,16 @@ const DAILY_LIMITS={1:30,2:60,3:120};
 async function consumeQuota(address,tier,env){const day=new Date().toISOString().slice(0,10),limit=DAILY_LIMITS[Number(tier)]||DAILY_LIMITS[1];const result=await env.DB.prepare('INSERT INTO usage(address,day,requests) VALUES(?,?,1) ON CONFLICT(address,day) DO UPDATE SET requests=requests+1 WHERE requests < ?').bind(address,day,limit).run();if(Number(result.meta?.changes||0)!==1)throw Error('Daily AI quota reached');const usage=await env.DB.prepare('SELECT requests FROM usage WHERE address=? AND day=?').bind(address,day).first();return Math.max(0,limit-Number(usage?.requests||limit))}
 
 const IMAGE_TEST_DAILY_LIMIT=25;
-async function reserveImageTestQuota(address,env){
+async function reserveImageTestQuota(env){
  const day=new Date().toISOString().slice(0,10);
- const result=await env.DB.prepare('INSERT INTO image_test_usage(address,day,generations,updated_at) VALUES(?,?,1,?) ON CONFLICT(address,day) DO UPDATE SET generations=generations+1,updated_at=excluded.updated_at WHERE generations < ?').bind(address,day,now(),IMAGE_TEST_DAILY_LIMIT).run();
+ const result=await env.DB.prepare('INSERT INTO image_test_usage(day,generations,updated_at) VALUES(?,1,?) ON CONFLICT(day) DO UPDATE SET generations=generations+1,updated_at=excluded.updated_at WHERE generations < ?').bind(day,now(),IMAGE_TEST_DAILY_LIMIT).run();
  if(Number(result.meta?.changes||0)!==1)throw Error('Daily image test quota reached');
- const usage=await env.DB.prepare('SELECT generations FROM image_test_usage WHERE address=? AND day=?').bind(address,day).first();
+ const usage=await env.DB.prepare('SELECT generations FROM image_test_usage WHERE day=?').bind(day).first();
  return Math.max(0,IMAGE_TEST_DAILY_LIMIT-Number(usage?.generations||IMAGE_TEST_DAILY_LIMIT));
 }
-async function releaseImageTestQuota(address,env){
+async function releaseImageTestQuota(env){
  const day=new Date().toISOString().slice(0,10);
- await env.DB.prepare('UPDATE image_test_usage SET generations=CASE WHEN generations>0 THEN generations-1 ELSE 0 END,updated_at=? WHERE address=? AND day=?').bind(now(),address,day).run();
+ await env.DB.prepare('UPDATE image_test_usage SET generations=CASE WHEN generations>0 THEN generations-1 ELSE 0 END,updated_at=? WHERE day=?').bind(now(),day).run();
 }
 
 const CORE_QUALITY=`You are a high-quality professional assistant. First understand the user's actual goal and answer it directly. Be accurate, thoughtful, practical, and appropriately detailed; avoid generic filler, repetition, exaggerated confidence, and unnecessary questions. Ask at most one concise clarifying question only when an essential fact is missing; otherwise state reasonable assumptions and proceed.
@@ -91,12 +91,12 @@ if(path==='/api/image/test'&&req.method==='POST'){
  if(body?.width!==undefined&&body.width!==512||body?.height!==undefined&&body.height!==512)return json({error:'Image test output is fixed at 512×512'},400);
  const seed=body?.seed;
  if(seed!==undefined&&(!Number.isInteger(seed)||seed<0||seed>2147483647))return json({error:'Seed must be an integer between 0 and 2147483647'},400);
- const remaining=await reserveImageTestQuota(session.sub,env);
+ const remaining=await reserveImageTestQuota(env);
  let generated;
  try{
   generated=await generateImage({ai:env.AI,prompt,seed});
  }catch(error){
-  try{await releaseImageTestQuota(session.sub,env)}catch(releaseError){console.error('Image test quota refund failed:',releaseError.message)}
+  try{await releaseImageTestQuota(env)}catch(releaseError){console.error('Image test quota refund failed:',releaseError.message)}
   console.error('Fly AI image test generation failed:',String(error?.message||error).slice(0,240));
   return json({error:'Image generation failed. The reserved test quota was released.'},503);
  }
