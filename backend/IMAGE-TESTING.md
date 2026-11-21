@@ -7,8 +7,10 @@ This branch adds a separately named test Worker and a test-only image endpoint. 
 - `backend/wrangler.image-test.toml`: Worker named `fly-ai-image-test`, with its own D1 database and Workers AI binding.
 - Model adapter for `@cf/black-forest-labs/flux-2-klein-4b`.
 - `POST /api/image/test`, protected by a temporary test-only secret header. This is a private test harness, not the end-user Fly AI authentication flow; it does not accept or reuse production wallet/JWT credentials.
-- A separate D1 table, `image_test_usage`, with a maximum of 50 attempts in total per UTC day across the isolated test Worker. The counter is independent from the production chat quota. A failed model call releases its reservation; a request rejected because the cap is reached does not consume an additional slot.
-- `IMAGE_TEST_ENABLED=true` is set only in the isolated test Worker configuration. The production `backend/wrangler.toml` remains unchanged.
+- A separate D1 table, `image_test_usage`, with a maximum of 50 attempts in total per UTC day across the isolated test Worker.
+- A separate production quota system in `image_generation_usage` and `image_generation_daily_usage`; it never reads or updates the existing chat `usage` table.
+- `IMAGE_TEST_ENABLED=true` is set only in the isolated test Worker configuration. `IMAGE_GENERATION_ENABLED` remains false by default in both configurations until wallet-authenticated UI testing is ready.
+- Production wallet-authenticated route: `POST /api/image/generate`. It reuses `requireAuth` (Network Owner verification and current FIT tier), while keeping image quota independent from chat.
 - Unit tests for multipart model invocation, output decoding, and fail-closed behavior.
 - A comparison script for the 10 Persian/English prompt pairs. `IMAGE_TEST_START_INDEX` can skip pairs already produced.
 
@@ -16,7 +18,7 @@ This branch adds a separately named test Worker and a test-only image endpoint. 
 
 1. Create or reuse a dedicated D1 database named `fly-ai-image-test-db`. Never use production `fly-ai-db`.
 2. Put its ID into `backend/wrangler.image-test.toml`.
-3. Apply `backend/migrations/0001_init.sql` and `backend/migrations/0004_image_test_usage.sql` to that test database only.
+3. Apply `backend/migrations/0001_init.sql`, `backend/migrations/0004_image_test_usage.sql`, and `backend/migrations/0005_image_generation_usage.sql` to that test database only.
 4. Deploy only with `npx wrangler deploy --config wrangler.image-test.toml` from `backend/`.
 5. Set a fresh random `IMAGE_TEST_AUTH_KEY` secret on the test Worker. The GitHub Actions test workflow generates an ephemeral value for each test run and never writes it to the repository.
 6. Keep the test Worker separate until the Persian/English image comparison is complete.
@@ -31,7 +33,9 @@ Do not copy production secrets into the test Worker. Do not deploy this branch u
 - JSON body: `{"prompt":"A professional product photograph of a watch on black marble","seed":42}`
 - Output: raw image bytes; response headers include `X-Image-Model`, `X-Image-Quota-Remaining`, dimensions and seed.
 
-The endpoint fixes output to 512×512 to control Neurons consumption. It accepts one prompt per request. The 50-attempt ceiling is a test safety cap, not the Cloudflare free-plan quota. Cloudflare's Neurons allowance is shared across Workers AI models and is separate from this D1 counter.
+The test endpoint fixes output to 512×512 to control Neurons consumption. It accepts one prompt per request. The 50-attempt ceiling is a test safety cap, not the Cloudflare free-plan quota.
+
+The production `/api/image/generate` route uses the existing wallet/JWT session and Network Owner entitlement. Initial per-wallet image quotas are 5 images/day for Tier 1, 10/day for Tier 2, and 20/day for Tier 3, with an account-wide ceiling of 250 images/day. At the tested 512×512 size this limits planned model consumption to about 6,513 Neurons/day for the production route. The route is disabled by default through `IMAGE_GENERATION_ENABLED=false`; it is not enabled on the production Worker by this branch.
 
 ## Validation
 
@@ -41,6 +45,7 @@ Run from `backend/`:
 npm test
 node --check src/index.js
 node --check src/image-provider.js
+node --check src/image-quota.js
 node --check scripts/image-prompt-comparison.mjs
 ```
 
