@@ -52,6 +52,170 @@ Object.assign(D.zh,{"assistantHealth":"健康与美容顾问","assistantHealthDe
 Object.assign(D.es,{"assistantHealth":"Asesor de Salud y Belleza","assistantHealthDesc":"Orientación de salud y belleza basada en evidencia","suggest_health_1":"Comprender un tema de salud","suggest_health_2":"Crear una rutina segura para la piel","suggest_health_3":"Comparar ingredientes para el cuidado de la piel"});
 Object.assign(D.pt,{"assistantHealth":"Consultor de Saúde e Beleza","assistantHealthDesc":"Orientação de saúde e beleza baseada em evidências","suggest_health_1":"Entender um tema de saúde","suggest_health_2":"Criar uma rotina segura de cuidados com a pele","suggest_health_3":"Comparar ingredientes de cuidados com a pele"});
 
+Object.assign(D.en,{
+ modeChat:"AI Chat",modeImage:"Image Studio",imageEyebrow:"AI IMAGE GENERATION",imageTitle:"Create images with AI",
+ imageSubtitle:"Describe your image in your own language. Fly AI sends the original prompt directly to the image model.",
+ imagePromptLabel:"Describe your image",imagePromptPlaceholder:"Describe the subject, setting, lighting, style and details…",
+ imageLanguageNote:"Write in Persian, English or another language you prefer. Translation is not forced.",
+ imageFormat:"Initial format: 512 × 512 · Square 1:1",imageQuotaHint:"Image generations use a separate daily quota from AI chat. Limits depend on your access tier.",
+ imageGenerate:"Generate image",imageGenerating:"Generating image…",imageResult:"Your generated image",imageDownload:"Download image",
+ imageEmpty:"Enter an image description first.",imageFailed:"Image generation failed. Please try again.",
+ imageNotEnabled:"Image generation is not enabled on this environment yet.",imageSuccess:"Your image is ready.",
+ imageQuotaLeft:"Images remaining today:",imageAlt:"AI-generated image",
+ imageTextNote:"Text inside generated images may be inaccurate. Add precise lettering in a separate design step."
+});
+Object.assign(D.fa,{
+ modeChat:"گفت‌وگوی هوشمند",modeImage:"استودیوی تصویر",imageEyebrow:"تولید تصویر با هوش مصنوعی",imageTitle:"با هوش مصنوعی تصویر بسازید",
+ imageSubtitle:"تصویر موردنظرتان را به زبان خودتان توصیف کنید. Fly AI متن اصلی را مستقیماً به مدل تصویر می‌فرستد.",
+ imagePromptLabel:"تصویر موردنظرتان را توصیف کنید",imagePromptPlaceholder:"سوژه، محیط، نورپردازی، سبک و جزئیات را توضیح دهید…",
+ imageLanguageNote:"به فارسی، انگلیسی یا هر زبان دلخواه بنویسید. ترجمه اجباری انجام نمی‌شود.",
+ imageFormat:"خروجی نسخه نخست: ۵۱۲ × ۵۱۲ · مربع ۱:۱",imageQuotaHint:"سهمیه تولید تصویر از سهمیه گفت‌وگوی AI جداست و بر اساس سطح دسترسی شما تعیین می‌شود.",
+ imageGenerate:"تولید تصویر",imageGenerating:"در حال تولید تصویر…",imageResult:"تصویر تولیدشده شما",imageDownload:"دریافت تصویر",
+ imageEmpty:"ابتدا توضیح تصویر را وارد کنید.",imageFailed:"تولید تصویر ناموفق بود. دوباره تلاش کنید.",
+ imageNotEnabled:"تولید تصویر هنوز در این محیط فعال نشده است.",imageSuccess:"تصویر شما آماده است.",
+ imageQuotaLeft:"تعداد تصاویر باقی‌مانده امروز:",imageAlt:"تصویر تولیدشده با هوش مصنوعی",
+ imageTextNote:"ممکن است نوشته‌های داخل تصاویر دقیق نباشند. برای نوشتار دقیق، از مرحله مستقل طراحی و متن‌نگاری استفاده می‌شود."
+});
+Object.assign(D.ar,{
+ modeChat:"محادثة الذكاء الاصطناعي",modeImage:"استوديو الصور",imageEyebrow:"إنشاء الصور بالذكاء الاصطناعي",imageTitle:"أنشئ صوراً بالذكاء الاصطناعي",
+ imageSubtitle:"صِف الصورة بلغتك. يرسل Fly AI النص الأصلي مباشرةً إلى نموذج الصور.",
+ imagePromptLabel:"صِف الصورة التي تريدها",imagePromptPlaceholder:"صف العنصر والمشهد والإضاءة والأسلوب والتفاصيل…",
+ imageLanguageNote:"اكتب بالفارسية أو الإنجليزية أو أي لغة تفضلها. لا نفرض الترجمة.",
+ imageFormat:"الصيغة الأولية: 512 × 512 · مربع 1:1",imageQuotaHint:"تستخدم الصور حصة يومية منفصلة عن الدردشة. تعتمد الحدود على مستوى الوصول.",
+ imageGenerate:"إنشاء الصورة",imageGenerating:"جارٍ إنشاء الصورة…",imageResult:"الصورة التي تم إنشاؤها",imageDownload:"تنزيل الصورة",
+ imageEmpty:"أدخل وصفاً للصورة أولاً.",imageFailed:"تعذر إنشاء الصورة. حاول مرة أخرى.",
+ imageNotEnabled:"إنشاء الصور غير مفعّل في هذه البيئة بعد.",imageSuccess:"صورتك جاهزة.",
+ imageQuotaLeft:"الصور المتبقية اليوم:",imageAlt:"صورة مولّدة بالذكاء الاصطناعي",
+ imageTextNote:"قد لا تكون الكتابة داخل الصور دقيقة. أضف النصوص الدقيقة في خطوة تصميم منفصلة."
+});
+Object.assign(D.tr,{
+ modeChat:"Yapay Zekâ Sohbeti",modeImage:"Görsel Stüdyosu",imageEyebrow:"YAPAY ZEKÂ İLE GÖRSEL ÜRETİMİ",imageTitle:"Yapay zekâ ile görseller oluşturun",
+ imageSubtitle:"Görselinizi kendi dilinizde açıklayın. Fly AI özgün istemi doğrudan görsel modeline gönderir.",
+ imagePromptLabel:"Görselinizi açıklayın",imagePromptPlaceholder:"Konuyu, ortamı, ışığı, stili ve ayrıntıları açıklayın…",
+ imageLanguageNote:"Farsça, İngilizce veya tercih ettiğiniz başka bir dilde yazın. Zorunlu çeviri yapılmaz.",
+ imageFormat:"İlk sürüm: 512 × 512 · Kare 1:1",imageQuotaHint:"Görsel üretim kotası AI sohbetinden ayrıdır. Limitler erişim seviyenize bağlıdır.",
+ imageGenerate:"Görsel oluştur",imageGenerating:"Görsel oluşturuluyor…",imageResult:"Oluşturulan görseliniz",imageDownload:"Görseli indir",
+ imageEmpty:"Önce görsel açıklamasını girin.",imageFailed:"Görsel oluşturulamadı. Lütfen tekrar deneyin.",
+ imageNotEnabled:"Bu ortamda görsel üretimi henüz etkin değil.",imageSuccess:"Görseliniz hazır.",
+ imageQuotaLeft:"Bugün kalan görsel:",imageAlt:"Yapay zekâ tarafından oluşturulan görsel",
+ imageTextNote:"Görsel içindeki metinler hatalı olabilir. Kesin metinleri ayrı tasarım adımında ekleyin."
+});
+Object.assign(D.ru,{
+ modeChat:"Чат с ИИ",modeImage:"Студия изображений",imageEyebrow:"СОЗДАНИЕ ИЗОБРАЖЕНИЙ С ИИ",imageTitle:"Создавайте изображения с помощью ИИ",
+ imageSubtitle:"Опишите изображение на своём языке. Fly AI отправит исходный запрос напрямую модели изображений.",
+ imagePromptLabel:"Опишите нужное изображение",imagePromptPlaceholder:"Опишите объект, обстановку, освещение, стиль и детали…",
+ imageLanguageNote:"Пишите на персидском, английском или другом удобном языке. Обязательного перевода нет.",
+ imageFormat:"Формат первой версии: 512 × 512 · Квадрат 1:1",imageQuotaHint:"Лимит генерации изображений отдельный от чата и зависит от уровня доступа.",
+ imageGenerate:"Создать изображение",imageGenerating:"Изображение создаётся…",imageResult:"Ваше изображение",imageDownload:"Скачать изображение",
+ imageEmpty:"Сначала введите описание изображения.",imageFailed:"Не удалось создать изображение. Попробуйте ещё раз.",
+ imageNotEnabled:"Создание изображений пока не включено в этой среде.",imageSuccess:"Изображение готово.",
+ imageQuotaLeft:"Изображений осталось сегодня:",imageAlt:"Изображение, созданное ИИ",
+ imageTextNote:"Текст внутри изображений может быть неточным. Точные надписи добавляйте на отдельном этапе дизайна."
+});
+Object.assign(D.zh,{
+ modeChat:"AI 对话",modeImage:"图像工作室",imageEyebrow:"AI 图像生成",imageTitle:"使用 AI 创建图像",
+ imageSubtitle:"使用您自己的语言描述图像。Fly AI 会将原始提示直接发送给图像模型。",
+ imagePromptLabel:"描述您想生成的图像",imagePromptPlaceholder:"描述主体、场景、光线、风格和细节…",
+ imageLanguageNote:"您可以使用波斯语、英语或其他熟悉的语言。不会强制翻译。",
+ imageFormat:"首版输出：512 × 512 · 1:1 正方形",imageQuotaHint:"图像生成使用独立于 AI 对话的每日额度，具体取决于访问等级。",
+ imageGenerate:"生成图像",imageGenerating:"正在生成图像…",imageResult:"生成的图像",imageDownload:"下载图像",
+ imageEmpty:"请先输入图像描述。",imageFailed:"图像生成失败，请重试。",
+ imageNotEnabled:"此环境尚未启用图像生成。",imageSuccess:"图像已准备就绪。",
+ imageQuotaLeft:"今日剩余图像数：",imageAlt:"AI 生成的图像",
+ imageTextNote:"图像中的文字可能不准确。精确文字请在单独的设计步骤中添加。"
+});
+Object.assign(D.es,{
+ modeChat:"Chat de IA",modeImage:"Estudio de imágenes",imageEyebrow:"GENERACIÓN DE IMÁGENES CON IA",imageTitle:"Crea imágenes con IA",
+ imageSubtitle:"Describe la imagen en tu propio idioma. Fly AI envía el texto original directamente al modelo de imágenes.",
+ imagePromptLabel:"Describe la imagen que deseas",imagePromptPlaceholder:"Describe el sujeto, el entorno, la iluminación, el estilo y los detalles…",
+ imageLanguageNote:"Escribe en persa, inglés u otro idioma que prefieras. No se fuerza la traducción.",
+ imageFormat:"Formato inicial: 512 × 512 · Cuadrado 1:1",imageQuotaHint:"La cuota de imágenes es independiente del chat de IA. Los límites dependen de tu nivel de acceso.",
+ imageGenerate:"Generar imagen",imageGenerating:"Generando imagen…",imageResult:"Tu imagen generada",imageDownload:"Descargar imagen",
+ imageEmpty:"Introduce primero una descripción.",imageFailed:"No se pudo generar la imagen. Inténtalo de nuevo.",
+ imageNotEnabled:"La generación de imágenes aún no está activada en este entorno.",imageSuccess:"Tu imagen está lista.",
+ imageQuotaLeft:"Imágenes restantes hoy:",imageAlt:"Imagen generada por IA",
+ imageTextNote:"El texto dentro de las imágenes puede ser inexacto. Añade los textos precisos en un paso de diseño separado."
+});
+Object.assign(D.pt,{
+ modeChat:"Chat com IA",modeImage:"Estúdio de imagens",imageEyebrow:"GERAÇÃO DE IMAGENS COM IA",imageTitle:"Crie imagens com IA",
+ imageSubtitle:"Descreva a imagem no seu próprio idioma. O Fly AI envia o texto original diretamente ao modelo de imagens.",
+ imagePromptLabel:"Descreva a imagem desejada",imagePromptPlaceholder:"Descreva o tema, o cenário, a iluminação, o estilo e os detalhes…",
+ imageLanguageNote:"Escreva em persa, inglês ou outro idioma de sua preferência. A tradução não é obrigatória.",
+ imageFormat:"Formato inicial: 512 × 512 · Quadrado 1:1",imageQuotaHint:"A cota de imagens é separada do chat de IA. Os limites dependem do seu nível de acesso.",
+ imageGenerate:"Gerar imagem",imageGenerating:"Gerando imagem…",imageResult:"Sua imagem gerada",imageDownload:"Baixar imagem",
+ imageEmpty:"Digite primeiro uma descrição da imagem.",imageFailed:"Não foi possível gerar a imagem. Tente novamente.",
+ imageNotEnabled:"A geração de imagens ainda não está ativada neste ambiente.",imageSuccess:"Sua imagem está pronta.",
+ imageQuotaLeft:"Imagens restantes hoje:",imageAlt:"Imagem gerada por IA",
+ imageTextNote:"O texto dentro das imagens pode sair incorreto. Adicione textos precisos em uma etapa de design separada."
+});
+
+Object.assign(D.en,{
+ imageTestModeBanner:"SANDBOX · NO WALLET CONNECTION OR SIGNATURE. Images are generated only through the isolated test service.",
+ imageTestReady:"Test workspace ready. No wallet or signature is required.",
+ imageTestIdentity:"Test session",
+ imageTestTag:"Sandbox · no wallet",
+ imageTestQuotaHint:"Test limits: up to 4 images per client IP per UTC day; 25 images shared by all testers per day."
+});
+Object.assign(D.fa,{
+ imageTestModeBanner:"محیط آزمایشی · بدون اتصال یا امضای کیف پول. تولید تصویر فقط از سرویس تست جداگانه انجام می‌شود.",
+ imageTestReady:"محیط آزمایشی آماده است؛ اتصال یا امضای کیف پول لازم نیست.",
+ imageTestIdentity:"نشست آزمایشی",
+ imageTestTag:"آزمایشی · بدون کیف پول",
+ imageTestQuotaHint:"محدودیت تست: حداکثر ۴ تصویر برای هر IP در روز UTC و ۲۵ تصویر برای تمام کاربران آزمایشی در روز."
+});
+Object.assign(D.ar,{
+ imageTestModeBanner:"بيئة اختبار · دون ربط المحفظة أو التوقيع. تُنشأ الصور عبر خدمة اختبار منفصلة فقط.",
+ imageTestReady:"مساحة الاختبار جاهزة. لا حاجة إلى محفظة أو توقيع.",
+ imageTestIdentity:"جلسة اختبار",
+ imageTestTag:"اختبار · دون محفظة",
+ imageTestQuotaHint:"حدود الاختبار: 4 صور لكل عنوان IP يومياً بتوقيت UTC، و25 صورة مشتركة يومياً لجميع المختبرين."
+});
+Object.assign(D.tr,{
+ imageTestModeBanner:"TEST ORTAMI · CÜZDAN BAĞLANTISI VEYA İMZA GEREKMEZ. Görseller yalnızca ayrı test hizmetinde oluşturulur.",
+ imageTestReady:"Test alanı hazır. Cüzdan veya imza gerekmez.",
+ imageTestIdentity:"Test oturumu",
+ imageTestTag:"Test · cüzdansız",
+ imageTestQuotaHint:"Test sınırları: IP başına UTC gününde en fazla 4 görsel; tüm test kullanıcıları için günlük toplam 25 görsel."
+});
+Object.assign(D.ru,{
+ imageTestModeBanner:"ТЕСТОВАЯ СРЕДА · ПОДКЛЮЧЕНИЕ КОШЕЛЬКА И ПОДПИСЬ НЕ НУЖНЫ. Изображения создаются только отдельным тестовым сервисом.",
+ imageTestReady:"Тестовая среда готова. Кошелёк и подпись не требуются.",
+ imageTestIdentity:"Тестовый сеанс",
+ imageTestTag:"Тест · без кошелька",
+ imageTestQuotaHint:"Лимиты теста: до 4 изображений на IP за сутки UTC; общий лимит для всех тестировщиков — 25 в сутки."
+});
+Object.assign(D.zh,{
+ imageTestModeBanner:"测试环境 · 无需连接钱包或签名。图像仅通过独立测试服务生成。",
+ imageTestReady:"测试工作区已就绪，无需钱包或签名。",
+ imageTestIdentity:"测试会话",
+ imageTestTag:"沙盒 · 无钱包",
+ imageTestQuotaHint:"测试限额：每个 IP 每个 UTC 日最多 4 张；所有测试用户每日共享上限为 25 张。"
+});
+Object.assign(D.es,{
+ imageTestModeBanner:"ENTORNO DE PRUEBA · SIN CONECTAR NI FIRMAR CON LA CARTERA. Las imágenes se generan solo mediante el servicio de prueba aislado.",
+ imageTestReady:"El espacio de prueba está listo. No se requiere cartera ni firma.",
+ imageTestIdentity:"Sesión de prueba",
+ imageTestTag:"Prueba · sin cartera",
+ imageTestQuotaHint:"Límites: hasta 4 imágenes por IP y día UTC; 25 imágenes diarias compartidas entre todos los participantes."
+});
+Object.assign(D.pt,{
+ imageTestModeBanner:"AMBIENTE DE TESTE · SEM CONEXÃO OU ASSINATURA DE CARTEIRA. As imagens são geradas apenas pelo serviço de teste isolado.",
+ imageTestReady:"O espaço de teste está pronto. Não é necessária carteira nem assinatura.",
+ imageTestIdentity:"Sessão de teste",
+ imageTestTag:"Sandbox · sem carteira",
+ imageTestQuotaHint:"Limites: até 4 imagens por IP por dia UTC; 25 imagens diárias compartilhadas por todos os testadores."
+});
+
+
+Object.assign(D.en,{assistantImageStudio:"Fly Infinity Image Studio",assistantImageStudioDesc:"Create original AI images in your language",connectBeforeImage:"Connect and verify your Fly Infinity wallet before using Image Studio.",imageSignMessage:"Please approve a free wallet sign-in signature. It does not send a transaction or transfer tokens.",imageServiceUnavailable:"The dedicated image service is not configured yet."});
+Object.assign(D.fa,{assistantImageStudio:"استودیو ساخت تصویر فلای اینفینیتی",assistantImageStudioDesc:"تولید تصویر با هوش مصنوعی، به زبان دلخواه شما",connectBeforeImage:"برای استفاده از استودیو تصویر، ابتدا کیف پول فلای اینفینیتی را متصل و تأیید کنید.",imageSignMessage:"لطفاً امضای رایگان ورود به استودیو تصویر را تأیید کنید؛ این امضا هیچ تراکنش یا انتقال توکنی انجام نمی‌دهد.",imageServiceUnavailable:"سرویس مستقل تولید تصویر هنوز پیکربندی نشده است."});
+Object.assign(D.ar,{assistantImageStudio:"استوديو صور Fly Infinity",assistantImageStudioDesc:"أنشئ صوراً أصلية بلغتك باستخدام الذكاء الاصطناعي",connectBeforeImage:"اربط محفظة Fly Infinity وتحقق منها قبل استخدام استوديو الصور.",imageSignMessage:"يرجى الموافقة على توقيع دخول مجاني للمحفظة. لا ينفذ هذا التوقيع معاملة أو ينقل الرموز.",imageServiceUnavailable:"خدمة الصور المستقلة غير مهيأة بعد."});
+Object.assign(D.tr,{assistantImageStudio:"Fly Infinity Görsel Stüdyosu",assistantImageStudioDesc:"Yapay zekâyla kendi dilinizde özgün görseller oluşturun",connectBeforeImage:"Görsel Stüdyosu'nu kullanmadan önce Fly Infinity cüzdanınızı bağlayıp doğrulayın.",imageSignMessage:"Lütfen ücretsiz cüzdan giriş imzasını onaylayın. Bu imza işlem başlatmaz veya token transfer etmez.",imageServiceUnavailable:"Bağımsız görsel hizmeti henüz yapılandırılmadı."});
+Object.assign(D.ru,{assistantImageStudio:"Студия изображений Fly Infinity",assistantImageStudioDesc:"Создавайте оригинальные изображения на своём языке",connectBeforeImage:"Подключите и подтвердите кошелёк Fly Infinity перед использованием студии изображений.",imageSignMessage:"Подтвердите бесплатную подпись для входа в кошелёк. Она не отправляет транзакцию и не переводит токены.",imageServiceUnavailable:"Отдельный сервис изображений ещё не настроен."});
+Object.assign(D.zh,{assistantImageStudio:"Fly Infinity 图像工作室",assistantImageStudioDesc:"使用 AI 以您的语言创作原创图像",connectBeforeImage:"使用图像工作室前，请先连接并验证 Fly Infinity 钱包。",imageSignMessage:"请确认免费的钱包登录签名。此签名不会发送交易或转移代币。",imageServiceUnavailable:"独立图像服务尚未配置。"});
+Object.assign(D.es,{assistantImageStudio:"Estudio de imágenes Fly Infinity",assistantImageStudioDesc:"Crea imágenes originales con IA en tu idioma",connectBeforeImage:"Conecta y verifica tu cartera Fly Infinity antes de usar el estudio de imágenes.",imageSignMessage:"Aprueba la firma gratuita de inicio de sesión. No envía transacciones ni transfiere tokens.",imageServiceUnavailable:"El servicio independiente de imágenes aún no está configurado."});
+Object.assign(D.pt,{assistantImageStudio:"Estúdio de Imagens Fly Infinity",assistantImageStudioDesc:"Crie imagens originais com IA no seu idioma",connectBeforeImage:"Conecte e verifique sua carteira Fly Infinity antes de usar o estúdio de imagens.",imageSignMessage:"Aprove a assinatura gratuita de acesso à carteira. Ela não envia transações nem transfere tokens.",imageServiceUnavailable:"O serviço independente de imagens ainda não está configurado."});
+
 let lang='en';function apply(l){lang=D[l]?l:'en';const rtl=['fa','ar'].includes(lang);document.documentElement.lang=lang;document.documentElement.dir=rtl?'rtl':'ltr';if(document.body)document.body.classList.toggle('fi-rtl',rtl);document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(D[lang][k])el.textContent=D[lang][k]});document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{const k=el.dataset.i18nPlaceholder;if(D[lang][k])el.placeholder=D[lang][k]});localStorage.setItem('fit_lang',lang);document.dispatchEvent(new Event('fly-ai-language-updated'))}window.FlyI18n={t:k=>D[lang][k]||D.en[k]||k,apply};const languageOptions=[['en','🇬🇧','English'],['fa','🇮🇷','فارسی'],['ar','🇮🇶','العربية'],['tr','🇹🇷','Türkçe'],['ru','🇷🇺','Русский'],['zh','🇨🇳','中文'],['es','🇪🇸','Español'],['pt','🇵🇹','Português']];
 document.addEventListener('DOMContentLoaded',()=>{
  const button=document.getElementById('languageButton'),menu=document.getElementById('languageMenu');

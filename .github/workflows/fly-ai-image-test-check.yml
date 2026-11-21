@@ -1,0 +1,29 @@
+name: Fly AI image test validation
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/fly-ai-image-test-check.yml'
+jobs:
+  image-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package.json
+      - name: Install Worker dependencies
+        working-directory: backend
+        run: npm install --no-audit --no-fund
+      - name: Check Worker syntax
+        working-directory: backend
+        run: |
+          node --check src/index.js
+          node --check src/image-provider.js
+          node --check src/image-quota.js
+      - name: Run image provider tests
+        working-directory: backend
+        run: npm test

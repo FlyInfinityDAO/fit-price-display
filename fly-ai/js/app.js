@@ -1,8 +1,11 @@
 (function(){'use strict';
 const $=id=>document.getElementById(id);
 const API=(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.apiBase||'').replace(/\/$/,'');
+const IMAGE_API_BASE=(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.imageApiBase||'').replace(/\/$/,'');
+const IMAGE_GENERATION_ENABLED=Boolean(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.imageGenerationEnabled===true);
+const IMAGE_STUDIO_TEST_MODE=Boolean(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.imageStudioTestMode===true);
 const FIT='0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa',CHAIN='0x38';
-let provider=null,address='',token='',busy=false,history=[],profile=null,assistantId='general',conversationId=null,conversations=[],memoryEnabled=true,memoryItems=[],historyUiBound=false;
+let provider=null,address='',token='',busy=false,history=[],profile=null,assistantId='general',conversationId=null,conversations=[],memoryEnabled=true,memoryItems=[],historyUiBound=false;let imageBusy=false,generatedImageUrl=null,generatedImageExtension='jpg',imageSessionToken='',imageSessionExpiresAt=0;
 const t=k=>window.FlyI18n.t(k);
 const supportedLanguages=['en','fa','ar','tr','ru','zh','es','pt'];
 const countryCodes=('AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW').split(' ');
@@ -125,5 +128,115 @@ function addAssistantMessage(content){
 }
 async function send(text){text=(text||'').trim();if(!text){toast(t('empty'));return}if(!token){toast(t('backendMissing'));return}if(!profile?.country_code){showCountryDialog(true);return}if(busy)return;busy=true;addMessage('user',text);history.push({role:'user',content:text});$('prompt').value='';$('sendBtn').disabled=true;const loading=document.createElement('div');loading.className='message assistant';loading.textContent=t('sending');$('messages').appendChild(loading);try{const result=await request('/api/chat',{method:'POST',body:JSON.stringify({messages:history.slice(-20),language:currentLanguage(),assistantId,conversationId})});conversationId=result.conversationId||conversationId;loading.remove();await addAssistantMessage(result.reply||'');history.push({role:'assistant',content:result.reply||''});await refreshConversations()}catch(e){loading.remove();addMessage('assistant',e.message||t('sendError'))}finally{busy=false;$('sendBtn').disabled=false}}
 $('connectBtn').addEventListener('click',()=>connect('browser'));$('connectWalletBtn').addEventListener('click',()=>connect('wallet'));const workspaceSidebar=$('workspaceSidebar');if(workspaceSidebar&&!$('workspaceMenuClose')){const closeMenu=document.createElement('button');closeMenu.id='workspaceMenuClose';closeMenu.type='button';closeMenu.className='workspace-menu-close';closeMenu.textContent='×';closeMenu.setAttribute('aria-label','Close menu');closeMenu.title='Close menu';closeMenu.addEventListener('click',()=>{$('workspace').classList.remove('mobile-menu-open');$('workspaceMenuToggle')?.setAttribute('aria-expanded','false')});workspaceSidebar.prepend(closeMenu)}$('workspaceMenuToggle')?.addEventListener('click',()=>{const open=$('workspace').classList.toggle('mobile-menu-open');$('workspaceMenuToggle').setAttribute('aria-expanded',String(open))});$('workspaceSidebar')?.addEventListener('click',e=>{if(e.target.closest('button')&&window.matchMedia('(max-width: 620px)').matches){$('workspace').classList.remove('mobile-menu-open');$('workspaceMenuToggle')?.setAttribute('aria-expanded','false')}});document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('workspace').classList.remove('mobile-menu-open');$('workspaceMenuToggle')?.setAttribute('aria-expanded','false')}});
-document.querySelectorAll('[data-assistant]').forEach(card=>card.addEventListener('click',()=>{const next=card.dataset.assistant;if(next===assistantId)return;assistantId=next;conversationId=null;history=[];$('messages').innerHTML='';$('welcome').classList.remove('hidden');renderAssistantSuggestions();document.querySelectorAll('[data-assistant]').forEach(item=>{const active=item===card;item.classList.toggle('active',active);item.setAttribute('aria-pressed',String(active))});}));$('chatForm').addEventListener('submit',e=>{e.preventDefault();send($('prompt').value)});document.querySelector('[data-i18n="newChat"]').addEventListener('click',()=>{conversationId=null;history=[];$('messages').innerHTML='';$('welcome').classList.remove('hidden');document.querySelectorAll('[data-assistant]').forEach(item=>{const active=item.dataset.assistant===assistantId;item.classList.toggle('active',active);item.setAttribute('aria-pressed',String(active))})});$('disconnectBtn').addEventListener('click',async()=>{token='';address='';profile=null;history=[];conversationId=null;conversations=[];memoryItems=[];$('messages').innerHTML='';$('workspace').classList.add('hidden');$('accessPanel').classList.remove('hidden');$('connectBtn').textContent=t('connectBrowser');$('connectWalletBtn').textContent=t('connectWallet');$('regionSettingsBtn')?.remove();$('countryDialog')?.remove();if(window.fiDisconnectSelectedWallet)await window.fiDisconnectSelectedWallet();toast(t('signedOut'))});if(window.ethereum)bindWalletEvents(window.ethereum);document.addEventListener('fly-ai-language-updated',()=>{updateRegionTexts();renderAssistantSuggestions();renderMemory()});renderAssistantSuggestions();
+document.querySelectorAll('[data-assistant]').forEach(card=>card.addEventListener('click',()=>{
+ const next=card.dataset.assistant;
+ if(next==='image-studio'){
+  if(!IMAGE_STUDIO_TEST_MODE&&!token){toast(t('connectBeforeImage'));$('accessPanel')?.scrollIntoView({behavior:'smooth',block:'center'});return}
+  setWorkspaceMode('image');$('workspace')?.scrollIntoView({behavior:'smooth',block:'start'});return;
+ }
+ assistantId=next;conversationId=null;history=[];$('messages').innerHTML='';$('welcome').classList.remove('hidden');renderAssistantSuggestions();setWorkspaceMode('chat');
+}));
+$('chatForm').addEventListener('submit',e=>{e.preventDefault();send($('prompt').value)});document.querySelector('[data-i18n="newChat"]').addEventListener('click',()=>{conversationId=null;history=[];$('messages').innerHTML='';$('welcome').classList.remove('hidden');document.querySelectorAll('[data-assistant]').forEach(item=>{const active=item.dataset.assistant===assistantId;item.classList.toggle('active',active);item.setAttribute('aria-pressed',String(active))})});$('disconnectBtn').addEventListener('click',async()=>{token='';address='';profile=null;imageSessionToken='';imageSessionExpiresAt=0;history=[];conversationId=null;conversations=[];memoryItems=[];$('messages').innerHTML='';$('workspace').classList.add('hidden');$('accessPanel').classList.remove('hidden');$('connectBtn').textContent=t('connectBrowser');$('connectWalletBtn').textContent=t('connectWallet');$('regionSettingsBtn')?.remove();$('countryDialog')?.remove();if(window.fiDisconnectSelectedWallet)await window.fiDisconnectSelectedWallet();toast(t('signedOut'))});if(window.ethereum)bindWalletEvents(window.ethereum);document.addEventListener('fly-ai-language-updated',()=>{updateRegionTexts();renderAssistantSuggestions();renderMemory()});
+function enableNoWalletImagePreview(){
+ if(!IMAGE_STUDIO_TEST_MODE)return;
+ document.body.classList.add('image-studio-preview');
+ $('accessPanel')?.classList.add('hidden');
+ $('workspace')?.classList.remove('hidden');
+ $('workspaceSidebar')?.classList.add('hidden');
+ $('connectBtn')?.classList.add('hidden');
+ $('connectWalletBtn')?.classList.add('hidden');
+ $('chatModeButton')?.classList.add('hidden');
+ $('chatPane')?.classList.add('hidden');
+ $('imageStudioPanel')?.classList.remove('hidden');
+ $('imageModeButton')?.classList.add('active');
+ $('imageModeButton')?.setAttribute('aria-selected','true');
+ if($('walletLabel'))$('walletLabel').textContent=t('imageTestIdentity');
+ if($('tierLabel'))$('tierLabel').textContent=t('imageTestTag');
+ const heading=$('imageStudioPanel')?.querySelector('.image-studio-heading');
+ if(heading&&!$('imageTestBanner')){
+  const banner=document.createElement('div');
+  banner.id='imageTestBanner';
+  banner.className='image-test-banner';
+  banner.dataset.i18n='imageTestModeBanner';
+  banner.textContent=t('imageTestModeBanner');
+  heading.before(banner);
+ }
+ const quotaHint=document.querySelector('[data-i18n="imageQuotaHint"]');
+ if(quotaHint){quotaHint.dataset.i18n='imageTestQuotaHint';quotaHint.textContent=t('imageTestQuotaHint')}
+ if($('imageStatus')){
+  $('imageStatus').dataset.i18n='imageTestReady';
+  $('imageStatus').textContent=t('imageTestReady');
+ }
+ setWorkspaceMode('image');
+}
+function setWorkspaceMode(mode){
+ const imageMode=mode==='image';
+ $('chatPane').classList.toggle('hidden',imageMode);$('imageStudioPanel').classList.toggle('hidden',!imageMode);
+ $('chatModeButton').classList.toggle('active',!imageMode);$('imageModeButton').classList.toggle('active',imageMode);
+ $('chatModeButton').setAttribute('aria-selected',String(!imageMode));$('imageModeButton').setAttribute('aria-selected',String(imageMode));
+ document.querySelectorAll('[data-assistant]').forEach(item=>{
+  const active=imageMode?item.dataset.assistant==='image-studio':item.dataset.assistant===assistantId;
+  item.classList.toggle('active',active);item.setAttribute('aria-pressed',String(active));
+ });
+ if(imageMode)window.setTimeout(()=>$('imagePrompt')?.focus(),40);
+}
+async function imageApiJson(path,payload){
+ if(!IMAGE_API_BASE)throw new Error(t('imageServiceUnavailable'));
+ const response=await fetch(IMAGE_API_BASE+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+ const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.error||t('imageFailed'));return data;
+}
+async function ensureImageSession(){
+ if(IMAGE_STUDIO_TEST_MODE)return;
+ if(!token||!address||!provider)throw new Error(t('connectBeforeImage'));
+ if(!IMAGE_API_BASE)throw new Error(t('imageServiceUnavailable'));
+ if(imageSessionToken&&imageSessionExpiresAt>Date.now()+60000)return;
+ const challenge=await imageApiJson('/api/auth/challenge',{address});toast(t('imageSignMessage'));
+ const signature=await provider.request({method:'personal_sign',params:[ethers.utils.hexlify(ethers.utils.toUtf8Bytes(challenge.message)),address]});
+ const verified=await imageApiJson('/api/auth/verify',{address,nonce:challenge.nonce,signature});
+ imageSessionToken=verified.token;imageSessionExpiresAt=Date.now()+Number(verified.expiresIn||1800)*1000;
+}
+async function generateImageFromPrompt(){
+ if(!IMAGE_GENERATION_ENABLED){toast(t('imageNotEnabled'));return}
+ const promptText=$('imagePrompt').value.trim();if(!promptText){toast(t('imageEmpty'));$('imagePrompt').focus();return}
+ if(!IMAGE_STUDIO_TEST_MODE&&!token){toast(t('connectBeforeImage'));return}
+ if(imageBusy)return;imageBusy=true;
+ const button=$('generateImageBtn'),buttonLabel=button.querySelector('[data-i18n]')||button.querySelector('span:last-child');
+ button.disabled=true;if(buttonLabel)buttonLabel.textContent=t('imageGenerating');$('imageStatus').textContent=t('imageGenerating');
+ try{
+  const payload=JSON.stringify({prompt:promptText});let response;
+  if(IMAGE_STUDIO_TEST_MODE){
+   response=await fetch(API+'/api/image/preview',{method:'POST',headers:{'Content-Type':'application/json'},body:payload});
+  }else{
+   await ensureImageSession();
+   const send=()=>fetch(IMAGE_API_BASE+'/api/image/generate',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+imageSessionToken},body:payload});
+   response=await send();
+   if(response.status===401){imageSessionToken='';imageSessionExpiresAt=0;await ensureImageSession();response=await send()}
+  }
+  if(!response.ok){const data=await response.json().catch(()=>({}));throw new Error(response.status===404?t('imageNotEnabled'):(data.error||t('imageFailed')))}
+  const blob=await response.blob();if(!blob.size||!(blob.type||'').startsWith('image/'))throw new Error(t('imageFailed'));
+  if(generatedImageUrl)URL.revokeObjectURL(generatedImageUrl);
+  generatedImageUrl=URL.createObjectURL(blob);generatedImageExtension=(blob.type.split('/')[1]||'jpeg').replace('jpeg','jpg');
+  $('generatedImage').src=generatedImageUrl;$('generatedImage').alt=t('imageAlt');$('imageResult').classList.remove('hidden');$('downloadImageBtn').disabled=false;
+  const remaining=response.headers.get('X-Image-Quota-Remaining');$('imageQuotaRemaining').textContent=remaining!==null?t('imageQuotaLeft')+' '+remaining:'';
+  $('imageModelLabel').textContent=response.headers.get('X-Image-Model')||'FLUX.2 Klein 4B';$('imageStatus').textContent=t('imageSuccess');$('imageResult').scrollIntoView({block:'nearest',behavior:'smooth'});
+ }catch(error){$('imageStatus').textContent='';toast(error.message||t('imageFailed'))}
+ finally{imageBusy=false;button.disabled=false;if(buttonLabel)buttonLabel.textContent=t('imageGenerate')}
+}
+if(!IMAGE_GENERATION_ENABLED){
+ $('generateImageBtn').disabled=true;
+ $('imageStatus').dataset.i18n='imageNotEnabled';
+ $('imageStatus').textContent=t('imageNotEnabled');
+}
+$('chatModeButton')?.addEventListener('click',()=>setWorkspaceMode('chat'));
+$('imageModeButton')?.addEventListener('click',()=>setWorkspaceMode('image'));
+$('imageForm')?.addEventListener('submit',event=>{event.preventDefault();generateImageFromPrompt()});
+$('downloadImageBtn')?.addEventListener('click',()=>{
+ if(!generatedImageUrl)return;
+ const link=document.createElement('a');
+ link.href=generatedImageUrl;
+ link.download='fly-infinity-image-'+new Date().toISOString().replace(/[:.]/g,'-')+'.'+generatedImageExtension;
+ document.body.appendChild(link);link.click();link.remove();
+});
+renderAssistantSuggestions();
+enableNoWalletImagePreview();
 })();

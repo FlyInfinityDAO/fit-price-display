@@ -1,0 +1,134 @@
+name: Fly AI image test provision and quality comparison
+
+on:
+  push:
+    branches:
+      - feature/fly-ai-image-test-api
+    paths:
+      - 'backend/**'
+      - '.github/workflows/fly-ai-image-test-provision.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fly-ai-image-test-provision
+  cancel-in-progress: false
+
+jobs:
+  provision-and-test:
+    name: Provision isolated image Worker and compare Persian/English prompts
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/feature/fly-ai-image-test-api') || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/feature/fly-ai-image-test-api')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      TEST_D1_NAME: fly-ai-image-test-db
+      TEST_WORKER_NAME: fly-ai-image-test
+      TEST_WORKER_URL: https://fly-ai-image-test.flyinfinityplatform.workers.dev
+
+    steps:
+      - name: Checkout isolated image test branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/fly-ai-image-test-api
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package.json
+
+      - name: Validate Cloudflare credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Missing repository secret CLOUDFLARE_API_TOKEN."; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Missing repository variable CLOUDFLARE_ACCOUNT_ID."; exit 1; }
+          node --check src/index.js
+          node --check src/image-provider.js
+          node --check scripts/image-prompt-comparison.mjs
+          npm install --no-audit --no-fund
+          npm test
+
+      - name: Create or reuse the isolated EU D1 database
+        id: d1
+        shell: bash
+        run: |
+          set -euo pipefail
+          api="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/d1/database"
+          list="$(curl --silent --show-error --fail-with-body \
+            --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "$api?name=$TEST_D1_NAME&per_page=100")"
+          echo "$list" | jq -e '.success == true' >/dev/null
+          database_id="$(echo "$list" | jq -r --arg name "$TEST_D1_NAME" '.result[]? | select(.name == $name) | .uuid' | head -n 1)"
+          if [ -z "$database_id" ]; then
+            created="$(curl --silent --show-error --fail-with-body \
+              --request POST \
+              --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              --header "Content-Type: application/json" \
+              --data "{\"name\":\"$TEST_D1_NAME\",\"jurisdiction\":\"eu\"}" \
+              "$api")"
+            echo "$created" | jq -e '.success == true' >/dev/null
+            database_id="$(echo "$created" | jq -r '.result.uuid')"
+          fi
+          [[ "$database_id" =~ ^[0-9a-fA-F-]{36}$ ]] || { echo "::error::Could not obtain a valid test D1 database ID."; exit 1; }
+          sed -i "s/REPLACE_WITH_FLY_AI_IMAGE_TEST_D1_ID/$database_id/" wrangler.image-test.toml
+          echo "database_id=$database_id" >> "$GITHUB_OUTPUT"
+          echo "Created or verified the isolated EU test database."
+
+      - name: Apply only the test database migrations
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx wrangler d1 execute "$TEST_D1_NAME" --remote --file=migrations/0001_init.sql --config=wrangler.image-test.toml
+          npx wrangler d1 execute "$TEST_D1_NAME" --remote --file=migrations/0004_image_test_usage.sql --config=wrangler.image-test.toml
+          npx wrangler d1 execute "$TEST_D1_NAME" --remote --file=migrations/0005_image_generation_usage.sql --config=wrangler.image-test.toml
+          npx wrangler d1 execute "$TEST_D1_NAME" --remote --file=migrations/0006_image_preview_usage.sql --config=wrangler.image-test.toml
+
+      - name: Deploy the isolated Workers AI test Worker
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(grep -c 'name = "fly-ai-image-test"' wrangler.image-test.toml)" -eq 1
+          test "$(grep -c 'database_name = "fly-ai-image-test-db"' wrangler.image-test.toml)" -eq 1
+          test "$(grep -c 'REPLACE_WITH_FLY_AI_IMAGE_TEST_D1_ID' wrangler.image-test.toml)" -eq 0
+          npx wrangler deploy --config=wrangler.image-test.toml
+
+      - name: Set image-test key and run the Persian/English image comparison
+        shell: bash
+        run: |
+          set -euo pipefail
+          IMAGE_TEST_AUTH_KEY="$(openssl rand -hex 32)"
+          echo "::add-mask::$IMAGE_TEST_AUTH_KEY"
+          printf '%s' "$IMAGE_TEST_AUTH_KEY" | npx wrangler secret put IMAGE_TEST_AUTH_KEY --config=wrangler.image-test.toml
+          npx wrangler secret list --config=wrangler.image-test.toml | grep -F 'IMAGE_TEST_AUTH_KEY'
+          IMAGE_PREVIEW_SALT="$(openssl rand -hex 32)"
+          echo "::add-mask::$IMAGE_PREVIEW_SALT"
+          printf '%s' "$IMAGE_PREVIEW_SALT" | npx wrangler secret put IMAGE_PREVIEW_SALT --config=wrangler.image-test.toml
+          npx wrangler secret list --config=wrangler.image-test.toml | grep -F 'IMAGE_PREVIEW_SALT'
+          # Allow the just-published secret version to propagate before the first request.
+          sleep 8
+          IMAGE_TEST_URL="$TEST_WORKER_URL" IMAGE_TEST_AUTH_KEY="$IMAGE_TEST_AUTH_KEY" IMAGE_TEST_START_INDEX=10 node scripts/image-prompt-comparison.mjs
+
+      - name: Verify test Worker is healthy
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --silent --show-error --fail --retry 12 --retry-delay 5 \
+            "$TEST_WORKER_URL/api/health"
+
+      - name: Upload generated images and comparison manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fly-ai-image-quality-comparison
+          path: backend/image-test-results/
+          if-no-files-found: warn
+          retention-days: 14
