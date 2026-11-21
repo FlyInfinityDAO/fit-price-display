@@ -939,3 +939,71 @@ body.light .assistant-card.image-studio-card b{color:#543521}body.light .assista
 /* Clear vertical rhythm between the specialist grid and lower access-level cards. */
 #assistantHub{margin-bottom:26px}
 .tiers{padding-top:24px}
+
+
+
+/* Featured Audio Studio card and workspace — distinct violet/cyan identity */
+.assistant-card.audio-studio-card{grid-column:span 2;min-height:112px;position:relative;overflow:hidden;border:1px solid rgba(155,145,255,.82);background:radial-gradient(circle at 88% 10%,rgba(117,223,255,.24),transparent 36%),linear-gradient(125deg,rgba(53,54,112,.88),rgba(36,49,85,.88) 52%,rgba(29,84,96,.82));box-shadow:inset 0 1px 0 rgba(223,223,255,.19),0 9px 30px rgba(105,124,214,.15),0 0 26px rgba(110,202,255,.1)}
+.assistant-card.audio-studio-card:before{content:"";position:absolute;width:150px;height:150px;right:-68px;bottom:-102px;border-radius:50%;background:rgba(106,218,255,.24);filter:blur(24px);pointer-events:none}
+.assistant-card.audio-studio-card>span{color:#b7eaff;font-size:25px;text-shadow:0 0 18px rgba(133,219,255,.52)}
+.assistant-card.audio-studio-card b{color:#e9f5ff;font-size:12px}.assistant-card.audio-studio-card small{color:#c4d9ee;font-size:10px}
+.assistant-card.audio-studio-card:hover{border-color:#d5f3ff;background:linear-gradient(125deg,rgba(71,76,145,.94),rgba(37,105,127,.92));box-shadow:0 12px 36px rgba(108,170,255,.22),0 0 30px rgba(117,220,255,.18)}
+.assistant-card.audio-studio-card.active{border-color:#c8f2ff;background:linear-gradient(125deg,rgba(78,83,157,.94),rgba(36,119,135,.9));box-shadow:inset 0 0 0 1px rgba(210,239,255,.28),0 0 0 2px rgba(140,208,255,.12),0 12px 34px rgba(97,184,237,.24)}
+.assistant-card.audio-studio-card.active>span{color:#f0fcff}
+body.light .assistant-card.audio-studio-card{background:linear-gradient(125deg,#edf0ff,#e6faff);border-color:#8294d9}
+body.light .assistant-card.audio-studio-card b{color:#26345e}body.light .assistant-card.audio-studio-card small{color:#536b91}body.light .assistant-card.audio-studio-card>span{color:#4a65b4}
+@media(max-width:620px){.assistant-card.audio-studio-card{grid-column:1/-1;min-height:94px}.assistant-card.audio-studio-card b{font-size:11px}.assistant-card.audio-studio-card small{font-size:9px}}
+
+.workspace-mode-tabs{display:flex;flex-wrap:wrap;gap:7px}
+.workspace-mode-tab.audio-mode-tab.active{color:#e7f8ff;background:linear-gradient(120deg,#3b3a79,#176b79);border-color:rgba(142,213,255,.62);box-shadow:0 0 18px rgba(115,200,255,.14)}
+.audio-studio{display:flex;flex-direction:column;gap:16px;padding:20px 2px;min-width:0}
+.audio-studio-heading{text-align:center;padding:8px 12px 2px}
+.audio-studio-heading>span{color:#a7b0ff;font-size:10px;letter-spacing:2px;font-weight:800}
+.audio-studio-heading h2{margin:10px 0 6px;font-size:clamp(23px,4vw,31px);color:#e9f3ff}
+.audio-studio-heading p,.audio-tool-heading p{margin:0 auto;color:#9eacbf;font-size:12px;line-height:1.8;max-width:680px}
+.audio-tool-tabs{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.audio-tool-tab{border:1px solid rgba(151,163,255,.25);background:rgba(18,26,48,.65);color:#b8c6df;border-radius:12px;padding:10px 16px;font:inherit;font-size:12px;cursor:pointer}
+.audio-tool-tab.active{background:linear-gradient(120deg,#393a7b,#126b79);border-color:#8bdaf0;color:#f5fcff;box-shadow:0 6px 20px rgba(96,180,255,.13)}
+.audio-tool-panel{display:flex;flex-direction:column;gap:14px}
+.audio-tool-heading{text-align:center}
+.audio-tool-heading h3{font-size:17px;color:#e7f3ff;margin:2px 0 5px}
+.audio-form,.audio-result{border:1px solid rgba(126,157,225,.22);border-radius:17px;background:linear-gradient(135deg,rgba(16,25,47,.92),rgba(15,37,48,.88));padding:18px;display:flex;flex-direction:column;gap:11px}
+.audio-form>label,.audio-field-row label,.audio-controls-grid label{font-size:12px;color:#dce9ff;font-weight:700}
+.audio-form textarea,.audio-form input,.audio-form select,.audio-field-row select,.audio-controls-grid select,.audio-controls-grid input{width:100%;min-width:0;border:1px solid rgba(139,170,220,.25);border-radius:10px;background:#0c1526;color:#f2f6ff;padding:11px 12px;font:inherit;font-size:13px;outline:none}
+.audio-form textarea{resize:vertical;min-height:94px;line-height:1.8}
+.audio-form textarea:focus,.audio-form input:focus,.audio-form select:focus{border-color:#8cbcf7;box-shadow:0 0 0 3px rgba(120,170,255,.1)}
+.audio-field-row{display:grid;grid-template-columns:100px minmax(0,1fr);align-items:center;gap:12px}
+.audio-form-footer{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:4px}
+.audio-form-footer small{color:#9eabc1;font-size:10px;line-height:1.7;max-width:430px}
+.audio-primary-btn{align-self:flex-start;border:0;border-radius:11px;padding:12px 19px;min-height:42px;background:linear-gradient(115deg,#8c85f5,#55c5d8);color:#091528;font:inherit;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 7px 22px rgba(93,161,224,.17)}
+.audio-primary-btn:disabled{opacity:.45;cursor:not-allowed}
+.audio-controls-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:12px}
+.audio-controls-grid>div{display:flex;flex-direction:column;gap:7px;min-width:0}
+.audio-disclosure{margin:0;padding:10px 12px;border:1px solid rgba(162,156,255,.2);border-radius:10px;background:rgba(74,70,129,.12);color:#bfc3df;font-size:10px;line-height:1.8}
+.audio-status{min-height:18px;color:#9eddf0;font-size:11px;text-align:center}
+.audio-result{gap:12px}
+.audio-result strong{font-size:12px;color:#e6f5ff}
+.audio-result audio{width:100%;min-height:42px}
+.audio-download-link{align-self:flex-start;color:#b8eaff;font-size:12px;text-decoration:none;border:1px solid rgba(139,213,255,.36);border-radius:9px;padding:9px 13px}
+.audio-download-link:hover{background:rgba(79,160,204,.12)}
+body.light .audio-studio-heading h2,body.light .audio-tool-heading h3{color:#27334a}
+body.light .audio-studio-heading p,body.light .audio-tool-heading p,body.light .audio-form-footer small{color:#65718a}
+body.light .audio-form,body.light .audio-result{background:#f5f8ff;border-color:#d3dcee}
+body.light .audio-form>label,body.light .audio-field-row label,body.light .audio-controls-grid label,body.light .audio-result strong{color:#2b3850}
+body.light .audio-form textarea,body.light .audio-form input,body.light .audio-form select,body.light .audio-field-row select,body.light .audio-controls-grid select,body.light .audio-controls-grid input{background:#fff;color:#223047;border-color:#d1d9e8}
+body.light .audio-disclosure{background:#f0f1ff;color:#59668a;border-color:#d8d8f2}
+@media(max-width:620px){
+ .workspace-mode-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;width:100%}
+ .workspace-mode-tab{padding:9px 5px;font-size:9px}
+ .audio-studio{gap:12px;padding-top:5px}
+ .audio-studio-heading h2{font-size:21px}
+ .audio-tool-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}
+ .audio-tool-tab{padding:9px 4px;font-size:10px}
+ .audio-form,.audio-result{padding:13px}
+ .audio-form-footer{align-items:stretch;flex-direction:column}
+ .audio-primary-btn{width:100%;min-height:44px}
+ .audio-controls-grid{grid-template-columns:1fr 1fr}
+ .audio-controls-grid>div:first-child{grid-column:1/-1}
+ .audio-field-row{grid-template-columns:1fr;gap:6px}
+ .audio-download-link{width:100%;text-align:center}
+}
