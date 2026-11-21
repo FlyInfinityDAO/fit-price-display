@@ -11,27 +11,27 @@ function request(path, options = {}) {
   });
 }
 
-test('production audio speech endpoint rejects requests without an audio wallet session', async () => {
+test('production audio speech endpoint is disabled to prevent API charges', async () => {
   const response = await audioWorker.fetch(request('/api/audio/tts'), {
     APP_ORIGIN: origin, AUDIO_PREVIEW_ENABLED: 'false'
   });
-  assert.equal(response.status, 401);
-  assert.match((await response.json()).error, /wallet session/i);
+  assert.equal(response.status, 410);
+  assert.match((await response.json()).error, /browser-native speech/i);
 });
 
-test('the no-wallet preview endpoint is disabled by default', async () => {
+test('the no-wallet cloud preview endpoint is permanently disabled', async () => {
   const response = await audioWorker.fetch(request('/api/audio/preview'), {
     APP_ORIGIN: origin, AUDIO_PREVIEW_ENABLED: 'false'
   });
-  assert.equal(response.status, 404);
+  assert.equal(response.status, 410);
 });
 
 
-test('no-wallet preview remains unavailable on the production site origin even when enabled', async () => {
+test('no-wallet cloud preview stays disabled even if a legacy flag is enabled', async () => {
   const response = await audioWorker.fetch(request('/api/audio/preview'), {
     APP_ORIGIN: origin, AUDIO_PREVIEW_ENABLED: 'true'
   });
-  assert.equal(response.status, 404);
+  assert.equal(response.status, 410);
 });
 
 test('the preview endpoint rejects any non-allowlisted origin', async () => {
