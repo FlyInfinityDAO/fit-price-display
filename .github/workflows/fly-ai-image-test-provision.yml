@@ -109,7 +109,7 @@ jobs:
           npx wrangler secret list --config=wrangler.image-test.toml | grep -F 'IMAGE_TEST_AUTH_KEY'
           # Allow the just-published secret version to propagate before the first request.
           sleep 8
-          IMAGE_TEST_URL="$TEST_WORKER_URL" IMAGE_TEST_AUTH_KEY="$IMAGE_TEST_AUTH_KEY" IMAGE_TEST_START_INDEX=2 node scripts/image-prompt-comparison.mjs
+          IMAGE_TEST_URL="$TEST_WORKER_URL" IMAGE_TEST_AUTH_KEY="$IMAGE_TEST_AUTH_KEY" IMAGE_TEST_START_INDEX=10 node scripts/image-prompt-comparison.mjs
 
       - name: Verify test Worker is healthy
         shell: bash
