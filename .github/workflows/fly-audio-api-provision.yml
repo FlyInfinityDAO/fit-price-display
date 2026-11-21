@@ -78,9 +78,20 @@ jobs:
       - name: Verify health, wallet challenge and authentication boundary
         run: |
           set -euo pipefail
-          curl --silent --show-error --fail --retry 12 --retry-delay 5 "$AUDIO_WORKER_URL/api/health"
-          challenge="$(curl --silent --show-error --fail --header "Origin: $APP_ORIGIN" --header "Content-Type: application/json" --data '{"address":"0x0000000000000000000000000000000000000001"}' "$AUDIO_WORKER_URL/api/auth/challenge")"
-          echo "$challenge" | jq -e '.nonce and .message and .expiresIn == 300' >/dev/null
-          status="$(curl --silent --show-error --output /tmp/audio-auth.json --write-out '%{http_code}' --request POST --header "Origin: $APP_ORIGIN" --header "Content-Type: application/json" --data '{"text":"This request must be rejected without a wallet session."}' "$AUDIO_WORKER_URL/api/audio/tts")"
-          test "$status" = "401"
+          health_status="$(curl --silent --show-error --output /tmp/audio-health.json --write-out '%{http_code}' "$AUDIO_WORKER_URL/api/health")"
+          challenge_status="$(curl --silent --show-error --output /tmp/audio-challenge.json --write-out '%{http_code}' --header "Origin: $APP_ORIGIN" --header "Content-Type: application/json" --data '{"address":"0x0000000000000000000000000000000000000001"}' "$AUDIO_WORKER_URL/api/auth/challenge")"
+          tts_status="$(curl --silent --show-error --output /tmp/audio-auth.json --write-out '%{http_code}' --request POST --header "Origin: $APP_ORIGIN" --header "Content-Type: application/json" --data '{"text":"This request must be rejected without a wallet session."}' "$AUDIO_WORKER_URL/api/audio/tts")"
+          echo "Health HTTP: $health_status"
+          cat /tmp/audio-health.json
+          echo "Challenge HTTP: $challenge_status"
+          cat /tmp/audio-challenge.json
+          echo "Unauthenticated TTS HTTP: $tts_status"
+          cat /tmp/audio-auth.json
+          echo "Health HTTP: $health_status" >> "$GITHUB_STEP_SUMMARY"
+          echo "Challenge HTTP: $challenge_status" >> "$GITHUB_STEP_SUMMARY"
+          echo "Unauthenticated TTS HTTP: $tts_status" >> "$GITHUB_STEP_SUMMARY"
+          test "$health_status" = "200"
+          test "$challenge_status" = "200"
+          jq -e '.nonce and .message and .expiresIn == 300' /tmp/audio-challenge.json >/dev/null
+          test "$tts_status" = "401"
           echo "Worker health, CORS, challenge and 401 authentication boundary checks passed." >> "$GITHUB_STEP_SUMMARY"
