@@ -9,7 +9,7 @@ This branch adds a separately named test Worker and a test-only image endpoint. 
 - `POST /api/image/test`, protected by a temporary test-only secret header. This is a private test harness, not the end-user Fly AI authentication flow; it does not accept or reuse production wallet/JWT credentials.
 - A separate D1 table, `image_test_usage`, with a maximum of 50 attempts in total per UTC day across the isolated test Worker.
 - A separate production quota system in `image_generation_usage` and `image_generation_daily_usage`; it never reads or updates the existing chat `usage` table.
-- `IMAGE_TEST_ENABLED=true` is set only in the isolated test Worker configuration. `IMAGE_GENERATION_ENABLED` remains false by default in both configurations until wallet-authenticated UI testing is ready.
+- `IMAGE_TEST_ENABLED=true` is set only in the isolated test Worker configuration. `IMAGE_GENERATION_ENABLED` remains false by default in both Worker configurations; the frontend `imageGenerationEnabled` flag is also false by default until the coordinated release.
 - Production wallet-authenticated route: `POST /api/image/generate`. It reuses `requireAuth` (Network Owner verification and current FIT tier), while keeping image quota independent from chat.
 - Unit tests for multipart model invocation, output decoding, and fail-closed behavior.
 - A comparison script for the 10 Persian/English prompt pairs. `IMAGE_TEST_START_INDEX` can skip pairs already produced.
@@ -50,3 +50,7 @@ node --check scripts/image-prompt-comparison.mjs
 ```
 
 These checks validate code and test scaffolding. Live image generation is verified separately through the isolated Worker workflow.
+
+## Frontend
+
+The existing Fly AI workspace now includes an Image Studio tab alongside the original AI Chat tab. All eight supported languages have translations. The prompt is sent in its original language, the first release is fixed at 512×512, and generated images are previewed and downloadable. The frontend image feature flag remains disabled by default until the Worker route is deliberately enabled during a coordinated test/release.
