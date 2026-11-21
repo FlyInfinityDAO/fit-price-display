@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Wallet } from 'ethers';
-import { buildChallengeMessage,verifyWalletSignature,createOpaqueSessionToken,hashSessionToken } from '../image-api/src/auth.js';
+import { buildChallengeMessage,verifyWalletSignature,createOpaqueSessionToken,hashSessionToken } from '../src/auth.js';
 test('challenge includes origin, wallet, chain and non-transaction disclaimer',()=>{
  const w=Wallet.createRandom(),message=buildChallengeMessage({origin:'https://flyinfinitydao.github.io',address:w.address,nonce:'nonce-123',issuedAt:'2026-11-21T10:00:00.000Z',expiresAt:'2026-11-21T10:05:00.000Z'});
  assert.match(message,/Fly Infinity Image Studio sign-in/);assert.match(message,/Domain: flyinfinitydao\.github\.io/);assert.match(message,new RegExp(w.address));assert.match(message,/Chain ID: 56/);assert.match(message,/Nonce: nonce-123/);assert.match(message,/does not authorize transactions or token transfers/);
