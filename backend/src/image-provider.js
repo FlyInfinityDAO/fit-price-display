@@ -46,12 +46,31 @@ export async function generateImage({ ai, prompt, seed }) {
     throw new Error('A valid image prompt is required');
   }
 
-  const input = { prompt: prompt.trim(), width: 512, height: 512 };
+  const form = new FormData();
+  form.set('prompt', prompt.trim());
+  form.set('width', '512');
+  form.set('height', '512');
   if (Number.isInteger(seed) && seed >= 0 && seed <= 2147483647) {
-    input.seed = seed;
+    form.set('seed', String(seed));
   }
 
-  const result = await ai.run(IMAGE_MODEL, input);
+  // FLUX.2 Klein requires multipart input even for prompt-only generation.
+  const request = new Request('https://fly-ai-image-test.invalid', {
+    method: 'POST',
+    body: form
+  });
+  const contentType = request.headers.get('content-type');
+  if (!request.body || !contentType?.startsWith('multipart/form-data; boundary=')) {
+    throw new Error('Could not construct multipart image request');
+  }
+
+  const result = await ai.run(IMAGE_MODEL, {
+    multipart: {
+      body: request.body,
+      contentType
+    }
+  });
+
   const image = decodeImage(result?.image);
-  return { ...image, model: IMAGE_MODEL, seed: input.seed ?? null };
+  return { ...image, model: IMAGE_MODEL, seed: Number.isInteger(seed) ? seed : null };
 }
