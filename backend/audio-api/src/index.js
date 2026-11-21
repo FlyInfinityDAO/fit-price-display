@@ -143,7 +143,7 @@ async function generateSpeech(req, env) {
 
 
 async function generatePreviewSpeech(req, env) {
-  if (env.AUDIO_PREVIEW_ENABLED !== 'true') return json({ error: 'Audio preview is disabled' }, 404);
+  if (env.APP_ORIGIN !== 'https://raw.githack.com' || env.AUDIO_PREVIEW_ENABLED === 'false') return json({ error: 'Audio preview is disabled outside the isolated test Worker' }, 404);
   const origin = req.headers.get('Origin');
   const allowedOrigin = env.APP_ORIGIN || DEFAULT_APP_ORIGIN;
   if (!origin || origin !== allowedOrigin) return json({ error: 'Preview origin not allowed' }, 403);
