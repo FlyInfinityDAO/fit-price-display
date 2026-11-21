@@ -115,6 +115,7 @@ jobs:
           printf '%s' "$IMAGE_TEST_AUTH_KEY" | npx wrangler secret put IMAGE_TEST_AUTH_KEY --config=wrangler.image-test.toml
           echo "IMAGE_TEST_AUTH_KEY=$IMAGE_TEST_AUTH_KEY" >> "$GITHUB_ENV"
           echo "IMAGE_TEST_URL=$TEST_WORKER_URL" >> "$GITHUB_ENV"
+          npx wrangler secret list --config=wrangler.image-test.toml | grep -F 'IMAGE_TEST_AUTH_KEY'
 
       - name: Verify test Worker is healthy
         shell: bash
