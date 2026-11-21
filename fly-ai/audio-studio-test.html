@@ -11,16 +11,12 @@
 <body>
 <main class="studio-shell">
 <header class="studio-header"><span class="studio-mark">♫</span><div><small>FLY INFINITY · PRIVATE PREVIEW</small><h1>Audio Studio</h1><p>Voice, original music and sound effects</p></div></header>
-<div class="notice"><strong>Test environment — no wallet required.</strong><span>This preview uses a separate test Worker and database. Voice preview is limited to 3 short generations per UTC day. It does not use the production wallet quota.</span></div>
+<div class="notice"><strong>Legacy local-audio sandbox.</strong><span>Cloud voice preview is disabled to prevent metered API usage. This page is for testing local music and sound effects only.</span></div>
 <nav class="tool-tabs" aria-label="Audio tools"><button class="active" data-tool="voice">Voice-over</button><button data-tool="music">Music Maker</button><button data-tool="effects">Sound Effects</button></nav>
 <section id="voiceTool" class="tool-panel">
-<h2>AI voice preview</h2><p class="muted">The free Cloudflare Aura voice preview is English-only.</p>
-<form id="voiceForm" class="form">
-<label for="voiceText">Text (max 160 characters)</label><textarea id="voiceText" maxlength="160" required placeholder="Hello from Fly Infinity Audio Studio."></textarea>
-<label for="voiceSpeaker">Voice</label><select id="voiceSpeaker"><option value="luna">Luna</option><option value="athena">Athena</option><option value="orion">Orion</option><option value="hera">Hera</option></select>
-<button id="voiceButton" type="submit">Generate speech</button>
-</form><p id="voiceStatus" class="status" role="status"></p>
-<div id="voiceResult" class="result hidden"><audio id="voicePlayer" controls></audio><a id="voiceDownload" download="fly-infinity-audio-preview.mp3">Download MP3</a></div>
+<h2>Browser voice-over</h2>
+<p class="muted">Voice playback is now provided by your browser/device in the main Fly AI workspace. No cloud speech preview or API credits are used here.</p>
+<a href="https://flyinfinitydao.github.io/fit-price-display/fly-ai/index.html">Open Fly Infinity AI Audio Studio</a>
 </section>
 <section id="musicTool" class="tool-panel hidden">
 <h2>Original instrumental composer</h2><p class="muted">Runs locally in this browser; no external API or upload.</p>
