@@ -1,4 +1,5 @@
 import { generateReply } from './ai-provider.js';
+import { generateImage } from './image-provider.js';
 import { ethers } from 'ethers';
 const ABI_NET=['function Owner_Exists(address owner) view returns (bool)'];
 const ABI_FIT=['function balanceOf(address account) view returns (uint256)'];
@@ -15,6 +16,19 @@ async function entitlement(address,env){const p=provider(env),net=new ethers.Con
 async function requireAuth(req,env){if(!env.JWT_SECRET)throw Error('JWT_SECRET is not configured');const raw=req.headers.get('Authorization')||'';const payload=await verifyToken(raw.replace(/^Bearer\s+/i,''),env.JWT_SECRET);const current=await entitlement(ethers.getAddress(payload.sub),env);if(!current.owner)throw Error('Wallet is no longer an eligible Network Owner');return {...payload,...current}}
 const DAILY_LIMITS={1:30,2:60,3:120};
 async function consumeQuota(address,tier,env){const day=new Date().toISOString().slice(0,10),limit=DAILY_LIMITS[Number(tier)]||DAILY_LIMITS[1];const result=await env.DB.prepare('INSERT INTO usage(address,day,requests) VALUES(?,?,1) ON CONFLICT(address,day) DO UPDATE SET requests=requests+1 WHERE requests < ?').bind(address,day,limit).run();if(Number(result.meta?.changes||0)!==1)throw Error('Daily AI quota reached');const usage=await env.DB.prepare('SELECT requests FROM usage WHERE address=? AND day=?').bind(address,day).first();return Math.max(0,limit-Number(usage?.requests||limit))}
+
+const IMAGE_TEST_DAILY_LIMIT=25;
+async function reserveImageTestQuota(address,env){
+ const day=new Date().toISOString().slice(0,10);
+ const result=await env.DB.prepare('INSERT INTO image_test_usage(address,day,generations,updated_at) VALUES(?,?,1,?) ON CONFLICT(address,day) DO UPDATE SET generations=generations+1,updated_at=excluded.updated_at WHERE generations < ?').bind(address,day,now(),IMAGE_TEST_DAILY_LIMIT).run();
+ if(Number(result.meta?.changes||0)!==1)throw Error('Daily image test quota reached');
+ const usage=await env.DB.prepare('SELECT generations FROM image_test_usage WHERE address=? AND day=?').bind(address,day).first();
+ return Math.max(0,IMAGE_TEST_DAILY_LIMIT-Number(usage?.generations||IMAGE_TEST_DAILY_LIMIT));
+}
+async function releaseImageTestQuota(address,env){
+ const day=new Date().toISOString().slice(0,10);
+ await env.DB.prepare('UPDATE image_test_usage SET generations=CASE WHEN generations>0 THEN generations-1 ELSE 0 END,updated_at=? WHERE address=? AND day=?').bind(now(),address,day).run();
+}
 
 const CORE_QUALITY=`You are a high-quality professional assistant. First understand the user's actual goal and answer it directly. Be accurate, thoughtful, practical, and appropriately detailed; avoid generic filler, repetition, exaggerated confidence, and unnecessary questions. Ask at most one concise clarifying question only when an essential fact is missing; otherwise state reasonable assumptions and proceed.
 
@@ -66,7 +80,37 @@ async function extractUserMemories(address,conversationId,env){
  }catch(error){console.error('Fly AI memory extraction skipped:',error.message)}
 }
 
-async function route(req,env,ctx){const url=new URL(req.url),path=url.pathname;const origin=req.headers.get('Origin');if(origin&&origin!==(env.APP_ORIGIN||DEFAULT_APP_ORIGIN))return json({error:'Origin not allowed'},403);if(req.method==='OPTIONS')return new Response(null,{status:204});if(path==='/api/health')return json({ok:true,service:'Fly AI API',version:'1.0.0'});if(path==='/api/auth/challenge'&&req.method==='POST'){const {address}=await req.json();if(!ethers.isAddress(address))return json({error:'Invalid wallet address'},400);const addr=ethers.getAddress(address),recent=await env.DB.prepare('SELECT COUNT(*) AS n FROM auth_nonces WHERE address=? AND expires_at>?').bind(ethers.getAddress(address),now()).first();if(Number(recent?.n||0)>=10)return json({error:'Too many login attempts. Please wait a few minutes.'},429);const nonce=crypto.randomUUID(),origin=env.APP_ORIGIN||DEFAULT_APP_ORIGIN,message='Fly AI secure sign-in\n\nDomain: '+origin+'\nWallet: '+addr+'\nNonce: '+nonce+'\nIssued At: '+new Date().toISOString()+'\n\nSigning this message proves wallet ownership. It does not authorize transactions.';await env.DB.prepare('INSERT INTO auth_nonces(nonce,address,message,expires_at) VALUES(?,?,?,?)').bind(nonce,addr,message,now()+300).run();return json({nonce,message,expiresIn:300})}
+async function route(req,env,ctx){const url=new URL(req.url),path=url.pathname;const origin=req.headers.get('Origin');if(origin&&origin!==(env.APP_ORIGIN||DEFAULT_APP_ORIGIN))return json({error:'Origin not allowed'},403);if(req.method==='OPTIONS')return new Response(null,{status:204});if(path==='/api/health')return json({ok:true,service:'Fly AI API',version:'1.0.0'});
+if(path==='/api/image/test'&&req.method==='POST'){
+ if(env.IMAGE_TEST_ENABLED!=='true')return json({error:'Not found'},404);
+ const session=await requireAuth(req,env);
+ if(!env.AI||typeof env.AI.run!=='function')return json({error:'Image generation is not configured'},503);
+ let body;try{body=await req.json()}catch{return json({error:'Request body must be valid JSON'},400)}
+ const prompt=typeof body?.prompt==='string'?body.prompt.trim():'';
+ if(prompt.length<8||prompt.length>1500)return json({error:'Prompt must contain 8–1500 characters'},400);
+ if(body?.width!==undefined&&body.width!==512||body?.height!==undefined&&body.height!==512)return json({error:'Image test output is fixed at 512×512'},400);
+ const seed=body?.seed;
+ if(seed!==undefined&&(!Number.isInteger(seed)||seed<0||seed>2147483647))return json({error:'Seed must be an integer between 0 and 2147483647'},400);
+ const remaining=await reserveImageTestQuota(session.sub,env);
+ let generated;
+ try{
+  generated=await generateImage({ai:env.AI,prompt,seed});
+ }catch(error){
+  try{await releaseImageTestQuota(session.sub,env)}catch(releaseError){console.error('Image test quota refund failed:',releaseError.message)}
+  console.error('Fly AI image test generation failed:',String(error?.message||error).slice(0,240));
+  return json({error:'Image generation failed. The reserved test quota was released.'},503);
+ }
+ return new Response(generated.bytes,{status:200,headers:{
+  'Content-Type':generated.contentType,
+  'Cache-Control':'no-store',
+  'X-Image-Model':generated.model,
+  'X-Image-Width':'512',
+  'X-Image-Height':'512',
+  'X-Image-Quota-Remaining':String(remaining),
+  ...(generated.seed!==null?{'X-Image-Seed':String(generated.seed)}:{})
+ }});
+}
+if(path==='/api/auth/challenge'&&req.method==='POST'){const {address}=await req.json();if(!ethers.isAddress(address))return json({error:'Invalid wallet address'},400);const addr=ethers.getAddress(address),recent=await env.DB.prepare('SELECT COUNT(*) AS n FROM auth_nonces WHERE address=? AND expires_at>?').bind(ethers.getAddress(address),now()).first();if(Number(recent?.n||0)>=10)return json({error:'Too many login attempts. Please wait a few minutes.'},429);const nonce=crypto.randomUUID(),origin=env.APP_ORIGIN||DEFAULT_APP_ORIGIN,message='Fly AI secure sign-in\n\nDomain: '+origin+'\nWallet: '+addr+'\nNonce: '+nonce+'\nIssued At: '+new Date().toISOString()+'\n\nSigning this message proves wallet ownership. It does not authorize transactions.';await env.DB.prepare('INSERT INTO auth_nonces(nonce,address,message,expires_at) VALUES(?,?,?,?)').bind(nonce,addr,message,now()+300).run();return json({nonce,message,expiresIn:300})}
 if(path==='/api/auth/verify'&&req.method==='POST'){if(!env.JWT_SECRET)return json({error:'JWT_SECRET is not configured'},503);const {address,nonce,signature}=await req.json();if(!ethers.isAddress(address)||typeof nonce!=='string'||typeof signature!=='string')return json({error:'Invalid verification payload'},400);const addr=ethers.getAddress(address),row=await env.DB.prepare('SELECT * FROM auth_nonces WHERE nonce=? AND address=? AND used=0 AND expires_at>?').bind(nonce,addr,now()).first();if(!row)return json({error:'Challenge expired or already used'},401);const recovered=ethers.verifyMessage(row.message,signature);if(ethers.getAddress(recovered)!==addr)return json({error:'Signature does not match wallet'},401);const consumed=await env.DB.prepare('UPDATE auth_nonces SET used=1 WHERE nonce=? AND address=? AND used=0 AND expires_at>?').bind(nonce,addr,now()).run();if(Number(consumed.meta?.changes||0)!==1)return json({error:'Challenge expired or already used'},401);const access=await entitlement(addr,env);if(!access.owner)return json({error:'This wallet is not a registered Fly Infinity Network Owner'},403);const token=await signToken({sub:addr,iat:now(),exp:now()+3600},env.JWT_SECRET);return json({token,tier:access.tier,balance:access.balance,expiresIn:3600})}
 if(path==='/api/profile'&&req.method==='GET'){const session=await requireAuth(req,env);const profile=await env.DB.prepare('SELECT country_code,preferred_language,updated_at FROM user_profiles WHERE address=?').bind(session.sub).first();return json({profile:profile||null})}
 if(path==='/api/profile'&&req.method==='PUT'){const session=await requireAuth(req,env);let body;try{body=await req.json()}catch{return json({error:'Request body must be valid JSON'},400)}const country=typeof body?.countryCode==='string'?body.countryCode.toUpperCase():'';const language=typeof body?.language==='string'?body.language.toLowerCase():'';if(!COUNTRY_CODES.has(country))return json({error:'Choose a valid country'},400);if(!['en','fa','ar','tr','ru','zh','es','pt'].includes(language))return json({error:'Choose a supported language'},400);await env.DB.prepare('INSERT INTO user_profiles(address,country_code,preferred_language,updated_at) VALUES(?,?,?,?) ON CONFLICT(address) DO UPDATE SET country_code=excluded.country_code,preferred_language=excluded.preferred_language,updated_at=excluded.updated_at').bind(session.sub,country,language,now()).run();return json({ok:true,profile:{country_code:country,preferred_language:language,updated_at:now()}})}
