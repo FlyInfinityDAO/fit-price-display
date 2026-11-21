@@ -1,4 +1,4 @@
-export const IMAGE_DAILY_LIMITS = Object.freeze({ 1: 5, 2: 10, 3: 20 });
+export const IMAGE_DAILY_LIMITS = Object.freeze({ 1: 2, 2: 4, 3: 8 });
 export const IMAGE_GLOBAL_DAILY_LIMIT = 250;
 
 export async function reserveImageQuota({
