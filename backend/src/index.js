@@ -105,8 +105,9 @@ if(path==='/api/image/test'&&req.method==='POST'){
   generated=await generateImage({ai:env.AI,prompt,seed});
  }catch(error){
   try{await releaseImageTestQuota(env)}catch(releaseError){console.error('Image test quota refund failed:',releaseError.message)}
-  console.error('Fly AI image test generation failed:',String(error?.message||error).slice(0,240));
-  return json({error:'Image generation failed. The reserved test quota was released.'},503);
+  const safeDetail=String(error?.message||error||'Unknown provider error').replace(/[\\r\\n]+/g,' ').slice(0,240);
+  console.error('Fly AI image test generation failed:',safeDetail);
+  return json({error:'Image generation failed; quota reservation released.',detail:safeDetail},503);
  }
  return new Response(generated.bytes,{status:200,headers:{
   'Content-Type':generated.contentType,
