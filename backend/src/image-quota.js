@@ -28,7 +28,7 @@ export async function reserveImageQuota({
     ).bind(day, timestamp, IMAGE_GLOBAL_DAILY_LIMIT).run();
 
     if (Number(globalReservation.meta?.changes || 0) !== 1) {
-      throw new Error('Global daily image capacity reached');
+      throw new Error('Global daily image quota reached');
     }
   } catch (error) {
     try {
