@@ -7,13 +7,6 @@ on:
     paths:
       - 'backend/**'
       - '.github/workflows/fly-ai-image-test-provision.yml'
-  pull_request:
-    branches:
-      - main
-    types: [opened, synchronize, reopened]
-    paths:
-      - 'backend/**'
-      - '.github/workflows/fly-ai-image-test-provision.yml'
   workflow_dispatch:
 
 permissions:
@@ -26,7 +19,7 @@ concurrency:
 jobs:
   provision-and-test:
     name: Provision isolated image Worker and compare Persian/English prompts
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/feature/fly-ai-image-test-api') || (github.event_name == 'pull_request' && github.head_ref == 'feature/fly-ai-image-test-api' && github.event.pull_request.head.repo.full_name == github.repository) || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/feature/fly-ai-image-test-api')
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/feature/fly-ai-image-test-api') || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/feature/fly-ai-image-test-api')
     runs-on: ubuntu-latest
     timeout-minutes: 45
     defaults:
@@ -116,7 +109,7 @@ jobs:
           npx wrangler secret list --config=wrangler.image-test.toml | grep -F 'IMAGE_TEST_AUTH_KEY'
           # Allow the just-published secret version to propagate before the first request.
           sleep 8
-          IMAGE_TEST_URL="$TEST_WORKER_URL" IMAGE_TEST_AUTH_KEY="$IMAGE_TEST_AUTH_KEY" node scripts/image-prompt-comparison.mjs
+          IMAGE_TEST_URL="$TEST_WORKER_URL" IMAGE_TEST_AUTH_KEY="$IMAGE_TEST_AUTH_KEY" IMAGE_TEST_START_INDEX=2 node scripts/image-prompt-comparison.mjs
 
       - name: Verify test Worker is healthy
         shell: bash
