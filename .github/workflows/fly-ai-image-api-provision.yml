@@ -1,11 +1,12 @@
 name: Fly Infinity dedicated Image Studio API
 on:
   push:
-    branches: [feature/fly-ai-image-test-api]
+    branches: [main]
     paths:
       - 'backend/image-api/**'
       - 'backend/src/image-provider.js'
       - 'backend/src/image-quota.js'
+      - 'backend/tests/image-quota.test.js'
       - 'backend/wrangler.image-api.toml'
       - '.github/workflows/fly-ai-image-api-provision.yml'
   workflow_dispatch:
@@ -16,7 +17,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   provision-and-deploy:
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/feature/fly-ai-image-test-api') || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/feature/fly-ai-image-test-api')
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     timeout-minutes: 30
     defaults:
@@ -31,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: feature/fly-ai-image-test-api
+          ref: main
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -59,7 +60,7 @@ jobs:
             created="$(curl --silent --show-error --fail-with-body --request POST \
               --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
               --header "Content-Type: application/json" \
-              --data "{\"name\":\"$IMAGE_D1_NAME\",\"jurisdiction\":\"eu\"}" "$api")"
+              --data "{\\"name\\":\\"$IMAGE_D1_NAME\\",\\"jurisdiction\\":\\"eu\\"}" "$api")"
             echo "$created" | jq -e '.success == true' >/dev/null
             database_id="$(echo "$created" | jq -r '.result.uuid')"
           fi
