@@ -269,40 +269,51 @@ function generateVoiceOver(){
  if(!textValue){toast(t('audioEmpty'));$('audioText').focus();return}
  if(textValue.length>300){toast(t('audioFailed'));return}
  if(audioBusy)return;
- const utterance=new SpeechSynthesisUtterance(textValue);
- utterance.lang=speechLocale();
  const selected=$('audioSpeaker').value;
- if(selected!==''&&audioBrowserVoices[Number(selected)]){
-  utterance.voice=audioBrowserVoices[Number(selected)];
-  utterance.lang=utterance.voice.lang||utterance.lang;
- }else{
-  const prefix=utterance.lang.toLowerCase().split('-')[0];
-  const match=audioBrowserVoices.find(voice=>voice.lang.toLowerCase().startsWith(prefix));
-  if(match)utterance.voice=match;
-  else if(audioBrowserVoices.length){
-   $('audioVoiceStatus').textContent=t('audioNoVoiceForLanguage');return;
-  }
- }
+ const requestedLocale=speechLocale();
  const run=++audioSpeechRun;
- speech.cancel();
- audioBusy=true;
  const button=$('audioGenerateVoiceBtn'),label=button.querySelector('[data-i18n]');
- button.disabled=true;if(label)label.textContent=t('audioGenerating');
+ audioBusy=true;button.disabled=true;if(label)label.textContent=t('audioGenerating');
  $('audioVoiceStatus').textContent=t('audioGenerating');
- utterance.onstart=()=>{
+ let attempt=0;
+ const speakAttempt=(useDefaultVoice)=>{
   if(run!==audioSpeechRun)return;
-  $('audioVoiceResult').classList.remove('hidden');
-  $('audioVoiceStatus').textContent=t('audioVoiceSuccess');
+  const utterance=new SpeechSynthesisUtterance(textValue);
+  utterance.lang=requestedLocale;
+  utterance.rate=1;utterance.pitch=1;utterance.volume=1;
+  const selectedVoice=!useDefaultVoice&&selected!==''?audioBrowserVoices[Number(selected)]:null;
+  if(selectedVoice){utterance.voice=selectedVoice;utterance.lang=selectedVoice.lang||requestedLocale;}
+  else if(!useDefaultVoice){
+   const prefix=requestedLocale.toLowerCase().split('-')[0];
+   const match=audioBrowserVoices.find(voice=>voice.lang.toLowerCase().startsWith(prefix));
+   if(match){utterance.voice=match;utterance.lang=match.lang||requestedLocale;}
+   else if(audioBrowserVoices.length){finishBrowserSpeech(run);$('audioVoiceStatus').textContent=t('audioNoVoiceForLanguage');return;}
+  }
+  utterance.onstart=()=>{
+   if(run!==audioSpeechRun)return;
+   $('audioVoiceResult').classList.remove('hidden');
+   $('audioVoiceStatus').textContent=t('audioVoiceSuccess');
+  };
+  utterance.onend=()=>finishBrowserSpeech(run);
+  utterance.onerror=(event)=>{
+   if(run!==audioSpeechRun)return;
+   if(event.error==='synthesis-failed'&&attempt===0){
+    attempt=1;
+    $('audioVoiceStatus').textContent=t('audioGenerating');
+    speech.cancel();
+    setTimeout(()=>{if(run===audioSpeechRun){speech.resume();speakAttempt(true)}},250);
+    return;
+   }
+   if(event.error!=='canceled'&&event.error!=='interrupted')$('audioVoiceStatus').textContent=t('audioFailed');
+   finishBrowserSpeech(run);
+  };
+  try{speech.speak(utterance)}catch(error){
+   if(attempt===0){attempt=1;setTimeout(()=>{if(run===audioSpeechRun){speech.resume();speakAttempt(true)}},250)}
+   else{$('audioVoiceStatus').textContent=t('audioFailed');finishBrowserSpeech(run)}
+  }
  };
- utterance.onend=()=>finishBrowserSpeech(run);
- utterance.onerror=(event)=>{
-  if(run!==audioSpeechRun)return;
-  if(event.error!=='canceled'&&event.error!=='interrupted')$('audioVoiceStatus').textContent=t('audioFailed');
-  finishBrowserSpeech(run);
- };
- try{speech.speak(utterance)}catch(error){
-  $('audioVoiceStatus').textContent=t('audioFailed');finishBrowserSpeech(run);
- }
+ speech.cancel();
+ setTimeout(()=>{if(run===audioSpeechRun){speech.resume();speakAttempt(false)}},120);
 }
 async function generateLocalMusic(){
  try{
