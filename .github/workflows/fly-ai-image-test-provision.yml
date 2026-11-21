@@ -90,6 +90,7 @@ jobs:
           npx wrangler d1 execute "$TEST_D1_NAME" --remote --file=migrations/0001_init.sql --config=wrangler.image-test.toml
           npx wrangler d1 execute "$TEST_D1_NAME" --remote --file=migrations/0004_image_test_usage.sql --config=wrangler.image-test.toml
           npx wrangler d1 execute "$TEST_D1_NAME" --remote --file=migrations/0005_image_generation_usage.sql --config=wrangler.image-test.toml
+          npx wrangler d1 execute "$TEST_D1_NAME" --remote --file=migrations/0006_image_preview_usage.sql --config=wrangler.image-test.toml
 
       - name: Deploy the isolated Workers AI test Worker
         shell: bash
@@ -108,6 +109,10 @@ jobs:
           echo "::add-mask::$IMAGE_TEST_AUTH_KEY"
           printf '%s' "$IMAGE_TEST_AUTH_KEY" | npx wrangler secret put IMAGE_TEST_AUTH_KEY --config=wrangler.image-test.toml
           npx wrangler secret list --config=wrangler.image-test.toml | grep -F 'IMAGE_TEST_AUTH_KEY'
+          IMAGE_PREVIEW_SALT="$(openssl rand -hex 32)"
+          echo "::add-mask::$IMAGE_PREVIEW_SALT"
+          printf '%s' "$IMAGE_PREVIEW_SALT" | npx wrangler secret put IMAGE_PREVIEW_SALT --config=wrangler.image-test.toml
+          npx wrangler secret list --config=wrangler.image-test.toml | grep -F 'IMAGE_PREVIEW_SALT'
           # Allow the just-published secret version to propagate before the first request.
           sleep 8
           IMAGE_TEST_URL="$TEST_WORKER_URL" IMAGE_TEST_AUTH_KEY="$IMAGE_TEST_AUTH_KEY" IMAGE_TEST_START_INDEX=10 node scripts/image-prompt-comparison.mjs
