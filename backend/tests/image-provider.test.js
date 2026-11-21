@@ -13,12 +13,10 @@ test('calls FLUX.2 Klein 4B with documented multipart input and a supplied seed'
     ai: {
       async run(model, input) {
         call = { model, input };
-        const request = new Request('https://test.invalid', {
-          method: 'POST',
-          body: input.multipart.body,
+        const response = new Response(input.multipart.body, {
           headers: { 'Content-Type': input.multipart.contentType }
         });
-        const form = await request.formData();
+        const form = await response.formData();
         assert.equal(form.get('prompt'), 'A gold and turquoise abstract technology image');
         assert.equal(form.get('width'), '512');
         assert.equal(form.get('height'), '512');
@@ -43,12 +41,10 @@ test('omits an invalid seed instead of forwarding it to the model', async () => 
   await generateImage({
     ai: {
       async run(model, input) {
-        const request = new Request('https://test.invalid', {
-          method: 'POST',
-          body: input.multipart.body,
+        const response = new Response(input.multipart.body, {
           headers: { 'Content-Type': input.multipart.contentType }
         });
-        formData = await request.formData();
+        formData = await response.formData();
         return { image: PNG_BASE64 };
       }
     },
