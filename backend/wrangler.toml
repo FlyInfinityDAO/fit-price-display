@@ -16,13 +16,9 @@ MIN_TIER2_FIT = "1"
 MIN_TIER3_FIT = "10"
 MAX_INPUT_CHARS = "6000"
 MAX_OUTPUT_TOKENS = "16384"
-IMAGE_TEST_ENABLED = "false"
 AI_PROVIDER = "openai-compatible"
 AI_BASE_URL = "https://api.z.ai/api/paas/v4"
 AI_MODEL = "glm-4.7-flash"
 
 [triggers]
 crons = ["0 3 * * *"]
-
-[ai]
-binding = "AI"
