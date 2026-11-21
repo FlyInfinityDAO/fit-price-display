@@ -84,7 +84,7 @@ test('global daily cap rejects a request and rolls back the wallet reservation',
 
   await assert.rejects(
     reserveImageQuota({ db, address: '0xdef', tier: 3, day: '2026-11-21', timestamp: 2 }),
-    /Global daily image capacity reached/
+    /Global daily image quota reached/
   );
 
   assert.equal(db.users.get('0xdef|2026-11-21'), 0);
