@@ -1,12 +1,6 @@
--- Dedicated quota for isolated Fly AI image-generation tests.
--- This table is intentionally separate from the existing chat usage table.
+-- One account-wide test quota protects the shared Workers AI free allocation.
 CREATE TABLE IF NOT EXISTS image_test_usage (
-  address TEXT NOT NULL,
-  day TEXT NOT NULL,
+  day TEXT PRIMARY KEY,
   generations INTEGER NOT NULL DEFAULT 0 CHECK (generations >= 0),
-  updated_at INTEGER NOT NULL,
-  PRIMARY KEY (address, day)
+  updated_at INTEGER NOT NULL
 );
-
-CREATE INDEX IF NOT EXISTS idx_image_test_usage_day
-  ON image_test_usage(day);
