@@ -1,5 +1,6 @@
 import { generateReply } from './ai-provider.js';
 import { generateImage } from './image-provider.js';
+import { reserveImageQuota, releaseImageQuota } from './image-quota.js';
 import { ethers } from 'ethers';
 const ABI_NET=['function Owner_Exists(address owner) view returns (bool)'];
 const ABI_FIT=['function balanceOf(address account) view returns (uint256)'];
@@ -87,6 +88,37 @@ async function extractUserMemories(address,conversationId,env){
 }
 
 async function route(req,env,ctx){const url=new URL(req.url),path=url.pathname;const origin=req.headers.get('Origin');if(origin&&origin!==(env.APP_ORIGIN||DEFAULT_APP_ORIGIN))return json({error:'Origin not allowed'},403);if(req.method==='OPTIONS')return new Response(null,{status:204});if(path==='/api/health')return json({ok:true,service:'Fly AI API',version:'1.0.0'});
+if(path==='/api/image/generate'&&req.method==='POST'){
+ if(env.IMAGE_GENERATION_ENABLED!=='true')return json({error:'Not found'},404);
+ const session=await requireAuth(req,env);
+ if(!env.AI||typeof env.AI.run!=='function')return json({error:'Image generation is not configured'},503);
+ let body;try{body=await req.json()}catch{return json({error:'Request body must be valid JSON'},400)}
+ const prompt=typeof body?.prompt==='string'?body.prompt.trim():'';
+ if(prompt.length<8||prompt.length>1500)return json({error:'Prompt must contain 8–1500 characters'},400);
+ if(body?.width!==undefined&&body.width!==512||body?.height!==undefined&&body.height!==512)return json({error:'Initial image output is fixed at 512×512'},400);
+ const seed=body?.seed;
+ if(seed!==undefined&&(!Number.isInteger(seed)||seed<0||seed>2147483647))return json({error:'Seed must be an integer between 0 and 2147483647'},400);
+ const quota=await reserveImageQuota({db:env.DB,address:ethers.getAddress(session.sub),tier:session.tier});
+ let generated;
+ try{
+  generated=await generateImage({ai:env.AI,prompt,seed});
+ }catch(error){
+  try{await releaseImageQuota({db:env.DB,address:ethers.getAddress(session.sub),day:quota.day})}catch(releaseError){console.error('Image quota refund failed:',releaseError?.message||releaseError)}
+  const safeDetail=String(error?.message||error||'Unknown image provider error').replace(/[\\r\\n]+/g,' ').slice(0,240);
+  console.error('Fly AI image generation failed:',safeDetail);
+  return json({error:'Image generation failed; reserved image quota was released.',detail:safeDetail},503);
+ }
+ return new Response(generated.bytes,{status:200,headers:{
+  'Content-Type':generated.contentType,
+  'Cache-Control':'no-store',
+  'X-Image-Model':generated.model,
+  'X-Image-Width':'512',
+  'X-Image-Height':'512',
+  'X-Image-Quota-Remaining':String(quota.userRemaining),
+  'X-Image-Global-Quota-Remaining':String(quota.globalRemaining),
+  ...(generated.seed!==null?{'X-Image-Seed':String(generated.seed)}:{})
+ }});
+}
 if(path==='/api/image/test'&&req.method==='POST'){
  if(env.IMAGE_TEST_ENABLED!=='true')return json({error:'Not found'},404);
  const suppliedKey=req.headers.get('X-Fly-Image-Test-Key')||'';
