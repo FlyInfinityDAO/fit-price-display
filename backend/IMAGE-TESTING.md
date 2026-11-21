@@ -67,7 +67,7 @@ A second, user-facing preview path is available for visual and live image-genera
 - The page uses the shared Image Studio UI and eight-language translations, but switches to a clearly labeled sandbox mode. It does not enable the normal chat interface or call the wallet challenge/signature flow.
 - The preview route does not accept production JWTs and does not call `requireAuth`. It is separate from `POST /api/image/generate` and from the private `/api/image/test` automation route.
 - Client IP addresses are combined with an ephemeral Worker secret and SHA-256 hashed before any quota record is stored. Raw IP addresses are not written to D1.
-- Preview limits: 4 successful or attempted reservations per client IP per UTC day and 25 per day globally across the isolated preview Worker. A failed model call releases the reserved quota.
+- Preview limits: up to 4 in-flight or successful image generations per client IP per UTC day and 25 per day globally across the isolated preview Worker. A failed model call releases its reservation and does not consume the daily allowance.
 - The test Worker enables `IMAGE_PREVIEW_ENABLED=true`; `IMAGE_GENERATION_ENABLED=false` remains in place. The production `fly-ai-api` Worker, `fly-ai-db`, production config, and wallet/JWT route are not modified or enabled.
 
 The preview can be opened from the feature branch at:
