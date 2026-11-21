@@ -23,6 +23,7 @@ jobs:
         run: |
           node --check src/index.js
           node --check src/image-provider.js
+          node --check src/image-quota.js
       - name: Run image provider tests
         working-directory: backend
         run: npm test
