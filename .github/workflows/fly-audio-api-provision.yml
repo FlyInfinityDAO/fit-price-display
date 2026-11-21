@@ -1,0 +1,86 @@
+name: Fly Infinity dedicated Audio Studio API
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/audio-api/**'
+      - 'backend/src/audio-quota.js'
+      - 'backend/tests/audio-quota.test.js'
+      - 'backend/wrangler.audio-api.toml'
+      - '.github/workflows/fly-audio-api-provision.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: fly-infinity-audio-api
+  cancel-in-progress: false
+jobs:
+  provision-and-deploy:
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      AUDIO_D1_NAME: fly-infinity-audio-db
+      AUDIO_WORKER_URL: https://fly-infinity-audio-api.flyinfinityplatform.workers.dev
+      APP_ORIGIN: https://flyinfinitydao.github.io
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package.json
+      - name: Validate worker and run full backend tests
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Missing CLOUDFLARE_API_TOKEN secret."; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Missing CLOUDFLARE_ACCOUNT_ID variable."; exit 1; }
+          node --check audio-api/src/index.js
+          node --check audio-api/src/auth.js
+          node --check src/audio-quota.js
+          npm install --no-audit --no-fund
+          npm test
+      - name: Create or reuse dedicated EU audio D1 database
+        run: |
+          set -euo pipefail
+          api="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/d1/database"
+          listed="$(curl --silent --show-error --fail-with-body --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$api?name=$AUDIO_D1_NAME&per_page=100")"
+          echo "$listed" | jq -e '.success == true' >/dev/null
+          database_id="$(echo "$listed" | jq -r --arg name "$AUDIO_D1_NAME" '.result[]? | select(.name == $name) | .uuid' | head -n 1)"
+          if [ -z "$database_id" ]; then
+            created="$(curl --silent --show-error --fail-with-body --request POST \
+              --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              --header "Content-Type: application/json" \
+              --data "{\\"name\\":\\"$AUDIO_D1_NAME\\",\\"jurisdiction\\":\\"eu\\"}" "$api")"
+            echo "$created" | jq -e '.success == true' >/dev/null
+            database_id="$(echo "$created" | jq -r '.result.uuid')"
+          fi
+          [[ "$database_id" =~ ^[0-9a-fA-F-]{36}$ ]]
+          sed -i "s/REPLACE_WITH_FLY_INFINITY_AUDIO_D1_ID/$database_id/" wrangler.audio-api.toml
+          echo "Dedicated Audio Studio D1: $database_id" >> "$GITHUB_STEP_SUMMARY"
+      - name: Apply schema only to dedicated audio D1
+        run: |
+          set -euo pipefail
+          test "$(grep -c 'database_name = "fly-infinity-audio-db"' wrangler.audio-api.toml)" -eq 1
+          test "$(grep -c 'database_name = "fly-ai-db"' wrangler.audio-api.toml || true)" -eq 0
+          test "$(grep -c 'database_name = "fly-ai-image-db"' wrangler.audio-api.toml || true)" -eq 0
+          test "$(grep -c 'database_name = "fly-infinity-audio-test-db"' wrangler.audio-api.toml || true)" -eq 0
+          npx wrangler d1 execute "$AUDIO_D1_NAME" --remote --file=audio-api/migrations/0001_init.sql --config=wrangler.audio-api.toml
+      - name: Deploy dedicated Audio Studio Worker
+        run: npx wrangler deploy --config=wrangler.audio-api.toml
+      - name: Verify health, wallet challenge and authentication boundary
+        run: |
+          set -euo pipefail
+          curl --silent --show-error --fail --retry 12 --retry-delay 5 "$AUDIO_WORKER_URL/api/health"
+          challenge="$(curl --silent --show-error --fail --header "Origin: $APP_ORIGIN" --header "Content-Type: application/json" --data '{"address":"0x0000000000000000000000000000000000000001"}' "$AUDIO_WORKER_URL/api/auth/challenge")"
+          echo "$challenge" | jq -e '.nonce and .message and .expiresIn == 300' >/dev/null
+          status="$(curl --silent --show-error --output /tmp/audio-auth.json --write-out '%{http_code}' --request POST --header "Origin: $APP_ORIGIN" --header "Content-Type: application/json" --data '{"text":"This request must be rejected without a wallet session."}' "$AUDIO_WORKER_URL/api/audio/tts")"
+          test "$status" = "401"
+          echo "Worker health, CORS, challenge and 401 authentication boundary checks passed." >> "$GITHUB_STEP_SUMMARY"
