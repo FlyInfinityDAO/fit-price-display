@@ -82,14 +82,25 @@ for (let i = 0; i < cases.length && !failed; i++) {
       status: 'pending'
     };
     try {
-      const response = await fetch(baseUrl + '/api/image/test', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Fly-Image-Test-Key': authKey
-        },
-        body: JSON.stringify({ prompt, seed })
-      });
+      let response;
+      let responseText = '';
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        response = await fetch(baseUrl + '/api/image/test', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Fly-Image-Test-Key': authKey
+          },
+          body: JSON.stringify({ prompt, seed })
+        });
+        if (response.ok) break;
+        responseText = (await response.text()).slice(0, 1000);
+        if (![429, 502, 503, 504].includes(response.status) || attempt === 3) break;
+        const delayMs = attempt * 5000;
+        console.log('Temporary image API error ' + response.status + ' for ' + item.id + ' [' + language + ']; retrying in ' + delayMs + ' ms');
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+      }
+
       record.httpStatus = response.status;
       record.model = response.headers.get('X-Image-Model');
       record.width = Number(response.headers.get('X-Image-Width') || 0);
@@ -99,7 +110,7 @@ for (let i = 0; i < cases.length && !failed; i++) {
 
       if (!response.ok) {
         record.status = 'failed';
-        record.error = (await response.text()).slice(0, 1000);
+        record.error = responseText || (await response.text()).slice(0, 1000);
         manifest.results.push(record);
         failed = true;
         break;
