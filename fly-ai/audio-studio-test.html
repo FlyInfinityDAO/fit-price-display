@@ -11,7 +11,7 @@
 <body>
 <main class="studio-shell">
 <header class="studio-header"><span class="studio-mark">♫</span><div><small>FLY INFINITY · ISOLATED QA LAB</small><h1>Audio Studio Test Lab</h1><p>Complete browser-only verification — wallet connection and signatures are not used.</p></div></header>
-<div class="notice"><strong>No-wallet test environment</strong><span>This isolated page does not load the Fly AI app, wallet bridge, authentication, token checks, or production API. All music and sound effects are rendered locally. Natural AI voice uses the optional Google Gemini free tier; device voices remain available as a fallback.</span></div>
+<div class="notice"><strong>No-wallet test environment</strong><span>This isolated page does not load the Fly AI app, wallet bridge, authentication, token checks, or production API. All music and sound effects are rendered locally. Natural صدای هوش مصنوعی uses the optional Google Gemini free tier; device voices remain available as a fallback.</span></div>
 <section class="qa-panel" aria-labelledby="qaTitle">
 <div class="qa-heading"><div><h2 id="qaTitle">End-to-end test suite</h2><p class="muted">Runs every music style, all six effects, WAV integrity checks, and available browser voices for all eight Fly AI languages.</p></div><button id="runAllTests" type="button">Run all tests</button></div>
 <div class="qa-stats"><span id="qaProgress">Not started</span><span id="qaPassed">0 passed</span><span id="qaFailed">0 failed</span><span id="qaSkipped">0 skipped</span></div>
@@ -24,12 +24,12 @@
 <label for="voiceLanguage">Language</label><select id="voiceLanguage"><option value="en-US">English</option><option value="fa-IR" selected>فارسی</option><option value="ar-SA">العربية</option><option value="tr-TR">Türkçe</option><option value="ru-RU">Русский</option><option value="zh-CN">中文</option><option value="es-ES">Español</option><option value="pt-PT">Português</option></select>
 <label for="voiceText">Text to speak</label><textarea id="voiceText" maxlength="1200">سلام، به استودیوی صدای فلای اینفینیتی خوش آمدید. این یک نمونه آزمایشی تولید گفتار است.</textarea>
 <div class="controls"><div><label for="voiceRate">Speech rate</label><input id="voiceRate" type="number" min="0.78" max="1.12" step="0.02" value="0.92"></div><div><label for="voicePitch">Pitch</label><input id="voicePitch" type="number" min="0.82" max="1.08" step="0.02" value="0.94"></div></div>
-<label for="geminiApiKey">Gemini API key · natural AI voice (free tier)</label>
-<input id="geminiApiKey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Paste a Google AI Studio API key for this test only">
-<p class="muted">The key is kept only in this page’s memory, is not saved to storage, and is sent directly to Google. Do not use sensitive text. Google’s free tier has rate limits and may use submitted content to improve its products. <a href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener noreferrer">Create a free API key ↗</a></p>
-<div class="controls"><div><label for="geminiVoiceName">AI voice</label><select id="geminiVoiceName"><option value="Kore">Kore · warm clear voice</option><option value="Aoede">Aoede · expressive voice</option><option value="Leda">Leda · gentle voice</option><option value="Puck">Puck · male voice</option><option value="Charon">Charon · deep voice</option><option value="Zephyr">Zephyr · bright voice</option></select></div></div>
-<button id="geminiSpeakButton" type="button">Generate natural AI voice</button>
-<button type="submit">Speak with device voice</button><button id="stopVoice" type="button">Stop voice</button>
+<label for="geminiApiKey">کلید API جمینای · صدای طبیعی هوش مصنوعی (سهمیه رایگان)</label>
+<input id="geminiApiKey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="کلید API گوگل AI Studio را فقط برای این آزمایش وارد کنید">
+<p class="muted">کلید فقط تا زمانی که این صفحه باز است در حافظه می‌ماند و ذخیره نمی‌شود؛ درخواست مستقیماً به گوگل ارسال می‌شود. متن خصوصی یا حساس وارد نکنید. سهمیه رایگان محدودیت نرخ دارد و ممکن است گوگل از محتوای ارسالی برای بهبود محصولاتش استفاده کند. <a href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener noreferrer">دریافت کلید رایگان API ↗</a></p>
+<div class="controls"><div><label for="geminiVoiceName">AI voice</label><select id="geminiVoiceName"><option value="Kore">Kore · صدای گرم و شفاف</option><option value="Aoede">Aoede · صدای رسا</option><option value="Leda">Leda · صدای ملایم</option><option value="Puck">Puck · صدای مردانه</option><option value="Charon">Charon · صدای بم</option><option value="Zephyr">Zephyr · صدای روشن</option></select></div></div>
+<button id="geminiSpeakButton" type="button">تولید گفتار طبیعی با هوش مصنوعی</button>
+<button type="submit">استفاده از صدای خود دستگاه</button><button id="stopVoice" type="button">توقف صدا</button>
 <a id="openChromeLink" class="muted" href="intent://raw.githack.com/FlyInfinityDAO/fit-price-display/audio-studio-natural-voice-test/fly-ai/audio-studio-test.html#Intent;scheme=https;package=com.android.chrome;end" hidden>Open this test in Google Chrome (Android)</a>
 </form><p id="voiceAvailability" class="muted" aria-live="polite"></p>
 </section>
