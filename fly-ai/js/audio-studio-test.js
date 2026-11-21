@@ -64,7 +64,6 @@ async function generateGeminiSpeech({apiKey,text,locale,voiceName='Kore'}){
  if(!spoken)throw new Error('Enter text to speak first.');
  if(spoken.length>1200)throw new Error('Keep this test text under 1,200 characters.');
  const language=({'en-US':'English','fa-IR':'Iranian Persian','ar-SA':'Arabic','tr-TR':'Turkish','ru-RU':'Russian','zh-CN':'Chinese','es-ES':'Spanish','pt-PT':'Portuguese'})[locale]||locale;
- const instruction='Read the following text verbatim in '+language+'. Use a natural, warm, calm studio-narration voice, clear pronunciation, moderate pace, soft dynamics and no exaggerated pitch or theatrical effects. Do not translate, summarize, or add words. Text:';
  const response=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash-tts:generateContent',{
   method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},
   body:JSON.stringify({contents:[{parts:[{text:spoken,speechMetadata:{style:'Warm, calm, natural studio narration. Soft dynamics, moderate pace, clear pronunciation, neutral and friendly delivery.'}}]}],
@@ -118,6 +117,7 @@ async function runAll(){
  for(const effect of EFFECTS){progress('Rendering effect: '+effect);try{const blob=await window.FlyAudioComposer.generateEffect(effect);const buf=await assertWav(blob);const decoded=await decodeWav(buf);log('Effect · '+effect,'pass',blob.size+' bytes WAV'+(decoded.duration?' · '+decoded.duration.toFixed(1)+'s':''));}catch(e){log('Effect · '+effect,'fail',e.message)}}
  progress('Checking browser voice languages…');
  if(!('speechSynthesis'in window)||!('SpeechSynthesisUtterance'in window)){log('Device speech engine','skip','This browser/WebView does not expose SpeechSynthesis; use Gemini Natural Voice below.')}else{const voices=await waitForVoices();log('Device speech engine','pass',voices.length+' installed voice(s)');for(const [name,locale] of LANGS){const prefix=locale.split('-')[0].toLowerCase();const voice=voices.find(v=>v.lang.toLowerCase()===locale.toLowerCase())||voices.find(v=>v.lang.toLowerCase().startsWith(prefix+'-'));if(!voice){log('Voice · '+name,'skip','No installed '+locale+' voice; device/browser limitation');continue}try{progress('Speaking sample: '+name);const result=await speak(locale,'Fly Infinity audio test.');if(result.unavailable)log('Voice · '+name,'skip','Voice became unavailable during test');else log('Voice · '+name,'pass',result.voice+' · '+result.lang+' · playback ended');}catch(e){log('Voice · '+name,e.environmental?'skip':'fail',e.message)}}}
+ try{const sample=pcmToWav(new Uint8Array(2048),24000,1);await assertWav(sample);log('PCM-to-WAV packaging','pass','24 kHz mono PCM wrapped in a valid WAV header')}catch(e){log('PCM-to-WAV packaging','fail',e.message)}
  if($('geminiApiKey').value.trim()){
   progress('Testing one Persian natural-voice request (free-tier quota applies)…');
   try{
