@@ -30,15 +30,15 @@
 <button type="button" class="audio-tool-tab" data-audio-tool="effects" data-i18n="audioModeEffects">Sound Effects</button>
 </div>
 <section id="audioVoiceTool" class="audio-tool-panel">
-<div class="audio-tool-heading"><h3 data-i18n="audioVoiceTitle">AI voice-over</h3><p data-i18n="audioVoiceHint">The free Cloudflare voice model currently speaks English only.</p></div>
+<div class="audio-tool-heading"><h3 data-i18n="audioVoiceTitle">Browser voice-over</h3><p data-i18n="audioVoiceHint">Uses your browser/device speech voices. Available languages depend on installed voices.</p></div>
 <form id="audioVoiceForm" class="audio-form">
 <label for="audioText" data-i18n="audioTextLabel">Text for narration</label>
-<textarea id="audioText" rows="4" maxlength="300" data-i18n-placeholder="audioTextPlaceholder" placeholder="Write up to 300 English characters to turn into speech…"></textarea>
-<div class="audio-field-row"><label for="audioSpeaker" data-i18n="audioSpeakerLabel">Voice</label><select id="audioSpeaker"><option value="luna">Luna</option><option value="athena">Athena</option><option value="orion">Orion</option><option value="hera">Hera</option><option value="orpheus">Orpheus</option><option value="stella">Stella</option></select></div>
-<div class="audio-form-footer"><small data-i18n="audioQuotaHint">Daily voice generations: Tier 1 · 2, Tier 2 · 4, Tier 3 · 8.</small><button id="audioGenerateVoiceBtn" type="submit" class="audio-primary-btn"><span aria-hidden="true">◖</span> <span data-i18n="audioGenerateVoice">Generate voice</span></button></div>
+<textarea id="audioText" rows="4" maxlength="300" data-i18n-placeholder="audioTextPlaceholder" placeholder="Write up to 300 characters in the selected language…"></textarea>
+<div class="audio-field-row"><label for="audioSpeaker" data-i18n="audioSpeakerLabel">Voice</label><select id="audioSpeaker"><option value="" data-i18n="audioVoiceAuto">System default</option></select></div>
+<div class="audio-form-footer"><small data-i18n="audioQuotaHint">Runs locally with no API credits or daily cloud quota. Voice availability depends on your device.</small><button id="audioGenerateVoiceBtn" type="submit" class="audio-primary-btn"><span aria-hidden="true">◖</span> <span data-i18n="audioGenerateVoice">Speak text</span></button></div>
 </form>
 <div id="audioVoiceStatus" class="audio-status" role="status" aria-live="polite"></div>
-<div id="audioVoiceResult" class="audio-result hidden"><strong data-i18n="audioVoiceResult">Generated voice-over</strong><audio id="audioVoicePlayer" controls preload="none"></audio><a id="audioVoiceDownload" class="audio-download-link" download="fly-infinity-voice-over.mp3" data-i18n="audioDownload">Download audio</a></div>
+<div id="audioVoiceResult" class="audio-result hidden"><strong data-i18n="audioVoiceResult">Voice playback</strong><button id="audioStopVoiceBtn" class="audio-download-link" type="button" data-i18n="audioStopVoice">Stop speaking</button></div>
 </section>
 <section id="audioMusicTool" class="audio-tool-panel hidden">
 <div class="audio-tool-heading"><h3 data-i18n="audioMusicTitle">Original instrumental composer</h3><p data-i18n="audioMusicHint">Build a new short instrumental track in your browser.</p></div>
@@ -50,7 +50,7 @@
 <div><label for="audioMusicTempo" data-i18n="audioTempo">Tempo (BPM)</label><input id="audioMusicTempo" type="number" min="65" max="150" value="96"></div>
 <div><label for="audioMusicDuration" data-i18n="audioDuration">Length</label><select id="audioMusicDuration"><option value="15" data-i18n="audioDuration15">15 seconds</option><option value="30" selected data-i18n="audioDuration30">30 seconds</option><option value="45" data-i18n="audioDuration45">45 seconds</option></select></div>
 </div>
-<p class="audio-disclosure" data-i18n="audioMusicNote">This free composer creates original algorithmic music in the browser; it is not a generative AI music model.</p>
+<p class="audio-disclosure" data-i18n="audioMusicNote">This free composer creates original algorithmic music in the browser; it is not a generative AI music model.</p>\n<a class="audio-download-link audio-external-link" href="https://acemusic.ai/ace-step/" target="_blank" rel="noopener noreferrer" data-i18n="audioAceLink">Open ACE-Step 1.5 XL on ACE Music ↗</a>\n<p class="audio-disclosure" data-i18n="audioAceNote">External service: sign in to ACE Music, then select ACE-Step v1.5 XL. This model has no generation-credit charge; other models may use credits and have different usage rights.</p>
 <button id="audioGenerateMusicBtn" type="submit" class="audio-primary-btn"><span aria-hidden="true">♫</span> <span data-i18n="audioGenerateMusic">Compose music</span></button>
 </form>
 </section>

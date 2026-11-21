@@ -24,6 +24,12 @@ jobs:
           node --check src/index.js
           node --check src/image-provider.js
           node --check src/image-quota.js
+          node --check audio-api/src/index.js
+          node --check audio-api/src/auth.js
+      - name: Check Fly AI and Audio Studio frontend syntax
+        run: |
+          node --check fly-ai/js/app.js
+          node --check fly-ai/js/audio-studio.js
       - name: Run image provider tests
         working-directory: backend
         run: npm test

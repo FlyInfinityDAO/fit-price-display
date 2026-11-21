@@ -1,11 +1,9 @@
 import { ethers } from 'ethers';
-import { reserveAudioQuota, releaseAudioQuota } from '../../src/audio-quota.js';
 import { buildChallengeMessage, verifyWalletSignature, createOpaqueSessionToken, hashSessionToken } from './auth.js';
 
 const ABI_NETWORK = ['function Owner_Exists(address owner) view returns (bool)'];
 const ABI_FIT = ['function balanceOf(address account) view returns (uint256)'];
 const DEFAULT_APP_ORIGIN = 'https://flyinfinitydao.github.io';
-const MODEL = '@cf/deepgram/aura-1';
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200, headers = {}) => new Response(JSON.stringify(data), {
   status, headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...headers }
@@ -98,85 +96,12 @@ async function requireSession(req, env) {
   return { address, tier: access.tier };
 }
 
-async function generateSpeech(req, env) {
-  const session = await requireSession(req, env);
-  if (session.error) return json({ error: session.error }, session.status);
-  if (!env.AI || typeof env.AI.run !== 'function') return json({ error: 'Workers AI binding is not configured' }, 503);
-  const body = await readJson(req);
-  const text = typeof body?.text === 'string' ? body.text.trim() : '';
-  if (!text || text.length > 300) return json({ error: 'Voice-over text must contain 1–300 characters' }, 400);
-  if (body?.language && body.language !== 'en') return json({ error: 'The free voice model currently supports English speech only' }, 400);
-  const speakers = new Set(['angus','asteria','arcas','orion','orpheus','athena','luna','zeus','perseus','helios','hera','stella']);
-  const speaker = typeof body?.speaker === 'string' && speakers.has(body.speaker) ? body.speaker : 'luna';
-  await env.DB.prepare("DELETE FROM audio_speech_usage WHERE day<date(?, '-90 days')").bind(new Date().toISOString().slice(0, 10)).run();
-  await env.DB.prepare("DELETE FROM audio_speech_global_usage WHERE day<date(?, '-90 days')").bind(new Date().toISOString().slice(0, 10)).run();
-
-  const quota = await reserveAudioQuota({ db: env.DB, address: session.address, tier: session.tier, characters: text.length });
-  try {
-    const result = await env.AI.run(MODEL, { text, speaker, encoding: 'mp3' }, { returnRawResponse: true });
-    let response;
-    if (result instanceof Response) response = result;
-    else if (result && typeof result.getReader === 'function') response = new Response(result, { headers: { 'Content-Type': 'audio/mpeg' } });
-    else if (result instanceof Uint8Array || result instanceof ArrayBuffer) response = new Response(result, { headers: { 'Content-Type': 'audio/mpeg' } });
-    else throw new Error('Unexpected audio model response');
-    if (!response.ok) throw new Error('Audio model request failed');
-    const bytes = await response.arrayBuffer();
-    if (!bytes.byteLength) throw new Error('The audio model returned an empty file');
-    return new Response(bytes, {
-      status: 200,
-      headers: {
-        'Content-Type': 'audio/mpeg',
-        'Content-Length': String(bytes.byteLength),
-        'Cache-Control': 'no-store',
-        'X-Audio-Model': MODEL,
-        'X-Audio-Quota-Remaining': String(quota.userRemaining),
-        'X-Audio-Characters-Remaining': String(quota.charactersRemaining)
-      }
-    });
-  } catch (error) {
-    try { await releaseAudioQuota({ db: env.DB, address: session.address, day: quota.day, characters: text.length }); }
-    catch (refundError) { console.error('Audio quota refund failed:', refundError?.message || refundError); }
-    console.error('Audio TTS failed:', error?.message || error);
-    return json({ error: 'Voice generation failed; reserved quota was released.' }, 503);
-  }
+async function generateSpeech() {
+  return json({ error: 'Cloud speech generation is disabled. Use browser-native speech in Fly Infinity Audio Studio.' }, 410);
 }
 
-
-async function generatePreviewSpeech(req, env) {
-  if (env.APP_ORIGIN !== 'https://raw.githack.com' || env.AUDIO_PREVIEW_ENABLED === 'false') return json({ error: 'Audio preview is disabled outside the isolated test Worker' }, 404);
-  const origin = req.headers.get('Origin');
-  const allowedOrigin = env.APP_ORIGIN || DEFAULT_APP_ORIGIN;
-  if (!origin || origin !== allowedOrigin) return json({ error: 'Preview origin not allowed' }, 403);
-  if (!env.AI || typeof env.AI.run !== 'function') return json({ error: 'Workers AI binding is not configured' }, 503);
-
-  const body = await readJson(req);
-  const text = typeof body?.text === 'string' ? body.text.trim() : '';
-  if (!text || text.length > 160) return json({ error: 'Preview text must contain 1–160 characters' }, 400);
-  const today = new Date().toISOString().slice(0, 10);
-  const reserved = await env.DB.prepare(
-    'INSERT INTO audio_preview_usage(day,requests,characters,updated_at) VALUES(?,1,?,?) ' +
-    'ON CONFLICT(day) DO UPDATE SET requests=requests+1,characters=characters+excluded.characters,updated_at=excluded.updated_at WHERE requests < 3 AND characters + excluded.characters <= 480'
-  ).bind(today, text.length, now()).run();
-  if (Number(reserved.meta?.changes || 0) !== 1) return json({ error: 'The no-wallet audio preview limit has been reached for today' }, 429);
-
-  try {
-    const speakers = new Set(['angus','asteria','arcas','orion','orpheus','athena','luna','zeus','perseus','helios','hera','stella']);
-    const speaker = typeof body?.speaker === 'string' && speakers.has(body.speaker) ? body.speaker : 'luna';
-    const response = await env.AI.run(MODEL, { text, speaker, encoding: 'mp3' }, { returnRawResponse: true });
-    if (!(response instanceof Response) || !response.ok) throw new Error('Unexpected audio model response');
-    const bytes = await response.arrayBuffer();
-    if (!bytes.byteLength) throw new Error('The audio model returned an empty file');
-    return new Response(bytes, {
-      status: 200,
-      headers: { 'Content-Type': response.headers.get('Content-Type') || 'audio/mpeg', 'Cache-Control': 'no-store', 'X-Audio-Model': MODEL }
-    });
-  } catch (error) {
-    await env.DB.prepare(
-      'UPDATE audio_preview_usage SET requests=CASE WHEN requests>0 THEN requests-1 ELSE 0 END,characters=CASE WHEN characters>=? THEN characters-? ELSE 0 END,updated_at=? WHERE day=?'
-    ).bind(text.length, text.length, now(), today).run();
-    console.error('Audio preview failed:', error?.message || error);
-    return json({ error: 'Audio preview generation failed; the test quota was released.' }, 503);
-  }
+async function generatePreviewSpeech() {
+  return json({ error: 'Cloud speech preview is disabled to keep Audio Studio fully free.' }, 410);
 }
 
 async function route(req, env) {
