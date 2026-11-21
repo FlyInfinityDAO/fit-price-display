@@ -935,3 +935,7 @@ body.light .image-result-foot{color:#65717c}
 body.light .assistant-card.image-studio-card{background:linear-gradient(125deg,#fff0e7,#fff3d9);border-color:#d99b55}
 body.light .assistant-card.image-studio-card b{color:#543521}body.light .assistant-card.image-studio-card small{color:#77563f}body.light .assistant-card.image-studio-card>span{color:#a9652f}
 @media(max-width:620px){.assistant-card.image-studio-card{grid-column:1/-1;min-height:94px}.assistant-card.image-studio-card b{font-size:11px}.assistant-card.image-studio-card small{font-size:9px}}
+
+/* Clear vertical rhythm between the specialist grid and lower access-level cards. */
+#assistantHub{margin-bottom:26px}
+.tiers{padding-top:24px}
