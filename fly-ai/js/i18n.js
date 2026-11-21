@@ -149,6 +149,63 @@ Object.assign(D.pt,{
  imageTextNote:"O texto dentro das imagens pode sair incorreto. Adicione textos precisos em uma etapa de design separada."
 });
 
+Object.assign(D.en,{
+ imageTestModeBanner:"SANDBOX · NO WALLET CONNECTION OR SIGNATURE. Images are generated only through the isolated test service.",
+ imageTestReady:"Test workspace ready. No wallet or signature is required.",
+ imageTestIdentity:"Test session",
+ imageTestTag:"Sandbox · no wallet",
+ imageTestQuotaHint:"Test limits: up to 4 images per client IP per UTC day; 25 images shared by all testers per day."
+});
+Object.assign(D.fa,{
+ imageTestModeBanner:"محیط آزمایشی · بدون اتصال یا امضای کیف پول. تولید تصویر فقط از سرویس تست جداگانه انجام می‌شود.",
+ imageTestReady:"محیط آزمایشی آماده است؛ اتصال یا امضای کیف پول لازم نیست.",
+ imageTestIdentity:"نشست آزمایشی",
+ imageTestTag:"آزمایشی · بدون کیف پول",
+ imageTestQuotaHint:"محدودیت تست: حداکثر ۴ تصویر برای هر IP در روز UTC و ۲۵ تصویر برای تمام کاربران آزمایشی در روز."
+});
+Object.assign(D.ar,{
+ imageTestModeBanner:"بيئة اختبار · دون ربط المحفظة أو التوقيع. تُنشأ الصور عبر خدمة اختبار منفصلة فقط.",
+ imageTestReady:"مساحة الاختبار جاهزة. لا حاجة إلى محفظة أو توقيع.",
+ imageTestIdentity:"جلسة اختبار",
+ imageTestTag:"اختبار · دون محفظة",
+ imageTestQuotaHint:"حدود الاختبار: 4 صور لكل عنوان IP يومياً بتوقيت UTC، و25 صورة مشتركة يومياً لجميع المختبرين."
+});
+Object.assign(D.tr,{
+ imageTestModeBanner:"TEST ORTAMI · CÜZDAN BAĞLANTISI VEYA İMZA GEREKMEZ. Görseller yalnızca ayrı test hizmetinde oluşturulur.",
+ imageTestReady:"Test alanı hazır. Cüzdan veya imza gerekmez.",
+ imageTestIdentity:"Test oturumu",
+ imageTestTag:"Test · cüzdansız",
+ imageTestQuotaHint:"Test sınırları: IP başına UTC gününde en fazla 4 görsel; tüm test kullanıcıları için günlük toplam 25 görsel."
+});
+Object.assign(D.ru,{
+ imageTestModeBanner:"ТЕСТОВАЯ СРЕДА · ПОДКЛЮЧЕНИЕ КОШЕЛЬКА И ПОДПИСЬ НЕ НУЖНЫ. Изображения создаются только отдельным тестовым сервисом.",
+ imageTestReady:"Тестовая среда готова. Кошелёк и подпись не требуются.",
+ imageTestIdentity:"Тестовый сеанс",
+ imageTestTag:"Тест · без кошелька",
+ imageTestQuotaHint:"Лимиты теста: до 4 изображений на IP за сутки UTC; общий лимит для всех тестировщиков — 25 в сутки."
+});
+Object.assign(D.zh,{
+ imageTestModeBanner:"测试环境 · 无需连接钱包或签名。图像仅通过独立测试服务生成。",
+ imageTestReady:"测试工作区已就绪，无需钱包或签名。",
+ imageTestIdentity:"测试会话",
+ imageTestTag:"沙盒 · 无钱包",
+ imageTestQuotaHint:"测试限额：每个 IP 每个 UTC 日最多 4 张；所有测试用户每日共享上限为 25 张。"
+});
+Object.assign(D.es,{
+ imageTestModeBanner:"ENTORNO DE PRUEBA · SIN CONECTAR NI FIRMAR CON LA CARTERA. Las imágenes se generan solo mediante el servicio de prueba aislado.",
+ imageTestReady:"El espacio de prueba está listo. No se requiere cartera ni firma.",
+ imageTestIdentity:"Sesión de prueba",
+ imageTestTag:"Prueba · sin cartera",
+ imageTestQuotaHint:"Límites: hasta 4 imágenes por IP y día UTC; 25 imágenes diarias compartidas entre todos los participantes."
+});
+Object.assign(D.pt,{
+ imageTestModeBanner:"AMBIENTE DE TESTE · SEM CONEXÃO OU ASSINATURA DE CARTEIRA. As imagens são geradas apenas pelo serviço de teste isolado.",
+ imageTestReady:"O espaço de teste está pronto. Não é necessária carteira nem assinatura.",
+ imageTestIdentity:"Sessão de teste",
+ imageTestTag:"Sandbox · sem carteira",
+ imageTestQuotaHint:"Limites: até 4 imagens por IP por dia UTC; 25 imagens diárias compartilhadas por todos os testadores."
+});
+
 let lang='en';function apply(l){lang=D[l]?l:'en';const rtl=['fa','ar'].includes(lang);document.documentElement.lang=lang;document.documentElement.dir=rtl?'rtl':'ltr';if(document.body)document.body.classList.toggle('fi-rtl',rtl);document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(D[lang][k])el.textContent=D[lang][k]});document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{const k=el.dataset.i18nPlaceholder;if(D[lang][k])el.placeholder=D[lang][k]});localStorage.setItem('fit_lang',lang);document.dispatchEvent(new Event('fly-ai-language-updated'))}window.FlyI18n={t:k=>D[lang][k]||D.en[k]||k,apply};const languageOptions=[['en','🇬🇧','English'],['fa','🇮🇷','فارسی'],['ar','🇮🇶','العربية'],['tr','🇹🇷','Türkçe'],['ru','🇷🇺','Русский'],['zh','🇨🇳','中文'],['es','🇪🇸','Español'],['pt','🇵🇹','Português']];
 document.addEventListener('DOMContentLoaded',()=>{
  const button=document.getElementById('languageButton'),menu=document.getElementById('languageMenu');
