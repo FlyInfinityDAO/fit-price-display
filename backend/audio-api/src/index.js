@@ -88,7 +88,7 @@ async function verifyChallenge(req, env) {
 }
 
 async function requireSession(req, env) {
-  const token = (req.headers.get('Authorization') || '').replace(/^Bearer\\s+/i, '').trim();
+  const token = (req.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '').trim();
   if (!token || token.length > 256) return { error: 'Audio Studio wallet session is required', status: 401 };
   const tokenHash = await hashSessionToken(token);
   const row = await env.DB.prepare('SELECT address,expires_at FROM audio_sessions WHERE token_hash=? AND expires_at>?').bind(tokenHash, now()).first();
