@@ -106,16 +106,17 @@ jobs:
           test "$(grep -c 'REPLACE_WITH_FLY_AI_IMAGE_TEST_D1_ID' wrangler.image-test.toml)" -eq 0
           npx wrangler deploy --config=wrangler.image-test.toml
 
-      - name: Set the temporary image-test-only authentication secret
+      - name: Set image-test key and run the Persian/English image comparison
         shell: bash
         run: |
           set -euo pipefail
           IMAGE_TEST_AUTH_KEY="$(openssl rand -hex 32)"
           echo "::add-mask::$IMAGE_TEST_AUTH_KEY"
           printf '%s' "$IMAGE_TEST_AUTH_KEY" | npx wrangler secret put IMAGE_TEST_AUTH_KEY --config=wrangler.image-test.toml
-          echo "IMAGE_TEST_AUTH_KEY=$IMAGE_TEST_AUTH_KEY" >> "$GITHUB_ENV"
-          echo "IMAGE_TEST_URL=$TEST_WORKER_URL" >> "$GITHUB_ENV"
           npx wrangler secret list --config=wrangler.image-test.toml | grep -F 'IMAGE_TEST_AUTH_KEY'
+          # Allow the just-published secret version to propagate before the first request.
+          sleep 8
+          IMAGE_TEST_URL="$TEST_WORKER_URL" IMAGE_TEST_AUTH_KEY="$IMAGE_TEST_AUTH_KEY" node scripts/image-prompt-comparison.mjs
 
       - name: Verify test Worker is healthy
         shell: bash
@@ -123,9 +124,6 @@ jobs:
           set -euo pipefail
           curl --silent --show-error --fail --retry 12 --retry-delay 5 \
             "$TEST_WORKER_URL/api/health"
-
-      - name: Generate 20 images for Persian and English prompt comparison
-        run: node scripts/image-prompt-comparison.mjs
 
       - name: Upload generated images and comparison manifest
         if: always()
