@@ -10,32 +10,85 @@ function progress(s){$('qaProgress').textContent=s}
 function setLocal(blob,name){if(localUrl)URL.revokeObjectURL(localUrl);localUrl=URL.createObjectURL(blob);$('localPlayer').src=localUrl;$('localDownload').href=localUrl;$('localDownload').download=name;$('localResult').classList.remove('hidden');$('localStatus').textContent='Audio ready.'}
 function assertWav(blob){if(!(blob instanceof Blob)||blob.type!=='audio/wav'||blob.size<48)throw new Error('Missing/invalid WAV Blob');return blob.arrayBuffer().then(buf=>{const v=new DataView(buf);const sig=[0,1,2,3,8,9,10,11].map(i=>String.fromCharCode(v.getUint8(i))).join('');if(sig!=='RIFFWAVE')throw new Error('RIFF/WAVE header missing');if(v.getUint32(4,true)!==buf.byteLength-8)throw new Error('RIFF size mismatch');if(v.getUint32(40,true)!==buf.byteLength-44)throw new Error('WAV data length mismatch');return buf;})}
 function decodeWav(buf){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return Promise.resolve({skipped:true});const ctx=new AC();return ctx.decodeAudioData(buf.slice(0)).then(audio=>{const info={duration:audio.duration,channels:audio.numberOfChannels,sampleRate:audio.sampleRate};ctx.close();if(!info.duration||!info.channels)throw new Error('Decoded audio is empty');return info},e=>{ctx.close();throw e})}
-function speak(locale,text){return new Promise((resolve,reject)=>{
- if(!('speechSynthesis'in window)||!('SpeechSynthesisUtterance'in window))return reject(new Error('Speech Synthesis API unavailable'));
- const voices=speechSynthesis.getVoices(),prefix=locale.split('-')[0].toLowerCase();
- const voice=voices.find(v=>v.lang.toLowerCase()===locale.toLowerCase())||voices.find(v=>v.lang.toLowerCase().startsWith(prefix+'-'));
- if(!voice)return resolve({unavailable:true,voiceCount:voices.length});
- let attempt=0,done=false,timer=null;
- const finish=(error,result)=>{if(done)return;done=true;if(timer)clearTimeout(timer);error?reject(error):resolve(result)};
- const start=useDefault=>{
-  if(done)return;
-  const utter=new SpeechSynthesisUtterance(text);utter.lang=locale;utter.rate=1;utter.pitch=1;utter.volume=1;
-  if(!useDefault){utter.voice=voice;utter.lang=voice.lang||locale}
-  utter.onend=()=>finish(null,{voice:useDefault?'System default':voice.name,lang:useDefault?locale:voice.lang,fallback:useDefault});
-  utter.onerror=e=>{
-   if((e.error==='synthesis-failed'||e.error==='audio-busy')&&attempt===0){
-    attempt=1;speechSynthesis.cancel();setTimeout(()=>{speechSynthesis.resume();start(true)},250);return;
-   }
-   if(e.error==='synthesis-failed'||e.error==='audio-busy')return finish(Object.assign(new Error('Browser speech engine unavailable after default-voice retry: '+e.error),{environmental:true}));
-   if(e.error==='canceled'||e.error==='interrupted')return finish(Object.assign(new Error('Speech interrupted: '+e.error),{environmental:true}));
-   finish(new Error('Speech playback error: '+e.error));
+function waitForVoices(timeout=1800){
+ return new Promise(resolve=>{
+  if(!('speechSynthesis'in window)){resolve([]);return}
+  const synth=window.speechSynthesis;
+  const existing=synth.getVoices();if(existing.length){resolve(existing);return}
+  let settled=false,timer;
+  const done=()=>{if(settled)return;settled=true;if(synth.removeEventListener)synth.removeEventListener('voiceschanged',check);clearTimeout(timer);resolve(synth.getVoices())};
+  const check=()=>{if(synth.getVoices().length)done()};
+  if(synth.addEventListener)synth.addEventListener('voiceschanged',check);
+  timer=setTimeout(done,timeout);
+ });
+}
+function speak(locale,text,rate=0.92,pitch=0.94){
+ return new Promise(async(resolve,reject)=>{
+  if(!('speechSynthesis'in window)||!('SpeechSynthesisUtterance'in window))return reject(Object.assign(new Error('This in-app Android WebView does not expose SpeechSynthesis. Use the natural AI voice below or open this page in Chrome.'),{environmental:true,unsupported:true}));
+  const voices=await waitForVoices(),prefix=locale.split('-')[0].toLowerCase();
+  const voice=voices.find(v=>v.lang.toLowerCase()===locale.toLowerCase())||voices.find(v=>v.lang.toLowerCase().startsWith(prefix+'-'));
+  if(!voice)return resolve({unavailable:true,voiceCount:voices.length});
+  let attempt=0,done=false,timer=null;
+  const finish=(error,result)=>{if(done)return;done=true;if(timer)clearTimeout(timer);error?reject(error):resolve(result)};
+  const start=useDefault=>{
+   if(done)return;
+   const utter=new SpeechSynthesisUtterance(text);utter.lang=voice.lang||locale;
+   utter.rate=Math.max(0.78,Math.min(1.12,Number(rate)||0.92));
+   utter.pitch=Math.max(0.82,Math.min(1.08,Number(pitch)||0.94));utter.volume=0.82;
+   if(!useDefault)utter.voice=voice;
+   utter.onend=()=>finish(null,{voice:useDefault?'System default':voice.name,lang:useDefault?locale:voice.lang,fallback:useDefault});
+   utter.onerror=e=>{
+    if((e.error==='synthesis-failed'||e.error==='audio-busy')&&attempt===0){
+     attempt=1;speechSynthesis.cancel();setTimeout(()=>{speechSynthesis.resume();start(true)},350);return;
+    }
+    finish(Object.assign(new Error('Browser speech playback failed: '+e.error),{environmental:true}));
+   };
+   try{speechSynthesis.speak(utter)}catch(e){if(attempt===0){attempt=1;setTimeout(()=>start(true),350)}else finish(e)}
   };
-  try{speechSynthesis.speak(utter)}catch(e){if(attempt===0){attempt=1;setTimeout(()=>start(true),250)}else finish(Object.assign(new Error('Browser speech engine unavailable: '+e.message),{environmental:true}))}
- };
- speechSynthesis.cancel();speechSynthesis.resume();
- timer=setTimeout(()=>{speechSynthesis.cancel();finish(Object.assign(new Error('Speech playback timed out'),{environmental:true}))},15000);
- setTimeout(()=>{speechSynthesis.resume();start(false)},120);
- });}
+  speechSynthesis.cancel();speechSynthesis.resume();
+  timer=setTimeout(()=>{speechSynthesis.cancel();finish(Object.assign(new Error('Speech playback timed out'),{environmental:true}))},18000);
+  setTimeout(()=>{speechSynthesis.resume();start(false)},180);
+ });
+}
+function pcmToWav(bytes,sampleRate=24000,channels=1){
+ const header=new ArrayBuffer(44),view=new DataView(header),write=(offset,value)=>{for(let i=0;i<value.length;i++)view.setUint8(offset+i,value.charCodeAt(i))};
+ write(0,'RIFF');view.setUint32(4,36+bytes.byteLength,true);write(8,'WAVE');write(12,'fmt ');
+ view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,channels,true);
+ view.setUint32(24,sampleRate,true);view.setUint32(28,sampleRate*channels*2,true);
+ view.setUint16(32,channels*2,true);view.setUint16(34,16,true);write(36,'data');view.setUint32(40,bytes.byteLength,true);
+ return new Blob([header,bytes],{type:'audio/wav'});
+}
+async function generateGeminiSpeech({apiKey,text,locale,voiceName='Kore'}){
+ const key=String(apiKey||'').trim(),spoken=String(text||'').trim();
+ if(!key)throw new Error('Paste a Google AI Studio API key first. The key is not saved.');
+ if(!spoken)throw new Error('Enter text to speak first.');
+ if(spoken.length>1200)throw new Error('Keep this test text under 1,200 characters.');
+ const language=({'en-US':'English','fa-IR':'Iranian Persian','ar-SA':'Arabic','tr-TR':'Turkish','ru-RU':'Russian','zh-CN':'Chinese','es-ES':'Spanish','pt-PT':'Portuguese'})[locale]||locale;
+ const instruction='Read the following text verbatim in '+language+'. Use a natural, warm, calm studio-narration voice, clear pronunciation, moderate pace, soft dynamics and no exaggerated pitch or theatrical effects. Do not translate, summarize, or add words. Text:';
+ const response=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash-tts:generateContent',{
+  method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},
+  body:JSON.stringify({contents:[{parts:[{text:instruction+'\n\n'+spoken}]}],
+   generationConfig:{responseModalities:['AUDIO'],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName}},languageCode:locale}}})
+ });
+ const data=await response.json().catch(()=>({}));
+ if(!response.ok){
+  const detail=data.error?.message||('HTTP '+response.status);
+  if(response.status===400||response.status===403)throw new Error('Google rejected the API key or request: '+detail);
+  if(response.status===404)throw new Error('Gemini TTS model is not available to this API key yet: '+detail);
+  if(response.status===429)throw new Error('Google free-tier rate limit reached. Wait before trying again. '+detail);
+  throw new Error('Gemini TTS request failed: '+detail);
+ }
+ const parts=data.candidates?.[0]?.content?.parts||[];
+ const audioPart=parts.find(part=>part.inlineData?.data);
+ if(!audioPart)throw new Error('Google returned no audio data. Try again with a shorter text.');
+ const mime=audioPart.inlineData.mimeType||'audio/L16;codec=pcm;rate=24000';
+ const raw=Uint8Array.from(atob(audioPart.inlineData.data),c=>c.charCodeAt(0));
+ const isWav=String.fromCharCode(...raw.slice(0,4))==='RIFF';
+ const rateMatch=mime.match(/rate=(\d+)/i),sampleRate=rateMatch?Number(rateMatch[1]):24000;
+ const wav=isWav?new Blob([raw],{type:'audio/wav'}):pcmToWav(raw,sampleRate,1);
+ if(wav.size<1000)throw new Error('The generated audio file is unexpectedly small.');
+ return wav;
+}
 document.querySelectorAll('[data-tool]').forEach(button=>button.addEventListener('click',()=>{const tool=button.dataset.tool;document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('active',b===button));['voice','music','effects'].forEach(n=>$(''+n+'Tool').classList.toggle('hidden',n!==tool));}));
 $('musicForm').addEventListener('submit',async e=>{e.preventDefault();try{const blob=await window.FlyAudioComposer.generateMusic({prompt:$('musicPrompt').value,style:$('musicStyle').value,tempo:$('musicTempo').value,duration:$('musicDuration').value});setLocal(blob,'fly-infinity-music-'+$('musicStyle').value+'.wav')}catch(error){$('localStatus').textContent=error.message}});
 $('effectForm').addEventListener('submit',async e=>{e.preventDefault();try{const blob=await window.FlyAudioComposer.generateEffect($('effectType').value);setLocal(blob,'fly-infinity-'+$('effectType').value+'.wav')}catch(error){$('localStatus').textContent=error.message}});
