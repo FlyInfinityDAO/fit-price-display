@@ -7,6 +7,13 @@ on:
     paths:
       - 'backend/**'
       - '.github/workflows/fly-ai-image-test-provision.yml'
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/fly-ai-image-test-provision.yml'
   workflow_dispatch:
 
 permissions:
@@ -19,7 +26,7 @@ concurrency:
 jobs:
   provision-and-test:
     name: Provision isolated image Worker and compare Persian/English prompts
-    if: github.ref == 'refs/heads/feature/fly-ai-image-test-api'
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/feature/fly-ai-image-test-api') || (github.event_name == 'pull_request' && github.head_ref == 'feature/fly-ai-image-test-api' && github.event.pull_request.head.repo.full_name == github.repository) || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/feature/fly-ai-image-test-api')
     runs-on: ubuntu-latest
     timeout-minutes: 45
     defaults:
