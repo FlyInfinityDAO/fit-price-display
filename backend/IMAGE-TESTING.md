@@ -75,3 +75,22 @@ The preview can be opened from the feature branch at:
 `https://raw.githack.com/FlyInfinityDAO/fit-price-display/feature/fly-ai-image-test-api/fly-ai/image-studio-test.html`
 
 To disable public no-wallet preview after testing, set `IMAGE_PREVIEW_ENABLED=false` on the isolated Worker (do not change the production Worker). The endpoint is a deliberately capped sandbox, not the production authentication policy.
+
+
+## Dedicated production Image Studio service
+
+Production image generation uses independent Cloudflare resources:
+
+- Worker: `fly-ai-image-api`
+- EU D1 database: `fly-ai-image-db`
+- Workers AI model: `@cf/black-forest-labs/flux-2-klein-4b`
+- API: `https://fly-ai-image-api.flyinfinityplatform.workers.dev`
+
+The Worker owns its wallet challenge/session and image-quota tables. It verifies a separate free wallet signature, checks the current `Owner_Exists` status and FIT balance on BNB Smart Chain, and applies image quotas (Tier 1: 5/day, Tier 2: 10/day, Tier 3: 20/day; shared ceiling: 250/day). Session IDs are short-lived, random, and stored only as SHA-256 hashes. The wallet signature does not authorize a transaction or token transfer.
+
+The three D1 stores are independent:
+- `fly-ai-db`: current Fly AI chat, profiles, memory and conversations.
+- `fly-ai-image-db`: production Image Studio sessions and quotas.
+- `fly-ai-image-test-db`: no-wallet sandbox tests and quota.
+
+The dedicated provisioning workflow creates/reuses only `fly-ai-image-db`, applies `backend/image-api/migrations/0001_init.sql` there, and deploys only `fly-ai-image-api`. Do not apply the legacy image quota migration to `fly-ai-db`. The no-wallet sandbox remains on its own Worker and D1.

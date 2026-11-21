@@ -1,0 +1,90 @@
+name: Fly Infinity dedicated Image Studio API
+on:
+  push:
+    branches: [feature/fly-ai-image-test-api]
+    paths:
+      - 'backend/image-api/**'
+      - 'backend/src/image-provider.js'
+      - 'backend/src/image-quota.js'
+      - 'backend/wrangler.image-api.toml'
+      - '.github/workflows/fly-ai-image-api-provision.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: fly-ai-image-api-provision
+  cancel-in-progress: false
+jobs:
+  provision-and-deploy:
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/feature/fly-ai-image-test-api') || (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/feature/fly-ai-image-test-api')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      IMAGE_D1_NAME: fly-ai-image-db
+      IMAGE_WORKER_URL: https://fly-ai-image-api.flyinfinityplatform.workers.dev
+      APP_ORIGIN: https://flyinfinitydao.github.io
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/fly-ai-image-test-api
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package.json
+      - name: Validate Cloudflare credentials and image Worker source
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Missing CLOUDFLARE_API_TOKEN secret."; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Missing CLOUDFLARE_ACCOUNT_ID variable."; exit 1; }
+          test "$(grep -c 'name = "fly-ai-image-api"' wrangler.image-api.toml)" -eq 1
+          test "$(grep -c 'database_name = "fly-ai-image-db"' wrangler.image-api.toml)" -eq 1
+          node --check image-api/src/index.js
+          node --check image-api/src/auth.js
+          npm install --no-audit --no-fund
+          npm test
+      - name: Create or reuse independent EU D1 database
+        run: |
+          set -euo pipefail
+          api="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/d1/database"
+          listed="$(curl --silent --show-error --fail-with-body --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$api?name=$IMAGE_D1_NAME&per_page=100")"
+          echo "$listed" | jq -e '.success == true' >/dev/null
+          database_id="$(echo "$listed" | jq -r --arg name "$IMAGE_D1_NAME" '.result[]? | select(.name == $name) | .uuid' | head -n 1)"
+          if [ -z "$database_id" ]; then
+            created="$(curl --silent --show-error --fail-with-body --request POST \
+              --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              --header "Content-Type: application/json" \
+              --data "{\"name\":\"$IMAGE_D1_NAME\",\"jurisdiction\":\"eu\"}" "$api")"
+            echo "$created" | jq -e '.success == true' >/dev/null
+            database_id="$(echo "$created" | jq -r '.result.uuid')"
+          fi
+          [[ "$database_id" =~ ^[0-9a-fA-F-]{36}$ ]] || { echo "::error::Invalid dedicated D1 identifier."; exit 1; }
+          sed -i "s/REPLACE_WITH_FLY_AI_IMAGE_D1_ID/$database_id/" wrangler.image-api.toml
+          echo "Dedicated Image Studio D1 ID: $database_id" >> "$GITHUB_STEP_SUMMARY"
+      - name: Apply schema only to dedicated image D1
+        run: |
+          set -euo pipefail
+          test "$(grep -c 'database_name = "fly-ai-image-db"' wrangler.image-api.toml)" -eq 1
+          test "$(grep -c 'database_name = "fly-ai-db"' wrangler.image-api.toml || true)" -eq 0
+          test "$(grep -c 'database_name = "fly-ai-image-test-db"' wrangler.image-api.toml || true)" -eq 0
+          npx wrangler d1 execute "$IMAGE_D1_NAME" --remote --file=image-api/migrations/0001_init.sql --config=wrangler.image-api.toml
+      - name: Deploy independent Workers AI Image API
+        run: |
+          set -euo pipefail
+          test "$(grep -c 'name = "fly-ai-image-api"' wrangler.image-api.toml)" -eq 1
+          test "$(grep -c 'REPLACE_WITH_FLY_AI_IMAGE_D1_ID' wrangler.image-api.toml || true)" -eq 0
+          npx wrangler deploy --config=wrangler.image-api.toml
+      - name: Verify health, wallet challenge and unauthenticated request rejection
+        run: |
+          set -euo pipefail
+          curl --silent --show-error --fail --retry 12 --retry-delay 5 "$IMAGE_WORKER_URL/api/health"
+          challenge="$(curl --silent --show-error --fail --header "Origin: $APP_ORIGIN" --header "Content-Type: application/json" --data '{"address":"0x0000000000000000000000000000000000000001"}' "$IMAGE_WORKER_URL/api/auth/challenge")"
+          echo "$challenge" | jq -e '.nonce and .message and .expiresIn == 300' >/dev/null
+          status="$(curl --silent --show-error --output /tmp/image-auth.json --write-out '%{http_code}' --request POST --header "Origin: $APP_ORIGIN" --header "Content-Type: application/json" --data '{"prompt":"A secure test prompt for the dedicated image service"}' "$IMAGE_WORKER_URL/api/image/generate")"
+          test "$status" = "401"
+          echo "Worker health, CORS origin, challenge and 401 authentication boundary checks passed." >> "$GITHUB_STEP_SUMMARY"
