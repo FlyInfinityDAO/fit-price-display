@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { reserveImageQuota, releaseImageQuota } from '../src/image-quota.js';
+import { IMAGE_DAILY_LIMITS, reserveImageQuota, releaseImageQuota } from '../src/image-quota.js';
 
 class FakeD1 {
   constructor() {
@@ -64,19 +64,25 @@ class FakeD1 {
   }
 }
 
-test('tier 1 image quota is separate and allows five images per UTC day', async () => {
-  const db = new FakeD1();
-  const options = { db, address: '0xabc', tier: 1, day: '2026-11-21', timestamp: 1 };
-
-  for (let i = 0; i < 5; i++) {
-    const quota = await reserveImageQuota(options);
-    assert.equal(quota.userRemaining, 4 - i);
-  }
-
-  await assert.rejects(reserveImageQuota(options), /Daily image generation quota reached/);
-  assert.equal(db.users.get('0xabc|2026-11-21'), 5);
-  assert.equal(db.global.get('2026-11-21'), 5);
+test('configured daily image limits are 2, 4 and 8 for tiers 1, 2 and 3', () => {
+  assert.deepEqual(IMAGE_DAILY_LIMITS, { 1: 2, 2: 4, 3: 8 });
 });
+
+for (const [tier, limit] of Object.entries(IMAGE_DAILY_LIMITS)) {
+  test(`tier ${tier} image quota allows exactly ${limit} images per UTC day`, async () => {
+    const db = new FakeD1();
+    const options = { db, address: '0xabc', tier: Number(tier), day: '2026-11-21', timestamp: 1 };
+
+    for (let i = 0; i < limit; i++) {
+      const quota = await reserveImageQuota(options);
+      assert.equal(quota.userRemaining, limit - i - 1);
+    }
+
+    await assert.rejects(reserveImageQuota(options), /Daily image generation quota reached/);
+    assert.equal(db.users.get('0xabc|2026-11-21'), limit);
+    assert.equal(db.global.get('2026-11-21'), limit);
+  });
+}
 
 test('global daily cap rejects a request and rolls back the wallet reservation', async () => {
   const db = new FakeD1();
