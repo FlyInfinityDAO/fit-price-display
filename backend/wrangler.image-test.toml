@@ -18,6 +18,7 @@ MIN_TIER2_FIT = "1"
 MIN_TIER3_FIT = "10"
 APP_ORIGIN = "https://flyinfinitydao.github.io"
 IMAGE_TEST_ENABLED = "true"
+IMAGE_GENERATION_ENABLED = "false"
 
 [ai]
 binding = "AI"
