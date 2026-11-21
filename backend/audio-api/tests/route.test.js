@@ -26,6 +26,14 @@ test('the no-wallet preview endpoint is disabled by default', async () => {
   assert.equal(response.status, 404);
 });
 
+
+test('no-wallet preview remains unavailable on the production site origin even when enabled', async () => {
+  const response = await audioWorker.fetch(request('/api/audio/preview'), {
+    APP_ORIGIN: origin, AUDIO_PREVIEW_ENABLED: 'true'
+  });
+  assert.equal(response.status, 404);
+});
+
 test('the preview endpoint rejects any non-allowlisted origin', async () => {
   const response = await audioWorker.fetch(request('/api/audio/preview', { origin: 'https://not-allowed.example' }), {
     APP_ORIGIN: origin, AUDIO_PREVIEW_ENABLED: 'true'
