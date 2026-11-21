@@ -152,6 +152,8 @@ function enableNoWalletImagePreview(){
   banner.textContent=t('imageTestModeBanner');
   heading.before(banner);
  }
+ const quotaHint=document.querySelector('[data-i18n="imageQuotaHint"]');
+ if(quotaHint){quotaHint.dataset.i18n='imageTestQuotaHint';quotaHint.textContent=t('imageTestQuotaHint')}
  if($('imageStatus')){
   $('imageStatus').dataset.i18n='imageTestReady';
   $('imageStatus').textContent=t('imageTestReady');
