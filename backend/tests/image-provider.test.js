@@ -7,12 +7,22 @@ const PNG_BASE64 = Buffer.from([
   0, 0, 0, 0
 ]).toString('base64');
 
-test('calls FLUX.2 Klein 4B with a 512 square output and a supplied seed', async () => {
+test('calls FLUX.2 Klein 4B with documented multipart input and a supplied seed', async () => {
   let call;
   const result = await generateImage({
     ai: {
       async run(model, input) {
         call = { model, input };
+        const request = new Request('https://test.invalid', {
+          method: 'POST',
+          body: input.multipart.body,
+          headers: { 'Content-Type': input.multipart.contentType }
+        });
+        const form = await request.formData();
+        assert.equal(form.get('prompt'), 'A gold and turquoise abstract technology image');
+        assert.equal(form.get('width'), '512');
+        assert.equal(form.get('height'), '512');
+        assert.equal(form.get('seed'), '42');
         return { image: PNG_BASE64 };
       }
     },
@@ -21,30 +31,31 @@ test('calls FLUX.2 Klein 4B with a 512 square output and a supplied seed', async
   });
 
   assert.equal(call.model, IMAGE_MODEL);
-  assert.deepEqual(call.input, {
-    prompt: 'A gold and turquoise abstract technology image',
-    width: 512,
-    height: 512,
-    seed: 42
-  });
+  assert.equal(typeof call.input.multipart.contentType, 'string');
+  assert.match(call.input.multipart.contentType, /^multipart\/form-data; boundary=/);
   assert.equal(result.contentType, 'image/png');
   assert.equal(result.seed, 42);
   assert.deepEqual(Array.from(result.bytes.slice(0, 8)), [137, 80, 78, 71, 13, 10, 26, 10]);
 });
 
 test('omits an invalid seed instead of forwarding it to the model', async () => {
-  let call;
+  let formData;
   await generateImage({
     ai: {
       async run(model, input) {
-        call = { model, input };
+        const request = new Request('https://test.invalid', {
+          method: 'POST',
+          body: input.multipart.body,
+          headers: { 'Content-Type': input.multipart.contentType }
+        });
+        formData = await request.formData();
         return { image: PNG_BASE64 };
       }
     },
     prompt: 'A calm forest at dawn',
     seed: -1
   });
-  assert.equal(Object.hasOwn(call.input, 'seed'), false);
+  assert.equal(formData.has('seed'), false);
 });
 
 test('fails closed when the Workers AI binding is unavailable', async () => {
