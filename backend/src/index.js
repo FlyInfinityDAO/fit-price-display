@@ -23,7 +23,7 @@ async function requireAuth(req,env){if(!env.JWT_SECRET)throw Error('JWT_SECRET i
 const DAILY_LIMITS={1:30,2:60,3:120};
 async function consumeQuota(address,tier,env){const day=new Date().toISOString().slice(0,10),limit=DAILY_LIMITS[Number(tier)]||DAILY_LIMITS[1];const result=await env.DB.prepare('INSERT INTO usage(address,day,requests) VALUES(?,?,1) ON CONFLICT(address,day) DO UPDATE SET requests=requests+1 WHERE requests < ?').bind(address,day,limit).run();if(Number(result.meta?.changes||0)!==1)throw Error('Daily AI quota reached');const usage=await env.DB.prepare('SELECT requests FROM usage WHERE address=? AND day=?').bind(address,day).first();return Math.max(0,limit-Number(usage?.requests||limit))}
 
-const IMAGE_TEST_DAILY_LIMIT=25;
+const IMAGE_TEST_DAILY_LIMIT=50;
 async function reserveImageTestQuota(env){
  const day=new Date().toISOString().slice(0,10);
  const result=await env.DB.prepare('INSERT INTO image_test_usage(day,generations,updated_at) VALUES(?,1,?) ON CONFLICT(day) DO UPDATE SET generations=generations+1,updated_at=excluded.updated_at WHERE generations < ?').bind(day,now(),IMAGE_TEST_DAILY_LIMIT).run();
