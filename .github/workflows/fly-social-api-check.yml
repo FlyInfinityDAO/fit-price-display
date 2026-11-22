@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'backend/social-api/**'
+      - 'creator-arena/social-api.js'
+      - 'creator-arena/index.html'
       - 'backend/package.json'
       - '.github/workflows/fly-social-api-check.yml'
   pull_request:
@@ -38,5 +40,6 @@ jobs:
           node --check social-api/src/index.js
           node --check social-api/src/auth.js
           node --check social-api/src/validation.js
+          node --check ../creator-arena/social-api.js
       - name: Run Social-only unit and route tests
         run: node --test social-api/tests/*.test.js
