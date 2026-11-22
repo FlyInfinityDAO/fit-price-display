@@ -590,8 +590,8 @@ async function deletePost(request, env, postId) {
   ).bind(now(), postId, session.address).run();
   if (post.media_key) {
     await env.DB.prepare(
-      "UPDATE social_media_objects SET state='removed' WHERE media_key=? AND owner_wallet=?"
-    ).bind(post.media_key, session.address).run();
+      "UPDATE social_media_objects SET state='removed',expires_at=? WHERE media_key=? AND owner_wallet=?"
+    ).bind(now(), post.media_key, session.address).run();
     try { await env.MEDIA?.delete(post.media_key); }
     catch (error) { console.error('Social post media deletion failed:', String(error?.message || error).slice(0, 160)); }
   }
@@ -660,7 +660,7 @@ export default {
     ctx.waitUntil((async () => {
       const timestamp = now();
       const stale = await env.DB.prepare(
-        "SELECT media_key FROM social_media_objects WHERE state='staged' AND expires_at<? LIMIT 100"
+        "SELECT media_key FROM social_media_objects WHERE state IN ('staged','removed') AND expires_at<? LIMIT 100"
       ).bind(timestamp).all();
       for (const row of stale.results || []) {
         try { await env.MEDIA?.delete(row.media_key); } catch (error) {
