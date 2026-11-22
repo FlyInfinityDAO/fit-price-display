@@ -179,6 +179,7 @@ html[dir=rtl] .brand-copy{align-items:flex-start}
     <div class="social-wallet-actions" aria-label="Social wallet access">
       <button class="btn btn-glass" type="button" id="connectSocialBrowser" data-social-t="connectBrowser">Connect with browser</button>
       <button class="btn btn-glass" type="button" id="connectSocialWallet" data-social-t="connectWallet">Connect wallet</button>
+      <button class="btn btn-glass" type="button" id="editSocialProfile" data-social-t="editProfile" hidden>Edit profile</button>
       <button class="btn btn-gold" type="button" id="disconnectSocialWallet" data-social-t="disconnect" hidden>Disconnect</button>
       <span id="socialAuthStatus" class="social-api-status" role="status" aria-live="polite"></span>
     </div>
@@ -307,6 +308,17 @@ html[dir=rtl] .brand-copy{align-items:flex-start}
     <div class="field"><label for="postPrompt" data-t="fieldPrompt">Prompt or creation notes</label><textarea id="postPrompt" maxlength="1200" data-ph="promptPlaceholder" placeholder="Add the prompt or notes you would like to share…"></textarea></div>
     <div class="field" id="postMediaField"><label for="postMediaFile" data-social-t="mediaFile">Attach your image or audio file</label><input id="postMediaFile" type="file" accept="image/png,image/jpeg,image/webp"><small id="postMediaStatus" data-social-t="mediaFileHint">PNG, JPEG or WebP images; up to 15 MB. Audio up to 30 MB.</small></div>
     <div class="composer-actions"><a class="btn btn-glass" href="../fly-ai/index.html?studio=media" target="_blank" rel="noopener" data-t="openStudio">Open Image Studio ↗</a><button class="btn btn-glass" type="button" id="cancelComposer" data-t="cancel">Cancel</button><button class="btn btn-gold" type="submit" data-t="publishPreview">Publish preview</button></div>
+  </form>
+</dialog>
+
+<dialog id="socialProfileDialog">
+  <div class="composer-head"><div><h2 data-social-t="profileTitle">Creator profile</h2><p data-social-t="profileSubtitle">Shape how the community sees your work.</p></div><button class="close-btn" type="button" id="closeSocialProfile" aria-label="Close">×</button></div>
+  <form class="composer-form" id="socialProfileForm">
+    <div class="field"><label for="socialProfileHandle" data-social-t="profileHandle">Creator handle</label><input id="socialProfileHandle" maxlength="24" minlength="3" pattern="[A-Za-z0-9_]{3,24}" required autocomplete="username"></div>
+    <div class="field"><label for="socialProfileName" data-social-t="profileDisplayName">Display name</label><input id="socialProfileName" maxlength="50" minlength="2" required></div>
+    <div class="field"><label for="socialProfileBio" data-social-t="profileBio">Short bio</label><textarea id="socialProfileBio" maxlength="180" rows="3"></textarea></div>
+    <div class="field"><label for="socialProfileLanguage" data-social-t="profileLanguage">Preferred language</label><select id="socialProfileLanguage"><option value="en">English</option><option value="fa">فارسی</option><option value="ar">العربية</option><option value="tr">Türkçe</option><option value="ru">Русский</option><option value="zh">中文</option><option value="es">Español</option><option value="pt">Português</option></select></div>
+    <div class="composer-actions"><button class="btn btn-glass" type="button" id="cancelSocialProfile" data-social-t="profileCancel">Cancel</button><button class="btn btn-gold" type="submit" data-social-t="profileSave">Save profile</button></div>
   </form>
 </dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
