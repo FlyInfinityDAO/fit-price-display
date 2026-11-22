@@ -469,6 +469,9 @@ $('downloadImageBtn')?.addEventListener('click',()=>{
  link.download='fly-infinity-image-'+new Date().toISOString().replace(/[:.]/g,'-')+'.'+generatedImageExtension;
  document.body.appendChild(link);link.click();link.remove();
 });
+const initialStudio=new URLSearchParams(window.location.search).get('studio');
+if(initialStudio==='media')setWorkspaceMode('image');
+else if(initialStudio==='audio')setWorkspaceMode('audio');
 renderAssistantSuggestions();
 enableNoWalletImagePreview();
 })();
