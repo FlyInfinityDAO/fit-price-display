@@ -176,7 +176,7 @@ html[dir=rtl] .brand-copy{align-items:flex-start}
     <select class="lang-select" id="languageSelect" aria-label="Select language">
       <option value="en">🇬🇧 English</option><option value="fa">🇮🇷 فارسی</option><option value="ar">🇮🇶 العربية</option><option value="tr">🇹🇷 Türkçe</option><option value="ru">🇷🇺 Русский</option><option value="zh">🇨🇳 中文</option><option value="es">🇪🇸 Español</option><option value="pt">🇵🇹 Português</option>
     </select>
-    <div class="social-wallet-actions" aria-label="Social wallet access">
+    <div class="social-wallet-actions" aria-label="Social wallet access" hidden>
       <button class="btn btn-glass" type="button" id="connectSocialBrowser" data-social-t="connectBrowser">Connect with browser</button>
       <button class="btn btn-glass" type="button" id="connectSocialWallet" data-social-t="connectWallet">Connect wallet</button>
       <button class="btn btn-glass" type="button" id="editSocialProfile" data-social-t="editProfile" hidden>Edit profile</button>
@@ -306,7 +306,7 @@ html[dir=rtl] .brand-copy{align-items:flex-start}
     <div class="field"><label for="postType" data-t="fieldType">Creation type</label><select id="postType"><option value="image" data-t="typeImage">AI Image</option><option value="audio" data-t="typeAudio">Voice / Audio</option><option value="prompt" data-t="typePrompt">Prompt / Template</option></select></div>
     <div class="field"><label for="postDescription" data-t="fieldDescription">Description</label><textarea id="postDescription" maxlength="320" data-ph="descriptionPlaceholder" placeholder="Tell the community what inspired this work…"></textarea></div>
     <div class="field"><label for="postPrompt" data-t="fieldPrompt">Prompt or creation notes</label><textarea id="postPrompt" maxlength="1200" data-ph="promptPlaceholder" placeholder="Add the prompt or notes you would like to share…"></textarea></div>
-    <div class="field" id="postMediaField"><label for="postMediaFile" data-social-t="mediaFile">Attach your image or audio file</label><input id="postMediaFile" type="file" accept="image/png,image/jpeg,image/webp"><small id="postMediaStatus" data-social-t="mediaFileHint">PNG, JPEG or WebP images; up to 15 MB. Audio up to 30 MB.</small></div>
+    <div class="field" id="postMediaField" hidden><label for="postMediaFile" data-social-t="mediaFile">Attach your image or audio file</label><input id="postMediaFile" type="file" accept="image/png,image/jpeg,image/webp"><small id="postMediaStatus" data-social-t="mediaFileHint">PNG, JPEG or WebP images; up to 15 MB. Audio up to 30 MB.</small></div>
     <div class="composer-actions"><a class="btn btn-glass" href="../fly-ai/index.html?studio=media" target="_blank" rel="noopener" data-t="openStudio">Open Image Studio ↗</a><button class="btn btn-glass" type="button" id="cancelComposer" data-t="cancel">Cancel</button><button class="btn btn-gold" type="submit" data-t="publishPreview">Publish preview</button></div>
   </form>
 </dialog>
