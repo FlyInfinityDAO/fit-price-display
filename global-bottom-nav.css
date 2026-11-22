@@ -5,7 +5,7 @@ body.fi-global-nav-enabled {
 }
 .fi-global-bottom-nav {
   position: fixed !important;
-  z-index: 2147483000 !important;
+  z-index: 9990 !important;
   left: 0 !important;
   right: 0 !important;
   bottom: 0 !important;
@@ -13,6 +13,7 @@ body.fi-global-nav-enabled {
   min-height: 76px;
   box-sizing: border-box;
   display: grid !important;
+  direction: ltr !important;
   grid-template-columns: repeat(5, minmax(0, 1fr));
   align-items: end;
   gap: clamp(2px, 1.3vw, 12px);
