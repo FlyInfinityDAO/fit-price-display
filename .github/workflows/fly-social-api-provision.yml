@@ -1,0 +1,138 @@
+name: Fly Infinity Social API — provision and deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/social-api/**'
+      - 'backend/wrangler.social-api.toml'
+      - 'backend/package.json'
+      - '.github/workflows/fly-social-api-provision.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fly-infinity-social-api
+  cancel-in-progress: false
+
+jobs:
+  provision-and-deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      SOCIAL_D1_NAME: fly-infinity-social-db
+      SOCIAL_R2_NAME: fly-infinity-social-media
+      SOCIAL_WORKER_URL: https://fly-infinity-social-api.flyinfinityplatform.workers.dev
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package.json
+
+      - name: Validate isolated Social Worker and tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Missing CLOUDFLARE_API_TOKEN secret."; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Missing CLOUDFLARE_ACCOUNT_ID variable."; exit 1; }
+          node --check social-api/src/index.js
+          node --check social-api/src/auth.js
+          node --check social-api/src/validation.js
+          npm install --no-audit --no-fund
+          node --test social-api/tests/*.test.js
+
+      - name: Create or reuse dedicated EU Social D1 database
+        id: d1
+        shell: bash
+        run: |
+          set -euo pipefail
+          api="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/d1/database"
+          listed="$(curl --silent --show-error --fail-with-body \
+            --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "$api?name=$SOCIAL_D1_NAME&per_page=100")"
+          echo "$listed" | jq -e '.success == true' >/dev/null
+          database_id="$(echo "$listed" | jq -r --arg name "$SOCIAL_D1_NAME" '.result[]? | select(.name == $name) | .uuid' | head -n 1)"
+          if [ -z "$database_id" ]; then
+            created="$(curl --silent --show-error --fail-with-body --request POST \
+              --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              --header "Content-Type: application/json" \
+              --data "{\"name\":\"$SOCIAL_D1_NAME\",\"jurisdiction\":\"eu\"}" "$api")"
+            echo "$created" | jq -e '.success == true' >/dev/null
+            database_id="$(echo "$created" | jq -r '.result.uuid')"
+          fi
+          [[ "$database_id" =~ ^[0-9a-fA-F-]{36}$ ]] || { echo "::error::Could not obtain Social D1 database ID."; exit 1; }
+          sed -i "s/REPLACE_WITH_FLY_INFINITY_SOCIAL_D1_ID/$database_id/" wrangler.social-api.toml
+          echo "Social D1: $database_id" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Create or reuse private EU Social media bucket
+        shell: bash
+        run: |
+          set -euo pipefail
+          api="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/r2/buckets"
+          listed="$(curl --silent --show-error --fail-with-body \
+            --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "$api")"
+          echo "$listed" | jq -e '.success == true' >/dev/null
+          bucket="$(echo "$listed" | jq -r --arg name "$SOCIAL_R2_NAME" '.result.buckets[]? | select(.name == $name) | .name' | head -n 1)"
+          if [ -z "$bucket" ]; then
+            created="$(curl --silent --show-error --fail-with-body --request POST \
+              --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              --header "Content-Type: application/json" \
+              --header "cf-r2-jurisdiction: eu" \
+              --data "{\"name\":\"$SOCIAL_R2_NAME\"}" "$api")"
+            echo "$created" | jq -e '.success == true' >/dev/null
+          fi
+          echo "Private R2 bucket ready: $SOCIAL_R2_NAME (EU jurisdiction)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Apply Social D1 schema
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(grep -c 'database_name = "fly-infinity-social-db"' wrangler.social-api.toml)" -eq 1
+          test "$(grep -c 'database_name = "fly-ai-db"' wrangler.social-api.toml || true)" -eq 0
+          test "$(grep -c 'database_name = "fly-ai-image-db"' wrangler.social-api.toml || true)" -eq 0
+          test "$(grep -c 'database_name = "fly-infinity-audio-db"' wrangler.social-api.toml || true)" -eq 0
+          npx wrangler d1 execute "$SOCIAL_D1_NAME" --remote --file=social-api/migrations/0001_init.sql --config=wrangler.social-api.toml
+
+      - name: Deploy only Fly Infinity Social API
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(grep -c 'name = "fly-infinity-social-api"' wrangler.social-api.toml)" -eq 1
+          test "$(grep -c 'bucket_name = "fly-infinity-social-media"' wrangler.social-api.toml)" -eq 1
+          test "$(grep -c 'REPLACE_WITH_FLY_INFINITY_SOCIAL_D1_ID' wrangler.social-api.toml || true)" -eq 0
+          npx wrangler deploy --config=wrangler.social-api.toml
+
+      - name: Verify Social Worker health, CORS and input validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --silent --show-error --fail --retry 12 --retry-delay 5 "$SOCIAL_WORKER_URL/api/health" | tee /tmp/social-health.json
+          jq -e '.ok == true and .service == "Fly Infinity Social API"' /tmp/social-health.json >/dev/null
+          preflight="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+            --request OPTIONS \
+            --header "Origin: https://flyinfinitydao.github.io" \
+            --header "Access-Control-Request-Method: POST" \
+            --header "Access-Control-Request-Headers: content-type,authorization" \
+            "$SOCIAL_WORKER_URL/api/auth/challenge")"
+          test "$preflight" = "204"
+          invalid="$(curl --silent --show-error --output /tmp/social-invalid.json --write-out '%{http_code}' \
+            --header "Origin: https://flyinfinitydao.github.io" \
+            --header "Content-Type: application/json" \
+            --data '{"address":"not-a-wallet"}' "$SOCIAL_WORKER_URL/api/auth/challenge")"
+          test "$invalid" = "400"
+          jq -e '.error | test("wallet address")' /tmp/social-invalid.json >/dev/null
+          echo "Social API health, strict CORS preflight and invalid-wallet rejection passed." >> "$GITHUB_STEP_SUMMARY"
