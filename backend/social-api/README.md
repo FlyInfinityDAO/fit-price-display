@@ -6,11 +6,12 @@ Independent backend for the Fly Infinity Social / Creator Arena page. It does no
 
 - Worker: `fly-infinity-social-api`
 - D1 database: `fly-infinity-social-db` (EU jurisdiction)
-- R2 bucket: `fly-infinity-social-media` (private, EU jurisdiction)
+- D1 ID: `64b672c3-cce6-418e-a0d2-da8d8ee3df7f`
+- R2 bucket: `fly-infinity-social-media` (private; create after enabling R2)
 - Wrangler config: `backend/wrangler.social-api.toml`
 - Migration: `backend/social-api/migrations/0001_init.sql`
 
-The provisioning workflow creates or reuses only these Social resources. It never changes another product's bindings or databases.
+The Worker and D1 database are already created. The Social D1 migration has been applied and verified: all 12 Social tables and both seed challenges are present. No other Fly Infinity database or Worker was modified. The R2 bucket is not yet created because Cloudflare requires R2 subscription activation first.
 
 ## Account access
 
@@ -68,21 +69,22 @@ The initial backend stores user reports and keeps publication/moderation state o
 
 Creator challenges, voting, profiles, posts, follows and likes are persistent. Creator marketplace, paid sales, on-chain payments, tipping, NFT minting and creator payouts are deliberately out of scope.
 
-## Provision and deploy
+## Deploy
 
-GitHub Actions workflow: `.github/workflows/fly-social-api-provision.yml`.
+GitHub Actions workflow: `.github/workflows/fly-social-api-provision.yml` (manual dispatch only).
 
-The provisioning workflow is currently **manual-dispatch only** while the Cloudflare API token is being granted R2 bucket-creation permission. This prevents automatic retry loops against a known 403. After updating the repository secret, run **Actions → Fly Infinity Social API — provision and deploy → Run workflow**.
+The workflow now only validates, tests and deploys this one Worker. It does not create or modify databases or buckets; those resources are provisioned separately.
 
-The workflow:
-1. Runs Social-only unit tests and syntax checks.
-2. Creates or reuses `fly-infinity-social-db` in EU.
-3. Creates or reuses the private `fly-infinity-social-media` R2 bucket in EU.
-4. Applies only the Social migration to Social D1.
-5. Deploys only `fly-infinity-social-api`.
-6. Verifies Worker health, CORS preflight and invalid-wallet rejection.
+Before deployment:
+1. Enable Cloudflare R2 for the account, using the account owner’s billing approval if Cloudflare requests it.
+2. Create the private bucket named `fly-infinity-social-media` in the EU jurisdiction.
+3. In Cloudflare, open Workers & Pages → `fly-infinity-social-api` → Settings → Builds → API token for external CI/CD → Create token. Use the token generated for this Worker; do not use a Global API Key or the shared token for other Fly Infinity services.
+4. In GitHub, open repository Settings → Secrets and variables → Actions → New repository secret. Save the token as `CLOUDFLARE_SOCIAL_API_TOKEN`.
+5. Keep the existing `CLOUDFLARE_API_TOKEN` unchanged. The existing repository variable `CLOUDFLARE_ACCOUNT_ID` is used by the workflow.
 
-The GitHub Actions secret is `CLOUDFLARE_SOCIAL_API_TOKEN`, dedicated to this Social workflow. Keep the shared `CLOUDFLARE_API_TOKEN` used by other Fly Infinity services unchanged. The Social token needs Workers Admin access to create the new Worker, D1 Edit to provision the Social database, and Workers R2 Storage Write to list/create the private media bucket. Wrangler may also require Account Settings Read plus User Details Read and Memberships Read. Scope the token to this Cloudflare account, keep it only in GitHub Actions Secrets, and never paste it into source code, chat, or workflow logs.
+Then run **Actions → Fly Infinity Social API — deploy → Run workflow** on `main`. The workflow verifies Worker health, strict CORS preflight and invalid-wallet rejection after deployment.
+
+Do not paste tokens into source code, chat or workflow logs.
 
 ## Local validation
 
