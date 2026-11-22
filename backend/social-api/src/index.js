@@ -186,6 +186,14 @@ async function getMe(request, env) {
   return json({ wallet: ethers.getAddress(session.address), profile, expiresAt: session.expiresAt });
 }
 
+async function logout(request, env) {
+  const session = await getSession(request, env, true);
+  if (session?.error) return json({ error: session.error }, session.status);
+  await env.DB.prepare('UPDATE social_sessions SET revoked_at=? WHERE token_hash=? AND revoked_at IS NULL')
+    .bind(now(), session.tokenHash).run();
+  return json({ loggedOut: true });
+}
+
 async function updateProfile(request, env) {
   const session = await getSession(request, env, true);
   if (session?.error) return json({ error: session.error }, session.status);
@@ -408,6 +416,7 @@ async function createPost(request, env) {
 async function likePost(request, env, postId, method) {
   const session = await getSession(request, env, true);
   if (session?.error) return json({ error: session.error }, session.status);
+  if (!await rateLimit(env.DB, 'like:' + session.address, 300, 86400)) return json({ error: 'Daily appreciation limit reached' }, 429);
   const post = await env.DB.prepare(
     "SELECT post_id FROM social_posts WHERE post_id=? AND status='published' AND moderation_state='clear'"
   ).bind(postId).first();
@@ -426,6 +435,7 @@ async function likePost(request, env, postId, method) {
 async function followCreator(request, env, targetAddress, method) {
   const session = await getSession(request, env, true);
   if (session?.error) return json({ error: session.error }, session.status);
+  if (!await rateLimit(env.DB, 'follow:' + session.address, 100, 86400)) return json({ error: 'Daily follow limit reached' }, 429);
   let target;
   try { target = normalizeAddress(targetAddress); }
   catch { return json({ error: 'Invalid creator wallet address' }, 400); }
@@ -589,6 +599,7 @@ async function route(request, env) {
   if (path === '/api/auth/challenge' && request.method === 'POST') return createChallenge(request, env);
   if (path === '/api/auth/verify' && request.method === 'POST') return verifyChallenge(request, env);
   if (path === '/api/me' && request.method === 'GET') return getMe(request, env);
+  if (path === '/api/auth/logout' && request.method === 'POST') return logout(request, env);
   if (path === '/api/profile' && request.method === 'PUT') return updateProfile(request, env);
   if (path === '/api/feed' && request.method === 'GET') return feed(request, env);
   if (path === '/api/prompts' && request.method === 'GET') return feed(request, env, 'prompt');
