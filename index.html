@@ -1663,7 +1663,7 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
 .fi-eco-platforms-heading{text-align:center;max-width:720px;margin:0 auto 18px;padding:0 8px}
 .fi-eco-platforms-heading h3{margin:5px 0 8px;color:#f4f8f6;font-size:clamp(20px,2.5vw,28px);line-height:1.25;text-shadow:0 0 20px rgba(0,200,150,.13)}
 .fi-eco-platforms-heading p{margin:0;color:#aebbb6;font-size:12px;line-height:1.7}
-.fi-eco-platform-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;align-items:stretch}
+.fi-eco-platform-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;align-items:stretch}
 .fi-eco-platform-card{--platform-accent:#62dfc1;--platform-glow:rgba(0,200,150,.12);position:relative;display:flex;min-width:0;min-height:218px;flex-direction:column;gap:12px;padding:17px 16px 15px;overflow:hidden;border:1px solid color-mix(in srgb,var(--platform-accent) 33%,transparent);border-radius:19px;background:radial-gradient(circle at 100% 0,var(--platform-glow),transparent 55%),linear-gradient(145deg,rgba(24,43,40,.74),rgba(12,20,23,.75));box-shadow:inset 0 1px 0 rgba(255,255,255,.11),0 12px 28px rgba(0,0,0,.18);color:#f3f7f5;text-decoration:none;isolation:isolate;transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
 .fi-eco-platform-card:before{content:"";position:absolute;inset:auto -26% -64% 34%;height:135px;border-radius:50%;background:var(--platform-glow);filter:blur(30px);z-index:-1;pointer-events:none}
 .fi-eco-platform-card:hover,.fi-eco-platform-card:focus-visible{transform:translateY(-5px);border-color:var(--platform-accent);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 16px 34px rgba(0,0,0,.23),0 0 22px var(--platform-glow);outline:none}
@@ -1680,6 +1680,7 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
 .platform-games{--platform-accent:#f0cc72;--platform-glow:rgba(212,175,55,.15)}
 .platform-ai{--platform-accent:#9cb6ff;--platform-glow:rgba(105,133,255,.16)}
 .platform-future{--platform-accent:#d0a6ff;--platform-glow:rgba(171,105,255,.16)}
+.platform-social{--platform-accent:#f2a8d8;--platform-glow:rgba(242,168,216,.17)}
 html[dir="rtl"] .fi-eco-platform-card{direction:rtl;text-align:right}
 html[dir="rtl"] .fi-eco-platform-index{text-align:left}
 html[dir="rtl"] .fi-eco-platform-cta i{transform:rotate(180deg)}
@@ -1918,8 +1919,14 @@ html[dir="rtl"] .fi-eco-platform-card:hover .fi-eco-platform-cta i,html[dir="rtl
             <p data-i18n="eco.aiText">The intelligence layer of the ecosystem — specialist assistants, image creation and an audio studio brought together in one place.</p>
             <span class="fi-eco-platform-cta"><span data-i18n="eco.aiCta">Discover Fly AI</span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
           </a>
+          <a class="fi-eco-platform-card platform-social" href="creator-arena/index.html" aria-labelledby="ecoSocialTitle">
+            <span class="fi-eco-platform-top"><span class="fi-eco-platform-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span><span class="fi-eco-platform-index">04 / COMMUNITY</span></span>
+            <h4 id="ecoSocialTitle" data-i18n="eco.socialTitle">Fly Infinity Social</h4>
+            <p data-i18n="eco.socialText">A creative community to publish AI-generated images, voice, music and sound — share prompts, remix ideas with attribution and join community challenges.</p>
+            <span class="fi-eco-platform-cta"><span data-i18n="eco.socialCta">Explore the community</span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
+          </a>
           <a class="fi-eco-platform-card platform-future" href="next-projects.html" aria-labelledby="ecoFutureTitle">
-            <span class="fi-eco-platform-top"><span class="fi-eco-platform-icon"><i class="fa-solid fa-rocket" aria-hidden="true"></i></span><span class="fi-eco-platform-index">04 / WHAT'S NEXT</span></span>
+            <span class="fi-eco-platform-top"><span class="fi-eco-platform-icon"><i class="fa-solid fa-rocket" aria-hidden="true"></i></span><span class="fi-eco-platform-index">05 / WHAT'S NEXT</span></span>
             <h4 id="ecoFutureTitle" data-i18n="eco.futureTitle">The Next Fly Infinity Projects</h4>
             <p data-i18n="eco.futureText">Look beyond the horizon. Explore the ideas, initiatives and new experiences shaping the next chapters of the Fly Infinity vision.</p>
             <span class="fi-eco-platform-cta"><span data-i18n="eco.futureCta">Explore What's Next</span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
@@ -2326,18 +2333,18 @@ html[dir="rtl"] .fi-eco-platform-card:hover .fi-eco-platform-cta i,html[dir="rtl
 <script id="fi-unified-site-navigation">
 (() => {
   const labels = {
-    en:["Dashboard","What is FIT?","Comparison","DApp","Fly Infinity Games","Fly Infinity AI","Profit Calculator","Upcoming Projects","Transactions","Privacy","Warnings","FAQ","White Paper","Security Audit"],
-    fa:["داشبورد","FIT چیست؟","مقایسه","اپلیکیشن غیرمتمرکز","بازی‌های فلای اینفینیتی","هوش مصنوعی فلای اینفینیتی","ماشین‌حساب سود","پروژه‌های آینده","تراکنش‌ها","حریم خصوصی","هشدارها","سؤالات متداول","وایت‌پیپر","ممیزی امنیتی"],
-    ar:["لوحة التحكم","ما هو FIT؟","مقارنة","التطبيق اللامركزي","ألعاب فلاي إنفينيتي","ذكاء فلاي إنفينيتي الاصطناعي","حاسبة الأرباح","المشاريع القادمة","المعاملات","الخصوصية","تحذيرات","الأسئلة الشائعة","الورقة البيضاء","التدقيق الأمني"],
-    tr:["Kontrol Paneli","FIT Nedir?","Karşılaştırma","DApp","Fly Infinity Oyunları","Fly Infinity AI","Kâr Hesaplayıcı","Gelecek Projeler","İşlemler","Gizlilik","Uyarılar","SSS","Teknik Doküman","Güvenlik Denetimi"],
-    ru:["Панель управления","Что такое FIT?","Сравнение","DApp","Игры Fly Infinity","Fly Infinity AI","Калькулятор прибыли","Будущие проекты","Транзакции","Конфиденциальность","Предупреждения","Частые вопросы","Белая книга","Аудит безопасности"],
-    zh:["控制面板","什么是 FIT？","比较","去中心化应用","Fly Infinity 游戏","Fly Infinity AI","收益计算器","未来项目","交易","隐私","风险提示","常见问题","白皮书","安全审计"],
-    es:["Panel","¿Qué es FIT?","Comparación","DApp","Juegos Fly Infinity","Fly Infinity AI","Calculadora de beneficios","Próximos proyectos","Transacciones","Privacidad","Advertencias","Preguntas frecuentes","Documento técnico","Auditoría de seguridad"],
-    pt:["Painel","O que é FIT?","Comparação","DApp","Jogos Fly Infinity","Fly Infinity AI","Calculadora de lucro","Próximos projetos","Transações","Privacidade","Avisos","Perguntas frequentes","White Paper","Auditoria de segurança"]
+    en:["Dashboard","What is FIT?","Comparison","DApp","Fly Infinity Games","Fly Infinity AI","Fly Infinity Social","Profit Calculator","Upcoming Projects","Transactions","Privacy","Warnings","FAQ","White Paper","Security Audit"],
+    fa:["داشبورد","FIT چیست؟","مقایسه","اپلیکیشن غیرمتمرکز","بازی‌های فلای اینفینیتی","هوش مصنوعی فلای اینفینیتی","رسانه اجتماعی فلای اینفینیتی","ماشین‌حساب سود","پروژه‌های آینده","تراکنش‌ها","حریم خصوصی","هشدارها","سؤالات متداول","وایت‌پیپر","ممیزی امنیتی"],
+    ar:["لوحة التحكم","ما هو FIT؟","مقارنة","التطبيق اللامركزي","ألعاب فلاي إنفينيتي","ذكاء فلاي إنفينيتي الاصطناعي","شبكة فلاي إنفينيتي الاجتماعية","حاسبة الأرباح","المشاريع القادمة","المعاملات","الخصوصية","تحذيرات","الأسئلة الشائعة","الورقة البيضاء","التدقيق الأمني"],
+    tr:["Kontrol Paneli","FIT Nedir?","Karşılaştırma","DApp","Fly Infinity Oyunları","Fly Infinity AI","Fly Infinity Sosyal","Kâr Hesaplayıcı","Gelecek Projeler","İşlemler","Gizlilik","Uyarılar","SSS","Teknik Doküman","Güvenlik Denetimi"],
+    ru:["Панель управления","Что такое FIT?","Сравнение","DApp","Игры Fly Infinity","Fly Infinity AI","Социальная сеть Fly Infinity","Калькулятор прибыли","Будущие проекты","Транзакции","Конфиденциальность","Предупреждения","Частые вопросы","Белая книга","Аудит безопасности"],
+    zh:["控制面板","什么是 FIT？","比较","去中心化应用","Fly Infinity 游戏","Fly Infinity AI","Fly Infinity 社交平台","收益计算器","未来项目","交易","隐私","风险提示","常见问题","白皮书","安全审计"],
+    es:["Panel","¿Qué es FIT?","Comparación","DApp","Juegos Fly Infinity","Fly Infinity AI","Fly Infinity Social","Calculadora de beneficios","Próximos proyectos","Transacciones","Privacidad","Advertencias","Preguntas frecuentes","Documento técnico","Auditoría de seguridad"],
+    pt:["Painel","O que é FIT?","Comparação","DApp","Jogos Fly Infinity","Fly Infinity AI","Fly Infinity Social","Calculadora de lucro","Próximos projetos","Transações","Privacidade","Avisos","Perguntas frequentes","White Paper","Auditoria de segurança"]
   };
   const items = [
     ["index.html","fa-gauge-high"],["what-is-fit.html","fa-circle-info"],["compare.html","fa-scale-balanced"],
-    ["dapp.html","fa-cubes"],["games/index.html","fa-dice"],["fly-ai/index.html","fa-brain"],
+    ["dapp.html","fa-cubes"],["games/index.html","fa-dice"],["fly-ai/index.html","fa-brain"],["creator-arena/index.html","fa-users"],
     ["profit-simulator.html","fa-calculator"],["next-projects.html","fa-rocket"],
     ["transactions.html","fa-arrow-right-arrow-left"],["privacy.html","fa-user-shield"],
     ["warnings.html","fa-triangle-exclamation"],["faq.html","fa-comments"],
