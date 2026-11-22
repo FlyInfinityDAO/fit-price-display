@@ -37,8 +37,14 @@
   function getLanguage(preferred) {
     if (preferred && translations[preferred]) return preferred;
     try {
-      const saved = localStorage.getItem("fit_lang");
-      if (saved && translations[saved]) return saved;
+      const path = window.location.pathname.toLowerCase();
+      let keys = ["fit_lang", "fi-game-language", "fi-hokm-language"];
+      if (path.includes("/games/hokm/")) keys = ["fi-hokm-language", "fit_lang", "fi-game-language"];
+      else if (path.includes("/games/ludo/") || path.includes("/games/snakes-and-ladders/")) keys = ["fi-game-language", "fit_lang"];
+      for (const key of keys) {
+        const saved = localStorage.getItem(key);
+        if (saved && translations[saved]) return saved;
+      }
     } catch (error) {}
     const browser = (navigator.language || "en").toLowerCase().split("-")[0];
     return translations[browser] ? browser : "en";
