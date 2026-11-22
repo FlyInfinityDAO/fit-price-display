@@ -107,5 +107,5 @@ jobs:
             --data '{"text":"سلام","locale":"fa-IR","voiceName":"Sulafat"}' \
             "$AUDIO_TEST_WORKER_URL/api/audio/gemini-tts")"
           test "$proxy_status" = "400"
-          jq -e '.error | test("API Studio API key")' /tmp/audio-proxy-validation.json >/dev/null
+          jq -e '.error | test("Google AI Studio API key")' /tmp/audio-proxy-validation.json >/dev/null
           echo "GitHub Pages CORS preflight passed and proxy validates requests without logging or storing credentials." >> "$GITHUB_STEP_SUMMARY"
