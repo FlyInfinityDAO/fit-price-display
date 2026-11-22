@@ -8,10 +8,6 @@ binding = "DB"
 database_name = "fly-infinity-social-db"
 database_id = "64b672c3-cce6-418e-a0d2-da8d8ee3df7f"
 
-[[r2_buckets]]
-binding = "MEDIA"
-bucket_name = "fly-infinity-social-media"
-
 [vars]
 APP_ORIGIN = "https://flyinfinitydao.github.io"
 BSC_RPC_URL = "https://bsc-dataseed.binance.org/"
