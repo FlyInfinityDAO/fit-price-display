@@ -106,7 +106,7 @@
 
   const css = document.createElement("link");
   css.rel = "stylesheet";
-  css.href = new URL("global-bottom-nav.css?v=20261122-v3", root).href;
+  css.href = new URL("global-bottom-nav.css?v=20261122-v4", root).href;
   document.head.appendChild(css);
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount, { once: true });
   else mount();
