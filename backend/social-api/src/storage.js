@@ -18,7 +18,8 @@ function readConfig(env) {
   let endpoint;
   try {
     const endpointValue = values[0];
-    endpoint = new URL(/^https?:\\/\\//i.test(endpointValue) ? endpointValue : 'https://' + endpointValue);
+    const hasScheme = endpointValue.startsWith('https://') || endpointValue.startsWith('http://');
+    endpoint = new URL(hasScheme ? endpointValue : 'https://' + endpointValue);
   } catch {
     throw new Error('Backblaze B2 endpoint is invalid');
   }
