@@ -166,6 +166,18 @@ async function getSession(request, env, required = false) {
     'SELECT wallet_address,expires_at FROM social_sessions WHERE token_hash=? AND revoked_at IS NULL AND expires_at>?'
   ).bind(tokenHash, now()).first();
   if (!row) return { error: 'Your Social session has expired. Please connect your wallet again.', status: 401 };
+  if (required) {
+    try {
+      if (!await isNetworkOwner(row.wallet_address, env)) {
+        await env.DB.prepare('UPDATE social_sessions SET revoked_at=? WHERE token_hash=? AND revoked_at IS NULL')
+          .bind(now(), tokenHash).run();
+        return { error: 'This wallet is no longer a registered Fly Infinity Network Owner', status: 403 };
+      }
+    } catch (error) {
+      console.error('Social owner revalidation unavailable:', String(error?.message || error).slice(0, 180));
+      return { error: 'BNB Smart Chain verification is temporarily unavailable. Please try again.', status: 503 };
+    }
+  }
   return { address: row.wallet_address, expiresAt: Number(row.expires_at), tokenHash };
 }
 
