@@ -19,7 +19,8 @@
     "whitepaper": "White Paper",
     "audit": "Auditoria de Segurança",
     "profitCalculator": "Calculadora e simulador de lucros",
-    "nextProjects": "Próximos projetos"
+    "nextProjects": "Próximos projetos",
+    "socialArena": "Fly Infinity Social"
   },
   "dashboard": {
     "title": "Fly Infinity Token (FIT)",
@@ -155,6 +156,9 @@
     "aiCta": "Descobrir o Fly AI",
     "futureTitle": "Próximos Projetos Fly Infinity",
     "futureText": "Olhe além do horizonte. Explore as ideias, iniciativas e novas experiências que moldarão os próximos capítulos da visão Fly Infinity.",
-    "futureCta": "Explorar o futuro"
+    "futureCta": "Explorar o futuro",
+    "socialTitle": "Fly Infinity Social",
+    "socialText": "Uma comunidade criativa para publicar imagens, narrações, músicas e efeitos gerados por IA; compartilhar prompts, remixar com atribuição ao autor e participar de desafios da comunidade.",
+    "socialCta": "Explorar a comunidade"
   }
 }
