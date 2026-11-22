@@ -4,22 +4,22 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#101329">
 <title>Fly Infinity Audio Studio — No-Wallet Test Lab</title>
-<link rel="stylesheet" href="css/audio-studio-test.css?v=2">
-<script defer src="js/audio-studio.js?v=2"></script>
-<script defer src="js/audio-studio-test.js?v=2"></script>
+<link rel="stylesheet" href="css/audio-studio-test.css?v=3">
+<script defer src="js/audio-studio.js?v=3"></script>
+<script defer src="js/audio-studio-test.js?v=3"></script>
 </head>
 <body>
 <main class="studio-shell">
 <header class="studio-header"><span class="studio-mark">♫</span><div><small>FLY INFINITY · ISOLATED QA LAB</small><h1>آزمایشگاه تست استودیوی صدای فلای اینفینیتی</h1><p>آزمایش مستقل استودیوی صدا؛ بدون اتصال کیف پول، امضا یا تراکنش.</p></div></header>
-<div class="notice"><strong>محیط آزمایشی بدون احراز کیف پول</strong><span>This isolated page does not load the Fly AI app, wallet bridge, authentication, token checks, or production API. All music and sound effects are rendered locally. برای گفتار طبیعی از سهمیه رایگان Google Gemini استفاده می‌شود؛ صدای داخلی دستگاه هم به‌عنوان جایگزین در دسترس است.</span></div>
+<div class="notice"><strong>محیط آزمایشی بدون احراز کیف پول</strong><span>این صفحه به برنامه اصلی Fly AI، پل کیف پول، احراز هویت، بررسی توکن یا API تولید متصل نیست. موسیقی و افکت‌ها داخل مرورگر ساخته می‌شوند. گفتار طبیعی از سهمیه رایگان Google Gemini استفاده می‌کند و صدای داخلی دستگاه نیز گزینه جایگزین است.</span></div>
 <section class="qa-panel" aria-labelledby="qaTitle">
-<div class="qa-heading"><div><h2 id="qaTitle">End-to-end test suite</h2><p class="muted">Runs every music style, all six effects, WAV integrity checks, and available browser voices for all eight Fly AI languages.</p></div><button id="runAllTests" type="button">اجرای همه آزمایش‌ها</button></div>
-<div class="qa-stats"><span id="qaProgress">Not started</span><span id="qaPassed">0 passed</span><span id="qaFailed">0 failed</span><span id="qaSkipped">0 skipped</span></div>
-<div id="qaLog" class="qa-log" role="log" aria-live="polite"><p class="muted">Press “Run all tests” to begin. Keep this tab open until the report is complete.</p></div>
+<div class="qa-heading"><div><h2 id="qaTitle">مجموعه آزمایش کامل</h2><p class="muted">تمام سبک‌های موسیقی، شش افکت صوتی، سلامت فایل WAV و صداهای نصب‌شده برای هشت زبان Fly AI را بررسی می‌کند.</p></div><button id="runAllTests" type="button">اجرای همه آزمایش‌ها</button></div>
+<div class="qa-stats"><span id="qaProgress">شروع نشده</span><span id="qaPassed">۰ موفق</span><span id="qaFailed">۰ ناموفق</span><span id="qaSkipped">۰ ردشده</span></div>
+<div id="qaLog" class="qa-log" role="log" aria-live="polite"><p class="muted">برای شروع «اجرای همه آزمایش‌ها» را بزنید و تا پایان گزارش این صفحه را باز نگه دارید.</p></div>
 </section>
 <nav class="tool-tabs" aria-label="Audio tools"><button class="active" data-tool="voice">گفتار متنی</button><button data-tool="music">ساخت موسیقی</button><button data-tool="effects">افکت صوتی</button></nav>
 <section id="voiceTool" class="tool-panel">
-<h2>تبدیل متن به گفتار</h2><p class="muted">Use the natural AI voice for consistent speech on iPhone and Android, or compare it with voices installed on this device.</p>
+<h2>تبدیل متن به گفتار</h2><p class="muted">برای صدای طبیعی و یکسان در آیفون و اندروید از گفتار هوش مصنوعی استفاده کنید؛ همچنین می‌توانید آن را با صداهای نصب‌شده روی دستگاه مقایسه کنید.</p>
 <form id="voiceForm" class="form">
 <label for="voiceLanguage">زبان گفتار</label><select id="voiceLanguage"><option value="en-US">English</option><option value="fa-IR" selected>فارسی</option><option value="ar-SA">العربية</option><option value="tr-TR">Türkçe</option><option value="ru-RU">Русский</option><option value="zh-CN">中文</option><option value="es-ES">Español</option><option value="pt-PT">Português</option></select>
 <label for="voiceText">متن مورد نظر برای خواندن</label><textarea id="voiceText" maxlength="1200">سلام، به استودیوی صدای فلای اینفینیتی خوش آمدید. این یک نمونه آزمایشی تولید گفتار است.</textarea>
@@ -31,7 +31,7 @@
 <button id="geminiSpeakButton" type="button">تولید گفتار طبیعی با هوش مصنوعی</button>
 <p class="muted">پس از آماده‌شدن فایل، در پخش‌کننده WAV که پایین همین صفحه ظاهر می‌شود روی پخش بزنید. برای مقایسه، صدای پیش‌فرض Sulafat گرم و ملایم است.</p>
 <button type="submit">پخش با صدای داخلی دستگاه</button><button id="stopVoice" type="button">توقف پخش</button>
-<a id="openChromeLink" class="muted" href="intent://raw.githack.com/FlyInfinityDAO/fit-price-display/audio-studio-natural-voice-test/fly-ai/audio-studio-test.html#Intent;scheme=https;package=com.android.chrome;end" hidden>Open this test in Google Chrome (Android)</a>
+<a id="openChromeLink" class="muted" href="intent://raw.githack.com/FlyInfinityDAO/fit-price-display/main/fly-ai/audio-studio-test.html#Intent;scheme=https;package=com.android.chrome;end" hidden>Open this test in Google Chrome (Android)</a>
 </form><p id="voiceAvailability" class="muted" aria-live="polite"></p>
 </section>
 <section id="musicTool" class="tool-panel hidden">
