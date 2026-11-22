@@ -506,7 +506,7 @@ async function voteChallenge(request, env, challengeId) {
   const result = await env.DB.prepare(
     'INSERT OR IGNORE INTO social_challenge_votes(challenge_id,post_id,voter_wallet,created_at) VALUES(?,?,?,?)'
   ).bind(challengeId, postId, session.address, now()).run();
-  if (Number(result.meta?.changes || 0) !== 1) return json({ error: 'You have already voted for this entry' }, 409);
+  if (Number(result.meta?.changes || 0) !== 1) return json({ error: 'You have already voted in this challenge' }, 409);
   const count = await env.DB.prepare(
     'SELECT COUNT(*) AS n FROM social_challenge_votes WHERE challenge_id=? AND post_id=?'
   ).bind(challengeId, postId).first();
