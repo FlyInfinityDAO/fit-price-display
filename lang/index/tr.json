@@ -19,7 +19,8 @@
     "whitepaper": "Beyaz Bülten",
     "audit": "Güvenlik Denetimi",
     "profitCalculator": "Kâr Hesaplayıcı ve Simülatör",
-    "nextProjects": "Gelecek Projeler"
+    "nextProjects": "Gelecek Projeler",
+    "socialArena": "Fly Infinity Sosyal"
   },
   "dashboard": {
     "title": "Fly Infinity Token (FIT)",
@@ -155,6 +156,9 @@
     "aiCta": "Fly AI'ı keşfet",
     "futureTitle": "Fly Infinity'nin Gelecek Projeleri",
     "futureText": "Ufkun ötesine bakın. Fly Infinity vizyonunun yeni bölümlerini şekillendirecek fikirleri, girişimleri ve deneyimleri keşfedin.",
-    "futureCta": "Geleceği keşfet"
+    "futureCta": "Geleceği keşfet",
+    "socialTitle": "Fly Infinity Sosyal",
+    "socialText": "Yapay zekâ ile üretilen görselleri, seslendirmeleri, müzikleri ve ses efektlerini paylaşın; istemleri paylaşın, kaynak göstererek yeniden üretin ve topluluk yarışmalarına katılın.",
+    "socialCta": "Topluluğu keşfet"
   }
 }
