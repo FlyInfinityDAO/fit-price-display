@@ -72,6 +72,8 @@ Creator challenges, voting, profiles, posts, follows and likes are persistent. C
 
 GitHub Actions workflow: `.github/workflows/fly-social-api-provision.yml`.
 
+The provisioning workflow is currently **manual-dispatch only** while the Cloudflare API token is being granted R2 bucket-creation permission. This prevents automatic retry loops against a known 403. After updating the repository secret, run **Actions → Fly Infinity Social API — provision and deploy → Run workflow**.
+
 The workflow:
 1. Runs Social-only unit tests and syntax checks.
 2. Creates or reuses `fly-infinity-social-db` in EU.
