@@ -84,6 +84,41 @@ with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
     except sqlite3.IntegrityError:
         pass
 
+    connection.execute(
+        "INSERT INTO social_follows(follower_wallet,following_wallet,created_at) VALUES(?,?,1)",
+        (voter, creator_a),
+    )
+    connection.execute(
+        "INSERT INTO social_likes(post_id,wallet_address,created_at) VALUES(?,?,1)",
+        ("schema-post-a", voter),
+    )
+
+    creator_rows = connection.execute(
+        "SELECT p.wallet_address,p.handle,p.display_name,p.bio,p.created_at,"
+        "(SELECT COUNT(*) FROM social_posts s WHERE s.wallet_address=p.wallet_address AND s.status='published') AS post_count,"
+        "(SELECT COUNT(*) FROM social_follows f WHERE f.following_wallet=p.wallet_address) AS follower_count,"
+        "(SELECT COUNT(*) FROM social_follows f WHERE f.follower_wallet=p.wallet_address) AS following_count,"
+        "(SELECT COUNT(*) FROM social_likes l JOIN social_posts s ON s.post_id=l.post_id WHERE s.wallet_address=p.wallet_address AND s.status='published') AS appreciation_count,"
+        "CASE WHEN ? <> '' AND EXISTS(SELECT 1 FROM social_follows vf WHERE vf.follower_wallet=? AND vf.following_wallet=p.wallet_address) THEN 1 ELSE 0 END AS following_by_me "
+        "FROM social_profiles p ORDER BY follower_count DESC,appreciation_count DESC,p.created_at ASC LIMIT ?",
+        (voter, voter, 20),
+    ).fetchall()
+    assert any(row[0] == creator_a and row[-1] == 1 for row in creator_rows), "Creator follow-state query failed"
+
+    challenge_rows = connection.execute(
+        "SELECT p.post_id,p.wallet_address,p.title,p.media_type,p.description,p.prompt,p.media_key,p.source_post_id,p.source_wallet,p.source_title,p.created_at,pr.handle,pr.display_name,"
+        "(SELECT COUNT(*) FROM social_challenge_votes v WHERE v.challenge_id=? AND v.post_id=p.post_id) AS vote_count,"
+        "CASE WHEN ? <> '' AND EXISTS(SELECT 1 FROM social_challenge_votes mv WHERE mv.challenge_id=? AND mv.voter_wallet=?) THEN 1 ELSE 0 END AS voted_by_me "
+        "FROM social_challenge_submissions s JOIN social_posts p ON p.post_id=s.post_id "
+        "JOIN social_profiles pr ON pr.wallet_address=p.wallet_address "
+        "WHERE s.challenge_id=? AND p.status='published' AND p.moderation_state='clear' "
+        "ORDER BY vote_count DESC,p.created_at DESC LIMIT 40",
+        (challenge_id, voter, challenge_id, voter, challenge_id),
+    ).fetchall()
+    assert len(challenge_rows) == 2, "Challenge entries query did not return the seeded entries"
+    assert all(row[-1] == 1 for row in challenge_rows), "Voted-by-me challenge query failed"
+    assert challenge_rows[0][0] == "schema-post-a" and challenge_rows[0][-2] == 1, "Challenge vote count query failed"
+
     try:
         connection.execute(
             "INSERT INTO social_likes(post_id,wallet_address,created_at) VALUES('missing-post',?,1)",
@@ -96,4 +131,4 @@ with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
     connection.close()
 
 print("Social D1 migration schema smoke test passed.")
-print("Verified all 12 Social tables, two seeded challenges, case-insensitive handles, one vote per wallet per challenge, and post foreign keys.")
+print("Verified all 12 Social tables, seeded challenges, case-insensitive handles, one vote per wallet per challenge, follow/like/challenge read queries, and post foreign keys.")
