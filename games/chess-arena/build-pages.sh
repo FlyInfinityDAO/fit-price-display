@@ -35,6 +35,7 @@ cp games/ludo/js/ludo-engine.js dist/games/ludo/js/ludo-engine.js
 # Reuse the exact brand assets from the main Fly Infinity website.
 cp logo.png background-desktop.png background-mobile.png pwa-shell.css pwa-offline.js pwa-brand-neon.css dist/
 cp walletconnect-bridge.js dist/walletconnect-bridge.js
+cp global-bottom-nav.js global-bottom-nav.css dist/
 
 # Shared game chrome and language/ambient scripts are referenced by both game pages
 # via ../*. Copy them into dist/games so those URLs resolve in the standalone Pages build.
@@ -65,6 +66,8 @@ test -s dist/games/hokm/js/hokm.js
 test -s dist/games/ludo/index.html
 test -s dist/games/ludo/js/ludo-engine.js
 test -s dist/walletconnect-bridge.js
+test -s dist/global-bottom-nav.js
+test -s dist/global-bottom-nav.css
 test -s dist/games/fi-neon-games.css
 test -s dist/games/shared-language-menu.js
 test -s dist/games/shared-neon-ambient.js
