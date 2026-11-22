@@ -7,11 +7,11 @@ Independent backend for the Fly Infinity Social / Creator Arena page. It does no
 - Worker: `fly-infinity-social-api`
 - D1 database: `fly-infinity-social-db` (EU jurisdiction)
 - D1 ID: `64b672c3-cce6-418e-a0d2-da8d8ee3df7f`
-- R2 bucket: `fly-infinity-social-media` (private; create after enabling R2)
+- Object storage: Backblaze B2 S3-compatible API (private bucket)
 - Wrangler config: `backend/wrangler.social-api.toml`
 - Migration: `backend/social-api/migrations/0001_init.sql`
 
-The Worker and D1 database are already created. The Social D1 migration has been applied and verified: all 12 Social tables and both seed challenges are present. No other Fly Infinity database or Worker was modified. The R2 bucket is not yet created because Cloudflare requires R2 subscription activation first.
+The Worker and D1 database are already created. The Social D1 migration has been applied and verified: all 12 Social tables and both seed challenges are present. Images and audio are stored in a private Backblaze B2 bucket, accessed only by the Worker through a bucket-restricted application key. Cloudflare R2 is not required.
 
 ## Account access
 
@@ -69,22 +69,32 @@ The initial backend stores user reports and keeps publication/moderation state o
 
 Creator challenges, voting, profiles, posts, follows and likes are persistent. Creator marketplace, paid sales, on-chain payments, tipping, NFT minting and creator payouts are deliberately out of scope.
 
+## Backblaze B2 setup
+
+Create a free Backblaze account at https://www.backblaze.com/sign-up/s3. Backblaze advertises 10 GB of always-free storage and free egress up to 3x average monthly storage. A payment method is not required to start. Use a **Private** bucket; public-bucket setup has separate payment-history requirements.
+
+Create one private bucket in the account's region, then create a standard Application Key restricted to that bucket and the `uploads/` file-name prefix. Grant only the capabilities needed for this Worker:
+- `readFiles`
+- `writeFiles`
+- `deleteFiles`
+
+Do not use the master application key. Save the Application Key ID and Application Key because the latter is shown only once. Copy the bucket's S3 Endpoint URL (for example, `https://s3.us-west-004.backblazeb2.com`).
+
+In GitHub repository Settings → Secrets and variables → Actions, create these four repository secrets:
+- `FLY_SOCIAL_B2_ENDPOINT` — the S3 Endpoint URL shown in the bucket details
+- `FLY_SOCIAL_B2_BUCKET` — the exact private bucket name
+- `FLY_SOCIAL_B2_KEY_ID` — the scoped Application Key ID
+- `FLY_SOCIAL_B2_APPLICATION_KEY` — the scoped Application Key value
+
+Keep the existing `CLOUDFLARE_API_TOKEN` unchanged. The existing repository variable `CLOUDFLARE_ACCOUNT_ID` remains required for the Worker deploy.
+
 ## Deploy
 
 GitHub Actions workflow: `.github/workflows/fly-social-api-provision.yml` (manual dispatch only).
 
-The workflow now only validates, tests and deploys this one Worker. It does not create or modify databases or buckets; those resources are provisioned separately.
+After the four B2 secrets and the dedicated Cloudflare Worker deploy token `CLOUDFLARE_SOCIAL_API_TOKEN` are saved, run **Actions → Fly Infinity Social API — deploy → Run workflow** on `main`. The workflow runs tests, uploads the B2 credentials to this Worker as encrypted runtime secrets, deploys only `fly-infinity-social-api`, then verifies health, CORS and input validation.
 
-Before deployment:
-1. Enable Cloudflare R2 for the account, using the account owner’s billing approval if Cloudflare requests it.
-2. Create the private bucket named `fly-infinity-social-media` in the EU jurisdiction.
-3. In Cloudflare, open Workers & Pages → `fly-infinity-social-api` → Settings → Builds → API token for external CI/CD → Create token. Use the token generated for this Worker; do not use a Global API Key or the shared token for other Fly Infinity services.
-4. In GitHub, open repository Settings → Secrets and variables → Actions → New repository secret. Save the token as `CLOUDFLARE_SOCIAL_API_TOKEN`.
-5. Keep the existing `CLOUDFLARE_API_TOKEN` unchanged. The existing repository variable `CLOUDFLARE_ACCOUNT_ID` is used by the workflow.
-
-Then run **Actions → Fly Infinity Social API — deploy → Run workflow** on `main`. The workflow verifies Worker health, strict CORS preflight and invalid-wallet rejection after deployment.
-
-Do not paste tokens into source code, chat or workflow logs.
+The B2 key is never exposed to browser code, source files or workflow output. Media is stored in a private bucket and served only through the Social Worker after D1 confirms it belongs to a published, unrestricted post. Do not paste any token or application key into chat or source code.
 
 ## Local validation
 
