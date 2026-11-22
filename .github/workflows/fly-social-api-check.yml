@@ -1,0 +1,42 @@
+name: Fly Infinity Social API — tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/social-api/**'
+      - 'backend/package.json'
+      - '.github/workflows/fly-social-api-check.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/social-api/**'
+      - 'backend/package.json'
+      - '.github/workflows/fly-social-api-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  social-api-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package.json
+      - name: Install backend dependencies
+        run: npm install --no-audit --no-fund
+      - name: Check Social Worker JavaScript syntax
+        run: |
+          node --check social-api/src/index.js
+          node --check social-api/src/auth.js
+          node --check social-api/src/validation.js
+      - name: Run Social-only unit and route tests
+        run: node --test social-api/tests/*.test.js
