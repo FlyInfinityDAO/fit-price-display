@@ -8,7 +8,50 @@ let localUrl=null,passed=0,failed=0,skipped=0,total=0;
 function log(label,status,detail){const row=document.createElement('div');row.className='qa-row '+status;const mark=document.createElement('b');mark.textContent=status==='pass'?'PASS':status==='fail'?'FAIL':'SKIP';const name=document.createElement('span');name.textContent=label;const info=document.createElement('small');info.textContent=detail||'';row.append(mark,name,info);$('qaLog').append(row);if(status==='pass')passed++;else if(status==='fail')failed++;else skipped++;$('qaPassed').textContent=passed+' passed';$('qaFailed').textContent=failed+' failed';$('qaSkipped').textContent=skipped+' skipped';}
 function progress(s){$('qaProgress').textContent=s}
 function setLocal(blob,name){if(localUrl)URL.revokeObjectURL(localUrl);localUrl=URL.createObjectURL(blob);$('localPlayer').src=localUrl;$('localDownload').href=localUrl;$('localDownload').download=name;$('localResult').classList.remove('hidden');$('localStatus').textContent='Audio ready.'}
-function assertWav(blob){if(!(blob instanceof Blob)||blob.type!=='audio/wav'||blob.size<48)throw new Error('Missing/invalid WAV Blob');return blob.arrayBuffer().then(buf=>{const v=new DataView(buf);const sig=[0,1,2,3,8,9,10,11].map(i=>String.fromCharCode(v.getUint8(i))).join('');if(sig!=='RIFFWAVE')throw new Error('RIFF/WAVE header missing');if(v.getUint32(4,true)!==buf.byteLength-8)throw new Error('RIFF size mismatch');if(v.getUint32(40,true)!==buf.byteLength-44)throw new Error('WAV data length mismatch');return buf;})}
+function assertWav(blob){
+ if(!(blob instanceof Blob)||!/^audio\/(?:wav|wave|x-wav)(?:$|;)/i.test(blob.type)||blob.size<44)throw new Error('Missing/invalid WAV Blob');
+ return blob.arrayBuffer().then(buf=>{
+  const view=new DataView(buf),tag=offset=>String.fromCharCode(view.getUint8(offset),view.getUint8(offset+1),view.getUint8(offset+2),view.getUint8(offset+3));
+  if(tag(0)!=='RIFF'||tag(8)!=='WAVE')throw new Error('RIFF/WAVE header missing');
+  const riffEnd=8+view.getUint32(4,true);
+  if(riffEnd!==buf.byteLength)throw new Error('RIFF container size mismatch');
+  let offset=12,format=null,audio=null;
+  while(offset<riffEnd){
+   if(offset+8>riffEnd)throw new Error('Incomplete WAV chunk header');
+   const id=tag(offset),size=view.getUint32(offset+4,true),start=offset+8,end=start+size;
+   if(end>riffEnd)throw new Error('WAV '+id.trim()+' chunk exceeds the RIFF container');
+   if(id==='fmt '){
+    if(size<16)throw new Error('WAV format chunk is too short');
+    format={tag:view.getUint16(start,true),channels:view.getUint16(start+2,true),sampleRate:view.getUint32(start+4,true),blockAlign:view.getUint16(start+12,true),bitsPerSample:view.getUint16(start+14,true)};
+   }else if(id==='data'){
+    if(!format)throw new Error('WAV data chunk appears before its format chunk');
+    if(audio)throw new Error('Multiple WAV data chunks are not supported');
+    audio={offset:start,size};
+   }
+   const next=end+(size&1);
+   if(next>riffEnd){
+    if(end===riffEnd)offset=riffEnd;
+    else throw new Error('Invalid WAV chunk padding');
+   }else offset=next;
+  }
+  if(!format||!format.channels||!format.sampleRate||!format.blockAlign)throw new Error('WAV format chunk is missing or invalid');
+  if(!audio||audio.size===0)throw new Error('WAV audio data chunk is missing or empty');
+  if((format.tag===1||format.tag===3||format.tag===0xfffe)&&audio.size%format.blockAlign!==0)throw new Error('WAV PCM data is not aligned to its sample frames');
+  return buf;
+ });
+}
+async function addOptionalWavChunk(blob){
+ const source=new Uint8Array(await blob.arrayBuffer()),insertAt=36,chunk=new Uint8Array(12);
+ chunk.set([74,85,78,75],0);
+ new DataView(chunk.buffer).setUint32(4,4,true);
+ chunk.set([70,76,89,33],8);
+ const output=new Uint8Array(source.length+chunk.length);
+ output.set(source.subarray(0,insertAt),0);
+ output.set(chunk,insertAt);
+ output.set(source.subarray(insertAt),insertAt+chunk.length);
+ new DataView(output.buffer).setUint32(4,output.length-8,true);
+ return new Blob([output],{type:'audio/wav'});
+}
 function decodeWav(buf){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return Promise.resolve({skipped:true});const ctx=new AC();return ctx.decodeAudioData(buf.slice(0)).then(audio=>{const info={duration:audio.duration,channels:audio.numberOfChannels,sampleRate:audio.sampleRate};ctx.close();if(!info.duration||!info.channels)throw new Error('Decoded audio is empty');return info},e=>{ctx.close();throw e})}
 function waitForVoices(timeout=1800){
  return new Promise(resolve=>{
@@ -116,13 +159,14 @@ $('stopVoice').addEventListener('click',()=>{if('speechSynthesis'in window)speec
 function refreshVoiceInfo(){const voices='speechSynthesis'in window?speechSynthesis.getVoices():[];$('voiceAvailability').textContent=voices.length+' device voice(s) detected. Natural AI voice works independently of installed voices.';updateChromeHint();}
 if('speechSynthesis'in window){if(speechSynthesis.addEventListener)speechSynthesis.addEventListener('voiceschanged',refreshVoiceInfo);else speechSynthesis.onvoiceschanged=refreshVoiceInfo;}
 async function runAll(){
- const button=$('runAllTests');button.disabled=true;passed=failed=skipped=0;$('qaLog').innerHTML='';$('qaPassed').textContent='0 passed';$('qaFailed').textContent='0 failed';$('qaSkipped').textContent='0 skipped';total=STYLES.length+EFFECTS.length+LANGS.length+2;progress('Running browser capability checks…');
+ const button=$('runAllTests');button.disabled=true;passed=failed=skipped=0;$('qaLog').innerHTML='';$('qaPassed').textContent='0 passed';$('qaFailed').textContent='0 failed';$('qaSkipped').textContent='0 skipped';total=STYLES.length+EFFECTS.length+LANGS.length+3;progress('Running browser capability checks…');
  try{if(!window.FlyAudioComposer)throw new Error('Composer script did not load');log('Audio composer library','pass','FlyAudioComposer API is available');}catch(e){log('Audio composer library','fail',e.message);progress('Stopped: core library unavailable');button.disabled=false;return}
  for(const style of STYLES){progress('Rendering music: '+style);try{const blob=await window.FlyAudioComposer.generateMusic({prompt:'Fly Infinity automated QA '+style,style,tempo:96,duration:15});const buf=await assertWav(blob);const decoded=await decodeWav(buf);log('Music · '+style,'pass',blob.size+' bytes WAV'+(decoded.duration?' · '+decoded.duration.toFixed(1)+'s · '+decoded.channels+'ch':''));}catch(e){log('Music · '+style,'fail',e.message)}}
  for(const effect of EFFECTS){progress('Rendering effect: '+effect);try{const blob=await window.FlyAudioComposer.generateEffect(effect);const buf=await assertWav(blob);const decoded=await decodeWav(buf);log('Effect · '+effect,'pass',blob.size+' bytes WAV'+(decoded.duration?' · '+decoded.duration.toFixed(1)+'s':''));}catch(e){log('Effect · '+effect,'fail',e.message)}}
  progress('Checking browser voice languages…');
  if(!('speechSynthesis'in window)||!('SpeechSynthesisUtterance'in window)){log('Device speech engine','skip','This browser/WebView does not expose SpeechSynthesis; use Gemini Natural Voice below.')}else{const voices=await waitForVoices();log('Device speech engine','pass',voices.length+' installed voice(s)');for(const [name,locale] of LANGS){const prefix=locale.split('-')[0].toLowerCase();const voice=voices.find(v=>v.lang.toLowerCase()===locale.toLowerCase())||voices.find(v=>v.lang.toLowerCase().startsWith(prefix+'-'));if(!voice){log('Voice · '+name,'skip','No installed '+locale+' voice; device/browser limitation');continue}try{progress('Speaking sample: '+name);const result=await speak(locale,'Fly Infinity audio test.');if(result.unavailable)log('Voice · '+name,'skip','Voice became unavailable during test');else log('Voice · '+name,'pass',result.voice+' · '+result.lang+' · playback ended');}catch(e){log('Voice · '+name,e.environmental?'skip':'fail',e.message)}}}
  try{const sample=pcmToWav(new Uint8Array(2048),24000,1);await assertWav(sample);log('PCM-to-WAV packaging','pass','24 kHz mono PCM wrapped in a valid WAV header')}catch(e){log('PCM-to-WAV packaging','fail',e.message)}
+ try{const sample=pcmToWav(new Uint8Array(2048),24000,1),extended=await addOptionalWavChunk(sample);await assertWav(extended);log('WAV parser · optional chunks','pass','RIFF/WAVE metadata chunk safely skipped; audio data found by chunk ID')}catch(e){log('WAV parser · optional chunks','fail',e.message)}
  if($('geminiApiKey').value.trim()){
   progress('Testing one Persian natural-voice request (free-tier quota applies)…');
   try{
