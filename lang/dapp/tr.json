@@ -136,7 +136,15 @@
         "agreementHeadingDeveloper": "Geliştirici Ödülleri – Performansa Dayalı Ödeme",
         "agreementHeadingInfrastructure": "Merkeziyetsiz Altyapı – Güvenlik ve Anonimlik",
         "connectReown": "Tarayıcı ile bağlan",
-        "connectBrowser": "Cüzdan ile bağlan"
+        "connectBrowser": "Cüzdan ile bağlan",
+        "agreementHeadingGames": "Fly Infinity Oyunları — Ücretsiz Oyun Erişimi",
+        "agreementGames": "Etkinleştirilen Fly Infinity Sahiplik Payı, doğrulanmış cüzdana Games Hub içinde ücretsiz olarak belirlenen oyunlara ayrı satın alma, abonelik veya giriş ücreti olmadan erişim hakkı sağlar. Mevcut doğrulama koşulu devam eder: cüzdanda en az 1 FIT bulunmalı ve ücretsiz doğrulama mesajı imzalanmalıdır. Bu oyunlara giriş için zincir üzerinde işlem veya token transferi gerekmez. Oyunlar eğlence amaçlıdır ve finansal ödül vaat etmez. Ücretli olarak belirtilen oyunlar, premium özellikler ve isteğe bağlı ücretli oyun içi hizmetler, Fly Infinity resmen aksini duyurmadıkça kapsam dışıdır.",
+        "agreementHeadingAi": "Fly AI — Yapay Zekâ Paketine Ücretsiz Erişim",
+        "agreementAi": "Etkinleştirilmiş Sahiplik Payı, kayıtlı cüzdana ayrı bir yinelenen abonelik olmadan Fly AI erişimi sağlar. Mevcut paket sekiz asistan içerir: Genel Fly AI, Hukuk Danışmanı, İngilizce Koçu, Ebeveynlik Danışmanı, Sağlık ve Güzellik Danışmanı, Kitap Danışmanı, Kültür Rehberi ve Network ve Liderlik Koçu. Ayrıca FIT Intelligence, işlem analizi, akıllı sözleşme analizi, salt okunur blokzincir araçları, AI görsel üretimi için Görsel Stüdyo ve Seslendirme, Müzik Oluşturucu ve Ses Efektleri sunan Ses Stüdyosu dahildir. Kullanım; cüzdan ve sahiplik doğrulamasına, seviyeye bağlı günlük kotalara, güvenlik kurallarına, teknik kapasiteye, bölgesel kullanılabilirliğe ve özellik koşullarına tabidir. Bazı üçüncü taraf modeller veya hizmetler ayrı koşul ya da ücret gerektirebilir; Sahiplik Payı bunları karşılamaz.",
+        "agreementHeadingFuture": "Gelecekteki Fly Infinity Projeleri — Sahip Avantajları",
+        "agreementFuture": "Etkinleştirilmiş Sahiplik Payı sahipleri, resmen sahip avantajı olarak belirlenen gelecekteki Fly Infinity ürün ve hizmetlerine ek platform erişim ücreti veya yinelenen abonelik olmadan ücretsiz erişmeye uygun olacaktır. Her resmî duyuru dahil edilen özellikleri, uygunluk koşullarını, yayın takvimini, kullanım sınırlarını, desteklenen bölgeleri ve istisnaları belirtir. Avantaj yalnızca ücretsiz olduğu açıkça belirtilen özellikleri kapsar; ücretli yükseltmeler, isteğe bağlı satın almalar, üçüncü taraf ücretleri ve uygulanabilir blokzincir/işlem ücretleri dahil değildir.",
+        "agreementHeadingScope": "Sahiplik Avantajlarının Kapsamı",
+        "agreementScope": "Bu bölümdeki avantajlar, etkinleştirilmiş Sahiplik Payına bağlı erişim haklarıdır. Ayrı ve bağlayıcı bir belge açıkça aksini belirtmedikçe, Sahiplik Payı satın almak tek başına herhangi bir oyun, yapay zekâ hizmeti, bağlı kuruluş, üçüncü taraf sağlayıcı veya gelecekteki projede doğrudan hisse, varlık mülkiyeti, yönetişim hakkı ya da gelir/kâr hakkı vermez. Ayrı haklar başka bir belgede açıkça düzenlenmelidir. Ürüne özel koşullar ve yürürlükteki yasalar geçerlidir."
     },
     "footer": {
         "tagline": "Fly Infinity — Merkeziyetsiz. Şeffaf. Sonsuza Yükselen."
