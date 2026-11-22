@@ -19,7 +19,7 @@ jobs:
       run:
         working-directory: backend
     env:
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_SOCIAL_API_TOKEN }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_SOCIAL_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
       SOCIAL_WORKER_URL: https://fly-infinity-social-api.flyinfinityplatform.workers.dev
       B2_ENDPOINT: ${{ secrets.FLY_SOCIAL_B2_ENDPOINT }}
@@ -58,6 +58,51 @@ jobs:
             echo "::error::Social Worker must not contain a Cloudflare R2 binding."
             exit 1
           fi
+
+      - name: Verify private Backblaze B2 credentials and access
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { randomUUID } from 'node:crypto';
+          import {
+            S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand
+          } from '@aws-sdk/client-s3';
+
+          const endpoint = new URL(process.env.B2_ENDPOINT);
+          if (endpoint.protocol !== 'https:' || !/^s3\\.[a-z0-9-]+\\.backblazeb2\\.com$/i.test(endpoint.hostname)) {
+            throw new Error('Invalid Backblaze S3 endpoint');
+          }
+          const client = new S3Client({
+            endpoint: endpoint.origin,
+            region: endpoint.hostname.split('.')[1],
+            forcePathStyle: true,
+            credentials: {
+              accessKeyId: process.env.B2_KEY_ID,
+              secretAccessKey: process.env.B2_APPLICATION_KEY
+            },
+            requestChecksumCalculation: 'WHEN_REQUIRED',
+            responseChecksumValidation: 'WHEN_REQUIRED'
+          });
+          const key = 'uploads/__fly_social_deploy_check_' + randomUUID() + '.txt';
+          const marker = 'Fly Infinity Social B2 storage check';
+          try {
+            await client.send(new PutObjectCommand({
+              Bucket: process.env.B2_BUCKET, Key: key, Body: marker,
+              ContentType: 'text/plain'
+            }));
+            const object = await client.send(new GetObjectCommand({
+              Bucket: process.env.B2_BUCKET, Key: key
+            }));
+            const value = await object.Body.transformToString();
+            if (value !== marker) throw new Error('Backblaze read-back check failed');
+            console.log('Private B2 bucket write/read verification passed.');
+          } finally {
+            await client.send(new DeleteObjectCommand({
+              Bucket: process.env.B2_BUCKET, Key: key
+            }));
+          }
+          NODE
 
       - name: Deploy only Fly Infinity Social API
         shell: bash
