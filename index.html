@@ -1628,6 +1628,36 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
     .mission-title { animation: none !important; }
 }
 </style>
+<style id="fi-ecosystem-platform-cards">
+.fi-eco-platforms{position:relative;z-index:2;max-width:1120px;margin:30px auto 0;padding-top:25px;border-top:1px solid rgba(0,200,150,.18)}
+.fi-eco-platforms-heading{text-align:center;max-width:720px;margin:0 auto 18px;padding:0 8px}
+.fi-eco-platforms-heading h3{margin:5px 0 8px;color:#f4f8f6;font-size:clamp(20px,2.5vw,28px);line-height:1.25;text-shadow:0 0 20px rgba(0,200,150,.13)}
+.fi-eco-platforms-heading p{margin:0;color:#aebbb6;font-size:12px;line-height:1.7}
+.fi-eco-platform-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;align-items:stretch}
+.fi-eco-platform-card{--platform-accent:#62dfc1;--platform-glow:rgba(0,200,150,.12);position:relative;display:flex;min-width:0;min-height:218px;flex-direction:column;gap:12px;padding:17px 16px 15px;overflow:hidden;border:1px solid color-mix(in srgb,var(--platform-accent) 33%,transparent);border-radius:19px;background:radial-gradient(circle at 100% 0,var(--platform-glow),transparent 55%),linear-gradient(145deg,rgba(24,43,40,.74),rgba(12,20,23,.75));box-shadow:inset 0 1px 0 rgba(255,255,255,.11),0 12px 28px rgba(0,0,0,.18);color:#f3f7f5;text-decoration:none;isolation:isolate;transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
+.fi-eco-platform-card:before{content:"";position:absolute;inset:auto -26% -64% 34%;height:135px;border-radius:50%;background:var(--platform-glow);filter:blur(30px);z-index:-1;pointer-events:none}
+.fi-eco-platform-card:hover,.fi-eco-platform-card:focus-visible{transform:translateY(-5px);border-color:var(--platform-accent);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 16px 34px rgba(0,0,0,.23),0 0 22px var(--platform-glow);outline:none}
+.fi-eco-platform-card:focus-visible{outline:2px solid var(--platform-accent);outline-offset:3px}
+.fi-eco-platform-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.fi-eco-platform-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border-radius:13px;color:var(--platform-accent);background:var(--platform-glow);border:1px solid color-mix(in srgb,var(--platform-accent) 28%,transparent);font-size:19px;text-shadow:0 0 15px var(--platform-glow)}
+.fi-eco-platform-index{color:var(--platform-accent);font-size:8px;font-weight:850;letter-spacing:1.4px;text-align:end}
+.fi-eco-platform-card h4{margin:1px 0 0;color:#f4f8f6;font-size:15px;line-height:1.35}
+.fi-eco-platform-card p{margin:0;color:#b9c7c1;font-size:10.5px;line-height:1.72;flex:1}
+.fi-eco-platform-cta{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:10px;border-top:1px solid rgba(255,255,255,.09);color:var(--platform-accent);font-size:10px;font-weight:800;line-height:1.4}
+.fi-eco-platform-cta i{flex:0 0 auto;font-size:11px;transition:transform .25s ease}
+.fi-eco-platform-card:hover .fi-eco-platform-cta i,.fi-eco-platform-card:focus-visible .fi-eco-platform-cta i{transform:translate(3px,-2px)}
+.platform-web{--platform-accent:#62dfc1;--platform-glow:rgba(0,200,150,.15)}
+.platform-games{--platform-accent:#f0cc72;--platform-glow:rgba(212,175,55,.15)}
+.platform-ai{--platform-accent:#9cb6ff;--platform-glow:rgba(105,133,255,.16)}
+.platform-future{--platform-accent:#d0a6ff;--platform-glow:rgba(171,105,255,.16)}
+html[dir="rtl"] .fi-eco-platform-card{direction:rtl;text-align:right}
+html[dir="rtl"] .fi-eco-platform-index{text-align:left}
+html[dir="rtl"] .fi-eco-platform-cta i{transform:rotate(180deg)}
+html[dir="rtl"] .fi-eco-platform-card:hover .fi-eco-platform-cta i,html[dir="rtl"] .fi-eco-platform-card:focus-visible .fi-eco-platform-cta i{transform:rotate(180deg) translate(3px,-2px)}
+@media(max-width:900px){.fi-eco-platform-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.fi-eco-platform-card{min-height:205px}}
+@media(max-width:540px){.fi-eco-platforms{margin-top:23px;padding-top:20px}.fi-eco-platforms-heading{margin-bottom:14px}.fi-eco-platforms-heading h3{font-size:21px;line-height:1.3}.fi-eco-platforms-heading p{font-size:11px;line-height:1.65}.fi-eco-platform-grid{grid-template-columns:minmax(0,1fr);gap:10px}.fi-eco-platform-card{min-height:0;padding:15px 15px 13px;border-radius:17px;gap:9px}.fi-eco-platform-icon{width:39px;height:39px;flex-basis:39px;font-size:17px}.fi-eco-platform-card h4{font-size:15px}.fi-eco-platform-card p{font-size:11px;line-height:1.65}.fi-eco-platform-cta{padding-top:9px;font-size:10px}}
+@media(prefers-reduced-motion:reduce){.fi-eco-platform-card,.fi-eco-platform-cta i{transition:none!important}.fi-eco-platform-card:hover,.fi-eco-platform-card:focus-visible{transform:none}}
+</style>
 </head>
 <body data-ambient="dashboard">
 <div class="container">
@@ -1811,7 +1841,7 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
       <div class="fi-eco-heading">
         <span class="fi-eco-eyebrow" data-i18n="eco.eyebrow">ONE CONNECTED ECOSYSTEM</span>
         <h2 id="ecoTitle" data-i18n="eco.title">The Fly Infinity Ecosystem</h2>
-        <p data-i18n="eco.subtitle">Four interconnected pillars. One community-driven vision.</p>
+        <p data-i18n="eco.subtitle">Four foundational smart contracts. One community-driven vision.</p>
       </div>
       <div class="fi-eco-stage">
         <div class="fi-eco-orbit orbit-a"></div><div class="fi-eco-orbit orbit-b"></div>
@@ -1831,6 +1861,39 @@ html[dir="rtl"] .mission-pillar + .mission-pillar { border-left: 0 !important; b
         <article class="fi-eco-info"><div class="info-symbol"><i class="fa-solid fa-vault"></i></div><div><h3 data-i18n="eco.reserveTitle">How the FIT price is calculated</h3><p data-i18n="eco.reserveText">The displayed on-chain price is calculated as the DAI reserve held by the FIT token contract divided by the current FIT total supply. This is a contract formula, not a promise of future market value or guaranteed returns.</p><div class="fi-formula">FIT Price = DAI Reserve <span>÷</span> FIT Total Supply</div></div></article>
         <article class="fi-eco-info"><div class="info-symbol gold"><i class="fa-solid fa-arrows-rotate"></i></div><div><h3 data-i18n="eco.flowTitle">A connected platform</h3><p data-i18n="eco.flowText">Network, FIT, Gift and DAO are presented as connected parts of the Fly Infinity platform. Each component has a distinct role while contributing to the wider ecosystem.</p><div class="fi-flow"><span>NETWORK</span><b></b><span>FIT</span><b></b><span>GIFT</span><b></b><span>DAO</span></div></div></article>
       </div>
+      <section class="fi-eco-platforms" aria-labelledby="ecoPlatformsTitle">
+        <div class="fi-eco-platforms-heading">
+          <span class="fi-eco-eyebrow" data-i18n="eco.platformsEyebrow">BEYOND THE CONTRACTS</span>
+          <h3 id="ecoPlatformsTitle" data-i18n="eco.platformsTitle">Explore the Fly Infinity universe</h3>
+          <p data-i18n="eco.platformsSubtitle">One connected destination for digital access, play, intelligence and what comes next.</p>
+        </div>
+        <div class="fi-eco-platform-grid">
+          <a class="fi-eco-platform-card platform-web" href="index.html" aria-labelledby="ecoWebTitle">
+            <span class="fi-eco-platform-top"><span class="fi-eco-platform-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><span class="fi-eco-platform-index">01 / ACCESS</span></span>
+            <h4 id="ecoWebTitle" data-i18n="eco.webTitle">Fly Infinity Web App</h4>
+            <p data-i18n="eco.webText">Your command centre for the Fly Infinity universe — a living dashboard connecting essential tools, services and community pathways.</p>
+            <span class="fi-eco-platform-cta"><span data-i18n="eco.webCta">Enter the Web App</span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
+          </a>
+          <a class="fi-eco-platform-card platform-games" href="games/index.html" aria-labelledby="ecoGamesTitle">
+            <span class="fi-eco-platform-top"><span class="fi-eco-platform-icon"><i class="fa-solid fa-gamepad" aria-hidden="true"></i></span><span class="fi-eco-platform-index">02 / PLAY</span></span>
+            <h4 id="ecoGamesTitle" data-i18n="eco.gamesTitle">Fly Infinity Games Hub</h4>
+            <p data-i18n="eco.gamesText">A world of friendly rivalry, skill and shared moments — discover the growing collection of games in one dedicated arena.</p>
+            <span class="fi-eco-platform-cta"><span data-i18n="eco.gamesCta">Enter the Games Hub</span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
+          </a>
+          <a class="fi-eco-platform-card platform-ai" href="fly-ai/index.html" aria-labelledby="ecoAiTitle">
+            <span class="fi-eco-platform-top"><span class="fi-eco-platform-icon"><i class="fa-solid fa-brain" aria-hidden="true"></i></span><span class="fi-eco-platform-index">03 / INTELLIGENCE</span></span>
+            <h4 id="ecoAiTitle" data-i18n="eco.aiTitle">Fly Infinity AI</h4>
+            <p data-i18n="eco.aiText">The intelligence layer of the ecosystem — specialist assistants, image creation and an audio studio brought together in one place.</p>
+            <span class="fi-eco-platform-cta"><span data-i18n="eco.aiCta">Discover Fly AI</span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
+          </a>
+          <a class="fi-eco-platform-card platform-future" href="next-projects.html" aria-labelledby="ecoFutureTitle">
+            <span class="fi-eco-platform-top"><span class="fi-eco-platform-icon"><i class="fa-solid fa-rocket" aria-hidden="true"></i></span><span class="fi-eco-platform-index">04 / WHAT'S NEXT</span></span>
+            <h4 id="ecoFutureTitle" data-i18n="eco.futureTitle">The Next Fly Infinity Projects</h4>
+            <p data-i18n="eco.futureText">Look beyond the horizon. Explore the ideas, initiatives and new experiences shaping the next chapters of the Fly Infinity vision.</p>
+            <span class="fi-eco-platform-cta"><span data-i18n="eco.futureCta">Explore What's Next</span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>
+          </a>
+        </div>
+      </section>
       <p class="fi-eco-footnote" data-i18n="eco.note">Information describes the platform design and currently deployed contract logic. It is not financial advice or a guarantee of price performance.</p>
     </section>
 

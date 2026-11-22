@@ -122,7 +122,7 @@
   "eco": {
     "eyebrow": "UN ECOSISTEMA CONECTADO",
     "title": "El ecosistema Fly Infinity",
-    "subtitle": "Cuatro pilares conectados. Una visión impulsada por la comunidad.",
+    "subtitle": "Cuatro contratos inteligentes fundamentales. Una visión impulsada por la comunidad.",
     "core": "CONECTADO POR DISEÑO",
     "networkTitle": "Red",
     "networkText": "La capa de desarrollo que conecta participantes, actividad y el resto de la plataforma.",
@@ -140,6 +140,21 @@
     "reserveText": "El precio mostrado en cadena se calcula dividiendo la reserva DAI del contrato del token FIT entre la oferta total actual de FIT. Es una fórmula del contrato, no una promesa de valor futuro ni de rendimientos garantizados.",
     "flowTitle": "Una plataforma conectada",
     "flowText": "Red, FIT, Gift y DAO son partes conectadas de Fly Infinity. Cada componente cumple una función distinta dentro del ecosistema.",
-    "note": "La información describe el diseño de la plataforma y la lógica actual de los contratos desplegados. No es asesoramiento financiero ni garantía de rendimiento."
+    "note": "La información describe el diseño de la plataforma y la lógica actual de los contratos desplegados. No es asesoramiento financiero ni garantía de rendimiento.",
+    "platformsEyebrow": "MÁS ALLÁ DE LOS CONTRATOS",
+    "platformsTitle": "Explora el universo Fly Infinity",
+    "platformsSubtitle": "Un destino conectado para el acceso digital, los juegos, la inteligencia y lo que está por venir.",
+    "webTitle": "Aplicación web Fly Infinity",
+    "webText": "El centro de mando del universo Fly Infinity: un panel dinámico que conecta herramientas, servicios y vías de participación comunitaria.",
+    "webCta": "Entrar en la aplicación web",
+    "gamesTitle": "Centro de juegos Fly Infinity",
+    "gamesText": "Un mundo de rivalidad amistosa, habilidad y momentos compartidos: descubre una colección de juegos en constante crecimiento en una sola arena.",
+    "gamesCta": "Entrar al centro de juegos",
+    "aiTitle": "Inteligencia artificial Fly Infinity",
+    "aiText": "La capa inteligente del ecosistema: asistentes especializados, creación de imágenes y un estudio de audio en un mismo espacio.",
+    "aiCta": "Descubrir Fly AI",
+    "futureTitle": "Próximos proyectos de Fly Infinity",
+    "futureText": "Mira más allá del horizonte. Explora las ideas, iniciativas y nuevas experiencias que darán forma a los próximos capítulos de Fly Infinity.",
+    "futureCta": "Explorar lo que viene"
   }
 }

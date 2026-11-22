@@ -122,7 +122,7 @@
   "eco": {
     "eyebrow": "BİRBİRİNE BAĞLI TEK EKOSİSTEM",
     "title": "Fly Infinity Ekosistemi",
-    "subtitle": "Birbirine bağlı dört temel bileşen. Topluluk odaklı tek vizyon.",
+    "subtitle": "Topluluk odaklı tek bir vizyonu taşıyan dört temel akıllı sözleşme.",
     "core": "TASARIMLA BÜTÜNLEŞİK",
     "networkTitle": "Ağ",
     "networkText": "Katılımcıları, faaliyetleri ve platformun diğer bölümlerini birbirine bağlayan geliştirme katmanı.",
@@ -140,6 +140,21 @@
     "reserveText": "Zincirde gösterilen fiyat, FIT token sözleşmesindeki DAI rezervinin mevcut toplam FIT arzına bölünmesiyle hesaplanır. Bu bir sözleşme formülüdür; gelecekteki piyasa değeri veya getiri garantisi değildir.",
     "flowTitle": "Birbirine bağlı platform",
     "flowText": "Ağ, FIT, Gift ve DAO; Fly Infinity platformunun bağlantılı parçalarıdır. Her bileşenin kendine özgü bir rolü vardır.",
-    "note": "Bu bilgiler platform tasarımını ve hâlihazırda dağıtılmış sözleşmelerin mantığını açıklar; finansal tavsiye veya fiyat performansı garantisi değildir."
+    "note": "Bu bilgiler platform tasarımını ve hâlihazırda dağıtılmış sözleşmelerin mantığını açıklar; finansal tavsiye veya fiyat performansı garantisi değildir.",
+    "platformsEyebrow": "SÖZLEŞMELERİN ÖTESİNDE",
+    "platformsTitle": "Fly Infinity evrenini keşfedin",
+    "platformsSubtitle": "Dijital erişim, oyun, yapay zekâ ve geleceğin projelerini bir araya getiren bütünleşik bir merkez.",
+    "webTitle": "Fly Infinity Web Uygulaması",
+    "webText": "Fly Infinity evreninin komuta merkezi; temel araçları, hizmetleri ve topluluk yollarını bir araya getiren yaşayan bir gösterge paneli.",
+    "webCta": "Web uygulamasına gir",
+    "gamesTitle": "Fly Infinity Oyun Merkezi",
+    "gamesText": "Dostça rekabet, beceri ve ortak deneyimlerle dolu bir dünya; büyüyen oyun koleksiyonunu tek bir arenada keşfedin.",
+    "gamesCta": "Oyun merkezine gir",
+    "aiTitle": "Fly Infinity Yapay Zekâ",
+    "aiText": "Ekosistemin zekâ katmanı; uzman asistanlar, görsel oluşturma ve ses stüdyosu tek bir yerde.",
+    "aiCta": "Fly AI'ı keşfet",
+    "futureTitle": "Fly Infinity'nin Gelecek Projeleri",
+    "futureText": "Ufkun ötesine bakın. Fly Infinity vizyonunun yeni bölümlerini şekillendirecek fikirleri, girişimleri ve deneyimleri keşfedin.",
+    "futureCta": "Geleceği keşfet"
   }
 }
