@@ -2,5 +2,6 @@
 window.FLY_AI_CONFIG=Object.freeze({
  apiBase:'https://fly-ai-api.flyinfinityplatform.workers.dev',
  imageApiBase:'https://fly-ai-image-api.flyinfinityplatform.workers.dev',
+ audioApiBase:'https://fly-infinity-audio-api.flyinfinityplatform.workers.dev',
  imageGenerationEnabled:true
 });

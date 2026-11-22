@@ -1007,3 +1007,13 @@ body.light .audio-disclosure{background:#f0f1ff;color:#59668a;border-color:#d8d8
  .audio-field-row{grid-template-columns:1fr;gap:6px}
  .audio-download-link{width:100%;text-align:center}
 }
+
+
+/* Natural Gemini voice option inside the existing Audio Studio voice workspace. */
+.audio-natural-voice{display:flex;flex-direction:column;gap:12px;padding-top:18px;margin-top:8px;border-top:1px solid rgba(139,170,220,.18)}
+.audio-natural-voice .audio-tool-heading h3{color:#dff4ff}
+.audio-natural-voice .audio-form{background:linear-gradient(135deg,rgba(28,35,67,.82),rgba(14,42,58,.8));border-color:rgba(119,203,237,.25)}
+.audio-natural-voice .audio-disclosure{font-size:10px}
+.audio-natural-voice .audio-status{min-height:16px}
+body.light .audio-natural-voice .audio-tool-heading h3{color:#27334a}
+body.light .audio-natural-voice .audio-form{background:#f5f8ff;border-color:#d3dcee}

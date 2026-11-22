@@ -5,9 +5,9 @@
 <title>Fly Infinity Ai | Fly Infinity</title><link rel="icon" href="../logo.png"><link rel="apple-touch-icon" href="../logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&family=Estedad:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/fly-ai.css?v=fly-ai-audio-studio-v1">
+<link rel="stylesheet" href="css/fly-ai.css?v=fly-ai-audio-studio-v2">
 <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-<script defer src="../walletconnect-bridge.js"></script><script defer src="js/i18n.js?v=fly-ai-image-studio-v3"></script><script defer src="js/config.js?v=fly-ai-image-studio-v3"></script><script defer src="js/app.js?v=fly-ai-audio-studio-v1"></script><script defer src="js/audio-studio.js?v=fly-ai-audio-studio-v1"></script>
+<script defer src="../walletconnect-bridge.js"></script><script defer src="js/i18n.js?v=fly-ai-image-studio-v3"></script><script defer src="js/config.js?v=fly-ai-image-studio-v3"></script><script defer src="js/app.js?v=fly-ai-audio-studio-v2"></script><script defer src="js/audio-studio.js?v=fly-ai-audio-studio-v2"></script>
 <link rel="manifest" href="../manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Fly Infinity">
@@ -39,6 +39,15 @@
 </form>
 <div id="audioVoiceStatus" class="audio-status" role="status" aria-live="polite"></div>
 <div id="audioVoiceResult" class="audio-result hidden"><strong data-i18n="audioVoiceResult">Voice playback</strong><button id="audioStopVoiceBtn" class="audio-download-link" type="button" data-i18n="audioStopVoice">Stop speaking</button></div>
+<div class="audio-natural-voice">
+<div class="audio-tool-heading"><h3 data-i18n="audioNaturalVoiceTitle">Natural AI voice</h3><p data-i18n="audioNaturalVoiceHint">Generate a natural-sounding WAV using the current Fly AI language.</p></div>
+<div class="audio-form">
+<div class="audio-field-row"><label for="audioNaturalVoiceName" data-i18n="audioNaturalVoiceSelect">AI voice</label><select id="audioNaturalVoiceName"><option value="Sulafat" selected>Sulafat</option><option value="Achernar">Achernar</option><option value="Algieba">Algieba</option><option value="Despina">Despina</option><option value="Vindemiatrix">Vindemiatrix</option><option value="Leda">Leda</option></select></div>
+<p class="audio-disclosure" data-i18n="audioNaturalVoicePrivacy">Your text is sent to Google Gemini to create speech. Google's free tier may use submitted content to improve its products. Do not enter sensitive text.</p>
+<button id="audioGenerateNaturalVoiceBtn" type="button" class="audio-primary-btn"><span aria-hidden="true">✧</span> <span data-i18n="audioNaturalVoiceButton">Generate natural AI voice</span></button>
+</div>
+<div id="audioNaturalVoiceStatus" class="audio-status" role="status" aria-live="polite"></div>
+</div>
 </section>
 <section id="audioMusicTool" class="audio-tool-panel hidden">
 <div class="audio-tool-heading"><h3 data-i18n="audioMusicTitle">Original instrumental composer</h3><p data-i18n="audioMusicHint">Build a new short instrumental track in your browser.</p></div>
