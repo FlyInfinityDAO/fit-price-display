@@ -8,6 +8,7 @@
     ["dapp.html","dapp","fa-solid fa-cubes"],
     ["games/index.html","games","fa-solid fa-dice"],
     ["fly-ai/index.html","ai","fa-solid fa-brain"],
+    ["creator-arena/index.html","socialArena","fa-solid fa-users"],
     ["profit-simulator.html","profitCalculator","fa-solid fa-calculator"],
     ["next-projects.html","nextProjects","fa-solid fa-rocket"],
     ["transactions.html","transactions","fa-solid fa-arrow-right-arrow-left"],
