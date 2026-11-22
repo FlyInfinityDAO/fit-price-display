@@ -52,7 +52,12 @@ document.addEventListener("DOMContentLoaded",function(){
   if(opening){menu.classList.add("open");if(ludoPage)menu.style.display="grid";positionMenu();button.setAttribute("aria-expanded","true")}
   else closeMenu();
  });
- select.addEventListener("change",sync);
+ select.addEventListener("change",()=>{
+  sync();
+  const selected=select.value;
+  try{localStorage.setItem("fit_lang",selected)}catch(e){}
+  document.dispatchEvent(new CustomEvent("fi-language-updated",{detail:{lang:selected}}));
+ });
  document.addEventListener("click",event=>{if(!button.contains(event.target)&&!menu.contains(event.target))closeMenu()});
  window.addEventListener("resize",()=>{if(menu.classList.contains("open"))positionMenu()},{passive:true});
  window.addEventListener("scroll",()=>{if(menu.classList.contains("open"))positionMenu()},{passive:true,capture:true});
