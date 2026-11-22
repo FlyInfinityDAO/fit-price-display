@@ -1,4 +1,5 @@
 import { ethers } from 'ethers';
+import { getMediaStorage } from './storage.js';
 import {
   buildChallengeMessage, createOpaqueSessionToken, hashValue,
   hashSessionToken, normalizeAddress, verifyWalletSignature
@@ -307,7 +308,8 @@ async function getPost(request, env, postId) {
 async function uploadMedia(request, env) {
   const session = await getSession(request, env, true);
   if (session?.error) return json({ error: session.error }, session.status);
-  if (!env.MEDIA) return json({ error: 'Social media storage is not configured' }, 503);
+  const mediaStorage = getMediaStorage(env);
+  if (!mediaStorage) return json({ error: 'Social media storage is not configured' }, 503);
   if (!await rateLimit(env.DB, 'media:' + session.address, 30, 86400)) {
     return json({ error: 'Daily upload limit reached. Try again tomorrow.' }, 429);
   }
@@ -324,9 +326,10 @@ async function uploadMedia(request, env) {
   const extension = safeFileExtension(media.contentType);
   const key = 'uploads/' + crypto.randomUUID() + '.' + extension;
   const timestamp = now();
-  await env.MEDIA.put(key, buffer, {
-    httpMetadata: { contentType: media.contentType, cacheControl: 'public, max-age=3600' },
-    customMetadata: { owner: session.address, mediaType: media.mediaType }
+  await mediaStorage.put(key, buffer, {
+    contentType: media.contentType,
+    cacheControl: 'public, max-age=3600',
+    metadata: { owner: session.address, mediaType: media.mediaType }
   });
   try {
     await env.DB.prepare(
@@ -334,14 +337,15 @@ async function uploadMedia(request, env) {
       "VALUES(?,?,?,?,?,'staged',?,?,NULL)"
     ).bind(key, session.address, media.mediaType, media.contentType, buffer.byteLength, timestamp, timestamp + 7200).run();
   } catch (error) {
-    try { await env.MEDIA.delete(key); } catch {}
+    try { await mediaStorage.delete(key); } catch {}
     throw error;
   }
   return json({ mediaKey: key, mediaType: media.mediaType, contentType: media.contentType, size: buffer.byteLength, expiresAt: timestamp + 7200 }, 201);
 }
 
 async function serveMedia(request, env, encodedKey) {
-  if (!env.MEDIA) return json({ error: 'Media storage is unavailable' }, 503);
+  const mediaStorage = getMediaStorage(env);
+  if (!mediaStorage) return json({ error: 'Media storage is unavailable' }, 503);
   let key;
   try { key = decodeURIComponent(encodedKey); } catch { return json({ error: 'Invalid media key' }, 400); }
   if (!key.startsWith('uploads/') || key.includes('..') || key.length > 180) return json({ error: 'Invalid media key' }, 400);
@@ -350,7 +354,7 @@ async function serveMedia(request, env, encodedKey) {
     "WHERE m.media_key=? AND m.state='attached' AND p.status='published' AND p.moderation_state='clear' LIMIT 1"
   ).bind(key).first();
   if (!visible) return json({ error: 'Media not found' }, 404);
-  const object = await env.MEDIA.get(key);
+  const object = await mediaStorage.get(key);
   if (!object) return json({ error: 'Media not found' }, 404);
   const headers = new Headers({
     'Content-Type': visible.content_type,
@@ -611,7 +615,7 @@ async function deletePost(request, env, postId) {
     await env.DB.prepare(
       "UPDATE social_media_objects SET state='removed',expires_at=? WHERE media_key=? AND owner_wallet=?"
     ).bind(now(), post.media_key, session.address).run();
-    try { await env.MEDIA?.delete(post.media_key); }
+    try { await getMediaStorage(env)?.delete(post.media_key); }
     catch (error) { console.error('Social post media deletion failed:', String(error?.message || error).slice(0, 160)); }
   }
   return json({ deleted: true });
@@ -681,8 +685,12 @@ export default {
       const stale = await env.DB.prepare(
         "SELECT media_key FROM social_media_objects WHERE state IN ('staged','removed') AND expires_at<? LIMIT 100"
       ).bind(timestamp).all();
+      let mediaStorage = null;
+      try { mediaStorage = getMediaStorage(env); } catch (error) {
+        console.error('Social media storage configuration failed:', String(error?.message || error).slice(0, 160));
+      }
       for (const row of stale.results || []) {
-        try { await env.MEDIA?.delete(row.media_key); } catch (error) {
+        try { await mediaStorage?.delete(row.media_key); } catch (error) {
           console.error('Social media cleanup failed:', String(error?.message || error).slice(0, 160));
         }
         await env.DB.prepare("UPDATE social_media_objects SET state='removed' WHERE media_key=? AND state='staged'")
