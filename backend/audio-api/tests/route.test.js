@@ -48,3 +48,51 @@ test('AI music endpoint is explicitly disabled without paid provider approval', 
   assert.equal(response.status, 402);
   assert.match((await response.json()).error, /paid provider/i);
 });
+
+test('Gemini TTS proxy is disabled on the production Audio Worker by default', async () => {
+  const response = await audioWorker.fetch(request('/api/audio/gemini-tts'), {
+    APP_ORIGIN: origin
+  });
+  assert.equal(response.status, 404);
+  assert.match((await response.json()).error, /not enabled/i);
+});
+
+test('Gemini TTS proxy validates the API key before contacting Google', async () => {
+  const response = await audioWorker.fetch(request('/api/audio/gemini-tts', {
+    body: JSON.stringify({ text: 'سلام', locale: 'fa-IR', voiceName: 'Sulafat' })
+  }), {
+    APP_ORIGIN: origin,
+    GEMINI_TTS_PROXY_ENABLED: 'true'
+  });
+  assert.equal(response.status, 400);
+  assert.match((await response.json()).error, /API Studio API key/i);
+});
+
+test('Gemini TTS proxy rejects unsupported languages and voices', async () => {
+  const env = { APP_ORIGIN: origin, GEMINI_TTS_PROXY_ENABLED: 'true' };
+  const languageResponse = await audioWorker.fetch(request('/api/audio/gemini-tts', {
+    body: JSON.stringify({ apiKey: 'test-api-key-123', text: 'hello', locale: 'xx-XX', voiceName: 'Sulafat' })
+  }), env);
+  assert.equal(languageResponse.status, 400);
+  assert.match((await languageResponse.json()).error, /language/i);
+
+  const voiceResponse = await audioWorker.fetch(request('/api/audio/gemini-tts', {
+    body: JSON.stringify({ apiKey: 'test-api-key-123', text: 'hello', locale: 'en-US', voiceName: 'Unknown' })
+  }), env);
+  assert.equal(voiceResponse.status, 400);
+  assert.match((await voiceResponse.json()).error, /voice/i);
+});
+
+test('Gemini TTS proxy supports GitHub Pages CORS preflight', async () => {
+  const response = await audioWorker.fetch(new Request('https://audio-worker.test/api/audio/gemini-tts', {
+    method: 'OPTIONS',
+    headers: {
+      Origin: origin,
+      'Access-Control-Request-Method': 'POST',
+      'Access-Control-Request-Headers': 'content-type'
+    }
+  }), { APP_ORIGIN: origin, GEMINI_TTS_PROXY_ENABLED: 'true' });
+  assert.equal(response.status, 204);
+  assert.equal(response.headers.get('Access-Control-Allow-Origin'), origin);
+  assert.match(response.headers.get('Access-Control-Allow-Headers'), /Content-Type/i);
+});

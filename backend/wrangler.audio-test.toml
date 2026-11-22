@@ -9,8 +9,9 @@ database_name = "fly-infinity-audio-test-db"
 database_id = "REPLACE_WITH_FLY_INFINITY_AUDIO_TEST_D1_ID"
 
 [vars]
-APP_ORIGIN = "https://raw.githack.com"
+APP_ORIGIN = "https://flyinfinitydao.github.io"
 AUDIO_PREVIEW_ENABLED = "false"
+GEMINI_TTS_PROXY_ENABLED = "true"
 BSC_RPC_URL = "https://bsc-dataseed.binance.org/"
 FIT_TOKEN_ADDRESS = "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa"
 NETWORK_ADDRESS = "0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B"

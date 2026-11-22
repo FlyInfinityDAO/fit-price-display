@@ -65,15 +65,15 @@ async function generateGeminiSpeech({apiKey,text,locale,voiceName='Sulafat'}){
  if(spoken.length>1200)throw new Error('Keep this test text under 1,200 characters.');
  const language=({'en-US':'English','fa-IR':'Iranian Persian','ar-SA':'Arabic','tr-TR':'Turkish','ru-RU':'Russian','zh-CN':'Chinese','es-ES':'Spanish','pt-PT':'Portuguese'})[locale]||locale;
  const style='Warm, gentle, calm studio narration. Soft dynamics, medium-low pitch, slow-to-moderate pace, smooth and clear pronunciation. Avoid sharp, shrill or exaggerated intonation. Read the transcript exactly as written in '+language+'.';
- const response=await fetch('https://generativelanguage.googleapis.com/v1beta/interactions',{
-  method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},
-  body:JSON.stringify({
-   model:'gemini-3.8-flash-tts',
-   input:[{type:'user_input',content:[{type:'text',text:spoken,annotations:[{type:'speech_metadata',style}]}]}],
-   response_format:{type:'audio',mime_type:'audio/wav',sample_rate:24000},
-   generation_config:{speech_config:[{voice:voiceName}]}
-  })
- });
+ let response;
+ try{
+  response=await fetch('https://fly-infinity-audio-test.flyinfinityplatform.workers.dev/api/audio/gemini-tts',{
+   method:'POST',headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({apiKey:key,text:spoken,locale,voiceName})
+  });
+ }catch(error){
+  throw new Error('اتصال امن به سرویس آزمایشی صوت برقرار نشد. صفحه را تازه‌سازی کنید و دوباره تلاش کنید. جزئیات: '+(error?.message||'network error'));
+ }
  const data=await response.json().catch(()=>({}));
  if(!response.ok){
   const detail=data.error?.message||('HTTP '+response.status);

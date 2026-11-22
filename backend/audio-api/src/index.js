@@ -104,6 +104,85 @@ async function generatePreviewSpeech() {
   return json({ error: 'Cloud speech preview is disabled to keep Audio Studio fully free.' }, 410);
 }
 
+// This one-request proxy is enabled only on the isolated no-wallet test Worker.
+// The caller supplies their own Google AI Studio key; it is never persisted or logged.
+async function generateGeminiPreviewSpeech(req, env) {
+  if (env.GEMINI_TTS_PROXY_ENABLED !== 'true') {
+    return json({ error: 'Gemini TTS proxy is not enabled on this Worker.' }, 404);
+  }
+  const contentLength = Number(req.headers.get('Content-Length') || 0);
+  if (contentLength > 20000) return json({ error: 'Request is too large.' }, 413);
+
+  const body = await readJson(req);
+  const apiKey = typeof body?.apiKey === 'string' ? body.apiKey.trim() : '';
+  const spoken = typeof body?.text === 'string' ? body.text.trim() : '';
+  const locale = typeof body?.locale === 'string' ? body.locale : '';
+  const voiceName = typeof body?.voiceName === 'string' ? body.voiceName : 'Sulafat';
+  const languages = {
+    'en-US': 'English',
+    'fa-IR': 'Iranian Persian',
+    'ar-SA': 'Arabic',
+    'tr-TR': 'Turkish',
+    'ru-RU': 'Russian',
+    'zh-CN': 'Chinese',
+    'es-ES': 'Spanish',
+    'pt-PT': 'Portuguese'
+  };
+  const voices = new Set(['Sulafat', 'Achernar', 'Algieba', 'Despina', 'Vindemiatrix', 'Leda']);
+
+  if (apiKey.length < 10 || apiKey.length > 256) {
+    return json({ error: 'A valid Google AI Studio API key is required for this test.' }, 400);
+  }
+  if (!spoken) return json({ error: 'Enter text to speak first.' }, 400);
+  if (spoken.length > 1200) return json({ error: 'Keep this test text under 1,200 characters.' }, 400);
+  if (!languages[locale]) return json({ error: 'Unsupported speech language.' }, 400);
+  if (!voices.has(voiceName)) return json({ error: 'Unsupported Gemini voice.' }, 400);
+
+  const style = 'Warm, gentle, calm studio narration. Soft dynamics, medium-low pitch, slow-to-moderate pace, smooth and clear pronunciation. Avoid sharp, shrill or exaggerated intonation. Read the transcript exactly as written in ' + languages[locale] + '.';
+  const upstream = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey
+    },
+    body: JSON.stringify({
+      model: 'gemini-3.8-flash-tts',
+      input: [{
+        type: 'user_input',
+        content: [{
+          type: 'text',
+          text: spoken,
+          annotations: [{ type: 'speech_metadata', style }]
+        }]
+      }],
+      response_format: {
+        type: 'audio',
+        mime_type: 'audio/wav',
+        sample_rate: 24000
+      },
+      generation_config: {
+        speech_config: [{ voice: voiceName }]
+      }
+    })
+  });
+
+  const data = await upstream.json().catch(() => ({}));
+  if (!upstream.ok) {
+    const detail = String(data?.error?.message || ('Google TTS request failed with HTTP ' + upstream.status))
+      .replaceAll(apiKey, '[redacted]');
+    return json({ error: detail }, upstream.status);
+  }
+
+  const audioData = data.output_audio?.data || (Array.isArray(data.steps)
+    ? data.steps.filter(step => step.type === 'model_output')
+      .flatMap(step => step.content || [])
+      .find(part => part.type === 'audio' && part.data)?.data
+    : null);
+  if (!audioData) return json({ error: 'Google returned no audio data. Try a shorter text.' }, 502);
+
+  return json(data, 200, { 'X-Audio-Model': 'gemini-3.8-flash-tts' });
+}
+
 async function route(req, env) {
   const url = new URL(req.url), origin = req.headers.get('Origin'), allowedOrigin = env.APP_ORIGIN || DEFAULT_APP_ORIGIN;
   if (origin && origin !== allowedOrigin) return json({ error: 'Origin not allowed' }, 403);
@@ -113,6 +192,7 @@ async function route(req, env) {
   if (url.pathname === '/api/auth/verify' && req.method === 'POST') return verifyChallenge(req, env);
   if (url.pathname === '/api/audio/tts' && req.method === 'POST') return generateSpeech(req, env);
   if (url.pathname === '/api/audio/preview' && req.method === 'POST') return generatePreviewSpeech(req, env);
+  if (url.pathname === '/api/audio/gemini-tts' && req.method === 'POST') return generateGeminiPreviewSpeech(req, env);
   if (url.pathname === '/api/audio/music' && req.method === 'POST') return json({ error: 'AI music generation is disabled until a paid provider is explicitly approved. Use the built-in free music composer.' }, 402);
   return json({ error: 'Not found' }, 404);
 }

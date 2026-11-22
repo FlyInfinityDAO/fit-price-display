@@ -4,9 +4,9 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#101329">
 <title>Fly Infinity Audio Studio — No-Wallet Test Lab</title>
-<link rel="stylesheet" href="css/audio-studio-test.css?v=3">
-<script defer src="js/audio-studio.js?v=3"></script>
-<script defer src="js/audio-studio-test.js?v=3"></script>
+<link rel="stylesheet" href="css/audio-studio-test.css?v=4">
+<script defer src="js/audio-studio.js?v=4"></script>
+<script defer src="js/audio-studio-test.js?v=4"></script>
 </head>
 <body>
 <main class="studio-shell">
@@ -26,7 +26,7 @@
 <div class="controls"><div><label for="voiceRate">سرعت گفتار</label><input id="voiceRate" type="number" min="0.78" max="1.12" step="0.02" value="0.92"></div><div><label for="voicePitch">زیر و بمی صدا</label><input id="voicePitch" type="number" min="0.82" max="1.08" step="0.02" value="0.94"></div></div>
 <label for="geminiApiKey">کلید API جمینای · صدای طبیعی هوش مصنوعی (سهمیه رایگان)</label>
 <input id="geminiApiKey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="کلید API گوگل AI Studio را فقط برای این آزمایش وارد کنید">
-<p class="muted">کلید فقط تا زمانی که این صفحه باز است در حافظه می‌ماند و ذخیره نمی‌شود؛ درخواست مستقیماً به گوگل ارسال می‌شود. متن خصوصی یا حساس وارد نکنید. سهمیه رایگان محدودیت نرخ دارد و ممکن است گوگل از محتوای ارسالی برای بهبود محصولاتش استفاده کند. <a href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener noreferrer">دریافت کلید رایگان API ↗</a></p>
+<p class="muted">کلید فقط برای همان درخواست از طریق درگاه امن آزمایشی Cloudflare به Google ارسال می‌شود؛ در پایگاه داده Fly Infinity ذخیره یا در گزارش‌های برنامه ثبت نمی‌شود. با بستن صفحه، کلید از فیلد آزمایش پاک می‌شود. متن خصوصی یا حساس وارد نکنید. سهمیه رایگان محدودیت نرخ دارد و ممکن است گوگل از محتوای ارسالی برای بهبود محصولاتش استفاده کند. <a href="https://aistudio.google.com/api-keys" target="_blank" rel="noopener noreferrer">دریافت کلید رایگان API ↗</a></p>
 <div class="controls"><div><label for="geminiVoiceName">انتخاب صدای هوش مصنوعی</label><select id="geminiVoiceName"><option value="Sulafat" selected>Sulafat · گرم و نرم</option><option value="Achernar">Achernar · ملایم</option><option value="Algieba">Algieba · روان و نرم</option><option value="Despina">Despina · نرم و صاف</option><option value="Vindemiatrix">Vindemiatrix · لطیف</option><option value="Leda">Leda · آرام و جوان</option></select></div></div>
 <button id="geminiSpeakButton" type="button">تولید گفتار طبیعی با هوش مصنوعی</button>
 <p class="muted">پس از آماده‌شدن فایل، در پخش‌کننده WAV که پایین همین صفحه ظاهر می‌شود روی پخش بزنید. برای مقایسه، صدای پیش‌فرض Sulafat گرم و ملایم است.</p>
