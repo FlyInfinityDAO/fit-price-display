@@ -70,7 +70,8 @@ jobs:
           } from '@aws-sdk/client-s3';
 
           const endpointValue = process.env.B2_ENDPOINT.trim();
-          const endpoint = new URL(/^https?:\\/\\//i.test(endpointValue) ? endpointValue : 'https://' + endpointValue);
+          const hasScheme = endpointValue.startsWith('https://') || endpointValue.startsWith('http://');
+          const endpoint = new URL(hasScheme ? endpointValue : 'https://' + endpointValue);
           if (endpoint.protocol !== 'https:' || !/^s3\\.[a-z0-9-]+\\.backblazeb2\\.com$/i.test(endpoint.hostname)) {
             throw new Error('Invalid Backblaze S3 endpoint');
           }
