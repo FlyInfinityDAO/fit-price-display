@@ -1,0 +1,22 @@
+name = "fly-infinity-social-api"
+main = "social-api/src/index.js"
+compatibility_date = "2026-11-22"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "fly-infinity-social-db"
+database_id = "REPLACE_WITH_FLY_INFINITY_SOCIAL_D1_ID"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "fly-infinity-social-media"
+
+[vars]
+APP_ORIGIN = "https://flyinfinitydao.github.io"
+BSC_RPC_URL = "https://bsc-dataseed.binance.org/"
+NETWORK_ADDRESS = "0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B"
+CHAIN_ID = "56"
+SESSION_TTL_SECONDS = "604800"
+MAX_IMAGE_BYTES = "15728640"
+MAX_AUDIO_BYTES = "31457280"
