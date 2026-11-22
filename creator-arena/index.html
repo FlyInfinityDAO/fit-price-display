@@ -321,6 +321,24 @@ html[dir=rtl] .brand-copy{align-items:flex-start}
     <div class="composer-actions"><button class="btn btn-glass" type="button" id="cancelSocialProfile" data-social-t="profileCancel">Cancel</button><button class="btn btn-gold" type="submit" data-social-t="profileSave">Save profile</button></div>
   </form>
 </dialog>
+
+<dialog id="socialReportDialog">
+  <div class="composer-head"><div><h2 data-social-t="reportTitle">Report content</h2><p data-social-t="reportSubtitle">Help keep Fly Infinity Social respectful and original.</p></div><button class="close-btn" type="button" id="closeSocialReport" aria-label="Close">×</button></div>
+  <form class="composer-form" id="socialReportForm">
+    <div class="field"><label for="socialReportReason" data-social-t="reportReason">Reason</label>
+      <select id="socialReportReason" required>
+        <option value="copyright" data-social-t="reasonCopyright">Copyright or ownership</option>
+        <option value="harassment" data-social-t="reasonHarassment">Harassment</option>
+        <option value="spam" data-social-t="reasonSpam">Spam or misleading content</option>
+        <option value="unsafe" data-social-t="reasonUnsafe">Unsafe content</option>
+        <option value="impersonation" data-social-t="reasonImpersonation">Impersonation</option>
+        <option value="other" data-social-t="reasonOther">Other</option>
+      </select>
+    </div>
+    <div class="field"><label for="socialReportDetails" data-social-t="reportDetails">Additional details (optional)</label><textarea id="socialReportDetails" maxlength="400" rows="3"></textarea></div>
+    <div class="composer-actions"><button class="btn btn-glass" type="button" id="cancelSocialReport" data-social-t="profileCancel">Cancel</button><button class="btn btn-gold" type="submit" data-social-t="reportSubmit">Submit report</button></div>
+  </form>
+</dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
