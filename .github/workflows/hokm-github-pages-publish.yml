@@ -19,6 +19,8 @@ on:
       - 'images/**'
       - 'games/**'
       - 'fly-ai/**'
+      - 'creator-arena/**'
+      - 'lang/index/**'
       - '.github/workflows/hokm-github-pages-publish.yml'
 
 permissions:
