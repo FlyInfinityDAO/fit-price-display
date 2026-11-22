@@ -13,6 +13,8 @@ on:
     branches: [main]
     paths:
       - 'backend/social-api/**'
+      - 'creator-arena/social-api.js'
+      - 'creator-arena/index.html'
       - 'backend/package.json'
       - '.github/workflows/fly-social-api-check.yml'
 
