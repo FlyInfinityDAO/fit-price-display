@@ -28,7 +28,7 @@ The Worker and D1 database are already created. The Social D1 migration has been
 - The Worker accepts PNG/JPEG/WebP and supported MP3/WAV/OGG/M4A/AAC audio.
 - Image limit: 15 MiB. Audio limit: 30 MiB.
 - File MIME type and binary signature are checked before the object is accepted.
-- Uploads are staged for two hours. A scheduled cleanup removes abandoned staged objects.
+- Uploads are staged for two hours. Expired staged objects are cleaned up opportunistically during later uploads; no Cloudflare Cron Trigger is required.
 - An uploaded file is served only after it is attached to a published, non-restricted creation. The R2 bucket is not public.
 - Deleting a post hides it and its media from public retrieval. Physical object cleanup is a later retention/moderation operation.
 
