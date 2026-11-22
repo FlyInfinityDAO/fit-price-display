@@ -455,6 +455,8 @@ async function followCreator(request, env, targetAddress, method) {
 
 async function listChallenges(request, env) {
   const timestamp = now();
+  const session = await getSession(request, env, false);
+  const viewer = session && !session.error ? session.address : '';
   const rows = await env.DB.prepare(
     "SELECT challenge_id,media_type,title,description,starts_at,ends_at FROM social_challenges " +
     "WHERE status='active' AND starts_at<=? AND ends_at>? ORDER BY ends_at ASC"
@@ -463,17 +465,19 @@ async function listChallenges(request, env) {
   for (const row of rows.results || []) {
     const entries = await env.DB.prepare(
       "SELECT p.post_id,p.wallet_address,p.title,p.media_type,p.description,p.prompt,p.media_key,p.source_post_id,p.source_wallet,p.source_title,p.created_at,pr.handle,pr.display_name," +
-      "(SELECT COUNT(*) FROM social_challenge_votes v WHERE v.challenge_id=? AND v.post_id=p.post_id) AS vote_count " +
+      "(SELECT COUNT(*) FROM social_challenge_votes v WHERE v.challenge_id=? AND v.post_id=p.post_id) AS vote_count," +
+      "CASE WHEN ? <> '' AND EXISTS(SELECT 1 FROM social_challenge_votes mv WHERE mv.challenge_id=? AND mv.voter_wallet=?) THEN 1 ELSE 0 END AS voted_by_me " +
       "FROM social_challenge_submissions s JOIN social_posts p ON p.post_id=s.post_id " +
       "JOIN social_profiles pr ON pr.wallet_address=p.wallet_address " +
       "WHERE s.challenge_id=? AND p.status='published' AND p.moderation_state='clear' ORDER BY vote_count DESC,p.created_at DESC LIMIT 40"
-    ).bind(row.challenge_id, row.challenge_id).all();
+    ).bind(row.challenge_id, viewer, row.challenge_id, viewer, row.challenge_id).all();
     challenges.push({
       id: row.challenge_id, mediaType: row.media_type, title: row.title, description: row.description,
       startsAt: Number(row.starts_at), endsAt: Number(row.ends_at),
       entries: (entries.results || []).map(item => ({
         ...serializePost({ ...item, like_count: 0, liked_by_me: 0 }, request),
-        votes: Number(item.vote_count || 0)
+        votes: Number(item.vote_count || 0),
+        votedByMe: asBool(item.voted_by_me)
       }))
     });
   }
@@ -491,10 +495,11 @@ async function voteChallenge(request, env, challengeId) {
   ).bind(challengeId, now(), now()).first();
   if (!challenge) return json({ error: 'This challenge is closed' }, 409);
   const entry = await env.DB.prepare(
-    "SELECT s.post_id FROM social_challenge_submissions s JOIN social_posts p ON p.post_id=s.post_id " +
+    "SELECT s.post_id,s.wallet_address FROM social_challenge_submissions s JOIN social_posts p ON p.post_id=s.post_id " +
     "WHERE s.challenge_id=? AND s.post_id=? AND p.status='published' AND p.moderation_state='clear'"
   ).bind(challengeId, postId).first();
   if (!entry) return json({ error: 'Challenge entry not found' }, 404);
+  if (entry.wallet_address === session.address) return json({ error: 'You cannot vote for your own challenge entry' }, 403);
   if (!await rateLimit(env.DB, 'vote:' + session.address, 50, 86400)) {
     return json({ error: 'Daily voting limit reached' }, 429);
   }
