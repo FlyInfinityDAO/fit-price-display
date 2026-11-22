@@ -1,13 +1,6 @@
 name: Fly Infinity Social API — provision and deploy
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'backend/social-api/**'
-      - 'backend/wrangler.social-api.toml'
-      - 'backend/package.json'
-      - '.github/workflows/fly-social-api-provision.yml'
   workflow_dispatch:
 
 permissions:
