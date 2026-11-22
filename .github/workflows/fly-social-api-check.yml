@@ -45,3 +45,5 @@ jobs:
           node --check ../creator-arena/social-api.js
       - name: Run Social-only unit and route tests
         run: node --test social-api/tests/*.test.js
+      - name: Validate Social D1 schema and constraints
+        run: python3 social-api/tests/schema-smoke.py
