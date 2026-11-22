@@ -112,7 +112,7 @@ async function restoreSession(){
   if(!token){paintWallet();return;}
   const me=await api('/api/me');wallet=me.wallet;profile=me.profile;paintWallet();
  }catch(error){
-  token='';wallet='';profile=null;sessionStorage.removeItem('fly-social-token');sessionStorage.removeItem('fly-social-wallet');paintWallet();
+  token='';wallet='';profile=null;storageRemove('fly-social-token');storageRemove('fly-social-wallet');paintWallet();
  }
 }
 function mediaElement(post,challenge=false){
