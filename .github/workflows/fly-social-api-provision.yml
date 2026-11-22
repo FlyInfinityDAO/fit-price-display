@@ -19,15 +19,18 @@ jobs:
       run:
         working-directory: backend
     env:
-      CLOUDFLARE_API_TOKEN: \${{ secrets.CLOUDFLARE_SOCIAL_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: \${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_SOCIAL_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
       SOCIAL_WORKER_URL: https://fly-infinity-social-api.flyinfinityplatform.workers.dev
+      B2_ENDPOINT: ${{ secrets.FLY_SOCIAL_B2_ENDPOINT }}
+      B2_BUCKET: ${{ secrets.FLY_SOCIAL_B2_BUCKET }}
+      B2_KEY_ID: ${{ secrets.FLY_SOCIAL_B2_KEY_ID }}
+      B2_APPLICATION_KEY: ${{ secrets.FLY_SOCIAL_B2_APPLICATION_KEY }}
 
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -38,23 +41,32 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Missing CLOUDFLARE_SOCIAL_API_TOKEN secret."; exit 1; }
-          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Missing CLOUDFLARE_ACCOUNT_ID variable."; exit 1; }
+          for name in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID B2_ENDPOINT B2_BUCKET B2_KEY_ID B2_APPLICATION_KEY; do
+            test -n "${!name}" || { echo "::error::Missing required Social deploy secret or variable: $name"; exit 1; }
+          done
           node --check social-api/src/index.js
           node --check social-api/src/auth.js
           node --check social-api/src/validation.js
+          node --check social-api/src/storage.js
           npm install --no-audit --no-fund
           node --test social-api/tests/*.test.js
           test "$(grep -c 'name = "fly-infinity-social-api"' wrangler.social-api.toml)" -eq 1
           test "$(grep -c 'database_name = "fly-infinity-social-db"' wrangler.social-api.toml)" -eq 1
           test "$(grep -c 'database_id = "64b672c3-cce6-418e-a0d2-da8d8ee3df7f"' wrangler.social-api.toml)" -eq 1
-          test "$(grep -c 'bucket_name = "fly-infinity-social-media"' wrangler.social-api.toml)" -eq 1
           test "$(grep -c 'REPLACE_WITH_FLY_INFINITY_SOCIAL_D1_ID' wrangler.social-api.toml || true)" -eq 0
+          if grep -Eq 'r2_buckets|bucket_name' wrangler.social-api.toml; then
+            echo "::error::Social Worker must not contain a Cloudflare R2 binding."
+            exit 1
+          fi
 
       - name: Deploy only Fly Infinity Social API
         shell: bash
         run: |
           set -euo pipefail
+          printf '%s' "$B2_ENDPOINT" | npx wrangler secret put B2_ENDPOINT --config=wrangler.social-api.toml
+          printf '%s' "$B2_BUCKET" | npx wrangler secret put B2_BUCKET --config=wrangler.social-api.toml
+          printf '%s' "$B2_KEY_ID" | npx wrangler secret put B2_KEY_ID --config=wrangler.social-api.toml
+          printf '%s' "$B2_APPLICATION_KEY" | npx wrangler secret put B2_APPLICATION_KEY --config=wrangler.social-api.toml
           npx wrangler deploy --config=wrangler.social-api.toml
 
       - name: Verify Social Worker health, CORS and input validation
