@@ -294,6 +294,13 @@ typeInput.addEventListener('change',()=>{
  fileInput.required=apiReady&&!promptOnly;
  $('postMediaStatus').textContent=t('mediaFileHint');
 });
+dialog.addEventListener('toggle',()=>{
+ if(!apiReady||!dialog.open)return;
+ const promptOnly=typeInput.value==='prompt';
+ mediaField.hidden=promptOnly;
+ fileInput.required=!promptOnly;
+ fileInput.accept=typeInput.value==='image'?'image/png,image/jpeg,image/webp':'audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac';
+});
 document.addEventListener('click',event=>{
  const challengeButton=event.target.closest('#joinChallenge,#joinChallenge2,#joinAudioChallenge2');
  if(challengeButton){form.dataset.challengeId=challengeButton.dataset.challengeId||'';form.dataset.sourcePostId='';}
