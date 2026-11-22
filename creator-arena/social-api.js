@@ -23,6 +23,9 @@ const t=key=>(copy[lang()]||copy.en)[key]||(copy.en[key]||key);
 let apiReady=false,token='',wallet='',profile=null,challenges=[];
 function toast(message){const node=$('toast');if(!node)return;node.textContent=message;node.classList.add('show');clearTimeout(node._socialTimer);node._socialTimer=setTimeout(()=>node.classList.remove('show'),2600);}
 function status(message,isError=false){if(!statusNode)return;statusNode.textContent=message;statusNode.classList.toggle('error',!!isError);}
+function storageGet(key){try{return sessionStorage.getItem(key)||'';}catch(error){return '';}}
+function storageSet(key,value){try{sessionStorage.setItem(key,value);}catch(error){console.warn('[Fly Infinity Social] Session storage is unavailable.');}}
+function storageRemove(key){try{sessionStorage.removeItem(key);}catch(error){}}
 function translateSocial(){document.querySelectorAll('[data-social-t]').forEach(node=>{const key=node.dataset.socialT;if(copy[lang()]&&copy[lang()][key])node.textContent=copy[lang()][key];});if(profile)paintWallet();}
 async function api(path,options={}){
  const headers=new Headers(options.headers||{});
@@ -85,8 +88,8 @@ async function connect(mode){
   status(t('verifying'));
   const verified=await api('/api/auth/verify',{method:'POST',body:{address,nonce:challenge.nonce,signature}});
   token=verified.token;wallet=verified.wallet;profile=verified.profile;
-  sessionStorage.setItem('fly-social-token',token);
-  sessionStorage.setItem('fly-social-wallet',wallet);
+  storageSet('fly-social-token',token);
+  storageSet('fly-social-wallet',wallet);
   paintWallet();
   const loaded=await Promise.allSettled([loadFeed(),loadChallenges(),loadCreators(),loadPrompts()]);
   if(loaded.some(item=>item.status==='rejected'))console.warn('[Fly Infinity Social] Authentication succeeded, but a community section could not be refreshed.');
@@ -99,13 +102,13 @@ async function connect(mode){
 async function disconnect(){
  try{if(token)await api('/api/auth/logout',{method:'POST'});}catch(error){}
  token='';wallet='';profile=null;
- sessionStorage.removeItem('fly-social-token');sessionStorage.removeItem('fly-social-wallet');
+ storageRemove('fly-social-token');storageRemove('fly-social-wallet');
  paintWallet();status(t('needWallet'));
 }
 async function restoreSession(){
  try{
-  token=sessionStorage.getItem('fly-social-token')||'';
-  wallet=sessionStorage.getItem('fly-social-wallet')||'';
+  token=storageGet('fly-social-token');
+  wallet=storageGet('fly-social-wallet');
   if(!token){paintWallet();return;}
   const me=await api('/api/me');wallet=me.wallet;profile=me.profile;paintWallet();
  }catch(error){
@@ -306,18 +309,17 @@ async function handleClick(event){
 }
 document.addEventListener('click',handleClick,true);
 form.addEventListener('submit',event=>{if(apiReady)publish(event);},true);
-typeInput.addEventListener('change',()=>{
- const promptOnly=typeInput.value==='prompt';mediaField.hidden=!apiReady||promptOnly;
- fileInput.accept=typeInput.value==='image'?'image/png,image/jpeg,image/webp':'audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac';
- fileInput.required=apiReady&&!promptOnly;
- $('postMediaStatus').textContent=t('mediaFileHint');
-});
-dialog.addEventListener('toggle',()=>{
- if(!apiReady||!dialog.open)return;
+function syncMediaField(){
  const promptOnly=typeInput.value==='prompt';
- mediaField.hidden=promptOnly;
- fileInput.required=!promptOnly;
+ mediaField.hidden=!apiReady||promptOnly;
+ fileInput.required=apiReady&&!promptOnly;
  fileInput.accept=typeInput.value==='image'?'image/png,image/jpeg,image/webp':'audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac';
+ $('postMediaStatus').textContent=t('mediaFileHint');
+}
+typeInput.addEventListener('change',syncMediaField);
+document.addEventListener('click',event=>{
+ const open=event.target.closest('#openComposer,#heroPublish,#publishFromFeed,#joinChallenge,#joinChallenge2,#joinAudioChallenge2');
+ if(open)queueMicrotask(syncMediaField);
 });
 document.addEventListener('click',event=>{
  const challengeButton=event.target.closest('#joinChallenge,#joinChallenge2,#joinAudioChallenge2');
