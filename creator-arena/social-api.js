@@ -228,7 +228,7 @@ function openRemix(postId){
   if(dialog.showModal)dialog.showModal();else dialog.setAttribute('open','open');
  }).catch(error=>toast(error.message));
 }
-async async function publish(e){
+async function publish(e){
  e.preventDefault();e.stopImmediatePropagation();
  if(!token){toast(t('needWallet'));return;}
  const mediaType=typeInput.value,file=fileInput.files?.[0]||null;
