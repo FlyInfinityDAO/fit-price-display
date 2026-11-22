@@ -72,7 +72,7 @@ jobs:
           const endpointValue = process.env.B2_ENDPOINT.trim();
           const hasScheme = endpointValue.startsWith('https://') || endpointValue.startsWith('http://');
           const endpoint = new URL(hasScheme ? endpointValue : 'https://' + endpointValue);
-          if (endpoint.protocol !== 'https:' || !/^s3\\.[a-z0-9-]+\\.backblazeb2\\.com$/i.test(endpoint.hostname)) {
+          if (endpoint.protocol !== 'https:' || !/^s3\.[a-z0-9-]+\\.backblazeb2\.com$/i.test(endpoint.hostname)) {
             throw new Error('Invalid Backblaze S3 endpoint');
           }
           const client = new S3Client({
