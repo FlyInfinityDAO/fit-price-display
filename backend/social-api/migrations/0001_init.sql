@@ -127,6 +127,7 @@ CREATE TABLE IF NOT EXISTS social_challenge_votes (
   voter_wallet TEXT NOT NULL,
   created_at INTEGER NOT NULL,
   PRIMARY KEY(challenge_id, post_id, voter_wallet),
+  UNIQUE(challenge_id, voter_wallet),
   FOREIGN KEY(challenge_id, post_id)
     REFERENCES social_challenge_submissions(challenge_id, post_id)
 );
