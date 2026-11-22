@@ -532,11 +532,11 @@ async function listCreators(request, env) {
   const viewer = session && !session.error ? session.address : '';
   const rows = await env.DB.prepare(
     'SELECT p.wallet_address,p.handle,p.display_name,p.bio,p.created_at,' +
-    ' (SELECT COUNT(*) FROM social_posts s WHERE s.wallet_address=p.wallet_address AND s.status=\\'published\\') AS post_count,' +
+    ' (SELECT COUNT(*) FROM social_posts s WHERE s.wallet_address=p.wallet_address AND s.status=\'published\') AS post_count,' +
     ' (SELECT COUNT(*) FROM social_follows f WHERE f.following_wallet=p.wallet_address) AS follower_count,' +
     ' (SELECT COUNT(*) FROM social_follows f WHERE f.follower_wallet=p.wallet_address) AS following_count,' +
-    ' (SELECT COUNT(*) FROM social_likes l JOIN social_posts s ON s.post_id=l.post_id WHERE s.wallet_address=p.wallet_address AND s.status=\\'published\\') AS appreciation_count,' +
-    ' CASE WHEN ? <> \\'\\' AND EXISTS(SELECT 1 FROM social_follows vf WHERE vf.follower_wallet=? AND vf.following_wallet=p.wallet_address) THEN 1 ELSE 0 END AS following_by_me ' +
+    ' (SELECT COUNT(*) FROM social_likes l JOIN social_posts s ON s.post_id=l.post_id WHERE s.wallet_address=p.wallet_address AND s.status=\'published\') AS appreciation_count,' +
+    ' CASE WHEN ? <> \'\' AND EXISTS(SELECT 1 FROM social_follows vf WHERE vf.follower_wallet=? AND vf.following_wallet=p.wallet_address) THEN 1 ELSE 0 END AS following_by_me ' +
     'FROM social_profiles p ORDER BY follower_count DESC,appreciation_count DESC,p.created_at ASC LIMIT ?'
   ).bind(viewer, viewer, limit).all();
   return json({ creators: rows.results || [] });
