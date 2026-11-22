@@ -55,7 +55,7 @@
     if (path.includes("/games/")) return "games";
     if (path.includes("/fly-ai/")) {
       const params = new URLSearchParams(window.location.search);
-      return path.includes("audio-studio-test") || path.includes("image-studio-test") || params.get("studio") === "media" ? "media" : "ai";
+      return params.get("studio") === "media" ? "media" : "ai";
     }
     if (path.includes("dapp")) return "dapp";
     return "dashboard";
