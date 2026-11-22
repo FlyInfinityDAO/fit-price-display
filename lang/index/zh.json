@@ -19,7 +19,8 @@
     "whitepaper": "白皮书",
     "audit": "安全审计",
     "profitCalculator": "利润计算器与模拟器",
-    "nextProjects": "后续项目"
+    "nextProjects": "后续项目",
+    "socialArena": "Fly Infinity 社交平台"
   },
   "dashboard": {
     "title": "Fly Infinity Token (FIT)",
@@ -155,6 +156,9 @@
     "aiCta": "探索 Fly AI",
     "futureTitle": "Fly Infinity 未来项目",
     "futureText": "眺望更远的未来，探索塑造 Fly Infinity 下一篇章的创意、计划与全新体验。",
-    "futureCta": "探索未来"
+    "futureCta": "探索未来",
+    "socialTitle": "Fly Infinity 社交平台",
+    "socialText": "创意社区：发布 AI 图片、配音、音乐和音效，分享提示词，在注明原作者的前提下进行二次创作，并参与社区挑战。",
+    "socialCta": "进入社区"
   }
 }
