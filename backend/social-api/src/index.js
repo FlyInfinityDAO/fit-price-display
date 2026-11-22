@@ -557,9 +557,15 @@ async function reportContent(request, env) {
     return json({ error: 'Select a valid report reason' }, 400);
   }
   if (details.length > 400) return json({ error: 'Report details must be 400 characters or fewer' }, 400);
-  const exists = targetType === 'post'
-    ? await env.DB.prepare("SELECT 1 AS yes FROM social_posts WHERE post_id=? AND status='published'").bind(targetId).first()
-    : await env.DB.prepare('SELECT 1 AS yes FROM social_profiles WHERE wallet_address=?').bind(normalizeAddress(targetId)).first();
+  let exists;
+  if (targetType === 'post') {
+    exists = await env.DB.prepare("SELECT 1 AS yes FROM social_posts WHERE post_id=? AND status='published'").bind(targetId).first();
+  } else {
+    let creatorAddress;
+    try { creatorAddress = normalizeAddress(targetId); }
+    catch { return json({ error: 'Invalid creator wallet address' }, 400); }
+    exists = await env.DB.prepare('SELECT 1 AS yes FROM social_profiles WHERE wallet_address=?').bind(creatorAddress).first();
+  }
   if (!exists) return json({ error: 'Reported content or creator was not found' }, 404);
   try {
     await env.DB.prepare(
@@ -582,9 +588,13 @@ async function deletePost(request, env, postId) {
   await env.DB.prepare(
     "UPDATE social_posts SET status='deleted',updated_at=? WHERE post_id=? AND wallet_address=?"
   ).bind(now(), postId, session.address).run();
-  if (post.media_key) await env.DB.prepare(
-    "UPDATE social_media_objects SET state='removed' WHERE media_key=? AND owner_wallet=?"
-  ).bind(post.media_key, session.address).run();
+  if (post.media_key) {
+    await env.DB.prepare(
+      "UPDATE social_media_objects SET state='removed' WHERE media_key=? AND owner_wallet=?"
+    ).bind(post.media_key, session.address).run();
+    try { await env.MEDIA?.delete(post.media_key); }
+    catch (error) { console.error('Social post media deletion failed:', String(error?.message || error).slice(0, 160)); }
+  }
   return json({ deleted: true });
 }
 
