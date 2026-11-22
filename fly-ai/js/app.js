@@ -2,10 +2,11 @@
 const $=id=>document.getElementById(id);
 const API=(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.apiBase||'').replace(/\/$/,'');
 const IMAGE_API_BASE=(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.imageApiBase||'').replace(/\/$/,'');
+const AUDIO_API_BASE=(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.audioApiBase||'').replace(/\/$/,'');
 const IMAGE_GENERATION_ENABLED=Boolean(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.imageGenerationEnabled===true);
 const IMAGE_STUDIO_TEST_MODE=Boolean(window.FLY_AI_CONFIG&&window.FLY_AI_CONFIG.imageStudioTestMode===true);
 const FIT='0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa',CHAIN='0x38';
-let provider=null,address='',token='',busy=false,history=[],profile=null,assistantId='general',conversationId=null,conversations=[],memoryEnabled=true,memoryItems=[],historyUiBound=false;let imageBusy=false,generatedImageUrl=null,generatedImageExtension='jpg',imageSessionToken='',imageSessionExpiresAt=0;let audioBusy=false,localAudioUrl=null,audioBrowserVoices=[],audioSpeechRun=0;
+let provider=null,address='',token='',busy=false,history=[],profile=null,assistantId='general',conversationId=null,conversations=[],memoryEnabled=true,memoryItems=[],historyUiBound=false;let imageBusy=false,generatedImageUrl=null,generatedImageExtension='jpg',imageSessionToken='',imageSessionExpiresAt=0;let audioBusy=false,audioNaturalBusy=false,audioSessionToken='',audioSessionExpiresAt=0,localAudioUrl=null,audioBrowserVoices=[],audioSpeechRun=0;
 const t=k=>window.FlyI18n.t(k);
 const supportedLanguages=['en','fa','ar','tr','ru','zh','es','pt'];
 const countryCodes=('AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW').split(' ');
@@ -224,6 +225,82 @@ function setLocalAudio(blob,kind){
  $('audioLocalResult').classList.remove('hidden');
  $('audioLocalStatus').textContent=t('audioLocalReady');
 }
+async function audioApiJson(path,payload){
+ if(!AUDIO_API_BASE)throw new Error(t('audioServiceUnavailable'));
+ const response=await fetch(AUDIO_API_BASE+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+ const data=await response.json().catch(()=>({}));
+ if(!response.ok)throw new Error(data.error||t('audioFailed'));
+ return data;
+}
+async function ensureAudioSession(){
+ if(!address||!provider)throw new Error(t('audioNeedWallet'));
+ if(audioSessionToken&&audioSessionExpiresAt>Date.now()+60000)return;
+ const challenge=await audioApiJson('/api/auth/challenge',{address});
+ const signature=await provider.request({method:'personal_sign',params:[ethers.utils.hexlify(ethers.utils.toUtf8Bytes(challenge.message)),address]});
+ const verified=await audioApiJson('/api/auth/verify',{address,nonce:challenge.nonce,signature});
+ audioSessionToken=verified.token;
+ audioSessionExpiresAt=Date.now()+Number(verified.expiresIn||1800)*1000;
+}
+async function validateNaturalWav(blob){
+ if(!(blob instanceof Blob)||blob.size<44)throw new Error(t('audioFailed'));
+ const buffer=await blob.arrayBuffer(),view=new DataView(buffer);
+ const tag=offset=>String.fromCharCode(view.getUint8(offset),view.getUint8(offset+1),view.getUint8(offset+2),view.getUint8(offset+3));
+ if(tag(0)!=='RIFF'||tag(8)!=='WAVE'||8+view.getUint32(4,true)!==buffer.byteLength)throw new Error(t('audioFailed'));
+ let offset=12,format=null,data=null;
+ while(offset<buffer.byteLength){
+  if(offset+8>buffer.byteLength)throw new Error(t('audioFailed'));
+  const id=tag(offset),size=view.getUint32(offset+4,true),start=offset+8,end=start+size;
+  if(end>buffer.byteLength)throw new Error(t('audioFailed'));
+  if(id==='fmt '){
+   if(size<16)throw new Error(t('audioFailed'));
+   format={channels:view.getUint16(start+2,true),blockAlign:view.getUint16(start+12,true)};
+  }else if(id==='data'){
+   if(data)throw new Error(t('audioFailed'));
+   data={size};
+  }
+  offset=end+(size&1);
+ }
+ if(!format?.channels||!format?.blockAlign||!data?.size||data.size%format.blockAlign!==0)throw new Error(t('audioFailed'));
+ return blob;
+}
+async function generateNaturalVoice(){
+ const textValue=$('audioText').value.trim();
+ if(!textValue){toast(t('audioEmpty'));$('audioText').focus();return}
+ if(textValue.length>300){toast(t('audioFailed'));return}
+ if(audioNaturalBusy)return;
+ const button=$('audioGenerateNaturalVoiceBtn'),label=button?.querySelector('[data-i18n]');
+ audioNaturalBusy=true;if(button)button.disabled=true;if(label)label.textContent=t('audioNaturalVoiceGenerating');
+ $('audioNaturalVoiceStatus').textContent=t('audioNaturalVoiceGenerating');
+ try{
+  await ensureAudioSession();
+  const payload={text:textValue,locale:speechLocale(),voiceName:$('audioNaturalVoiceName').value||'Sulafat'};
+  const send=()=>fetch(AUDIO_API_BASE+'/api/audio/tts',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+audioSessionToken},body:JSON.stringify(payload)});
+  let response=await send();
+  if(response.status===401){
+   audioSessionToken='';audioSessionExpiresAt=0;
+   await ensureAudioSession();
+   response=await send();
+  }
+  if(!response.ok){
+   const error=await response.json().catch(()=>({}));
+   throw new Error(error.error||t('audioFailed'));
+  }
+  let blob=await response.blob();
+  if(!blob.type||!blob.type.toLowerCase().startsWith('audio/'))blob=new Blob([blob],{type:'audio/wav'});
+  await validateNaturalWav(blob);
+  setLocalAudio(blob,'natural-voice');
+  $('audioNaturalVoiceStatus').textContent=t('audioNaturalVoiceReady');
+  $('audioVoiceStatus').textContent=t('audioNaturalVoiceReady');
+  const remaining=response.headers.get('X-Audio-Quota-Remaining');
+  if(remaining!==null)$('audioNaturalVoiceStatus').textContent+=' '+t('audioNaturalVoiceRemaining')+' '+remaining;
+ }catch(error){
+  const message=error.message||t('audioFailed');
+  $('audioNaturalVoiceStatus').textContent=message;
+  $('audioVoiceStatus').textContent=message;
+ }finally{
+  audioNaturalBusy=false;if(button)button.disabled=false;if(label)label.textContent=t('audioNaturalVoiceButton');
+ }
+}
 function speechLocale(){
  const lang=(localStorage.getItem('fit_lang')||document.documentElement.lang||'en').toLowerCase().split('-')[0];
  return ({en:'en-US',fa:'fa-IR',ar:'ar-SA',tr:'tr-TR',ru:'ru-RU',zh:'zh-CN',es:'es-ES',pt:'pt-PT'})[lang]||'en-US';
@@ -376,6 +453,10 @@ $('audioStopVoiceBtn')?.addEventListener('click',stopBrowserSpeech);
 populateAudioBrowserVoices();
 if(window.speechSynthesis){if(typeof window.speechSynthesis.addEventListener==='function')window.speechSynthesis.addEventListener('voiceschanged',populateAudioBrowserVoices);else window.speechSynthesis.onvoiceschanged=populateAudioBrowserVoices;}
 $('audioVoiceForm')?.addEventListener('submit',event=>{event.preventDefault();generateVoiceOver()});
+$('audioGenerateNaturalVoiceBtn')?.addEventListener('click',generateNaturalVoice);
+document.addEventListener('fly-ai-language-updated',()=>{
+ const status=$('audioNaturalVoiceStatus');if(status)status.textContent='';
+});
 $('audioMusicForm')?.addEventListener('submit',event=>{event.preventDefault();generateLocalMusic()});
 $('audioEffectForm')?.addEventListener('submit',event=>{event.preventDefault();generateLocalEffect()});
 
