@@ -146,8 +146,14 @@ body.fi-global-nav-enabled {
 }
 @media (max-width: 390px) {
   .fi-global-bottom-nav { gap: 3px; padding-left: 6px; padding-right: 6px; }
-  .fi-bottom-nav-item:not(.fi-bottom-nav-dashboard) { min-height: 55px; border-radius: 999px; font-size: 9px !important; }
-  .fi-bottom-nav-item svg { width: 19px; height: 19px; }
+  .fi-bottom-nav-item:not(.fi-bottom-nav-dashboard) {
+    min-height: 48px;
+    padding: 4px 1px;
+    gap: 3px;
+    border-radius: 999px;
+    font-size: 8px !important;
+  }
+  .fi-bottom-nav-item svg { width: 18px; height: 18px; }
   .fi-bottom-nav-dashboard {
     width: min(100%, 62px);
     margin-top: -6px;
