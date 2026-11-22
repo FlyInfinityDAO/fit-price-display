@@ -93,6 +93,7 @@ jobs:
           test "$health_status" = "200"
           test "$challenge_status" = "200"
           jq -e '.nonce and .message and .expiresIn == 300' /tmp/audio-challenge.json >/dev/null
-          test "$tts_status" = "410"
-          jq -e '.error | test("browser-native speech")' /tmp/audio-auth.json >/dev/null
-          echo "Worker health, CORS, challenge and disabled cloud-speech checks passed." >> "$GITHUB_STEP_SUMMARY"
+          test "$tts_status" = "401"
+          jq -e '.error | test("wallet session")' /tmp/audio-auth.json >/dev/null
+          echo "Worker health, CORS, challenge and wallet-gated natural voice checks passed." >> "$GITHUB_STEP_SUMMARY"
+          echo "The GEMINI_API_KEY secret must be configured in Cloudflare before natural voice can generate audio." >> "$GITHUB_STEP_SUMMARY"

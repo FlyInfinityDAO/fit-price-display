@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { buildChallengeMessage, verifyWalletSignature, createOpaqueSessionToken, hashSessionToken } from './auth.js';
+import { reserveAudioQuota, releaseAudioQuota } from '../../src/audio-quota.js';
 
 const ABI_NETWORK = ['function Owner_Exists(address owner) view returns (bool)'];
 const ABI_FIT = ['function balanceOf(address account) view returns (uint256)'];
@@ -96,8 +97,136 @@ async function requireSession(req, env) {
   return { address, tier: access.tier };
 }
 
-async function generateSpeech() {
-  return json({ error: 'Cloud speech generation is disabled. Use browser-native speech in Fly Infinity Audio Studio.' }, 410);
+async function generateSpeech(req, env) {
+  if (env.GEMINI_TTS_ENABLED !== 'true') {
+    return json({ error: 'Natural AI voice is not enabled on this Audio Studio service.' }, 404);
+  }
+
+  const session = await requireSession(req, env);
+  if (session.error) return json({ error: session.error }, session.status);
+
+  const apiKey = typeof env.GEMINI_API_KEY === 'string' ? env.GEMINI_API_KEY.trim() : '';
+  if (!apiKey) return json({ error: 'Natural AI voice is not configured yet. Please try again later.' }, 503);
+
+  const contentLength = Number(req.headers.get('Content-Length') || 0);
+  if (contentLength > 12000) return json({ error: 'Speech request is too large.' }, 413);
+
+  const body = await readJson(req);
+  const spoken = typeof body?.text === 'string' ? body.text.trim() : '';
+  const locale = typeof body?.locale === 'string' ? body.locale : '';
+  const voiceName = typeof body?.voiceName === 'string' ? body.voiceName : 'Sulafat';
+  const languages = {
+    'en-US': 'English',
+    'fa-IR': 'Iranian Persian',
+    'ar-SA': 'Arabic',
+    'tr-TR': 'Turkish',
+    'ru-RU': 'Russian',
+    'zh-CN': 'Chinese',
+    'es-ES': 'Spanish',
+    'pt-PT': 'Portuguese'
+  };
+  const voices = new Set(['Sulafat', 'Achernar', 'Algieba', 'Despina', 'Vindemiatrix', 'Leda']);
+
+  if (!spoken) return json({ error: 'Enter text to speak first.' }, 400);
+  if (spoken.length > 300) return json({ error: 'Keep natural voice text under 300 characters.' }, 400);
+  if (!languages[locale]) return json({ error: 'Unsupported speech language.' }, 400);
+  if (!voices.has(voiceName)) return json({ error: 'Unsupported Gemini voice.' }, 400);
+
+  const quotaInput = {
+    db: env.DB,
+    address: session.address,
+    tier: session.tier,
+    characters: spoken.length
+  };
+  const quota = await reserveAudioQuota(quotaInput);
+  let reservationActive = true;
+  const releaseReservation = async () => {
+    if (!reservationActive) return;
+    reservationActive = false;
+    try {
+      await releaseAudioQuota({ ...quotaInput, day: quota.day });
+    } catch (error) {
+      console.error('Audio quota rollback failed:', error?.message || 'unknown error');
+    }
+  };
+
+  try {
+    const style = 'Warm, gentle, calm studio narration. Soft dynamics, medium-low pitch, slow-to-moderate pace, smooth and clear pronunciation. Avoid sharp, shrill or exaggerated intonation. Read the transcript exactly as written in ' + languages[locale] + '.';
+    const upstream = await fetch('https://generativelanguage.googleapis.com/v1beta/interactions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': apiKey
+      },
+      body: JSON.stringify({
+        model: 'gemini-3.8-flash-tts',
+        input: [{
+          type: 'user_input',
+          content: [{
+            type: 'text',
+            text: spoken,
+            annotations: [{ type: 'speech_metadata', style }]
+          }]
+        }],
+        response_format: {
+          type: 'audio',
+          mime_type: 'audio/wav',
+          sample_rate: 24000
+        },
+        generation_config: {
+          speech_config: [{ voice: voiceName }]
+        }
+      })
+    });
+
+    const data = await upstream.json().catch(() => ({}));
+    if (!upstream.ok) {
+      await releaseReservation();
+      const detail = String(data?.error?.message || ('Google TTS request failed with HTTP ' + upstream.status))
+        .replaceAll(apiKey, '[redacted]');
+      const status = upstream.status === 429 ? 429 : upstream.status >= 500 ? 503 : 502;
+      return json({ error: detail }, status);
+    }
+
+    const audioData = data.output_audio?.data || (Array.isArray(data.steps)
+      ? data.steps.filter(step => step.type === 'model_output')
+        .flatMap(step => step.content || [])
+        .find(part => part.type === 'audio' && part.data)?.data
+      : null);
+    if (typeof audioData !== 'string' || audioData.length < 64 || audioData.length > 12000000) {
+      await releaseReservation();
+      return json({ error: 'Google returned missing or oversized audio data.' }, 502);
+    }
+
+    let bytes;
+    try {
+      const binary = atob(audioData);
+      bytes = Uint8Array.from(binary, character => character.charCodeAt(0));
+    } catch {
+      await releaseReservation();
+      return json({ error: 'Google returned invalid audio encoding.' }, 502);
+    }
+    if (bytes.byteLength < 44 || String.fromCharCode(bytes[0], bytes[1], bytes[2], bytes[3]) !== 'RIFF' ||
+        String.fromCharCode(bytes[8], bytes[9], bytes[10], bytes[11]) !== 'WAVE') {
+      await releaseReservation();
+      return json({ error: 'Google returned an invalid WAV audio file.' }, 502);
+    }
+
+    reservationActive = false;
+    return new Response(bytes, {
+      status: 200,
+      headers: {
+        'Content-Type': 'audio/wav',
+        'Cache-Control': 'no-store',
+        'X-Audio-Model': 'gemini-3.8-flash-tts',
+        'X-Audio-Quota-Remaining': String(quota.userRemaining),
+        'X-Audio-Characters-Remaining': String(quota.charactersRemaining)
+      }
+    });
+  } catch (error) {
+    await releaseReservation();
+    throw error;
+  }
 }
 
 async function generatePreviewSpeech() {

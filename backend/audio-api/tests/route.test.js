@@ -11,12 +11,22 @@ function request(path, options = {}) {
   });
 }
 
-test('production audio speech endpoint is disabled to prevent API charges', async () => {
+test('production natural voice endpoint requires a wallet-authenticated Audio Studio session', async () => {
   const response = await audioWorker.fetch(request('/api/audio/tts'), {
-    APP_ORIGIN: origin, AUDIO_PREVIEW_ENABLED: 'false'
+    APP_ORIGIN: origin,
+    GEMINI_TTS_ENABLED: 'true',
+    GEMINI_API_KEY: 'test-secret-not-used'
   });
-  assert.equal(response.status, 410);
-  assert.match((await response.json()).error, /browser-native speech/i);
+  assert.equal(response.status, 401);
+  assert.match((await response.json()).error, /wallet session is required/i);
+});
+
+test('production natural voice endpoint stays disabled unless explicitly enabled', async () => {
+  const response = await audioWorker.fetch(request('/api/audio/tts'), {
+    APP_ORIGIN: origin
+  });
+  assert.equal(response.status, 404);
+  assert.match((await response.json()).error, /not enabled/i);
 });
 
 test('the no-wallet cloud preview endpoint is permanently disabled', async () => {
