@@ -10,7 +10,7 @@
   const translations = {
     en: { nav: "Fly Infinity main navigation", dapp: "DApp", media: "Media", dashboard: "Dashboard", ai: "AI", games: "Games",
       aria: { dapp: "Open the Fly Infinity DApp", media: "Open Media Studio", dashboard: "Open Dashboard", ai: "Open Fly Infinity AI", games: "Open Fly Infinity Games" } },
-    fa: { nav: "ناوبری اصلی فلای اینفینیتی", dapp: "دپ‌اپ", media: "رسانه", dashboard: "داشبورد", ai: "هوش مصنوعی", games: "بازی‌ها",
+    fa: { nav: "ناوبری اصلی فلای اینفینیتی", dapp: "DApp", media: "رسانه", dashboard: "داشبورد", ai: "هوش مصنوعی", games: "بازی‌ها",
       aria: { dapp: "ورود به برنامه غیرمتمرکز فلای اینفینیتی", media: "ورود به استودیوی رسانه و تصویر", dashboard: "ورود به داشبورد", ai: "ورود به هوش مصنوعی فلای اینفینیتی", games: "ورود به بازی‌های فلای اینفینیتی" } },
     ar: { nav: "التنقل الرئيسي في Fly Infinity", dapp: "DApp", media: "الوسائط", dashboard: "الرئيسية", ai: "الذكاء", games: "الألعاب",
       aria: { dapp: "افتح تطبيق Fly Infinity اللامركزي", media: "افتح استوديو الوسائط", dashboard: "افتح لوحة التحكم", ai: "افتح الذكاء الاصطناعي من Fly Infinity", games: "افتح ألعاب Fly Infinity" } },
