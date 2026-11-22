@@ -60,7 +60,7 @@ Protected calls use `Authorization: Bearer <sessionToken>`.
 - `POST /api/challenges/:challengeId/vote` — JSON: `{ "postId": "..." }`
 - `POST /api/reports` — report a post or creator.
 
-Challenge votes are unique per wallet and entry. Remix posts store the source post, source wallet and original title so attribution survives even when a creator later changes their display name.
+Each wallet may cast only one vote per challenge; the API rejects votes for a creator's own entry. These limits are enforced by D1 constraints and server-side checks, not only by the browser. Remix posts store the source post, source wallet and original title so attribution survives even when a creator later changes their display name.
 
 ## Moderation and launch scope
 
