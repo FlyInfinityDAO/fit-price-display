@@ -305,6 +305,22 @@ async function getPost(request, env, postId) {
   return json({ post: serializePost(row, request) });
 }
 
+async function cleanupExpiredMedia(env, mediaStorage, timestamp = now()) {
+  const stale = await env.DB.prepare(
+    "SELECT media_key FROM social_media_objects WHERE state IN ('staged','removed') AND expires_at<? LIMIT 25"
+  ).bind(timestamp).all();
+  for (const row of stale.results || []) {
+    try {
+      await mediaStorage.delete(row.media_key);
+      await env.DB.prepare(
+        "UPDATE social_media_objects SET state='removed' WHERE media_key=? AND state IN ('staged','removed')"
+      ).bind(row.media_key).run();
+    } catch (error) {
+      console.error('Social media cleanup failed:', String(error?.message || error).slice(0, 160));
+    }
+  }
+}
+
 async function uploadMedia(request, env) {
   const session = await getSession(request, env, true);
   if (session?.error) return json({ error: session.error }, session.status);
@@ -326,6 +342,8 @@ async function uploadMedia(request, env) {
   const extension = safeFileExtension(media.contentType);
   const key = 'uploads/' + crypto.randomUUID() + '.' + extension;
   const timestamp = now();
+  try { await cleanupExpiredMedia(env, mediaStorage, timestamp); }
+  catch (error) { console.error('Social media cleanup check failed:', String(error?.message || error).slice(0, 160)); }
   await mediaStorage.put(key, buffer, {
     contentType: media.contentType,
     cacheControl: 'public, max-age=3600',
@@ -679,28 +697,4 @@ export default {
       return json({ error: status === 500 ? 'Social service temporarily unavailable' : message }, status, headers);
     }
   },
-  async scheduled(_event, env, ctx) {
-    ctx.waitUntil((async () => {
-      const timestamp = now();
-      const stale = await env.DB.prepare(
-        "SELECT media_key FROM social_media_objects WHERE state IN ('staged','removed') AND expires_at<? LIMIT 100"
-      ).bind(timestamp).all();
-      let mediaStorage = null;
-      try { mediaStorage = getMediaStorage(env); } catch (error) {
-        console.error('Social media storage configuration failed:', String(error?.message || error).slice(0, 160));
-      }
-      for (const row of stale.results || []) {
-        try { await mediaStorage?.delete(row.media_key); } catch (error) {
-          console.error('Social media cleanup failed:', String(error?.message || error).slice(0, 160));
-        }
-        await env.DB.prepare("UPDATE social_media_objects SET state='removed' WHERE media_key=? AND state='staged'")
-          .bind(row.media_key).run();
-      }
-      await env.DB.batch([
-        env.DB.prepare('DELETE FROM social_auth_nonces WHERE expires_at<?').bind(timestamp - 3600),
-        env.DB.prepare('DELETE FROM social_sessions WHERE expires_at<? OR revoked_at IS NOT NULL').bind(timestamp),
-        env.DB.prepare('DELETE FROM social_rate_limits WHERE window_start<?').bind(timestamp - 172800)
-      ]);
-    })());
-  }
 };
