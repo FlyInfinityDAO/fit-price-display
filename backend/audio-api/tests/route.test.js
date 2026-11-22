@@ -65,7 +65,7 @@ test('Gemini TTS proxy validates the API key before contacting Google', async ()
     GEMINI_TTS_PROXY_ENABLED: 'true'
   });
   assert.equal(response.status, 400);
-  assert.match((await response.json()).error, /API Studio API key/i);
+  assert.match((await response.json()).error, /Google AI Studio API key/i);
 });
 
 test('Gemini TTS proxy rejects unsupported languages and voices', async () => {
