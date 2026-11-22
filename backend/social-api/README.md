@@ -82,7 +82,7 @@ The workflow:
 5. Deploys only `fly-infinity-social-api`.
 6. Verifies Worker health, CORS preflight and invalid-wallet rejection.
 
-The GitHub Actions secret `CLOUDFLARE_API_TOKEN` must permit the current Worker/D1 provisioning tasks **and** Cloudflare R2 bucket creation. The R2 API requires the `Workers R2 Storage Write` permission. Do not paste API tokens into source code, chat, or workflow logs; replace the secret in GitHub repository settings with a suitably scoped token.
+The GitHub Actions secret is `CLOUDFLARE_SOCIAL_API_TOKEN`, dedicated to this Social workflow. Keep the shared `CLOUDFLARE_API_TOKEN` used by other Fly Infinity services unchanged. The Social token needs Workers Admin access to create the new Worker, D1 Edit to provision the Social database, and Workers R2 Storage Write to list/create the private media bucket. Wrangler may also require Account Settings Read plus User Details Read and Memberships Read. Scope the token to this Cloudflare account, keep it only in GitHub Actions Secrets, and never paste it into source code, chat, or workflow logs.
 
 ## Local validation
 
