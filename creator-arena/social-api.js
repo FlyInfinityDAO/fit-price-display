@@ -36,11 +36,11 @@ async function api(path,options={}){
 }
 function toHex(value){return '0x'+Array.from(new TextEncoder().encode(value),b=>b.toString(16).padStart(2,'0')).join('');}
 async function providerFor(mode){
+ if(mode==='wallet'&&typeof window.fiConnectWalletConnect==='function')return await window.fiConnectWalletConnect();
  if(mode==='browser'&&typeof window.fiSelectWalletProvider==='function')return await window.fiSelectWalletProvider();
  if(window.ethereum&&typeof window.ethereum.request==='function'){
   await window.ethereum.request({method:'eth_requestAccounts'});return window.ethereum;
  }
- if(mode==='browser'&&typeof window.fiConnectWalletConnect==='function')return await window.fiConnectWalletConnect();
  throw new Error(t('noWallet'));
 }
 async function switchToBsc(provider){
@@ -284,9 +284,10 @@ async function handleClick(event){
 document.addEventListener('click',handleClick,true);
 form.addEventListener('submit',event=>{if(apiReady)publish(event);},true);
 typeInput.addEventListener('change',()=>{
- const promptOnly=typeInput.value==='prompt';mediaField.hidden=promptOnly;
+ const promptOnly=typeInput.value==='prompt';mediaField.hidden=!apiReady||promptOnly;
  fileInput.accept=typeInput.value==='image'?'image/png,image/jpeg,image/webp':'audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac';
- fileInput.required=!promptOnly;
+ fileInput.required=apiReady&&!promptOnly;
+ $('postMediaStatus').textContent=t('mediaFileHint');
 });
 document.addEventListener('click',event=>{
  const challengeButton=event.target.closest('#joinChallenge,#joinChallenge2,#joinAudioChallenge2');
@@ -309,13 +310,17 @@ async function initialize(){
   const result=await health.json();
   if(!result.ok||result.service!=='Fly Infinity Social API')throw new Error('API not ready');
   apiReady=true;document.body.classList.add('social-api-online');
-  document.querySelector('.social-wallet-actions').hidden=false;mediaField.hidden=true;
-  $('previewLabel')?.classList.add('social-api-status');
+  document.querySelector('.social-wallet-actions').hidden=false;
+  mediaField.hidden=typeInput.value==='prompt';
+  fileInput.accept=typeInput.value==='audio'?'audio/mpeg,audio/wav,audio/ogg,audio/mp4,audio/aac':'image/png,image/jpeg,image/webp';
+  fileInput.required=typeInput.value!=='prompt';
+  $('postMediaStatus').textContent=t('mediaFileHint');
   const preview=document.querySelector('.preview-strip');
   if(preview){preview.textContent=t('online');preview.classList.add('is-live');}
   const footer=document.querySelector('.footer-note');if(footer)footer.textContent=t('online');
   await restoreSession();
-  await Promise.all([loadFeed(),loadChallenges(),loadCreators(),loadPrompts()]);
+  const results=await Promise.allSettled([loadFeed(),loadChallenges(),loadCreators(),loadPrompts()]);
+  if(results.some(item=>item.status==='rejected'))console.warn('[Fly Infinity Social] One or more community sections could not be loaded.');
  }catch(error){
   apiReady=false;document.querySelector('.social-wallet-actions').hidden=true;mediaField.hidden=true;
   status(t('offline'));
