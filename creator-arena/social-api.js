@@ -87,7 +87,9 @@ async function connect(mode){
   sessionStorage.setItem('fly-social-token',token);
   sessionStorage.setItem('fly-social-wallet',wallet);
   paintWallet();
-  await Promise.all([loadFeed(),loadChallenges(),loadCreators(),loadPrompts()]);
+  const loaded=await Promise.allSettled([loadFeed(),loadChallenges(),loadCreators(),loadPrompts()]);
+  if(loaded.some(item=>item.status==='rejected'))console.warn('[Fly Infinity Social] Authentication succeeded, but a community section could not be refreshed.');
+  status((profile?.display_name||wallet)+' · '+t('connected'));
   toast(t('connected'));
   window.dispatchEvent(new CustomEvent('fly-social:authenticated',{detail:{wallet,profile}}));
  }catch(error){status(error.message||t('loginFailed'),true);toast(error.message||t('loginFailed'));}
@@ -220,7 +222,7 @@ function openRemix(postId){
   if(dialog.showModal)dialog.showModal();else dialog.setAttribute('open','open');
  }).catch(error=>toast(error.message));
 }
-async function publish(e){
+async async function publish(e){
  e.preventDefault();e.stopImmediatePropagation();
  if(!token){toast(t('needWallet'));return;}
  const mediaType=typeInput.value,file=fileInput.files?.[0]||null;
