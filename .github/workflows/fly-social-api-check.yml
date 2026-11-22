@@ -42,8 +42,11 @@ jobs:
           node --check social-api/src/index.js
           node --check social-api/src/auth.js
           node --check social-api/src/validation.js
+          node --check social-api/src/storage.js
           node --check ../creator-arena/social-api.js
       - name: Run Social-only unit and route tests
         run: node --test social-api/tests/*.test.js
+      - name: Build Social Worker bundle without deploying
+        run: npx wrangler deploy --dry-run --outdir /tmp/social-api-dry-run --config=wrangler.social-api.toml
       - name: Validate Social D1 schema and constraints
         run: python3 social-api/tests/schema-smoke.py
