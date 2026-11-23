@@ -45,6 +45,16 @@ jobs:
           node --check social-api/src/validation.js
           node --check social-api/src/storage.js
           node --check ../creator-arena/social-api.js
+      - name: Check Social page inline JavaScript syntax
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync } from 'node:fs';
+          const html = readFileSync('creator-arena/index.html', 'utf8');
+          const match = html.match(/<script>\\s*([\\s\\S]*?)<\\/script>/);
+          if (!match) throw new Error('Social inline application script was not found');
+          writeFileSync('/tmp/fly-social-page-inline.js', match[1]);
+          NODE
+          node --check /tmp/fly-social-page-inline.js
       - name: Run Social-only unit and route tests
         run: node --test social-api/tests/*.test.js
       - name: Build Social Worker bundle without deploying
