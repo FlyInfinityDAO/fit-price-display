@@ -4,11 +4,13 @@ import tempfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 MIGRATION = ROOT / "social-api" / "migrations" / "0001_init.sql"
+ACCOUNT_MIGRATION = ROOT / "social-api" / "migrations" / "0002_accounts_passwords_reposts.sql"
 
 with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
     connection = sqlite3.connect(file.name)
     connection.execute("PRAGMA foreign_keys = ON")
     connection.executescript(MIGRATION.read_text(encoding="utf-8"))
+    connection.executescript(ACCOUNT_MIGRATION.read_text(encoding="utf-8"))
 
     tables = {
         row[0]
@@ -29,8 +31,15 @@ with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
         "social_challenge_votes",
         "social_reports",
         "social_rate_limits",
+        "social_password_recovery_nonces",
+        "social_reposts",
     }
     assert expected.issubset(tables), f"Missing Social tables: {expected - tables}"
+
+    profile_columns = {row[1] for row in connection.execute("PRAGMA table_info(social_profiles)")}
+    session_columns = {row[1] for row in connection.execute("PRAGMA table_info(social_sessions)")}
+    assert {"password_hash", "password_salt", "password_iterations"}.issubset(profile_columns)
+    assert "password_verified" in session_columns
 
     seeded = connection.execute(
         "SELECT COUNT(*) FROM social_challenges WHERE status='active'"
@@ -93,6 +102,31 @@ with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
         ("schema-post-a", voter),
     )
 
+    # A repost references the original post and preserves the original author's record.
+    connection.execute(
+        "INSERT INTO social_reposts(repost_id,post_id,wallet_address,created_at) VALUES(?,?,?,1)",
+        ("repost-a", "schema-post-a", creator_b),
+    )
+    repost = connection.execute(
+        "SELECT p.wallet_address,p.title,r.wallet_address FROM social_posts p "
+        "JOIN social_reposts r ON r.post_id=p.post_id WHERE r.repost_id='repost-a'"
+    ).fetchone()
+    assert repost == (creator_a, "schema-post-a", creator_b), "Repost did not preserve original post identity"
+    try:
+        connection.execute(
+            "INSERT INTO social_reposts(repost_id,post_id,wallet_address,created_at) VALUES(?,?,?,2)",
+            ("repost-duplicate", "schema-post-a", creator_b),
+        )
+        raise AssertionError("Duplicate repost constraint was not enforced")
+    except sqlite3.IntegrityError:
+        pass
+
+    connection.execute(
+        "INSERT INTO social_password_recovery_nonces(nonce,wallet_address,message,created_at,expires_at) "
+        "VALUES(?,?,?,?,?)",
+        ("recovery-smoke", creator_a, "signed recovery challenge", 10, 310),
+    )
+
     creator_rows = connection.execute(
         "SELECT p.wallet_address,p.handle,p.display_name,p.bio,p.created_at,"
         "(SELECT COUNT(*) FROM social_posts s WHERE s.wallet_address=p.wallet_address AND s.status='published') AS post_count,"
@@ -131,4 +165,4 @@ with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
     connection.close()
 
 print("Social D1 migration schema smoke test passed.")
-print("Verified all 12 Social tables, seeded challenges, case-insensitive handles, one vote per wallet per challenge, follow/like/challenge read queries, and post foreign keys.")
+print("Verified all 14 Social tables, password/session columns, recovery nonce storage, case-insensitive handles, attributed unique reposts, and existing legacy constraints.")
