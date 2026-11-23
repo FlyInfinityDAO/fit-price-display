@@ -68,6 +68,14 @@ test('session hashing produces a stable SHA-256 digest', async () => {
   assert.notEqual(first, 'social-session-token');
 });
 
+test('default password hashing uses the Cloudflare Workers PBKDF2 iteration ceiling', async () => {
+  const password = 'default-hash-regression-password';
+  const salt = createPasswordSalt();
+  const defaultHash = await hashPassword(password, salt);
+  const workersLimitHash = await hashPassword(password, salt, 100000);
+  assert.equal(defaultHash, workersLimitHash);
+});
+
 test('passwords use unique salts and PBKDF2 hashes that can be verified without storing plaintext', async () => {
   const password = 'a-long-safe-password';
   const saltA = createPasswordSalt();
