@@ -1,0 +1,961 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0F0F0F">
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="Isolated Fly Infinity Social QA preview. Test accounts and content are stored separately from production.">
+<title>Fly Infinity Social QA | Fly Infinity</title>
+<link rel="icon" href="../logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="social-api.css?v=20261123-social2">
+<style>
+:root{color-scheme:dark;--bg:#09120f;--panel:rgba(15,30,24,.92);--line:rgba(157,219,188,.16);--gold:#dfbf65;--mint:#61e2b2;--text:#eef7f1;--muted:#9db4a8;--red:#ff9b9b}
+*{box-sizing:border-box}
+html{min-height:100%;background:var(--bg);scroll-behavior:smooth}
+body{margin:0;min-height:100vh;padding:0 14px calc(30px + env(safe-area-inset-bottom));color:var(--text);font-family:Inter,Vazirmatn,system-ui,sans-serif;background:radial-gradient(ellipse at 16% 0%,rgba(24,125,88,.18),transparent 36%),radial-gradient(ellipse at 90% 8%,rgba(206,167,66,.10),transparent 30%),linear-gradient(180deg,#09120f,#101b16 55%,#09120f)}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}
+.shell{width:min(920px,100%);margin:0 auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:17px 2px 15px;border-bottom:1px solid rgba(157,219,188,.12)}
+.brand{display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none}
+.brand img{width:38px;height:38px;object-fit:contain;border-radius:50%;border:1px solid rgba(223,191,101,.5)}
+.brand strong{display:block;color:#f2dfa2;font-size:13px;letter-spacing:1.1px}
+.brand small{display:block;margin-top:3px;color:#88d8b7;font-size:9px;letter-spacing:2px;font-weight:800}
+.lang-select{height:37px;max-width:140px;padding:0 10px;border:1px solid var(--line);border-radius:11px;background:#0b1b14;color:#e8f6ee;font-size:11px}
+main{padding:38px 0 12px}
+.auth-gate{width:min(490px,100%);margin:clamp(35px,9vh,95px) auto 0;padding:clamp(23px,5vw,36px);border:1px solid rgba(223,191,101,.25);border-radius:25px;background:linear-gradient(145deg,rgba(17,39,29,.96),rgba(8,20,15,.96));box-shadow:0 25px 75px rgba(0,0,0,.32);text-align:center}
+.auth-mark{width:56px;height:56px;margin:0 auto 15px;display:grid;place-items:center;border-radius:18px;border:1px solid rgba(223,191,101,.4);background:linear-gradient(145deg,rgba(223,191,101,.18),rgba(97,226,178,.08));color:var(--gold);font-size:25px}
+h1{margin:0;color:#f3e3b4;font-size:clamp(22px,4vw,29px);font-weight:900;letter-spacing:-.4px}
+.lead{margin:9px auto 0;max-width:380px;color:var(--muted);font-size:12px;line-height:1.9}
+.wallet-step,.account-step,.recovery-step{margin-top:25px}
+.wallet-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.btn{min-height:45px;padding:11px 14px;border-radius:12px;border:1px solid transparent;font-size:11px;font-weight:850;transition:transform .2s,border-color .2s}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:linear-gradient(135deg,#f2dc9c,#d8b34e 70%,#af8127);color:#191507;box-shadow:0 8px 22px rgba(211,174,74,.14)}
+.btn-secondary{border-color:rgba(97,226,178,.32);background:rgba(20,77,55,.26);color:#c8f4df}
+.btn-quiet{border-color:rgba(157,219,188,.14);background:rgba(255,255,255,.035);color:#adc7b9}
+.field{display:grid;gap:7px;margin:13px 0;text-align:start}
+.field label{color:#c9ddcf;font-size:11px;font-weight:800}
+.field input,.field textarea{width:100%;min-height:45px;padding:12px 13px;border:1px solid rgba(157,219,188,.2);border-radius:11px;outline:none;background:rgba(2,13,9,.65);color:#f1f8f3;font-size:13px}
+.field input:focus,.field textarea:focus{border-color:rgba(97,226,178,.66);box-shadow:0 0 0 3px rgba(97,226,178,.08)}
+.field input[readonly]{color:#9fb9aa;background:rgba(255,255,255,.035)}
+.hint{min-height:16px;color:#8fa99b;font-size:10px;line-height:1.6}
+.hint.good{color:#7fe0b7}.hint.bad{color:var(--red)}
+.form-help{margin:12px 0 0;color:#81998c;font-size:10px;line-height:1.8}
+.form-actions{display:flex;gap:9px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:17px}
+.status{min-height:20px;margin:17px 0 0;color:#a9c9b8;font-size:10px;line-height:1.7;overflow-wrap:anywhere}
+.status.error{color:var(--red)}
+.wallet-summary{display:flex;align-items:center;gap:9px;margin-top:18px;padding:10px 12px;border:1px solid rgba(97,226,178,.2);border-radius:12px;background:rgba(22,87,61,.14);color:#c9e9d8;font-size:10px;text-align:start;overflow-wrap:anywhere}
+.wallet-summary .dot{width:7px;height:7px;flex:0 0 auto;border-radius:50%;background:var(--mint);box-shadow:0 0 10px rgba(97,226,178,.45)}
+.wallet-summary button{margin-inline-start:auto;border:0;background:transparent;color:#d8c078;font-size:10px;font-weight:800}
+.gate-note{margin:19px 0 0;color:#829b8e;font-size:9px;line-height:1.8}
+[hidden]{display:none!important}
+.feed-app{width:min(690px,100%);margin:0 auto}
+.feed-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;padding:10px 0 17px;border-bottom:1px solid rgba(157,219,188,.12)}
+.feed-head h2{margin:0;color:#efdda6;font-size:18px}
+.feed-head p{margin:5px 0 0;color:var(--muted);font-size:10px}
+.feed-user{display:flex;align-items:center;gap:8px}
+.feed-user .handle{color:#bde7d1;font-size:10px;font-weight:800}
+.feed-user button{border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.04);color:#adbeaf;padding:8px 10px;font-size:9px}
+.composer{padding:16px;border:1px solid rgba(223,191,101,.2);border-radius:17px;background:rgba(12,29,21,.82);box-shadow:0 12px 32px rgba(0,0,0,.13)}
+.composer textarea{display:block;width:100%;min-height:86px;resize:vertical;padding:12px;border:1px solid rgba(157,219,188,.16);border-radius:11px;background:rgba(2,13,9,.48);color:#f1f8f3;outline:none;font-size:12px;line-height:1.8}
+.composer textarea:focus{border-color:rgba(97,226,178,.5)}
+.composer-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:11px}
+.file-pick{display:inline-flex;align-items:center;gap:7px;color:#a8c6b6;font-size:10px;cursor:pointer}
+.file-pick input{max-width:180px;color:#a8c6b6;font-size:9px}
+.file-pick input::file-selector-button{padding:7px 9px;border:1px solid rgba(97,226,178,.24);border-radius:8px;background:rgba(24,93,66,.22);color:#d2f0df;font-size:9px;cursor:pointer}
+.counter{color:#7f998b;font-size:9px}
+.feed-list{display:grid;gap:13px;margin-top:17px}
+.post{overflow:hidden;border:1px solid rgba(157,219,188,.13);border-radius:16px;background:linear-gradient(145deg,rgba(18,37,28,.92),rgba(9,21,15,.95));box-shadow:0 11px 30px rgba(0,0,0,.14)}
+.repost-note{padding:10px 14px 0;color:#d7c078;font-size:9px;font-weight:750}
+.post-head{display:flex;align-items:center;gap:9px;padding:14px 14px 7px}
+.avatar{display:grid;place-items:center;width:34px;height:34px;flex:0 0 auto;border-radius:50%;border:1px solid rgba(223,191,101,.42);background:linear-gradient(135deg,#dfbf65,#21684e);color:#102016;font-size:11px;font-weight:900}
+.post-author{min-width:0}
+.post-author strong{display:block;color:#eaf4ed;font-size:11px}
+.post-author small{display:block;margin-top:3px;color:#8da89a;font-size:9px;overflow-wrap:anywhere}
+.post-date{margin-inline-start:auto;color:#708a7c;font-size:9px;white-space:nowrap}
+.post-text{margin:4px 14px 13px;color:#d2e2d8;font-size:12px;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere}
+.post-image{display:block;width:100%;max-height:650px;object-fit:contain;background:#07100c}
+.post-actions{display:flex;align-items:center;gap:8px;padding:10px 13px;border-top:1px solid rgba(255,255,255,.06)}
+.action-btn{min-height:32px;padding:7px 10px;border:1px solid rgba(157,219,188,.14);border-radius:9px;background:rgba(255,255,255,.035);color:#b7d1c2;font-size:9px;font-weight:800}
+.action-btn.active{border-color:rgba(97,226,178,.37);background:rgba(97,226,178,.09);color:#83e9bd}
+.action-btn.delete{margin-inline-start:auto;color:#cf9d91}
+.feed-empty{padding:30px 16px;border:1px dashed rgba(157,219,188,.2);border-radius:15px;color:#9ab1a4;text-align:center;font-size:11px;line-height:1.8}
+.feed-status{text-align:center;min-height:20px;margin:14px;color:#8fa99b;font-size:10px}
+.social-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin:4px 0 22px;padding:7px;border:1px solid rgba(157,219,188,.14);border-radius:15px;background:rgba(8,22,16,.76);backdrop-filter:blur(18px)}
+.social-nav button{position:relative;display:flex;align-items:center;justify-content:center;gap:9px;min-height:43px;padding:8px 10px;border:1px solid transparent;border-radius:10px;background:transparent;color:#9bb5a6;font-size:11px;font-weight:800}
+.social-nav button.active{border-color:rgba(223,191,101,.28);background:linear-gradient(135deg,rgba(223,191,101,.14),rgba(97,226,178,.08));color:#f0dda5}
+.nav-icon{font-size:16px;line-height:1}
+.nav-badge{display:inline-grid;place-items:center;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:#e5bd59;color:#171307;font-size:9px;font-weight:900}
+.view-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 16px}
+.view-title h3{margin:0;color:#efdda6;font-size:17px}
+.view-title p{margin:4px 0 0;color:#8fa99b;font-size:10px;line-height:1.6}
+.view-action{min-height:34px;padding:7px 11px;border:1px solid rgba(157,219,188,.17);border-radius:9px;background:rgba(255,255,255,.04);color:#c7dbce;font-size:10px;font-weight:800}
+.post-profile-link{display:block;min-width:0;padding:0;border:0;background:none;color:inherit;text-align:start;cursor:pointer}
+.post-profile-link strong{display:block;color:#eaf4ed;font-size:11px}
+.post-profile-link small{display:block;margin-top:3px;color:#8da89a;font-size:9px}
+.post-reason{padding:9px 14px 0;color:#d7c078;font-size:9px;font-weight:750}
+.explore-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.explore-tile{position:relative;overflow:hidden;min-width:0;border:1px solid rgba(157,219,188,.13);border-radius:13px;background:linear-gradient(145deg,rgba(18,37,28,.95),rgba(9,21,15,.98))}
+.explore-media{display:grid;place-items:center;aspect-ratio:1/1;overflow:hidden;background:radial-gradient(circle at 30% 20%,rgba(223,191,101,.18),transparent 50%),#0b1a13;color:#d8c078}
+.explore-media img{width:100%;height:100%;object-fit:cover}
+.explore-media .tile-letter{font-size:34px;font-weight:900;opacity:.65}
+.explore-meta{padding:9px}
+.explore-meta .post-profile-link{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.explore-caption{display:-webkit-box;overflow:hidden;margin:6px 0;color:#b8cfc1;font-size:10px;line-height:1.6;-webkit-line-clamp:2;-webkit-box-orient:vertical;min-height:32px}
+.explore-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.explore-actions .action-btn{min-height:28px;padding:5px 7px;font-size:9px}
+.profile-card{display:flex;align-items:center;gap:17px;margin:4px 0 15px;padding:18px;border:1px solid rgba(223,191,101,.2);border-radius:17px;background:linear-gradient(145deg,rgba(17,39,29,.9),rgba(8,20,15,.88))}
+.profile-avatar{display:grid;place-items:center;width:76px;height:76px;flex:0 0 auto;border:2px solid rgba(223,191,101,.62);border-radius:50%;background:linear-gradient(135deg,#dfbf65,#21684e);color:#102016;font-size:22px;font-weight:900}
+.profile-info{flex:1;min-width:0}
+.profile-info h3{margin:0;color:#f1e2b6;font-size:18px}
+.profile-info .profile-handle{margin:4px 0;color:#9fcbb4;font-size:11px}
+.profile-info .profile-bio{margin:7px 0 0;color:#bacfc2;font-size:11px;line-height:1.7;overflow-wrap:anywhere}
+.profile-wallet{margin:5px 0 0;color:#708a7c;font-size:9px;overflow-wrap:anywhere}
+.profile-follow{min-height:36px;margin-top:10px;padding:8px 13px;border:1px solid rgba(97,226,178,.3);border-radius:10px;background:rgba(25,102,70,.2);color:#c7f0dd;font-size:10px;font-weight:850}
+.profile-follow.following{border-color:rgba(223,191,101,.28);background:rgba(223,191,101,.08);color:#e5d39c}
+.profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:17px;padding:12px 8px;border:1px solid rgba(157,219,188,.13);border-radius:13px;background:rgba(12,28,20,.68)}
+.profile-stats button{display:grid;gap:4px;border:0;background:none;color:#91ab9d;text-align:center;font-size:10px}
+.profile-stats strong{color:#f0dda5;font-size:16px}
+.profile-section-title{margin:16px 0 10px;color:#e8d59d;font-size:12px;font-weight:850}
+.connection-list,.notification-list{display:grid;gap:9px}
+.connection-row,.notification-row{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid rgba(157,219,188,.13);border-radius:13px;background:rgba(14,31,22,.84)}
+.connection-row .avatar,.notification-row .avatar{width:38px;height:38px}
+.connection-main{min-width:0;flex:1}
+.connection-main strong{display:block;color:#eaf4ed;font-size:11px}
+.connection-main small{display:block;margin-top:3px;color:#8da89a;font-size:9px}
+.connection-row .action-btn{flex:0 0 auto}
+.notification-row{align-items:flex-start}
+.notification-row.unread{border-color:rgba(223,191,101,.28);background:linear-gradient(120deg,rgba(223,191,101,.08),rgba(14,31,22,.9))}
+.notification-copy{flex:1;min-width:0;color:#c3d8ca;font-size:11px;line-height:1.7}
+.notification-copy strong{color:#f0dda5}
+.notification-copy small{display:block;margin-top:3px;color:#789286;font-size:9px}
+.notification-dot{width:7px;height:7px;flex:0 0 auto;margin-top:5px;border-radius:50%;background:#e1bd61;box-shadow:0 0 10px rgba(225,189,97,.45)}
+.notification-post-thumb{width:45px;height:45px;flex:0 0 auto;border-radius:8px;object-fit:cover}
+.section-divider{height:1px;margin:15px 0;background:rgba(157,219,188,.12)}
+@media(max-width:560px){.social-nav{position:fixed;z-index:50;left:10px;right:10px;bottom:calc(8px + env(safe-area-inset-bottom));margin:0;padding:6px;box-shadow:0 12px 35px rgba(0,0,0,.45)}
+.social-nav button{display:grid;gap:3px;min-height:48px;padding:5px 2px;font-size:9px}
+.nav-icon{font-size:18px}
+.explore-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.profile-card{align-items:flex-start;gap:12px;padding:13px}
+.profile-avatar{width:62px;height:62px;font-size:18px}
+.profile-info h3{font-size:15px}
+.profile-follow{min-height:33px}
+.profile-stats{margin-bottom:13px}
+body{padding-bottom:calc(100px + env(safe-area-inset-bottom))}
+}
+@media(min-width:561px){.feed-app{padding-bottom:20px}}
+@media(max-width:560px){body{padding-left:10px;padding-right:10px}.topbar{padding-top:12px}.brand img{width:34px;height:34px}.brand strong{font-size:11px}.brand small{font-size:8px}.lang-select{max-width:112px;height:34px;font-size:9px}.auth-gate{margin-top:30px;padding:23px 17px;border-radius:20px}.wallet-actions{grid-template-columns:1fr}.feed-head{align-items:flex-start}.feed-head h2{font-size:16px}.feed-user{align-items:flex-end;flex-direction:column}.composer{padding:12px}.post-text{font-size:11px}.post-image{max-height:470px}}
+html[dir=rtl] body{font-family:Vazirmatn,Inter,system-ui,sans-serif}
+html[dir=rtl] .field{text-align:right}
+</style>
+<link rel="stylesheet" href="../ambient-motion.css?v=20261123-social-theme1">
+<link rel="stylesheet" href="../pwa-brand-neon.css?v=20261123-social-theme1">
+<link rel="stylesheet" href="social-brand-theme.css?v=20261123-1">
+</head>
+<body data-ambient="social">
+<div class="shell">
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="Fly Infinity dashboard">
+      <img src="../logo.png" alt="">
+      <span><strong>FLY INFINITY</strong><small data-i18n="brandSub">SOCIAL</small></span>
+    </a>
+    <div class="language-control">
+      <button class="lang-btn" id="langBtn" type="button" aria-label="Change language" aria-haspopup="true" aria-expanded="false">🌐</button>
+      <div class="lang-dropdown" id="langDropdown" role="menu" aria-label="Language">
+        <a class="lang-item" href="#" data-lang="en" role="menuitem"><span class="flag">🇬🇧</span><span class="lang-name">English</span></a>
+        <a class="lang-item" href="#" data-lang="fa" role="menuitem"><span class="flag">🇮🇷</span><span class="lang-name">فارسی</span></a>
+        <a class="lang-item" href="#" data-lang="ar" role="menuitem"><span class="flag">🇮🇶</span><span class="lang-name">العربية</span></a>
+        <a class="lang-item" href="#" data-lang="tr" role="menuitem"><span class="flag">🇹🇷</span><span class="lang-name">Türkçe</span></a>
+        <a class="lang-item" href="#" data-lang="ru" role="menuitem"><span class="flag">🇷🇺</span><span class="lang-name">Русский</span></a>
+        <a class="lang-item" href="#" data-lang="zh" role="menuitem"><span class="flag">🇨🇳</span><span class="lang-name">中文</span></a>
+        <a class="lang-item" href="#" data-lang="es" role="menuitem"><span class="flag">🇪🇸</span><span class="lang-name">Español</span></a>
+        <a class="lang-item" href="#" data-lang="pt" role="menuitem"><span class="flag">🇵🇹</span><span class="lang-name">Português</span></a>
+      </div>
+    </div>
+  </header>
+  <div class="qa-banner" role="status">QA PREVIEW · SEPARATE DATABASE · TEST DATA ONLY</div>
+
+  <main>
+    <section class="auth-gate" id="authGate">
+      <div class="auth-mark" aria-hidden="true">✦</div>
+      <h1 data-i18n="title">Fly Infinity Social</h1>
+      <p class="lead" data-i18n="intro">Connect your Fly Infinity wallet to create your profile and join the community.</p>
+
+      <div class="wallet-step" id="walletStep">
+        <div class="wallet-actions">
+          <button class="btn btn-primary" id="connectSocialBrowser" type="button" data-i18n="connectBrowser">Connect with browser</button>
+          <button class="btn btn-secondary" id="connectSocialWallet" type="button" data-i18n="connectWallet">Connect wallet</button>
+        </div>
+        <p class="form-help" data-i18n="signatureNote">Wallet connection uses a free signature. No transaction, token transfer or gas fee is required.</p>
+      </div>
+
+      <div class="wallet-summary" id="walletSummary" hidden>
+        <span class="dot"></span><span id="walletSummaryText"></span>
+        <button id="disconnectSocialWallet" type="button" data-i18n="disconnect">Disconnect</button>
+      </div>
+
+      <form class="account-step" id="accountForm" hidden>
+        <div class="field">
+          <label for="accountHandle" data-i18n="username">Username</label>
+          <input id="accountHandle" name="username" type="text" minlength="3" maxlength="24" pattern="[A-Za-z0-9_]{3,24}" autocomplete="username" required placeholder="username">
+          <span class="hint" id="usernameHint" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="accountPassword" data-i18n="password">Password</label>
+          <input id="accountPassword" name="password" type="password" minlength="6" maxlength="128" autocomplete="new-password" required>
+          <span class="hint" data-i18n="passwordHelp">Use at least 10 characters. Your password is stored as a secure hash.</span>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-primary" id="accountSubmit" type="submit" data-i18n="createProfile">Create profile</button>
+          <button class="btn btn-quiet" id="forgotPassword" type="button" data-i18n="forgotPassword" hidden>Forgot password?</button>
+        </div>
+      </form>
+
+      <form class="recovery-step" id="recoveryForm" hidden>
+        <div class="field">
+          <label for="recoveryPassword" data-i18n="newPassword">New password</label>
+          <input id="recoveryPassword" type="password" minlength="6" maxlength="128" autocomplete="new-password" required>
+        </div>
+        <div class="field">
+          <label for="recoveryConfirm" data-i18n="confirmPassword">Confirm new password</label>
+          <input id="recoveryConfirm" type="password" minlength="6" maxlength="128" autocomplete="new-password" required>
+        </div>
+        <p class="form-help" data-i18n="recoveryHelp">To reset your password, your connected wallet signs a new, free recovery message. This is not a blockchain transaction and costs no gas.</p>
+        <div class="form-actions">
+          <button class="btn btn-primary" id="recoverySubmit" type="submit" data-i18n="resetPassword">Verify wallet and reset password</button>
+          <button class="btn btn-quiet" id="cancelRecovery" type="button" data-i18n="cancel">Cancel</button>
+        </div>
+      </form>
+
+      <div class="status" id="socialAuthStatus" role="status" aria-live="polite"></div>
+      <p class="gate-note" data-i18n="ownerNote">Access is available to registered Fly Infinity Network wallets.</p>
+    </section>
+
+    <section class="feed-app" id="feedApp" hidden>
+      <div class="feed-head">
+        <div><h2 data-i18n="communityTitle">Fly Infinity Social</h2><p data-i18n="communitySubtitle">A simple space for images and ideas.</p></div>
+        <div class="feed-user"><button class="handle post-profile-link" id="openOwnProfile" type="button"></button><button id="feedDisconnect" type="button" data-i18n="disconnect">Disconnect</button></div>
+      </div>
+
+      <nav class="social-nav" aria-label="Social navigation">
+        <button type="button" class="active" data-social-view="feed"><span class="nav-icon">⌂</span><span data-social-i18n="feed">Feed</span></button>
+        <button type="button" data-social-view="explore"><span class="nav-icon">⌕</span><span data-social-i18n="explore">Explore</span></button>
+        <button type="button" data-social-view="notifications"><span class="nav-icon">♧</span><span data-social-i18n="notifications">Notifications</span><span class="nav-badge" id="notificationBadge" hidden>0</span></button>
+        <button type="button" data-social-view="profile"><span class="nav-icon">◉</span><span data-social-i18n="profile">Profile</span></button>
+      </nav>
+
+      <section class="social-view" id="feedView">
+        <div class="view-title"><div><h3 data-social-i18n="feedTitle">Your feed</h3><p data-social-i18n="feedSubtitle">Posts from people you follow and popular posts.</p></div></div>
+        <form class="composer" id="postForm">
+          <textarea id="postText" maxlength="2000" data-i18n-placeholder="postPlaceholder" placeholder="What would you like to share?"></textarea>
+          <div class="composer-tools">
+            <label class="file-pick"><span data-i18n="addImage">＋ Add image</span><input id="postImage" type="file" accept="image/png,image/jpeg,image/webp"></label>
+            <span class="counter" id="postCounter">0 / 2000</span>
+            <button class="btn btn-primary" id="publishPost" type="submit" data-i18n="publish">Publish</button>
+          </div>
+          <div class="hint" id="imageHint" aria-live="polite"></div>
+        </form>
+        <div class="feed-status" id="feedStatus" role="status" aria-live="polite"></div>
+        <div class="feed-list" id="feedList" aria-live="polite"></div>
+      </section>
+
+      <section class="social-view" id="exploreView" hidden>
+        <div class="view-title"><div><h3 data-social-i18n="exploreTitle">Explore</h3><p data-social-i18n="exploreSubtitle">Discover popular posts from the community.</p></div></div>
+        <div class="feed-status" id="exploreStatus" role="status" aria-live="polite"></div>
+        <div class="explore-grid" id="exploreGrid"></div>
+      </section>
+
+      <section class="social-view" id="notificationsView" hidden>
+        <div class="view-title">
+          <div><h3 data-social-i18n="notificationsTitle">Notifications</h3><p data-social-i18n="notificationsSubtitle">Follows, likes and reposts.</p></div>
+          <button class="view-action" id="markAllRead" type="button" data-social-i18n="markAllRead">Mark all read</button>
+        </div>
+        <div class="feed-status" id="notificationsStatus" role="status" aria-live="polite"></div>
+        <div class="notification-list" id="notificationList"></div>
+      </section>
+
+      <section class="social-view" id="profileView" hidden>
+        <div class="view-title"><div><h3 data-social-i18n="profileTitle">Profile</h3><p data-social-i18n="profileSubtitle">Your public Fly Infinity Social profile.</p></div></div>
+        <div class="profile-card">
+          <div class="profile-avatar" id="profileAvatar">FI</div>
+          <div class="profile-info">
+            <h3 id="profileDisplayName"></h3>
+            <p class="profile-handle" id="profileHandle"></p>
+            <p class="profile-bio" id="profileBio"></p>
+            <p class="profile-wallet" id="profileWallet"></p>
+            <button class="profile-follow" id="profileFollowButton" type="button" hidden></button>
+          </div>
+        </div>
+        <div class="profile-stats">
+          <button type="button"><strong id="profilePostCount">0</strong><span data-social-i18n="posts">Posts</span></button>
+          <button type="button" data-open-connections="followers"><strong id="profileFollowerCount">0</strong><span data-social-i18n="followers">Followers</span></button>
+          <button type="button" data-open-connections="following"><strong id="profileFollowingCount">0</strong><span data-social-i18n="following">Following</span></button>
+        </div>
+        <div id="profilePostsPanel">
+          <div class="profile-section-title" data-social-i18n="profilePosts">Posts</div>
+          <div class="feed-status" id="profileStatus" role="status" aria-live="polite"></div>
+          <div class="feed-list" id="profilePosts"></div>
+        </div>
+        <div id="connectionsPanel" hidden>
+          <div class="view-title"><h3 class="profile-section-title" id="connectionsTitle"></h3><button type="button" class="view-action" id="backToProfile" data-social-i18n="backToProfile">Back to profile</button></div>
+          <div class="connection-list" id="connectionsList"></div>
+        </div>
+      </section>
+    </section>
+  </main>
+</div>
+
+<script>
+window.FLY_INFINITY_SOCIAL_API="https://fly-social-qa.flyinfinityplatform.workers.dev";
+window.FLY_SOCIAL_PATH="creator-arena-qa/index.html";
+</script>
+<script>
+(function(){
+'use strict';
+const translations={
+en:{walletBrowserOnly:'Open this page inside your wallet app browser (for example TokenPocket). This button does not use Reown or WalletConnect.',brandSub:'SOCIAL',title:'Fly Infinity Social',intro:'Connect your Fly Infinity wallet to create your profile and join the community.',connectBrowser:'Connect with browser',connectWallet:'Connect in wallet browser',disconnect:'Disconnect',signatureNote:'Wallet connection uses a free signature. No transaction, token transfer or gas fee is required.',username:'Username',password:'Password',passwordHelp:'Use at least 6 characters. Your password is stored as a secure hash.',createProfile:'Create profile',signIn:'Sign in',forgotPassword:'Forgot password?',newPassword:'New password',confirmPassword:'Confirm new password',recoveryHelp:'To reset your password, your connected wallet signs a new, free recovery message. This is not a blockchain transaction and costs no gas.',resetPassword:'Verify wallet and reset password',cancel:'Cancel',ownerNote:'Access is available to registered Fly Infinity Network wallets.',communityTitle:'Fly Infinity Social',communitySubtitle:'A simple space for images and ideas.',postPlaceholder:'What would you like to share?',addImage:'＋ Add image',publish:'Publish',checking:'Checking…',available:'Username is available',taken:'This username is already taken',badUsername:'Use 3–24 English letters, numbers or underscores',connectFirst:'Connect your wallet first.',connected:'Wallet connected. Complete your profile.',existing:'Account found. Enter your username and password.',profileCreated:'Your profile is ready.',signedIn:'You are signed in.',wrongPassword:'Username or password is incorrect.',signing:'Please sign the free wallet message…',verifying:'Verifying wallet…',passwordMismatch:'The passwords do not match.',passwordLength:'Password must contain at least 6 characters.',recoverySigning:'Please sign the password recovery message in your wallet…',recovered:'Your password has been reset.',publishing:'Publishing…',uploading:'Uploading image…',published:'Your post has been published.',loading:'Loading posts…',empty:'No posts yet. Be the first to share something.',like:'Like',liked:'Liked',repost:'Repost',reposted:'Reposted',repostedBy:'Reposted by',delete:'Delete',imageReady:'Image selected',imageTooLarge:'Images must be 15 MB or smaller.',writePost:'Write text or attach an image before publishing.',walletChanged:'Your wallet account changed. Please reconnect to continue.',wrongNetwork:'Your wallet switched away from BNB Smart Chain. Switch back and reconnect.',invalidMediaType:'Choose a PNG, JPEG or WebP image.',sessionExpired:'Your Social session expired. Connect your wallet again.',ownerRequired:'This wallet is not registered in Fly Infinity Network.',rateLimited:'You have reached the action limit. Please try again later.',postTooLong:'Your post must be 2,000 characters or fewer.',apiOffline:'The Social service is unavailable. Please try again later.',postFailed:'Could not publish this post.',loadFailed:'Could not load the feed.',confirmDelete:'Delete this post?',timeNow:'Just now',unknown:'Community member'},
+fa:{walletBrowserOnly:'برای اتصال مستقیم، این صفحه را در مرورگر داخلی کیف پول مثل TokenPocket باز کنید. این دکمه از Reown یا WalletConnect استفاده نمی‌کند.',brandSub:'رسانه اجتماعی',title:'رسانه اجتماعی فلای اینفینیتی',intro:'برای ساخت پروفایل و پیوستن به جامعه، کیف پول فلای اینفینیتی خود را متصل کنید.',connectBrowser:'اتصال با مرورگر',connectWallet:'اتصال مستقیم کیف پول',disconnect:'قطع اتصال',signatureNote:'اتصال کیف پول با یک امضای رایگان انجام می‌شود؛ هیچ تراکنش، انتقال توکن یا کارمزد گس لازم نیست.',username:'نام کاربری',password:'رمز عبور',passwordHelp:'حداقل ۶ نویسه انتخاب کنید. رمز شما به‌صورت هش امن ذخیره می‌شود.',createProfile:'ساخت پروفایل',signIn:'ورود',forgotPassword:'رمز عبور را فراموش کرده‌اید؟',newPassword:'رمز عبور جدید',confirmPassword:'تکرار رمز عبور جدید',recoveryHelp:'برای بازیابی رمز، کیف پول متصل‌شده یک پیام بازیابی جدید و رایگان را امضا می‌کند. این کار تراکنش بلاک‌چینی نیست و گس ندارد.',resetPassword:'تأیید کیف پول و تغییر رمز',cancel:'انصراف',ownerNote:'دسترسی برای کیف پول‌های ثبت‌شده در شبکه فلای اینفینیتی فعال است.',communityTitle:'رسانه اجتماعی فلای اینفینیتی',communitySubtitle:'فضایی ساده برای انتشار تصویر و ایده.',postPlaceholder:'چه چیزی می‌خواهید با دیگران به اشتراک بگذارید؟',addImage:'＋ افزودن تصویر',publish:'انتشار',checking:'در حال بررسی…',available:'این نام کاربری آزاد است',taken:'این نام کاربری قبلاً انتخاب شده است',badUsername:'۳ تا ۲۴ حرف انگلیسی، عدد یا زیرخط وارد کنید',connectFirst:'ابتدا کیف پول را متصل کنید.',connected:'کیف پول متصل شد. پروفایل خود را تکمیل کنید.',existing:'حساب شما شناسایی شد. نام کاربری و رمز را وارد کنید.',profileCreated:'پروفایل شما آماده است.',signedIn:'با موفقیت وارد شدید.',wrongPassword:'نام کاربری یا رمز عبور صحیح نیست.',signing:'لطفاً پیام ورود رایگان را در کیف پول امضا کنید…',verifying:'در حال بررسی کیف پول…',passwordMismatch:'رمزهای عبور یکسان نیستند.',passwordLength:'رمز عبور باید حداقل ۶ نویسه داشته باشد.',recoverySigning:'لطفاً پیام بازیابی رمز را در کیف پول امضا کنید…',recovered:'رمز عبور شما تغییر کرد.',publishing:'در حال انتشار…',uploading:'در حال بارگذاری تصویر…',published:'پست شما منتشر شد.',loading:'در حال بارگذاری پست‌ها…',empty:'هنوز پستی منتشر نشده است. اولین پست را شما منتشر کنید.',like:'پسندیدن',liked:'پسندیده‌شده',repost:'بازنشر',reposted:'بازنشر شد',repostedBy:'بازنشر توسط',delete:'حذف',imageReady:'تصویر انتخاب شد',imageTooLarge:'حجم تصویر باید حداکثر ۱۵ مگابایت باشد.',writePost:'برای انتشار، متن بنویسید یا تصویری پیوست کنید.',walletChanged:'حساب کیف پول تغییر کرد. برای ادامه دوباره متصل شوید.',wrongNetwork:'شبکه کیف پول از BNB Smart Chain خارج شده است؛ شبکه را تغییر دهید و دوباره متصل شوید.',invalidMediaType:'یک تصویر با فرمت PNG، JPEG یا WebP انتخاب کنید.',sessionExpired:'نشست سوشال منقضی شده است. دوباره کیف پول را متصل کنید.',ownerRequired:'این کیف پول در شبکه فلای اینفینیتی ثبت نشده است.',rateLimited:'به محدودیت این عملیات رسیده‌اید. کمی بعد دوباره تلاش کنید.',postTooLong:'متن پست باید حداکثر ۲۰۰۰ نویسه باشد.',apiOffline:'سرویس رسانه اجتماعی در دسترس نیست. بعداً دوباره تلاش کنید.',postFailed:'انتشار پست انجام نشد.',loadFailed:'بارگذاری فید انجام نشد.',confirmDelete:'این پست حذف شود؟',timeNow:'همین حالا',unknown:'عضو جامعه'},
+ar:{walletBrowserOnly:'افتح الصفحة داخل متصفح محفظتك مثل TokenPocket. هذا الزر لا يستخدم Reown أو WalletConnect.',brandSub:'اجتماعي',title:'Fly Infinity Social',intro:'اربط محفظة Fly Infinity لإنشاء ملفك الشخصي والانضمام إلى المجتمع.',connectBrowser:'الاتصال عبر المتصفح',connectWallet:'الاتصال من متصفح المحفظة',disconnect:'قطع الاتصال',signatureNote:'يتم الربط بتوقيع مجاني. لا توجد معاملة أو تحويل رموز أو رسوم غاز.',username:'اسم المستخدم',password:'كلمة المرور',passwordHelp:'استخدم 6 أحرف على الأقل. تُحفظ كلمة المرور بصيغة تجزئة آمنة.',createProfile:'إنشاء الملف الشخصي',signIn:'تسجيل الدخول',forgotPassword:'نسيت كلمة المرور؟',newPassword:'كلمة مرور جديدة',confirmPassword:'تأكيد كلمة المرور الجديدة',recoveryHelp:'لاستعادة كلمة المرور، توقّع محفظتك المتصلة رسالة استعادة مجانية جديدة. ليست معاملة بلوكتشين ولا تكلف غازًا.',resetPassword:'تحقق من المحفظة وأعد تعيين كلمة المرور',cancel:'إلغاء',ownerNote:'الدخول متاح لمحافظ Fly Infinity Network المسجلة.',communityTitle:'Fly Infinity Social',communitySubtitle:'مساحة بسيطة للصور والأفكار.',postPlaceholder:'ماذا تريد أن تشارك؟',addImage:'＋ إضافة صورة',publish:'نشر',checking:'جارٍ التحقق…',available:'اسم المستخدم متاح',taken:'اسم المستخدم مستخدم بالفعل',badUsername:'استخدم 3–24 حرفًا إنجليزيًا أو رقمًا أو شرطة سفلية',connectFirst:'اربط محفظتك أولاً.',connected:'تم ربط المحفظة. أكمل ملفك الشخصي.',existing:'تم العثور على حسابك. أدخل اسم المستخدم وكلمة المرور.',profileCreated:'ملفك الشخصي جاهز.',signedIn:'تم تسجيل الدخول.',wrongPassword:'اسم المستخدم أو كلمة المرور غير صحيحة.',signing:'وقّع رسالة الدخول المجانية…',verifying:'جارٍ التحقق من المحفظة…',passwordMismatch:'كلمتا المرور غير متطابقتين.',passwordLength:'يجب ألا تقل كلمة المرور عن 6 أحرف.',recoverySigning:'وقّع رسالة استعادة كلمة المرور في محفظتك…',recovered:'تم تغيير كلمة المرور.',publishing:'جارٍ النشر…',uploading:'جارٍ رفع الصورة…',published:'تم نشر منشورك.',loading:'جارٍ تحميل المنشورات…',empty:'لا توجد منشورات بعد. كن أول من يشارك.',like:'إعجاب',liked:'أعجبني',repost:'إعادة نشر',reposted:'تمت إعادة النشر',repostedBy:'أعاد النشر',delete:'حذف',imageReady:'تم اختيار الصورة',imageTooLarge:'يجب ألا يتجاوز حجم الصورة 15 ميغابايت.',writePost:'اكتب نصًا أو أرفق صورة قبل النشر.',walletChanged:'تغير حساب محفظتك. أعد الاتصال للمتابعة.',wrongNetwork:'تم تحويل محفظتك من BNB Smart Chain. عد إلى الشبكة ثم أعد الاتصال.',invalidMediaType:'اختر صورة بصيغة PNG أو JPEG أو WebP.',sessionExpired:'انتهت جلسة Social. أعد ربط محفظتك.',ownerRequired:'هذه المحفظة غير مسجلة في Fly Infinity Network.',rateLimited:'لقد وصلت إلى حد هذه العملية. حاول لاحقًا.',postTooLong:'يجب ألا يتجاوز المنشور 2000 حرف.',apiOffline:'الخدمة الاجتماعية غير متاحة الآن.',postFailed:'تعذر نشر المنشور.',loadFailed:'تعذر تحميل المنشورات.',confirmDelete:'هل تريد حذف هذا المنشور؟',timeNow:'الآن',unknown:'عضو المجتمع'},
+tr:{walletBrowserOnly:'Bu sayfayı TokenPocket gibi cüzdan uygulamasının tarayıcısında açın. Bu düğme Reown veya WalletConnect kullanmaz.',brandSub:'SOSYAL',title:'Fly Infinity Social',intro:'Profilinizi oluşturmak ve topluluğa katılmak için Fly Infinity cüzdanınızı bağlayın.',connectBrowser:'Tarayıcıyla bağlan',connectWallet:'Cüzdan tarayıcısıyla bağlan',disconnect:'Bağlantıyı kes',signatureNote:'Bağlantı ücretsiz imza ile yapılır. İşlem, token transferi veya gas ücreti yoktur.',username:'Kullanıcı adı',password:'Şifre',passwordHelp:'En az 6 karakter kullanın. Şifreniz güvenli bir özet olarak saklanır.',createProfile:'Profil oluştur',signIn:'Giriş yap',forgotPassword:'Şifrenizi mi unuttunuz?',newPassword:'Yeni şifre',confirmPassword:'Yeni şifreyi onayla',recoveryHelp:'Şifreyi sıfırlamak için bağlı cüzdanınız yeni ve ücretsiz bir kurtarma mesajı imzalar. Bu bir blok zinciri işlemi değildir ve gas gerektirmez.',resetPassword:'Cüzdanı doğrula ve şifreyi sıfırla',cancel:'İptal',ownerNote:'Erişim, kayıtlı Fly Infinity Network cüzdanlarına açıktır.',communityTitle:'Fly Infinity Social',communitySubtitle:'Görseller ve fikirler için sade bir alan.',postPlaceholder:'Ne paylaşmak istersiniz?',addImage:'＋ Görsel ekle',publish:'Yayınla',checking:'Kontrol ediliyor…',available:'Kullanıcı adı kullanılabilir',taken:'Bu kullanıcı adı zaten alınmış',badUsername:'3–24 İngilizce harf, rakam veya alt çizgi kullanın',connectFirst:'Önce cüzdanınızı bağlayın.',connected:'Cüzdan bağlandı. Profilinizi tamamlayın.',existing:'Hesabınız bulundu. Kullanıcı adı ve şifrenizi girin.',profileCreated:'Profiliniz hazır.',signedIn:'Giriş yaptınız.',wrongPassword:'Kullanıcı adı veya şifre hatalı.',signing:'Lütfen ücretsiz giriş mesajını imzalayın…',verifying:'Cüzdan doğrulanıyor…',passwordMismatch:'Şifreler eşleşmiyor.',passwordLength:'Şifre en az 6 karakter olmalıdır.',recoverySigning:'Lütfen kurtarma mesajını cüzdanınızda imzalayın…',recovered:'Şifreniz sıfırlandı.',publishing:'Yayınlanıyor…',uploading:'Görsel yükleniyor…',published:'Gönderiniz yayınlandı.',loading:'Gönderiler yükleniyor…',empty:'Henüz gönderi yok. İlk paylaşımı siz yapın.',like:'Beğen',liked:'Beğenildi',repost:'Yeniden paylaş',reposted:'Yeniden paylaşıldı',repostedBy:'Yeniden paylaşan',delete:'Sil',imageReady:'Görsel seçildi',imageTooLarge:'Görseller en fazla 15 MB olmalıdır.',writePost:'Yayınlamadan önce metin yazın veya görsel ekleyin.',walletChanged:'Cüzdan hesabınız değişti. Devam etmek için yeniden bağlanın.',wrongNetwork:'Cüzdanınız BNB Smart Chain dışındaki bir ağa geçti. Geri dönüp yeniden bağlanın.',invalidMediaType:'PNG, JPEG veya WebP biçiminde bir görsel seçin.',sessionExpired:'Social oturumunuz sona erdi. Cüzdanınızı yeniden bağlayın.',ownerRequired:'Bu cüzdan Fly Infinity Network\'e kayıtlı değil.',rateLimited:'Bu işlem için sınıra ulaştınız. Daha sonra tekrar deneyin.',postTooLong:'Gönderiniz en fazla 2.000 karakter olabilir.',apiOffline:'Sosyal hizmet şu anda kullanılamıyor.',postFailed:'Gönderi yayınlanamadı.',loadFailed:'Akış yüklenemedi.',confirmDelete:'Bu gönderi silinsin mi?',timeNow:'Şimdi',unknown:'Topluluk üyesi'},
+ru:{walletBrowserOnly:'Откройте страницу во встроенном браузере кошелька, например TokenPocket. Эта кнопка не использует Reown или WalletConnect.',brandSub:'СООБЩЕСТВО',title:'Fly Infinity Social',intro:'Подключите кошелёк Fly Infinity, чтобы создать профиль и присоединиться к сообществу.',connectBrowser:'Подключить через браузер',connectWallet:'Подключить в браузере кошелька',disconnect:'Отключить',signatureNote:'Подключение использует бесплатную подпись. Транзакции, перевода токенов и комиссии за газ нет.',username:'Имя пользователя',password:'Пароль',passwordHelp:'Используйте не менее 6 символов. Пароль хранится в виде защищённого хеша.',createProfile:'Создать профиль',signIn:'Войти',forgotPassword:'Забыли пароль?',newPassword:'Новый пароль',confirmPassword:'Подтвердите новый пароль',recoveryHelp:'Для сброса пароля подключённый кошелёк подпишет новое бесплатное сообщение восстановления. Это не блокчейн-транзакция и не требует газа.',resetPassword:'Проверить кошелёк и сбросить пароль',cancel:'Отмена',ownerNote:'Доступ открыт для зарегистрированных кошельков Fly Infinity Network.',communityTitle:'Fly Infinity Social',communitySubtitle:'Пространство для изображений и идей.',postPlaceholder:'Чем хотите поделиться?',addImage:'＋ Добавить изображение',publish:'Опубликовать',checking:'Проверка…',available:'Имя пользователя свободно',taken:'Это имя уже занято',badUsername:'Используйте 3–24 латинские буквы, цифры или подчёркивание',connectFirst:'Сначала подключите кошелёк.',connected:'Кошелёк подключён. Завершите профиль.',existing:'Аккаунт найден. Введите имя пользователя и пароль.',profileCreated:'Ваш профиль готов.',signedIn:'Вы вошли в систему.',wrongPassword:'Неверное имя пользователя или пароль.',signing:'Подпишите бесплатное сообщение для входа…',verifying:'Проверка кошелька…',passwordMismatch:'Пароли не совпадают.',passwordLength:'Пароль должен содержать не менее 6 символов.',recoverySigning:'Подпишите сообщение восстановления в кошельке…',recovered:'Пароль сброшен.',publishing:'Публикация…',uploading:'Загрузка изображения…',published:'Публикация добавлена.',loading:'Загрузка публикаций…',empty:'Публикаций пока нет. Поделитесь первым.',like:'Нравится',liked:'Понравилось',repost:'Репост',reposted:'Репост опубликован',repostedBy:'Репост от',delete:'Удалить',imageReady:'Изображение выбрано',imageTooLarge:'Размер изображения не должен превышать 15 МБ.',writePost:'Напишите текст или прикрепите изображение.',walletChanged:'Адрес кошелька изменился. Подключитесь снова, чтобы продолжить.',wrongNetwork:'Кошелёк переключён с BNB Smart Chain. Вернитесь в эту сеть и подключитесь снова.',invalidMediaType:'Выберите изображение PNG, JPEG или WebP.',sessionExpired:'Срок действия Social-сеанса истёк. Подключите кошелёк снова.',ownerRequired:'Этот кошелёк не зарегистрирован в Fly Infinity Network.',rateLimited:'Достигнут лимит действий. Попробуйте позже.',postTooLong:'Длина публикации не должна превышать 2000 символов.',apiOffline:'Социальный сервис сейчас недоступен.',postFailed:'Не удалось опубликовать запись.',loadFailed:'Не удалось загрузить ленту.',confirmDelete:'Удалить эту публикацию?',timeNow:'Только что',unknown:'Участник сообщества'},
+zh:{walletBrowserOnly:'请在 TokenPocket 等钱包应用的内置浏览器中打开此页面。此按钮不使用 Reown 或 WalletConnect。',brandSub:'社交社区',title:'Fly Infinity Social',intro:'连接您的 Fly Infinity 钱包，创建个人资料并加入社区。',connectBrowser:'通过浏览器连接',connectWallet:'在钱包浏览器中连接',disconnect:'断开连接',signatureNote:'连接只需免费签名，不需要交易、代币转账或 Gas 费用。',username:'用户名',password:'密码',passwordHelp:'至少使用 6 个字符。密码以安全哈希形式保存。',createProfile:'创建个人资料',signIn:'登录',forgotPassword:'忘记密码？',newPassword:'新密码',confirmPassword:'确认新密码',recoveryHelp:'重置密码时，已连接的钱包会签署一条新的免费恢复消息。这不是区块链交易，也不需要 Gas。',resetPassword:'验证钱包并重置密码',cancel:'取消',ownerNote:'仅限已注册的 Fly Infinity Network 钱包访问。',communityTitle:'Fly Infinity Social',communitySubtitle:'分享图片和想法的简洁空间。',postPlaceholder:'您想分享什么？',addImage:'＋ 添加图片',publish:'发布',checking:'检查中…',available:'用户名可用',taken:'该用户名已被使用',badUsername:'使用 3–24 个英文字母、数字或下划线',connectFirst:'请先连接钱包。',connected:'钱包已连接。请完成个人资料。',existing:'已找到您的账户。请输入用户名和密码。',profileCreated:'个人资料已准备就绪。',signedIn:'登录成功。',wrongPassword:'用户名或密码错误。',signing:'请签署免费的登录消息…',verifying:'正在验证钱包…',passwordMismatch:'两次密码不一致。',passwordLength:'密码至少需要 6 个字符。',recoverySigning:'请在钱包中签署密码恢复消息…',recovered:'密码已重置。',publishing:'正在发布…',uploading:'正在上传图片…',published:'帖子已发布。',loading:'正在加载帖子…',empty:'暂无帖子。成为第一个分享的人吧。',like:'点赞',liked:'已点赞',repost:'转发',reposted:'已转发',repostedBy:'转发者',delete:'删除',imageReady:'已选择图片',imageTooLarge:'图片大小不能超过 15 MB。',writePost:'请先输入文字或附加图片。',walletChanged:'钱包账户已更改。请重新连接以继续。',wrongNetwork:'钱包已切换离开 BNB Smart Chain。请切回该网络并重新连接。',invalidMediaType:'请选择 PNG、JPEG 或 WebP 格式的图片。',sessionExpired:'Social 会话已过期。请重新连接钱包。',ownerRequired:'此钱包尚未在 Fly Infinity Network 注册。',rateLimited:'已达到此操作的次数限制，请稍后重试。',postTooLong:'帖子内容不得超过 2,000 个字符。',apiOffline:'社交服务暂时不可用。',postFailed:'发布失败。',loadFailed:'无法加载动态。',confirmDelete:'确定删除此帖子吗？',timeNow:'刚刚',unknown:'社区成员'},
+es:{walletBrowserOnly:'Abre esta página en el navegador integrado de tu cartera, como TokenPocket. Este botón no usa Reown ni WalletConnect.',brandSub:'SOCIAL',title:'Fly Infinity Social',intro:'Conecta tu cartera Fly Infinity para crear tu perfil y unirte a la comunidad.',connectBrowser:'Conectar con navegador',connectWallet:'Conectar desde el navegador de la cartera',disconnect:'Desconectar',signatureNote:'La conexión utiliza una firma gratuita. No requiere transacciones, transferencias de tokens ni gas.',username:'Nombre de usuario',password:'Contraseña',passwordHelp:'Usa al menos 6 caracteres. Tu contraseña se guarda como un hash seguro.',createProfile:'Crear perfil',signIn:'Iniciar sesión',forgotPassword:'¿Olvidaste tu contraseña?',newPassword:'Nueva contraseña',confirmPassword:'Confirmar nueva contraseña',recoveryHelp:'Para restablecer la contraseña, tu cartera conectada firma un nuevo mensaje gratuito. No es una transacción blockchain y no cuesta gas.',resetPassword:'Verificar cartera y restablecer contraseña',cancel:'Cancelar',ownerNote:'El acceso está disponible para carteras registradas en Fly Infinity Network.',communityTitle:'Fly Infinity Social',communitySubtitle:'Un espacio sencillo para imágenes e ideas.',postPlaceholder:'¿Qué te gustaría compartir?',addImage:'＋ Añadir imagen',publish:'Publicar',checking:'Comprobando…',available:'Nombre de usuario disponible',taken:'Este nombre de usuario ya está ocupado',badUsername:'Usa 3–24 letras inglesas, números o guiones bajos',connectFirst:'Conecta primero tu cartera.',connected:'Cartera conectada. Completa tu perfil.',existing:'Cuenta encontrada. Introduce tu nombre y contraseña.',profileCreated:'Tu perfil está listo.',signedIn:'Has iniciado sesión.',wrongPassword:'El nombre o la contraseña no son correctos.',signing:'Firma el mensaje gratuito de acceso…',verifying:'Verificando cartera…',passwordMismatch:'Las contraseñas no coinciden.',passwordLength:'La contraseña debe tener al menos 6 caracteres.',recoverySigning:'Firma el mensaje de recuperación en tu cartera…',recovered:'Tu contraseña se ha restablecido.',publishing:'Publicando…',uploading:'Subiendo imagen…',published:'Tu publicación se ha publicado.',loading:'Cargando publicaciones…',empty:'Todavía no hay publicaciones. Comparte la primera.',like:'Me gusta',liked:'Te gusta',repost:'Republicar',reposted:'Republicado',repostedBy:'Republicado por',delete:'Eliminar',imageReady:'Imagen seleccionada',imageTooLarge:'Las imágenes no deben superar los 15 MB.',writePost:'Escribe texto o adjunta una imagen antes de publicar.',walletChanged:'La cuenta de tu cartera ha cambiado. Vuelve a conectarla para continuar.',wrongNetwork:'Tu cartera cambió de BNB Smart Chain. Vuelve a esa red y conecta de nuevo.',invalidMediaType:'Elige una imagen PNG, JPEG o WebP.',sessionExpired:'Tu sesión de Social ha caducado. Conecta tu cartera otra vez.',ownerRequired:'Esta cartera no está registrada en Fly Infinity Network.',rateLimited:'Has alcanzado el límite de esta acción. Inténtalo más tarde.',postTooLong:'Tu publicación debe tener 2.000 caracteres o menos.',apiOffline:'El servicio social no está disponible.',postFailed:'No se pudo publicar.',loadFailed:'No se pudo cargar el feed.',confirmDelete:'¿Eliminar esta publicación?',timeNow:'Ahora',unknown:'Miembro de la comunidad'},
+pt:{walletBrowserOnly:'Abra esta página no navegador integrado da sua carteira, como o TokenPocket. Este botão não usa Reown nem WalletConnect.',brandSub:'SOCIAL',title:'Fly Infinity Social',intro:'Conecte sua carteira Fly Infinity para criar seu perfil e entrar na comunidade.',connectBrowser:'Conectar pelo navegador',connectWallet:'Conectar pelo navegador da carteira',disconnect:'Desconectar',signatureNote:'A conexão usa uma assinatura gratuita. Não exige transação, transferência de tokens ou taxa de gás.',username:'Nome de usuário',password:'Senha',passwordHelp:'Use pelo menos 6 caracteres. Sua senha é armazenada como hash seguro.',createProfile:'Criar perfil',signIn:'Entrar',forgotPassword:'Esqueceu a senha?',newPassword:'Nova senha',confirmPassword:'Confirmar nova senha',recoveryHelp:'Para redefinir a senha, sua carteira conectada assina uma nova mensagem gratuita de recuperação. Não é uma transação blockchain e não custa gás.',resetPassword:'Verificar carteira e redefinir senha',cancel:'Cancelar',ownerNote:'O acesso está disponível para carteiras registradas na Fly Infinity Network.',communityTitle:'Fly Infinity Social',communitySubtitle:'Um espaço simples para imagens e ideias.',postPlaceholder:'O que você gostaria de compartilhar?',addImage:'＋ Adicionar imagem',publish:'Publicar',checking:'Verificando…',available:'Nome de usuário disponível',taken:'Este nome de usuário já está em uso',badUsername:'Use 3–24 letras inglesas, números ou sublinhados',connectFirst:'Conecte sua carteira primeiro.',connected:'Carteira conectada. Complete seu perfil.',existing:'Conta encontrada. Digite seu nome de usuário e senha.',profileCreated:'Seu perfil está pronto.',signedIn:'Você entrou.',wrongPassword:'Nome de usuário ou senha incorretos.',signing:'Assine a mensagem gratuita de acesso…',verifying:'Verificando carteira…',passwordMismatch:'As senhas não coincidem.',passwordLength:'A senha deve ter pelo menos 6 caracteres.',recoverySigning:'Assine a mensagem de recuperação na sua carteira…',recovered:'Sua senha foi redefinida.',publishing:'Publicando…',uploading:'Enviando imagem…',published:'Sua publicação foi publicada.',loading:'Carregando publicações…',empty:'Ainda não há publicações. Compartilhe a primeira.',like:'Curtir',liked:'Curtido',repost:'Republicar',reposted:'Republicado',repostedBy:'Republicado por',delete:'Excluir',imageReady:'Imagem selecionada',imageTooLarge:'As imagens devem ter no máximo 15 MB.',writePost:'Escreva um texto ou anexe uma imagem antes de publicar.',walletChanged:'A conta da sua carteira mudou. Conecte novamente para continuar.',wrongNetwork:'Sua carteira saiu da BNB Smart Chain. Volte para essa rede e conecte novamente.',invalidMediaType:'Escolha uma imagem PNG, JPEG ou WebP.',sessionExpired:'Sua sessão Social expirou. Conecte sua carteira novamente.',ownerRequired:'Esta carteira não está registrada na Fly Infinity Network.',rateLimited:'Você atingiu o limite desta ação. Tente novamente mais tarde.',postTooLong:'Sua publicação deve ter no máximo 2.000 caracteres.',apiOffline:'O serviço social está indisponível.',postFailed:'Não foi possível publicar.',loadFailed:'Não foi possível carregar o feed.',confirmDelete:'Excluir esta publicação?',timeNow:'Agora',unknown:'Membro da comunidade'}
+};
+const socialLabels={
+en:{feed:'Feed',explore:'Explore',notifications:'Notifications',profile:'Profile',feedTitle:'Your feed',feedSubtitle:'Posts from people you follow and popular posts.',exploreTitle:'Explore',exploreSubtitle:'Discover popular posts from the community.',notificationsTitle:'Notifications',notificationsSubtitle:'Follows, likes and reposts.',markAllRead:'Mark all read',profileTitle:'Profile',profileSubtitle:'Your public Fly Infinity Social profile.',posts:'Posts',followers:'Followers',following:'Following',profilePosts:'Posts',backToProfile:'Back to profile',follow:'Follow',unfollow:'Following',noExplore:'No public posts to explore yet.',noNotifications:'You are all caught up. New likes, reposts and follows will appear here.',noConnections:'No accounts here yet.',followed:'Following',popular:'Popular',yours:'Your post',startedFollowingYou:'started following you',likedYourPost:'liked your post',repostedYourPost:'reposted your post',followsYou:'Follows you',loading:'Loading…',loadError:'Could not load this section.'},
+fa:{feed:'فید',explore:'اکسپلور',notifications:'اعلان‌ها',profile:'پروفایل',feedTitle:'فید شما',feedSubtitle:'پست‌های دنبال‌شوندگان و پست‌های محبوب.',exploreTitle:'اکسپلور',exploreSubtitle:'پست‌های محبوب جامعه فلای اینفینیتی را کشف کنید.',notificationsTitle:'اعلان‌ها',notificationsSubtitle:'دنبال‌کردن‌ها، پسندها و بازنشرها.',markAllRead:'خواندن همه',profileTitle:'پروفایل',profileSubtitle:'پروفایل عمومی شما در فلای اینفینیتی سوشال.',posts:'پست',followers:'دنبال‌کننده',following:'دنبال‌شونده',profilePosts:'پست‌ها',backToProfile:'بازگشت به پروفایل',follow:'دنبال کردن',unfollow:'دنبال می‌کنید',noExplore:'هنوز پست عمومی برای اکسپلور وجود ندارد.',noNotifications:'اعلان جدیدی ندارید. پسندها، بازنشرها و دنبال‌کردن‌های جدید اینجا نمایش داده می‌شوند.',noConnections:'هنوز حسابی در این فهرست وجود ندارد.',followed:'دنبال‌شده',popular:'محبوب',yours:'پست شما',startedFollowingYou:'شما را دنبال کرد',likedYourPost:'پست شما را پسندید',repostedYourPost:'پست شما را بازنشر کرد',followsYou:'شما را دنبال می‌کند',loading:'در حال بارگذاری…',loadError:'بارگذاری این بخش انجام نشد.'},
+ar:{feed:'الخلاصة',explore:'استكشاف',notifications:'الإشعارات',profile:'الملف الشخصي',feedTitle:'خلاصتك',feedSubtitle:'منشورات من تتابعهم والمنشورات الشائعة.',exploreTitle:'استكشاف',exploreSubtitle:'اكتشف المنشورات الشائعة في المجتمع.',notificationsTitle:'الإشعارات',notificationsSubtitle:'المتابعات والإعجابات وإعادة النشر.',markAllRead:'تحديد الكل كمقروء',profileTitle:'الملف الشخصي',profileSubtitle:'ملفك العام في Fly Infinity Social.',posts:'المنشورات',followers:'المتابعون',following:'يتابع',profilePosts:'المنشورات',backToProfile:'العودة إلى الملف الشخصي',follow:'متابعة',unfollow:'يتابع',noExplore:'لا توجد منشورات عامة للاستكشاف بعد.',noNotifications:'أنت على اطلاع. ستظهر المتابعات والإعجابات وإعادة النشر هنا.',noConnections:'لا توجد حسابات هنا بعد.',followed:'يتابع',popular:'شائع',yours:'منشورك',startedFollowingYou:'بدأ بمتابعتك',likedYourPost:'أعجب بمنشورك',repostedYourPost:'أعاد نشر منشورك',followsYou:'يتابعك',loading:'جارٍ التحميل…',loadError:'تعذر تحميل هذا القسم.'},
+tr:{feed:'Akış',explore:'Keşfet',notifications:'Bildirimler',profile:'Profil',feedTitle:'Akışın',feedSubtitle:'Takip ettiğin kişiler ve popüler gönderiler.',exploreTitle:'Keşfet',exploreSubtitle:'Topluluktaki popüler gönderileri keşfet.',notificationsTitle:'Bildirimler',notificationsSubtitle:'Takipler, beğeniler ve yeniden paylaşımlar.',markAllRead:'Tümünü okundu işaretle',profileTitle:'Profil',profileSubtitle:'Herkese açık Fly Infinity Social profilin.',posts:'Gönderi',followers:'Takipçi',following:'Takip',profilePosts:'Gönderiler',backToProfile:'Profile dön',follow:'Takip et',unfollow:'Takip ediliyor',noExplore:'Keşfedilecek herkese açık gönderi yok.',noNotifications:'Güncelsin. Yeni takipler, beğeniler ve paylaşımlar burada görünür.',noConnections:'Burada henüz hesap yok.',followed:'Takip ediliyor',popular:'Popüler',yours:'Gönderin',startedFollowingYou:'seni takip etmeye başladı',likedYourPost:'gönderini beğendi',repostedYourPost:'gönderini yeniden paylaştı',followsYou:'Seni takip ediyor',loading:'Yükleniyor…',loadError:'Bu bölüm yüklenemedi.'},
+ru:{feed:'Лента',explore:'Обзор',notifications:'Уведомления',profile:'Профиль',feedTitle:'Ваша лента',feedSubtitle:'Публикации тех, на кого вы подписаны, и популярные записи.',exploreTitle:'Обзор',exploreSubtitle:'Откройте популярные публикации сообщества.',notificationsTitle:'Уведомления',notificationsSubtitle:'Подписки, отметки «Нравится» и репосты.',markAllRead:'Отметить всё прочитанным',profileTitle:'Профиль',profileSubtitle:'Ваш публичный профиль Fly Infinity Social.',posts:'Публикации',followers:'Подписчики',following:'Подписки',profilePosts:'Публикации',backToProfile:'Назад в профиль',follow:'Подписаться',unfollow:'Вы подписаны',noExplore:'Пока нет публичных публикаций для обзора.',noNotifications:'Новых уведомлений нет. Подписки, отметки «Нравится» и репосты появятся здесь.',noConnections:'Здесь пока нет аккаунтов.',followed:'Вы подписаны',popular:'Популярное',yours:'Ваша публикация',startedFollowingYou:'подписался на вас',likedYourPost:'оценил вашу публикацию',repostedYourPost:'сделал репост вашей публикации',followsYou:'Подписан на вас',loading:'Загрузка…',loadError:'Не удалось загрузить этот раздел.'},
+zh:{feed:'动态',explore:'发现',notifications:'通知',profile:'个人资料',feedTitle:'你的动态',feedSubtitle:'你关注的用户和热门帖子。',exploreTitle:'发现',exploreSubtitle:'发现社区中的热门帖子。',notificationsTitle:'通知',notificationsSubtitle:'关注、点赞和转发。',markAllRead:'全部标为已读',profileTitle:'个人资料',profileSubtitle:'你的 Fly Infinity Social 公开主页。',posts:'帖子',followers:'粉丝',following:'关注',profilePosts:'帖子',backToProfile:'返回个人资料',follow:'关注',unfollow:'已关注',noExplore:'暂无可发现的公开帖子。',noNotifications:'目前没有新通知。新的关注、点赞和转发会显示在这里。',noConnections:'这里还没有账户。',followed:'已关注',popular:'热门',yours:'你的帖子',startedFollowingYou:'开始关注你',likedYourPost:'赞了你的帖子',repostedYourPost:'转发了你的帖子',followsYou:'关注了你',loading:'加载中…',loadError:'无法加载此部分。'},
+es:{feed:'Inicio',explore:'Explorar',notifications:'Notificaciones',profile:'Perfil',feedTitle:'Tu feed',feedSubtitle:'Publicaciones de personas que sigues y publicaciones populares.',exploreTitle:'Explorar',exploreSubtitle:'Descubre publicaciones populares de la comunidad.',notificationsTitle:'Notificaciones',notificationsSubtitle:'Seguimientos, me gusta y republicaciones.',markAllRead:'Marcar todo como leído',profileTitle:'Perfil',profileSubtitle:'Tu perfil público de Fly Infinity Social.',posts:'Publicaciones',followers:'Seguidores',following:'Siguiendo',profilePosts:'Publicaciones',backToProfile:'Volver al perfil',follow:'Seguir',unfollow:'Siguiendo',noExplore:'Todavía no hay publicaciones públicas para explorar.',noNotifications:'Estás al día. Los nuevos seguimientos, me gusta y republicaciones aparecerán aquí.',noConnections:'Todavía no hay cuentas aquí.',followed:'Siguiendo',popular:'Popular',yours:'Tu publicación',startedFollowingYou:'ha empezado a seguirte',likedYourPost:'le ha gustado tu publicación',repostedYourPost:'ha republicado tu publicación',followsYou:'Te sigue',loading:'Cargando…',loadError:'No se pudo cargar esta sección.'},
+pt:{feed:'Feed',explore:'Explorar',notifications:'Notificações',profile:'Perfil',feedTitle:'Seu feed',feedSubtitle:'Publicações de quem você segue e publicações populares.',exploreTitle:'Explorar',exploreSubtitle:'Descubra publicações populares da comunidade.',notificationsTitle:'Notificações',notificationsSubtitle:'Seguidores, curtidas e republicações.',markAllRead:'Marcar tudo como lido',profileTitle:'Perfil',profileSubtitle:'Seu perfil público no Fly Infinity Social.',posts:'Publicações',followers:'Seguidores',following:'Seguindo',profilePosts:'Publicações',backToProfile:'Voltar ao perfil',follow:'Seguir',unfollow:'Seguindo',noExplore:'Ainda não há publicações públicas para explorar.',noNotifications:'Tudo em dia. Novos seguidores, curtidas e republicações aparecerão aqui.',noConnections:'Ainda não há contas nesta lista.',followed:'Seguindo',popular:'Popular',yours:'Sua publicação',startedFollowingYou:'começou a seguir você',likedYourPost:'curtiu sua publicação',repostedYourPost:'republicou sua publicação',followsYou:'Segue você',loading:'Carregando…',loadError:'Não foi possível carregar esta seção.'}
+};
+const tx=key=>(socialLabels[lang]||socialLabels.en)[key]||socialLabels.en[key]||key;
+const $=id=>document.getElementById(id);
+const API=(window.FLY_INFINITY_SOCIAL_API||'https://fly-infinity-social-api.flyinfinityplatform.workers.dev').replace(/\/$/,'');
+let lang='en',apiReady=false,token='',wallet='',profile=null,activeProvider=null,passwordSet=false,passwordVerified=false,handleCheckTimer=null,handleCheckValue='',handleCheckSequence=0,walletEventHandlers=null,walletEventProvider=null;
+let activeSocialView='feed',activeProfileHandle='',currentProfileData=null;
+const storage={
+ get:key=>{try{return sessionStorage.getItem(key)||'';}catch(e){return '';}},
+ set:(key,value)=>{try{sessionStorage.setItem(key,value);}catch(e){}},
+ del:key=>{try{sessionStorage.removeItem(key);}catch(e){}}
+};
+const t=key=>(translations[lang]||translations.en)[key]||translations.en[key]||key;
+function say(message,error){$('socialAuthStatus').textContent=message||'';$('socialAuthStatus').classList.toggle('error',!!error);}
+function feedSay(message){$('feedStatus').textContent=message||'';}
+const LANGUAGE_META={en:{flag:'🇬🇧',name:'English'},fa:{flag:'🇮🇷',name:'فارسی'},ar:{flag:'🇮🇶',name:'العربية'},tr:{flag:'🇹🇷',name:'Türkçe'},ru:{flag:'🇷🇺',name:'Русский'},zh:{flag:'🇨🇳',name:'中文'},es:{flag:'🇪🇸',name:'Español'},pt:{flag:'🇵🇹',name:'Português'}};
+function translate(next){
+ const previousLanguage=lang;
+ lang=translations[next]?next:'en';
+ document.documentElement.lang=lang;
+ document.documentElement.dir=(lang==='fa'||lang==='ar')?'rtl':'ltr';
+ document.querySelectorAll('[data-i18n]').forEach(node=>{const key=node.dataset.i18n;if(t(key))node.textContent=t(key);});
+ document.querySelectorAll('[data-i18n-placeholder]').forEach(node=>{const key=node.dataset.i18nPlaceholder;node.placeholder=t(key);});
+ document.querySelectorAll('[data-social-i18n]').forEach(node=>{node.textContent=tx(node.dataset.socialI18n);});
+ const languageButton=$('langBtn');
+ if(languageButton){languageButton.textContent=LANGUAGE_META[lang].flag;languageButton.setAttribute('aria-label','Change language · '+LANGUAGE_META[lang].name);}
+ document.querySelectorAll('.lang-item[data-lang]').forEach(item=>{
+  const active=item.dataset.lang===lang;
+  item.classList.toggle('active',active);
+  if(active)item.setAttribute('aria-current','true');else item.removeAttribute('aria-current');
+ });
+ try{localStorage.setItem('fit_lang',lang);}catch(e){}
+ document.dispatchEvent(new CustomEvent('fi-language-updated',{detail:{lang}}));
+ if(passwordVerified&&previousLanguage!==lang){refreshCurrentSocialView().catch(()=>{});}
+}
+function toast(message){say(message,false);window.setTimeout(()=>{if($('socialAuthStatus').textContent===message)say('');},3300);}
+function friendlyApiError(message,status){
+ const value=String(message||'');
+ if(/username or password is incorrect/i.test(value))return t('wrongPassword');
+ if(/this wallet already has a password/i.test(value))return t('existing');
+ if(status===401||/session has expired|connect your Fly Infinity wallet to continue|enter your Social account password/i.test(value))return t('sessionExpired');
+ if(status===403||/not a registered Fly Infinity Network Owner|no longer a registered/i.test(value))return t('ownerRequired');
+ if(status===429||/too many|limit reached/i.test(value))return t('rateLimited');
+ if(status===503||/temporarily unavailable|not configured/i.test(value))return t('apiOffline');
+ if(/only PNG, JPEG and WebP|content does not match its declared|unsupported image/i.test(value))return t('invalidMediaType');
+ if(/password must contain 6/i.test(value))return t('passwordLength');
+ if(/username must be 3/i.test(value))return t('badUsername');
+ if(/post text must be 2000/i.test(value))return t('postTooLong');
+ if(/write a message or attach an image/i.test(value))return t('writePost');
+ if(/image exceeds the 15 MB|exceeds 15 MB/i.test(value))return t('imageTooLarge');
+ return value||t('apiOffline');
+}
+async function api(path,options){
+ options=options||{};
+ const headers=new Headers(options.headers||{});
+ if(token)headers.set('Authorization','Bearer '+token);
+ let body=options.body;
+ if(body&&typeof body==='object'&&!(body instanceof Blob)&&!(body instanceof ArrayBuffer)&&!(body instanceof FormData)){
+  headers.set('Content-Type','application/json');body=JSON.stringify(body);
+ }
+ let response;
+ try{response=await fetch(API+path,Object.assign({},options,{headers,body,cache:'no-store'}));}
+ catch(error){throw new Error(t('apiOffline'));}
+ const data=await response.json().catch(()=>({}));
+ if(!response.ok)throw new Error(friendlyApiError(data.error,response.status));
+ return data;
+}
+function toHex(value){return '0x'+Array.from(new TextEncoder().encode(value),b=>b.toString(16).padStart(2,'0')).join('');}
+const injectedProviderAtPageLoad=window.ethereum;
+function getDirectInjectedProvider(){
+ const providers=[];
+ const add=provider=>{
+  if(provider&&typeof provider.request==='function'&&!providers.includes(provider))providers.push(provider);
+ };
+ const root=injectedProviderAtPageLoad;
+ if(root&&Array.isArray(root.providers))root.providers.forEach(add);
+ add(window.tokenpocket&&window.tokenpocket.ethereum);
+ add(window.tp&&window.tp.ethereum);
+ add(root);
+ // Never mistake an active Reown provider injected later by the shared bridge for a browser wallet.
+ if(!window.fiWalletConnectActive)add(window.ethereum);
+ return providers.find(provider=>
+  provider.isTokenPocket||provider.isTP||provider.isTrust||provider.isTrustWallet||
+  provider.isSafePal||provider.isMetaMask||provider.isCoinbaseWallet
+ )||providers[0]||null;
+}
+async function providerFor(mode){
+ if(mode==='wallet'){
+  const provider=getDirectInjectedProvider();
+  if(!provider)throw new Error(t('walletBrowserOnly'));
+  await provider.request({method:'eth_requestAccounts'});
+  return provider;
+ }
+ if(mode==='browser'&&typeof window.fiSelectWalletProvider==='function'){
+  return await window.fiSelectWalletProvider();
+ }
+ if(window.ethereum&&typeof window.ethereum.request==='function'){
+  await window.ethereum.request({method:'eth_requestAccounts'});
+  return window.ethereum;
+ }
+ throw new Error(t('apiOffline'));
+}
+async function switchToBsc(provider){
+ let chain=await provider.request({method:'eth_chainId'});
+ if(Number.parseInt(chain,16)===56)return;
+ try{await provider.request({method:'wallet_switchEthereumChain',params:[{chainId:'0x38'}]});}
+ catch(error){
+  if(Number(error?.code)!==4902)throw error;
+  await provider.request({method:'wallet_addEthereumChain',params:[{chainId:'0x38',chainName:'BNB Smart Chain',nativeCurrency:{name:'BNB',symbol:'BNB',decimals:18},rpcUrls:['https://bsc-dataseed.binance.org/'],blockExplorerUrls:['https://bscscan.com']}]});
+ }
+ chain=await provider.request({method:'eth_chainId'});
+ if(Number.parseInt(chain,16)!==56)throw new Error(t('wrongNetwork'));
+}
+function stopWalletWatch(){
+ if(walletEventProvider&&walletEventHandlers){
+  const remove=walletEventProvider.removeListener||walletEventProvider.off;
+  if(typeof remove==='function'){
+   remove.call(walletEventProvider,'accountsChanged',walletEventHandlers.accounts);
+   remove.call(walletEventProvider,'chainChanged',walletEventHandlers.chain);
+  }
+ }
+ walletEventProvider=null;walletEventHandlers=null;
+}
+async function invalidateWalletSession(messageKey){
+ const oldToken=token;
+ stopWalletWatch();
+ token='';wallet='';profile=null;activeProvider=null;passwordSet=false;passwordVerified=false;
+ storage.del('fly-social-token');storage.del('fly-social-wallet');resetAccountForm();say(t(messageKey),true);
+ if(oldToken){try{await fetch(API+'/api/auth/logout',{method:'POST',headers:{Authorization:'Bearer '+oldToken},cache:'no-store'});}catch(error){}}
+}
+function watchWalletProvider(provider){
+ stopWalletWatch();
+ if(!provider||typeof provider.on!=='function')return;
+ const accounts=values=>{
+  const next=Array.isArray(values)&&values[0]?String(values[0]).toLowerCase():'';
+  if(next!==wallet.toLowerCase())invalidateWalletSession('walletChanged');
+ };
+ const chain=value=>{if(Number.parseInt(value,16)!==56)invalidateWalletSession('wrongNetwork');};
+ walletEventProvider=provider;walletEventHandlers={accounts,chain};
+ provider.on('accountsChanged',accounts);provider.on('chainChanged',chain);
+}
+function resetAccountForm(){
+ $('accountForm').hidden=true;$('recoveryForm').hidden=true;$('walletStep').hidden=false;$('walletSummary').hidden=true;
+ $('feedApp').hidden=true;$('authGate').hidden=false;$('accountHandle').value='';$('accountPassword').value='';
+ $('recoveryPassword').value='';$('recoveryConfirm').value='';$('forgotPassword').hidden=true;
+ $('usernameHint').textContent='';$('usernameHint').className='hint';passwordVerified=false;
+}
+function paintConnected(){
+ $('walletStep').hidden=true;$('walletSummary').hidden=false;
+ $('walletSummaryText').textContent=wallet.slice(0,8)+'…'+wallet.slice(-6);
+ $('authGate').hidden=true;$('feedApp').hidden=true;
+}
+function showAccountStep(){
+ $('authGate').hidden=false;$('feedApp').hidden=true;
+ $('walletStep').hidden=true;$('walletSummary').hidden=false;
+ $('accountForm').hidden=false;$('recoveryForm').hidden=true;
+ $('accountHandle').readOnly=passwordSet;
+ $('accountHandle').value=passwordSet?(profile?.handle||''):'';
+ $('accountPassword').value='';
+ $('accountPassword').setAttribute('autocomplete',passwordSet?'current-password':'new-password');
+ $('accountSubmit').textContent=t(passwordSet?'signIn':'createProfile');
+ $('forgotPassword').hidden=!passwordSet;
+ $('usernameHint').textContent='';
+ say(passwordSet?t('existing'):t('connected'));
+ if(!passwordSet){$('accountHandle').focus();}
+ else{$('accountPassword').focus();}
+}
+async function loadFeed(){
+ feedSay(t('loading'));
+ const result=await api('/api/feed?limit=30',{method:'GET'});
+ const list=$('feedList');list.replaceChildren();
+ if(!result.posts||!result.posts.length){
+  const empty=document.createElement('div');empty.className='feed-empty';empty.textContent=t('empty');list.append(empty);feedSay('');return;
+ }
+ result.posts.forEach(post=>list.append(makePost(post)));
+ feedSay('');
+}
+function initials(value){return String(value||'FI').slice(0,2).toUpperCase();}
+function makePost(post){
+ const card=document.createElement('article');card.className='post';card.dataset.postId=post.id;
+ if(post.repostedBy){
+  const note=document.createElement('div');note.className='repost-note';
+  note.textContent=t('repostedBy')+' @'+post.repostedBy.handle;card.append(note);
+ }
+ if(post.feedReason==='popular'||post.feedReason==='following'){
+  const reason=document.createElement('div');reason.className='post-reason';reason.textContent=tx(post.feedReason);card.append(reason);
+ }
+ const head=document.createElement('div');head.className='post-head';
+ const avatar=document.createElement('span');avatar.className='avatar';avatar.textContent=initials(post.creator?.displayName||post.creator?.handle);
+ const author=document.createElement('button');author.type='button';author.className='post-author post-profile-link';
+ author.dataset.profileHandle=post.creator?.handle||'';
+ const strong=document.createElement('strong');strong.textContent=post.creator?.displayName||post.creator?.handle||t('unknown');
+ const handle=document.createElement('small');handle.textContent='@'+(post.creator?.handle||'');
+ author.append(strong,handle);
+ const date=document.createElement('span');date.className='post-date';date.dateTime=post.createdAt?new Date(Number(post.createdAt)*1000).toISOString():'';date.textContent=postAgeLabel(post.createdAt);
+ head.append(avatar,author,date);card.append(head);
+ if(post.text){const text=document.createElement('p');text.className='post-text';text.textContent=post.text;card.append(text);}
+ if(post.imageUrl){const image=document.createElement('img');image.className='post-image';image.src=post.imageUrl;image.alt='Post image';image.loading='lazy';card.append(image);}
+ const actions=document.createElement('div');actions.className='post-actions';
+ const like=document.createElement('button');like.type='button';like.className='action-btn'+(post.likedByMe?' active':'');like.dataset.likeId=post.id;
+ like.textContent=(post.likedByMe?'♥ ':'♡ ')+t(post.likedByMe?'liked':'like')+' · '+post.likes;like.setAttribute('aria-pressed',String(post.likedByMe));
+ const isOwnPost=!!(post.creator?.wallet&&post.creator.wallet.toLowerCase()===wallet.toLowerCase());
+ if(!isOwnPost){
+  const repost=document.createElement('button');repost.type='button';repost.className='action-btn'+(post.repostedByMe?' active':'');repost.dataset.repostId=post.id;
+  repost.textContent='↻ '+t(post.repostedByMe?'reposted':'repost')+' · '+post.reposts;repost.setAttribute('aria-pressed',String(post.repostedByMe));actions.append(repost);
+ }
+ actions.append(like);
+ if(isOwnPost){
+  const remove=document.createElement('button');remove.type='button';remove.className='action-btn delete';remove.dataset.deleteId=post.id;remove.textContent=t('delete');actions.append(remove);
+ }
+ card.append(actions);return card;
+}
+function showSocialView(view) {
+ const allowed=['feed','explore','notifications','profile'];
+ activeSocialView=allowed.includes(view)?view:'feed';
+ document.querySelectorAll('.social-view').forEach(node=>node.hidden=node.id!==activeSocialView+'View');
+ document.querySelectorAll('[data-social-view]').forEach(button=>button.classList.toggle('active',button.dataset.socialView===activeSocialView));
+}
+function updateNotificationBadge(count) {
+ const badge=$('notificationBadge');
+ const value=Math.max(0,Number(count||0));
+ badge.hidden=value===0;
+ badge.textContent=value>9?'9+':String(value);
+}
+async function refreshNotificationBadge() {
+ try { const data=await api('/api/notifications?limit=1',{method:'GET'});updateNotificationBadge(data.unreadCount); }
+ catch(e) {}
+}
+function setEmpty(container,message) {
+ container.replaceChildren();
+ const empty=document.createElement('div');empty.className='feed-empty';empty.textContent=message;container.append(empty);
+}
+function makeExploreTile(post) {
+ const tile=document.createElement('article');tile.className='explore-tile';tile.dataset.postId=post.id;
+ const media=document.createElement('div');media.className='explore-media';
+ if(post.imageUrl){
+  const image=document.createElement('img');image.src=post.imageUrl;image.alt='';image.loading='lazy';
+  image.onerror=()=>{image.remove();const letter=document.createElement('span');letter.className='tile-letter';letter.textContent=initials(post.creator?.handle);media.append(letter);};
+  media.append(image);
+ }else{
+  const letter=document.createElement('span');letter.className='tile-letter';letter.textContent=initials(post.creator?.handle);media.append(letter);
+ }
+ const meta=document.createElement('div');meta.className='explore-meta';
+ const author=document.createElement('button');author.type='button';author.className='post-profile-link';author.dataset.profileHandle=post.creator?.handle||'';
+ const name=document.createElement('strong');name.textContent='@'+(post.creator?.handle||t('unknown'));author.append(name);
+ const caption=document.createElement('p');caption.className='explore-caption';caption.textContent=post.text||'';
+ const actions=document.createElement('div');actions.className='explore-actions';
+ const like=document.createElement('button');like.type='button';like.className='action-btn'+(post.likedByMe?' active':'');
+ like.dataset.likeId=post.id;like.setAttribute('aria-pressed',String(post.likedByMe));
+ like.textContent=(post.likedByMe?'♥ ':'♡ ')+post.likes;
+ const repost=document.createElement('button');repost.type='button';repost.className='action-btn'+(post.repostedByMe?' active':'');
+ repost.dataset.repostId=post.id;repost.setAttribute('aria-pressed',String(post.repostedByMe));
+ repost.textContent='↻ '+post.reposts;
+ actions.append(like,repost);meta.append(author,caption,actions);tile.append(media,meta);return tile;
+}
+async function loadExplore() {
+ $('exploreStatus').textContent=tx('loading');
+ try{
+  const result=await api('/api/explore?limit=36',{method:'GET'});
+  const grid=$('exploreGrid');grid.replaceChildren();
+  if(!result.posts||!result.posts.length){setEmpty(grid,tx('noExplore'));$('exploreStatus').textContent='';return;}
+  result.posts.forEach(post=>grid.append(makeExploreTile(post)));
+  $('exploreStatus').textContent='';
+ }catch(error){$('exploreStatus').textContent=error.message||tx('loadError');}
+}
+function notificationText(item) {
+ const actor=item.actor?.displayName||('@'+(item.actor?.handle||t('unknown')));
+ const action=item.type==='follow'?tx('startedFollowingYou'):item.type==='like'?tx('likedYourPost'):tx('repostedYourPost');
+ return {actor,action};
+}
+async function loadNotifications() {
+ $('notificationsStatus').textContent=tx('loading');
+ try{
+  const result=await api('/api/notifications?limit=50',{method:'GET'});
+  updateNotificationBadge(result.unreadCount);
+  const list=$('notificationList');list.replaceChildren();
+  if(!result.notifications||!result.notifications.length){setEmpty(list,tx('noNotifications'));$('notificationsStatus').textContent='';return;}
+  result.notifications.forEach(item=>{
+   const row=document.createElement('article');row.className='notification-row'+(item.read?'':' unread');
+   const avatar=document.createElement('span');avatar.className='avatar';avatar.textContent=initials(item.actor?.displayName||item.actor?.handle);
+   const copy=document.createElement('div');copy.className='notification-copy';
+   const actor=document.createElement('strong');actor.textContent=textSafeActor(item.actor);
+   const text=document.createElement('span');text.textContent=' '+notificationText(item).action;
+   const time=document.createElement('small');time.textContent=new Date(item.createdAt*1000).toLocaleString(lang);
+   const actorLink=document.createElement('button');actorLink.type='button';actorLink.className='post-profile-link';actorLink.dataset.profileHandle=item.actor?.handle||'';actorLink.append(actor);
+   copy.append(actorLink,text,time);
+   if(item.post?.imageUrl){const thumb=document.createElement('img');thumb.className='notification-post-thumb';thumb.src=item.post.imageUrl;thumb.alt='';row.append(thumb);}
+   if(!item.read){const dot=document.createElement('span');dot.className='notification-dot';row.append(dot);}
+   const mark=document.createElement('button');mark.type='button';mark.className='action-btn';mark.dataset.notificationId=item.id;mark.textContent=item.read?'✓':'•';
+   if(item.read)mark.disabled=true;
+   row.append(avatar,copy,mark);list.append(row);
+  });
+  $('notificationsStatus').textContent='';
+ }catch(error){$('notificationsStatus').textContent=error.message||tx('loadError');}
+}
+function postAgeLabel(timestamp){
+ const value=Number(timestamp||0);
+ if(!value)return '';
+ const seconds=Math.max(0,Math.floor(Date.now()/1000-value));
+ if(seconds<45)return t('timeNow');
+ const relative=typeof Intl!=='undefined'&&Intl.RelativeTimeFormat?new Intl.RelativeTimeFormat(lang,{numeric:'auto'}):null;
+ if(relative){
+  if(seconds<3600)return relative.format(-Math.max(1,Math.floor(seconds/60)),'minute');
+  if(seconds<86400)return relative.format(-Math.max(1,Math.floor(seconds/3600)),'hour');
+  return relative.format(-Math.max(1,Math.floor(seconds/86400)),'day');
+ }
+ return new Date(value*1000).toLocaleString(lang);
+}
+function textSafeActor(actor) {
+ return actor?.displayName||('@'+(actor?.handle||t('unknown')));
+}
+async function loadProfile(handle) {
+ if(!handle)return;
+ activeProfileHandle=handle;
+ showSocialView('profile');
+ $('profileStatus').textContent=tx('loading');
+ $('connectionsPanel').hidden=true;$('profilePostsPanel').hidden=false;
+ try{
+  const result=await api('/api/profiles/'+encodeURIComponent(handle)+'?limit=40',{method:'GET'});
+  const p=result.profile;currentProfileData=p;
+  $('profileDisplayName').textContent=p.displayName||p.handle;
+  $('profileHandle').textContent='@'+p.handle;
+  $('profileAvatar').textContent=initials(p.displayName||p.handle);
+  $('profileBio').textContent=p.bio||'';
+  $('profileWallet').textContent=p.wallet.slice(0,10)+'…'+p.wallet.slice(-8);
+  $('profilePostCount').textContent=p.posts;
+  $('profileFollowerCount').textContent=p.followers;
+  $('profileFollowingCount').textContent=p.following;
+  const follow=$('profileFollowButton');
+  follow.hidden=p.isMe;follow.dataset.followHandle=p.handle;
+  follow.textContent=p.isFollowing?tx('unfollow'):tx('follow');follow.dataset.following=String(p.isFollowing);
+  follow.classList.toggle('following',p.isFollowing);
+  const list=$('profilePosts');list.replaceChildren();
+  if(!result.posts||!result.posts.length)setEmpty(list,tx('noExplore'));
+  else result.posts.forEach(post=>list.append(makePost(post)));
+  $('profileStatus').textContent='';
+ }catch(error){currentProfileData=null;$('profileStatus').textContent=error.message||tx('loadError');}
+}
+async function loadConnections(kind) {
+ if(!activeProfileHandle)return;
+ $('profilePostsPanel').hidden=true;$('connectionsPanel').hidden=false;
+ $('connectionsTitle').dataset.kind=kind;
+ $('connectionsTitle').textContent=tx(kind)+' · @'+activeProfileHandle;
+ const list=$('connectionsList');list.replaceChildren();
+ const loading=document.createElement('div');loading.className='feed-status';loading.textContent=tx('loading');list.append(loading);
+ try{
+  const result=await api('/api/profiles/'+encodeURIComponent(activeProfileHandle)+'/'+kind+'?limit=80',{method:'GET'});
+  list.replaceChildren();
+  if(!result.users||!result.users.length){setEmpty(list,tx('noConnections'));return;}
+  result.users.forEach(user=>{
+   const row=document.createElement('div');row.className='connection-row';
+   const avatar=document.createElement('span');avatar.className='avatar';avatar.textContent=initials(user.displayName||user.handle);
+   const main=document.createElement('div');main.className='connection-main';
+   const link=document.createElement('button');link.type='button';link.className='post-profile-link';link.dataset.profileHandle=user.handle;
+   const name=document.createElement('strong');name.textContent=user.displayName||user.handle;
+   const handle=document.createElement('small');handle.textContent='@'+user.handle;
+   link.append(name,handle);main.append(link);
+   row.append(avatar,main);
+   if(!user.isMe){
+    const follow=document.createElement('button');follow.type='button';follow.className='action-btn'+(user.isFollowing?' active':'');
+    follow.dataset.followHandle=user.handle;follow.dataset.following=String(user.isFollowing);follow.textContent=user.isFollowing?tx('unfollow'):tx('follow');row.append(follow);
+   }
+   list.append(row);
+  });
+ }catch(error){setEmpty(list,error.message||tx('loadError'));}
+}
+async function performFollow(handle, method) {
+ await api('/api/profiles/'+encodeURIComponent(handle)+'/follow',{method});
+ await refreshNotificationBadge();
+ if(activeSocialView==='profile'&&activeProfileHandle){
+  const wasViewingConnections=!$('connectionsPanel').hidden;
+  const currentKind=$('connectionsTitle').dataset.kind||'followers';
+  await loadProfile(activeProfileHandle);
+  if(wasViewingConnections)await loadConnections(currentKind);
+ }else if(activeSocialView==='feed'){
+  await loadFeed();
+ }
+}
+async function refreshCurrentSocialView() {
+ if(activeSocialView==='feed')await loadFeed();
+ else if(activeSocialView==='explore')await loadExplore();
+ else if(activeSocialView==='notifications')await loadNotifications();
+ else if(activeSocialView==='profile'&&activeProfileHandle)await loadProfile(activeProfileHandle);
+}
+async function finishSignIn(){
+ passwordVerified=true;$('authGate').hidden=true;$('feedApp').hidden=false;
+ $('openOwnProfile').textContent='@'+(profile?.handle||'');
+ say('');
+ showSocialView('feed');
+ say(t('signedIn'));
+ await Promise.all([loadFeed().catch(error=>feedSay(error.message||t('loadFailed'))),refreshNotificationBadge()]);
+}
+async function connect(mode){
+ const buttons=[$('connectSocialBrowser'),$('connectSocialWallet')];buttons.forEach(b=>b.disabled=true);
+ try{
+  say(t('signing'));
+  const provider=await providerFor(mode);activeProvider=provider;await switchToBsc(provider);
+  const accounts=await provider.request({method:'eth_accounts'});
+  if(!Array.isArray(accounts)||!accounts[0])throw new Error(t('apiOffline'));
+  const address=accounts[0];
+  const challenge=await api('/api/auth/challenge',{method:'POST',body:{address}});
+  const signature=await provider.request({method:'personal_sign',params:[toHex(challenge.message),address]});
+  say(t('verifying'));
+  const result=await api('/api/auth/verify',{method:'POST',body:{address,nonce:challenge.nonce,signature}});
+  token=result.token;wallet=result.wallet;profile=result.profile||null;passwordSet=!!result.passwordSet;passwordVerified=false;
+  watchWalletProvider(provider);
+  storage.set('fly-social-token',token);storage.set('fly-social-wallet',wallet);
+  showAccountStep();
+ }catch(error){say(error.message||t('apiOffline'),true);}
+ finally{buttons.forEach(b=>b.disabled=false);}
+}
+async function disconnect(){
+ try{if(token)await api('/api/auth/logout',{method:'POST'});}catch(e){}
+ stopWalletWatch();
+ try{if(typeof window.fiDisconnectSelectedWallet==='function')await window.fiDisconnectSelectedWallet();
+  else if(typeof window.fiDisconnectWalletConnect==='function')await window.fiDisconnectWalletConnect();}catch(e){}
+ token='';wallet='';profile=null;activeProvider=null;passwordSet=false;passwordVerified=false;
+ storage.del('fly-social-token');storage.del('fly-social-wallet');resetAccountForm();say('');
+}
+async function restoreSession(){
+ token=storage.get('fly-social-token');wallet=storage.get('fly-social-wallet');
+ if(!token){resetAccountForm();return;}
+ try{
+  const me=await api('/api/me',{method:'GET'});
+  wallet=me.wallet;profile=me.profile||null;passwordSet=!!me.passwordSet;passwordVerified=!!me.passwordVerified;
+  if(passwordVerified){await finishSignIn();}
+  else{showAccountStep();}
+ }catch(error){
+  token='';wallet='';profile=null;passwordSet=false;storage.del('fly-social-token');storage.del('fly-social-wallet');resetAccountForm();
+ }
+}
+function usernameLooksValid(value){return /^[a-z0-9_]{3,24}$/i.test(value);}
+async function checkUsername(){
+ const value=$('accountHandle').value.trim().toLowerCase();
+ const hint=$('usernameHint');
+ const sequence=++handleCheckSequence;
+ if(passwordSet){hint.textContent='';handleCheckValue='';return false;}
+ if(!usernameLooksValid(value)){hint.textContent=value?t('badUsername'):'';hint.className='hint bad';handleCheckValue='';return false;}
+ hint.textContent=t('checking');hint.className='hint';
+ try{
+  const result=await api('/api/handles/check?handle='+encodeURIComponent(value),{method:'GET'});
+  if(sequence!==handleCheckSequence||$('accountHandle').value.trim().toLowerCase()!==value)return false;
+  hint.textContent=result.available?t('available'):t('taken');hint.className='hint '+(result.available?'good':'bad');handleCheckValue=result.available?value:'';
+  return !!result.available;
+ }catch(error){
+  if(sequence!==handleCheckSequence)return false;
+  hint.textContent=error.message;hint.className='hint bad';handleCheckValue='';return false;
+ }
+}
+$('accountHandle').addEventListener('input',()=>{
+ if(passwordSet)return;
+ clearTimeout(handleCheckTimer);handleCheckValue='';handleCheckSequence++;
+ handleCheckTimer=window.setTimeout(checkUsername,450);
+});
+$('accountForm').addEventListener('submit',async event=>{
+ event.preventDefault();
+ if(!token){say(t('connectFirst'),true);return;}
+ const handle=$('accountHandle').value.trim().toLowerCase(),password=$('accountPassword').value;
+ if(!usernameLooksValid(handle)){say(t('badUsername'),true);return;}
+ if(password.length<6){say(t('passwordLength'),true);return;}
+ const button=$('accountSubmit');button.disabled=true;
+ try{
+  if(passwordSet){
+   const result=await api('/api/auth/password',{method:'POST',body:{handle,password}});
+   profile=result.profile;await finishSignIn();
+  }else{
+   if(handleCheckValue!==handle){
+    const available=await checkUsername();
+    if(!available){const hint=$('usernameHint').textContent;throw new Error(hint&&hint!==t('checking')?hint:t('taken'));}
+   }
+   const result=await api('/api/profile/create',{method:'POST',body:{handle,password}});
+   profile=result.profile;passwordSet=true;passwordVerified=true;
+   await finishSignIn();
+  }
+ }catch(error){say(error.message||t('apiOffline'),true);}
+ finally{button.disabled=false;}
+});
+$('forgotPassword').addEventListener('click',()=>{
+ $('recoveryForm').hidden=false;$('accountForm').hidden=true;$('recoveryPassword').focus();say(t('recoveryHelp'));
+});
+$('cancelRecovery').addEventListener('click',()=>{
+ $('recoveryForm').hidden=true;$('accountForm').hidden=false;$('recoveryPassword').value='';$('recoveryConfirm').value='';say(t('existing'));
+});
+$('recoveryForm').addEventListener('submit',async event=>{
+ event.preventDefault();
+ const password=$('recoveryPassword').value,confirm=$('recoveryConfirm').value;
+ if(password.length<6){say(t('passwordLength'),true);return;}
+ if(password!==confirm){say(t('passwordMismatch'),true);return;}
+ const button=$('recoverySubmit');button.disabled=true;
+ try{
+  const challenge=await api('/api/auth/password/recovery/challenge',{method:'POST'});
+  const provider=activeProvider||await providerFor('browser');activeProvider=provider;await switchToBsc(provider);
+  const accounts=await provider.request({method:'eth_accounts'});
+  if(!Array.isArray(accounts)||!accounts[0]||accounts[0].toLowerCase()!==wallet.toLowerCase()){
+   throw new Error(t('connectFirst'));
+  }
+  say(t('recoverySigning'));
+  const signature=await provider.request({method:'personal_sign',params:[toHex(challenge.message),accounts[0]]});
+  const result=await api('/api/auth/password/recovery/verify',{method:'POST',body:{nonce:challenge.nonce,signature,password}});
+  token=result.token;profile=result.profile;passwordSet=true;passwordVerified=true;
+  storage.set('fly-social-token',token);storage.set('fly-social-wallet',wallet);
+  $('recoveryForm').reset();await finishSignIn();say(t('recovered'));
+ }catch(error){say(error.message||t('apiOffline'),true);}
+ finally{button.disabled=false;}
+});
+$('disconnectSocialWallet').addEventListener('click',disconnect);
+$('feedDisconnect').addEventListener('click',disconnect);
+$('connectSocialBrowser').addEventListener('click',()=>connect('browser'));
+$('connectSocialWallet').addEventListener('click',()=>connect('wallet'));
+$('postText').addEventListener('input',()=>{$('postCounter').textContent=$('postText').value.length+' / 2000';});
+$('postImage').addEventListener('change',()=>{
+ const file=$('postImage').files&&$('postImage').files[0];
+ $('imageHint').textContent='';
+ if(!file)return;
+ if(file.size>15728640){$('postImage').value='';$('imageHint').textContent=t('imageTooLarge');return;}
+ if(!['image/png','image/jpeg','image/webp'].includes(file.type)){$('postImage').value='';$('imageHint').textContent=t('invalidMediaType');return;}
+ $('imageHint').textContent=t('imageReady')+' · '+file.name;
+});
+$('postForm').addEventListener('submit',async event=>{
+ event.preventDefault();
+ const text=$('postText').value.trim(),file=$('postImage').files&&$('postImage').files[0];
+ if(!text&&!file){feedSay(t('writePost'));return;}
+ if(file&&file.size>15728640){feedSay(t('imageTooLarge'));return;}
+ const button=$('publishPost');button.disabled=true;
+ try{
+  let mediaKey=null;
+  if(file){
+   if(!['image/png','image/jpeg','image/webp'].includes(file.type))throw new Error(t('invalidMediaType'));
+   feedSay(t('uploading'));
+   const uploaded=await api('/api/media/upload',{method:'POST',headers:{'Content-Type':file.type},body:file});
+   mediaKey=uploaded.mediaKey;
+  }
+  feedSay(t('publishing'));
+  await api('/api/posts',{method:'POST',body:{text,mediaKey}});
+  $('postForm').reset();$('postCounter').textContent='0 / 2000';$('imageHint').textContent='';
+  feedSay(t('published'));await loadFeed();
+ }catch(error){feedSay(error.message||t('postFailed'));}
+ finally{button.disabled=false;}
+});
+$('feedApp').addEventListener('click',async event=>{
+ const viewButton=event.target.closest('[data-social-view]');
+ if(viewButton){if(viewButton.dataset.socialView==='profile'){await loadProfile(profile?.handle||'');}else{showSocialView(viewButton.dataset.socialView);await refreshCurrentSocialView();}return;}
+ const ownProfile=event.target.closest('#openOwnProfile');
+ if(ownProfile){await loadProfile(profile?.handle||'');return;}
+ const profileLink=event.target.closest('[data-profile-handle]');
+ if(profileLink&&profileLink.dataset.profileHandle){await loadProfile(profileLink.dataset.profileHandle);return;}
+ const connections=event.target.closest('[data-open-connections]');
+ if(connections){await loadConnections(connections.dataset.openConnections);return;}
+ if(event.target.closest('#backToProfile')){await loadProfile(activeProfileHandle);return;}
+ if(event.target.closest('#markAllRead')){
+  const button=$('markAllRead');button.disabled=true;
+  try{await api('/api/notifications/read-all',{method:'POST'});await loadNotifications();}
+  catch(error){$('notificationsStatus').textContent=error.message||tx('loadError');}
+  finally{button.disabled=false;}
+  return;
+ }
+ const mark=event.target.closest('[data-notification-id]');
+ if(mark){mark.disabled=true;try{await api('/api/notifications/'+encodeURIComponent(mark.dataset.notificationId)+'/read',{method:'PATCH'});await loadNotifications();}
+  catch(error){$('notificationsStatus').textContent=error.message||tx('loadError');}return;}
+ const follow=event.target.closest('[data-follow-handle]');
+ if(follow){follow.disabled=true;const was=follow.dataset.following==='true';
+  try{await performFollow(follow.dataset.followHandle,was?'DELETE':'POST');}
+  catch(error){if(activeSocialView==='profile')$('profileStatus').textContent=error.message||tx('loadError');}
+  finally{follow.disabled=false;}return;}
+ const like=event.target.closest('[data-like-id]');
+ const repost=event.target.closest('[data-repost-id]');
+ const remove=event.target.closest('[data-delete-id]');
+ const button=like||repost||remove;if(!button)return;
+ button.disabled=true;
+ try{
+  if(like){
+   const was=like.getAttribute('aria-pressed')==='true';
+   await api('/api/posts/'+encodeURIComponent(like.dataset.likeId)+'/like',{method:was?'DELETE':'POST'});
+  }else if(repost){
+   const was=repost.getAttribute('aria-pressed')==='true';
+   await api('/api/posts/'+encodeURIComponent(repost.dataset.repostId)+'/repost',{method:was?'DELETE':'POST'});
+  }else{
+   if(!window.confirm(t('confirmDelete')))return;
+   await api('/api/posts/'+encodeURIComponent(remove.dataset.deleteId),{method:'DELETE'});
+  }
+  await refreshCurrentSocialView();await refreshNotificationBadge();
+ }catch(error){if(activeSocialView==='feed')feedSay(error.message||t('apiOffline'));
+  else if(activeSocialView==='explore')$('exploreStatus').textContent=error.message||tx('loadError');
+  else if(activeSocialView==='profile')$('profileStatus').textContent=error.message||tx('loadError');
+ }
+ finally{button.disabled=false;}
+});
+async function initialize(){
+ translate('en');
+ let saved='en';try{saved=localStorage.getItem('fit_lang')||((navigator.language||'en').slice(0,2));}catch(e){}
+ translate(translations[saved]?saved:'en');
+ const languageButton=$('langBtn'),languageDropdown=$('langDropdown');
+ document.body.appendChild(languageDropdown);
+ function closeLanguageMenu(){languageDropdown.classList.remove('open');languageButton.setAttribute('aria-expanded','false');}
+ languageButton.addEventListener('click',event=>{
+  event.stopPropagation();
+  const open=!languageDropdown.classList.contains('open');
+  languageDropdown.classList.toggle('open',open);
+  languageButton.setAttribute('aria-expanded',String(open));
+ });
+ languageDropdown.addEventListener('click',event=>{
+  const item=event.target.closest('[data-lang]');if(!item)return;
+  event.preventDefault();translate(item.dataset.lang);closeLanguageMenu();
+ });
+ document.addEventListener('click',event=>{if(!event.target.closest('.language-control')&&!event.target.closest('#langDropdown'))closeLanguageMenu();});
+ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&languageDropdown.classList.contains('open')){closeLanguageMenu();languageButton.focus();}});
+
+ try{
+  const health=await fetch(API+'/api/health',{cache:'no-store'});
+  if(!health.ok)throw new Error('health');
+  const payload=await health.json();
+  if(!payload.ok||payload.service!=='Fly Infinity Social API')throw new Error('health');
+  apiReady=true;await restoreSession();
+ }catch(error){resetAccountForm();say(t('apiOffline'),true);}
+}
+initialize();
+})();
+</script>
+<script src="../walletconnect-bridge.js?v=20261123-social3-direct"></script>
+<script src="social-api.js?v=20261123-social3-direct"></script>
+<script src="../global-bottom-nav.js?v=20261123-social-qa"></script>
+</body>
+</html>
