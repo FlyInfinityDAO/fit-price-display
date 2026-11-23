@@ -39,6 +39,28 @@ test('requests from an unapproved browser origin are rejected', async () => {
   assert.deepEqual(await response.json(), { error: 'Origin not allowed' });
 });
 
+test('Social discovery, profile, follow and notification routes are exposed behind a password session', async () => {
+  const requests = [
+    ['GET', '/api/explore'],
+    ['GET', '/api/profiles/alice'],
+    ['GET', '/api/profiles/alice/followers'],
+    ['GET', '/api/profiles/alice/following'],
+    ['POST', '/api/profiles/alice/follow'],
+    ['DELETE', '/api/profiles/alice/follow'],
+    ['GET', '/api/notifications'],
+    ['POST', '/api/notifications/read-all'],
+    ['PATCH', '/api/notifications/notification-1/read']
+  ];
+  for (const [method, path] of requests) {
+    const response = await worker.fetch(new Request('https://social.example' + path, {
+      method,
+      headers: { Origin: 'https://flyinfinitydao.github.io' }
+    }), { APP_ORIGIN: 'https://flyinfinitydao.github.io' });
+    assert.equal(response.status, 401, method + ' ' + path + ' should require a session, not return 404');
+    assert.deepEqual(await response.json(), { error: 'Connect your Fly Infinity wallet to continue' });
+  }
+});
+
 test('old audio, challenge, profile listing and comment-style routes are no longer exposed', async () => {
   const paths = [
     '/api/challenges',
