@@ -152,6 +152,9 @@ body{padding-bottom:calc(100px + env(safe-area-inset-bottom))}
 @media(max-width:560px){body{padding-left:10px;padding-right:10px}.topbar{padding-top:12px}.brand img{width:34px;height:34px}.brand strong{font-size:11px}.brand small{font-size:8px}.lang-select{max-width:112px;height:34px;font-size:9px}.auth-gate{margin-top:30px;padding:23px 17px;border-radius:20px}.wallet-actions{grid-template-columns:1fr}.feed-head{align-items:flex-start}.feed-head h2{font-size:16px}.feed-user{align-items:flex-end;flex-direction:column}.composer{padding:12px}.post-text{font-size:11px}.post-image{max-height:470px}}
 html[dir=rtl] body{font-family:Vazirmatn,Inter,system-ui,sans-serif}
 html[dir=rtl] .field{text-align:right}
+@media(max-width:768px){
+ .field input,.field textarea,.composer textarea{font-size:16px!important}
+}
 </style>
 <link rel="stylesheet" href="../ambient-motion.css?v=20261123-social-theme1">
 <link rel="stylesheet" href="../pwa-brand-neon.css?v=20261123-social-theme1">
@@ -495,8 +498,9 @@ function showAccountStep(){
  $('forgotPassword').hidden=!passwordSet;
  $('usernameHint').textContent='';
  say(passwordSet?t('existing'):t('connected'));
- if(!passwordSet){$('accountHandle').focus();}
- else{$('accountPassword').focus();}
+ if(window.matchMedia&&window.matchMedia('(hover: hover) and (pointer: fine)').matches){
+  if(!passwordSet){$('accountHandle').focus();}else{$('accountPassword').focus();}
+ }
 }
 async function loadFeed(){
  feedSay(t('loading'));
@@ -716,6 +720,7 @@ async function refreshCurrentSocialView() {
  else if(activeSocialView==='profile'&&activeProfileHandle)await loadProfile(activeProfileHandle);
 }
 async function finishSignIn(){
+ $('authGate').querySelectorAll('input,textarea,select').forEach(field=>field.blur());
  passwordVerified=true;$('authGate').hidden=true;$('feedApp').hidden=false;
  $('openOwnProfile').textContent='@'+(profile?.handle||'');
  say('');
@@ -830,7 +835,7 @@ $('accountForm').addEventListener('submit',async event=>{
  finally{button.disabled=false;}
 });
 $('forgotPassword').addEventListener('click',()=>{
- $('recoveryForm').hidden=false;$('accountForm').hidden=true;$('recoveryPassword').focus();say(t('recoveryHelp'));
+ $('recoveryForm').hidden=false;$('accountForm').hidden=true;if(window.matchMedia&&window.matchMedia('(hover: hover) and (pointer: fine)').matches)$('recoveryPassword').focus();say(t('recoveryHelp'));
 });
 $('cancelRecovery').addEventListener('click',()=>{
  $('recoveryForm').hidden=true;$('accountForm').hidden=false;$('recoveryPassword').value='';$('recoveryConfirm').value='';say(t('existing'));
