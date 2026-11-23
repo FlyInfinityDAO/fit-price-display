@@ -274,6 +274,9 @@ jobs:
             "$QA_WORKER_URL/api/auth/challenge")"
           echo "Production-origin rejection HTTP status: $rejected"
           test "$rejected" = "403"
+          DEMO_FEED="$(curl --silent --show-error --fail --header "Origin: $QA_ORIGIN" --header "Authorization: Bearer fly-social-qa-demo-v1" "$QA_WORKER_URL/api/feed?limit=30")"
+          printf '%s' "$DEMO_FEED" | jq -e '.posts | length >= 5' >/dev/null
+          echo "Wallet-free demo feed returned at least five seeded posts."
           echo "QA preview: $QA_ORIGIN/creator-arena-qa/" >> "$GITHUB_STEP_SUMMARY"
           echo "QA API: $QA_WORKER_URL/api/health" >> "$GITHUB_STEP_SUMMARY"
           echo "The QA API rejects requests from the production GitHub Pages origin." >> "$GITHUB_STEP_SUMMARY"
