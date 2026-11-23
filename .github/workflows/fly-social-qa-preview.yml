@@ -284,7 +284,7 @@ jobs:
           set -euo pipefail
           test -n "$QA_ORIGIN"
           test -f qa-tests/social-responsive-playwright.mjs
-          node qa-tests/social-responsive-playwright.mjs
+          QA_ORIGIN="$QA_ORIGIN/creator-arena-qa/index.html" node qa-tests/social-responsive-playwright.mjs
 
       - name: Upload Social QA responsive screenshots and report
         if: always()
