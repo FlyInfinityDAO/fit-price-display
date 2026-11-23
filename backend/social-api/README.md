@@ -96,3 +96,8 @@ node --test social-api/tests/*.test.js
 python3 social-api/tests/schema-smoke.py
 npx wrangler deploy --dry-run --outdir /tmp/social-api-dry-run --config=wrangler.social-api.toml
 ```
+
+
+## Public image delivery
+
+Published post images are served by the Social Worker from private Backblaze B2 storage. The Worker verifies in D1 that an image belongs to a published, unrestricted post before returning it. The response uses `Cross-Origin-Resource-Policy: cross-origin` because the public Social UI is hosted on GitHub Pages and the image API is hosted on `workers.dev`; keeping this header at `same-site` would cause browsers to block otherwise successful image responses.
