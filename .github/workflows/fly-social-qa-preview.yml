@@ -274,9 +274,14 @@ jobs:
             "$QA_WORKER_URL/api/auth/challenge")"
           echo "Production-origin rejection HTTP status: $rejected"
           test "$rejected" = "403"
-          DEMO_FEED="$(curl --silent --show-error --fail --header "Origin: $QA_ORIGIN" --header "Authorization: Bearer fly-social-qa-demo-v1" "$QA_WORKER_URL/api/feed?limit=30")"
+          DEMO_AUTH="Authorization: Bearer fly-social-qa-demo-v1"
+          DEMO_FEED="$(curl --silent --show-error --fail --header "Origin: $QA_ORIGIN" --header "$DEMO_AUTH" "$QA_WORKER_URL/api/feed?limit=30")"
           printf '%s' "$DEMO_FEED" | jq -e '.posts | length >= 5' >/dev/null
-          echo "Wallet-free demo feed returned at least five seeded posts."
+          DEMO_FOLLOWERS="$(curl --silent --show-error --fail --header "Origin: $QA_ORIGIN" --header "$DEMO_AUTH" "$QA_WORKER_URL/api/profiles/flytester/followers?limit=80")"
+          printf '%s' "$DEMO_FOLLOWERS" | jq -e '.users | length >= 2' >/dev/null
+          DEMO_FOLLOWING="$(curl --silent --show-error --fail --header "Origin: $QA_ORIGIN" --header "$DEMO_AUTH" "$QA_WORKER_URL/api/profiles/flytester/following?limit=80")"
+          printf '%s' "$DEMO_FOLLOWING" | jq -e '.users | length >= 1' >/dev/null
+          echo "Wallet-free demo API verified: feed >=5 posts, followers >=2, following >=1."
           echo "QA preview: $QA_ORIGIN/creator-arena-qa/" >> "$GITHUB_STEP_SUMMARY"
           echo "QA API: $QA_WORKER_URL/api/health" >> "$GITHUB_STEP_SUMMARY"
           echo "The QA API rejects requests from the production GitHub Pages origin." >> "$GITHUB_STEP_SUMMARY"
