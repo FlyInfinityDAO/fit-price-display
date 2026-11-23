@@ -403,7 +403,7 @@ async function qaApi(path,options){
  if(markMatch&&method==='PATCH'){
   const item=QA_STATE.notifications.find(item=>item.id===decodeURIComponent(markMatch[1]));if(item)item.read=true;return {updated:item?1:0};
  }
- const connectionMatch=path.match(/^\/api\/profiles\/([^/]+)\/(followers|following)$/);
+ const connectionMatch=path.match(/^\/api\/profiles\/([^/]+)\/(followers|following)(?:\?limit=\d+)?$/);
  if(connectionMatch&&method==='GET'){
   const target=decodeURIComponent(connectionMatch[1]).toLowerCase(),kind=connectionMatch[2];
   if(!qaUser(target))throw new Error('Profile not found');
