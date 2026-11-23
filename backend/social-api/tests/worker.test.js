@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import worker, { extractBearerToken } from '../src/index.js';
+import worker, { extractBearerToken, createPublicMediaHeaders } from '../src/index.js';
 
 test('Bearer session tokens are extracted from standard Authorization headers', () => {
   const token = 'a'.repeat(64);
@@ -9,6 +9,15 @@ test('Bearer session tokens are extracted from standard Authorization headers', 
   assert.equal(extractBearerToken('  ' + 'Bearer ' + token), '');
   assert.equal(extractBearerToken(null), '');
   assert.equal(extractBearerToken(''), '');
+});
+
+test('public Social images can be embedded from the separate GitHub Pages site', () => {
+  const headers = createPublicMediaHeaders('image/png', 2048, '"social-image-etag"');
+  assert.equal(headers.get('Content-Type'), 'image/png');
+  assert.equal(headers.get('Content-Length'), '2048');
+  assert.equal(headers.get('Cross-Origin-Resource-Policy'), 'cross-origin');
+  assert.equal(headers.get('X-Content-Type-Options'), 'nosniff');
+  assert.equal(headers.get('ETag'), '"social-image-etag"');
 });
 
 test('health endpoint identifies Social API v2 and sets strict CORS headers', async () => {
