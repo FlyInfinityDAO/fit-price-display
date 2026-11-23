@@ -571,7 +571,7 @@ async function loadProfile(handle) {
   $('profileFollowingCount').textContent=p.following;
   const follow=$('profileFollowButton');
   follow.hidden=p.isMe;follow.dataset.followHandle=p.handle;
-  follow.textContent=p.isFollowing?tx('unfollow'):tx('follow');
+  follow.textContent=p.isFollowing?tx('unfollow'):tx('follow');follow.dataset.following=String(p.isFollowing);
   follow.classList.toggle('following',p.isFollowing);
   const list=$('profilePosts');list.replaceChildren();
   if(!result.posts||!result.posts.length)setEmpty(list,tx('noExplore'));
@@ -600,7 +600,7 @@ async function loadConnections(kind) {
    row.append(avatar,main);
    if(!user.isMe){
     const follow=document.createElement('button');follow.type='button';follow.className='action-btn'+(user.isFollowing?' active':'');
-    follow.dataset.followHandle=user.handle;follow.textContent=user.isFollowing?tx('unfollow'):tx('follow');row.append(follow);
+    follow.dataset.followHandle=user.handle;follow.dataset.following=String(user.isFollowing);follow.textContent=user.isFollowing?tx('unfollow'):tx('follow');row.append(follow);
    }
    list.append(row);
   });
@@ -788,9 +788,9 @@ $('feedApp').addEventListener('click',async event=>{
  if(mark){mark.disabled=true;try{await api('/api/notifications/'+encodeURIComponent(mark.dataset.notificationId)+'/read',{method:'PATCH'});await loadNotifications();}
   catch(error){$('notificationsStatus').textContent=error.message||tx('loadError');}return;}
  const follow=event.target.closest('[data-follow-handle]');
- if(follow){follow.disabled=true;const was=follow.textContent===tx('unfollow');
+ if(follow){follow.disabled=true;const was=follow.dataset.following==='true';
   try{await performFollow(follow.dataset.followHandle,was?'DELETE':'POST');}
-  catch(error){if(activeView==='profile')$('profileStatus').textContent=error.message||tx('loadError');}
+  catch(error){if(activeSocialView==='profile')$('profileStatus').textContent=error.message||tx('loadError');}
   finally{follow.disabled=false;}return;}
  const like=event.target.closest('[data-like-id]');
  const repost=event.target.closest('[data-repost-id]');
