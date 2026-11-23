@@ -347,6 +347,7 @@ function say(message,error){$('socialAuthStatus').textContent=message||'';$('soc
 function feedSay(message){$('feedStatus').textContent=message||'';}
 const LANGUAGE_META={en:{flag:'🇬🇧',name:'English'},fa:{flag:'🇮🇷',name:'فارسی'},ar:{flag:'🇮🇶',name:'العربية'},tr:{flag:'🇹🇷',name:'Türkçe'},ru:{flag:'🇷🇺',name:'Русский'},zh:{flag:'🇨🇳',name:'中文'},es:{flag:'🇪🇸',name:'Español'},pt:{flag:'🇵🇹',name:'Português'}};
 function translate(next){
+ const previousLanguage=lang;
  lang=translations[next]?next:'en';
  document.documentElement.lang=lang;
  document.documentElement.dir=(lang==='fa'||lang==='ar')?'rtl':'ltr';
@@ -362,9 +363,41 @@ function translate(next){
  });
  try{localStorage.setItem('fit_lang',lang);}catch(e){}
  document.dispatchEvent(new CustomEvent('fi-language-updated',{detail:{lang}}));
+ if(passwordVerified&&previousLanguage!==lang){refreshCurrentSocialView().catch(()=>{});}
 }
 function toast(message){say(message,false);window.setTimeout(()=>{if($('socialAuthStatus').textContent===message)say('');},3300);}
+function friendlyApiError(message,status){
+ const value=String(message||'');
+ if(/username or password is incorrect/i.test(value))return t('wrongPassword');
+ if(/this wallet already has a password/i.test(value))return t('existing');
+ if(status===401||/session has expired|connect your Fly Infinity wallet to continue|enter your Social account password/i.test(value))return t('sessionExpired');
+ if(status===403||/not a registered Fly Infinity Network Owner|no longer a registered/i.test(value))return t('ownerRequired');
+ if(status===429||/too many|limit reached/i.test(value))return t('rateLimited');
+ if(status===503||/temporarily unavailable|not configured/i.test(value))return t('apiOffline');
+ if(/only PNG, JPEG and WebP|content does not match its declared|unsupported image/i.test(value))return t('invalidMediaType');
+ if(/password must contain 6/i.test(value))return t('passwordLength');
+ if(/username must be 3/i.test(value))return t('badUsername');
+ if(/post text must be 2000/i.test(value))return t('postTooLong');
+ if(/write a message or attach an image/i.test(value))return t('writePost');
+ if(/image exceeds the 15 MB|exceeds 15 MB/i.test(value))return t('imageTooLarge');
+ return value||t('apiOffline');
+}
 async function api(path,options){
+ options=options||{};
+ const headers=new Headers(options.headers||{});
+ if(token)headers.set('Authorization','Bearer '+token);
+ let body=options.body;
+ if(body&&typeof body==='object'&&!(body instanceof Blob)&&!(body instanceof ArrayBuffer)&&!(body instanceof FormData)){
+  headers.set('Content-Type','application/json');body=JSON.stringify(body);
+ }
+ let response;
+ try{response=await fetch(API+path,Object.assign({},options,{headers,body,cache:'no-store'}));}
+ catch(error){throw new Error(t('apiOffline'));}
+ const data=await response.json().catch(()=>({}));
+ if(!response.ok)throw new Error(friendlyApiError(data.error,response.status));
+ return data;
+}
+
  options=options||{};
  const headers=new Headers(options.headers||{});
  if(token)headers.set('Authorization','Bearer '+token);
@@ -456,6 +489,19 @@ async function loadFeed(){
  feedSay('');
 }
 function initials(value){return String(value||'FI').slice(0,2).toUpperCase();}
+function postAgeLabel(timestamp){
+ const value=Number(timestamp||0);
+ if(!value)return '';
+ const seconds=Math.max(0,Math.floor(Date.now()/1000-value));
+ if(seconds<45)return t('timeNow');
+ const relative=typeof Intl!=='undefined'&&Intl.RelativeTimeFormat?new Intl.RelativeTimeFormat(lang,{numeric:'auto'}):null;
+ if(relative){
+  if(seconds<3600)return relative.format(-Math.max(1,Math.floor(seconds/60)),'minute');
+  if(seconds<86400)return relative.format(-Math.max(1,Math.floor(seconds/3600)),'hour');
+  return relative.format(-Math.max(1,Math.floor(seconds/86400)),'day');
+ }
+ return new Date(value*1000).toLocaleString(lang);
+}
 function makePost(post){
  const card=document.createElement('article');card.className='post';card.dataset.postId=post.id;
  if(post.repostedBy){
@@ -472,17 +518,20 @@ function makePost(post){
  const strong=document.createElement('strong');strong.textContent=post.creator?.displayName||post.creator?.handle||t('unknown');
  const handle=document.createElement('small');handle.textContent='@'+(post.creator?.handle||'');
  author.append(strong,handle);
- const date=document.createElement('span');date.className='post-date';date.textContent=t('timeNow');
+ const date=document.createElement('span');date.className='post-date';date.dateTime=post.createdAt?new Date(Number(post.createdAt)*1000).toISOString():'';date.textContent=postAgeLabel(post.createdAt);
  head.append(avatar,author,date);card.append(head);
  if(post.text){const text=document.createElement('p');text.className='post-text';text.textContent=post.text;card.append(text);}
  if(post.imageUrl){const image=document.createElement('img');image.className='post-image';image.src=post.imageUrl;image.alt='Post image';image.loading='lazy';card.append(image);}
  const actions=document.createElement('div');actions.className='post-actions';
  const like=document.createElement('button');like.type='button';like.className='action-btn'+(post.likedByMe?' active':'');like.dataset.likeId=post.id;
  like.textContent=(post.likedByMe?'♥ ':'♡ ')+t(post.likedByMe?'liked':'like')+' · '+post.likes;like.setAttribute('aria-pressed',String(post.likedByMe));
- const repost=document.createElement('button');repost.type='button';repost.className='action-btn'+(post.repostedByMe?' active':'');repost.dataset.repostId=post.id;
- repost.textContent='↻ '+t(post.repostedByMe?'reposted':'repost')+' · '+post.reposts;repost.setAttribute('aria-pressed',String(post.repostedByMe));
- actions.append(like,repost);
- if(post.creator?.wallet&&post.creator.wallet.toLowerCase()===wallet.toLowerCase()){
+ const isOwnPost=!!(post.creator?.wallet&&post.creator.wallet.toLowerCase()===wallet.toLowerCase());
+ if(!isOwnPost){
+  const repost=document.createElement('button');repost.type='button';repost.className='action-btn'+(post.repostedByMe?' active':'');repost.dataset.repostId=post.id;
+  repost.textContent='↻ '+t(post.repostedByMe?'reposted':'repost')+' · '+post.reposts;repost.setAttribute('aria-pressed',String(post.repostedByMe));actions.append(repost);
+ }
+ actions.append(like);
+ if(isOwnPost){
   const remove=document.createElement('button');remove.type='button';remove.className='action-btn delete';remove.dataset.deleteId=post.id;remove.textContent=t('delete');actions.append(remove);
  }
  card.append(actions);return card;
@@ -630,14 +679,14 @@ async function loadConnections(kind) {
 async function performFollow(handle, method) {
  await api('/api/profiles/'+encodeURIComponent(handle)+'/follow',{method});
  await refreshNotificationBadge();
- if(activeSocialView==='profile'&&activeProfileHandle.toLowerCase()===handle.toLowerCase()){
+ if(activeSocialView==='profile'&&activeProfileHandle){
+  const wasViewingConnections=!$('connectionsPanel').hidden;
+  const currentKind=$('connectionsTitle').dataset.kind||'followers';
   await loadProfile(activeProfileHandle);
-  if(!$('connectionsPanel').hidden){
-   const current=$('connectionsTitle').textContent.includes(tx('followers'))?'followers':'following';
-   await loadConnections(current);
-  }
+  if(wasViewingConnections)await loadConnections(currentKind);
+ }else if(activeSocialView==='feed'){
+  await loadFeed();
  }
- if(activeSocialView==='feed')await loadFeed();
 }
 async function refreshCurrentSocialView() {
  if(activeSocialView==='feed')await loadFeed();
@@ -647,7 +696,6 @@ async function refreshCurrentSocialView() {
 }
 async function finishSignIn(){
  passwordVerified=true;$('authGate').hidden=true;$('feedApp').hidden=false;
- $('profileHandleLabel').textContent='@'+(profile?.handle||'');
  $('openOwnProfile').textContent='@'+(profile?.handle||'');
  showSocialView('feed');
  say(t('signedIn'));
@@ -869,5 +917,6 @@ initialize();
 </script>
 <script src="../walletconnect-bridge.js?v=20261123-social3-direct"></script>
 <script src="social-api.js?v=20261123-social3-direct"></script>
+<script src="../global-bottom-nav.js?v=20261124-social-unified"></script>
 </body>
 </html>
