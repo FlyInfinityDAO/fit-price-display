@@ -496,9 +496,12 @@ function makePost(post){
  const actions=document.createElement('div');actions.className='post-actions';
  const like=document.createElement('button');like.type='button';like.className='action-btn'+(post.likedByMe?' active':'');like.dataset.likeId=post.id;
  like.textContent=(post.likedByMe?'♥ ':'♡ ')+t(post.likedByMe?'liked':'like')+' · '+post.likes;like.setAttribute('aria-pressed',String(post.likedByMe));
- const repost=document.createElement('button');repost.type='button';repost.className='action-btn'+(post.repostedByMe?' active':'');repost.dataset.repostId=post.id;
- repost.textContent='↻ '+t(post.repostedByMe?'reposted':'repost')+' · '+post.reposts;repost.setAttribute('aria-pressed',String(post.repostedByMe));
- actions.append(like,repost);
+ actions.append(like);
+ if(!post.creator?.wallet||post.creator.wallet.toLowerCase()!==wallet.toLowerCase()){
+  const repost=document.createElement('button');repost.type='button';repost.className='action-btn'+(post.repostedByMe?' active':'');repost.dataset.repostId=post.id;
+  repost.textContent='↻ '+t(post.repostedByMe?'reposted':'repost')+' · '+post.reposts;repost.setAttribute('aria-pressed',String(post.repostedByMe));
+  actions.append(repost);
+ }
  if(post.creator?.wallet&&post.creator.wallet.toLowerCase()===wallet.toLowerCase()){
   const remove=document.createElement('button');remove.type='button';remove.className='action-btn delete';remove.dataset.deleteId=post.id;remove.textContent=t('delete');actions.append(remove);
  }
