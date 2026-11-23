@@ -274,7 +274,7 @@ jobs:
           set -euo pipefail
           PLAYWRIGHT_DIR="$RUNNER_TEMP/social-ui-playwright"
           mkdir -p "$PLAYWRIGHT_DIR"
-          npm install --prefix "$PLAYWRIGHT_DIR" --no-audit --no-fund --no-save playwright@1.56.1
+          npm install --prefix "$PLAYWRIGHT_DIR" --no-audit --no-fund --no-save playwright@1.61.0
           "$PLAYWRIGHT_DIR/node_modules/.bin/playwright" install --with-deps chromium
           echo "PLAYWRIGHT_MODULE=$PLAYWRIGHT_DIR/node_modules/playwright/index.mjs" >> "$GITHUB_ENV"
 
