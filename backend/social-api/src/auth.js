@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 
-const PASSWORD_ITERATIONS = 310000;
+const PASSWORD_ITERATIONS = 100000;
 
 export function normalizeAddress(value) {
   if (typeof value !== 'string' || !ethers.isAddress(value)) {
