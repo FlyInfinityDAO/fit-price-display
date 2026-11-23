@@ -30,6 +30,8 @@ async function nav(view){
   const loadedSelector={feed:"#feedList .post",explore:"#exploreGrid .explore-tile",notifications:"#notificationList .notification-row",profile:"#profileHandle"}[view];
   if(loadedSelector)await page.locator(loadedSelector).first().waitFor({state:"visible",timeout:20000});
   if(view==="profile")await page.waitForFunction(()=>document.querySelector("#profileHandle")?.textContent?.trim()==="@flytester",{timeout:20000});
+  const statusSelector={feed:"#feedStatus",explore:"#exploreStatus",notifications:"#notificationsStatus",profile:"#profileStatus"}[view];
+  if(statusSelector)await page.waitForFunction(selector=>{const node=document.querySelector(selector);return !!node&&!node.textContent.trim();},statusSelector,{timeout:20000});
 }
 async function request(path,options={}){
   const response=await page.request.fetch(api+path,{...options,headers:{...authHeaders,...(options.headers||{})}});
