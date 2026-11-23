@@ -1,0 +1,217 @@
+name: Fly Infinity Social QA — isolated preview
+
+on:
+  push:
+    branches:
+      - "qa/social-full-audit-2026-11-23"
+    paths:
+      - "creator-arena/**"
+      - "creator-arena-qa/**"
+      - "backend/social-api/**"
+      - "backend/wrangler.social-qa.toml"
+      - "backend/package.json"
+      - "global-bottom-nav.js"
+      - "global-bottom-nav.css"
+      - "walletconnect-bridge.js"
+      - "ambient-motion.css"
+      - "pwa-brand-neon.css"
+      - "background-desktop.png"
+      - "background-mobile.png"
+      - "logo.png"
+      - ".github/workflows/fly-social-qa-preview.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fly-social-qa-preview
+  cancel-in-progress: false
+
+jobs:
+  deploy-isolated-social-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_SOCIAL_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      B2_ENDPOINT: ${{ secrets.FLY_SOCIAL_B2_ENDPOINT }}
+      B2_BUCKET: ${{ secrets.FLY_SOCIAL_B2_BUCKET }}
+      B2_KEY_ID: ${{ secrets.FLY_SOCIAL_B2_KEY_ID }}
+      B2_APPLICATION_KEY: ${{ secrets.FLY_SOCIAL_B2_APPLICATION_KEY }}
+      QA_PAGES_PROJECT: fly-social-qa-preview
+      QA_PAGES_BRANCH: qa-preview
+      QA_ORIGIN: https://qa-preview.fly-social-qa-preview.pages.dev
+      QA_WORKER_URL: https://fly-social-qa.flyinfinityplatform.workers.dev
+
+    steps:
+      - name: Checkout QA branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Verify required deploy configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in CLOUDFLARE_API_TOKEN CLOUDFLARE_ACCOUNT_ID B2_ENDPOINT B2_BUCKET B2_KEY_ID B2_APPLICATION_KEY; do
+            test -n "${!name}" || { echo "::error::Missing required QA deploy secret or variable: $name"; exit 1; }
+          done
+          test -f creator-arena-qa/index.html
+          test -f creator-arena-qa/social-brand-theme.css
+          test -f creator-arena-qa/social-api.css
+          test -f creator-arena-qa/social-api.js
+          test -f backend/wrangler.social-qa.toml
+          if grep -q '64b672c3-cce6-418e-a0d2-da8d8ee3df7f' backend/wrangler.social-qa.toml; then
+            echo "::error::QA Worker config points at the production Social D1 database."
+            exit 1
+          fi
+
+      - name: Validate page DOM references and inline JavaScript
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync } from 'node:fs';
+          for (const file of ['creator-arena/index.html', 'creator-arena-qa/index.html']) {
+            const html = readFileSync(file, 'utf8');
+            const ids = [...html.matchAll(/\bid=["']([^"']+)["']/g)].map(match => match[1]);
+            const idSet = new Set(ids);
+            if (idSet.size !== ids.length) throw new Error(file + ': duplicate HTML ids detected');
+            const missing = [...new Set([...html.matchAll(/\$\(["']([^"']+)["']\)/g)]
+              .map(match => match[1]).filter(id => !idSet.has(id)))];
+            if (missing.length) throw new Error(file + ': missing DOM ids: ' + missing.join(', '));
+            const scripts = [...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
+              .map(match => match[1]).filter(source => source.trim());
+            if (!scripts.length) throw new Error(file + ': no inline app scripts found');
+            scripts.forEach((source, index) => {
+              const target = '/tmp/social-qa-' + file.replaceAll('/', '-') + '-' + index + '.js';
+              writeFileSync(target, source);
+            });
+          }
+          NODE
+          for file in /tmp/social-qa-*.js; do node --check "$file"; done
+
+      - name: Run Social Worker tests
+        working-directory: backend
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-audit --no-fund
+          node --check social-api/src/index.js
+          node --check social-api/src/auth.js
+          node --check social-api/src/validation.js
+          node --check social-api/src/storage.js
+          node --test social-api/tests/*.test.js
+          python3 social-api/tests/schema-smoke.py
+
+      - name: Ensure EU-only QA D1 database exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          DB_LIST="$(npx --yes wrangler@4.158.0 d1 list --json)"
+          DB_ID="$(printf '%s' "$DB_LIST" | node -e '
+            let raw = "";
+            for await (const chunk of process.stdin) raw += chunk;
+            const parsed = JSON.parse(raw);
+            const rows = Array.isArray(parsed) ? parsed : (parsed.result || parsed.databases || []);
+            const row = rows.find(item => item.name === "fly-social-qa-db");
+            process.stdout.write(row?.uuid || row?.database_id || "");
+          ')"
+          if [ -z "$DB_ID" ]; then
+            npx --yes wrangler@4.158.0 d1 create fly-social-qa-db --jurisdiction=eu
+            DB_LIST="$(npx --yes wrangler@4.158.0 d1 list --json)"
+            DB_ID="$(printf '%s' "$DB_LIST" | node -e '
+              let raw = "";
+              for await (const chunk of process.stdin) raw += chunk;
+              const parsed = JSON.parse(raw);
+              const rows = Array.isArray(parsed) ? parsed : (parsed.result || parsed.databases || []);
+              const row = rows.find(item => item.name === "fly-social-qa-db");
+              process.stdout.write(row?.uuid || row?.database_id || "");
+            ')"
+          fi
+          test -n "$DB_ID" || { echo "::error::Could not resolve Social QA D1 database ID"; exit 1; }
+          sed -i "s/REPLACE_WITH_SOCIAL_QA_D1_ID/$DB_ID/" backend/wrangler.social-qa.toml
+          echo "SOCIAL_QA_D1_ID=$DB_ID" >> "$GITHUB_ENV"
+          echo "Dedicated EU Social QA D1 database is ready."
+
+      - name: Apply Social schema to QA-only D1
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes wrangler@4.158.0 d1 migrations apply fly-social-qa-db --remote --config=backend/wrangler.social-qa.toml
+
+      - name: Create isolated Cloudflare Pages project when needed
+        shell: bash
+        run: |
+          set -euo pipefail
+          PROJECTS="$(npx --yes wrangler@4.158.0 pages project list)"
+          if ! printf '%s' "$PROJECTS" | grep -Fq "$QA_PAGES_PROJECT"; then
+            npx --yes wrangler@4.158.0 pages project create "$QA_PAGES_PROJECT" --production-branch=main
+          fi
+
+      - name: Stage only Social QA page and shared visual assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          STAGE="$RUNNER_TEMP/fly-social-qa-site"
+          mkdir -p "$STAGE/creator-arena-qa"
+          cp -a creator-arena-qa/. "$STAGE/creator-arena-qa/"
+          for asset in logo.png background-desktop.png background-mobile.png ambient-motion.css pwa-brand-neon.css global-bottom-nav.js global-bottom-nav.css walletconnect-bridge.js; do
+            test -f "$asset" || { echo "::error::Missing shared Social asset: $asset"; exit 1; }
+            cp "$asset" "$STAGE/$asset"
+          done
+          echo "SOCIAL_QA_STAGE=$STAGE" >> "$GITHUB_ENV"
+
+      - name: Deploy isolated Social QA website
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes wrangler@4.158.0 pages deploy "$SOCIAL_QA_STAGE" \
+            --project-name="$QA_PAGES_PROJECT" \
+            --branch="$QA_PAGES_BRANCH" \
+            --commit-hash="$GITHUB_SHA" \
+            --commit-message="Fly Infinity Social QA preview"
+
+      - name: Configure QA-only private image storage credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s' "$B2_ENDPOINT" | npx --yes wrangler@4.158.0 secret put B2_ENDPOINT --config=backend/wrangler.social-qa.toml
+          printf '%s' "$B2_BUCKET" | npx --yes wrangler@4.158.0 secret put B2_BUCKET --config=backend/wrangler.social-qa.toml
+          printf '%s' "$B2_KEY_ID" | npx --yes wrangler@4.158.0 secret put B2_KEY_ID --config=backend/wrangler.social-qa.toml
+          printf '%s' "$B2_APPLICATION_KEY" | npx --yes wrangler@4.158.0 secret put B2_APPLICATION_KEY --config=backend/wrangler.social-qa.toml
+
+      - name: Deploy isolated Social QA Worker
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes wrangler@4.158.0 deploy --config=backend/wrangler.social-qa.toml
+
+      - name: Verify QA Worker health and origin isolation
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --silent --show-error --fail --retry 10 --retry-delay 5 "$QA_WORKER_URL/api/health" | tee /tmp/social-qa-health.json
+          jq -e '.ok == true and .service == "Fly Infinity Social API"' /tmp/social-qa-health.json >/dev/null
+          preflight="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+            --request OPTIONS --header "Origin: $QA_ORIGIN" \
+            --header "Access-Control-Request-Method: POST" \
+            --header "Access-Control-Request-Headers: content-type,authorization" \
+            "$QA_WORKER_URL/api/auth/challenge")"
+          test "$preflight" = "204"
+          rejected="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+            --request POST --header "Origin: https://flyinfinitydao.github.io" \
+            --header "Content-Type: application/json" --data '{}' \
+            "$QA_WORKER_URL/api/auth/challenge")"
+          test "$rejected" = "403"
+          echo "QA preview: $QA_ORIGIN/creator-arena-qa/" >> "$GITHUB_STEP_SUMMARY"
+          echo "QA API: $QA_WORKER_URL/api/health" >> "$GITHUB_STEP_SUMMARY"
+          echo "The QA API rejects requests from the production GitHub Pages origin." >> "$GITHUB_STEP_SUMMARY"
