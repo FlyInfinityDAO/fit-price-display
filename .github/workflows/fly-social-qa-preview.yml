@@ -179,10 +179,10 @@ jobs:
                   raise SystemExit(f"{label}: expected one match, got {html.count(old)}")
               html = html.replace(old, new, 1)
           replace_once('<meta name="theme-color" content="#0F0F0F">', '<meta name="theme-color" content="#0F0F0F">' + chr(10) + '<meta name="robots" content="noindex,nofollow">', "robots")
-          html, count = re.subn(r\'<meta name="description" content="[^"]*">\', \'<meta name="description" content="Isolated Fly Infinity Social QA preview. Test accounts and content are separate from production.">\', html, count=1)
+          html, count = re.subn(r'<meta name="description" content="[^"]*">', '<meta name="description" content="Isolated Fly Infinity Social QA preview. Test accounts and content are separate from production.">', html, count=1)
           if count != 1:
               raise SystemExit("description meta tag could not be updated")
-          html, count = re.subn(r\'<title>[^<]*</title>\', \'<title>Fly Infinity Social QA | Fly Infinity</title>\', html, count=1)
+          html, count = re.subn(r'<title>[^<]*</title>', '<title>Fly Infinity Social QA | Fly Infinity</title>', html, count=1)
           if count != 1:
               raise SystemExit("page title could not be updated")
           marker = "  </header>" + chr(10) + chr(10) + "  <main>"
