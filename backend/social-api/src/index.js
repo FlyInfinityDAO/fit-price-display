@@ -14,7 +14,7 @@ import {
 
 const DEFAULT_ORIGIN = 'https://flyinfinitydao.github.io';
 const CHAIN_ID = 56;
-const PASSWORD_ITERATIONS = 310000;
+const PASSWORD_ITERATIONS = 100000;
 const now = () => Math.floor(Date.now() / 1000);
 const json = (data, status = 200, extra = {}) => new Response(JSON.stringify(data), {
   status,
