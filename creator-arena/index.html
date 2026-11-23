@@ -755,10 +755,31 @@ async function restoreSession(){
  try{
   const me=await api('/api/me',{method:'GET'});
   wallet=me.wallet;profile=me.profile||null;passwordSet=!!me.passwordSet;passwordVerified=!!me.passwordVerified;
+  // Reattach monitoring to an already-authorized injected wallet after refresh.
+  // Do not open a wallet picker or request fresh permissions during restoration.
+  const provider=getDirectInjectedProvider();
+  if(provider){
+   try{
+    const accounts=await provider.request({method:'eth_accounts'});
+    if(Array.isArray(accounts)&&accounts[0]){
+     if(accounts[0].toLowerCase()!==wallet.toLowerCase()){
+      await invalidateWalletSession('walletChanged');return;
+     }
+     const chain=await provider.request({method:'eth_chainId'});
+     if(Number.parseInt(chain,16)!==56){
+      await invalidateWalletSession('wrongNetwork');return;
+     }
+     activeProvider=provider;watchWalletProvider(provider);
+    }else{
+     watchWalletProvider(provider);
+    }
+   }catch(error){}
+  }
   if(passwordVerified){await finishSignIn();}
   else{showAccountStep();}
  }catch(error){
-  token='';wallet='';profile=null;passwordSet=false;storage.del('fly-social-token');storage.del('fly-social-wallet');resetAccountForm();
+  stopWalletWatch();token='';wallet='';profile=null;passwordSet=false;activeProvider=null;
+  storage.del('fly-social-token');storage.del('fly-social-wallet');resetAccountForm();
  }
 }
 function usernameLooksValid(value){return /^[a-z0-9_]{3,24}$/i.test(value);}
