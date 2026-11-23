@@ -5,12 +5,14 @@ import tempfile
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 MIGRATION = ROOT / "social-api" / "migrations" / "0001_init.sql"
 ACCOUNT_MIGRATION = ROOT / "social-api" / "migrations" / "0002_accounts_passwords_reposts.sql"
+NOTIFICATION_MIGRATION = ROOT / "social-api" / "migrations" / "0003_social_notifications.sql"
 
 with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
     connection = sqlite3.connect(file.name)
     connection.execute("PRAGMA foreign_keys = ON")
     connection.executescript(MIGRATION.read_text(encoding="utf-8"))
     connection.executescript(ACCOUNT_MIGRATION.read_text(encoding="utf-8"))
+    connection.executescript(NOTIFICATION_MIGRATION.read_text(encoding="utf-8"))
 
     tables = {
         row[0]
@@ -33,6 +35,7 @@ with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
         "social_rate_limits",
         "social_password_recovery_nonces",
         "social_reposts",
+        "social_notifications",
     }
     assert expected.issubset(tables), f"Missing Social tables: {expected - tables}"
 
@@ -121,6 +124,22 @@ with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
     except sqlite3.IntegrityError:
         pass
 
+    # Follow, like and repost events have recipient-owned notifications.
+    connection.execute(
+        "INSERT INTO social_notifications(notification_id,recipient_wallet,actor_wallet,notification_type,post_id,created_at) "
+        "VALUES(?,?,?,?,NULL,?)",
+        ("notification-follow", creator_a, creator_b, "follow", 2),
+    )
+    connection.execute(
+        "INSERT INTO social_notifications(notification_id,recipient_wallet,actor_wallet,notification_type,post_id,created_at) "
+        "VALUES(?,?,?,?,?,?)",
+        ("notification-like", creator_a, creator_b, "like", "schema-post-a", 3),
+    )
+    notification_count = connection.execute(
+        "SELECT COUNT(*) FROM social_notifications WHERE recipient_wallet=?", (creator_a,)
+    ).fetchone()[0]
+    assert notification_count == 2, "Follow/like notifications were not stored"
+
     connection.execute(
         "INSERT INTO social_password_recovery_nonces(nonce,wallet_address,message,created_at,expires_at) "
         "VALUES(?,?,?,?,?)",
@@ -165,4 +184,4 @@ with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
     connection.close()
 
 print("Social D1 migration schema smoke test passed.")
-print("Verified all 14 Social tables, password/session columns, recovery nonce storage, case-insensitive handles, attributed unique reposts, and existing legacy constraints.")
+print("Verified all 15 Social tables, password/session columns, recovery nonce storage, notifications, case-insensitive handles, attributed unique reposts, and existing legacy constraints.")
