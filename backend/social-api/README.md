@@ -27,6 +27,11 @@ Independent backend for the Fly Infinity Social page. It uses its own Worker, D1
 - Images: PNG, JPEG or WebP, up to 15 MiB; the Worker checks MIME type and binary signature.
 - Persistent likes: unique per wallet per original post.
 - Persistent reposts: a repost is a separate feed event referencing the original post. The original post ID, image, text and original creator remain unchanged; the feed labels the wallet that reposted it. Duplicate reposts by the same wallet are prevented by a D1 unique constraint.
+- Personalized feed: posts from the current wallet and followed profiles appear first, followed by a ranked selection of popular community posts.
+- Explore: public image posts are ranked using likes, reposts and recency.
+- Public profiles: each profile shows its posts, follower/following counts, and whether the viewer follows it; followers and following lists are browsable.
+- Follows: profiles can be followed or unfollowed. Self-following is rejected and repeat follows do not create duplicate events.
+- Notifications: the profile owner receives in-app notifications when another wallet follows them, likes one of their posts, or reposts one of their posts. Notifications can be marked individually or all at once.
 - Users can delete their own original posts.
 - There is no comments feature, audio, prompt library, creator directory, challenge or voting UI/API in the v2 public surface.
 
@@ -45,7 +50,13 @@ Independent backend for the Fly Infinity Social page. It uses its own Worker, D1
 - `POST /api/auth/logout`
 
 ### Feed and posts
-- `GET /api/feed?limit=30` — requires a password-verified session.
+- `GET /api/feed?limit=30` — password-verified session; followed/self posts plus popular posts.
+- `GET /api/explore?limit=36` — password-verified session; popular public posts.
+- `GET /api/profiles/:handle?limit=40` — public profile summary and its posts.
+- `GET /api/profiles/:handle/followers` and `GET /api/profiles/:handle/following` — connection lists.
+- `POST|DELETE /api/profiles/:handle/follow` — follow or unfollow a profile.
+- `GET /api/notifications?limit=50` — notifications and unread count.
+- `PATCH /api/notifications/:id/read` and `POST /api/notifications/read-all` — mark notifications as read.
 - `POST /api/media/upload` — binary image body with PNG/JPEG/WebP Content-Type.
 - `POST /api/posts` — `{ "text": "...", "mediaKey": "uploads/..." }`; either field may be omitted, but not both.
 - `DELETE /api/posts/:postId`
@@ -57,10 +68,10 @@ Protected endpoints require `Authorization: Bearer <sessionToken>`. Posting, upl
 
 ## Storage and privacy
 
-- Usernames and account metadata, password hashes, session hashes, posts, likes, repost references and recovery nonces are stored in Social D1 only.
+- Usernames and account metadata, password hashes, session hashes, posts, likes, follows, repost references, notifications and recovery nonces are stored in Social D1 only.
 - Original images are kept in the private Backblaze B2 bucket; the B2 key is available only to the Worker and is never sent to the browser.
 - The Worker serves image bytes only after D1 confirms that the image is attached to a published post.
-- Old sessions become password-unverified after migration; existing wallet owners must create/set their Social password once. No existing profile or post is deleted by migration 0002.
+- Old sessions become password-unverified after migration; existing wallet owners must create/set their Social password once. No existing profile or post is deleted by migrations 0002 or 0003.
 - Moderation/report tooling is not presented as a live capability.
 
 ## Backblaze B2
