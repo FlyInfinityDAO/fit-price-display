@@ -48,6 +48,14 @@ jobs:
           node --check social-api/src/auth.js
           node --check social-api/src/validation.js
           node --check social-api/src/storage.js
+          node --input-type=module <<'NODE'
+          import { readFileSync, writeFileSync } from 'node:fs';
+          const html = readFileSync('../creator-arena/index.html', 'utf8');
+          const match = html.match(/<script>\\s*([\\s\\S]*?)<\\/script>/);
+          if (!match) throw new Error('Social inline application script was not found');
+          writeFileSync('/tmp/fly-social-page-inline.js', match[1]);
+          NODE
+          node --check /tmp/fly-social-page-inline.js
           npm install --no-audit --no-fund
           node --test social-api/tests/*.test.js
           test "$(grep -c 'name = "fly-infinity-social-api"' wrangler.social-api.toml)" -eq 1
