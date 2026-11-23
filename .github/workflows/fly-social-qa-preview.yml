@@ -18,6 +18,7 @@ on:
       - "background-desktop.png"
       - "background-mobile.png"
       - "logo.png"
+      - "qa-tests/**"
       - ".github/workflows/fly-social-qa-preview.yml"
   workflow_dispatch:
 
@@ -31,7 +32,7 @@ concurrency:
 jobs:
   deploy-isolated-social-qa:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_SOCIAL_API_TOKEN || secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
@@ -161,6 +162,29 @@ jobs:
           STAGE="$RUNNER_TEMP/fly-social-qa-site"
           mkdir -p "$STAGE/creator-arena-qa"
           cp -a creator-arena-qa/. "$STAGE/creator-arena-qa/"
+          cp creator-arena/index.html "$STAGE/creator-arena-qa/index.html"
+          python3 - <<'PY'
+          from pathlib import Path
+          target = Path("")
+          html = Path("creator-arena-qa/index.html").read_text(encoding="utf-8")
+          def replace_once(old, new, label):
+              global html
+              if html.count(old) != 1:
+                  raise SystemExit(f"{label}: expected one match, got {html.count(old)}")
+              html = html.replace(old, new, 1)
+          replace_once('<meta name="theme-color" content="#0F0F0F">', '<meta name="theme-color" content="#0F0F0F">\\n<meta name="robots" content="noindex,nofollow">', "robots")
+          replace_once('<meta name="description" content="Fly Infinity Social — share images and text with the Fly Infinity community.">', '<meta name="description" content="Isolated Fly Infinity Social QA preview. Test accounts and content are separate from production.">', "description")
+          replace_once("<title>Fly Infinity Social | Fly Infinity</title>", "<title>Fly Infinity Social QA | Fly Infinity</title>", "title")
+          replace_once("  </header>\\n\\n  <main>", '  </header>\\n  <div class="qa-banner" role="status">QA PREVIEW · SEPARATE DATABASE · TEST DATA ONLY</div>\\n\\n  <main>', "QA banner")
+          config = """<script>
+          window.FLY_INFINITY_SOCIAL_API="https://fly-social-qa.flyinfinityplatform.workers.dev";
+          window.FLY_GLOBAL_NAV_ROOT="https://flyinfinitydao.github.io/fit-price-display/";
+          window.FLY_SOCIAL_PATH=window.location.origin+"/creator-arena-qa/index.html";
+          </script>
+          """
+          replace_once("<script>\\n(function(){", config + "<script>\\n(function(){", "QA API and navigation config")
+          Path("creator-arena-qa/index.html").write_text(html, encoding="utf-8")
+          PY
           for asset in logo.png background-desktop.png background-mobile.png ambient-motion.css pwa-brand-neon.css global-bottom-nav.js global-bottom-nav.css walletconnect-bridge.js; do
             test -f "$asset" || { echo "::error::Missing shared Social asset: $asset"; exit 1; }
             cp "$asset" "$STAGE/$asset"
@@ -231,3 +255,29 @@ jobs:
           echo "QA preview: $QA_ORIGIN/creator-arena-qa/" >> "$GITHUB_STEP_SUMMARY"
           echo "QA API: $QA_WORKER_URL/api/health" >> "$GITHUB_STEP_SUMMARY"
           echo "The QA API rejects requests from the production GitHub Pages origin." >> "$GITHUB_STEP_SUMMARY"
+      - name: Install Playwright Chromium for responsive QA
+        shell: bash
+        run: |
+          set -euo pipefail
+          PLAYWRIGHT_DIR="$RUNNER_TEMP/social-ui-playwright"
+          mkdir -p "$PLAYWRIGHT_DIR"
+          npm install --prefix "$PLAYWRIGHT_DIR" --no-audit --no-fund --no-save playwright@1.56.1
+          "$PLAYWRIGHT_DIR/node_modules/.bin/playwright" install --with-deps chromium
+          echo "PLAYWRIGHT_MODULE=$PLAYWRIGHT_DIR/node_modules/playwright/index.mjs" >> "$GITHUB_ENV"
+
+      - name: Test Social responsive layouts at mobile and desktop widths
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$QA_ORIGIN"
+          test -f qa-tests/social-responsive-playwright.mjs
+          node qa-tests/social-responsive-playwright.mjs
+
+      - name: Upload Social QA responsive screenshots and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fly-infinity-social-responsive-qa
+          path: qa-ui-artifacts/
+          if-no-files-found: warn
+          retention-days: 7
