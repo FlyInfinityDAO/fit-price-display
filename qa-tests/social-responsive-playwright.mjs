@@ -71,6 +71,19 @@ try{
   assert(await page.evaluate(()=>sessionStorage.getItem("fly-social-token"))===null,"QA must not create or persist a production-style user session");
   pass("no-wallet, no-signature, no-username/password demo entry", "demo account flytester opened directly with seeded synthetic records");
 
+  const mobileViewportGuard=await page.evaluate(()=>{
+    const ids=["#accountHandle","#accountPassword","#recoveryPassword","#recoveryConfirm","#postText"];
+    return {
+      scale:window.visualViewport?window.visualViewport.scale:1,
+      activeTag:document.activeElement?.tagName||"",
+      fontSizes:ids.map(id=>parseFloat(getComputedStyle(document.querySelector(id)).fontSize))
+    };
+  });
+  assert(mobileViewportGuard.fontSizes.every(size=>size>=16),"mobile text controls must use at least 16px to prevent automatic browser zoom: "+JSON.stringify(mobileViewportGuard));
+  assert(!["INPUT","TEXTAREA","SELECT"].includes(mobileViewportGuard.activeTag),"mobile Social must not leave an input focused after entering the feed: "+JSON.stringify(mobileViewportGuard));
+  assert(Math.abs(mobileViewportGuard.scale-1)<0.02,"mobile browser viewport unexpectedly zoomed on entry: "+JSON.stringify(mobileViewportGuard));
+  pass("mobile focus and automatic-zoom protection",JSON.stringify(mobileViewportGuard));
+
   // Real API actions against the isolated QA D1 and B2, not mocked browser responses.
   const ownCard=page.locator("#feedList .post").filter({has:page.locator(".post-author small").filter({hasText:"@flytester"})}).first();
   assert(await ownCard.count()>=1,"cannot locate the demo user's own post card");
