@@ -146,6 +146,12 @@ jobs:
           set -euo pipefail
           npx --yes wrangler@4.158.0 d1 migrations apply fly-social-qa-db --remote --config=backend/wrangler.social-qa.toml
 
+      - name: Reset and seed isolated Social QA demo data
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes wrangler@4.158.0 d1 execute fly-social-qa-db --remote --config=backend/wrangler.social-qa.toml --file=backend/social-api/qa/seed.sql
+
       - name: Create isolated Cloudflare Pages project when needed
         shell: bash
         run: |
@@ -192,6 +198,9 @@ jobs:
           window.FLY_INFINITY_SOCIAL_API="https://fly-social-qa.flyinfinityplatform.workers.dev";
           window.FLY_GLOBAL_NAV_ROOT="https://flyinfinitydao.github.io/fit-price-display/";
           window.FLY_SOCIAL_PATH=window.location.origin+"/creator-arena-qa/index.html";
+          window.FLY_INFINITY_SOCIAL_QA_MODE=true;
+          window.FLY_INFINITY_SOCIAL_QA_TOKEN="fly-social-qa-demo-v1";
+          window.FLY_INFINITY_SOCIAL_QA_WALLET="0x1111111111111111111111111111111111111111";
           </script>
           """
           script_marker = "<script>" + chr(10) + "(function(){"
