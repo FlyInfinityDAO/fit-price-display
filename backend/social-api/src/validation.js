@@ -12,16 +12,16 @@ export function normalizeHandle(value) {
 export function parseAccountInput(body) {
   const handle = normalizeHandle(body?.handle);
   const password = String(body?.password || '');
-  if (password.length < 10 || password.length > 128) {
-    throw new Error('Password must contain 10–128 characters');
+  if (password.length < 6 || password.length > 128) {
+    throw new Error('Password must contain 6–128 characters');
   }
   return { handle, password };
 }
 
 export function parsePasswordInput(body) {
   const password = String(body?.password || '');
-  if (password.length < 10 || password.length > 128) {
-    throw new Error('Password must contain 10–128 characters');
+  if (password.length < 6 || password.length > 128) {
+    throw new Error('Password must contain 6–128 characters');
   }
   return password;
 }
