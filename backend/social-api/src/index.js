@@ -400,6 +400,20 @@ function mediaUrl(request, key) {
   return new URL('/api/media/' + encodeURIComponent(key), request.url).toString();
 }
 
+export function createPublicMediaHeaders(contentType, byteSize, etag = null) {
+  const headers = new Headers({
+    'Content-Type': contentType,
+    'Content-Length': String(byteSize),
+    'Cache-Control': 'public, max-age=3600',
+    'X-Content-Type-Options': 'nosniff',
+    // Social pages are hosted on GitHub Pages while images are served by the Worker.
+    // These are different sites, so same-site would make browsers block every image.
+    'Cross-Origin-Resource-Policy': 'cross-origin'
+  });
+  if (etag) headers.set('ETag', etag);
+  return headers;
+}
+
 function serializePost(row, request) {
   return {
     id: row.post_id,
@@ -553,14 +567,7 @@ async function serveMedia(request, env, encodedKey) {
   if (!visible) return json({ error: 'Image not found' }, 404);
   const object = await mediaStorage.get(key);
   if (!object) return json({ error: 'Image not found' }, 404);
-  const headers = new Headers({
-    'Content-Type': visible.content_type,
-    'Content-Length': String(visible.byte_size),
-    'Cache-Control': 'public, max-age=3600',
-    'X-Content-Type-Options': 'nosniff',
-    'Cross-Origin-Resource-Policy': 'same-site'
-  });
-  if (object.httpEtag) headers.set('ETag', object.httpEtag);
+  const headers = createPublicMediaHeaders(visible.content_type, visible.byte_size, object.httpEtag);
   return new Response(object.body, { headers });
 }
 
