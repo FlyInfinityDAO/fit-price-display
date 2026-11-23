@@ -449,13 +449,15 @@ function showAccountStep(){
 }
 async function loadFeed(){
  feedSay(t('loading'));
- const result=await api('/api/feed?limit=30',{method:'GET'});
- const list=$('feedList');list.replaceChildren();
- if(!result.posts||!result.posts.length){
-  const empty=document.createElement('div');empty.className='feed-empty';empty.textContent=t('empty');list.append(empty);feedSay('');return;
- }
- result.posts.forEach(post=>list.append(makePost(post)));
- feedSay('');
+ try{
+  const result=await api('/api/feed?limit=30',{method:'GET'});
+  const list=$('feedList');list.replaceChildren();
+  if(!result.posts||!result.posts.length){
+   const empty=document.createElement('div');empty.className='feed-empty';empty.textContent=t('empty');list.append(empty);feedSay('');return;
+  }
+  result.posts.forEach(post=>list.append(makePost(post)));
+  feedSay('');
+ }catch(error){feedSay(error.message||t('loadFailed'));}
 }
 function initials(value){return String(value||'FI').slice(0,2).toUpperCase();}
 function formatPostTime(timestamp){
