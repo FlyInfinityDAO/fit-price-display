@@ -229,6 +229,8 @@ h1,.feed-head h2,.view-title h3{
 .explore-media{background:radial-gradient(circle at 30% 20%,rgba(212,175,55,.20),transparent 50%),rgba(5,13,11,.72)}
 .profile-avatar,.avatar{box-shadow:0 0 16px rgba(212,175,55,.13)}
 .section-divider{background:rgba(0,200,150,.17)}
+.qa-banner{margin:0 auto 12px;padding:7px 12px;border:1px solid rgba(212,175,55,.42);border-radius:999px;background:rgba(212,175,55,.09);color:#E9D58F;text-align:center;font-size:10px;font-weight:800;letter-spacing:.04em;}
+.lang-dropdown{z-index:10010;}
 @media(hover:hover) and (pointer:fine){
   .post:hover,.explore-tile:hover,.connection-row:hover,.notification-row:hover,.profile-card:hover{
     transform:translateY(-2px);border-color:rgba(0,245,185,.62);
@@ -268,9 +270,8 @@ html[dir=rtl] .lang-dropdown{right:auto;left:20px;transform-origin:top left}
   .feed-head{align-items:flex-start;padding:12px;border-radius:18px}
   .feed-head h2{font-size:16px}.feed-user{align-items:flex-end;flex-direction:column}
   .social-nav{
-    position:fixed;z-index:50;left:10px;right:10px;bottom:calc(8px + env(safe-area-inset-bottom));
-    margin:0;padding:6px;border-radius:23px;
-    box-shadow:0 12px 38px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.10),0 0 20px rgba(0,200,150,.08);
+    position:sticky;top:10px;z-index:40;margin:4px 0 18px;padding:6px;border-radius:23px;
+    box-shadow:0 12px 38px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.10),0 0 20px rgba(0,200,150,.08);
   }
   .social-nav button{display:grid;gap:3px;min-height:50px;padding:5px 2px;font-size:9px}
   .nav-icon{font-size:18px}
