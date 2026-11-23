@@ -4,7 +4,7 @@
   window.__FLY_GLOBAL_BOTTOM_NAV__ = true;
 
   const script = document.currentScript;
-  const root = new URL("./", script.src);
+  const root = new URL(window.FLY_GLOBAL_NAV_ROOT || "./", script.src);
   const href = (path) => new URL(path, root).href;
 
   const translations = {
