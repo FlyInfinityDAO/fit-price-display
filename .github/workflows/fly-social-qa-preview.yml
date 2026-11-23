@@ -41,7 +41,6 @@ jobs:
       B2_APPLICATION_KEY: ${{ secrets.FLY_SOCIAL_B2_APPLICATION_KEY }}
       QA_PAGES_PROJECT: fly-social-qa-preview
       QA_PAGES_BRANCH: qa-preview
-      QA_ORIGIN: https://qa-preview.fly-social-qa-preview.pages.dev
       QA_WORKER_URL: https://fly-social-qa.flyinfinityplatform.workers.dev
 
     steps:
@@ -172,11 +171,17 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          npx --yes wrangler@4.158.0 pages deploy "$SOCIAL_QA_STAGE" \
+          DEPLOY_OUTPUT="$(npx --yes wrangler@4.158.0 pages deploy "$SOCIAL_QA_STAGE" \
             --project-name="$QA_PAGES_PROJECT" \
             --branch="$QA_PAGES_BRANCH" \
             --commit-hash="$GITHUB_SHA" \
-            --commit-message="Fly Infinity Social QA preview"
+            --commit-message="Fly Infinity Social QA preview" 2>&1)"
+          printf '%s\n' "$DEPLOY_OUTPUT"
+          QA_ORIGIN="$(printf '%s\n' "$DEPLOY_OUTPUT" | sed -E 's/\\x1B\\[[0-9;]*[mK]//g' | grep -Eo 'https://[a-z0-9-]+\\.fly-social-qa-preview\\.pages\\.dev' | head -n 1)"
+          test -n "$QA_ORIGIN" || { echo "::error::Could not resolve the immutable Cloudflare Pages preview URL"; exit 1; }
+          sed -i "s|^APP_ORIGIN = .*|APP_ORIGIN = \"$QA_ORIGIN\"|" backend/wrangler.social-qa.toml
+          echo "QA_ORIGIN=$QA_ORIGIN" >> "$GITHUB_ENV"
+          echo "CORS origin pinned to this exact immutable Pages deployment: $QA_ORIGIN"
 
       - name: Configure QA-only private image storage credentials
         shell: bash
