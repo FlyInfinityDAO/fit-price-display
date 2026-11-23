@@ -176,7 +176,7 @@ try{
       },view);
       assert(snapshot.scrollWidth<=snapshot.clientWidth+1,"horizontal overflow at "+width+"x"+height+" in "+view);
       assert(snapshot.globalNav&&snapshot.globalNav.bottom<=height+1,"global nav outside viewport at "+width+"x"+height);
-      assert(snapshot.activeView&&snapshot.activeView.width>0,"view did not render: "+view+" at "+width+"x"+height");
+      assert(snapshot.activeView&&snapshot.activeView.width>0,"view did not render: "+view+" at "+width+"x"+height);
       for(const rect of snapshot.content){
         assert(rect.left>=-1&&rect.right<=width+1,"content clipped at "+width+"x"+height+" in "+view);
       }
