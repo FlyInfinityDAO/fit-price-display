@@ -29,6 +29,7 @@ async function nav(view){
   await page.locator("#"+(view==="notifications"?"notifications":view)+"View").waitFor({state:"visible",timeout:15000});
   const loadedSelector={feed:"#feedList .post",explore:"#exploreGrid .explore-tile",notifications:"#notificationList .notification-row",profile:"#profileHandle"}[view];
   if(loadedSelector)await page.locator(loadedSelector).first().waitFor({state:"visible",timeout:20000});
+  if(view==="profile")await page.waitForFunction(()=>document.querySelector("#profileHandle")?.textContent?.trim()==="@flytester",{timeout:20000});
 }
 async function request(path,options={}){
   const response=await page.request.fetch(api+path,{...options,headers:{...authHeaders,...(options.headers||{})}});
@@ -133,7 +134,8 @@ try{
   await nav("profile");
   await page.locator('[data-open-connections="followers"]').click();
   await page.locator("#connectionsPanel").waitFor({state:"visible"});
-  assert(await page.locator("#connectionsList .connection-row").count()>=2,"demo followers were not seeded");
+  await page.locator("#connectionsList .connection-row").first().waitFor({state:"visible",timeout:20000});
+  assert(await page.locator("#connectionsList .connection-row").count()>=2,"demo followers were not seeded: "+await page.locator("#connectionsList").innerText());
   const bobFollow=page.locator("#connectionsList [data-follow-handle='bobcreator']");
   assert(await bobFollow.count()===1,"Bob is missing from the demo follower list");
   await clickTarget(bobFollow,"Follow from followers list");
@@ -141,7 +143,8 @@ try{
   await page.locator("#backToProfile").click();
   await page.locator('[data-open-connections="following"]').click();
   await page.locator("#connectionsPanel").waitFor({state:"visible"});
-  assert(await page.locator("#connectionsList .connection-row").count()>=1,"demo following list is empty");
+  await page.locator("#connectionsList .connection-row").first().waitFor({state:"visible",timeout:20000});
+  assert(await page.locator("#connectionsList .connection-row").count()>=1,"demo following list is empty: "+await page.locator("#connectionsList").innerText());
   pass("followers/following lists and inline follow refresh");
 
   // Notifications: unread state, single-read and read-all.
