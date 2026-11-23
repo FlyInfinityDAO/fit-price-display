@@ -209,11 +209,19 @@ jobs:
             --header "Access-Control-Request-Method: POST" \
             --header "Access-Control-Request-Headers: content-type,authorization" \
             "$QA_WORKER_URL/api/auth/challenge")"
+          echo "QA preflight HTTP status: $preflight"
+          preflight_headers="$(curl --silent --show-error --include \
+            --request OPTIONS --header "Origin: $QA_ORIGIN" \
+            --header "Access-Control-Request-Method: POST" \
+            --header "Access-Control-Request-Headers: content-type,authorization" \
+            "$QA_WORKER_URL/api/auth/challenge")"
+          printf '%s\n' "$preflight_headers"
           test "$preflight" = "204"
           rejected="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
             --request POST --header "Origin: https://flyinfinitydao.github.io" \
             --header "Content-Type: application/json" --data '{}' \
             "$QA_WORKER_URL/api/auth/challenge")"
+          echo "Production-origin rejection HTTP status: $rejected"
           test "$rejected" = "403"
           echo "QA preview: $QA_ORIGIN/creator-arena-qa/" >> "$GITHUB_STEP_SUMMARY"
           echo "QA API: $QA_WORKER_URL/api/health" >> "$GITHUB_STEP_SUMMARY"
