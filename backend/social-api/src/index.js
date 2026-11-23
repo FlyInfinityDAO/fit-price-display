@@ -173,8 +173,13 @@ async function verifyChallenge(request, env) {
   });
 }
 
+export function extractBearerToken(authorization) {
+  const match = String(authorization || '').match(/^Bearer\s+(.+)$/i);
+  return match ? match[1].trim() : '';
+}
+
 async function getSession(request, env, required = false, requirePassword = true) {
-  const token = (request.headers.get('Authorization') || '').replace(/^Bearer\\s+/i, '').trim();
+  const token = extractBearerToken(request.headers.get('Authorization'));
   if (!token) return required ? { error: 'Connect your Fly Infinity wallet to continue', status: 401 } : null;
   if (token.length > 256) return { error: 'Invalid session', status: 401 };
   const tokenHash = await hashSessionToken(token);
