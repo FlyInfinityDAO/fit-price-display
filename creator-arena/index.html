@@ -441,9 +441,13 @@ function makePost(post){
   const note=document.createElement('div');note.className='repost-note';
   note.textContent=t('repostedBy')+' @'+post.repostedBy.handle;card.append(note);
  }
+ if(post.feedReason==='popular'||post.feedReason==='following'){
+  const reason=document.createElement('div');reason.className='post-reason';reason.textContent=tx(post.feedReason);card.append(reason);
+ }
  const head=document.createElement('div');head.className='post-head';
  const avatar=document.createElement('span');avatar.className='avatar';avatar.textContent=initials(post.creator?.displayName||post.creator?.handle);
- const author=document.createElement('span');author.className='post-author';
+ const author=document.createElement('button');author.type='button';author.className='post-author post-profile-link';
+ author.dataset.profileHandle=post.creator?.handle||'';
  const strong=document.createElement('strong');strong.textContent=post.creator?.displayName||post.creator?.handle||t('unknown');
  const handle=document.createElement('small');handle.textContent='@'+(post.creator?.handle||'');
  author.append(strong,handle);
@@ -462,11 +466,171 @@ function makePost(post){
  }
  card.append(actions);return card;
 }
+function showSocialView(view) {
+ const allowed=['feed','explore','notifications','profile'];
+ activeSocialView=allowed.includes(view)?view:'feed';
+ document.querySelectorAll('.social-view').forEach(node=>node.hidden=node.id!==activeSocialView+'View');
+ document.querySelectorAll('[data-social-view]').forEach(button=>button.classList.toggle('active',button.dataset.socialView===activeSocialView));
+}
+function updateNotificationBadge(count) {
+ const badge=$('notificationBadge');
+ const value=Math.max(0,Number(count||0));
+ badge.hidden=value===0;
+ badge.textContent=value>9?'9+':String(value);
+}
+async function refreshNotificationBadge() {
+ try { const data=await api('/api/notifications?limit=1',{method:'GET'});updateNotificationBadge(data.unreadCount); }
+ catch(e) {}
+}
+function setEmpty(container,message) {
+ container.replaceChildren();
+ const empty=document.createElement('div');empty.className='feed-empty';empty.textContent=message;container.append(empty);
+}
+function makeExploreTile(post) {
+ const tile=document.createElement('article');tile.className='explore-tile';tile.dataset.postId=post.id;
+ const media=document.createElement('div');media.className='explore-media';
+ if(post.imageUrl){
+  const image=document.createElement('img');image.src=post.imageUrl;image.alt='';image.loading='lazy';
+  image.onerror=()=>{image.remove();const letter=document.createElement('span');letter.className='tile-letter';letter.textContent=initials(post.creator?.handle);media.append(letter);};
+  media.append(image);
+ }else{
+  const letter=document.createElement('span');letter.className='tile-letter';letter.textContent=initials(post.creator?.handle);media.append(letter);
+ }
+ const meta=document.createElement('div');meta.className='explore-meta';
+ const author=document.createElement('button');author.type='button';author.className='post-profile-link';author.dataset.profileHandle=post.creator?.handle||'';
+ const name=document.createElement('strong');name.textContent='@'+(post.creator?.handle||t('unknown'));author.append(name);
+ const caption=document.createElement('p');caption.className='explore-caption';caption.textContent=post.text||'';
+ const actions=document.createElement('div');actions.className='explore-actions';
+ const like=document.createElement('button');like.type='button';like.className='action-btn'+(post.likedByMe?' active':'');
+ like.dataset.likeId=post.id;like.setAttribute('aria-pressed',String(post.likedByMe));
+ like.textContent=(post.likedByMe?'♥ ':'♡ ')+post.likes;
+ const repost=document.createElement('button');repost.type='button';repost.className='action-btn'+(post.repostedByMe?' active':'');
+ repost.dataset.repostId=post.id;repost.setAttribute('aria-pressed',String(post.repostedByMe));
+ repost.textContent='↻ '+post.reposts;
+ actions.append(like,repost);meta.append(author,caption,actions);tile.append(media,meta);return tile;
+}
+async function loadExplore() {
+ $('exploreStatus').textContent=tx('loading');
+ try{
+  const result=await api('/api/explore?limit=36',{method:'GET'});
+  const grid=$('exploreGrid');grid.replaceChildren();
+  if(!result.posts||!result.posts.length){setEmpty(grid,tx('noExplore'));$('exploreStatus').textContent='';return;}
+  result.posts.forEach(post=>grid.append(makeExploreTile(post)));
+  $('exploreStatus').textContent='';
+ }catch(error){$('exploreStatus').textContent=error.message||tx('loadError');}
+}
+function notificationText(item) {
+ const actor=item.actor?.displayName||('@'+(item.actor?.handle||t('unknown')));
+ const action=item.type==='follow'?tx('startedFollowingYou'):item.type==='like'?tx('likedYourPost'):tx('repostedYourPost');
+ return {actor,action};
+}
+async function loadNotifications() {
+ $('notificationsStatus').textContent=tx('loading');
+ try{
+  const result=await api('/api/notifications?limit=50',{method:'GET'});
+  updateNotificationBadge(result.unreadCount);
+  const list=$('notificationList');list.replaceChildren();
+  if(!result.notifications||!result.notifications.length){setEmpty(list,tx('noNotifications'));$('notificationsStatus').textContent='';return;}
+  result.notifications.forEach(item=>{
+   const row=document.createElement('article');row.className='notification-row'+(item.read?'':' unread');
+   const avatar=document.createElement('span');avatar.className='avatar';avatar.textContent=initials(item.actor?.displayName||item.actor?.handle);
+   const copy=document.createElement('div');copy.className='notification-copy';
+   const actor=document.createElement('strong');actor.textContent=textSafeActor(item.actor);
+   const text=document.createElement('span');text.textContent=' '+notificationText(item).action;
+   const time=document.createElement('small');time.textContent=new Date(item.createdAt*1000).toLocaleString(lang);
+   const actorLink=document.createElement('button');actorLink.type='button';actorLink.className='post-profile-link';actorLink.dataset.profileHandle=item.actor?.handle||'';actorLink.append(actor);
+   copy.append(actorLink,text,time);
+   if(item.post?.imageUrl){const thumb=document.createElement('img');thumb.className='notification-post-thumb';thumb.src=item.post.imageUrl;thumb.alt='';row.append(thumb);}
+   if(!item.read){const dot=document.createElement('span');dot.className='notification-dot';row.append(dot);}
+   const mark=document.createElement('button');mark.type='button';mark.className='action-btn';mark.dataset.notificationId=item.id;mark.textContent=item.read?'✓':'•';
+   if(item.read)mark.disabled=true;
+   row.append(avatar,copy,mark);list.append(row);
+  });
+  $('notificationsStatus').textContent='';
+ }catch(error){$('notificationsStatus').textContent=error.message||tx('loadError');}
+}
+function textSafeActor(actor) {
+ return actor?.displayName||('@'+(actor?.handle||t('unknown')));
+}
+async function loadProfile(handle) {
+ if(!handle)return;
+ activeProfileHandle=handle;
+ showSocialView('profile');
+ $('profileStatus').textContent=tx('loading');
+ $('connectionsPanel').hidden=true;$('profilePostsPanel').hidden=false;
+ try{
+  const result=await api('/api/profiles/'+encodeURIComponent(handle)+'?limit=40',{method:'GET'});
+  const p=result.profile;currentProfileData=p;
+  $('profileDisplayName').textContent=p.displayName||p.handle;
+  $('profileHandle').textContent='@'+p.handle;
+  $('profileAvatar').textContent=initials(p.displayName||p.handle);
+  $('profileBio').textContent=p.bio||'';
+  $('profileWallet').textContent=p.wallet.slice(0,10)+'…'+p.wallet.slice(-8);
+  $('profilePostCount').textContent=p.posts;
+  $('profileFollowerCount').textContent=p.followers;
+  $('profileFollowingCount').textContent=p.following;
+  const follow=$('profileFollowButton');
+  follow.hidden=p.isMe;follow.dataset.followHandle=p.handle;
+  follow.textContent=p.isFollowing?tx('unfollow'):tx('follow');
+  follow.classList.toggle('following',p.isFollowing);
+  const list=$('profilePosts');list.replaceChildren();
+  if(!result.posts||!result.posts.length)setEmpty(list,tx('noExplore'));
+  else result.posts.forEach(post=>list.append(makePost(post)));
+  $('profileStatus').textContent='';
+ }catch(error){currentProfileData=null;$('profileStatus').textContent=error.message||tx('loadError');}
+}
+async function loadConnections(kind) {
+ if(!activeProfileHandle)return;
+ $('profilePostsPanel').hidden=true;$('connectionsPanel').hidden=false;
+ $('connectionsTitle').textContent=tx(kind)+' · @'+activeProfileHandle;
+ const list=$('connectionsList');list.replaceChildren();
+ const loading=document.createElement('div');loading.className='feed-status';loading.textContent=tx('loading');list.append(loading);
+ try{
+  const result=await api('/api/profiles/'+encodeURIComponent(activeProfileHandle)+'/'+kind+'?limit=80',{method:'GET'});
+  list.replaceChildren();
+  if(!result.users||!result.users.length){setEmpty(list,tx('noConnections'));return;}
+  result.users.forEach(user=>{
+   const row=document.createElement('div');row.className='connection-row';
+   const avatar=document.createElement('span');avatar.className='avatar';avatar.textContent=initials(user.displayName||user.handle);
+   const main=document.createElement('div');main.className='connection-main';
+   const link=document.createElement('button');link.type='button';link.className='post-profile-link';link.dataset.profileHandle=user.handle;
+   const name=document.createElement('strong');name.textContent=user.displayName||user.handle;
+   const handle=document.createElement('small');handle.textContent='@'+user.handle;
+   link.append(name,handle);main.append(link);
+   row.append(avatar,main);
+   if(!user.isMe){
+    const follow=document.createElement('button');follow.type='button';follow.className='action-btn'+(user.isFollowing?' active':'');
+    follow.dataset.followHandle=user.handle;follow.textContent=user.isFollowing?tx('unfollow'):tx('follow');row.append(follow);
+   }
+   list.append(row);
+  });
+ }catch(error){setEmpty(list,error.message||tx('loadError'));}
+}
+async function performFollow(handle, method) {
+ await api('/api/profiles/'+encodeURIComponent(handle)+'/follow',{method});
+ await refreshNotificationBadge();
+ if(activeSocialView==='profile'&&activeProfileHandle.toLowerCase()===handle.toLowerCase()){
+  await loadProfile(activeProfileHandle);
+  if(!$('connectionsPanel').hidden){
+   const current=$('connectionsTitle').textContent.includes(tx('followers'))?'followers':'following';
+   await loadConnections(current);
+  }
+ }
+ if(activeSocialView==='feed')await loadFeed();
+}
+async function refreshCurrentSocialView() {
+ if(activeSocialView==='feed')await loadFeed();
+ else if(activeSocialView==='explore')await loadExplore();
+ else if(activeSocialView==='notifications')await loadNotifications();
+ else if(activeSocialView==='profile'&&activeProfileHandle)await loadProfile(activeProfileHandle);
+}
 async function finishSignIn(){
  passwordVerified=true;$('authGate').hidden=true;$('feedApp').hidden=false;
  $('profileHandleLabel').textContent='@'+(profile?.handle||'');
+ $('openOwnProfile').textContent='@'+(profile?.handle||'');
+ showSocialView('feed');
  say(t('signedIn'));
- await loadFeed().catch(error=>feedSay(error.message||t('loadFailed')));
+ await Promise.all([loadFeed().catch(error=>feedSay(error.message||t('loadFailed'))),refreshNotificationBadge()]);
 }
 async function connect(mode){
  const buttons=[$('connectSocialBrowser'),$('connectSocialWallet')];buttons.forEach(b=>b.disabled=true);
@@ -603,7 +767,31 @@ $('postForm').addEventListener('submit',async event=>{
  }catch(error){feedSay(error.message||t('postFailed'));}
  finally{button.disabled=false;}
 });
-$('feedList').addEventListener('click',async event=>{
+$('feedApp').addEventListener('click',async event=>{
+ const viewButton=event.target.closest('[data-social-view]');
+ if(viewButton){showSocialView(viewButton.dataset.socialView);await refreshCurrentSocialView();return;}
+ const ownProfile=event.target.closest('#openOwnProfile');
+ if(ownProfile){await loadProfile(profile?.handle||'');return;}
+ const profileLink=event.target.closest('[data-profile-handle]');
+ if(profileLink&&profileLink.dataset.profileHandle){await loadProfile(profileLink.dataset.profileHandle);return;}
+ const connections=event.target.closest('[data-open-connections]');
+ if(connections){await loadConnections(connections.dataset.openConnections);return;}
+ if(event.target.closest('#backToProfile')){await loadProfile(activeProfileHandle);return;}
+ if(event.target.closest('#markAllRead')){
+  const button=$('markAllRead');button.disabled=true;
+  try{await api('/api/notifications/read-all',{method:'POST'});await loadNotifications();}
+  catch(error){$('notificationsStatus').textContent=error.message||tx('loadError');}
+  finally{button.disabled=false;}
+  return;
+ }
+ const mark=event.target.closest('[data-notification-id]');
+ if(mark){mark.disabled=true;try{await api('/api/notifications/'+encodeURIComponent(mark.dataset.notificationId)+'/read',{method:'PATCH'});await loadNotifications();}
+  catch(error){$('notificationsStatus').textContent=error.message||tx('loadError');}return;}
+ const follow=event.target.closest('[data-follow-handle]');
+ if(follow){follow.disabled=true;const was=follow.textContent===tx('unfollow');
+  try{await performFollow(follow.dataset.followHandle,was?'DELETE':'POST');}
+  catch(error){if(activeView==='profile')$('profileStatus').textContent=error.message||tx('loadError');}
+  finally{follow.disabled=false;}return;}
  const like=event.target.closest('[data-like-id]');
  const repost=event.target.closest('[data-repost-id]');
  const remove=event.target.closest('[data-delete-id]');
@@ -620,8 +808,11 @@ $('feedList').addEventListener('click',async event=>{
    if(!window.confirm(t('confirmDelete')))return;
    await api('/api/posts/'+encodeURIComponent(remove.dataset.deleteId),{method:'DELETE'});
   }
-  await loadFeed();
- }catch(error){feedSay(error.message||t('apiOffline'));}
+  await refreshCurrentSocialView();await refreshNotificationBadge();
+ }catch(error){if(activeSocialView==='feed')feedSay(error.message||t('apiOffline'));
+  else if(activeSocialView==='explore')$('exploreStatus').textContent=error.message||tx('loadError');
+  else if(activeSocialView==='profile')$('profileStatus').textContent=error.message||tx('loadError');
+ }
  finally{button.disabled=false;}
 });
 async function initialize(){
