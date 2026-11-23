@@ -769,7 +769,7 @@ $('postForm').addEventListener('submit',async event=>{
 });
 $('feedApp').addEventListener('click',async event=>{
  const viewButton=event.target.closest('[data-social-view]');
- if(viewButton){showSocialView(viewButton.dataset.socialView);await refreshCurrentSocialView();return;}
+ if(viewButton){if(viewButton.dataset.socialView==='profile'){await loadProfile(profile?.handle||'');}else{showSocialView(viewButton.dataset.socialView);await refreshCurrentSocialView();}return;}
  const ownProfile=event.target.closest('#openOwnProfile');
  if(ownProfile){await loadProfile(profile?.handle||'');return;}
  const profileLink=event.target.closest('[data-profile-handle]');
