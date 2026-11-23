@@ -7,6 +7,7 @@ on:
       - 'backend/social-api/**'
       - 'creator-arena/social-api.js'
       - 'creator-arena/index.html'
+      - 'social-qa/**'
       - 'backend/package.json'
       - 'backend/wrangler.social-api.toml'
       - '.github/workflows/fly-social-api-check.yml'
@@ -16,6 +17,7 @@ on:
       - 'backend/social-api/**'
       - 'creator-arena/social-api.js'
       - 'creator-arena/index.html'
+      - 'social-qa/**'
       - 'backend/package.json'
       - '.github/workflows/fly-social-api-check.yml'
 
@@ -45,17 +47,23 @@ jobs:
           node --check social-api/src/validation.js
           node --check social-api/src/storage.js
           node --check ../creator-arena/social-api.js
-      - name: Check Social page inline JavaScript syntax
+      - name: Check Social page and isolated QA inline JavaScript syntax
         run: |
           node --input-type=module <<'NODE'
           import { readFileSync, writeFileSync } from 'node:fs';
-          const html = readFileSync('../creator-arena/index.html', 'utf8');
-          const start = html.indexOf('<script>');
-          const end = html.indexOf('</script>', start);
-          if (start < 0 || end < 0) throw new Error('Social inline application script was not found');
-          writeFileSync('/tmp/fly-social-page-inline.js', html.slice(start + 8, end));
+          for (const [source, output] of [
+            ['../creator-arena/index.html', '/tmp/fly-social-page-inline.js'],
+            ['../social-qa/index.html', '/tmp/fly-social-qa-inline.js']
+          ]) {
+            const html = readFileSync(source, 'utf8');
+            const start = html.indexOf('<script>');
+            const end = html.indexOf('</script>', start);
+            if (start < 0 || end < 0) throw new Error('Inline application script was not found in ' + source);
+            writeFileSync(output, html.slice(start + 8, end));
+          }
           NODE
           node --check /tmp/fly-social-page-inline.js
+          node --check /tmp/fly-social-qa-inline.js
       - name: Run Social-only unit and route tests
         run: node --test social-api/tests/*.test.js
       - name: Build Social Worker bundle without deploying
