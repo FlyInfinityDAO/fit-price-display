@@ -18,7 +18,7 @@ Independent backend for the Fly Infinity Social page. It uses its own Worker, D1
 3. The Worker verifies the signature and checks `Owner_Exists(wallet)` in the Fly Infinity Network contract. The signature is a free off-chain message; it never authorizes a transaction, token transfer or spending.
 4. After wallet verification, the user creates a username and password, or enters existing credentials. The feed is unavailable until password authentication succeeds.
 5. New usernames are normalized to lowercase and must be 3–24 English letters, digits or underscores. A unique case-insensitive D1 index/constraint prevents duplicates; `GET /api/handles/check` is only a convenience check and the database remains authoritative.
-6. Passwords must be 10–128 characters. They are stored as PBKDF2-SHA-256 hashes with a per-user random salt and 100,000 iterations (the Cloudflare Workers runtime limit), never as plaintext.
+6. Passwords must be 6–128 characters. They are stored as PBKDF2-SHA-256 hashes with a per-user random salt and 100,000 iterations (the Cloudflare Workers runtime limit), never as plaintext.
 7. To recover a password, the wallet first obtains a short-lived recovery challenge and signs its explicit recovery message. The signature is verified server-side and the one-use nonce is consumed before the new password is saved. This is not a blockchain transaction and costs no gas. All prior sessions for that wallet are revoked and a new password-verified session is issued.
 
 ## Supported social features
