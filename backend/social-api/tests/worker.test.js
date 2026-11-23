@@ -1,6 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import worker from '../src/index.js';
+import worker, { extractBearerToken } from '../src/index.js';
+
+test('Bearer session tokens are extracted from standard Authorization headers', () => {
+  const token = 'a'.repeat(64);
+  assert.equal(extractBearerToken('Bearer ' + token), token);
+  assert.equal(extractBearerToken('bearer ' + token), token);
+  assert.equal(extractBearerToken('  ' + 'Bearer ' + token), '');
+  assert.equal(extractBearerToken(null), '');
+  assert.equal(extractBearerToken(''), '');
+});
 
 test('health endpoint identifies Social API v2 and sets strict CORS headers', async () => {
   const request = new Request('https://social.example/api/health', {
