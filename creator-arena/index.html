@@ -398,18 +398,6 @@ async function api(path,options){
  return data;
 }
 
- options=options||{};
- const headers=new Headers(options.headers||{});
- if(token)headers.set('Authorization','Bearer '+token);
- let body=options.body;
- if(body&&typeof body==='object'&&!(body instanceof Blob)&&!(body instanceof ArrayBuffer)&&!(body instanceof FormData)){
-  headers.set('Content-Type','application/json');body=JSON.stringify(body);
- }
- const response=await fetch(API+path,Object.assign({},options,{headers,body,cache:'no-store'}));
- const data=await response.json().catch(()=>({}));
- if(!response.ok)throw new Error(data.error||t('apiOffline'));
- return data;
-}
 function toHex(value){return '0x'+Array.from(new TextEncoder().encode(value),b=>b.toString(16).padStart(2,'0')).join('');}
 const injectedProviderAtPageLoad=window.ethereum;
 function getDirectInjectedProvider(){
