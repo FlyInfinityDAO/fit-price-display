@@ -336,7 +336,7 @@ const tx=key=>(socialLabels[lang]||socialLabels.en)[key]||socialLabels.en[key]||
 const $=id=>document.getElementById(id);
 const API=(window.FLY_INFINITY_SOCIAL_API||'https://fly-infinity-social-api.flyinfinityplatform.workers.dev').replace(/\/$/,'');
 let lang='en',apiReady=false,token='',wallet='',profile=null,activeProvider=null,passwordSet=false,passwordVerified=false,handleCheckTimer=null,handleCheckValue='';
-let activeSocialView='feed',activeProfileHandle='',currentProfileData=null;
+let activeSocialView='feed',activeProfileHandle='',currentProfileData=null,activeConnectionKind='',walletWatchProvider=null,walletWatchHandlers=null;
 const storage={
  get:key=>{try{return sessionStorage.getItem(key)||'';}catch(e){return '';}},
  set:(key,value)=>{try{sessionStorage.setItem(key,value);}catch(e){}},
@@ -345,6 +345,7 @@ const storage={
 const t=key=>(translations[lang]||translations.en)[key]||translations.en[key]||key;
 function say(message,error){$('socialAuthStatus').textContent=message||'';$('socialAuthStatus').classList.toggle('error',!!error);}
 function feedSay(message){$('feedStatus').textContent=message||'';}
+function showCurrentViewError(error){const message=error?.message||tx('loadError');if(activeSocialView==='feed')feedSay(message);else if(activeSocialView==='explore')$('exploreStatus').textContent=message;else if(activeSocialView==='notifications')$('notificationsStatus').textContent=message;else if(activeSocialView==='profile')$('profileStatus').textContent=message;}
 const LANGUAGE_META={en:{flag:'🇬🇧',name:'English'},fa:{flag:'🇮🇷',name:'فارسی'},ar:{flag:'🇮🇶',name:'العربية'},tr:{flag:'🇹🇷',name:'Türkçe'},ru:{flag:'🇷🇺',name:'Русский'},zh:{flag:'🇨🇳',name:'中文'},es:{flag:'🇪🇸',name:'Español'},pt:{flag:'🇵🇹',name:'Português'}};
 function translate(next){
  lang=translations[next]?next:'en';
@@ -362,6 +363,7 @@ function translate(next){
  });
  try{localStorage.setItem('fit_lang',lang);}catch(e){}
  document.dispatchEvent(new CustomEvent('fi-language-updated',{detail:{lang}}));
+ if(passwordVerified){refreshCurrentSocialView().catch(showCurrentViewError);refreshNotificationBadge();}
 }
 function toast(message){say(message,false);window.setTimeout(()=>{if($('socialAuthStatus').textContent===message)say('');},3300);}
 async function api(path,options){
@@ -456,6 +458,19 @@ async function loadFeed(){
  feedSay('');
 }
 function initials(value){return String(value||'FI').slice(0,2).toUpperCase();}
+function formatPostTime(timestamp){
+ const milliseconds=Number(timestamp)*1000;
+ if(!Number.isFinite(milliseconds)||milliseconds<=0)return '';
+ const difference=Math.round((milliseconds-Date.now())/1000),absolute=Math.abs(difference);
+ let value=difference,unit='second';
+ if(absolute>=31536000){value=Math.round(difference/31536000);unit='year';}
+ else if(absolute>=2592000){value=Math.round(difference/2592000);unit='month';}
+ else if(absolute>=86400){value=Math.round(difference/86400);unit='day';}
+ else if(absolute>=3600){value=Math.round(difference/3600);unit='hour';}
+ else if(absolute>=60){value=Math.round(difference/60);unit='minute';}
+ try{return new Intl.RelativeTimeFormat(lang,{numeric:'auto'}).format(value,unit);}
+ catch{return new Date(milliseconds).toLocaleString(lang);}
+}
 function makePost(post){
  const card=document.createElement('article');card.className='post';card.dataset.postId=post.id;
  if(post.repostedBy){
@@ -472,7 +487,7 @@ function makePost(post){
  const strong=document.createElement('strong');strong.textContent=post.creator?.displayName||post.creator?.handle||t('unknown');
  const handle=document.createElement('small');handle.textContent='@'+(post.creator?.handle||'');
  author.append(strong,handle);
- const date=document.createElement('span');date.className='post-date';date.textContent=t('timeNow');
+ const date=document.createElement('time');date.className='post-date';date.dateTime=Number(post.createdAt)>0?new Date(Number(post.createdAt)*1000).toISOString():'';date.textContent=formatPostTime(post.createdAt);date.title=Number(post.createdAt)>0?new Date(Number(post.createdAt)*1000).toLocaleString(lang):'';
  head.append(avatar,author,date);card.append(head);
  if(post.text){const text=document.createElement('p');text.className='post-text';text.textContent=post.text;card.append(text);}
  if(post.imageUrl){const image=document.createElement('img');image.className='post-image';image.src=post.imageUrl;image.alt='Post image';image.loading='lazy';card.append(image);}
@@ -575,7 +590,7 @@ function textSafeActor(actor) {
 }
 async function loadProfile(handle) {
  if(!handle)return;
- activeProfileHandle=handle;
+ activeProfileHandle=handle;activeConnectionKind='';
  showSocialView('profile');
  $('profileStatus').textContent=tx('loading');
  $('connectionsPanel').hidden=true;$('profilePostsPanel').hidden=false;
@@ -602,6 +617,7 @@ async function loadProfile(handle) {
 }
 async function loadConnections(kind) {
  if(!activeProfileHandle)return;
+ activeConnectionKind=kind;
  $('profilePostsPanel').hidden=true;$('connectionsPanel').hidden=false;
  $('connectionsTitle').textContent=tx(kind)+' · @'+activeProfileHandle;
  const list=$('connectionsList');list.replaceChildren();
@@ -630,12 +646,11 @@ async function loadConnections(kind) {
 async function performFollow(handle, method) {
  await api('/api/profiles/'+encodeURIComponent(handle)+'/follow',{method});
  await refreshNotificationBadge();
- if(activeSocialView==='profile'&&activeProfileHandle.toLowerCase()===handle.toLowerCase()){
+ if(activeSocialView==='profile'&&activeProfileHandle){
+  const connectionsWereOpen=!$('connectionsPanel').hidden;
+  const connectionKind=activeConnectionKind;
   await loadProfile(activeProfileHandle);
-  if(!$('connectionsPanel').hidden){
-   const current=$('connectionsTitle').textContent.includes(tx('followers'))?'followers':'following';
-   await loadConnections(current);
-  }
+  if(connectionsWereOpen&&connectionKind)await loadConnections(connectionKind);
  }
  if(activeSocialView==='feed')await loadFeed();
 }
@@ -647,7 +662,6 @@ async function refreshCurrentSocialView() {
 }
 async function finishSignIn(){
  passwordVerified=true;$('authGate').hidden=true;$('feedApp').hidden=false;
- $('profileHandleLabel').textContent='@'+(profile?.handle||'');
  $('openOwnProfile').textContent='@'+(profile?.handle||'');
  showSocialView('feed');
  say(t('signedIn'));
@@ -667,14 +681,33 @@ async function connect(mode){
   const result=await api('/api/auth/verify',{method:'POST',body:{address,nonce:challenge.nonce,signature}});
   token=result.token;wallet=result.wallet;profile=result.profile||null;passwordSet=!!result.passwordSet;passwordVerified=false;
   storage.set('fly-social-token',token);storage.set('fly-social-wallet',wallet);
-  showAccountStep();
+  watchWalletSession(provider,wallet);showAccountStep();
  }catch(error){say(error.message||t('apiOffline'),true);}
  finally{buttons.forEach(b=>b.disabled=false);}
 }
-async function disconnect(){
+async function clearWalletWatch(){
+ if(walletWatchProvider&&walletWatchHandlers){
+  try{walletWatchProvider.removeListener?.('accountsChanged',walletWatchHandlers.accountsChanged);walletWatchProvider.removeListener?.('chainChanged',walletWatchHandlers.chainChanged);}catch(e){}
+  try{walletWatchProvider.off?.('accountsChanged',walletWatchHandlers.accountsChanged);walletWatchProvider.off?.('chainChanged',walletWatchHandlers.chainChanged);}catch(e){}
+ }
+ walletWatchProvider=null;walletWatchHandlers=null;
+}
+function watchWalletSession(provider,address){
+ clearWalletWatch();if(!provider||typeof provider.on!=='function')return;
+ const accountsChanged=accounts=>{const current=Array.isArray(accounts)?accounts[0]:'';if(!current||String(current).toLowerCase()!==String(address).toLowerCase())void disconnect({message:t('walletChanged')});};
+ const chainChanged=chain=>{const id=typeof chain==='number'?chain:parseInt(String(chain),16);if(id!==56)void disconnect({message:t('networkChanged')});};
+ walletWatchProvider=provider;walletWatchHandlers={accountsChanged,chainChanged};
+ provider.on('accountsChanged',accountsChanged);provider.on('chainChanged',chainChanged);
+}
+async function disconnect(options){
+ const message=options?.message||'';
  try{if(token)await api('/api/auth/logout',{method:'POST'});}catch(e){}
- token='';wallet='';profile=null;activeProvider=null;passwordSet=false;passwordVerified=false;
- storage.del('fly-social-token');storage.del('fly-social-wallet');resetAccountForm();say('');
+ await clearWalletWatch();
+ if(window.fiWalletConnectActive&&typeof window.fiDisconnectWalletConnect==='function'){
+  try{await window.fiDisconnectWalletConnect();}catch(e){}
+ }
+ token='';wallet='';profile=null;activeProvider=null;passwordSet=false;passwordVerified=false;activeProfileHandle='';activeConnectionKind='';
+ storage.del('fly-social-token');storage.del('fly-social-wallet');resetAccountForm();say(message,!!message);
 }
 async function restoreSession(){
  token=storage.get('fly-social-token');wallet=storage.get('fly-social-wallet');
@@ -692,14 +725,15 @@ function usernameLooksValid(value){return /^[a-z0-9_]{3,24}$/i.test(value);}
 async function checkUsername(){
  const value=$('accountHandle').value.trim().toLowerCase();
  const hint=$('usernameHint');
- if(passwordSet){hint.textContent='';return;}
- if(!usernameLooksValid(value)){hint.textContent=value?t('badUsername'):'';hint.className='hint bad';return;}
+ if(passwordSet){hint.textContent='';return true;}
+ if(!usernameLooksValid(value)){hint.textContent=value?t('badUsername'):'';hint.className='hint bad';return false;}
  hint.textContent=t('checking');hint.className='hint';
  try{
   const result=await api('/api/handles/check?handle='+encodeURIComponent(value),{method:'GET'});
-  if($('accountHandle').value.trim().toLowerCase()!==value)return;
+  if($('accountHandle').value.trim().toLowerCase()!==value)return false;
   hint.textContent=result.available?t('available'):t('taken');hint.className='hint '+(result.available?'good':'bad');handleCheckValue=result.available?value:'';
- }catch(error){hint.textContent=error.message;hint.className='hint bad';}
+  return !!result.available;
+ }catch(error){hint.textContent=error.message;hint.className='hint bad';handleCheckValue='';return false;}
 }
 $('accountHandle').addEventListener('input',()=>{
  if(passwordSet)return;
@@ -718,7 +752,7 @@ $('accountForm').addEventListener('submit',async event=>{
    const result=await api('/api/auth/password',{method:'POST',body:{handle,password}});
    profile=result.profile;await finishSignIn();
   }else{
-   if(handleCheckValue!==handle)await checkUsername();
+   if(handleCheckValue!==handle){const available=await checkUsername();if(!available)throw new Error($('usernameHint').textContent||t('taken'));}
    if(handleCheckValue!==handle)throw new Error(t('taken'));
    const result=await api('/api/profile/create',{method:'POST',body:{handle,password}});
    profile=result.profile;passwordSet=true;passwordVerified=true;
@@ -807,7 +841,7 @@ $('feedApp').addEventListener('click',async event=>{
  }
  const mark=event.target.closest('[data-notification-id]');
  if(mark){mark.disabled=true;try{await api('/api/notifications/'+encodeURIComponent(mark.dataset.notificationId)+'/read',{method:'PATCH'});await loadNotifications();}
-  catch(error){$('notificationsStatus').textContent=error.message||tx('loadError');}return;}
+  catch(error){$('notificationsStatus').textContent=error.message||tx('loadError');}finally{mark.disabled=false;}return;}
  const follow=event.target.closest('[data-follow-handle]');
  if(follow){follow.disabled=true;const was=follow.dataset.following==='true';
   try{await performFollow(follow.dataset.followHandle,was?'DELETE':'POST');}
