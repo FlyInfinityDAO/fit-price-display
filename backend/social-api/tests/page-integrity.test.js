@@ -5,27 +5,30 @@ import { fileURLToPath } from 'node:url';
 
 const root = new URL('../../../', import.meta.url);
 const pagePath = fileURLToPath(new URL('creator-arena/index.html', root));
+const qaPagePath = fileURLToPath(new URL('social-qa/index.html', root));
 const themePath = fileURLToPath(new URL('creator-arena/social-brand-theme.css', root));
 const ambientPath = fileURLToPath(new URL('ambient-motion.css', root));
 const html = readFileSync(pagePath, 'utf8');
+const qaHtml = readFileSync(qaPagePath, 'utf8');
 const theme = readFileSync(themePath, 'utf8');
 const ambient = readFileSync(ambientPath, 'utf8');
 
 test('every Social page DOM lookup resolves to an element in the page', () => {
-  const ids = new Set([...html.matchAll(/\\bid=["']([^"']+)["']/g)].map(match => match[1]));
-  const lookups = new Set([...html.matchAll(/\\$\\(["']([^"']+)["']\\)/g)].map(match => match[1]));
+  const ids = new Set([...html.matchAll(/\\bid="([^"]+)"/g)].map(match => match[1]));
+  const lookups = new Set([...html.matchAll(/\\$\\("([^"]+)"\\)/g)].map(match => match[1]));
   const missing = [...lookups].filter(id => !ids.has(id));
   assert.deepEqual(missing, [], 'Missing DOM IDs break Social UI event handlers and login flows');
 });
 
-test('all eight supported languages contain the same authentication translation keys', () => {
+test('all eight supported languages contain matching authentication keys', () => {
   const languages = ['en', 'fa', 'ar', 'tr', 'ru', 'zh', 'es', 'pt'];
   const lines = html.split('\\n');
   const dictionaries = new Map();
   for (const language of languages) {
-    const line = lines.find(value => new RegExp('^\\\\s*' + language + ':\\\\{').test(value));
+    const line = lines.find(value => value.trimStart().startsWith(language + ':{'));
     assert.ok(line, 'Missing authentication dictionary: ' + language);
-    const keys = [...line.matchAll(/(?:^|[,\\{])([A-Za-z][A-Za-z0-9_]*):(?=['"])/g)].map(match => match[1]);
+    const body = line.slice(line.indexOf('{') + 1);
+    const keys = [...body.matchAll(/(?:^|,)([A-Za-z][A-Za-z0-9_]*):/g)].map(match => match[1]);
     dictionaries.set(language, new Set(keys));
   }
   const baseline = dictionaries.get('en');
@@ -37,43 +40,57 @@ test('all eight supported languages contain the same authentication translation 
   }
 });
 
-test('post cards format the server-provided creation timestamp instead of always saying now', () => {
-  assert.match(html, /function formatPostTime\\(timestamp\\)/);
-  assert.match(html, /formatPostTime\\(post\\.createdAt\\)/);
-  assert.match(html, /new Intl\\.RelativeTimeFormat\\(lang/);
-  assert.doesNotMatch(html, /date\\.textContent=t\\('timeNow'\\)/);
+test('post cards use each post creation timestamp and localized relative time', () => {
+  assert.ok(html.includes('function formatPostTime(timestamp)'));
+  assert.ok(html.includes('formatPostTime(post.createdAt)'));
+  assert.ok(html.includes('new Intl.RelativeTimeFormat(lang'));
+  assert.ok(!html.includes("date.textContent=t('timeNow')"));
 });
 
 test('switching languages refreshes the authenticated dynamic view', () => {
-  assert.match(html, /if\\(passwordVerified\\)\\{refreshCurrentSocialView\\(\\)\\.catch\\(showCurrentViewError\\);refreshNotificationBadge\\(\\);\\}/);
+  assert.ok(html.includes('if(passwordVerified){refreshCurrentSocialView().catch(showCurrentViewError);refreshNotificationBadge();}'));
 });
 
-test('following or unfollowing from a followers/following list refreshes that open list', () => {
-  assert.match(html, /const connectionsWereOpen=!\\$\\('connectionsPanel'\\)\\.hidden/);
-  assert.match(html, /if\\(connectionsWereOpen&&connectionKind\\)await loadConnections\\(connectionKind\\)/);
+test('following or unfollowing from a followers/following list refreshes the open list', () => {
+  assert.ok(html.includes("const connectionsWereOpen=!$('connectionsPanel').hidden"));
+  assert.ok(html.includes('if(connectionsWereOpen&&connectionKind)await loadConnections(connectionKind)'));
 });
 
-test('Social logout clears the active WalletConnect session and watcher listeners', () => {
-  assert.match(html, /window\\.fiWalletConnectActive&&typeof window\\.fiDisconnectWalletConnect==='function'/);
-  assert.match(html, /async function clearWalletWatch\\(\\)/);
-  assert.match(html, /walletChanged/);
-  assert.match(html, /networkChanged/);
+test('own posts do not display a repost action that the API rejects', () => {
+  assert.ok(html.includes('if(!post.creator?.wallet||post.creator.wallet.toLowerCase()!==wallet.toLowerCase())'));
+});
+
+test('Social logout clears WalletConnect session and account/network listeners', () => {
+  assert.ok(html.includes("window.fiWalletConnectActive&&typeof window.fiDisconnectWalletConnect==='function'"));
+  assert.ok(html.includes('async function clearWalletWatch()'));
+  assert.ok(html.includes('walletChanged'));
+  assert.ok(html.includes('networkChanged'));
 });
 
 test('the Social page retains responsive dashboard assets and accessible live status regions', () => {
-  assert.match(html, /name=["']viewport["']/);
-  assert.match(html, /social-brand-theme\\.css/);
-  assert.match(html, /ambient-motion\\.css/);
-  assert.match(theme, /background-mobile\\.png/);
-  assert.match(theme, /@media\\(max-width:560px\\)/);
-  assert.match(theme, /@media\\(max-width:390px\\)/);
-  assert.match(ambient, /fiStarDrift/);
-  assert.match(html, /id=["']socialAuthStatus["'][^>]*role=["']status["'][^>]*aria-live=["']polite["']/);
+  assert.ok(html.includes('name="viewport"'));
+  assert.ok(html.includes('social-brand-theme.css'));
+  assert.ok(html.includes('ambient-motion.css'));
+  assert.ok(theme.includes('background-mobile.png'));
+  assert.ok(theme.includes('@media(max-width:560px)'));
+  assert.ok(theme.includes('@media(max-width:390px)'));
+  assert.ok(ambient.includes('fiStarDrift'));
+  assert.ok(html.includes('id="socialAuthStatus"') && html.includes('role="status"') && html.includes('aria-live="polite"'));
 });
 
-test('Social page includes only one source of inline application JavaScript and versioned bridge compatibility file', () => {
-  const inlineScripts = [...html.matchAll(/<script>/g)];
-  assert.equal(inlineScripts.length, 1);
-  assert.match(html, /walletconnect-bridge\\.js\\?v=/);
-  assert.match(html, /social-api\\.js\\?v=/);
+test('the isolated QA page uses synthetic mock APIs and cannot connect to live wallet or API', () => {
+  assert.ok(qaHtml.includes("location.hostname==='fly-social-qa.pages.dev'"));
+  assert.ok(qaHtml.includes('async function qaApi(path,options)'));
+  assert.ok(qaHtml.includes('if(QA_MODE)return qaApi(path,options)'));
+  assert.ok(qaHtml.includes('id="qaTestLogin"'));
+  assert.ok(qaHtml.includes('MOCK DATA ONLY'));
+  assert.ok(!qaHtml.includes('walletconnect-bridge.js'));
+  assert.ok(!qaHtml.includes('social-api.js?v='));
+});
+
+test('both Social entry points retain one inline application script and versioned live-page compatibility script', () => {
+  assert.equal([...html.matchAll(/<script>/g)].length, 1);
+  assert.ok(html.includes('walletconnect-bridge.js?v='));
+  assert.ok(html.includes('social-api.js?v='));
+  assert.equal([...qaHtml.matchAll(/<script>/g)].length, 1);
 });
