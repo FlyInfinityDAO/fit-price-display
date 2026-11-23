@@ -1,100 +1,87 @@
-# Fly Infinity Social API
+# Fly Infinity Social API v2
 
-Independent backend for the Fly Infinity Social / Creator Arena page. It does not share a Worker, D1 database, R2 bucket, authentication table, or quota table with Fly AI, Image Studio, Audio Studio, or the games.
+Independent backend for the Fly Infinity Social page. It uses its own Worker, D1 database and private Backblaze B2 bucket. It does not share authentication, quotas, storage or database tables with Fly AI, Image Studio, Audio Studio or games.
 
 ## Dedicated resources
 
 - Worker: `fly-infinity-social-api`
 - D1 database: `fly-infinity-social-db` (EU jurisdiction)
 - D1 ID: `64b672c3-cce6-418e-a0d2-da8d8ee3df7f`
-- Object storage: Backblaze B2 S3-compatible API (private bucket)
+- Image storage: Backblaze B2 S3-compatible private bucket
 - Wrangler config: `backend/wrangler.social-api.toml`
-- Migration: `backend/social-api/migrations/0001_init.sql`
+- Migrations: `backend/social-api/migrations/`
 
-The Worker and D1 database are already created. The Social D1 migration has been applied and verified: all 12 Social tables and both seed challenges are present. Images and audio are stored in a private Backblaze B2 bucket, accessed only by the Worker through a bucket-restricted application key. Cloudflare R2 is not required.
+## User experience and access
 
-## Account access
+1. Initially the page shows only Fly Infinity branding, language selection and wallet connection. It does not load a public feed or sample posts.
+2. The user connects a wallet on BNB Smart Chain (chain ID 56) and signs a short-lived one-use login challenge.
+3. The Worker verifies the signature and checks `Owner_Exists(wallet)` in the Fly Infinity Network contract. The signature is a free off-chain message; it never authorizes a transaction, token transfer or spending.
+4. After wallet verification, the user creates a username and password, or enters existing credentials. The feed is unavailable until password authentication succeeds.
+5. New usernames are normalized to lowercase and must be 3–24 English letters, digits or underscores. A unique case-insensitive D1 index/constraint prevents duplicates; `GET /api/handles/check` is only a convenience check and the database remains authoritative.
+6. Passwords must be 10–128 characters. They are stored as PBKDF2-SHA-256 hashes with a per-user random salt and 310,000 iterations, never as plaintext.
+7. To recover a password, the wallet first obtains a short-lived recovery challenge and signs its explicit recovery message. The signature is verified server-side and the one-use nonce is consumed before the new password is saved. This is not a blockchain transaction and costs no gas. All prior sessions for that wallet are revoked and a new password-verified session is issued.
 
-- The user signs a short-lived, one-use challenge with their BNB Smart Chain wallet.
-- The Worker verifies the signature and checks `Owner_Exists(wallet)` on the Fly Infinity Network contract.
-- No minimum FIT balance is required by this initial Social access policy.
-- The signature is authentication only. It does not authorize token transfers, transactions, or spending.
-- Opaque session tokens are stored in D1 as SHA-256 hashes; raw session tokens are returned only to the signing browser.
+## Supported social features
 
-## Storage and media
-
-- Structured records, profile details, feed metadata, likes, follows, challenge submissions, votes, and reports live in D1.
-- Images and audio files live in a private R2 bucket, never in D1.
-- The Worker accepts PNG/JPEG/WebP and supported MP3/WAV/OGG/M4A/AAC audio.
-- Image limit: 15 MiB. Audio limit: 30 MiB.
-- File MIME type and binary signature are checked before the object is accepted.
-- Uploads are staged for two hours. Expired staged objects are cleaned up opportunistically during later uploads; no Cloudflare Cron Trigger is required.
-- An uploaded file is served only after it is attached to a published, non-restricted creation. The R2 bucket is not public.
-- Deleting a post hides it and its media from public retrieval. Physical object cleanup is a later retention/moderation operation.
+- Posts contain optional text (up to 2,000 characters) and an optional image. Text-only, image-only and text-plus-image posts are supported.
+- Images: PNG, JPEG or WebP, up to 15 MiB; the Worker checks MIME type and binary signature.
+- Persistent likes: unique per wallet per original post.
+- Persistent reposts: a repost is a separate feed event referencing the original post. The original post ID, image, text and original creator remain unchanged; the feed labels the wallet that reposted it. Duplicate reposts by the same wallet are prevented by a D1 unique constraint.
+- Users can delete their own original posts.
+- There is no comments feature, audio, prompt library, creator directory, challenge or voting UI/API in the v2 public surface.
 
 ## API overview
 
-### Public
+### Health and account access
 - `GET /api/health`
-- `GET /api/feed?type=image|audio|prompt&cursor=...`
-- `GET /api/posts/:postId`
-- `GET /api/prompts`
-- `GET /api/challenges`
-- `GET /api/creators`
-- `GET /api/creators/:handle`
-- `GET /api/media/:key` (only media attached to a published creation)
-
-### Wallet authentication
-- `POST /api/auth/challenge` — JSON: `{ "address": "0x..." }`
-- `POST /api/auth/verify` — JSON: `{ "address": "0x...", "nonce": "...", "signature": "0x..." }`
+- `POST /api/auth/challenge` — `{ "address": "0x..." }`
+- `POST /api/auth/verify` — `{ "address": "0x...", "nonce": "...", "signature": "0x..." }`
+- `POST /api/profile/create` — `{ "handle": "...", "password": "..." }`
+- `GET /api/handles/check?handle=...`
+- `POST /api/auth/password` — `{ "handle": "...", "password": "..." }`
+- `POST /api/auth/password/recovery/challenge`
+- `POST /api/auth/password/recovery/verify` — `{ "nonce": "...", "signature": "0x...", "password": "..." }`
 - `GET /api/me`
-- `PUT /api/profile` — JSON: `{ "handle": "...", "displayName": "...", "bio": "...", "language": "en" }`
+- `POST /api/auth/logout`
 
-Protected calls use `Authorization: Bearer <sessionToken>`.
+### Feed and posts
+- `GET /api/feed?limit=30` — requires a password-verified session.
+- `POST /api/media/upload` — binary image body with PNG/JPEG/WebP Content-Type.
+- `POST /api/posts` — `{ "text": "...", "mediaKey": "uploads/..." }`; either field may be omitted, but not both.
+- `DELETE /api/posts/:postId`
+- `POST|DELETE /api/posts/:postId/like`
+- `POST|DELETE /api/posts/:postId/repost`
+- `GET /api/media/:key` — image is served only if attached to a published, unrestricted original post.
 
-### Publishing and community
-- `POST /api/media/upload` — raw file body; `Content-Type` must match the file signature.
-- `POST /api/posts` — JSON: `{ "title": "...", "mediaType": "image|audio|prompt", "description": "...", "prompt": "...", "mediaKey": "...", "sourcePostId": "...", "challengeId": "..." }`
-- `DELETE /api/posts/:postId` — delete your own creation.
-- `POST /api/posts/:postId/like` and `DELETE /api/posts/:postId/like`
-- `POST /api/creators/:walletAddress/follow` and `DELETE /api/creators/:walletAddress/follow`
-- `POST /api/challenges/:challengeId/vote` — JSON: `{ "postId": "..." }`
-- `POST /api/reports` — report a post or creator.
+Protected endpoints require `Authorization: Bearer <sessionToken>`. Posting, uploads, likes, reposts and feed access require a password-verified session. Username checks, profile creation, login and recovery require a valid wallet-authenticated session.
 
-Each wallet may cast only one vote per challenge; the API rejects votes for a creator's own entry. These limits are enforced by D1 constraints and server-side checks, not only by the browser. Remix posts store the source post, source wallet and original title so attribution survives even when a creator later changes their display name.
+## Storage and privacy
 
-## Moderation and launch scope
+- Usernames and account metadata, password hashes, session hashes, posts, likes, repost references and recovery nonces are stored in Social D1 only.
+- Original images are kept in the private Backblaze B2 bucket; the B2 key is available only to the Worker and is never sent to the browser.
+- The Worker serves image bytes only after D1 confirms that the image is attached to a published post.
+- Old sessions become password-unverified after migration; existing wallet owners must create/set their Social password once. No existing profile or post is deleted by migration 0002.
+- Moderation/report tooling is not presented as a live capability.
 
-The initial backend stores user reports and keeps publication/moderation state on every post. It does not yet provide a moderator dashboard or automated content classifier. Do not describe the report queue as actively moderated until moderator tooling and an accountable moderation process are in place.
+## Backblaze B2
 
-Creator challenges, voting, profiles, posts, follows and likes are persistent. Creator marketplace, paid sales, on-chain payments, tipping, NFT minting and creator payouts are deliberately out of scope.
+Use one private bucket and an application key restricted to the bucket and the `uploads/` prefix. Required key capabilities: `readFiles`, `writeFiles`, `deleteFiles`. Do not use the Master Application Key.
 
-## Backblaze B2 setup
+The GitHub Actions repository secrets are:
+- `FLY_SOCIAL_B2_ENDPOINT`
+- `FLY_SOCIAL_B2_BUCKET`
+- `FLY_SOCIAL_B2_KEY_ID`
+- `FLY_SOCIAL_B2_APPLICATION_KEY`
 
-Create a free Backblaze account at https://www.backblaze.com/sign-up/s3. Backblaze advertises 10 GB of always-free storage and free egress up to 3x average monthly storage. A payment method is not required to start. Use a **Private** bucket; public-bucket setup has separate payment-history requirements.
+Cloudflare deployment uses `CLOUDFLARE_SOCIAL_API_TOKEN` when available and falls back to the existing `CLOUDFLARE_API_TOKEN`. Do not change the shared token for Social deployment.
 
-Create one private bucket in the account's region, then create a standard Application Key restricted to that bucket and the `uploads/` file-name prefix. Grant only the capabilities needed for this Worker:
-- `readFiles`
-- `writeFiles`
-- `deleteFiles`
+## Deploy and migrations
 
-Do not use the master application key. Save the Application Key ID and Application Key because the latter is shown only once. Copy the bucket's S3 Endpoint URL (for example, `https://s3.us-west-004.backblazeb2.com`).
-
-In GitHub repository Settings → Secrets and variables → Actions, create these four repository secrets:
-- `FLY_SOCIAL_B2_ENDPOINT` — the S3 Endpoint URL shown in the bucket details
-- `FLY_SOCIAL_B2_BUCKET` — the exact private bucket name
-- `FLY_SOCIAL_B2_KEY_ID` — the scoped Application Key ID
-- `FLY_SOCIAL_B2_APPLICATION_KEY` — the scoped Application Key value
-
-Keep the existing `CLOUDFLARE_API_TOKEN` unchanged. The existing repository variable `CLOUDFLARE_ACCOUNT_ID` remains required for the Worker deploy.
-
-## Deploy
-
-GitHub Actions workflow: `.github/workflows/fly-social-api-provision.yml` (manual dispatch only).
-
-After the four B2 secrets and the dedicated Cloudflare Worker deploy token `CLOUDFLARE_SOCIAL_API_TOKEN` are saved, run **Actions → Fly Infinity Social API — deploy → Run workflow** on `main`. The workflow runs tests, uploads the B2 credentials to this Worker as encrypted runtime secrets, deploys only `fly-infinity-social-api`, then verifies health, CORS and input validation.
-
-The B2 key is never exposed to browser code, source files or workflow output. Media is stored in a private bucket and served only through the Social Worker after D1 confirms it belongs to a published, unrestricted post. Do not paste any token or application key into chat or source code.
+- Tests: `.github/workflows/fly-social-api-check.yml`
+- Manual deploy: `.github/workflows/fly-social-api-provision.yml`
+- The deploy workflow applies pending migrations remotely before deploying only `fly-infinity-social-api`.
+- The workflow verifies the private B2 bucket with a temporary write/read/delete probe, deploys the Worker and checks health, CORS and wallet validation.
+- Do not deploy or alter other Fly Infinity Workers or databases.
 
 ## Local validation
 
@@ -106,4 +93,6 @@ node --check social-api/src/index.js
 node --check social-api/src/auth.js
 node --check social-api/src/validation.js
 node --test social-api/tests/*.test.js
+python3 social-api/tests/schema-smoke.py
+npx wrangler deploy --dry-run --outdir /tmp/social-api-dry-run --config=wrangler.social-api.toml
 ```
