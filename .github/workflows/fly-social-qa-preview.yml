@@ -163,6 +163,9 @@ jobs:
           mkdir -p "$STAGE/creator-arena-qa"
           cp -a creator-arena-qa/. "$STAGE/creator-arena-qa/"
           cp creator-arena/index.html "$STAGE/creator-arena-qa/index.html"
+          cp creator-arena/social-brand-theme.css "$STAGE/creator-arena-qa/social-brand-theme.css"
+          cp creator-arena/social-api.css "$STAGE/creator-arena-qa/social-api.css"
+          cp creator-arena/social-api.js "$STAGE/creator-arena-qa/social-api.js"
           python3 - <<'PY'
           from pathlib import Path
           html = Path("creator-arena-qa/index.html").read_text(encoding="utf-8")
