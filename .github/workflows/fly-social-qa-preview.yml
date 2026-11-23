@@ -223,8 +223,8 @@ jobs:
             --commit-hash="$GITHUB_SHA" \
             --commit-message="Fly Infinity Social QA preview" 2>&1)"
           printf '%s\n' "$DEPLOY_OUTPUT"
-          QA_ORIGIN="$(printf '%s\n' "$DEPLOY_OUTPUT" | grep -Eo 'https://[[:alnum:]-]+[.]fly-social-qa-preview[.]pages[.]dev' | head -n 1)"
-          test -n "$QA_ORIGIN" || { echo "::error::Could not resolve the immutable Cloudflare Pages preview URL"; exit 1; }
+          QA_ORIGIN="https://$QA_PAGES_BRANCH.$QA_PAGES_PROJECT.pages.dev"
+          printf '%s\n' "$DEPLOY_OUTPUT" | grep -Fq "$QA_ORIGIN" || { echo "::error::Stable QA Pages alias was not returned by Cloudflare"; exit 1; }
           sed -i "s|^APP_ORIGIN = .*|APP_ORIGIN = \"$QA_ORIGIN\"|" backend/wrangler.social-qa.toml
           echo "QA_ORIGIN=$QA_ORIGIN" >> "$GITHUB_ENV"
           echo "CORS origin pinned to this exact immutable Pages deployment: $QA_ORIGIN"
