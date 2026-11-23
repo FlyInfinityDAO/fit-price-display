@@ -28,7 +28,7 @@
 
   const items = [
     { id: "dapp", path: "dapp.html", icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5z"/><path d="m4.5 7.7 7.5 4.4 7.5-4.4M12 12v8.5"/></svg>' },
-    { id: "media", path: "creator-arena/index.html", icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg>' },
+    { id: "media", path: window.FLY_SOCIAL_PATH || "creator-arena/index.html", icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-5-5L5 20"/></svg>' },
     { id: "dashboard", path: "index.html", icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13a9 9 0 1 1 18 0"/><path d="M12 13 17 8M5 18h14"/></svg>' },
     { id: "ai", path: "fly-ai/index.html", icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/><circle cx="12" cy="12" r="5"/></svg>' },
     { id: "games", path: "games/index.html", icon: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9h12a4 4 0 0 1 3.8 5.2l-1 3.2a2 2 0 0 1-3.2 1l-3-2.4H9.4l-3 2.4a2 2 0 0 1-3.2-1l-1-3.2A4 4 0 0 1 6 9Z"/><path d="M7 12v4m-2-2h4m7-1h.01M18 15h.01"/></svg>' }
