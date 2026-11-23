@@ -14,15 +14,15 @@ const theme = readFileSync(themePath, 'utf8');
 const ambient = readFileSync(ambientPath, 'utf8');
 
 test('every Social page DOM lookup resolves to an element in the page', () => {
-  const ids = new Set([...html.matchAll(/\\bid="([^"]+)"/g)].map(match => match[1]));
-  const lookups = new Set([...html.matchAll(/\\$\\("([^"]+)"\\)/g)].map(match => match[1]));
+  const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]));
+  const lookups = new Set([...html.matchAll(/\$\("([^"]+)"\)/g)].map(match => match[1]));
   const missing = [...lookups].filter(id => !ids.has(id));
   assert.deepEqual(missing, [], 'Missing DOM IDs break Social UI event handlers and login flows');
 });
 
 test('all eight supported languages contain matching authentication keys', () => {
   const languages = ['en', 'fa', 'ar', 'tr', 'ru', 'zh', 'es', 'pt'];
-  const lines = html.split('\\n');
+  const lines = html.split('\n');
   const dictionaries = new Map();
   for (const language of languages) {
     const line = lines.find(value => value.trimStart().startsWith(language + ':{'));
@@ -88,7 +88,7 @@ test('the isolated QA page uses synthetic mock APIs and cannot connect to live w
   assert.ok(!qaHtml.includes('social-api.js?v='));
 });
 
-test('both Social entry points retain one inline application script and versioned live-page compatibility script', () => {
+test('both Social entry points retain one inline application script and versioned bridge compatibility on the live page', () => {
   assert.equal([...html.matchAll(/<script>/g)].length, 1);
   assert.ok(html.includes('walletconnect-bridge.js?v='));
   assert.ok(html.includes('social-api.js?v='));
