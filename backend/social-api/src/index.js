@@ -180,6 +180,16 @@ export function extractBearerToken(authorization) {
 
 async function getSession(request, env, required = false, requirePassword = true) {
   const token = extractBearerToken(request.headers.get('Authorization'));
+  // The no-wallet demo session is compiled into the isolated QA branch only.
+  // The production Worker has no SOCIAL_QA_DEMO_MODE binding and will reject it.
+  if (env.SOCIAL_QA_DEMO_MODE === 'true' && token === 'fly-social-qa-demo-v1') {
+    return {
+      address: '0x1111111111111111111111111111111111111111',
+      expiresAt: now() + 86400,
+      tokenHash: 'social-qa-demo-only',
+      passwordVerified: true
+    };
+  }
   if (!token) return required ? { error: 'Connect your Fly Infinity wallet to continue', status: 401 } : null;
   if (token.length > 256) return { error: 'Invalid session', status: 401 };
   const tokenHash = await hashSessionToken(token);
