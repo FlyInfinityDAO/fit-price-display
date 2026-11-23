@@ -94,5 +94,6 @@ test('preflight returns allowed methods and authorization headers', async () => 
   assert.equal(response.status, 204);
   assert.match(response.headers.get('access-control-allow-methods'), /POST/);
   assert.match(response.headers.get('access-control-allow-methods'), /DELETE/);
+  assert.match(response.headers.get('access-control-allow-methods'), /PATCH/);
   assert.match(response.headers.get('access-control-allow-headers'), /Authorization/);
 });
