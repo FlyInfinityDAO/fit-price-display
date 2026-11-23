@@ -15,8 +15,13 @@ test('account creation requires a valid unique-ready username shape and strong-l
   assert.deepEqual(parseAccountInput({ handle: 'Creator_01', password: 'this-is-a-safe-password' }), {
     handle: 'creator_01', password: 'this-is-a-safe-password'
   });
-  assert.throws(() => parseAccountInput({ handle: 'creator1', password: 'short' }), /10–128/);
-  assert.throws(() => parsePasswordInput({ password: 'x'.repeat(129) }), /10–128/);
+  assert.throws(() => parseAccountInput({ handle: 'creator1', password: 'short' }), /6–128/);
+  assert.deepEqual(parseAccountInput({ handle: 'creator1', password: 'abcdef' }), {
+    handle: 'creator1', password: 'abcdef'
+  });
+  assert.throws(() => parsePasswordInput({ password: '12345' }), /6–128/);
+  assert.equal(parsePasswordInput({ password: 'abcdef' }), 'abcdef');
+  assert.throws(() => parsePasswordInput({ password: 'x'.repeat(129) }), /6–128/);
 });
 
 test('post input accepts text-only, image-only and combined posts, but rejects empty or unsupported media', () => {
