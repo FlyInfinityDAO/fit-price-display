@@ -368,6 +368,8 @@ function translate(next){
 function toast(message){say(message,false);window.setTimeout(()=>{if($('socialAuthStatus').textContent===message)say('');},3300);}
 function friendlyApiError(message,status){
  const value=String(message||'');
+ if(/username or password is incorrect/i.test(value))return t('wrongPassword');
+ if(/this wallet already has a password/i.test(value))return t('existing');
  if(status===401||/session has expired|connect your Fly Infinity wallet to continue|enter your Social account password/i.test(value))return t('sessionExpired');
  if(status===403||/not a registered Fly Infinity Network Owner|no longer a registered/i.test(value))return t('ownerRequired');
  if(status===429||/too many|limit reached/i.test(value))return t('rateLimited');
@@ -948,5 +950,6 @@ initialize();
 </script>
 <script src="../walletconnect-bridge.js?v=20261123-social3-direct"></script>
 <script src="social-api.js?v=20261123-social3-direct"></script>
+<script src="../global-bottom-nav.js?v=20261123-social-qa"></script>
 </body>
 </html>
