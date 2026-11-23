@@ -25,7 +25,7 @@ const asBool = value => Number(value || 0) > 0;
 function corsHeaders(env) {
   return {
     'Access-Control-Allow-Origin': env.APP_ORIGIN || DEFAULT_ORIGIN,
-    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+    'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type,Authorization',
     'Access-Control-Expose-Headers': 'Content-Length,ETag',
     'Vary': 'Origin'
