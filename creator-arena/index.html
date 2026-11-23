@@ -841,6 +841,7 @@ async function initialize(){
  let saved='en';try{saved=localStorage.getItem('fit_lang')||((navigator.language||'en').slice(0,2));}catch(e){}
  translate(translations[saved]?saved:'en');
  const languageButton=$('langBtn'),languageDropdown=$('langDropdown');
+ document.body.appendChild(languageDropdown);
  function closeLanguageMenu(){languageDropdown.classList.remove('open');languageButton.setAttribute('aria-expanded','false');}
  languageButton.addEventListener('click',event=>{
   event.stopPropagation();
@@ -852,7 +853,7 @@ async function initialize(){
   const item=event.target.closest('[data-lang]');if(!item)return;
   event.preventDefault();translate(item.dataset.lang);closeLanguageMenu();
  });
- document.addEventListener('click',event=>{if(!event.target.closest('.language-control'))closeLanguageMenu();});
+ document.addEventListener('click',event=>{if(!event.target.closest('.language-control')&&!event.target.closest('#langDropdown'))closeLanguageMenu();});
  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&languageDropdown.classList.contains('open')){closeLanguageMenu();languageButton.focus();}});
 
  try{
