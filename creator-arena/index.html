@@ -335,6 +335,7 @@ pt:{feed:'Feed',explore:'Explorar',notifications:'Notificações',profile:'Perfi
 const tx=key=>(socialLabels[lang]||socialLabels.en)[key]||socialLabels.en[key]||key;
 const $=id=>document.getElementById(id);
 const API=(window.FLY_INFINITY_SOCIAL_API||'https://fly-infinity-social-api.flyinfinityplatform.workers.dev').replace(/\/$/,'');
+const SOCIAL_QA_DEMO_MODE=window.FLY_INFINITY_SOCIAL_QA_MODE===true;
 let lang='en',apiReady=false,token='',wallet='',profile=null,activeProvider=null,passwordSet=false,passwordVerified=false,handleCheckTimer=null,handleCheckValue='',handleCheckSequence=0,walletEventHandlers=null,walletEventProvider=null;
 let activeSocialView='feed',activeProfileHandle='',currentProfileData=null;
 const storage={
@@ -963,7 +964,18 @@ async function initialize(){
   if(!health.ok)throw new Error('health');
   const payload=await health.json();
   if(!payload.ok||payload.service!=='Fly Infinity Social API')throw new Error('health');
-  apiReady=true;await restoreSession();
+  apiReady=true;
+  if(SOCIAL_QA_DEMO_MODE){
+   token=String(window.FLY_INFINITY_SOCIAL_QA_TOKEN||'');
+   if(!token)throw new Error('QA demo token is missing');
+   wallet=String(window.FLY_INFINITY_SOCIAL_QA_WALLET||'0x1111111111111111111111111111111111111111');
+   profile={handle:'flytester',displayName:'Fly QA Tester'};
+   passwordSet=true;passwordVerified=true;
+   await finishSignIn();
+   $('socialAuthStatus').dataset.qaMode='true';
+  }else{
+   await restoreSession();
+  }
  }catch(error){resetAccountForm();say(t('apiOffline'),true);}
 }
 initialize();
