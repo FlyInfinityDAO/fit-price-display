@@ -1,5 +1,14 @@
 /* Fly Infinity Social — shared dashboard visual system */
 :root{
+  --bg:#0F0F0F;
+  --panel:rgba(10,16,16,.48);
+  --line:rgba(0,200,150,.25);
+  --gold:#D4AF37;
+  --mint:#00C896;
+  --text:#F2F7F5;
+  --muted:#AABBB4;
+  --red:#FF9B9B;
+  color-scheme:dark;
   --fi-social-bg:#0F0F0F;
   --fi-social-green:#00C896;
   --fi-social-green-bright:#25D79A;
