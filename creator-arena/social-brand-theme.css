@@ -25,7 +25,7 @@ body{
 }
 body::before{
   content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-image:linear-gradient(rgba(15,15,15,.78),rgba(15,15,15,.78)),url("../background-desktop.png");
+  background-image:linear-gradient(rgba(15,15,15,.88),rgba(15,15,15,.88)),url("../background-desktop.png");
   background-size:cover;background-position:center center;background-repeat:no-repeat;
   transform:translate3d(0,0,0);will-change:transform;
 }
@@ -153,14 +153,14 @@ h1,.feed-head h2,.view-title h3{
 .feed-app{width:min(760px,100%)}
 .feed-head{
   position:relative;gap:15px;margin:2px 0 18px;padding:13px 16px;
-  border:1px solid rgba(0,200,150,.24);border-radius:22px;background:rgba(10,16,16,.68);
+  border:1px solid rgba(0,200,150,.24);border-radius:22px;background:rgba(10,16,16,.78);
   -webkit-backdrop-filter:blur(22px) saturate(145%);backdrop-filter:blur(22px) saturate(145%);
   box-shadow:0 12px 34px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.06);
 }
 .feed-head h2{font-size:19px}
 .feed-user .handle{color:#C4F6E1}
 .feed-user button{min-height:38px;padding:8px 12px}
-.composer{border-color:rgba(212,175,55,.28);border-radius:22px;background:rgba(10,18,18,.70)}
+.composer{border-color:rgba(212,175,55,.28);border-radius:22px;background:rgba(10,18,18,.80)}
 .composer textarea{background:rgba(3,10,10,.58)}
 .file-pick{min-height:42px;padding:8px 11px;border:1px solid rgba(0,200,150,.24);border-radius:12px;background:rgba(0,200,150,.065)}
 .file-pick input::file-selector-button{
@@ -168,13 +168,13 @@ h1,.feed-head h2,.view-title h3{
   background:linear-gradient(135deg,rgba(212,175,55,.18),rgba(0,200,150,.08));color:#F0DFA7;
 }
 .post,.explore-tile,.connection-row,.notification-row,.profile-card,.profile-stats{
-  border-color:rgba(0,200,150,.20);background:rgba(10,18,18,.70);
+  border-color:rgba(0,200,150,.20);background:rgba(10,18,18,.80);
   -webkit-backdrop-filter:blur(23px) saturate(155%);backdrop-filter:blur(23px) saturate(155%);
   transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease,background .28s ease;
 }
 .post{border-radius:20px}.explore-tile{border-radius:18px}
 .profile-card{border-color:rgba(212,175,55,.26);border-radius:21px}
-.profile-stats{border-radius:17px;background:rgba(10,18,18,.66)}
+.profile-stats{border-radius:17px;background:rgba(10,18,18,.78)}
 .connection-row,.notification-row{border-radius:16px}
 .post-author strong,.connection-main strong{color:#EDF8F2}
 .post-text,.profile-info .profile-bio,.notification-copy{color:#D8E7DF}
@@ -196,7 +196,7 @@ h1,.feed-head h2,.view-title h3{
   position:relative;isolation:isolate;overflow:hidden;
   grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:4px 0 20px;padding:8px;
   border:1px solid rgba(220,255,241,.22);border-radius:24px;
-  background:linear-gradient(180deg,rgba(12,27,23,.62),rgba(5,13,11,.74));
+  background:linear-gradient(180deg,rgba(12,27,23,.72),rgba(5,13,11,.82));
   -webkit-backdrop-filter:blur(32px) saturate(195%);backdrop-filter:blur(32px) saturate(195%);
   box-shadow:0 12px 38px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.08),0 0 20px rgba(0,200,150,.06);
 }
@@ -252,7 +252,7 @@ html[dir=rtl] .lang-dropdown{right:auto;left:20px;transform-origin:top left}
 @media(max-width:768px){
   body{padding-left:12px;padding-right:12px}
   body::before{
-    background-image:linear-gradient(rgba(15,15,15,.78),rgba(15,15,15,.78)),url("../background-mobile.png");
+    background-image:linear-gradient(rgba(15,15,15,.88),rgba(15,15,15,.88)),url("../background-mobile.png");
     background-size:contain;background-position:center top;background-color:#0F0F0F;
   }
   .topbar{padding:11px 15px;margin-top:12px;border-radius:23px}
@@ -294,4 +294,42 @@ html[dir=rtl] .lang-dropdown{right:auto;left:20px;transform-origin:top left}
 @media(prefers-reduced-motion:reduce){
   .topbar::after,.auth-mark,.auth-mark::after,.feed-app,.auth-gate,.post,.explore-tile,.connection-row,.notification-row{animation:none!important;will-change:auto}
   .btn,.action-btn,.view-action,.feed-user button,.profile-follow,.social-nav button,.lang-btn,.lang-item{transition:none!important}
+}
+
+/* Short-height devices: compact the shared fixed nav and Social chrome so the
+   composer and view content remain reachable above the persistent navigation. */
+@media(max-height:600px){
+  body[data-ambient="social"].fi-global-nav-enabled{
+    padding-bottom:calc(78px + env(safe-area-inset-bottom,0px))!important;
+  }
+  body[data-ambient="social"] .fi-global-bottom-nav{
+    min-height:64px!important;
+    padding:4px max(8px,env(safe-area-inset-left,0px)) calc(5px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-right,0px))!important;
+    gap:4px!important;
+  }
+  body[data-ambient="social"] .fi-bottom-nav-item{
+    min-height:44px!important;
+    gap:2px!important;
+    padding:4px 2px!important;
+    font-size:9px!important;
+  }
+  body[data-ambient="social"] .fi-bottom-nav-item svg{width:18px!important;height:18px!important}
+  body[data-ambient="social"] .fi-bottom-nav-dashboard{
+    width:min(100%,54px)!important;
+    margin:-2px auto 0!important;
+    padding:3px 2px!important;
+    font-size:8px!important;
+  }
+  body[data-ambient="social"] .fi-bottom-nav-dashboard svg{width:19px!important;height:19px!important}
+  body[data-ambient="social"] .fi-bottom-nav-dashboard .fi-bottom-nav-label{font-size:7px!important}
+}
+@media(max-height:600px) and (min-width:561px){
+  body[data-ambient="social"] .topbar{margin:8px 0 12px!important;padding:8px 16px!important;min-height:50px!important}
+  body[data-ambient="social"] .brand img{width:30px!important;height:30px!important}
+  body[data-ambient="social"] main{padding:8px 0 10px!important}
+  body[data-ambient="social"] .feed-head{margin:0 0 10px!important;padding:8px 12px!important}
+  body[data-ambient="social"] .social-nav{margin:2px 0 12px!important;padding:5px!important}
+  body[data-ambient="social"] .social-nav button{min-height:40px!important;padding:5px 8px!important;gap:6px!important}
+  body[data-ambient="social"] .composer{padding:10px!important}
+  body[data-ambient="social"] .composer textarea{min-height:68px!important}
 }
