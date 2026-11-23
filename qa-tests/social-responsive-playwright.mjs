@@ -180,8 +180,8 @@ try{
       for(const rect of snapshot.content){
         assert(rect.left>=-1&&rect.right<=width+1,"content clipped at "+width+"x"+height+" in "+view);
       }
-      assert(width<=768?snapshot.background==="mobile":snapshot.background==="desktop","incorrect responsive background at "+width+"x"+height");
-      if(width<=560)assert(snapshot.innerNav.position==="sticky","Social inner navigation should be sticky on mobile at "+width+"x"+height");
+      assert(width<=768?snapshot.background==="mobile":snapshot.background==="desktop","incorrect responsive background at "+width+"x"+height);
+      if(width<=560)assert(snapshot.innerNav.position==="sticky","Social inner navigation should be sticky on mobile at "+width+"x"+height);
       report.screenshots.push({width,height,view});
       const screenshot=path.join(outDir,"social-"+width+"x"+height+"-"+view+".png");
       await page.screenshot({path:screenshot,fullPage:true,animations:"disabled"});
