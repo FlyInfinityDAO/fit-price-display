@@ -26,6 +26,8 @@ const authHeaders = {Origin:origin,Authorization:"Bearer "+token};
 async function nav(view){
   await page.locator("#feedApp .social-nav [data-social-view='"+view+"']").click();
   await page.locator("#"+(view==="notifications"?"notifications":view)+"View").waitFor({state:"visible",timeout:15000});
+  const loadedSelector={feed:"#feedList .post",explore:"#exploreGrid .explore-tile",notifications:"#notificationList .notification-row",profile:"#profileHandle"}[view];
+  if(loadedSelector)await page.locator(loadedSelector).first().waitFor({state:"visible",timeout:20000});
 }
 async function request(path,options={}){
   const response=await page.request.fetch(api+path,{...options,headers:{...authHeaders,...(options.headers||{})}});
@@ -51,7 +53,7 @@ try{
 
   // Real API actions against the isolated QA D1 and B2, not mocked browser responses.
   const ownCard=page.locator("#feedList .post").filter({has:page.locator(".post-author small").filter({hasText:"@flytester"})}).first();
-  assert(await ownCard.count()===1,"cannot locate the demo user's own post card");
+  assert(await ownCard.count()>=1,"cannot locate the demo user's own post card");
   assert(await ownCard.locator("[data-delete-id]").count()===1,"own post is missing its Delete action");
   assert(await ownCard.locator("[data-repost-id]").count()===0,"own post must not expose an invalid Repost action");
   const otherCard=page.locator("#feedList .post").filter({has:page.locator(".post-author small").filter({hasText:"@alicegreen"})}).first();
