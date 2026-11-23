@@ -204,12 +204,17 @@ jobs:
           set -euo pipefail
           curl --silent --show-error --fail --retry 10 --retry-delay 5 "$QA_WORKER_URL/api/health" | tee /tmp/social-qa-health.json
           jq -e '.ok == true and .service == "Fly Infinity Social API"' /tmp/social-qa-health.json >/dev/null
-          preflight="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
-            --request OPTIONS --header "Origin: $QA_ORIGIN" \
-            --header "Access-Control-Request-Method: POST" \
-            --header "Access-Control-Request-Headers: content-type,authorization" \
-            "$QA_WORKER_URL/api/auth/challenge")"
-          echo "QA preflight HTTP status: $preflight"
+          preflight="000"
+          for attempt in $(seq 1 12); do
+            preflight="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+              --request OPTIONS --header "Origin: $QA_ORIGIN" \
+              --header "Access-Control-Request-Method: POST" \
+              --header "Access-Control-Request-Headers: content-type,authorization" \
+              "$QA_WORKER_URL/api/auth/challenge")"
+            echo "QA preflight attempt $attempt returned HTTP $preflight"
+            [ "$preflight" = "204" ] && break
+            sleep 3
+          done
           preflight_headers="$(curl --silent --show-error --include \
             --request OPTIONS --header "Origin: $QA_ORIGIN" \
             --header "Access-Control-Request-Method: POST" \
