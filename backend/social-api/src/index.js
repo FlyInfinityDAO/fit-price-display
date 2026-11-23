@@ -242,7 +242,7 @@ async function createProfile(request, env) {
     if (current) {
       await env.DB.prepare(
         'UPDATE social_profiles SET handle=?,display_name=?,bio=\'\',language=\'en\',password_hash=?,password_salt=?,password_iterations=?,updated_at=? ' +
-        'WHERE wallet_address=? AND password_hash IS NULL'
+        'WHERE wallet_address=? AND (password_hash IS NULL OR password_salt IS NULL)'
       ).bind(account.handle, account.handle, passwordHash, salt, PASSWORD_ITERATIONS, timestamp, session.address).run();
     } else {
       await env.DB.prepare(
@@ -442,7 +442,7 @@ async function feed(request, env) {
     WITH feed_events AS (
       SELECT p.post_id,p.created_at AS event_created_at,'' AS reposter_wallet
       FROM social_posts p
-      WHERE p.wallet_address=p.wallet_address
+      WHERE p.media_type='image'
       UNION ALL
       SELECT r.post_id,r.created_at AS event_created_at,r.wallet_address AS reposter_wallet
       FROM social_reposts r
