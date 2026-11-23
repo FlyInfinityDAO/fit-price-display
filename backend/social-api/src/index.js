@@ -432,6 +432,7 @@ function serializePost(row, request) {
       wallet: ethers.getAddress(row.reposter_wallet),
       handle: row.reposter_handle || ''
     } : null,
+    feedReason: row.feed_reason || null,
     createdAt: Number(row.event_created_at || row.created_at)
   };
 }
@@ -457,8 +458,19 @@ async function feed(request, env) {
   const viewer = session.address;
   const url = new URL(request.url);
   const limit = Math.max(1, Math.min(40, Number(url.searchParams.get('limit') || 30) || 30));
+  const popularLimit = Math.min(12, limit);
   const result = await env.DB.prepare(`
-    WITH feed_events AS (
+    WITH popular_posts AS (
+      SELECT p2.post_id
+      FROM social_posts p2
+      WHERE p2.media_type='image' AND p2.status='published'
+        AND p2.moderation_state='clear' AND p2.wallet_address<>?
+      ORDER BY (SELECT COUNT(*) FROM social_likes l2 WHERE l2.post_id=p2.post_id) DESC,
+               (SELECT COUNT(*) FROM social_reposts r2 WHERE r2.post_id=p2.post_id) DESC,
+               p2.created_at DESC
+      LIMIT ?
+    ),
+    feed_events AS (
       SELECT p.post_id,p.created_at AS event_created_at,'' AS reposter_wallet
       FROM social_posts p
       WHERE p.media_type='image'
@@ -473,18 +485,34 @@ async function feed(request, env) {
            CASE WHEN ? <> '' AND EXISTS(
              SELECT 1 FROM social_likes vl WHERE vl.post_id=p.post_id AND vl.wallet_address=?
            ) THEN 1 ELSE 0 END AS liked_by_me,
-           (SELECT COUNT(*) FROM social_reposts r2 WHERE r2.post_id=p.post_id) AS repost_count,
+           (SELECT COUNT(*) FROM social_reposts r3 WHERE r3.post_id=p.post_id) AS repost_count,
            CASE WHEN ? <> '' AND EXISTS(
              SELECT 1 FROM social_reposts vr WHERE vr.post_id=p.post_id AND vr.wallet_address=?
-           ) THEN 1 ELSE 0 END AS reposted_by_me
+           ) THEN 1 ELSE 0 END AS reposted_by_me,
+           CASE WHEN p.wallet_address=? THEN 'you'
+                WHEN EXISTS(SELECT 1 FROM social_follows f WHERE f.follower_wallet=? AND f.following_wallet=p.wallet_address)
+                THEN 'following' ELSE 'popular' END AS feed_reason
     FROM feed_events e
     JOIN social_posts p ON p.post_id=e.post_id
     JOIN social_profiles pr ON pr.wallet_address=p.wallet_address
     LEFT JOIN social_profiles rp ON rp.wallet_address=e.reposter_wallet
     WHERE p.status='published' AND p.moderation_state='clear' AND p.media_type='image'
-    ORDER BY e.event_created_at DESC,p.post_id DESC,e.reposter_wallet DESC
+      AND (
+        p.wallet_address=? OR
+        EXISTS(SELECT 1 FROM social_follows f WHERE f.follower_wallet=? AND f.following_wallet=p.wallet_address) OR
+        p.post_id IN (SELECT post_id FROM popular_posts)
+      )
+    ORDER BY CASE WHEN feed_reason='popular' THEN 1 ELSE 0 END ASC,
+             CASE WHEN feed_reason='popular' THEN like_count END DESC,
+             CASE WHEN feed_reason<>'popular' THEN e.event_created_at END DESC,
+             e.event_created_at DESC
     LIMIT ?
-  `).bind(viewer, viewer, viewer, viewer, limit).all();
+  `).bind(
+    viewer, popularLimit,
+    viewer, viewer, viewer, viewer,
+    viewer, viewer,
+    viewer, viewer, limit
+  ).all();
   return json({ posts: (result.results || []).map(row => serializePost(row, request)) });
 }
 
@@ -611,6 +639,14 @@ async function createPost(request, env) {
   return json({ post: row ? serializePost(row, request) : { id: postId } }, 201);
 }
 
+async function createNotification(db, recipientWallet, actorWallet, type, postId = null) {
+  if (!recipientWallet || !actorWallet || recipientWallet === actorWallet) return;
+  await db.prepare(
+    'INSERT INTO social_notifications(notification_id,recipient_wallet,actor_wallet,notification_type,post_id,created_at,read_at) ' +
+    'VALUES(?,?,?,?,?,?,NULL)'
+  ).bind(crypto.randomUUID(), recipientWallet, actorWallet, type, postId, now()).run();
+}
+
 async function likePost(request, env, postId, method) {
   const session = await getSession(request, env, true, true);
   if (session?.error) return json({ error: session.error }, session.status);
@@ -618,15 +654,19 @@ async function likePost(request, env, postId, method) {
     return json({ error: 'Daily like limit reached' }, 429);
   }
   const post = await env.DB.prepare(
-    "SELECT post_id FROM social_posts WHERE post_id=? AND status='published' AND moderation_state='clear' AND media_type='image'"
+    "SELECT post_id,wallet_address FROM social_posts WHERE post_id=? AND status='published' AND moderation_state='clear' AND media_type='image'"
   ).bind(postId).first();
   if (!post) return json({ error: 'Post not found' }, 404);
   if (method === 'DELETE') {
     await env.DB.prepare('DELETE FROM social_likes WHERE post_id=? AND wallet_address=?')
       .bind(postId, session.address).run();
   } else {
-    await env.DB.prepare('INSERT OR IGNORE INTO social_likes(post_id,wallet_address,created_at) VALUES(?,?,?)')
-      .bind(postId, session.address, now()).run();
+    const inserted = await env.DB.prepare(
+      'INSERT OR IGNORE INTO social_likes(post_id,wallet_address,created_at) VALUES(?,?,?)'
+    ).bind(postId, session.address, now()).run();
+    if (Number(inserted.meta?.changes || 0) > 0) {
+      await createNotification(env.DB, post.wallet_address, session.address, 'like', postId);
+    }
   }
   const count = await env.DB.prepare('SELECT COUNT(*) AS n FROM social_likes WHERE post_id=?').bind(postId).first();
   return json({ liked: method !== 'DELETE', likes: Number(count?.n || 0) });
@@ -647,9 +687,12 @@ async function repostPost(request, env, postId, method) {
     await env.DB.prepare('DELETE FROM social_reposts WHERE post_id=? AND wallet_address=?')
       .bind(postId, session.address).run();
   } else {
-    await env.DB.prepare(
+    const inserted = await env.DB.prepare(
       'INSERT OR IGNORE INTO social_reposts(repost_id,post_id,wallet_address,created_at) VALUES(?,?,?,?)'
     ).bind(crypto.randomUUID(), postId, session.address, now()).run();
+    if (Number(inserted.meta?.changes || 0) > 0) {
+      await createNotification(env.DB, post.wallet_address, session.address, 'repost', postId);
+    }
   }
   const count = await env.DB.prepare('SELECT COUNT(*) AS n FROM social_reposts WHERE post_id=?').bind(postId).first();
   return json({ reposted: method !== 'DELETE', reposts: Number(count?.n || 0) });
@@ -675,6 +718,191 @@ async function deletePost(request, env, postId) {
   return json({ deleted: true });
 }
 
+async function followProfile(request, env, handle, method) {
+  const session = await getSession(request, env, true, true);
+  if (session?.error) return json({ error: session.error }, session.status);
+  if (!await rateLimit(env.DB, 'follow:' + session.address, 250, 86400)) {
+    return json({ error: 'Daily follow limit reached' }, 429);
+  }
+  const target = await env.DB.prepare(
+    'SELECT wallet_address,handle FROM social_profiles WHERE handle=? COLLATE NOCASE'
+  ).bind(handle).first();
+  if (!target) return json({ error: 'Profile not found' }, 404);
+  if (target.wallet_address === session.address) return json({ error: 'You cannot follow your own profile' }, 400);
+  if (method === 'DELETE') {
+    await env.DB.prepare('DELETE FROM social_follows WHERE follower_wallet=? AND following_wallet=?')
+      .bind(session.address, target.wallet_address).run();
+  } else {
+    const inserted = await env.DB.prepare(
+      'INSERT OR IGNORE INTO social_follows(follower_wallet,following_wallet,created_at) VALUES(?,?,?)'
+    ).bind(session.address, target.wallet_address, now()).run();
+    if (Number(inserted.meta?.changes || 0) > 0) {
+      await createNotification(env.DB, target.wallet_address, session.address, 'follow');
+    }
+  }
+  const counts = await env.DB.prepare(
+    'SELECT (SELECT COUNT(*) FROM social_follows WHERE following_wallet=?) AS followers,' +
+    '(SELECT COUNT(*) FROM social_follows WHERE follower_wallet=?) AS following'
+  ).bind(target.wallet_address, target.wallet_address).first();
+  return json({
+    following: method !== 'DELETE',
+    followers: Number(counts?.followers || 0),
+    followingCount: Number(counts?.following || 0)
+  });
+}
+
+async function publicProfile(request, env, handle) {
+  const session = await getSession(request, env, true, true);
+  if (session?.error) return json({ error: session.error }, session.status);
+  const url = new URL(request.url);
+  const limit = Math.max(1, Math.min(40, Number(url.searchParams.get('limit') || 30) || 30));
+  const row = await env.DB.prepare(`
+    SELECT p.wallet_address,p.handle,p.display_name,p.bio,p.avatar_media_key,p.created_at,
+      (SELECT COUNT(*) FROM social_posts s WHERE s.wallet_address=p.wallet_address AND s.status='published' AND s.media_type='image') AS post_count,
+      (SELECT COUNT(*) FROM social_follows f WHERE f.following_wallet=p.wallet_address) AS follower_count,
+      (SELECT COUNT(*) FROM social_follows f WHERE f.follower_wallet=p.wallet_address) AS following_count,
+      (SELECT COUNT(*) FROM social_likes l JOIN social_posts s ON s.post_id=l.post_id WHERE s.wallet_address=p.wallet_address AND s.status='published') AS like_count,
+      CASE WHEN ?<>'' AND EXISTS(
+        SELECT 1 FROM social_follows vf WHERE vf.follower_wallet=? AND vf.following_wallet=p.wallet_address
+      ) THEN 1 ELSE 0 END AS following_by_me,
+      CASE WHEN ?<>'' AND EXISTS(
+        SELECT 1 FROM social_follows vf WHERE vf.follower_wallet=p.wallet_address AND vf.following_wallet=?
+      ) THEN 1 ELSE 0 END AS follows_me
+    FROM social_profiles p WHERE p.handle=? COLLATE NOCASE
+  `).bind(session.address, session.address, session.address, session.address, handle).first();
+  if (!row) return json({ error: 'Profile not found' }, 404);
+  const posts = await env.DB.prepare(POST_SELECT +
+    " WHERE p.wallet_address=? AND p.status='published' AND p.moderation_state='clear' AND p.media_type='image' " +
+    "ORDER BY p.created_at DESC LIMIT ?"
+  ).bind(session.address, session.address, session.address, session.address, row.wallet_address, limit).all();
+  return json({
+    profile: {
+      wallet: ethers.getAddress(row.wallet_address),
+      handle: row.handle,
+      displayName: row.display_name,
+      bio: row.bio || '',
+      avatarMediaKey: row.avatar_media_key || null,
+      createdAt: Number(row.created_at),
+      posts: Number(row.post_count || 0),
+      followers: Number(row.follower_count || 0),
+      following: Number(row.following_count || 0),
+      likes: Number(row.like_count || 0),
+      isFollowing: asBool(row.following_by_me),
+      followsMe: asBool(row.follows_me),
+      isMe: row.wallet_address === session.address
+    },
+    posts: (posts.results || []).map(post => serializePost(post, request))
+  });
+}
+
+async function profileConnections(request, env, handle, kind) {
+  const session = await getSession(request, env, true, true);
+  if (session?.error) return json({ error: session.error }, session.status);
+  const url = new URL(request.url);
+  const limit = Math.max(1, Math.min(80, Number(url.searchParams.get('limit') || 50) || 50));
+  const target = await env.DB.prepare(
+    'SELECT wallet_address,handle FROM social_profiles WHERE handle=? COLLATE NOCASE'
+  ).bind(handle).first();
+  if (!target) return json({ error: 'Profile not found' }, 404);
+  const joinColumn = kind === 'followers' ? 'f.follower_wallet' : 'f.following_wallet';
+  const whereColumn = kind === 'followers' ? 'f.following_wallet' : 'f.follower_wallet';
+  const result = await env.DB.prepare(`
+    SELECT p.wallet_address,p.handle,p.display_name,p.bio,
+      CASE WHEN EXISTS(
+        SELECT 1 FROM social_follows vf WHERE vf.follower_wallet=? AND vf.following_wallet=p.wallet_address
+      ) THEN 1 ELSE 0 END AS following_by_me
+    FROM social_follows f
+    JOIN social_profiles p ON p.wallet_address=${joinColumn}
+    WHERE ${whereColumn}=?
+    ORDER BY f.created_at DESC
+    LIMIT ?
+  `).bind(session.address, target.wallet_address, limit).all();
+  return json({
+    profile: { handle: target.handle, wallet: ethers.getAddress(target.wallet_address) },
+    kind,
+    users: (result.results || []).map(row => ({
+      wallet: ethers.getAddress(row.wallet_address),
+      handle: row.handle,
+      displayName: row.display_name,
+      bio: row.bio || '',
+      isFollowing: asBool(row.following_by_me),
+      isMe: row.wallet_address === session.address
+    }))
+  });
+}
+
+async function notifications(request, env) {
+  const session = await getSession(request, env, true, true);
+  if (session?.error) return json({ error: session.error }, session.status);
+  const url = new URL(request.url);
+  const limit = Math.max(1, Math.min(60, Number(url.searchParams.get('limit') || 40) || 40));
+  const [result, unread] = await Promise.all([
+    env.DB.prepare(`
+      SELECT n.notification_id,n.notification_type,n.created_at,n.read_at,n.post_id,
+             a.wallet_address AS actor_wallet,a.handle AS actor_handle,a.display_name AS actor_display_name,
+             p.description AS post_text,p.media_key,p.status AS post_status
+      FROM social_notifications n
+      JOIN social_profiles a ON a.wallet_address=n.actor_wallet
+      LEFT JOIN social_posts p ON p.post_id=n.post_id
+      WHERE n.recipient_wallet=?
+      ORDER BY n.created_at DESC,n.notification_id DESC
+      LIMIT ?
+    `).bind(session.address, limit).all(),
+    env.DB.prepare('SELECT COUNT(*) AS n FROM social_notifications WHERE recipient_wallet=? AND read_at IS NULL')
+      .bind(session.address).first()
+  ]);
+  return json({
+    unreadCount: Number(unread?.n || 0),
+    notifications: (result.results || []).map(row => ({
+      id: row.notification_id,
+      type: row.notification_type,
+      createdAt: Number(row.created_at),
+      read: row.read_at !== null,
+      actor: {
+        wallet: ethers.getAddress(row.actor_wallet),
+        handle: row.actor_handle,
+        displayName: row.actor_display_name
+      },
+      post: row.post_id ? {
+        id: row.post_id,
+        text: row.post_text || '',
+        imageUrl: row.media_key && row.post_status === 'published' ? mediaUrl(request, row.media_key) : null
+      } : null
+    }))
+  });
+}
+
+async function markNotificationRead(request, env, notificationId) {
+  const session = await getSession(request, env, true, true);
+  if (session?.error) return json({ error: session.error }, session.status);
+  const result = await env.DB.prepare(
+    'UPDATE social_notifications SET read_at=? WHERE notification_id=? AND recipient_wallet=? AND read_at IS NULL'
+  ).bind(now(), notificationId, session.address).run();
+  return json({ updated: Number(result.meta?.changes || 0) > 0 });
+}
+
+async function markAllNotificationsRead(request, env) {
+  const session = await getSession(request, env, true, true);
+  if (session?.error) return json({ error: session.error }, session.status);
+  const result = await env.DB.prepare(
+    'UPDATE social_notifications SET read_at=? WHERE recipient_wallet=? AND read_at IS NULL'
+  ).bind(now(), session.address).run();
+  return json({ updated: Number(result.meta?.changes || 0) });
+}
+
+async function explore(request, env) {
+  const session = await getSession(request, env, true, true);
+  if (session?.error) return json({ error: session.error }, session.status);
+  const viewer = session.address;
+  const url = new URL(request.url);
+  const limit = Math.max(1, Math.min(60, Number(url.searchParams.get('limit') || 36) || 36));
+  const result = await env.DB.prepare(POST_SELECT +
+    " WHERE p.status='published' AND p.moderation_state='clear' AND p.media_type='image' AND p.wallet_address<>? " +
+    "ORDER BY ((like_count * 4) + (repost_count * 6)) DESC,p.created_at DESC LIMIT ?"
+  ).bind(viewer, viewer, viewer, viewer, viewer, limit).all();
+  return json({ posts: (result.results || []).map(row => serializePost(row, request)) });
+}
+
 async function route(request, env) {
   const url = new URL(request.url);
   const path = url.pathname;
@@ -697,6 +925,25 @@ async function route(request, env) {
   if (path === '/api/profile/create' && request.method === 'POST') return createProfile(request, env);
   if (path === '/api/handles/check' && request.method === 'GET') return checkHandle(request, env);
   if (path === '/api/feed' && request.method === 'GET') return feed(request, env);
+  if (path === '/api/explore' && request.method === 'GET') return explore(request, env);
+  if (path === '/api/notifications' && request.method === 'GET') return notifications(request, env);
+  if (path === '/api/notifications/read-all' && request.method === 'POST') return markAllNotificationsRead(request, env);
+  const notificationReadMatch = path.match(/^\/api\/notifications\/([^/]+)\/read$/);
+  if (notificationReadMatch && request.method === 'PATCH') {
+    return markNotificationRead(request, env, decodeURIComponent(notificationReadMatch[1]));
+  }
+  const profileConnectionsMatch = path.match(/^\/api\/profiles\/([^/]+)\/(followers|following)$/);
+  if (profileConnectionsMatch && request.method === 'GET') {
+    return profileConnections(request, env, decodeURIComponent(profileConnectionsMatch[1]), profileConnectionsMatch[2]);
+  }
+  const profileFollowMatch = path.match(/^\/api\/profiles\/([^/]+)\/follow$/);
+  if (profileFollowMatch && ['POST','DELETE'].includes(request.method)) {
+    return followProfile(request, env, decodeURIComponent(profileFollowMatch[1]), request.method);
+  }
+  const profileMatch = path.match(/^\/api\/profiles\/([^/]+)$/);
+  if (profileMatch && request.method === 'GET') {
+    return publicProfile(request, env, decodeURIComponent(profileMatch[1]));
+  }
   if (path === '/api/posts' && request.method === 'POST') return createPost(request, env);
   if (path === '/api/media/upload' && request.method === 'POST') return uploadImage(request, env);
   if (path.startsWith('/api/media/') && request.method === 'GET') {
