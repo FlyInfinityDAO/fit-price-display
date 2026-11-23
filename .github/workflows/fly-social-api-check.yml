@@ -8,6 +8,7 @@ on:
       - 'creator-arena/social-api.js'
       - 'creator-arena/index.html'
       - 'backend/package.json'
+      - 'backend/wrangler.social-api.toml'
       - '.github/workflows/fly-social-api-check.yml'
   pull_request:
     branches: [main]
