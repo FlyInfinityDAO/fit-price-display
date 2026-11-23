@@ -95,7 +95,7 @@ try {
   assert(layers.menu>layers.nav,"language dropdown would be covered by bottom navigation");
   const languages=["en","fa","ar","tr","ru","zh","es","pt"];
   for(const lang of languages){
-    await page.locator("#langBtn").click().catch(()=>{});
+    await page.locator("#langBtn").click();
     await page.locator("#langDropdown [data-lang='"+lang+"']").click();
     const dir=await page.locator("html").getAttribute("dir");
     assert((lang==="fa"||lang==="ar")?dir==="rtl":dir==="ltr","incorrect text direction for "+lang);
