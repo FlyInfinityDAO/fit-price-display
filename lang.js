@@ -79,7 +79,7 @@ function t(key) {
         if (value && value[k] !== undefined) {
             value = value[k];
         } else {
-            if (key === "nav.games" || key === "nav.ai") {
+            if (key === "nav.games" || key === "nav.ai" || key === "nav.ownerProfile") {
                 const navKey = key.slice(4);
                 return SHARED_NAV_TRANSLATIONS[currentLang]?.[navKey] || key;
             }
