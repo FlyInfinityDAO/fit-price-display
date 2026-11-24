@@ -223,6 +223,26 @@ try{
   assert(await page.locator("#langDropdown").evaluate(el=>!el.classList.contains("open")),"Escape should close the language menu");
   pass("8 languages, RTL/LTR, dynamic view refresh and keyboard dismissal");
 
+  // The selected language must survive both a hard reload and leaving/returning
+  // to Social on the same site origin.
+  await page.locator("#langBtn").click();
+  await page.locator("#langDropdown [data-lang='fa']").click();
+  await page.waitForFunction(()=>localStorage.getItem("fit_lang")==="fa",{timeout:10000});
+  await page.reload({waitUntil:"domcontentloaded",timeout:60000});
+  await page.waitForFunction(()=>document.documentElement.lang==="fa"&&document.documentElement.dir==="rtl"&&
+    document.querySelector("#feedApp")&&!document.querySelector("#feedApp").hidden&&
+    document.querySelector("#langBtn")?.textContent==="🇮🇷",null,{timeout:60000});
+  assert(await page.evaluate(()=>localStorage.getItem("fit_lang"))==="fa","Persian preference was not retained after a hard reload");
+  pass("persist selected language after hard reload","Social reopened directly in Persian RTL");
+
+  await page.goto("about:blank");
+  await page.goto(base,{waitUntil:"domcontentloaded",timeout:60000});
+  await page.waitForFunction(()=>document.documentElement.lang==="fa"&&document.documentElement.dir==="rtl"&&
+    document.querySelector("#feedApp")&&!document.querySelector("#feedApp").hidden&&
+    document.querySelector("#langBtn")?.textContent==="🇮🇷",null,{timeout:60000});
+  assert(await page.evaluate(()=>localStorage.getItem("fit_lang"))==="fa","Persian preference was not retained after leaving and returning to Social");
+  pass("persist selected language after leaving and returning","same-origin return restored Persian RTL without manual selection");
+
   // Android Chrome emulation: keep the RTL content and fixed background stable
   // while the browser's mobile viewport is being observed over several seconds.
   const androidContext=await browser.newContext({
