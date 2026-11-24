@@ -1,11 +1,11 @@
 {
-  "lastUpdated": "2026-11-24T21:30:34.621Z",
+  "lastUpdated": "2026-11-24T21:30:55.978Z",
   "sourceUpdatedAt": "2026-11-24T19:57:18.000Z",
   "totalHolders": 1620,
   "source": "Binplorer public freekey API",
   "contractAddress": "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa",
   "chainId": 56,
-  "indexedThroughBlock": 135534912,
+  "indexedThroughBlock": 135535158,
   "totalSupplyRaw": "8260789077147517369995",
   "transfersCount": 3487,
   "transactionsCount": 3059
