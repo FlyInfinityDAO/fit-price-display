@@ -36,7 +36,7 @@
     snapshot: null,
     treeCache: new Map(),
     treeExpanded: new Set(),
-    treeLoading: new Set(),
+    treeLoading: new Map(),
     treeErrors: new Map(),
     treeEpoch: 0,
     requestId: 0
@@ -378,11 +378,10 @@
     for (const url of RPC_URLS) {
       const reader = providerForRead(url);
       try {
-        const result = await fn(reader);
-        state.reader = reader;
-        return result;
+        return await fn(reader);
       } catch (error) {
         lastError = error;
+      } finally {
         try { reader.destroy(); } catch {}
       }
     }
@@ -492,10 +491,12 @@
       const balance = Number(ethers.utils.formatUnits(result.balanceRaw, 18));
       const price = Number(ethers.utils.formatUnits(result.priceRaw, 18));
       const value = balance * price;
-      const bought = usd(displayUnits(result.ownerInfo.purchased, 4), 4);
-      setMetric('opPurchased', bought, 'gold');
-      setMetric('opLimit', usd(displayUnits(result.ownerInfo.allowedLimit, 4), 4), 'gold');
-      setMetric('opRemaining', usd(displayUnits(result.ownerInfo.remaining, 4), 4), 'gold');
+      const bought = Number(ethers.utils.formatUnits(result.ownerInfo.purchased, 18));
+      const limit = Number(ethers.utils.formatUnits(result.ownerInfo.allowedLimit, 18));
+      const remaining = Number(ethers.utils.formatUnits(result.ownerInfo.remaining, 18));
+      setMetric('opPurchased', usd(bought, 4), 'gold');
+      setMetric('opLimit', usd(limit, 4), 'gold');
+      setMetric('opRemaining', usd(remaining, 4), 'gold');
       setMetric('opBalance', displayUnits(result.balanceRaw, 6) + ' FIT', 'gold');
       setMetric('opPrice', usd(price, 6), 'gold');
       setMetric('opValue', usd(value, 4), 'gold');
