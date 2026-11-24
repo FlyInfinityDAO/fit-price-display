@@ -136,3 +136,8 @@ body.owner-profile-page{padding:18px;background:#0b1110;color:var(--op-text);min
 @media(max-width:360px){.op-tree-children{grid-template-columns:repeat(2,minmax(195px,1fr))}.op-tree-side{min-width:195px}.op-tree-branch .op-tree-side{min-width:185px}}
 @media(prefers-reduced-motion:reduce){.op-btn,.op-tree-toggle,.op-wallet-page .sidebar{transition:none!important}}
 \n.owner-profile-page .footer{position:relative;z-index:1;margin:28px 0 8px;padding:18px;border-top:1px solid rgba(0,200,150,.18);color:#8da59b;text-align:center}.owner-profile-page .footer-links{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px}.owner-profile-page .footer-links a{color:#9db7ab;text-decoration:none;font-size:11px}.owner-profile-page .footer-links a:hover{color:var(--op-gold)}\n
+/* Keep the document viewport fixed; the genealogy canvas has its own pan/scroll area. */
+html:has(body.owner-profile-page),body.owner-profile-page{width:100%;max-width:100%;overflow-x:hidden}
+body.owner-profile-page *,body.owner-profile-page *::before,body.owner-profile-page *::after{box-sizing:border-box}
+body.owner-profile-page .op-container{width:100%;max-width:1450px;min-width:0}
+body.owner-profile-page main,body.owner-profile-page .op-hero,body.owner-profile-page .op-card{min-width:0;max-width:100%}
