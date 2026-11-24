@@ -68,6 +68,14 @@ try{
   assert(await page.locator("#feedApp .social-nav").isVisible(),"in-app Social navigation is missing");
   assert(await page.locator(".fi-global-bottom-nav [aria-current='page']").count()===1,"global nav must have exactly one active item");
   assert(await page.locator(".fi-bottom-nav-media").getAttribute("href")===origin+"/creator-arena-qa/index.html","global Media item does not point to QA Social");
+  const navIconAudit=await page.evaluate(()=>{
+    const inner=[...document.querySelectorAll("#feedApp .social-nav .nav-icon svg")].map(el=>({width:Math.round(el.getBoundingClientRect().width),height:Math.round(el.getBoundingClientRect().height)}));
+    const global=[...document.querySelectorAll(".fi-global-bottom-nav .fi-bottom-nav-item svg")].map(el=>({width:Math.round(el.getBoundingClientRect().width),height:Math.round(el.getBoundingClientRect().height)}));
+    return {inner,global};
+  });
+  assert(navIconAudit.inner.length===4&&navIconAudit.inner.every(x=>x.width>=25&&x.height>=25),"Social tab icons must be meaningful SVGs and at least 25px on mobile: "+JSON.stringify(navIconAudit));
+  assert(navIconAudit.global.length===5&&navIconAudit.global.every(x=>x.width>=23&&x.height>=23),"shared navigation icons must be at least 23px on Social mobile: "+JSON.stringify(navIconAudit));
+  pass("semantic and enlarged mobile navigation icons",JSON.stringify(navIconAudit));
   assert(await page.evaluate(()=>sessionStorage.getItem("fly-social-token"))===null,"QA must not create or persist a production-style user session");
   pass("no-wallet, no-signature, no-username/password demo entry", "demo account flytester opened directly with seeded synthetic records");
 
