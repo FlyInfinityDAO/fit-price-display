@@ -454,3 +454,17 @@ body.owner-profile-page *::after { box-sizing: border-box; }
   .op-test-profile-preview .op-profit-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .op-test-profile-preview .op-profit-item { padding:8px; }
 }
+
+@media (max-width: 350px) {
+  .op-test-tree .op-tree-viewport { padding:6px; }
+  .op-test-tree .op-tree-root-label { width:160px; padding:8px; }
+  .op-test-tree .op-tree-children { grid-template-columns:repeat(2,minmax(122px,126px)); gap:6px; }
+  .op-test-tree .op-tree-side { width:126px; min-width:122px; gap:6px; }
+  .op-test-tree .op-tree-node { padding:6px; }
+  .op-test-tree .op-tree-node-head { grid-template-columns:20px minmax(0,1fr) 24px; gap:4px; }
+  .op-test-tree .op-tree-toggle { width:20px; height:22px; }
+  .op-test-tree .op-tree-copy { width:24px; height:24px; }
+  .op-test-tree .op-tree-branch .op-tree-children { grid-template-columns:repeat(2,minmax(112px,118px)); gap:5px; }
+  .op-test-tree .op-tree-branch .op-tree-side { width:118px; min-width:112px; }
+  .op-test-tree .op-tree-address { font-size:9px; }
+}
