@@ -1807,7 +1807,7 @@ html[dir="rtl"] .fi-eco-platform-card:hover .fi-eco-platform-cta i,html[dir="rtl
                 <div class="stat-card"><div class="stat-value" id="totalSupply">—</div><div class="stat-label" data-i18n="dashboard.totalSupply">Total Supply</div></div>
                 <div class="stat-card"><div class="stat-value" id="daiBalance">—</div><div class="stat-label" data-i18n="dashboard.reserve">$ Reserve</div></div>
                 <div class="stat-card"><div class="stat-value" id="tradingVolume">—</div><div class="stat-label" data-i18n="dashboard.tradingVolume">Trading Volume ($)</div></div>
-                <div class="stat-card"><div class="stat-value" id="holderCount">—</div><div class="stat-label"><span data-i18n="dashboard.holders">Total Holders</span> <a href="https://binplorer.com/address/0xbebe4ea7aa4037cef5d0bc25a10f9dca16120dfa" target="_blank" rel="noopener noreferrer" title="Holder data source: Binplorer" style="color:inherit;opacity:.82;font-size:9px;text-decoration:underline;margin-inline-start:4px;">Binplorer</a></div></div>
+                <div class="stat-card"><div class="stat-value" id="holderCount">—</div><div class="stat-label" data-i18n="dashboard.holders">Total Holders</div></div>
                 <div class="stat-card stat-card-wide" style="grid-column: span 2; border-left-color: #D4AF37;">
                     <div class="stat-value" id="totalAirdrops">—</div>
                     <div class="stat-label" data-i18n="dashboard.totalAirdrops">Total Airdrops Paid ($)</div>
@@ -2016,21 +2016,14 @@ html[dir="rtl"] .fi-eco-platform-card:hover .fi-eco-platform-cta i,html[dir="rtl
                 throw new Error("Invalid holder count in cached data");
             }
 
-            const locale = document.documentElement.lang || navigator.language || "en";
-            holderElement.textContent = new Intl.NumberFormat(locale).format(count);
-            const sourceDate = data.sourceUpdatedAt || data.lastUpdated;
-            const updatedText = sourceDate && Number.isFinite(Date.parse(sourceDate))
-                ? new Date(sourceDate).toLocaleString(locale)
-                : "unknown";
-            const sourceLink = holderElement.parentElement?.querySelector('a[href*="binplorer.com"]');
-            if (sourceLink) sourceLink.title = `Holder data source: Binplorer | Source updated: ${updatedText}`;
+            // Keep dashboard statistics consistently formatted with Latin digits.
+            holderElement.textContent = new Intl.NumberFormat("en-US").format(count);
         } catch (error) {
             console.warn("FIT holder count is temporarily unavailable:", error);
             if (!holderElement.textContent.trim() || holderElement.textContent.trim() === "—") {
                 holderElement.textContent = "—";
             }
-            const sourceLink = holderElement.parentElement?.querySelector('a[href*="binplorer.com"]');
-            if (sourceLink) sourceLink.title = "Holder data source: Binplorer";
+
         }
     }
     
