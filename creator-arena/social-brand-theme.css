@@ -16,7 +16,7 @@
   --fi-social-text:#F2F7F5;
   --fi-social-muted:#AABBB4;
 }
-html{min-height:100%;background:var(--fi-social-bg)}
+html{min-height:100%;max-width:100%;overflow-x:hidden;background:var(--fi-social-bg)}
 body{
   position:relative;isolation:isolate;overflow-x:hidden;
   min-height:100vh;min-height:100dvh;
@@ -27,7 +27,7 @@ body::before{
   content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
   background-image:linear-gradient(rgba(15,15,15,.88),rgba(15,15,15,.88)),url("../background-desktop.png");
   background-size:cover;background-position:center center;background-repeat:no-repeat;
-  transform:translate3d(0,0,0);will-change:transform;
+  transform:none;will-change:auto;
 }
 .shell{position:relative;z-index:1;width:min(1040px,100%)}
 .topbar{
@@ -253,7 +253,7 @@ html[dir=rtl] .lang-dropdown{right:auto;left:20px;transform-origin:top left}
   body{padding-left:12px;padding-right:12px}
   body::before{
     background-image:linear-gradient(rgba(15,15,15,.88),rgba(15,15,15,.88)),url("../background-mobile.png");
-    background-size:contain;background-position:center top;background-color:#0F0F0F;
+    background-size:100% auto;background-position:center top;background-repeat:no-repeat;background-color:#0F0F0F;
   }
   .topbar{padding:11px 15px;margin-top:12px;border-radius:23px}
   .brand img{width:34px;height:34px}.brand strong{font-size:13px}
