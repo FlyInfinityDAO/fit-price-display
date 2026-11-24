@@ -9,6 +9,13 @@ on:
       - 'creator-arena/index.html'
       - 'backend/package.json'
       - 'backend/wrangler.social-api.toml'
+      - 'owner-profile.html'
+      - 'owner-profile.css'
+      - 'owner-profile.js'
+      - 'lang/owner-profile/**'
+      - 'site-navigation.js'
+      - 'lang.js'
+      - 'dapp.html'
       - '.github/workflows/fly-social-api-check.yml'
   pull_request:
     branches: [main]
@@ -46,6 +53,22 @@ jobs:
           node --check social-api/src/validation.js
           node --check social-api/src/storage.js
           node --check ../creator-arena/social-api.js
+      - name: Check Owner Profile frontend and language dictionaries
+        run: |
+          node --check ../owner-profile.js
+          node --input-type=module <<'NODE'
+          import { readFileSync, readdirSync } from 'node:fs';
+          const html = readFileSync('../owner-profile.html', 'utf8');
+          const js = readFileSync('../owner-profile.js', 'utf8');
+          const ids = new Set([...html.matchAll(/\\bid="([^"]+)"/g)].map(match => match[1]));
+          const missing = [...js.matchAll(/\\$\\('([^']+)'\\)/g)].map(match => match[1]).filter(id => !ids.has(id));
+          if (missing.length) throw new Error('Owner Profile references missing element IDs: ' + [...new Set(missing)].join(', '));
+          for (const file of readdirSync('../lang/owner-profile').filter(name => name.endsWith('.json'))) {
+            JSON.parse(readFileSync('../lang/owner-profile/' + file, 'utf8'));
+          }
+          if (!/owner-profile.html/.test(readFileSync('../site-navigation.js', 'utf8'))) throw new Error('Owner Profile navigation link is missing');
+          console.log('Owner Profile frontend syntax, DOM IDs, navigation and language JSON validated.');
+          NODE
       - name: Check Social page inline JavaScript syntax
         run: |
           node --input-type=module <<'NODE'
