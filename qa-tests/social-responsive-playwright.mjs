@@ -92,6 +92,21 @@ try{
   assert(Math.abs(mobileViewportGuard.scale-1)<0.02,"mobile browser viewport unexpectedly zoomed on entry: "+JSON.stringify(mobileViewportGuard));
   pass("mobile focus and automatic-zoom protection",JSON.stringify(mobileViewportGuard));
 
+  const glassAudit=await page.evaluate(()=>{
+    const selectors=[".topbar",".feed-head",".composer",".post",".post-actions",".view-title",".explore-tile",".profile-card",".profile-stats",".profile-stats button",".connection-row",".notification-row",".action-btn",".field input",".composer textarea",".file-pick",".wallet-summary"];
+    return Object.fromEntries(selectors.map(selector=>{
+      const el=document.querySelector(selector);
+      if(!el)return [selector,null];
+      const style=getComputedStyle(el);
+      return [selector,{blur:style.backdropFilter||style.webkitBackdropFilter,background:style.backgroundColor,border:style.borderTopColor}];
+    }));
+  });
+  for(const selector of [".topbar",".feed-head",".composer",".post",".view-title",".profile-stats button",".action-btn",".field input",".file-pick"]){
+    const item=glassAudit[selector];
+    assert(item&&item.blur&&item.blur.includes("blur("),selector+" is missing the frosted-glass blur: "+JSON.stringify(glassAudit));
+  }
+  pass("glass treatment across Social cards, fields, controls and section headers",JSON.stringify(glassAudit));
+
   // Real API actions against the isolated QA D1 and B2, not mocked browser responses.
   const ownCard=page.locator("#feedList .post").filter({has:page.locator(".post-author small").filter({hasText:"@flytester"})}).first();
   assert(await ownCard.count()>=1,"cannot locate the demo user's own post card");
