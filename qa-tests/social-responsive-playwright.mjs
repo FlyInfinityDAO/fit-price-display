@@ -223,6 +223,69 @@ try{
   assert(await page.locator("#langDropdown").evaluate(el=>!el.classList.contains("open")),"Escape should close the language menu");
   pass("8 languages, RTL/LTR, dynamic view refresh and keyboard dismissal");
 
+  // Android Chrome emulation: keep the RTL content and fixed background stable
+  // while the browser's mobile viewport is being observed over several seconds.
+  const androidContext=await browser.newContext({
+    viewport:{width:393,height:873},
+    deviceScaleFactor:2.75,
+    isMobile:true,
+    hasTouch:true,
+    locale:"en-US",
+    userAgent:"Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"
+  });
+  const androidPage=await androidContext.newPage();
+  androidPage.on("pageerror",e=>report.errors.push("Android emulation: "+e.message));
+  androidPage.on("console",m=>{if(m.type()==="error")report.errors.push("Android emulation console: "+m.text());});
+  await androidPage.goto(base,{waitUntil:"domcontentloaded",timeout:60000});
+  await androidPage.waitForFunction(()=>document.querySelector("#feedApp")&&!document.querySelector("#feedApp").hidden&&document.querySelectorAll("#feedList .post").length>0,null,{timeout:60000});
+  await androidPage.locator("#langBtn").click();
+  await androidPage.locator("#langDropdown [data-lang='fa']").click();
+  await androidPage.waitForFunction(()=>document.documentElement.dir==="rtl",null,{timeout:10000});
+  await androidPage.waitForFunction(()=>!document.querySelector("#feedStatus")?.textContent?.trim(),null,{timeout:20000});
+  await androidPage.evaluate(()=>window.scrollTo(0,0));
+  const androidSamples=[];
+  for(let sampleIndex=0;sampleIndex<8;sampleIndex++){
+    androidSamples.push(await androidPage.evaluate(()=>{
+      const rect=selector=>{
+        const el=document.querySelector(selector);
+        if(!el)return null;
+        const r=el.getBoundingClientRect();
+        return {left:r.left,right:r.right,width:r.width};
+      };
+      const root=document.documentElement;
+      const background=getComputedStyle(document.body,"::before");
+      return {
+        direction:root.dir,
+        scale:window.visualViewport?.scale??1,
+        viewportWidth:innerWidth,
+        scrollX,
+        scrollWidth:root.scrollWidth,
+        clientWidth:root.clientWidth,
+        shell:rect(".shell"),
+        feed:rect("#feedApp"),
+        backgroundSize:background.backgroundSize,
+        backgroundPosition:background.backgroundPosition
+      };
+    }));
+    await androidPage.waitForTimeout(500);
+  }
+  const baseline=androidSamples[0];
+  assert(baseline.direction==="rtl","Android Persian mode did not activate RTL: "+JSON.stringify(baseline));
+  assert(baseline.backgroundSize.startsWith("100% auto")&&!baseline.backgroundSize.includes("contain"),"Android background must be width-locked instead of viewport-height-dependent contain: "+JSON.stringify(baseline));
+  for(const sample of androidSamples){
+    assert(sample.direction==="rtl","Android direction changed unexpectedly: "+JSON.stringify(sample));
+    assert(Math.abs(sample.scale-1)<0.02,"Android viewport scale changed while idle in Persian: "+JSON.stringify(sample));
+    assert(sample.scrollX===0,"Android page scrolled horizontally in Persian: "+JSON.stringify(sample));
+    assert(sample.scrollWidth<=sample.clientWidth+1,"Android Persian layout overflowed horizontally: "+JSON.stringify(sample));
+    assert(sample.shell&&Math.abs(sample.shell.left-baseline.shell.left)<=1&&Math.abs(sample.shell.right-baseline.shell.right)<=1,"Android Social content shifted horizontally after Persian selection: "+JSON.stringify({baseline,sample}));
+    assert(sample.feed&&Math.abs(sample.feed.left-baseline.feed.left)<=1&&Math.abs(sample.feed.right-baseline.feed.right)<=1,"Android feed shifted horizontally after Persian selection: "+JSON.stringify({baseline,sample}));
+    assert(sample.backgroundSize===baseline.backgroundSize,"Android background zoomed/recalculated while idle in Persian: "+JSON.stringify({baseline,sample}));
+  }
+  await androidPage.screenshot({path:path.join(outDir,"android-persian-layout-stability.png"),fullPage:true,animations:"disabled"});
+  report.screenshots.push({device:"Android Chrome emulation",width:393,height:873,view:"Persian stability"});
+  pass("Android Persian RTL stability for 4 seconds",JSON.stringify({samples:androidSamples.length,baseline}));
+  await androidContext.close();
+
   assert(report.errors.length===0,"uncaught browser errors: "+report.errors.join(" | "));
   assert(report.apiFailures.length===0,"QA API 5xx responses: "+JSON.stringify(report.apiFailures));
   pass("no uncaught browser errors or API 5xx responses");
