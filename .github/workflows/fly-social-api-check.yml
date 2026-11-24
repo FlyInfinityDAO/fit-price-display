@@ -12,6 +12,8 @@ on:
       - 'owner-profile.html'
       - 'owner-profile.css'
       - 'owner-profile.js'
+      - 'owner-profile-test.html'
+      - 'owner-profile-test.js'
       - 'lang/owner-profile/**'
       - 'site-navigation.js'
       - 'lang.js'
@@ -27,6 +29,8 @@ on:
       - 'owner-profile.html'
       - 'owner-profile.css'
       - 'owner-profile.js'
+      - 'owner-profile-test.html'
+      - 'owner-profile-test.js'
       - 'lang/owner-profile/**'
       - 'site-navigation.js'
       - 'lang.js'
@@ -78,7 +82,7 @@ jobs:
           }
           if (!/owner-profile.html/.test(readFileSync('../site-navigation.js', 'utf8'))) throw new Error('Owner Profile navigation link is missing');
           if (!/0xc8199B9A3408631a0defBfb7381b736f582Ce642/i.test(testHtml)) throw new Error('Fixed test wallet is missing from the test page');
-          if (/auth\\/challenge|\\/register|\\/login/.test(testJs)) throw new Error('Read-only test page must not call account authentication endpoints');
+          if (testJs.includes('/api/owner-profile/auth/challenge') || testJs.includes('/api/owner-profile/register') || testJs.includes('/api/owner-profile/login')) throw new Error('Read-only test page must not call account authentication endpoints');
           console.log('Owner Profile frontend, read-only test bench, DOM IDs, navigation and language JSON validated.');
           NODE
       - name: Check Social page inline JavaScript syntax
