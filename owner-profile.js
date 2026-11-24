@@ -537,7 +537,7 @@
     if (state.treeLoading.has(key)) return state.treeLoading.get(key);
     const epoch = state.treeEpoch;
     const promise = withReadProvider(async reader => {
-      const network = new ethers.Contract(NETWORK, NETWORK_ABI, reader);
+      const network = new ethers.Contract(ethers.utils.getAddress(NETWORK.toLowerCase()), NETWORK_ABI, reader);
       const directs = await network.Owner_Directs(address);
       return [directs[0], directs[1]];
     }).then(pair => {
@@ -752,7 +752,7 @@
       $('opTreeRoot').textContent = tr('loading');
       try {
         const pair = await withReadProvider(async reader => {
-          const network = new ethers.Contract(NETWORK, NETWORK_ABI, reader);
+          const network = new ethers.Contract(ethers.utils.getAddress(NETWORK.toLowerCase()), NETWORK_ABI, reader);
           return network.Owner_Directs(state.selectedWallet);
         });
         state.treeCache.set(state.selectedWallet.toLowerCase(), [pair[0], pair[1]]);
