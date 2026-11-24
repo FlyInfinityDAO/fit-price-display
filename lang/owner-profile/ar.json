@@ -7,7 +7,22 @@
     "title": "Fly Infinity DAO"
   },
   "nav": {
-    "ownerProfile": "ملف المالك"
+    "dashboard": "لوحة التحكم",
+    "whatisfit": "ما هو FIT؟",
+    "comparison": "مقارنة",
+    "dapp": "التطبيق اللامركزي",
+    "games": "ألعاب فلاي إنفينيتي",
+    "ai": "ذكاء فلاي إنفينيتي الاصطناعي",
+    "socialArena": "الساحة الاجتماعية",
+    "ownerProfile": "ملف المالك",
+    "profitCalculator": "حاسبة الأرباح",
+    "nextProjects": "المشاريع القادمة",
+    "transactions": "المعاملات",
+    "privacy": "الخصوصية",
+    "warnings": "تحذيرات",
+    "faq": "الأسئلة الشائعة",
+    "whitepaper": "الورقة البيضاء",
+    "audit": "التدقيق الأمني"
   },
   "ownerProfile": {
     "eyebrow": "FLY INFINITY NETWORK",
