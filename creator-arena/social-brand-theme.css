@@ -384,3 +384,44 @@ html[dir=rtl] .lang-dropdown{right:auto;left:20px;transform-origin:top left}
   body[data-ambient="social"] .fi-bottom-nav-dashboard .fi-bottom-nav-label{font-size:6px!important}
   body[data-ambient="social"] main{padding-top:62px!important}
 }
+
+
+/* Clear, recognizable Social navigation icons with larger touch-friendly sizing. */
+.social-nav .nav-icon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:28px;height:28px;flex:0 0 28px;
+  filter:drop-shadow(0 0 7px rgba(0,200,150,.30));
+}
+.social-nav .nav-icon svg{
+  display:block;width:24px;height:24px;overflow:visible;
+  fill:none;stroke:currentColor;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.social-nav button:hover .nav-icon svg,
+.social-nav button.active .nav-icon svg{
+  filter:drop-shadow(0 0 5px rgba(212,175,55,.50));
+}
+@media(max-width:560px){
+  .social-nav button{min-height:56px;gap:4px}
+  .social-nav .nav-icon{width:29px;height:29px;flex-basis:29px}
+  .social-nav .nav-icon svg{width:27px;height:27px}
+}
+@media(max-width:390px){
+  .social-nav .nav-icon{width:27px;height:27px;flex-basis:27px}
+  .social-nav .nav-icon svg{width:25px;height:25px}
+}
+
+/* The shared site navigation is deliberately enlarged only on Social, so
+   its icons are easier to recognize on phones without changing other pages. */
+@media(max-width:768px){
+  body[data-ambient="social"] .fi-bottom-nav-item svg{width:25px!important;height:25px!important}
+  body[data-ambient="social"] .fi-bottom-nav-dashboard svg{width:27px!important;height:27px!important}
+}
+@media(max-width:390px){
+  body[data-ambient="social"] .fi-bottom-nav-item svg{width:23px!important;height:23px!important}
+  body[data-ambient="social"] .fi-bottom-nav-dashboard svg{width:25px!important;height:25px!important}
+}
+@media(max-height:600px){
+  body[data-ambient="social"] .fi-bottom-nav-item svg{width:20px!important;height:20px!important}
+  body[data-ambient="social"] .fi-bottom-nav-dashboard svg{width:21px!important;height:21px!important}
+}
