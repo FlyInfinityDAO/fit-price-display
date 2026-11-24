@@ -7,7 +7,22 @@
     "title": "Fly Infinity DAO"
   },
   "nav": {
-    "ownerProfile": "Sahip Profili"
+    "dashboard": "Kontrol Paneli",
+    "whatisfit": "FIT Nedir?",
+    "comparison": "Karşılaştırma",
+    "dapp": "DApp",
+    "games": "Fly Infinity Oyunları",
+    "ai": "Fly Infinity Yapay Zekâ",
+    "socialArena": "Sosyal Alan",
+    "ownerProfile": "Sahip Profili",
+    "profitCalculator": "Kâr Hesaplayıcı",
+    "nextProjects": "Gelecek Projeler",
+    "transactions": "İşlemler",
+    "privacy": "Gizlilik",
+    "warnings": "Uyarılar",
+    "faq": "SSS",
+    "whitepaper": "Teknik Doküman",
+    "audit": "Güvenlik Denetimi"
   },
   "ownerProfile": {
     "eyebrow": "FLY INFINITY NETWORK",
