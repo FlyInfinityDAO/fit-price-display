@@ -7,7 +7,22 @@
     "title": "Fly Infinity DAO"
   },
   "nav": {
-    "ownerProfile": "所有者档案"
+    "dashboard": "控制面板",
+    "whatisfit": "什么是 FIT？",
+    "comparison": "比较",
+    "dapp": "去中心化应用",
+    "games": "Fly Infinity 游戏",
+    "ai": "Fly Infinity 人工智能",
+    "socialArena": "社交空间",
+    "ownerProfile": "所有者档案",
+    "profitCalculator": "收益计算器",
+    "nextProjects": "未来项目",
+    "transactions": "交易",
+    "privacy": "隐私",
+    "warnings": "风险提示",
+    "faq": "常见问题",
+    "whitepaper": "白皮书",
+    "audit": "安全审计"
   },
   "ownerProfile": {
     "eyebrow": "FLY INFINITY NETWORK",
