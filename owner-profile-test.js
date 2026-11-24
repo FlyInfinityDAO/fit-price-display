@@ -21,6 +21,10 @@
     'function Price() view returns (uint256)'
   ];
   const $ = id => document.getElementById(id);
+  function shortAddress(address) {
+    const value = String(address || '');
+    return /^0x[0-9a-f]{40}$/i.test(value) ? value.slice(0, 3) + '...' + value.slice(-3) : value;
+  }
   const state = {
     provider: null,
     rpc: '',
@@ -152,7 +156,7 @@
     toggle.textContent=zero?'·':(state.expanded.has(address.toLowerCase())?'−':'+');
     toggle.disabled=zero||depth>=14||count.value>=260;
     toggle.setAttribute('aria-label','Expand branch');
-    const addr=document.createElement('div');addr.className='op-tree-address';addr.textContent=address;
+    const addr=document.createElement('div');addr.className='op-tree-address';addr.textContent=shortAddress(address);addr.title=address;addr.setAttribute('aria-label',address);
     const cp=document.createElement('button');cp.type='button';cp.className='op-tree-copy';cp.textContent='⧉';cp.title='Copy address';cp.addEventListener('click',()=>copy(address));
     head.append(toggle,addr,cp);card.appendChild(head);
     const label=document.createElement('div');label.className='op-tree-label';
@@ -189,7 +193,7 @@
       const tag=document.createElement('div');tag.className='op-tree-side-label';tag.textContent=side.toUpperCase();col.appendChild(tag);
       const child=pair[i]||ZERO;
       if(child.toLowerCase()!==ZERO.toLowerCase() && ancestors.has(child.toLowerCase())){
-        const repeated=document.createElement('div');repeated.className='op-tree-node zero';repeated.textContent=child+' · repeated branch';
+        const repeated=document.createElement('div');repeated.className='op-tree-node zero';repeated.textContent=shortAddress(child)+' · repeated branch';repeated.title=child;
         col.appendChild(repeated);
       }else if(count.value<260) col.appendChild(createNode(child,side,ancestors,depth,count));
       else {const cap=document.createElement('div');cap.className='op-tree-node zero';cap.textContent='Display safety limit reached';col.appendChild(cap);}
@@ -202,7 +206,7 @@
     if(!state.rootPair){root.textContent='Waiting for successful Owner_Directs call.';return;}
     const holder=document.createElement('div');holder.className='op-tree-root';
     const rootLabel=document.createElement('div');rootLabel.className='op-tree-root-label';
-    rootLabel.textContent=TARGET;
+    rootLabel.textContent=shortAddress(TARGET);rootLabel.title=TARGET;rootLabel.setAttribute('aria-label',TARGET);
     const rootCopy=document.createElement('button');rootCopy.className='op-icon-btn';rootCopy.type='button';rootCopy.textContent='⧉';rootCopy.addEventListener('click',()=>copy(TARGET));rootLabel.appendChild(rootCopy);
     const count={value:0};
     holder.append(rootLabel,createChildren(state.rootPair,new Set([TARGET.toLowerCase()]),1,count));
@@ -304,6 +308,7 @@
   $('runTests').addEventListener('click',runTests);
   $('refreshTests').addEventListener('click',runTests);
   $('reloadTree').addEventListener('click',reloadTree);
+  $('testAddress').textContent=shortAddress(TARGET);$('testAddress').title=TARGET;
   log('Read-only test bench ready',{target:TARGET,network:NETWORK});
   runTests();
 })();
