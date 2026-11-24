@@ -21,6 +21,27 @@ Independent backend for the Fly Infinity Social page. It uses its own Worker, D1
 6. Passwords must be 6–128 characters. They are stored as PBKDF2-SHA-256 hashes with a per-user random salt and 100,000 iterations (the Cloudflare Workers runtime limit), never as plaintext.
 7. To recover a password, the wallet first obtains a short-lived recovery challenge and signs its explicit recovery message. The signature is verified server-side and the one-use nonce is consumed before the new password is saved. This is not a blockchain transaction and costs no gas. All prior sessions for that wallet are revoked and a new password-verified session is issued.
 
+## Owner Profile
+
+Owner Profile is restricted to wallets for which the Fly Infinity Network contract returns `Owner_Exists(wallet) == true`. The first wallet is verified by a short-lived, single-use off-chain message signature. The signature is free, is not a blockchain transaction, and does not authorize token transfers or spending.
+
+Users create a unique username and password. Passwords are stored only as PBKDF2-SHA-256 hashes with random salts (100,000 iterations). Session tokens and wallet-proof tokens are stored as hashes. Every additional wallet must independently sign a one-use challenge and pass the same on-chain owner check before it can be linked. A wallet can belong to only one Owner Profile. The primary wallet cannot be removed; secondary wallets can be unlinked. Any linked owner wallet can authorize password recovery.
+
+The Owner Profile tables store account credentials, session hashes, one-time verification challenges and the list of verified wallet addresses. **Genealogy trees, branch descendants and network snapshots are never stored in D1**; the browser reads `Owner_Directs` and `Owner_Left_Right_All` live from BNB Smart Chain each time a profile is opened or a branch is expanded.
+
+Owner Profile API:
+- `POST /api/owner-profile/auth/challenge` — `{ "address": "0x..." }`
+- `POST /api/owner-profile/auth/verify` — `{ "address": "0x...", "nonce": "...", "signature": "0x..." }`
+- `POST /api/owner-profile/register` — `{ "username": "...", "password": "...", "proofToken": "..." }`
+- `POST /api/owner-profile/login` — `{ "username": "...", "password": "..." }`
+- `GET /api/owner-profile/me`
+- `POST /api/owner-profile/wallets` — `{ "proofToken": "..." }`
+- `DELETE /api/owner-profile/wallets/:address`
+- `POST /api/owner-profile/password/recover` — `{ "password": "...", "proofToken": "..." }`
+- `POST /api/owner-profile/logout`
+
+Owner Profile account tables are defined in migration `0004_owner_profiles.sql` and are isolated from Social content and account tables.
+
 ## Supported social features
 
 - Posts contain optional text (up to 2,000 characters) and an optional image. Text-only, image-only and text-plus-image posts are supported.
