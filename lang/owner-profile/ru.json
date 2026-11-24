@@ -7,7 +7,22 @@
     "title": "Fly Infinity DAO"
   },
   "nav": {
-    "ownerProfile": "Профиль владельца"
+    "dashboard": "Панель управления",
+    "whatisfit": "Что такое FIT?",
+    "comparison": "Сравнение",
+    "dapp": "DApp",
+    "games": "Игры Fly Infinity",
+    "ai": "ИИ Fly Infinity",
+    "socialArena": "Социальная площадка",
+    "ownerProfile": "Профиль владельца",
+    "profitCalculator": "Калькулятор прибыли",
+    "nextProjects": "Будущие проекты",
+    "transactions": "Транзакции",
+    "privacy": "Конфиденциальность",
+    "warnings": "Предупреждения",
+    "faq": "Частые вопросы",
+    "whitepaper": "Белая книга",
+    "audit": "Аудит безопасности"
   },
   "ownerProfile": {
     "eyebrow": "FLY INFINITY NETWORK",
