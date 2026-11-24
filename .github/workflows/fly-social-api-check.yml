@@ -82,6 +82,8 @@ jobs:
           }
           if (!/owner-profile.html/.test(readFileSync('../site-navigation.js', 'utf8'))) throw new Error('Owner Profile navigation link is missing');
           if (!/0xc8199B9A3408631a0defBfb7381b736f582Ce642/i.test(testHtml)) throw new Error('Fixed test wallet is missing from the test page');
+          if (!testHtml.includes('<meta name="viewport"')) throw new Error('Read-only test page viewport meta is missing');
+          if (!readFileSync('../owner-profile.css', 'utf8').includes('overflow-x:auto')) throw new Error('Genealogy viewport must support independent horizontal scrolling');
           if (testJs.includes('/api/owner-profile/auth/challenge') || testJs.includes('/api/owner-profile/register') || testJs.includes('/api/owner-profile/login')) throw new Error('Read-only test page must not call account authentication endpoints');
           console.log('Owner Profile frontend, read-only test bench, DOM IDs, navigation and language JSON validated.');
           NODE
