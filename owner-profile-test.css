@@ -333,3 +333,124 @@ body.owner-profile-page *::after { box-sizing: border-box; }
   .op-test-panel { padding: 10px; }
   .op-test-metric { padding: 8px; }
 }
+
+/* Match the production profile component geometry inside the safe preview. */
+.op-test-profile-preview { display:grid; gap:14px; min-width:0; }
+.op-test-profile-preview .op-profile-head,
+.op-test-profile-preview .op-wallet-panel,
+.op-test-profile-preview .op-data-panel,
+.op-test-profile-preview .op-tree-panel { min-width:0; max-width:100%; }
+.op-test-profile-preview .op-profile-head {
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:12px; padding:clamp(14px,1.8vw,20px);
+}
+.op-test-profile-preview .op-profile-title { min-width:0; }
+.op-test-profile-preview .op-profile-title h2 {
+  margin:0 0 5px; color:#d4af37; font-size:clamp(17px,2vw,21px); line-height:1.35;
+}
+.op-test-profile-preview .op-profile-title p {
+  margin:0; color:#9fb4ad; font-size:12px; line-height:1.6; overflow-wrap:anywhere;
+}
+.op-test-profile-preview .op-profile-actions { display:flex; flex-wrap:wrap; gap:8px; min-width:0; }
+.op-test-profile-preview .op-preview-tag { cursor:default; white-space:normal; }
+.op-test-profile-preview .op-wallet-panel { padding:clamp(14px,1.8vw,20px); }
+.op-test-profile-preview .op-section-head {
+  display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;
+  margin-bottom:12px; min-width:0;
+}
+.op-test-profile-preview .op-section-head h3 { color:#00c896; margin:0; font-size:15px; }
+.op-test-profile-preview .op-wallet-list {
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; min-width:0;
+}
+.op-test-profile-preview .op-wallet-item {
+  display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:8px;
+  min-width:0; padding:11px; border:1px solid rgba(0,200,150,.18); border-radius:14px;
+  background:rgba(255,255,255,.035);
+}
+.op-test-profile-preview .op-wallet-item.active {
+  border-color:rgba(212,175,55,.48);
+  background:linear-gradient(110deg,rgba(212,175,55,.09),rgba(0,200,150,.07));
+}
+.op-test-profile-preview .op-wallet-select { display:block; min-width:0; text-align:start; }
+.op-test-profile-preview .op-wallet-select strong {
+  display:block; min-width:0; direction:ltr; text-align:left; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis; color:#edf8f3; font-size:12px;
+  font-family:ui-monospace,Consolas,monospace;
+}
+.op-test-profile-preview .op-wallet-select small {
+  display:block; margin-top:5px; color:#9fb4ad; font-size:11px; overflow-wrap:anywhere;
+}
+.op-test-profile-preview .op-wallet-tools { display:flex; gap:6px; }
+.op-test-profile-preview .op-selected {
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;
+  min-width:0; padding:12px 14px; border:1px solid rgba(212,175,55,.22);
+  border-radius:14px; background:rgba(212,175,55,.06); color:#d7e4de; font-size:12px;
+}
+.op-test-profile-preview .op-selected strong {
+  max-width:100%; direction:ltr; text-align:left; color:#d4af37;
+  font-family:ui-monospace,Consolas,monospace; white-space:nowrap;
+}
+.op-test-profile-preview .op-data-grid {
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; min-width:0;
+}
+.op-test-profile-preview .op-data-panel { padding:clamp(14px,1.8vw,20px); min-width:0; }
+.op-test-profile-preview .op-panel-title {
+  display:flex; align-items:center; gap:9px; margin:0 0 14px; font-size:16px; line-height:1.4;
+}
+.op-test-profile-preview .op-panel-title.fit { color:#d4af37; }
+.op-test-profile-preview .op-panel-title.network { color:#00c896; }
+.op-test-profile-preview .op-metrics {
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; min-width:0;
+}
+.op-test-profile-preview .op-metric {
+  min-width:0; padding:clamp(9px,1.15vw,12px); border-radius:12px;
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.065);
+}
+.op-test-profile-preview .op-metric-label {
+  display:block; margin-bottom:7px; color:#9fb4ad; font-size:10px; line-height:1.5;
+}
+.op-test-profile-preview .op-metric-value {
+  display:block; max-width:100%; color:#f4f8f6; font-size:clamp(13px,1.3vw,17px);
+  font-weight:850; line-height:1.4; font-variant-numeric:tabular-nums; overflow-wrap:anywhere;
+}
+.op-test-profile-preview .op-metric-value.gold { color:#f2d879; }
+.op-test-profile-preview .op-metric-value.green { color:#82e4bf; }
+.op-test-profile-preview .op-profit { margin-top:13px; }
+.op-test-profile-preview .op-profit h4 { margin:0 0 9px; color:#c7d8d0; font-size:12px; line-height:1.5; }
+.op-test-profile-preview .op-profit-grid {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; min-width:0;
+}
+.op-test-profile-preview .op-profit-item {
+  min-width:0; padding:9px; border-radius:11px; background:rgba(0,0,0,.18);
+  border:1px solid rgba(0,200,150,.13);
+}
+.op-test-profile-preview .op-profit-item span {
+  display:block; margin-bottom:6px; color:#9fb4ad; font-size:10px;
+}
+.op-test-profile-preview .op-profit-item strong {
+  display:block; font-size:12px; overflow-wrap:anywhere; font-variant-numeric:tabular-nums;
+}
+.op-test-profile-preview .op-profit-item strong.positive { color:#68e1ad; }
+.op-test-profile-preview .op-profit-item strong.negative { color:#ffb79e; }
+.op-test-profile-preview .op-note,
+.op-test-profile-preview .op-footer-note { color:#8ea59b; font-size:11px; line-height:1.65; overflow-wrap:anywhere; }
+
+@media (max-width: 900px) {
+  .op-test-profile-preview .op-data-grid { grid-template-columns:minmax(0,1fr); }
+}
+@media (max-width: 600px) {
+  .op-test-profile-preview { gap:10px; }
+  .op-test-profile-preview .op-profile-head,
+  .op-test-profile-preview .op-wallet-panel,
+  .op-test-profile-preview .op-data-panel,
+  .op-test-profile-preview .op-tree-panel { padding:12px; border-radius:16px; }
+  .op-test-profile-preview .op-wallet-list { grid-template-columns:minmax(0,1fr); gap:8px; }
+  .op-test-profile-preview .op-wallet-item { padding:9px; }
+  .op-test-profile-preview .op-wallet-select strong { font-size:11px; }
+  .op-test-profile-preview .op-selected { align-items:flex-start; padding:10px 12px; }
+  .op-test-profile-preview .op-data-grid { gap:10px; }
+  .op-test-profile-preview .op-data-panel { padding:12px; }
+  .op-test-profile-preview .op-panel-title { font-size:15px; margin-bottom:11px; }
+  .op-test-profile-preview .op-profit-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .op-test-profile-preview .op-profit-item { padding:8px; }
+}
