@@ -1807,7 +1807,7 @@ html[dir="rtl"] .fi-eco-platform-card:hover .fi-eco-platform-cta i,html[dir="rtl
                 <div class="stat-card"><div class="stat-value" id="totalSupply">—</div><div class="stat-label" data-i18n="dashboard.totalSupply">Total Supply</div></div>
                 <div class="stat-card"><div class="stat-value" id="daiBalance">—</div><div class="stat-label" data-i18n="dashboard.reserve">$ Reserve</div></div>
                 <div class="stat-card"><div class="stat-value" id="tradingVolume">—</div><div class="stat-label" data-i18n="dashboard.tradingVolume">Trading Volume ($)</div></div>
-                <div class="stat-card"><div class="stat-value" id="holderCount">—</div><div class="stat-label" data-i18n="dashboard.holders">Total Holders</div></div>
+                <div class="stat-card"><div class="stat-value" id="holderCount">—</div><div class="stat-label"><span data-i18n="dashboard.holders">Total Holders</span> <a href="https://binplorer.com/address/0xbebe4ea7aa4037cef5d0bc25a10f9dca16120dfa" target="_blank" rel="noopener noreferrer" title="Holder data source: Binplorer" style="color:inherit;opacity:.82;font-size:9px;text-decoration:underline;margin-inline-start:4px;">Binplorer</a></div></div>
                 <div class="stat-card stat-card-wide" style="grid-column: span 2; border-left-color: #D4AF37;">
                     <div class="stat-value" id="totalAirdrops">—</div>
                     <div class="stat-label" data-i18n="dashboard.totalAirdrops">Total Airdrops Paid ($)</div>
@@ -1997,17 +1997,38 @@ html[dir="rtl"] .fi-eco-platform-card:hover .fi-eco-platform-cta i,html[dir="rtl
     let currentPriceDAI = 0;
     let priceChart = null;
     
-    const ETHERSCAN_API_KEY = "SKAHDN5X6UMW388XSIY1B8VH99WJ4KH7S4";
-    const BSC_CHAIN_ID = 56;
-    
     async function fetchHolderCount() {
+        const holderElement = document.getElementById("holderCount");
+        if (!holderElement) return;
+
         try {
-            const url = `https://api.etherscan.io/v2/api?chainid=${BSC_CHAIN_ID}&module=token&action=topholders&contractaddress=${CONTRACT_ADDRESS}&page=1&offset=1&apikey=${ETHERSCAN_API_KEY}`;
-            const response = await fetch(url);
+            const response = await fetch(`holders-data.json?refresh=${Date.now()}`, {
+                cache: "no-store"
+            });
+            if (!response.ok) throw new Error(`Holder data unavailable (HTTP ${response.status})`);
+
             const data = await response.json();
-            document.getElementById("holderCount").innerHTML = "1,500+";
-        } catch(e) {
-            document.getElementById("holderCount").innerHTML = "1,500+";
+            const count = Number(data.totalHolders);
+            if (String(data.contractAddress || "").toLowerCase() !== CONTRACT_ADDRESS.toLowerCase()) {
+                throw new Error("Holder data belongs to a different token contract");
+            }
+            if (!Number.isSafeInteger(count) || count < 1) {
+                throw new Error("Invalid holder count in cached data");
+            }
+
+            const locale = document.documentElement.lang || navigator.language || "en";
+            holderElement.textContent = new Intl.NumberFormat(locale).format(count);
+            const sourceDate = data.sourceUpdatedAt || data.lastUpdated;
+            const updatedText = sourceDate && Number.isFinite(Date.parse(sourceDate))
+                ? new Date(sourceDate).toLocaleString(locale)
+                : "unknown";
+            holderElement.title = `Source: Binplorer | Source updated: ${updatedText}`;
+        } catch (error) {
+            console.warn("FIT holder count is temporarily unavailable:", error);
+            if (!holderElement.textContent.trim() || holderElement.textContent.trim() === "—") {
+                holderElement.textContent = "—";
+            }
+            holderElement.title = "Holder count will appear when the local data file is available";
         }
     }
     
