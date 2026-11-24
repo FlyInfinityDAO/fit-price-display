@@ -3,7 +3,7 @@
   'use strict';
 
   const API = 'https://fly-infinity-social-api.flyinfinityplatform.workers.dev';
-  const NETWORK = '0x7f1cB4fce7C3b6C612c4A7Dd123D3865640dC1B';
+  const NETWORK = '0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B';
   const ZERO = '0x0000000000000000000000000000000000000000';
   const TOKEN_KEY = 'fly_owner_profile_session';
   const NETWORK_ABI = [
@@ -473,7 +473,7 @@
     $('opTreeRoot').textContent = tr('loading');
     try {
       const result = await withReadProvider(async reader => {
-        const network = new ethers.Contract(NETWORK, NETWORK_ABI, reader);
+        const network = new ethers.Contract(ethers.utils.getAddress(NETWORK.toLowerCase()), NETWORK_ABI, reader);
         const isOwner = await network.Owner_Exists(address);
         if (!isOwner) throw new Error(tr('notOwner'));
         const tokenAddress = await network.Fly_Infinity_Token_Contract();
