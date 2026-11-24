@@ -436,7 +436,7 @@
     const records = Array.isArray(payload) ? payload : payload.records;
     if (!Array.isArray(records)) throw new Error('Invalid FIT price history');
     state.history = records.filter(row =>
-      row && /^\\d{4}-\\d{2}-\\d{2}$/.test(row.date) &&
+      row && /^\d{4}-\d{2}-\d{2}$/.test(row.date) &&
       Number.isFinite(Number(row.price)) && Number(row.price) > 0
     ).sort((a, b) => a.date.localeCompare(b.date));
   }
