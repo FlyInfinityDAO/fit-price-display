@@ -7,7 +7,22 @@
     "title": "Fly Infinity DAO"
   },
   "nav": {
-    "ownerProfile": "Perfil do proprietário"
+    "dashboard": "Painel",
+    "whatisfit": "O que é FIT?",
+    "comparison": "Comparação",
+    "dapp": "DApp",
+    "games": "Jogos Fly Infinity",
+    "ai": "IA Fly Infinity",
+    "socialArena": "Espaço social",
+    "ownerProfile": "Perfil do proprietário",
+    "profitCalculator": "Calculadora de lucro",
+    "nextProjects": "Próximos projetos",
+    "transactions": "Transações",
+    "privacy": "Privacidade",
+    "warnings": "Avisos",
+    "faq": "Perguntas frequentes",
+    "whitepaper": "White Paper",
+    "audit": "Auditoria de segurança"
   },
   "ownerProfile": {
     "eyebrow": "FLY INFINITY NETWORK",
