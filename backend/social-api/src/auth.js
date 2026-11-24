@@ -26,6 +26,23 @@ export function buildChallengeMessage({ origin, address, nonce, issuedAt, expire
   ].join('\n');
 }
 
+export function buildOwnerProfileChallengeMessage({ origin, address, nonce, issuedAt, expiresAt }) {
+  const host = new URL(origin).host;
+  return [
+    'Fly Infinity Owner Profile wallet verification',
+    '',
+    'Domain: ' + host,
+    'URI: ' + origin,
+    'Wallet: ' + ethers.getAddress(address),
+    'Chain ID: 56',
+    'Nonce: ' + nonce,
+    'Issued At: ' + issuedAt,
+    'Expiration Time: ' + expiresAt,
+    '',
+    'This free off-chain signature only verifies control of this wallet for an Owner Profile. It is not a blockchain transaction, does not authorize token transfers or spending, and requires no gas.'
+  ].join('\n');
+}
+
 export function buildPasswordRecoveryMessage({ origin, address, nonce, issuedAt, expiresAt }) {
   const host = new URL(origin).host;
   return [
