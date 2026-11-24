@@ -11,6 +11,7 @@ import {
   parseAccountInput, parsePasswordInput, parsePostInput,
   normalizeHandle, safeFileExtension
 } from './validation.js';
+import { routeOwnerProfile } from './owner-profile.js';
 
 const DEFAULT_ORIGIN = 'https://flyinfinitydao.github.io';
 const CHAIN_ID = 56;
@@ -911,6 +912,8 @@ async function route(request, env) {
   if (path === '/api/health' && request.method === 'GET') {
     return json({ ok: true, service: 'Fly Infinity Social API', version: '2.0.0' });
   }
+  const ownerProfileResponse = await routeOwnerProfile(request, env);
+  if (ownerProfileResponse) return ownerProfileResponse;
   if (path === '/api/auth/challenge' && request.method === 'POST') return createChallenge(request, env);
   if (path === '/api/auth/verify' && request.method === 'POST') return verifyChallenge(request, env);
   if (path === '/api/auth/password' && request.method === 'POST') return loginWithPassword(request, env);
