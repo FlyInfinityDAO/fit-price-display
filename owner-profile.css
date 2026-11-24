@@ -438,3 +438,201 @@ body.owner-profile-page .op-note { overflow-wrap:anywhere; line-height:1.65; }
   body.owner-profile-page .op-tree-toggle,
   body.owner-profile-page .sidebar { transition:none!important; }
 }
+
+/* Genealogy layout v2: nested branches flow vertically inside each parent.
+   The root remains left/right side-by-side; every expanded descendant pair is
+   stacked to prevent sibling subtrees from occupying the same horizontal space. */
+html, body.owner-profile-page {
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden;
+}
+body.owner-profile-page {
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+body.owner-profile-page .op-container,
+body.owner-profile-page main,
+body.owner-profile-page #opWalletContent,
+body.owner-profile-page .op-tree-panel {
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+body.owner-profile-page .op-tree-viewport {
+  display:block;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
+  contain:layout paint;
+}
+body.owner-profile-page .op-tree-root {
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+}
+body.owner-profile-page .op-tree-root-label {
+  align-self:center;
+  width:min(100%,280px);
+  max-width:100%;
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+body.owner-profile-page .op-tree-root > .op-tree-children {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:clamp(7px,1.2vw,14px);
+  width:100%;
+  min-width:0;
+  max-width:100%;
+}
+body.owner-profile-page .op-tree-side {
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  flex:1 1 0;
+}
+body.owner-profile-page .op-tree-node {
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  overflow:hidden;
+}
+body.owner-profile-page .op-tree-node-head {
+  display:grid;
+  grid-template-columns:clamp(20px,2.2vw,26px) minmax(0,1fr) clamp(24px,2.5vw,30px);
+  align-items:center;
+  gap:clamp(4px,.7vw,7px);
+  width:100%;
+  min-width:0;
+}
+body.owner-profile-page .op-tree-address {
+  display:block;
+  min-width:0;
+  max-width:100%;
+  direction:ltr;
+  text-align:left;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  overflow-wrap:normal;
+  word-break:normal;
+}
+body.owner-profile-page .op-tree-copy,
+body.owner-profile-page .op-tree-toggle {
+  flex:none;
+  max-width:100%;
+}
+body.owner-profile-page .op-tree-branch {
+  display:block;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  margin-top:9px;
+  padding:9px 0 0;
+  overflow:hidden;
+  border-top:1px solid rgba(0,200,150,.16);
+}
+body.owner-profile-page .op-tree-branch > .op-tree-children,
+body.owner-profile-page .op-tree-branch .op-tree-children {
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:8px;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+}
+body.owner-profile-page .op-tree-branch .op-tree-side {
+  display:flex;
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  flex:none;
+}
+body.owner-profile-page .op-tree-branch .op-tree-node {
+  width:100%;
+  min-width:0;
+  max-width:100%;
+  padding:8px;
+}
+body.owner-profile-page .op-tree-branch .op-tree-node-head {
+  grid-template-columns:22px minmax(0,1fr) 27px;
+}
+body.owner-profile-page .op-tree-branch .op-tree-address {
+  font-size:clamp(9px,1vw,11px);
+}
+@media(max-width:600px) {
+  body.owner-profile-page .op-tree-viewport {
+    min-height:220px;
+    max-height:58vh;
+    padding:8px;
+  }
+  body.owner-profile-page .op-tree-root-label {
+    width:min(100%,220px);
+    margin-bottom:12px;
+    padding:9px 10px;
+  }
+  body.owner-profile-page .op-tree-root > .op-tree-children {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:7px;
+  }
+  body.owner-profile-page .op-tree-node {
+    padding:7px;
+  }
+  body.owner-profile-page .op-tree-node-head {
+    grid-template-columns:21px minmax(0,1fr) 25px;
+    gap:4px;
+  }
+  body.owner-profile-page .op-tree-toggle {
+    width:21px;
+    height:23px;
+  }
+  body.owner-profile-page .op-tree-copy {
+    width:25px;
+    height:25px;
+  }
+  body.owner-profile-page .op-tree-address {
+    font-size:9px;
+  }
+  body.owner-profile-page .op-tree-branch {
+    margin-top:7px;
+    padding-top:7px;
+  }
+  body.owner-profile-page .op-tree-branch .op-tree-children {
+    grid-template-columns:minmax(0,1fr);
+    gap:7px;
+  }
+  body.owner-profile-page .op-tree-branch .op-tree-side {
+    width:100%;
+    min-width:0;
+  }
+  body.owner-profile-page .op-tree-branch .op-tree-node {
+    padding:6px;
+  }
+  body.owner-profile-page .op-tree-branch .op-tree-node-head {
+    grid-template-columns:20px minmax(0,1fr) 24px;
+    gap:4px;
+  }
+  body.owner-profile-page .op-tree-branch .op-tree-toggle {
+    width:20px;
+    height:22px;
+  }
+  body.owner-profile-page .op-tree-branch .op-tree-copy {
+    width:24px;
+    height:24px;
+  }
+}
