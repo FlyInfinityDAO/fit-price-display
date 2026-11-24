@@ -290,3 +290,49 @@ html body .fi-global-bottom-nav .fi-bottom-nav-item:not(.fi-bottom-nav-dashboard
     rgba(16, 139, 94, .68) 100%) !important;
   box-shadow: inset 0 1px 0 rgba(255, 250, 218, .24), 0 0 14px rgba(190, 170, 76, .16), 0 0 18px rgba(24, 167, 111, .14) !important;
 }
+
+/* Symmetric navigation color progression: gold beside Dashboard, pure green at both ends. */
+html body .fi-global-bottom-nav .fi-bottom-nav-item:nth-child(2),
+html body .fi-global-bottom-nav .fi-bottom-nav-item:nth-child(4) {
+  color: #FFF0B8 !important;
+  border-color: rgba(214, 183, 87, .68) !important;
+  background: linear-gradient(145deg,
+    rgba(198, 158, 58, .56) 0%,
+    rgba(155, 166, 76, .52) 55%,
+    rgba(67, 151, 91, .56) 100%) !important;
+}
+html body .fi-global-bottom-nav .fi-bottom-nav-item:nth-child(1),
+html body .fi-global-bottom-nav .fi-bottom-nav-item:nth-child(5) {
+  color: #C8FFE4 !important;
+  border-color: rgba(36, 190, 127, .72) !important;
+  background: linear-gradient(145deg,
+    rgba(17, 151, 99, .68) 0%,
+    rgba(7, 119, 79, .72) 100%) !important;
+}
+html body .fi-global-bottom-nav .fi-bottom-nav-item:nth-child(2):hover,
+html body .fi-global-bottom-nav .fi-bottom-nav-item:nth-child(2):focus-visible,
+html body .fi-global-bottom-nav .fi-bottom-nav-item:nth-child(2).is-active,
+html body .fi-global-bottom-nav .fi-bottom-nav-item:nth-child(4):hover,
+html body .fi-global-bottom-nav .fi-bottom-nav-item:nth-child(4):focus-visible,
+html body .fi-global-bottom-nav .fi-bottom-nav-item:nth-child(4).is-active {
+  color: #FFFBE5 !important;
+  border-color: rgba(240, 220, 145, .92) !important;
+  background: linear-gradient(145deg,
+    rgba(225, 187, 76, .72) 0%,
+    rgba(171, 188, 83, .68) 55%,
+    rgba(79, 180, 111, .72) 100%) !important;
+  box-shadow: 0 0 18px rgba(173, 187, 86, .2), 0 0 18px rgba(35, 171, 112, .18) !important;
+}
+html body .fi-global-bottom-nav .fi-bottom-nav-item:nth-child(1):hover,
+html body .fi-global-bottom-nav .fi-bottom-nav-item:nth-child(1):focus-visible,
+html body .fi-global-bottom-nav .fi-bottom-nav-item:nth-child(1).is-active,
+html body .fi-global-bottom-nav .fi-bottom-nav-item:nth-child(5):hover,
+html body .fi-global-bottom-nav .fi-bottom-nav-item:nth-child(5):focus-visible,
+html body .fi-global-bottom-nav .fi-bottom-nav-item:nth-child(5).is-active {
+  color: #F0FFF7 !important;
+  border-color: rgba(116, 255, 190, .94) !important;
+  background: linear-gradient(145deg,
+    rgba(25, 184, 121, .82) 0%,
+    rgba(5, 132, 88, .86) 100%) !important;
+  box-shadow: 0 0 20px rgba(27, 196, 130, .28), inset 0 0 12px rgba(139, 255, 203, .12) !important;
+}
