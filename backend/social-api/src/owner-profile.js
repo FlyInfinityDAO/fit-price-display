@@ -233,7 +233,9 @@ async function createProfile(request, env) {
     return json({ error: error.message }, 400);
   }
 
-  if (!await rateLimit(env.DB, 'owner-profile-create-ip:' + (request.headers.get('CF-Connecting-IP') || 'unknown'), 8, 3600)) {
+  const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+  const ipHash = await hashValue(ip + ':' + new Date().toISOString().slice(0, 10));
+  if (!await rateLimit(env.DB, 'owner-profile-create-ip:' + ipHash, 8, 3600)) {
     return json({ error: 'Too many profile setup attempts. Please try later.' }, 429);
   }
   const proof = await consumeWalletProof(env.DB, env, body.proofToken);
