@@ -23,6 +23,10 @@
     'https://1rpc.io/bnb'
   ];
   const $ = id => document.getElementById(id);
+  function shortAddress(address) {
+    const value = String(address || '');
+    return /^0x[0-9a-f]{40}$/i.test(value) ? value.slice(0, 3) + '...' + value.slice(-3) : value;
+  }
   const tr = key => {
     const value = typeof window.t === 'function' ? window.t('ownerProfile.' + key) : key;
     return value === 'ownerProfile.' + key ? key : value;
@@ -319,7 +323,9 @@
       select.className = 'op-wallet-select';
       select.addEventListener('click', () => selectWallet(wallet.address));
       const address = document.createElement('strong');
-      address.textContent = wallet.address;
+      address.textContent = shortAddress(wallet.address);
+      address.title = wallet.address;
+      address.setAttribute('aria-label', wallet.address);
       const role = document.createElement('small');
       role.textContent = wallet.isPrimary ? tr('primaryWallet') : tr('linkedWallet');
       select.append(address, role);
@@ -468,7 +474,9 @@
     clearTree();
     renderProfile();
     $('opWalletContent').classList.remove('op-hidden');
-    $('opSelectedAddress').textContent = address;
+    $('opSelectedAddress').textContent = shortAddress(address);
+    $('opSelectedAddress').title = address;
+    $('opSelectedAddress').setAttribute('aria-label', address);
     setProfileStatus(tr('loadingWallet'));
     ['opPurchased','opLimit','opRemaining','opBalance','opPrice','opValue','opLeft','opRight'].forEach(id => setMetric(id, tr('loading')));
     $('opTreeRoot').textContent = tr('loading');
@@ -572,7 +580,9 @@
     toggle.setAttribute('aria-label', state.treeExpanded.has(address.toLowerCase()) ? tr('collapseBranch') : tr('expandBranch'));
     const value = document.createElement('div');
     value.className = 'op-tree-address';
-    value.textContent = address;
+    value.textContent = shortAddress(address);
+    value.title = address;
+    value.setAttribute('aria-label', address);
     const copy = document.createElement('button');
     copy.type = 'button';
     copy.className = 'op-tree-copy';
@@ -659,7 +669,8 @@
       if (ancestors.has(childKey) && childKey !== ZERO.toLowerCase()) {
         const repeated = document.createElement('div');
         repeated.className = 'op-tree-node zero';
-        repeated.textContent = child + ' · ' + tr('cycleDetected');
+        repeated.textContent = shortAddress(child) + ' · ' + tr('cycleDetected');
+        repeated.title = child;
         column.appendChild(repeated);
       } else if (counter.count < 500) {
         column.appendChild(makeTreeNode(child, side, ancestors, depth, counter));
@@ -686,7 +697,9 @@
     rootNode.className = 'op-tree-root';
     const label = document.createElement('div');
     label.className = 'op-tree-root-label';
-    label.textContent = state.selectedWallet;
+    label.textContent = shortAddress(state.selectedWallet);
+    label.title = state.selectedWallet;
+    label.setAttribute('aria-label', state.selectedWallet);
     const copy = document.createElement('button');
     copy.type = 'button';
     copy.className = 'op-icon-btn';
