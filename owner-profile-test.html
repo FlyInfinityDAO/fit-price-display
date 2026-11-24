@@ -30,7 +30,7 @@ body{background:#07100e!important;color:#f2f7f5}.op-test-shell{position:relative
 .op-test-controls{display:flex;gap:8px;flex-wrap:wrap}.op-test-controls button{flex:1}
 @media(max-width:720px){.op-test-grid{grid-template-columns:1fr}.op-test-shell{padding:12px 9px 100px}.op-test-panel{padding:14px}}
 </style>
-<link rel="stylesheet" href="owner-profile-test.css?v=20261125-responsive-v1">
+<link rel="stylesheet" href="owner-profile-test.css?v=20261125-responsive-v2">
 </head>
 <body class="owner-profile-page">
 <main class="op-test-shell">
@@ -83,14 +83,92 @@ body{background:#07100e!important;color:#f2f7f5}.op-test-shell{position:relative
     </section>
   </div>
 
-  <section class="op-card op-test-panel op-test-tree">
-    <div class="op-tree-toolbar">
-      <div><h2 style="margin:0;color:#00c896"><i class="fa-solid fa-sitemap"></i> Live genealogy test</h2>
-      <p class="op-tree-hint">Tap + on any address to fetch its children live. Each branch request is measured and logged.</p></div>
-      <button class="op-btn subtle" id="reloadTree" type="button"><i class="fa-solid fa-arrows-rotate"></i> Reload root branches</button>
+  <section class="op-profile op-test-profile-preview" aria-label="Owner Profile responsive layout preview">
+    <div class="op-card op-profile-head">
+      <div class="op-profile-title">
+        <h2>Owner Profile — Responsive UI Preview</h2>
+        <p>Sample profile layout only · no login, no wallet connection, no transactions</p>
+      </div>
+      <div class="op-profile-actions">
+        <span class="op-btn subtle op-preview-tag" aria-label="Preview mode">PREVIEW MODE</span>
+      </div>
     </div>
-    <div class="op-tree-viewport" id="testTreeViewport"><div id="testTreeRoot" class="op-empty">Run the live tests to load the root branches.</div></div>
-    <p class="op-note">Genealogy data is fetched directly from the BNB Smart Chain. This test page stores no tree data and uses no site database.</p>
+
+    <section class="op-card op-wallet-panel">
+      <div class="op-section-head">
+        <h3>Registered wallets</h3>
+        <span class="op-kicker">SAMPLE PROFILE</span>
+      </div>
+      <div class="op-wallet-list">
+        <div class="op-wallet-item active">
+          <div class="op-wallet-select">
+            <strong title="0xc8199B9A3408631a0defBfb7381b736f582Ce642">0xc...642</strong>
+            <small>Primary wallet · selected</small>
+          </div>
+          <div class="op-wallet-tools"><button class="op-icon-btn" type="button" aria-label="Copy sample address" title="Copy sample address">⧉</button></div>
+        </div>
+        <div class="op-wallet-item">
+          <div class="op-wallet-select">
+            <strong title="0x53a83f7cCf10d8B8e8aBE8d0Fe7F9111DC85d881">0x5...881</strong>
+            <small>Linked wallet</small>
+          </div>
+          <div class="op-wallet-tools"><button class="op-icon-btn" type="button" aria-label="Copy sample address" title="Copy sample address">⧉</button></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="op-selected">
+      <span>Selected wallet</span>
+      <strong title="0xc8199B9A3408631a0defBfb7381b736f582Ce642">0xc...642</strong>
+    </div>
+
+    <div class="op-data-grid">
+      <article class="op-card op-data-panel fit">
+        <h3 class="op-panel-title fit"><i class="fa-solid fa-coins"></i> FIT Information</h3>
+        <div class="op-metrics">
+          <div class="op-metric"><span class="op-metric-label">Purchased amount</span><strong class="op-metric-value gold">$15.05</strong></div>
+          <div class="op-metric"><span class="op-metric-label">Purchase ceiling</span><strong class="op-metric-value gold">$300.00</strong></div>
+          <div class="op-metric"><span class="op-metric-label">Remaining amount</span><strong class="op-metric-value gold">$284.95</strong></div>
+          <div class="op-metric"><span class="op-metric-label">FIT wallet balance</span><strong class="op-metric-value gold">2.042869 FIT</strong></div>
+          <div class="op-metric"><span class="op-metric-label">Current FIT price</span><strong class="op-metric-value">$7.499261</strong></div>
+          <div class="op-metric"><span class="op-metric-label">Current dollar value</span><strong class="op-metric-value green">$15.32</strong></div>
+        </div>
+        <div class="op-profit">
+          <h4>Estimated FIT price growth on current balance</h4>
+          <div class="op-profit-grid">
+            <div class="op-profit-item"><span>1 day</span><strong class="positive">+$0.12</strong></div>
+            <div class="op-profit-item"><span>7 days</span><strong class="positive">+$0.45</strong></div>
+            <div class="op-profit-item"><span>30 days</span><strong class="negative">−$0.08</strong></div>
+            <div class="op-profit-item"><span>3 months</span><strong>—</strong></div>
+            <div class="op-profit-item"><span>6 months</span><strong>—</strong></div>
+            <div class="op-profit-item"><span>1 year</span><strong>—</strong></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="op-card op-data-panel network">
+        <h3 class="op-panel-title network"><i class="fa-solid fa-diagram-project"></i> Network Information</h3>
+        <div class="op-metrics">
+          <div class="op-metric"><span class="op-metric-label">Left network total</span><strong class="op-metric-value green">12</strong></div>
+          <div class="op-metric"><span class="op-metric-label">Right network total</span><strong class="op-metric-value green">11</strong></div>
+        </div>
+        <p class="op-note">Sample preview values — actual owner data is loaded live from BNB Smart Chain in the authenticated profile.</p>
+      </article>
+    </div>
+
+    <section class="op-card op-tree-panel op-test-tree">
+      <div class="op-tree-toolbar">
+        <div>
+          <h3><i class="fa-solid fa-sitemap"></i> Network Genealogy</h3>
+          <p class="op-tree-hint">Expand a shortened address to fetch its left and right children. Copy still copies the full address.</p>
+        </div>
+        <button class="op-btn subtle" id="reloadTree" type="button"><i class="fa-solid fa-arrows-rotate"></i> Reload live tree</button>
+      </div>
+      <div class="op-tree-viewport" id="testTreeViewport">
+        <div id="testTreeRoot" class="op-empty">Run the live tests to load the root branches.</div>
+      </div>
+      <p class="op-note">Genealogy is read directly from the contract. The preview does not require authentication and stores no tree data.</p>
+    </section>
   </section>
 </main>
 <script src="owner-profile-test.js?v=20261125-test-v1"></script>
