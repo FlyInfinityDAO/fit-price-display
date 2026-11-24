@@ -53,6 +53,7 @@ jobs:
           done
           node --check social-api/src/index.js
           node --check social-api/src/auth.js
+          node --check social-api/src/owner-profile.js
           node --check social-api/src/validation.js
           node --check social-api/src/storage.js
           node --input-type=module <<'NODE'
