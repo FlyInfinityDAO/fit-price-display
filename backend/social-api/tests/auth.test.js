@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { Wallet } from 'ethers';
 import {
-  buildChallengeMessage, buildPasswordRecoveryMessage, normalizeAddress,
+  buildChallengeMessage, buildOwnerProfileChallengeMessage, buildPasswordRecoveryMessage, normalizeAddress,
   verifyWalletSignature, hashValue, createPasswordSalt, hashPassword,
   constantTimeEqual
 } from '../src/auth.js';
@@ -89,4 +89,23 @@ test('passwords use unique salts and PBKDF2 hashes that can be verified without 
   assert.equal(constantTimeEqual(hashA, hashAgain), true);
   assert.equal(constantTimeEqual(hashA, hashOtherSalt), false);
   assert.match(hashA, /^[0-9a-f]{64}$/);
+});
+
+test('Owner Profile challenge verifies wallet control without an on-chain transaction', async () => {
+  const wallet = Wallet.createRandom();
+  const other = Wallet.createRandom();
+  const message = buildOwnerProfileChallengeMessage({
+    origin: 'https://flyinfinitydao.github.io',
+    address: wallet.address,
+    nonce: 'owner-profile-nonce',
+    issuedAt: '2026-11-25T00:00:00.000Z',
+    expiresAt: '2026-11-25T00:05:00.000Z'
+  });
+  assert.match(message, /Owner Profile wallet verification/);
+  assert.match(message, /Chain ID: 56/);
+  assert.match(message, /does not authorize token transfers or spending/i);
+  assert.match(message, /requires no gas/i);
+  const signature = await wallet.signMessage(message);
+  assert.equal(verifyWalletSignature({ address: wallet.address, message, signature }), true);
+  assert.equal(verifyWalletSignature({ address: other.address, message, signature }), false);
 });
