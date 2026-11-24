@@ -551,6 +551,7 @@
       if (epoch === state.treeEpoch) renderTree();
     });
     state.treeLoading.set(key, promise);
+    renderTree();
     return promise;
   }
 
