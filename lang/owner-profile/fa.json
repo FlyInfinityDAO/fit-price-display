@@ -7,7 +7,22 @@
     "title": "Fly Infinity DAO"
   },
   "nav": {
-    "ownerProfile": "پروفایل مالک"
+    "dashboard": "داشبورد",
+    "whatisfit": "FIT چیست؟",
+    "comparison": "مقایسه",
+    "dapp": "اپلیکیشن غیرمتمرکز",
+    "games": "بازی‌های فلای اینفینیتی",
+    "ai": "هوش مصنوعی فلای اینفینیتی",
+    "socialArena": "رسانه اجتماعی",
+    "ownerProfile": "پروفایل مالک",
+    "profitCalculator": "ماشین‌حساب سود",
+    "nextProjects": "پروژه‌های آینده",
+    "transactions": "تراکنش‌ها",
+    "privacy": "حریم خصوصی",
+    "warnings": "هشدارها",
+    "faq": "سؤالات متداول",
+    "whitepaper": "وایت‌پیپر",
+    "audit": "ممیزی امنیتی"
   },
   "ownerProfile": {
     "eyebrow": "شبکه فلای اینفینیتی",
