@@ -97,3 +97,44 @@ test('preflight returns allowed methods and authorization headers', async () => 
   assert.match(response.headers.get('access-control-allow-methods'), /PATCH/);
   assert.match(response.headers.get('access-control-allow-headers'), /Authorization/);
 });
+
+test('Owner Profile routes are wired and reject unauthenticated profile access', async () => {
+  const requests = [
+    ['GET', '/api/owner-profile/me'],
+    ['POST', '/api/owner-profile/wallets'],
+    ['DELETE', '/api/owner-profile/wallets/0x0000000000000000000000000000000000000001'],
+    ['POST', '/api/owner-profile/logout']
+  ];
+  for (const [method, path] of requests) {
+    const response = await worker.fetch(new Request('https://social.example' + path, {
+      method,
+      headers: { Origin: 'https://flyinfinitydao.github.io' }
+    }), { APP_ORIGIN: 'https://flyinfinitydao.github.io' });
+    assert.equal(response.status, 401, method + ' ' + path + ' must require an Owner Profile session');
+  }
+});
+
+test('Owner Profile wallet challenge validates addresses before database access', async () => {
+  const response = await worker.fetch(new Request('https://social.example/api/owner-profile/auth/challenge', {
+    method: 'POST',
+    headers: {
+      Origin: 'https://flyinfinitydao.github.io',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ address: 'not-a-wallet' })
+  }), { APP_ORIGIN: 'https://flyinfinitydao.github.io' });
+  assert.equal(response.status, 400);
+  assert.match((await response.json()).error, /wallet address/i);
+});
+
+test('Owner Profile login validates username and password before database access', async () => {
+  const response = await worker.fetch(new Request('https://social.example/api/owner-profile/login', {
+    method: 'POST',
+    headers: {
+      Origin: 'https://flyinfinitydao.github.io',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ username: 'x', password: 'tiny' })
+  }), { APP_ORIGIN: 'https://flyinfinitydao.github.io' });
+  assert.equal(response.status, 400);
+});
