@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1110">
+<title>Owner Profile — Live Contract Test</title>
+<link rel="stylesheet" href="owner-profile.css?v=20261125-owner-profile-v2">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<style>
+body{background:#07100e!important;color:#f2f7f5}.op-test-shell{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:20px 14px 100px}
+.op-test-banner{border:1px solid rgba(212,175,55,.5);border-radius:16px;background:rgba(212,175,55,.08);padding:14px 16px;color:#f0dfa1;font-size:13px;line-height:1.7;margin-bottom:16px}
+.op-test-heading{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:18px 0}
+.op-test-heading h1{font-size:clamp(24px,4vw,38px);color:#d4af37}
+.op-test-address{direction:ltr;text-align:left;overflow-wrap:anywhere;font-family:ui-monospace,Consolas,monospace;color:#a4e6c9;font-size:13px}
+.op-test-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.op-test-panel{padding:18px}
+.op-test-panel h2{font-size:16px;color:#00c896;margin-bottom:14px}
+.op-test-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.op-test-metric{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);padding:12px;border-radius:12px;min-width:0}
+.op-test-metric span{display:block;color:#9fb4ad;font-size:11px;margin-bottom:7px}
+.op-test-metric strong{display:block;color:#f3f8f5;font-size:15px;overflow-wrap:anywhere}
+.op-test-status{display:grid;gap:8px}
+.op-test-row{display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px;align-items:start;border-bottom:1px solid rgba(255,255,255,.06);padding:8px 0;font-size:12px}
+.op-test-row i{margin-top:2px}.op-ok{color:#69e2ab}.op-fail{color:#ff9c8f}.op-pending{color:#d4af37}
+.op-test-error{margin-top:5px;color:#ffb8ad;overflow-wrap:anywhere;font-family:ui-monospace,Consolas,monospace;font-size:10px}
+.op-test-log{margin-top:14px;padding:12px;border-radius:12px;background:rgba(0,0,0,.3);font-size:11px;line-height:1.65;color:#a4b9ae;overflow-wrap:anywhere;max-height:220px;overflow:auto;white-space:pre-wrap}
+.op-test-tree{margin-top:14px}.op-test-tree .op-tree-viewport{max-height:65vh}
+.op-test-controls{display:flex;gap:8px;flex-wrap:wrap}.op-test-controls button{flex:1}
+@media(max-width:720px){.op-test-grid{grid-template-columns:1fr}.op-test-shell{padding:12px 9px 100px}.op-test-panel{padding:14px}}
+</style>
+</head>
+<body class="owner-profile-page">
+<main class="op-test-shell">
+  <div class="op-test-banner"><strong><i class="fa-solid fa-flask"></i> TEST MODE — READ ONLY</strong><br>
+    This isolated test page does not ask for a wallet connection, username, password, or signature. It only reads public BNB Smart Chain contract data for the fixed test address. No transactions can be sent.
+  </div>
+  <div class="op-test-heading">
+    <div><div class="op-kicker">FLY INFINITY · CONTRACT DIAGNOSTICS</div><h1>Owner Profile Test Bench</h1></div>
+    <span class="badge">Chain ID 56 · BNB Smart Chain</span>
+  </div>
+  <section class="op-card op-test-panel">
+    <h2><i class="fa-solid fa-wallet"></i> Test wallet address</h2>
+    <div class="op-test-address" id="testAddress">0xc8199B9A3408631a0defBfb7381b736f582Ce642</div>
+    <div class="op-test-controls" style="margin-top:14px">
+      <button class="op-btn gold" id="runTests"><i class="fa-solid fa-play"></i> Run live contract tests</button>
+      <button class="op-btn subtle" id="refreshTests"><i class="fa-solid fa-rotate"></i> Refresh data</button>
+    </div>
+    <p class="op-status" id="testOverall" role="status" aria-live="polite">Ready. Press Run live contract tests.</p>
+  </section>
+
+  <div class="op-test-grid" style="margin-top:14px">
+    <section class="op-card op-test-panel">
+      <h2><i class="fa-solid fa-list-check"></i> Contract diagnostics</h2>
+      <div id="testResults" class="op-test-status"><div class="op-empty">Tests have not started.</div></div>
+      <div id="testLog" class="op-test-log">RPC and contract details will appear here.</div>
+    </section>
+    <section class="op-card op-test-panel">
+      <h2><i class="fa-solid fa-coins"></i> FIT information</h2>
+      <div class="op-test-metrics">
+        <div class="op-test-metric"><span>Purchased amount</span><strong id="vPurchased">—</strong></div>
+        <div class="op-test-metric"><span>Purchase ceiling</span><strong id="vLimit">—</strong></div>
+        <div class="op-test-metric"><span>Remaining amount</span><strong id="vRemaining">—</strong></div>
+        <div class="op-test-metric"><span>FIT balance</span><strong id="vBalance">—</strong></div>
+        <div class="op-test-metric"><span>Current FIT price</span><strong id="vPrice">—</strong></div>
+        <div class="op-test-metric"><span>Current dollar value</span><strong id="vValue">—</strong></div>
+      </div>
+    </section>
+    <section class="op-card op-test-panel">
+      <h2><i class="fa-solid fa-diagram-project"></i> Network information</h2>
+      <div class="op-test-metrics">
+        <div class="op-test-metric"><span>Owner_Exists</span><strong id="vOwner">—</strong></div>
+        <div class="op-test-metric"><span>Left network total</span><strong id="vLeft">—</strong></div>
+        <div class="op-test-metric"><span>Right network total</span><strong id="vRight">—</strong></div>
+        <div class="op-test-metric"><span>FIT token contract</span><strong id="vToken" class="op-test-address">—</strong></div>
+      </div>
+    </section>
+    <section class="op-card op-test-panel">
+      <h2><i class="fa-solid fa-code"></i> Raw call responses</h2>
+      <div id="rawResults" class="op-test-log">No contract responses yet.</div>
+    </section>
+  </div>
+
+  <section class="op-card op-test-panel op-test-tree">
+    <div class="op-tree-toolbar">
+      <div><h2 style="margin:0;color:#00c896"><i class="fa-solid fa-sitemap"></i> Live genealogy test</h2>
+      <p class="op-tree-hint">Tap + on any address to fetch its children live. Each branch request is measured and logged.</p></div>
+      <button class="op-btn subtle" id="reloadTree" type="button"><i class="fa-solid fa-arrows-rotate"></i> Reload root branches</button>
+    </div>
+    <div class="op-tree-viewport" id="testTreeViewport"><div id="testTreeRoot" class="op-empty">Run the live tests to load the root branches.</div></div>
+    <p class="op-note">Genealogy data is fetched directly from the BNB Smart Chain. This test page stores no tree data and uses no site database.</p>
+  </section>
+</main>
+<script src="owner-profile-test.js?v=20261125-test-v1"></script>
+</body>
+</html>
