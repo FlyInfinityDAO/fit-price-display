@@ -19,14 +19,14 @@ let translations = {};
 let currentPage = '';
 
 const SHARED_NAV_TRANSLATIONS = {
-  en: { games: "Fly Infinity Games", ai: "Fly Infinity AI" },
-  fa: { games: "بازی‌های فلای اینفینیتی", ai: "هوش مصنوعی فلای اینفینیتی" },
-  ar: { games: "ألعاب فلاي إنفينيتي", ai: "ذكاء فلاي إنفينيتي الاصطناعي" },
-  tr: { games: "Fly Infinity Oyunları", ai: "Fly Infinity Yapay Zekâ" },
-  ru: { games: "Игры Fly Infinity", ai: "ИИ Fly Infinity" },
-  zh: { games: "Fly Infinity 游戏", ai: "Fly Infinity 人工智能" },
-  es: { games: "Juegos Fly Infinity", ai: "IA de Fly Infinity" },
-  pt: { games: "Jogos Fly Infinity", ai: "IA Fly Infinity" }
+  en: { games: "Fly Infinity Games", ai: "Fly Infinity AI", ownerProfile: "Owner Profile" },
+  fa: { games: "بازی‌های فلای اینفینیتی", ai: "هوش مصنوعی فلای اینفینیتی", ownerProfile: "پروفایل مالک" },
+  ar: { games: "ألعاب فلاي إنفينيتي", ai: "ذكاء فلاي إنفينيتي الاصطناعي", ownerProfile: "ملف المالك" },
+  tr: { games: "Fly Infinity Oyunları", ai: "Fly Infinity Yapay Zekâ", ownerProfile: "Sahip Profili" },
+  ru: { games: "Игры Fly Infinity", ai: "ИИ Fly Infinity", ownerProfile: "Профиль владельца" },
+  zh: { games: "Fly Infinity 游戏", ai: "Fly Infinity 人工智能", ownerProfile: "所有者档案" },
+  es: { games: "Juegos Fly Infinity", ai: "IA de Fly Infinity", ownerProfile: "Perfil de propietario" },
+  pt: { games: "Jogos Fly Infinity", ai: "IA Fly Infinity", ownerProfile: "Perfil do proprietário" }
 };
 
 function getPageName() {
