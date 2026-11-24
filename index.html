@@ -2022,13 +2022,15 @@ html[dir="rtl"] .fi-eco-platform-card:hover .fi-eco-platform-cta i,html[dir="rtl
             const updatedText = sourceDate && Number.isFinite(Date.parse(sourceDate))
                 ? new Date(sourceDate).toLocaleString(locale)
                 : "unknown";
-            holderElement.title = `Source: Binplorer | Source updated: ${updatedText}`;
+            const sourceLink = holderElement.parentElement?.querySelector('a[href*="binplorer.com"]');
+            if (sourceLink) sourceLink.title = `Holder data source: Binplorer | Source updated: ${updatedText}`;
         } catch (error) {
             console.warn("FIT holder count is temporarily unavailable:", error);
             if (!holderElement.textContent.trim() || holderElement.textContent.trim() === "—") {
                 holderElement.textContent = "—";
             }
-            holderElement.title = "Holder count will appear when the local data file is available";
+            const sourceLink = holderElement.parentElement?.querySelector('a[href*="binplorer.com"]');
+            if (sourceLink) sourceLink.title = "Holder data source: Binplorer";
         }
     }
     
