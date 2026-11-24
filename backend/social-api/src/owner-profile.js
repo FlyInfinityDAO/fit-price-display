@@ -54,7 +54,7 @@ async function isNetworkOwner(address, env) {
   );
   try {
     const network = new ethers.Contract(
-      env.NETWORK_ADDRESS || '0x7f1cB4fce7C3b6C612c4A7Dd123D3865640dC1B',
+      env.NETWORK_ADDRESS || '0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B',
       ['function Owner_Exists(address owner) view returns (bool)'],
       provider
     );
