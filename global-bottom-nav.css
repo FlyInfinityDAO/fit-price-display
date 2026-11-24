@@ -336,3 +336,17 @@ html body .fi-global-bottom-nav .fi-bottom-nav-item:nth-child(5).is-active {
     rgba(5, 132, 88, .86) 100%) !important;
   box-shadow: 0 0 20px rgba(27, 196, 130, .28), inset 0 0 12px rgba(139, 255, 203, .12) !important;
 }
+
+/* Keep the fixed navigation out of the way while the mobile keyboard is open. */
+@media (max-width: 759px) {
+  html body.fi-mobile-keyboard-open .fi-global-bottom-nav {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transform: translateY(120%) !important;
+    transition: opacity .16s ease, transform .16s ease, visibility .16s ease !important;
+  }
+  html body .fi-global-bottom-nav {
+    transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
+  }
+}
