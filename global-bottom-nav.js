@@ -107,7 +107,7 @@
 
   const css = document.createElement("link");
   css.rel = "stylesheet";
-  css.href = new URL("global-bottom-nav.css?v=20261124-game-nav-size1", root).href;
+  css.href = new URL("global-bottom-nav.css?v=20261124-symmetric-gold-green1", root).href;
   document.head.appendChild(css);
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount, { once: true });
   else mount();
