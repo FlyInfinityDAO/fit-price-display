@@ -468,3 +468,63 @@ body.owner-profile-page *::after { box-sizing: border-box; }
   .op-test-tree .op-tree-branch .op-tree-side { width:118px; min-width:112px; }
   .op-test-tree .op-tree-address { font-size:9px; }
 }
+
+/* Match production's non-overlapping recursive genealogy layout in the test bench. */
+body.owner-profile-page .op-test-tree .op-tree-viewport {
+  width:100%; max-width:100%; min-width:0;
+  overflow-x:hidden; overflow-y:auto;
+  touch-action:pan-y; overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+}
+body.owner-profile-page .op-test-tree .op-tree-root {
+  display:flex; flex-direction:column; align-items:stretch;
+  width:100%; min-width:0; max-width:100%;
+}
+body.owner-profile-page .op-test-tree .op-tree-root-label {
+  align-self:center; width:min(100%,220px); max-width:100%;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+body.owner-profile-page .op-test-tree .op-tree-root > .op-tree-children {
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px; width:100%; min-width:0; max-width:100%;
+}
+body.owner-profile-page .op-test-tree .op-tree-side {
+  display:flex; flex:1 1 0; flex-direction:column; align-items:stretch;
+  width:100%; min-width:0; max-width:100%;
+}
+body.owner-profile-page .op-test-tree .op-tree-node {
+  width:100%; min-width:0; max-width:100%; overflow:hidden;
+}
+body.owner-profile-page .op-test-tree .op-tree-node-head {
+  display:grid; grid-template-columns:21px minmax(0,1fr) 25px;
+  align-items:center; gap:4px; width:100%; min-width:0;
+}
+body.owner-profile-page .op-test-tree .op-tree-address {
+  min-width:0; max-width:100%; white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis; overflow-wrap:normal; word-break:normal;
+}
+body.owner-profile-page .op-test-tree .op-tree-branch {
+  display:block; width:100%; min-width:0; max-width:100%;
+  margin-top:7px; padding:7px 0 0; overflow:hidden;
+}
+body.owner-profile-page .op-test-tree .op-tree-branch .op-tree-children {
+  display:grid; grid-template-columns:minmax(0,1fr); gap:7px;
+  width:100%; min-width:0; max-width:100%;
+}
+body.owner-profile-page .op-test-tree .op-tree-branch .op-tree-side {
+  display:flex; flex:none; width:100%; min-width:0; max-width:100%;
+}
+body.owner-profile-page .op-test-tree .op-tree-branch .op-tree-node {
+  width:100%; min-width:0; max-width:100%; padding:6px;
+}
+body.owner-profile-page .op-test-tree .op-tree-branch .op-tree-node-head {
+  grid-template-columns:20px minmax(0,1fr) 24px;
+}
+body.owner-profile-page .op-test-tree .op-tree-branch .op-tree-address {font-size:9px}
+@media(max-width:350px) {
+  body.owner-profile-page .op-test-tree .op-tree-root > .op-tree-children {gap:5px}
+  body.owner-profile-page .op-test-tree .op-tree-node {padding:5px}
+  body.owner-profile-page .op-test-tree .op-tree-node-head {grid-template-columns:19px minmax(0,1fr) 22px;gap:3px}
+  body.owner-profile-page .op-test-tree .op-tree-toggle {width:19px;height:21px}
+  body.owner-profile-page .op-test-tree .op-tree-copy {width:22px;height:22px}
+}
