@@ -18,8 +18,9 @@
     'function Price() view returns (uint256)'
   ];
   const RPC_URLS = [
+    'https://bsc-rpc.publicnode.com',
     'https://bsc-dataseed.binance.org/',
-    'https://bsc-rpc.publicnode.com'
+    'https://1rpc.io/bnb'
   ];
   const $ = id => document.getElementById(id);
   const tr = key => {
