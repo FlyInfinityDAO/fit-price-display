@@ -425,3 +425,162 @@ html[dir=rtl] .lang-dropdown{right:auto;left:20px;transform-origin:top left}
   body[data-ambient="social"] .fi-bottom-nav-item svg{width:20px!important;height:20px!important}
   body[data-ambient="social"] .fi-bottom-nav-dashboard svg{width:21px!important;height:21px!important}
 }
+
+
+/* Fly Infinity Social — Glass finish pass: give the remaining controls and content surfaces the same
+   transparent glass treatment as the main Social cards and site navigation. */
+.feed-head{
+  background:linear-gradient(125deg,rgba(9,24,19,.52),rgba(8,17,16,.42));
+  border-color:rgba(37,215,154,.28);
+  -webkit-backdrop-filter:blur(28px) saturate(175%);
+  backdrop-filter:blur(28px) saturate(175%);
+  box-shadow:0 16px 42px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.10),inset 0 -1px 0 rgba(0,200,150,.06);
+}
+.auth-gate{
+  background:linear-gradient(145deg,rgba(10,25,21,.60),rgba(7,16,15,.54));
+  -webkit-backdrop-filter:blur(30px) saturate(175%);
+  backdrop-filter:blur(30px) saturate(175%);
+}
+.composer{
+  background:linear-gradient(145deg,rgba(10,25,21,.54),rgba(7,17,15,.44));
+  border-color:rgba(212,175,55,.30);
+  -webkit-backdrop-filter:blur(28px) saturate(175%);
+  backdrop-filter:blur(28px) saturate(175%);
+  box-shadow:0 17px 40px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.09);
+}
+.post,.explore-tile,.connection-row,.notification-row,.profile-card,.profile-stats{
+  background:linear-gradient(145deg,rgba(12,29,24,.58),rgba(7,17,16,.48));
+  border-color:rgba(37,215,154,.24);
+  -webkit-backdrop-filter:blur(28px) saturate(175%);
+  backdrop-filter:blur(28px) saturate(175%);
+  box-shadow:0 17px 42px rgba(0,0,0,.23),inset 0 1px 0 rgba(255,255,255,.085),inset 0 -1px 0 rgba(0,200,150,.055);
+}
+.profile-card{background:linear-gradient(135deg,rgba(18,35,26,.60),rgba(8,17,16,.46))}
+.profile-stats{background:rgba(10,24,20,.42)}
+.notification-row.unread{
+  background:linear-gradient(120deg,rgba(212,175,55,.13),rgba(8,20,17,.50));
+  border-color:rgba(212,175,55,.48);
+}
+.view-title{
+  position:relative;
+  padding:11px 14px;
+  border:1px solid rgba(0,200,150,.19);
+  border-radius:17px;
+  background:linear-gradient(120deg,rgba(10,27,22,.44),rgba(8,17,16,.34));
+  -webkit-backdrop-filter:blur(22px) saturate(160%);
+  backdrop-filter:blur(22px) saturate(160%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 9px 25px rgba(0,0,0,.12);
+}
+.profile-section-title{
+  display:inline-flex;align-items:center;
+  padding:7px 12px;
+  border:1px solid rgba(0,200,150,.22);
+  border-radius:12px;
+  background:rgba(0,200,150,.065);
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
+}
+.post-actions{
+  border-top:1px solid rgba(220,255,241,.11);
+  background:linear-gradient(90deg,rgba(0,200,150,.035),rgba(255,255,255,.035),rgba(212,175,55,.045));
+  -webkit-backdrop-filter:blur(18px);
+  backdrop-filter:blur(18px);
+}
+.action-btn,.view-action,.feed-user button,.profile-follow{
+  border:1px solid rgba(37,215,154,.28);
+  background:linear-gradient(135deg,rgba(0,200,150,.085),rgba(255,255,255,.045));
+  -webkit-backdrop-filter:blur(16px) saturate(145%);
+  backdrop-filter:blur(16px) saturate(145%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 5px 15px rgba(0,0,0,.10);
+}
+.action-btn.active,.profile-follow.following{
+  background:linear-gradient(135deg,rgba(0,200,150,.19),rgba(212,175,55,.12));
+  border-color:rgba(0,200,150,.60);
+}
+.action-btn.delete{
+  border-color:rgba(255,155,155,.32);
+  background:linear-gradient(135deg,rgba(255,110,110,.11),rgba(255,255,255,.035));
+}
+.profile-stats button{
+  min-height:62px;
+  padding:9px 5px;
+  border:1px solid rgba(37,215,154,.20);
+  border-radius:13px;
+  background:linear-gradient(145deg,rgba(0,200,150,.09),rgba(255,255,255,.035));
+  -webkit-backdrop-filter:blur(16px) saturate(145%);
+  backdrop-filter:blur(16px) saturate(145%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.065),0 7px 18px rgba(0,0,0,.12);
+  transition:transform .22s ease,border-color .22s ease,background .22s ease,box-shadow .22s ease;
+}
+.profile-stats button:hover,.profile-stats button:focus-visible{
+  border-color:rgba(212,175,55,.48);
+  background:linear-gradient(145deg,rgba(212,175,55,.12),rgba(0,200,150,.09));
+  box-shadow:0 8px 20px rgba(0,0,0,.16),0 0 16px rgba(0,200,150,.09);
+  outline:none;
+}
+.field input,.field textarea,.composer textarea{
+  background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(0,200,150,.045));
+  border-color:rgba(37,215,154,.27);
+  -webkit-backdrop-filter:blur(18px) saturate(145%);
+  backdrop-filter:blur(18px) saturate(145%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.055),0 6px 18px rgba(0,0,0,.10);
+}
+.field input[readonly]{background:rgba(255,255,255,.055)}
+.file-pick{
+  border-color:rgba(37,215,154,.28);
+  background:linear-gradient(135deg,rgba(0,200,150,.09),rgba(255,255,255,.045));
+  -webkit-backdrop-filter:blur(18px);
+  backdrop-filter:blur(18px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 7px 18px rgba(0,0,0,.10);
+}
+.wallet-summary{
+  background:linear-gradient(130deg,rgba(0,200,150,.14),rgba(255,255,255,.04));
+  border-color:rgba(0,200,150,.38);
+  -webkit-backdrop-filter:blur(22px) saturate(160%);
+  backdrop-filter:blur(22px) saturate(160%);
+}
+.feed-empty{
+  background:linear-gradient(145deg,rgba(10,28,22,.50),rgba(7,17,15,.40));
+  border-color:rgba(0,200,150,.32);
+  -webkit-backdrop-filter:blur(24px) saturate(155%);
+  backdrop-filter:blur(24px) saturate(155%);
+}
+.post-reason,.repost-note{
+  display:table;
+  margin-inline:14px;
+  padding:7px 11px;
+  border:1px solid rgba(212,175,55,.24);
+  border-radius:999px;
+  background:rgba(212,175,55,.075);
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
+}
+.explore-meta{
+  background:linear-gradient(180deg,rgba(0,200,150,.035),rgba(255,255,255,.025));
+}
+.lang-dropdown{
+  background:linear-gradient(145deg,rgba(10,25,21,.78),rgba(6,14,13,.72));
+  border-color:rgba(37,215,154,.38);
+}
+@media(max-width:560px){
+  .view-title{padding:10px 11px;border-radius:15px}
+  .composer{background:linear-gradient(145deg,rgba(10,25,21,.58),rgba(7,17,15,.50))}
+  .post,.explore-tile,.connection-row,.notification-row,.profile-card,.profile-stats{
+    background:linear-gradient(145deg,rgba(12,29,24,.64),rgba(7,17,16,.54));
+  }
+  .profile-stats{gap:6px;padding:9px 7px}
+  .profile-stats button{min-height:58px}
+  .post-actions{padding:9px 10px;gap:7px}
+  .file-pick{min-height:42px}
+}
+@media(prefers-reduced-transparency:reduce){
+  .topbar,.auth-gate,.feed-head,.composer,.post,.explore-tile,.profile-card,.profile-stats,.connection-row,.notification-row,.view-title,.action-btn,.view-action,.file-pick{
+    -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+    background-color:rgba(8,18,15,.90)!important;
+  }
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .feed-head,.composer,.post,.explore-tile,.profile-card,.profile-stats,.connection-row,.notification-row,.view-title{
+    background-color:rgba(8,18,15,.84);
+  }
+}
