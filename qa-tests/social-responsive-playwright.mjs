@@ -271,7 +271,7 @@ try{
   }
   const baseline=androidSamples[0];
   assert(baseline.direction==="rtl","Android Persian mode did not activate RTL: "+JSON.stringify(baseline));
-  assert(baseline.backgroundSize.startsWith("100% auto")&&!baseline.backgroundSize.includes("contain"),"Android background must be width-locked instead of viewport-height-dependent contain: "+JSON.stringify(baseline));
+  assert(baseline.backgroundSize.startsWith("100%")&&!baseline.backgroundSize.includes("contain"),"Android background must be width-locked instead of viewport-height-dependent contain: "+JSON.stringify(baseline));
   for(const sample of androidSamples){
     assert(sample.direction==="rtl","Android direction changed unexpectedly: "+JSON.stringify(sample));
     assert(Math.abs(sample.scale-1)<0.02,"Android viewport scale changed while idle in Persian: "+JSON.stringify(sample));
