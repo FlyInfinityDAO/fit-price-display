@@ -24,6 +24,13 @@ on:
       - 'creator-arena/social-api.js'
       - 'creator-arena/index.html'
       - 'backend/package.json'
+      - 'owner-profile.html'
+      - 'owner-profile.css'
+      - 'owner-profile.js'
+      - 'lang/owner-profile/**'
+      - 'site-navigation.js'
+      - 'lang.js'
+      - 'dapp.html'
       - '.github/workflows/fly-social-api-check.yml'
 
 permissions:
@@ -60,8 +67,8 @@ jobs:
           import { readFileSync, readdirSync } from 'node:fs';
           const html = readFileSync('../owner-profile.html', 'utf8');
           const js = readFileSync('../owner-profile.js', 'utf8');
-          const ids = new Set([...html.matchAll(/\\bid="([^"]+)"/g)].map(match => match[1]));
-          const missing = [...js.matchAll(/\\$\\('([^']+)'\\)/g)].map(match => match[1]).filter(id => !ids.has(id));
+          const ids = new Set([...html.matchAll(/id="([^"]+)"/g)].map(match => match[1]));
+          const missing = [...js.matchAll(/\$\('([^']+)'\)/g)].map(match => match[1]).filter(id => !ids.has(id));
           if (missing.length) throw new Error('Owner Profile references missing element IDs: ' + [...new Set(missing)].join(', '));
           for (const file of readdirSync('../lang/owner-profile').filter(name => name.endsWith('.json'))) {
             JSON.parse(readFileSync('../lang/owner-profile/' + file, 'utf8'));
