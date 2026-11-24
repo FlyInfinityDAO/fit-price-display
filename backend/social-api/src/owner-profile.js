@@ -416,8 +416,9 @@ export async function routeOwnerProfile(request, env) {
   if (path === '/api/owner-profile/login' && method === 'POST') return login(request, env);
   if (path === '/api/owner-profile/me' && method === 'GET') return me(request, env);
   if (path === '/api/owner-profile/wallets' && method === 'POST') return addWallet(request, env);
-  const walletMatch = path.match(/^\\/api\\/owner-profile\\/wallets\\/([^/]+)$/);
-  if (walletMatch && method === 'DELETE') return removeWallet(request, env, walletMatch[1]);
+  const walletPrefix = '/api/owner-profile/wallets/';
+  const walletAddress = path.startsWith(walletPrefix) ? path.slice(walletPrefix.length) : '';
+  if (walletAddress && method === 'DELETE' && !walletAddress.includes('/')) return removeWallet(request, env, walletAddress);
   if (path === '/api/owner-profile/password/recover' && method === 'POST') return recoverPassword(request, env);
   if (path === '/api/owner-profile/logout' && method === 'POST') return logout(request, env);
   return null;
