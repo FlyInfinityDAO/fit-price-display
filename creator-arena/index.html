@@ -878,7 +878,6 @@ $('feedApp').addEventListener('click',async event=>{
  finally{button.disabled=false;}
 });
 async function initialize(){
- translate('en');
  let saved='en';try{saved=localStorage.getItem('fit_lang')||((navigator.language||'en').slice(0,2));}catch(e){}
  translate(translations[saved]?saved:'en');
  const languageButton=$('langBtn'),languageDropdown=$('langDropdown');
