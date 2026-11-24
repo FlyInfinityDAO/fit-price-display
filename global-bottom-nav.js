@@ -97,6 +97,30 @@
     document.body.appendChild(nav);
     document.body.classList.add("fi-global-nav-enabled");
 
+    // Mobile browsers may move fixed elements into the visible area when
+    // the software keyboard opens. Hide the shared nav while editing fields.
+    const isEditable = (element) => {
+      if (!element || !element.matches) return false;
+      return element.matches('input:not([type="button"]):not([type="submit"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]), textarea, select, [contenteditable="true"]');
+    };
+    let keyboardCloseCheck;
+    document.addEventListener("focusin", (event) => {
+      if (window.matchMedia("(max-width: 759px)").matches && isEditable(event.target)) {
+        window.clearTimeout(keyboardCloseCheck);
+        document.body.classList.add("fi-mobile-keyboard-open");
+      }
+    });
+    document.addEventListener("focusout", () => {
+      if (!window.matchMedia("(max-width: 759px)").matches) return;
+      window.clearTimeout(keyboardCloseCheck);
+      keyboardCloseCheck = window.setTimeout(() => {
+        if (!isEditable(document.activeElement)) {
+          document.body.classList.remove("fi-mobile-keyboard-open");
+        }
+      }, 450);
+    });
+
+
     document.addEventListener("fi-language-updated", (event) => {
       refreshLabels(event && event.detail && event.detail.lang);
     });
@@ -107,7 +131,7 @@
 
   const css = document.createElement("link");
   css.rel = "stylesheet";
-  css.href = new URL("global-bottom-nav.css?v=20261124-symmetric-gold-green1", root).href;
+  css.href = new URL("global-bottom-nav.css?v=20261124-mobile-keyboard-fix1", root).href;
   document.head.appendChild(css);
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount, { once: true });
   else mount();
