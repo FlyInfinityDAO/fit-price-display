@@ -42,6 +42,7 @@ jobs:
         run: |
           node --check social-api/src/index.js
           node --check social-api/src/auth.js
+          node --check social-api/src/owner-profile.js
           node --check social-api/src/validation.js
           node --check social-api/src/storage.js
           node --check ../creator-arena/social-api.js
