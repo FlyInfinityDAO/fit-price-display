@@ -6,6 +6,7 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 MIGRATION = ROOT / "social-api" / "migrations" / "0001_init.sql"
 ACCOUNT_MIGRATION = ROOT / "social-api" / "migrations" / "0002_accounts_passwords_reposts.sql"
 NOTIFICATION_MIGRATION = ROOT / "social-api" / "migrations" / "0003_social_notifications.sql"
+OWNER_PROFILE_MIGRATION = ROOT / "social-api" / "migrations" / "0004_owner_profiles.sql"
 
 with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
     connection = sqlite3.connect(file.name)
@@ -13,6 +14,7 @@ with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
     connection.executescript(MIGRATION.read_text(encoding="utf-8"))
     connection.executescript(ACCOUNT_MIGRATION.read_text(encoding="utf-8"))
     connection.executescript(NOTIFICATION_MIGRATION.read_text(encoding="utf-8"))
+    connection.executescript(OWNER_PROFILE_MIGRATION.read_text(encoding="utf-8"))
 
     tables = {
         row[0]
@@ -43,6 +45,63 @@ with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
     session_columns = {row[1] for row in connection.execute("PRAGMA table_info(social_sessions)")}
     assert {"password_hash", "password_salt", "password_iterations"}.issubset(profile_columns)
     assert "password_verified" in session_columns
+
+    owner_tables = {
+        row[0]
+        for row in connection.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE 'owner_profile_%'"
+        )
+    }
+    expected_owner_tables = {
+        "owner_profiles",
+        "owner_profile_wallets",
+        "owner_profile_nonces",
+        "owner_profile_proofs",
+        "owner_profile_sessions",
+    }
+    assert expected_owner_tables.issubset(owner_tables), (
+        f"Missing Owner Profile tables: {expected_owner_tables - owner_tables}"
+    )
+
+    # Only verified wallet/account metadata is stored: never genealogy nodes or descendants.
+    genealogy_tables = {
+        name for name in owner_tables
+        if "genealogy" in name.lower() or "tree" in name.lower() or "descendant" in name.lower()
+    }
+    assert not genealogy_tables, f"Genealogy data must not be persisted: {genealogy_tables}"
+
+    primary_wallet = "0x" + "5" * 40
+    secondary_wallet = "0x" + "6" * 40
+    connection.execute(
+        "INSERT INTO owner_profiles(profile_id,username,password_hash,password_salt,password_iterations,primary_wallet_address,created_at,updated_at) "
+        "VALUES(?,?,?,?,?,?,?,?)",
+        ("owner-profile-a", "owneralpha", "hash-a", "salt-a", 100000, primary_wallet, 1, 1),
+    )
+    connection.execute(
+        "INSERT INTO owner_profile_wallets(wallet_address,profile_id,is_primary,added_at) VALUES(?,?,1,?)",
+        (primary_wallet, "owner-profile-a", 1),
+    )
+    connection.execute(
+        "INSERT INTO owner_profile_wallets(wallet_address,profile_id,is_primary,added_at) VALUES(?,?,0,?)",
+        (secondary_wallet, "owner-profile-a", 2),
+    )
+    try:
+        connection.execute(
+            "INSERT INTO owner_profiles(profile_id,username,password_hash,password_salt,password_iterations,primary_wallet_address,created_at,updated_at) "
+            "VALUES(?,?,?,?,?,?,?,?)",
+            ("owner-profile-b", "OWNERALPHA", "hash-b", "salt-b", 100000, "0x" + "7" * 40, 1, 1),
+        )
+        raise AssertionError("Owner Profile usernames must be unique regardless of case")
+    except sqlite3.IntegrityError:
+        pass
+    try:
+        connection.execute(
+            "INSERT INTO owner_profile_wallets(wallet_address,profile_id,is_primary,added_at) VALUES(?,?,0,?)",
+            (secondary_wallet, "owner-profile-a", 3),
+        )
+        raise AssertionError("A wallet cannot be duplicated in an Owner Profile")
+    except sqlite3.IntegrityError:
+        pass
 
     seeded = connection.execute(
         "SELECT COUNT(*) FROM social_challenges WHERE status='active'"
