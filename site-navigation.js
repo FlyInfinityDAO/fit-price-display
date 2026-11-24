@@ -6,6 +6,7 @@
     ["what-is-fit.html","whatisfit","fa-solid fa-circle-info"],
     ["compare.html","comparison","fa-solid fa-scale-balanced"],
     ["dapp.html","dapp","fa-solid fa-cubes"],
+    ["owner-profile.html","ownerProfile","fa-solid fa-network-wired"],
     ["games/index.html","games","fa-solid fa-dice"],
     ["fly-ai/index.html","ai","fa-solid fa-brain"],
     ["creator-arena/index.html","socialArena","fa-solid fa-users"],
