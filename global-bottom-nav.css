@@ -164,3 +164,100 @@ body.fi-global-nav-enabled {
 @media (prefers-reduced-motion: reduce) {
   .fi-bottom-nav-item { transition: none !important; }
 }
+
+
+/* Keep the shared navigation geometry identical on game pages.
+   Game themes contain broad link/button/SVG rules; isolate the fixed nav. */
+html body .fi-global-bottom-nav {
+  box-sizing: border-box !important;
+  min-height: 84px !important;
+  max-height: 96px !important;
+  font-size: 10px !important;
+  line-height: normal !important;
+}
+html body .fi-global-bottom-nav .fi-bottom-nav-item {
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  min-height: 59px !important;
+  max-height: 59px !important;
+  width: auto !important;
+  height: 59px !important;
+  margin: 0 !important;
+  padding: 6px 2px !important;
+  gap: 4px !important;
+  font-size: 10px !important;
+  line-height: 1.15 !important;
+  font-weight: 700 !important;
+  letter-spacing: .005em !important;
+  text-decoration: none !important;
+  transform: none;
+}
+html body .fi-global-bottom-nav .fi-bottom-nav-item svg {
+  display: block !important;
+  width: 21px !important;
+  min-width: 21px !important;
+  max-width: 21px !important;
+  height: 21px !important;
+  min-height: 21px !important;
+  max-height: 21px !important;
+  flex: 0 0 21px !important;
+}
+html body .fi-global-bottom-nav .fi-bottom-nav-label {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  font-size: inherit !important;
+  line-height: 1.15 !important;
+  white-space: nowrap !important;
+}
+html body .fi-global-bottom-nav .fi-bottom-nav-dashboard {
+  width: min(100%, 70px) !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1 !important;
+  margin: -8px auto 0 !important;
+  padding: 5px 3px !important;
+  gap: 3px !important;
+}
+html body .fi-global-bottom-nav .fi-bottom-nav-dashboard svg {
+  width: 24px !important;
+  min-width: 24px !important;
+  max-width: 24px !important;
+  height: 24px !important;
+  min-height: 24px !important;
+  max-height: 24px !important;
+  flex-basis: 24px !important;
+}
+@media (max-width: 390px) {
+  html body .fi-global-bottom-nav .fi-bottom-nav-item:not(.fi-bottom-nav-dashboard) {
+    min-height: 48px !important;
+    max-height: 48px !important;
+    height: 48px !important;
+    padding: 4px 1px !important;
+    gap: 3px !important;
+    font-size: 8px !important;
+  }
+  html body .fi-global-bottom-nav .fi-bottom-nav-item:not(.fi-bottom-nav-dashboard) svg {
+    width: 18px !important;
+    min-width: 18px !important;
+    max-width: 18px !important;
+    height: 18px !important;
+    min-height: 18px !important;
+    max-height: 18px !important;
+    flex-basis: 18px !important;
+  }
+  html body .fi-global-bottom-nav .fi-bottom-nav-dashboard {
+    width: min(100%, 62px) !important;
+    margin: -6px auto 0 !important;
+  }
+  html body .fi-global-bottom-nav .fi-bottom-nav-dashboard svg {
+    width: 21px !important;
+    min-width: 21px !important;
+    max-width: 21px !important;
+    height: 21px !important;
+    min-height: 21px !important;
+    max-height: 21px !important;
+    flex-basis: 21px !important;
+  }
+}
