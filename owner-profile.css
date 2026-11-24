@@ -85,7 +85,7 @@ body.owner-profile-page{padding:18px;background:#0b1110;color:var(--op-text);min
 .op-profit-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .op-profit-item{padding:11px;border-radius:12px;background:rgba(0,0,0,.18);border:1px solid rgba(0,200,150,.13)}
 .op-profit-item span{display:block;color:#9fb4ad;font-size:10px;margin-bottom:7px}
-.op-profit-item strong{font-size:13px;display:block;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.op-profit-item strong{font-size:13px;display:block;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.op-profit-item strong.positive{color:#68e1ad}.op-profit-item strong.negative{color:#ffb79e}
 .op-note{margin-top:13px;color:#8ea59b;font-size:11px;line-height:1.7}
 .op-tree-panel{padding:20px}
 .op-tree-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
@@ -135,3 +135,4 @@ body.owner-profile-page{padding:18px;background:#0b1110;color:var(--op-text);min
 }
 @media(max-width:360px){.op-tree-children{grid-template-columns:repeat(2,minmax(195px,1fr))}.op-tree-side{min-width:195px}.op-tree-branch .op-tree-side{min-width:185px}}
 @media(prefers-reduced-motion:reduce){.op-btn,.op-tree-toggle,.op-wallet-page .sidebar{transition:none!important}}
+\n.owner-profile-page .footer{position:relative;z-index:1;margin:28px 0 8px;padding:18px;border-top:1px solid rgba(0,200,150,.18);color:#8da59b;text-align:center}.owner-profile-page .footer-links{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px}.owner-profile-page .footer-links a{color:#9db7ab;text-decoration:none;font-size:11px}.owner-profile-page .footer-links a:hover{color:var(--op-gold)}\n
