@@ -309,6 +309,7 @@
   $('refreshTests').addEventListener('click',runTests);
   $('reloadTree').addEventListener('click',reloadTree);
   $('testAddress').textContent=shortAddress(TARGET);$('testAddress').title=TARGET;
+  document.querySelectorAll('[data-copy-address]').forEach(button => button.addEventListener('click', () => copy(button.getAttribute('data-copy-address'))));
   log('Read-only test bench ready',{target:TARGET,network:NETWORK});
   runTests();
 })();
