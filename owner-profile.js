@@ -27,6 +27,59 @@
     const value = String(address || '');
     return /^0x[0-9a-f]{40}$/i.test(value) ? value.slice(0, 3) + '...' + value.slice(-3) : value;
   }
+
+  const TREE_TIERS = [
+    { threshold: 0, crowns: 0 }, { threshold: 1, crowns: 0 },
+    { threshold: 3, crowns: 0 }, { threshold: 10, crowns: 0 },
+    { threshold: 30, crowns: 0 }, { threshold: 100, crowns: 0 },
+    { threshold: 300, crowns: 0 }, { threshold: 1000, crowns: 1 },
+    { threshold: 3000, crowns: 2 }, { threshold: 10000, crowns: 3 },
+    { threshold: 30000, crowns: 4 }, { threshold: 100000, crowns: 5 }
+  ];
+
+  function treeTierFor(counts) {
+    if (!counts || counts.length < 2) return null;
+    const left = Number(counts[0]);
+    const right = Number(counts[1]);
+    if (!Number.isFinite(left) || !Number.isFinite(right)) return null;
+    const minimum = Math.min(left, right);
+    let tier = TREE_TIERS[0];
+    for (const item of TREE_TIERS) if (minimum >= item.threshold) tier = item;
+    return { ...tier, minimum, left, right };
+  }
+
+  function appendTreeStats(card, counts) {
+    const tier = treeTierFor(counts);
+    if (!tier) return;
+    card.classList.add('op-tree-tier-' + tier.threshold);
+    card.dataset.treeMinCount = String(tier.minimum);
+    const row = document.createElement('div');
+    row.className = 'op-tree-counts';
+    [[tr('leftBranch'), tier.left], [tr('rightBranch'), tier.right]].forEach(([label, value], index) => {
+      const cell = document.createElement('div');
+      cell.className = 'op-tree-count-cell ' + (index === 0 ? 'left' : 'right');
+      const name = document.createElement('span');
+      name.textContent = label;
+      const number = document.createElement('strong');
+      number.textContent = value.toLocaleString('en-US');
+      cell.append(name, number);
+      row.appendChild(cell);
+    });
+    card.appendChild(row);
+    const meta = document.createElement('div');
+    meta.className = 'op-tree-tier-meta';
+    const min = document.createElement('span');
+    min.textContent = 'MIN ' + tier.minimum.toLocaleString('en-US');
+    meta.appendChild(min);
+    if (tier.crowns) {
+      const crowns = document.createElement('span');
+      crowns.className = 'op-tree-crowns';
+      crowns.setAttribute('aria-label', tier.crowns + ' gold crowns');
+      crowns.textContent = '👑'.repeat(tier.crowns);
+      meta.appendChild(crowns);
+    }
+    card.appendChild(meta);
+  }
   const tr = key => {
     const value = typeof window.t === 'function' ? window.t('ownerProfile.' + key) : key;
     return value === 'ownerProfile.' + key ? key : value;
@@ -40,6 +93,7 @@
     history: [],
     snapshot: null,
     treeCache: new Map(),
+    treeStatsCache: new Map(),
     treeExpanded: new Set(),
     treeLoading: new Map(),
     treeErrors: new Map(),
@@ -522,6 +576,7 @@
       }
       state.snapshot = { address, balance, price, value, totals: result.totals };
       state.treeCache.set(address.toLowerCase(), [result.directs[0], result.directs[1]]);
+      state.treeStatsCache.set(address.toLowerCase(), [Number(result.totals[0]), Number(result.totals[1])]);
       renderTree();
       setProfileStatus(tr('walletLoaded'), 'success');
     } catch (error) {
@@ -534,6 +589,7 @@
   function clearTree() {
     state.treeEpoch += 1;
     state.treeCache.clear();
+    state.treeStatsCache.clear();
     state.treeExpanded.clear();
     state.treeLoading.clear();
     state.treeErrors.clear();
@@ -542,16 +598,22 @@
 
   async function readDirects(address) {
     const key = address.toLowerCase();
-    if (state.treeCache.has(key)) return state.treeCache.get(key);
+    if (state.treeCache.has(key) && state.treeStatsCache.has(key)) return state.treeCache.get(key);
     if (state.treeLoading.has(key)) return state.treeLoading.get(key);
     const epoch = state.treeEpoch;
     const promise = withReadProvider(async reader => {
       const network = new ethers.Contract(ethers.utils.getAddress(NETWORK.toLowerCase()), NETWORK_ABI, reader);
-      const directs = await network.Owner_Directs(address);
-      return [directs[0], directs[1]];
-    }).then(pair => {
-      if (epoch === state.treeEpoch) state.treeCache.set(key, pair);
-      return pair;
+      const [directs, totals] = await Promise.all([
+        network.Owner_Directs(address),
+        network.Owner_Left_Right_All(address)
+      ]);
+      return { pair: [directs[0], directs[1]], counts: [Number(totals[0]), Number(totals[1])] };
+    }).then(result => {
+      if (epoch === state.treeEpoch) {
+        state.treeCache.set(key, result.pair);
+        state.treeStatsCache.set(key, result.counts);
+      }
+      return result.pair;
     }).catch(error => {
       if (epoch === state.treeEpoch) state.treeErrors.set(key, error.message || tr('readFailed'));
       throw error;
@@ -597,6 +659,14 @@
     label.className = 'op-tree-label';
     label.textContent = zero ? tr('emptyAddress') : (side === 'left' ? tr('leftBranch') : tr('rightBranch'));
     card.appendChild(label);
+    const counts = state.treeStatsCache.get(address.toLowerCase());
+    if (!zero) appendTreeStats(card, counts);
+    if (!zero && state.treeExpanded.has(address.toLowerCase()) && !counts) {
+      const waiting = document.createElement('div');
+      waiting.className = 'op-tree-counts-loading';
+      waiting.textContent = state.treeLoading.has(address.toLowerCase()) ? tr('loading') : tr('readFailed');
+      card.appendChild(waiting);
+    }
 
     if (!zero) {
       toggle.addEventListener('click', async () => {
@@ -697,6 +767,8 @@
     canvas.className = 'op-tree-canvas';
     const rootNode = document.createElement('div');
     rootNode.className = 'op-tree-root';
+    const rootCard = document.createElement('div');
+    rootCard.className = 'op-tree-node op-tree-root-card';
     const label = document.createElement('div');
     label.className = 'op-tree-root-label';
     label.textContent = shortAddress(state.selectedWallet);
@@ -709,10 +781,12 @@
     copy.innerHTML = '<i class="fa-regular fa-copy" aria-hidden="true"></i>';
     copy.addEventListener('click', () => copyAddress(state.selectedWallet));
     label.appendChild(copy);
+    rootCard.appendChild(label);
+    appendTreeStats(rootCard, state.treeStatsCache.get(state.selectedWallet.toLowerCase()));
     const counter = { count: 0 };
     const pair = state.treeCache.get(state.selectedWallet.toLowerCase());
     const emptyOrChildren = makeChildren(pair, new Set([state.selectedWallet.toLowerCase()]), 1, counter);
-    rootNode.append(label, emptyOrChildren);
+    rootNode.append(rootCard, emptyOrChildren);
     canvas.appendChild(rootNode);
     root.appendChild(canvas);
   }
