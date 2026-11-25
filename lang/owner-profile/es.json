@@ -80,6 +80,7 @@
     "usernameRules": "El nombre debe tener 3–24 letras inglesas, números o guiones bajos.",
     "passwordRules": "La contraseña debe tener entre 8 y 128 caracteres.",
     "created": "Perfil de propietario creado correctamente.",
+    "profileSessionRequired": "No se encontró la sesión del perfil. Inicia sesión de nuevo y vuelve a intentar añadir la cartera.",
     "genericError": "Se ha producido un error. Inténtalo de nuevo.",
     "primaryWallet": "Cartera principal",
     "copyAddress": "Copiar dirección",
