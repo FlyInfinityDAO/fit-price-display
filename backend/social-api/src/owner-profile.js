@@ -209,7 +209,7 @@ async function getProfileSummary(db, profileId) {
   if (!profile) return null;
   const rows = await db.prepare(
     'SELECT wallet_address,is_primary,added_at FROM owner_profile_wallets ' +
-    'WHERE profile_id=? AND is_primary=1 LIMIT 1'
+    'WHERE profile_id=? ORDER BY is_primary DESC,added_at ASC'
   ).bind(profileId).all();
   return {
     username: profile.username,
