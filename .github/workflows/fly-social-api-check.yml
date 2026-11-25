@@ -92,6 +92,7 @@ jobs:
           if (html.includes('opChangeWalletBrowser') || html.includes('Changed your network wallet?')) throw new Error('The advanced network-wallet replacement UI must remain removed');
           if (!js.includes("'/api/owner-profile/wallets'") || !js.includes('async function addWallet(') || !js.includes('async function removeWallet(')) throw new Error('Owner Profile frontend wallet add/remove functions are missing');
           if (!js.includes("obtainWalletProof(mode") || !js.includes('proofToken: proof.proofToken')) throw new Error('Wallet add/remove must require a free signed-message proof');
+          if (!js.includes("api('/api/owner-profile/me', undefined, profileToken, 'GET')") || !js.includes('sessionStorage.setItem(TOKEN_KEY, profileToken)') || !js.includes('}, profileToken, \'POST\')')) throw new Error('Wallet addition must prevalidate and preserve the signed-in profile session token');
           if (!js.includes('Math.max(0, balance * (currentPrice - price))')) throw new Error('FIT estimated growth must not display losses');
           if (!ownerBackend.includes('ORDER BY is_primary DESC,added_at ASC')) throw new Error('Owner Profile API must return all linked wallets');
           if (!ownerBackend.includes('MAX_LINKED_WALLETS') || !ownerBackend.includes('At least one verified wallet must remain linked')) throw new Error('Owner Profile wallet add/remove limits are missing');
