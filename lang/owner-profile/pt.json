@@ -80,6 +80,7 @@
     "usernameRules": "O nome deve ter 3–24 letras inglesas, números ou sublinhados.",
     "passwordRules": "A senha deve conter de 8 a 128 caracteres.",
     "created": "Perfil do proprietário criado com sucesso.",
+    "profileSessionRequired": "A sessão do Perfil do Proprietário não foi encontrada. Entre novamente e tente adicionar a carteira.",
     "genericError": "Ocorreu um erro. Tente novamente.",
     "primaryWallet": "Carteira principal",
     "copyAddress": "Copiar endereço",
