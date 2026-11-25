@@ -80,6 +80,7 @@
     "usernameRules": "用户名需为 3–24 位英文字母、数字或下划线。",
     "passwordRules": "密码长度必须为 8–128 个字符。",
     "created": "所有者档案创建成功。",
+    "profileSessionRequired": "未找到所有者档案会话。请重新登录，然后再次尝试添加钱包。",
     "genericError": "发生错误，请重试。",
     "primaryWallet": "主钱包",
     "copyAddress": "复制地址",
