@@ -185,7 +185,6 @@
     const zero=address.toLowerCase()===ZERO.toLowerCase();
     card.className='op-tree-node'+(zero?' zero':'');
     const counts=state.statsCache.get(address.toLowerCase());
-    if(!zero)appendTreeStats(card,counts);
     const head=document.createElement('div');head.className='op-tree-node-head';
     const toggle=document.createElement('button');toggle.type='button';toggle.className='op-tree-toggle';
     toggle.textContent=zero?'·':(state.expanded.has(address.toLowerCase())?'−':'+');
@@ -196,6 +195,7 @@
     head.append(toggle,addr,cp);card.appendChild(head);
     const label=document.createElement('div');label.className='op-tree-label';
     label.textContent=zero?'Empty side · zero address returned by contract':(side==='left'?'Left direct':'Right direct');card.appendChild(label);
+    if(!zero)appendTreeStats(card,counts);
     if(!zero&&state.expanded.has(address.toLowerCase())&&!counts){const wait=document.createElement('div');wait.className='op-tree-counts-loading';wait.textContent=state.pending.has(address.toLowerCase())?'Loading branch counts…':'Branch counts not available';card.appendChild(wait);}
     if(!zero) {
       const key=address.toLowerCase();
@@ -339,7 +339,7 @@
 
   async function reloadTree() {
     if(!state.provider||!state.network){$('testOverall').textContent='Run contract diagnostics first.';return;}
-    state.epoch++;state.rootPair=null;state.directCache.clear();state.expanded.clear();state.pending.clear();state.errors.clear();
+    state.epoch++;state.rootPair=null;state.directCache.clear();state.statsCache.clear();state.expanded.clear();state.pending.clear();state.errors.clear();
     renderTree();
     try {
       const [pair,totals]=await Promise.all([state.network.Owner_Directs(norm(TARGET)),state.network.Owner_Left_Right_All(norm(TARGET))]);
