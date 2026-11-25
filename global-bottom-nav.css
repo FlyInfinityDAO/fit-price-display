@@ -1,13 +1,16 @@
-/* Fly Infinity — unified premium bottom navigation v4 */
+/* Fly Infinity — premium glass navigation v5: fixed green/gold palette */
 :root {
-  --fi-nav-green: #19C58A;
-  --fi-nav-green-soft: #7BE0B2;
+  --fi-nav-green: #20B982;
+  --fi-nav-green-bright: #35D49A;
+  --fi-nav-green-border: rgba(54, 205, 145, .42);
   --fi-nav-gold: #D8B34E;
-  --fi-nav-text: #F2F7EE;
-  --fi-nav-muted: #A9B8AC;
+  --fi-nav-text: #F1F7F2;
+  --fi-nav-muted: #B4C8BC;
 }
+
+/* Reserve only the space needed by the fixed dock. */
 body.fi-global-nav-enabled {
-  padding-bottom: calc(106px + env(safe-area-inset-bottom, 0px)) !important;
+  padding-bottom: calc(104px + env(safe-area-inset-bottom, 0px)) !important;
 }
 html body .fi-global-bottom-nav {
   position: fixed !important;
@@ -29,38 +32,23 @@ html body .fi-global-bottom-nav {
   overflow: visible !important;
   isolation: isolate !important;
   direction: ltr !important;
-  border: 1px solid rgba(112, 194, 154, .26) !important;
-  border-radius: 25px !important;
-  background: linear-gradient(180deg, rgba(8, 25, 18, .985), rgba(3, 15, 11, .995)) !important;
-  -webkit-backdrop-filter: blur(24px) saturate(145%) !important;
-  backdrop-filter: blur(24px) saturate(145%) !important;
+  border: 1px solid var(--fi-nav-green-border) !important;
+  border-radius: 24px !important;
+  background: linear-gradient(180deg, rgba(11, 43, 31, .78), rgba(4, 24, 17, .84)) !important;
+  -webkit-backdrop-filter: blur(26px) saturate(165%) !important;
+  backdrop-filter: blur(26px) saturate(165%) !important;
   box-shadow:
-    0 9px 28px rgba(0, 0, 0, .38),
-    0 0 18px rgba(21, 178, 119, .10),
-    inset 0 1px 0 rgba(241, 255, 247, .09) !important;
+    0 8px 26px rgba(0, 0, 0, .28),
+    0 0 16px rgba(22, 179, 119, .09),
+    inset 0 1px 0 rgba(230, 255, 242, .12) !important;
 }
-html body .fi-global-bottom-nav::before {
-  content: "" !important;
-  position: absolute !important;
-  pointer-events: none !important;
-  z-index: 3 !important;
-  top: -1px !important;
-  left: 12% !important;
-  right: 12% !important;
-  height: 1.5px !important;
-  border-radius: 999px !important;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(25, 197, 138, .20) 12%,
-    rgba(25, 197, 138, .75) 35%,
-    rgba(216, 179, 78, .92) 52%,
-    rgba(25, 197, 138, .70) 72%,
-    transparent 100%) !important;
-  background-size: 210% 100% !important;
-  animation: fiNavToplineFlow 8s ease-in-out infinite alternate !important;
-  box-shadow: 0 0 8px rgba(25, 197, 138, .16) !important;
+html body .fi-global-bottom-nav::before,
+html body .fi-global-bottom-nav::after {
+  content: none !important;
+  display: none !important;
 }
-html body .fi-global-bottom-nav::after { content: none !important; display: none !important; }
+
+/* Seven quiet, evenly-sized destinations. */
 html body .fi-global-bottom-nav .fi-bottom-nav-item {
   position: relative !important;
   width: 100% !important;
@@ -77,68 +65,56 @@ html body .fi-global-bottom-nav .fi-bottom-nav-item {
   justify-content: center !important;
   gap: 3px !important;
   border: 1px solid transparent !important;
-  border-radius: 17px !important;
+  border-radius: 15px !important;
   color: var(--fi-nav-muted) !important;
   background: transparent !important;
   box-shadow: none !important;
   text-decoration: none !important;
   font: inherit !important;
   transform: none !important;
-  transition: color .22s ease, background .22s ease, border-color .22s ease !important;
+  transition: color .18s ease, background-color .18s ease, border-color .18s ease !important;
   -webkit-tap-highlight-color: transparent !important;
 }
 html body .fi-global-bottom-nav .fi-bottom-nav-icon-wrap {
   position: relative !important;
-  width: 30px !important;
-  height: 30px !important;
-  min-width: 30px !important;
-  min-height: 30px !important;
-  flex: 0 0 30px !important;
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  min-height: 34px !important;
+  flex: 0 0 34px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   overflow: hidden !important;
   isolation: isolate !important;
-  border: 1px solid transparent !important;
-  border-radius: 10px !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  color: #C4D3C8 !important;
-  transition: background .22s ease, color .22s ease, border-color .22s ease !important;
+  border: 1px solid rgba(55, 198, 139, .34) !important;
+  border-radius: 11px !important;
+  background: linear-gradient(145deg, rgba(18, 133, 91, .38), rgba(5, 73, 50, .34)) !important;
+  box-shadow: inset 0 1px 0 rgba(236, 255, 246, .12) !important;
+  color: #61D9A8 !important;
+  transition: background-color .18s ease, color .18s ease, border-color .18s ease !important;
 }
 html body .fi-global-bottom-nav .fi-bottom-nav-icon-wrap::before {
-  content: "" !important;
-  position: absolute !important;
-  z-index: 0 !important;
-  inset: 0 !important;
-  pointer-events: none !important;
-  border-radius: inherit !important;
-  background: linear-gradient(135deg,
-    rgba(25, 197, 138, .02) 0%,
-    rgba(25, 197, 138, .18) 34%,
-    rgba(216, 179, 78, .25) 58%,
-    rgba(25, 197, 138, .06) 100%) !important;
-  background-size: 240% 240% !important;
-  opacity: .58 !important;
-  animation: fiNavIconShimmer 9s ease-in-out infinite alternate !important;
+  content: none !important;
+  display: none !important;
 }
 html body .fi-global-bottom-nav .fi-bottom-nav-item svg {
   position: relative !important;
   z-index: 1 !important;
   display: block !important;
-  width: 20px !important;
-  min-width: 20px !important;
-  max-width: 20px !important;
-  height: 20px !important;
-  min-height: 20px !important;
-  max-height: 20px !important;
-  flex: 0 0 20px !important;
+  width: 21px !important;
+  min-width: 21px !important;
+  max-width: 21px !important;
+  height: 21px !important;
+  min-height: 21px !important;
+  max-height: 21px !important;
+  flex: 0 0 21px !important;
   fill: none !important;
   stroke: currentColor !important;
   stroke-width: 1.8 !important;
   stroke-linecap: round !important;
   stroke-linejoin: round !important;
-  opacity: .96 !important;
+  opacity: 1 !important;
 }
 html body .fi-global-bottom-nav .fi-bottom-nav-label {
   position: relative !important;
@@ -159,27 +135,26 @@ html body .fi-global-bottom-nav .fi-bottom-nav-label {
   text-overflow: clip !important;
   text-shadow: none !important;
 }
-html body .fi-global-bottom-nav .fi-bottom-nav-dapp .fi-bottom-nav-icon-wrap,
-html body .fi-global-bottom-nav .fi-bottom-nav-media .fi-bottom-nav-icon-wrap {
-  color: #65DCAE !important;
+
+/* All six secondary destinations stay green at rest and when selected. */
+html body .fi-global-bottom-nav .fi-bottom-nav-item:not(.fi-bottom-nav-dashboard) {
+  color: #C9EBDD !important;
 }
-html body .fi-global-bottom-nav .fi-bottom-nav-owner .fi-bottom-nav-icon-wrap,
-html body .fi-global-bottom-nav .fi-bottom-nav-games .fi-bottom-nav-icon-wrap {
-  color: #C7D78E !important;
-}
-html body .fi-global-bottom-nav .fi-bottom-nav-fit .fi-bottom-nav-icon-wrap,
-html body .fi-global-bottom-nav .fi-bottom-nav-ai .fi-bottom-nav-icon-wrap {
-  color: #E4C66E !important;
+html body .fi-global-bottom-nav .fi-bottom-nav-item:not(.fi-bottom-nav-dashboard) .fi-bottom-nav-icon-wrap {
+  color: #61D9A8 !important;
+  border-color: rgba(55, 198, 139, .40) !important;
+  background: linear-gradient(145deg, rgba(18, 133, 91, .42), rgba(5, 73, 50, .38)) !important;
 }
 html body .fi-global-bottom-nav .fi-bottom-nav-item.is-active:not(.fi-bottom-nav-dashboard) {
-  color: #F4E8BD !important;
-  background: linear-gradient(180deg, rgba(23, 137, 97, .17), rgba(23, 137, 97, .045)) !important;
-  border-color: rgba(80, 191, 142, .18) !important;
+  color: #F0FFF7 !important;
+  background: rgba(25, 185, 130, .10) !important;
+  border-color: rgba(54, 205, 145, .24) !important;
 }
 html body .fi-global-bottom-nav .fi-bottom-nav-item.is-active:not(.fi-bottom-nav-dashboard) .fi-bottom-nav-icon-wrap {
-  color: #F0D27A !important;
-  background: linear-gradient(135deg, rgba(21, 161, 110, .25), rgba(202, 164, 63, .15)) !important;
-  border-color: rgba(205, 177, 93, .20) !important;
+  color: #A4F0CF !important;
+  border-color: rgba(68, 224, 160, .72) !important;
+  background: linear-gradient(145deg, rgba(22, 159, 108, .64), rgba(6, 88, 59, .60)) !important;
+  box-shadow: 0 0 10px rgba(31, 197, 137, .16), inset 0 1px 0 rgba(255, 255, 255, .18) !important;
 }
 html body .fi-global-bottom-nav .fi-bottom-nav-item:hover,
 html body .fi-global-bottom-nav .fi-bottom-nav-item:focus-visible {
@@ -188,79 +163,61 @@ html body .fi-global-bottom-nav .fi-bottom-nav-item:focus-visible {
 }
 html body .fi-global-bottom-nav .fi-bottom-nav-item:hover .fi-bottom-nav-icon-wrap,
 html body .fi-global-bottom-nav .fi-bottom-nav-item:focus-visible .fi-bottom-nav-icon-wrap {
-  color: #F1D47C !important;
-  background: rgba(18, 143, 96, .16) !important;
+  border-color: rgba(76, 225, 164, .72) !important;
+  background: rgba(18, 143, 96, .56) !important;
 }
+
+/* Dashboard is the single gold destination, without a dark outer halo. */
 html body .fi-global-bottom-nav .fi-bottom-nav-dashboard {
   height: 68px !important;
   min-height: 68px !important;
   max-height: 68px !important;
   gap: 2px !important;
-  color: #F4E6B0 !important;
+  color: #F3D77D !important;
   background: transparent !important;
   border-color: transparent !important;
 }
 html body .fi-global-bottom-nav .fi-bottom-nav-dashboard .fi-bottom-nav-icon-wrap {
-  width: 44px !important;
-  height: 44px !important;
-  min-width: 44px !important;
-  min-height: 44px !important;
-  flex-basis: 44px !important;
-  border: 1px solid rgba(234, 201, 111, .76) !important;
+  width: 46px !important;
+  height: 46px !important;
+  min-width: 46px !important;
+  min-height: 46px !important;
+  flex-basis: 46px !important;
+  border: 1px solid rgba(255, 224, 139, .94) !important;
   border-radius: 50% !important;
-  color: #FFF2C7 !important;
-  background: linear-gradient(138deg, #0F9D70 0%, #168C68 40%, #B99235 100%) !important;
-  background-size: 220% 220% !important;
+  color: #38290B !important;
+  background: linear-gradient(145deg, #FFE8A1 0%, #E5BE59 55%, #C79632 100%) !important;
   box-shadow:
-    0 0 12px rgba(23, 184, 125, .20),
-    0 0 12px rgba(216, 179, 78, .16),
-    inset 0 1px 0 rgba(255, 255, 255, .22) !important;
-  animation: fiNavHomeFlow 8s ease-in-out infinite alternate !important;
+    0 0 12px rgba(216, 179, 78, .22),
+    inset 0 1px 0 rgba(255, 255, 255, .52),
+    inset 0 -3px 7px rgba(123, 83, 15, .12) !important;
 }
 html body .fi-global-bottom-nav .fi-bottom-nav-dashboard .fi-bottom-nav-icon-wrap::before {
-  background: linear-gradient(130deg,
-    rgba(255, 232, 156, .05),
-    rgba(25, 197, 138, .34),
-    rgba(216, 179, 78, .30),
-    rgba(255, 232, 156, .05)) !important;
-  background-size: 240% 240% !important;
-  opacity: .78 !important;
+  content: none !important;
+  display: none !important;
 }
 html body .fi-global-bottom-nav .fi-bottom-nav-dashboard svg {
-  width: 24px !important;
-  min-width: 24px !important;
-  max-width: 24px !important;
-  height: 24px !important;
-  min-height: 24px !important;
-  max-height: 24px !important;
-  flex-basis: 24px !important;
+  width: 25px !important;
+  min-width: 25px !important;
+  max-width: 25px !important;
+  height: 25px !important;
+  min-height: 25px !important;
+  max-height: 25px !important;
+  flex-basis: 25px !important;
+  stroke: #38290B !important;
 }
 html body .fi-global-bottom-nav .fi-bottom-nav-dashboard .fi-bottom-nav-label {
-  color: #E5C876 !important;
+  color: #F0D47A !important;
   font-size: 9px !important;
   font-weight: 800 !important;
 }
 html body .fi-global-bottom-nav .fi-bottom-nav-dashboard.is-active .fi-bottom-nav-icon-wrap {
-  border-color: rgba(255, 225, 139, .95) !important;
-  box-shadow:
-    0 0 14px rgba(216, 179, 78, .28),
-    0 0 18px rgba(25, 197, 138, .22),
-    inset 0 1px 0 rgba(255, 255, 255, .3) !important;
+  border-color: #FFF0BA !important;
+  background: linear-gradient(145deg, #FFF0B8 0%, #EBCB70 55%, #D1A13F 100%) !important;
+  box-shadow: 0 0 16px rgba(216, 179, 78, .30), inset 0 1px 0 rgba(255, 255, 255, .68) !important;
 }
-@keyframes fiNavToplineFlow {
-  0% { background-position: 0% 50%; opacity: .55; }
-  100% { background-position: 100% 50%; opacity: 1; }
-}
-@keyframes fiNavIconShimmer {
-  0% { background-position: 0% 40%; opacity: .26; }
-  50% { background-position: 72% 80%; opacity: .62; }
-  100% { background-position: 100% 15%; opacity: .34; }
-}
-@keyframes fiNavHomeFlow {
-  0% { background-position: 0% 50%; }
-  45% { background-position: 100% 25%; }
-  100% { background-position: 18% 100%; }
-}
+
+/* No motion on color surfaces: the palette remains constant. */
 @media (min-width: 760px) {
   body.fi-global-nav-enabled { padding-bottom: 112px !important; }
   html body .fi-global-bottom-nav {
@@ -277,11 +234,11 @@ html body .fi-global-bottom-nav .fi-bottom-nav-dashboard.is-active .fi-bottom-na
     max-height: 70px !important;
   }
   html body .fi-global-bottom-nav .fi-bottom-nav-dashboard .fi-bottom-nav-icon-wrap {
-    width: 48px !important;
-    height: 48px !important;
-    min-width: 48px !important;
-    min-height: 48px !important;
-    flex-basis: 48px !important;
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    flex-basis: 50px !important;
   }
 }
 @media (max-width: 759px) {
@@ -300,10 +257,6 @@ html body .fi-global-bottom-nav .fi-bottom-nav-dashboard.is-active .fi-bottom-na
     gap: 1px !important;
     border-radius: 22px !important;
   }
-  html body .fi-global-bottom-nav::before {
-    left: 10% !important;
-    right: 10% !important;
-  }
   html body .fi-global-bottom-nav .fi-bottom-nav-item {
     height: 66px !important;
     min-height: 66px !important;
@@ -313,12 +266,11 @@ html body .fi-global-bottom-nav .fi-bottom-nav-dashboard.is-active .fi-bottom-na
     border-radius: 13px !important;
   }
   html body .fi-global-bottom-nav .fi-bottom-nav-icon-wrap {
-    width: 28px !important;
-    height: 28px !important;
-    min-width: 28px !important;
-    min-height: 28px !important;
-    flex-basis: 28px !important;
-    border-radius: 9px !important;
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+    flex-basis: 30px !important;
   }
   html body .fi-global-bottom-nav .fi-bottom-nav-item svg {
     width: 19px !important;
@@ -340,11 +292,11 @@ html body .fi-global-bottom-nav .fi-bottom-nav-dashboard.is-active .fi-bottom-na
     max-height: 68px !important;
   }
   html body .fi-global-bottom-nav .fi-bottom-nav-dashboard .fi-bottom-nav-icon-wrap {
-    width: 42px !important;
-    height: 42px !important;
-    min-width: 42px !important;
-    min-height: 42px !important;
-    flex-basis: 42px !important;
+    width: 43px !important;
+    height: 43px !important;
+    min-width: 43px !important;
+    min-height: 43px !important;
+    flex-basis: 43px !important;
   }
   html body .fi-global-bottom-nav .fi-bottom-nav-dashboard svg {
     width: 23px !important;
@@ -373,21 +325,24 @@ html body .fi-global-bottom-nav .fi-bottom-nav-dashboard.is-active .fi-bottom-na
   html body .fi-global-bottom-nav .fi-bottom-nav-label { font-size: 6.7px !important; }
   html body .fi-global-bottom-nav[data-language="fa"] .fi-bottom-nav-label { font-size: 6.3px !important; }
   html body .fi-global-bottom-nav .fi-bottom-nav-dashboard .fi-bottom-nav-icon-wrap {
-    width: 39px !important; height: 39px !important; min-width: 39px !important; min-height: 39px !important; flex-basis: 39px !important;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  html body .fi-global-bottom-nav::before,
-  html body .fi-global-bottom-nav .fi-bottom-nav-icon-wrap,
-  html body .fi-global-bottom-nav .fi-bottom-nav-icon-wrap::before {
-    animation: none !important;
-    transition: none !important;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    flex-basis: 40px !important;
   }
 }
 
-/* Shared fixed glass header for every Fly Infinity page that has a site header.
-   JS measures the real responsive height and reserves matching space in the page,
-   so the first content row never starts underneath the fixed bar. */
+/* Respect platform accessibility settings. */
+@media (prefers-reduced-transparency: reduce) {
+  html body .fi-global-bottom-nav {
+    background: rgba(5, 22, 16, .96) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
+
+/* Shared fixed glass header for every Fly Infinity page that has a site header. */
 html.fi-fixed-header-document {
   scroll-padding-top: calc(var(--fi-fixed-header-height, 68px) + env(safe-area-inset-top, 0px) + 16px);
 }
@@ -423,9 +378,6 @@ html body .fi-global-fixed-header {
     backdrop-filter: none !important;
   }
 }
-
-
-
 
 /* Keep the dock out of the way while the mobile keyboard is open. */
 @media (max-width: 759px) {
