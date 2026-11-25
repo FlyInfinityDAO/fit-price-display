@@ -100,7 +100,8 @@
     treeLoading: new Map(),
     treeErrors: new Map(),
     treeEpoch: 0,
-    requestId: 0
+    requestId: 0,
+    pendingRemoveWallet: ''
   };
 
   async function api(path, body, token = state.token, method = body === undefined ? 'GET' : 'POST') {
@@ -332,42 +333,145 @@
     node.className = 'op-status' + (kind ? ' ' + kind : '');
   }
 
+  function setWalletActionStatus(message, kind = '') {
+    const node = $('opWalletActionStatus');
+    if (!node) return;
+    node.textContent = message || '';
+    node.className = 'op-status' + (kind ? ' ' + kind : '');
+  }
+
   function renderProfile() {
     if (!state.profile) return;
     $('opProfileUsername').textContent = '@' + state.profile.username;
     const list = $('opWalletList');
     list.replaceChildren();
 
-    const address = state.profile.primaryWallet
-      || state.profile.wallets?.find(wallet => wallet.isPrimary)?.address
-      || state.profile.wallets?.[0]?.address;
-    if (!address) return;
+    const wallets = Array.isArray(state.profile.wallets) ? state.profile.wallets.slice() : [];
+    if (!wallets.length && state.profile.primaryWallet) {
+      wallets.push({ address: state.profile.primaryWallet, isPrimary: true });
+    }
+    wallets.sort((a, b) => Number(Boolean(b.isPrimary)) - Number(Boolean(a.isPrimary)));
 
-    const item = document.createElement('div');
-    item.className = 'op-wallet-item active';
-    const identity = document.createElement('div');
-    identity.className = 'op-wallet-select';
-    const value = document.createElement('strong');
-    value.textContent = shortAddress(address);
-    value.title = address;
-    value.setAttribute('aria-label', address);
-    const note = document.createElement('small');
-    note.textContent = tr('walletOnlyNote');
-    identity.append(value, note);
+    wallets.forEach(wallet => {
+      const address = wallet.address;
+      const isPrimary = Boolean(wallet.isPrimary);
+      const active = String(address).toLowerCase() === String(state.selectedWallet || state.profile.primaryWallet).toLowerCase();
+      const item = document.createElement('div');
+      item.className = 'op-wallet-item' + (active ? ' active' : '') + (isPrimary ? ' primary' : '');
 
-    const tools = document.createElement('div');
-    tools.className = 'op-wallet-tools';
-    const copy = document.createElement('button');
-    copy.type = 'button';
-    copy.className = 'op-icon-btn';
-    copy.title = tr('copyAddress');
-    copy.setAttribute('aria-label', tr('copyAddress'));
-    copy.innerHTML = '<i class="fa-regular fa-copy" aria-hidden="true"></i>';
-    copy.addEventListener('click', () => copyAddress(address));
-    tools.appendChild(copy);
+      const identity = document.createElement('button');
+      identity.type = 'button';
+      identity.className = 'op-wallet-select';
+      identity.setAttribute('aria-pressed', String(active));
+      identity.addEventListener('click', () => selectWallet(address));
 
-    item.append(identity, tools);
-    list.appendChild(item);
+      const value = document.createElement('strong');
+      value.textContent = shortAddress(address);
+      value.title = address;
+      value.setAttribute('aria-label', address);
+      const note = document.createElement('small');
+      note.textContent = tr(isPrimary ? 'primaryWallet' : 'linkedWallet');
+      identity.append(value, note);
+
+      const tools = document.createElement('div');
+      tools.className = 'op-wallet-tools';
+
+      const copy = document.createElement('button');
+      copy.type = 'button';
+      copy.className = 'op-icon-btn';
+      copy.title = tr('copyAddress');
+      copy.setAttribute('aria-label', tr('copyAddress'));
+      copy.innerHTML = '<i class="fa-regular fa-copy" aria-hidden="true"></i>';
+      copy.addEventListener('click', () => copyAddress(address));
+      tools.appendChild(copy);
+
+      if (wallets.length > 1) {
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'op-icon-btn danger';
+        remove.title = tr('removeWallet');
+        remove.setAttribute('aria-label', tr('removeWallet') + ' ' + shortAddress(address));
+        remove.innerHTML = '<i class="fa-solid fa-trash-can" aria-hidden="true"></i>';
+        remove.addEventListener('click', () => {
+          state.pendingRemoveWallet = address;
+          $('opRemoveWalletPromptText').textContent = tr('removeWalletPrompt').replace('{address}', shortAddress(address));
+          $('opRemoveWalletPrompt').classList.remove('op-hidden');
+          setWalletActionStatus('');
+          $('opRemoveWalletPrompt').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+        tools.appendChild(remove);
+      }
+
+      item.append(identity, tools);
+      list.appendChild(item);
+    });
+
+    if (state.pendingRemoveWallet && !wallets.some(wallet =>
+      String(wallet.address).toLowerCase() === state.pendingRemoveWallet.toLowerCase()
+    )) {
+      state.pendingRemoveWallet = '';
+      $('opRemoveWalletPrompt')?.classList.add('op-hidden');
+    }
+  }
+
+  async function addWallet(mode) {
+    setBusy(['opAddWalletBrowser', 'opAddWalletReown'], true);
+    setWalletActionStatus(tr('connectWallet'));
+    try {
+      const proof = await obtainWalletProof(mode, $('opWalletActionStatus'));
+      setWalletActionStatus(tr('addingWallet'));
+      const payload = await api('/api/owner-profile/wallets', {
+        proofToken: proof.proofToken
+      }, state.token, 'POST');
+      state.profile = payload.profile;
+      state.selectedWallet = proof.address;
+      state.pendingRemoveWallet = '';
+      $('opRemoveWalletPrompt').classList.add('op-hidden');
+      renderProfile();
+      setWalletActionStatus(tr('walletAdded'), 'success');
+      await selectWallet(proof.address);
+      setWalletActionStatus(tr('walletAdded'), 'success');
+    } catch (error) {
+      setWalletActionStatus(error.message || tr('genericError'), 'error');
+    } finally {
+      setBusy(['opAddWalletBrowser', 'opAddWalletReown'], false);
+    }
+  }
+
+  async function removeWallet(address, mode) {
+    if (!address || !state.profile) return;
+    setBusy(['opRemoveWalletBrowser', 'opRemoveWalletReown', 'opRemoveWalletCancel'], true);
+    setWalletActionStatus(tr('connectWallet'));
+    try {
+      const proof = await obtainWalletProof(mode, $('opWalletActionStatus'));
+      const linked = (state.profile.wallets || []).some(wallet =>
+        String(wallet.address).toLowerCase() === proof.address.toLowerCase()
+      );
+      if (!linked) throw new Error(tr('removeWalletSignLinked'));
+
+      setWalletActionStatus(tr('removingWallet'));
+      const payload = await api('/api/owner-profile/wallets/' + encodeURIComponent(address), {
+        proofToken: proof.proofToken
+      }, state.token, 'DELETE');
+
+      state.profile = payload.profile;
+      state.pendingRemoveWallet = '';
+      $('opRemoveWalletPrompt').classList.add('op-hidden');
+      setWalletActionStatus(tr('walletRemoved'), 'success');
+      const stillLinked = (state.profile.wallets || []).some(wallet =>
+        String(wallet.address).toLowerCase() === String(state.selectedWallet).toLowerCase()
+      );
+      if (!stillLinked) {
+        await selectWallet(state.profile.primaryWallet);
+      } else {
+        renderProfile();
+      }
+      setWalletActionStatus(tr('walletRemoved'), 'success');
+    } catch (error) {
+      setWalletActionStatus(error.message || tr('genericError'), 'error');
+    } finally {
+      setBusy(['opRemoveWalletBrowser', 'opRemoveWalletReown', 'opRemoveWalletCancel'], false);
+    }
   }
 
   async function copyAddress(address) {
@@ -841,6 +945,19 @@
     $('opRecoveryBack').addEventListener('click', showAuthView);
     $('opRecoveryBrowser').addEventListener('click', () => recoverPassword('browser'));
     $('opRecoveryReown').addEventListener('click', () => recoverPassword('reown'));
+    $('opAddWalletBrowser').addEventListener('click', () => addWallet('browser'));
+    $('opAddWalletReown').addEventListener('click', () => addWallet('reown'));
+    $('opRemoveWalletBrowser').addEventListener('click', () => {
+      if (state.pendingRemoveWallet) removeWallet(state.pendingRemoveWallet, 'browser');
+    });
+    $('opRemoveWalletReown').addEventListener('click', () => {
+      if (state.pendingRemoveWallet) removeWallet(state.pendingRemoveWallet, 'reown');
+    });
+    $('opRemoveWalletCancel').addEventListener('click', () => {
+      state.pendingRemoveWallet = '';
+      $('opRemoveWalletPrompt').classList.add('op-hidden');
+      setWalletActionStatus('');
+    });
     $('opLogout').addEventListener('click', logout);
     $('opRefresh').addEventListener('click', () => selectWallet(state.selectedWallet));
     $('opTreeRefresh').addEventListener('click', async () => {
