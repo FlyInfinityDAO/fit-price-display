@@ -4,7 +4,7 @@
 "use strict";
 
 const CACHE_PREFIX = "fly-infinity-pwa-";
-const CACHE_VERSION = "v8";
+const CACHE_VERSION = "v9";
 const SHELL_CACHE = CACHE_PREFIX + CACHE_VERSION;
 const SCOPE_URL = self.registration.scope;
 const PRECACHE_URLS = [
@@ -175,6 +175,8 @@ const PRECACHE_URLS = [
   "./lang/whitepaper/tr.json",
   "./lang/whitepaper/zh.json",
   "./logo.png",
+  "./global-bottom-nav.js",
+  "./global-bottom-nav.css",
   "./manifest.webmanifest",
   "./next-projects.html",
   "./package.json",
