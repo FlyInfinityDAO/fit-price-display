@@ -158,4 +158,14 @@ jobs:
             --data '{"address":"not-a-wallet"}' "$SOCIAL_WORKER_URL/api/auth/challenge")"
           test "$invalid" = "400"
           jq -e '.error | test("wallet address")' /tmp/social-invalid.json >/dev/null
-          echo "Social API health, strict CORS preflight and invalid-wallet rejection passed." >> "$GITHUB_STEP_SUMMARY"
+
+          # Regression check: a syntactically valid Bearer header with an unknown token
+          # must reach session lookup and return "session expired", not "sign in" (missing header).
+          auth_probe_status="$(curl --silent --show-error --output /tmp/owner-profile-auth-probe.json --write-out '%{http_code}' \
+            --header "Origin: https://flyinfinitydao.github.io" \
+            --header "Authorization: Bearer owner-profile-regression-invalid-token" \
+            "$SOCIAL_WORKER_URL/api/owner-profile/me")"
+          test "$auth_probe_status" = "401"
+          jq -e '.error | test("session has expired"; "i")' /tmp/owner-profile-auth-probe.json >/dev/null
+
+          echo "Social API health, strict CORS, invalid-wallet rejection and Owner Profile Bearer-header parsing passed." >> "$GITHUB_STEP_SUMMARY"
