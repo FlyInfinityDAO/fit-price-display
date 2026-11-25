@@ -25,6 +25,38 @@
     const value = String(address || '');
     return /^0x[0-9a-f]{40}$/i.test(value) ? value.slice(0, 3) + '...' + value.slice(-3) : value;
   }
+
+  const TREE_TIERS = [
+    {threshold:0,crowns:0},{threshold:1,crowns:0},{threshold:3,crowns:0},
+    {threshold:10,crowns:0},{threshold:30,crowns:0},{threshold:100,crowns:0},
+    {threshold:300,crowns:0},{threshold:1000,crowns:1},{threshold:3000,crowns:2},
+    {threshold:10000,crowns:3},{threshold:30000,crowns:4},{threshold:100000,crowns:5}
+  ];
+  function treeTierFor(counts) {
+    if(!counts||counts.length<2)return null;
+    const left=Number(counts[0]),right=Number(counts[1]);
+    if(!Number.isFinite(left)||!Number.isFinite(right))return null;
+    const minimum=Math.min(left,right);let tier=TREE_TIERS[0];
+    for(const item of TREE_TIERS)if(minimum>=item.threshold)tier=item;
+    return {...tier,minimum,left,right};
+  }
+  function appendTreeStats(card,counts) {
+    const tier=treeTierFor(counts);if(!tier)return;
+    card.classList.add('op-tree-tier-'+tier.threshold);
+    card.dataset.treeMinCount=String(tier.minimum);
+    const row=document.createElement('div');row.className='op-tree-counts';
+    [['LEFT',tier.left],['RIGHT',tier.right]].forEach(([label,value])=>{
+      const cell=document.createElement('div');cell.className='op-tree-count-cell '+label.toLowerCase();
+      const name=document.createElement('span');name.textContent=label;
+      const number=document.createElement('strong');number.textContent=value.toLocaleString('en-US');
+      cell.append(name,number);row.appendChild(cell);
+    });
+    card.appendChild(row);
+    const meta=document.createElement('div');meta.className='op-tree-tier-meta';
+    const min=document.createElement('span');min.textContent='Minimum branch: '+tier.minimum.toLocaleString('en-US');meta.appendChild(min);
+    if(tier.crowns){const crown=document.createElement('span');crown.className='op-tree-crowns';crown.setAttribute('aria-label',tier.crowns+' gold crowns');crown.textContent='👑'.repeat(tier.crowns);meta.appendChild(crown);}
+    card.appendChild(meta);
+  }
   const state = {
     provider: null,
     rpc: '',
@@ -32,6 +64,7 @@
     token: null,
     tokenAddress: '',
     directCache: new Map(),
+    statsCache: new Map(),
     expanded: new Set(),
     pending: new Map(),
     errors: new Map(),
@@ -151,6 +184,8 @@
     const card=document.createElement('div');
     const zero=address.toLowerCase()===ZERO.toLowerCase();
     card.className='op-tree-node'+(zero?' zero':'');
+    const counts=state.statsCache.get(address.toLowerCase());
+    if(!zero)appendTreeStats(card,counts);
     const head=document.createElement('div');head.className='op-tree-node-head';
     const toggle=document.createElement('button');toggle.type='button';toggle.className='op-tree-toggle';
     toggle.textContent=zero?'·':(state.expanded.has(address.toLowerCase())?'−':'+');
@@ -161,6 +196,7 @@
     head.append(toggle,addr,cp);card.appendChild(head);
     const label=document.createElement('div');label.className='op-tree-label';
     label.textContent=zero?'Empty side · zero address returned by contract':(side==='left'?'Left direct':'Right direct');card.appendChild(label);
+    if(!zero&&state.expanded.has(address.toLowerCase())&&!counts){const wait=document.createElement('div');wait.className='op-tree-counts-loading';wait.textContent=state.pending.has(address.toLowerCase())?'Loading branch counts…':'Branch counts not available';card.appendChild(wait);}
     if(!zero) {
       const key=address.toLowerCase();
       toggle.addEventListener('click',async()=>{
@@ -206,11 +242,13 @@
     if(!state.rootPair){root.textContent='Waiting for successful Owner_Directs call.';return;}
     const canvas=document.createElement('div');canvas.className='op-tree-canvas';
     const holder=document.createElement('div');holder.className='op-tree-root';
+    const rootCard=document.createElement('div');rootCard.className='op-tree-node op-tree-root-card';
     const rootLabel=document.createElement('div');rootLabel.className='op-tree-root-label';
     rootLabel.textContent=shortAddress(TARGET);rootLabel.title=TARGET;rootLabel.setAttribute('aria-label',TARGET);
     const rootCopy=document.createElement('button');rootCopy.className='op-icon-btn';rootCopy.type='button';rootCopy.textContent='⧉';rootCopy.addEventListener('click',()=>copy(TARGET));rootLabel.appendChild(rootCopy);
+    rootCard.appendChild(rootLabel);appendTreeStats(rootCard,state.statsCache.get(TARGET.toLowerCase()));
     const count={value:0};
-    holder.append(rootLabel,createChildren(state.rootPair,new Set([TARGET.toLowerCase()]),1,count));
+    holder.append(rootCard,createChildren(state.rootPair,new Set([TARGET.toLowerCase()]),1,count));
     canvas.appendChild(holder);
     root.appendChild(canvas);
   }
@@ -219,10 +257,10 @@
     if(state.directCache.has(key))return state.directCache.get(key);
     if(state.pending.has(key))return state.pending.get(key);
     const epoch=state.epoch;
-    const promise=state.network.Owner_Directs(address).then(pair=>{
-      const value=[norm(pair[0]),norm(pair[1])];
-      if(epoch===state.epoch)state.directCache.set(key,value);
-      log('Owner_Directs expanded',{address,left:value[0],right:value[1]});
+    const promise=Promise.all([state.network.Owner_Directs(address),state.network.Owner_Left_Right_All(address)]).then(([pair,totals])=>{
+      const value=[norm(pair[0]),norm(pair[1])],counts=[Number(totals[0]),Number(totals[1])];
+      if(epoch===state.epoch){state.directCache.set(key,value);state.statsCache.set(key,counts);}
+      log('Wallet genealogy stats loaded',{address,left:value[0],right:value[1],leftCount:counts[0],rightCount:counts[1]});
       return value;
     }).catch(error=>{
       if(epoch===state.epoch)state.errors.set(key,error.message||String(error));
@@ -242,7 +280,7 @@
     $('testLog').textContent='Starting read-only diagnostics…';
     $('rawResults').textContent='Waiting for contract calls…';
     ['vPurchased','vLimit','vRemaining','vBalance','vPrice','vValue','vOwner','vLeft','vRight','vToken'].forEach(id=>setMetric(id,'—'));
-    state.rootPair=null;state.directCache.clear();state.expanded.clear();state.pending.clear();state.errors.clear();state.epoch++;
+    state.rootPair=null;state.directCache.clear();state.statsCache.clear();state.expanded.clear();state.pending.clear();state.errors.clear();state.epoch++;
     renderTree();
 
     try {
@@ -257,7 +295,11 @@
       ]);
       if(run!==state.testId)return;
       if(results[0].ok){setMetric('vOwner',results[0].value?'TRUE':'FALSE');if(!results[0].value)addResult('Owner_Exists','fail','Wallet is not currently an Owner according to the network contract.');}
-      if(results[1].ok){setMetric('vLeft',Number(results[1].value[0]).toLocaleString('en-US'));setMetric('vRight',Number(results[1].value[1]).toLocaleString('en-US'));}
+      if(results[1].ok){
+        const rootCounts=[Number(results[1].value[0]),Number(results[1].value[1])];
+        state.statsCache.set(address.toLowerCase(),rootCounts);
+        setMetric('vLeft',rootCounts[0].toLocaleString('en-US'));setMetric('vRight',rootCounts[1].toLocaleString('en-US'));
+      }
       if(results[2].ok){state.rootPair=[norm(results[2].value[0]),norm(results[2].value[1])];state.directCache.set(address.toLowerCase(),state.rootPair);renderTree();}
       if(!results[3].ok)throw results[3].error;
       state.tokenAddress=norm(results[3].value);setMetric('vToken',state.tokenAddress);
@@ -300,9 +342,10 @@
     state.epoch++;state.rootPair=null;state.directCache.clear();state.expanded.clear();state.pending.clear();state.errors.clear();
     renderTree();
     try {
-      const pair=await state.network.Owner_Directs(norm(TARGET));
+      const [pair,totals]=await Promise.all([state.network.Owner_Directs(norm(TARGET)),state.network.Owner_Left_Right_All(norm(TARGET))]);
       state.rootPair=[norm(pair[0]),norm(pair[1])];
       state.directCache.set(norm(TARGET).toLowerCase(),state.rootPair);
+      state.statsCache.set(norm(TARGET).toLowerCase(),[Number(totals[0]),Number(totals[1])]);
       renderTree();log('Root genealogy refreshed',{left:state.rootPair[0],right:state.rootPair[1]});
     } catch(error) { $('testTreeRoot').textContent='Owner_Directs failed: '+(error.message||error); }
   }
