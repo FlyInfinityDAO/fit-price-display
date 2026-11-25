@@ -209,7 +209,7 @@ async function getProfileSummary(db, profileId) {
   if (!profile) return null;
   const rows = await db.prepare(
     'SELECT wallet_address,is_primary,added_at FROM owner_profile_wallets ' +
-    'WHERE profile_id=? ORDER BY is_primary DESC,added_at ASC'
+    'WHERE profile_id=? AND is_primary=1 LIMIT 1'
   ).bind(profileId).all();
   return {
     username: profile.username,
@@ -320,57 +320,13 @@ async function me(request, env) {
 async function addWallet(request, env) {
   const session = await getProfileSession(request, env);
   if (session.error) return json({ error: session.error }, session.status);
-  const body = await readJson(request);
-  const proof = await consumeWalletProof(env.DB, env, body.proofToken);
-  if (proof.error) return json({ error: proof.error }, proof.status);
-
-  const walletCount = await env.DB.prepare(
-    'SELECT COUNT(*) AS total FROM owner_profile_wallets WHERE profile_id=?'
-  ).bind(session.profileId).first();
-  if (Number(walletCount?.total || 0) >= MAX_LINKED_WALLETS) {
-    return json({ error: 'A profile can contain up to 20 verified wallets.' }, 409);
-  }
-
-  const existing = await env.DB.prepare(
-    'SELECT profile_id FROM owner_profile_wallets WHERE wallet_address=?'
-  ).bind(proof.address).first();
-  if (existing) {
-    return json({ error: existing.profile_id === session.profileId
-      ? 'This wallet is already registered in your profile'
-      : 'This wallet is already linked to another Owner Profile' }, 409);
-  }
-
-  try {
-    await env.DB.prepare(
-      'INSERT INTO owner_profile_wallets(wallet_address,profile_id,is_primary,added_at) VALUES(?,?,0,?)'
-    ).bind(proof.address, session.profileId, now()).run();
-  } catch (error) {
-    if (/unique|constraint/i.test(String(error?.message || error))) {
-      return json({ error: 'This wallet is already linked to an Owner Profile' }, 409);
-    }
-    throw error;
-  }
-  return json({ profile: await getProfileSummary(env.DB, session.profileId) }, 201);
+  return json({ error: 'Each Owner Profile is linked to one verified primary wallet. Additional wallet linking is disabled.' }, 409);
 }
 
 async function removeWallet(request, env, addressParam) {
   const session = await getProfileSession(request, env);
   if (session.error) return json({ error: session.error }, session.status);
-  let address;
-  try { address = normalizeAddress(decodeURIComponent(addressParam)); }
-  catch (error) { return json({ error: error.message }, 400); }
-
-  const row = await env.DB.prepare(
-    'SELECT is_primary FROM owner_profile_wallets WHERE wallet_address=? AND profile_id=?'
-  ).bind(address, session.profileId).first();
-  if (!row) return json({ error: 'This wallet is not linked to your profile' }, 404);
-  if (Number(row.is_primary) === 1) {
-    return json({ error: 'The primary wallet cannot be removed. Add another wallet first.' }, 409);
-  }
-  await env.DB.prepare(
-    'DELETE FROM owner_profile_wallets WHERE wallet_address=? AND profile_id=? AND is_primary=0'
-  ).bind(address, session.profileId).run();
-  return json({ profile: await getProfileSummary(env.DB, session.profileId) });
+  return json({ error: 'An Owner Profile is bound to its original verified wallet. Wallet removal is disabled.' }, 409);
 }
 
 async function recoverPassword(request, env) {
@@ -382,7 +338,7 @@ async function recoverPassword(request, env) {
   if (proof.error) return json({ error: proof.error }, proof.status);
 
   const wallet = await env.DB.prepare(
-    'SELECT profile_id FROM owner_profile_wallets WHERE wallet_address=?'
+    'SELECT profile_id FROM owner_profile_wallets WHERE wallet_address=? AND is_primary=1'
   ).bind(proof.address).first();
   if (!wallet) return json({ error: 'This wallet is not linked to an Owner Profile' }, 403);
 
