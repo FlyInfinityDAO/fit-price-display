@@ -629,7 +629,7 @@
 
   async function readDirects(address) {
     const key = address.toLowerCase();
-    if (state.treeCache.has(key) && state.treeStatsCache.has(key)) return state.treeCache.get(key);
+    if (state.treeCache.has(key)) return state.treeCache.get(key);
     if (state.treeLoading.has(key)) return state.treeLoading.get(key);
     const epoch = state.treeEpoch;
     const promise = withReadProvider(async reader => {
