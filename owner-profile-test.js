@@ -65,6 +65,7 @@
     tokenAddress: '',
     directCache: new Map(),
     statsCache: new Map(),
+    statsPending: new Map(),
     expanded: new Set(),
     pending: new Map(),
     errors: new Map(),
@@ -184,7 +185,9 @@
     const card=document.createElement('div');
     const zero=address.toLowerCase()===ZERO.toLowerCase();
     card.className='op-tree-node'+(zero?' zero':'');
-    const counts=state.statsCache.get(address.toLowerCase());
+    const key=address.toLowerCase();
+    const counts=state.statsCache.get(key);
+    if(!zero&&!counts&&!state.statsPending.has(key))loadStats(address).catch(()=>{});
     const head=document.createElement('div');head.className='op-tree-node-head';
     const toggle=document.createElement('button');toggle.type='button';toggle.className='op-tree-toggle';
     toggle.textContent=zero?'·':(state.expanded.has(address.toLowerCase())?'−':'+');
@@ -252,15 +255,33 @@
     canvas.appendChild(holder);
     root.appendChild(canvas);
   }
+  async function loadStats(address) {
+    const key=address.toLowerCase();
+    if(state.statsCache.has(key))return state.statsCache.get(key);
+    if(state.statsPending.has(key))return state.statsPending.get(key);
+    const epoch=state.epoch;
+    const promise=state.network.Owner_Left_Right_All(address).then(totals=>{
+      const counts=[Number(totals[0]),Number(totals[1])];
+      if(epoch===state.epoch)state.statsCache.set(key,counts);
+      log('Owner_Left_Right_All loaded',{address,leftCount:counts[0],rightCount:counts[1]});
+      return counts;
+    }).finally(()=>{
+      state.statsPending.delete(key);
+      if(epoch===state.epoch)renderTree();
+    });
+    state.statsPending.set(key,promise);
+    return promise;
+  }
+
   async function loadDirects(address) {
     const key=address.toLowerCase();
     if(state.directCache.has(key))return state.directCache.get(key);
     if(state.pending.has(key))return state.pending.get(key);
     const epoch=state.epoch;
-    const promise=Promise.all([state.network.Owner_Directs(address),state.network.Owner_Left_Right_All(address)]).then(([pair,totals])=>{
-      const value=[norm(pair[0]),norm(pair[1])],counts=[Number(totals[0]),Number(totals[1])];
-      if(epoch===state.epoch){state.directCache.set(key,value);state.statsCache.set(key,counts);}
-      log('Wallet genealogy stats loaded',{address,left:value[0],right:value[1],leftCount:counts[0],rightCount:counts[1]});
+    const promise=Promise.all([state.network.Owner_Directs(address),loadStats(address)]).then(([pair])=>{
+      const value=[norm(pair[0]),norm(pair[1])];
+      if(epoch===state.epoch)state.directCache.set(key,value);
+      log('Owner_Directs expanded',{address,left:value[0],right:value[1]});
       return value;
     }).catch(error=>{
       if(epoch===state.epoch)state.errors.set(key,error.message||String(error));
@@ -280,7 +301,7 @@
     $('testLog').textContent='Starting read-only diagnostics…';
     $('rawResults').textContent='Waiting for contract calls…';
     ['vPurchased','vLimit','vRemaining','vBalance','vPrice','vValue','vOwner','vLeft','vRight','vToken'].forEach(id=>setMetric(id,'—'));
-    state.rootPair=null;state.directCache.clear();state.statsCache.clear();state.expanded.clear();state.pending.clear();state.errors.clear();state.epoch++;
+    state.rootPair=null;state.directCache.clear();state.statsCache.clear();state.statsPending.clear();state.expanded.clear();state.pending.clear();state.errors.clear();state.epoch++;
     renderTree();
 
     try {
@@ -339,7 +360,7 @@
 
   async function reloadTree() {
     if(!state.provider||!state.network){$('testOverall').textContent='Run contract diagnostics first.';return;}
-    state.epoch++;state.rootPair=null;state.directCache.clear();state.statsCache.clear();state.expanded.clear();state.pending.clear();state.errors.clear();
+    state.epoch++;state.rootPair=null;state.directCache.clear();state.statsCache.clear();state.statsPending.clear();state.expanded.clear();state.pending.clear();state.errors.clear();
     renderTree();
     try {
       const [pair,totals]=await Promise.all([state.network.Owner_Directs(norm(TARGET)),state.network.Owner_Left_Right_All(norm(TARGET))]);
