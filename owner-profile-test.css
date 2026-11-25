@@ -769,3 +769,50 @@ body.owner-profile-page .op-test-tree .op-tree-branch .op-tree-label {
     width:25px;height:25px;
   }
 }
+
+/* Explicit intrinsic canvas makes the genealogy viewport's scroll extents
+   follow the recursive tree instead of shrinking its contents to the screen. */
+body.owner-profile-page .op-test-tree .op-tree-viewport {
+  display:block !important;
+  overflow:auto !important;
+  overflow-x:scroll !important;
+  overflow-y:scroll !important;
+  touch-action:pan-x pan-y !important;
+  scrollbar-gutter:stable;
+  overscroll-behavior:contain;
+}
+body.owner-profile-page .op-test-tree #testTreeRoot {
+  display:block !important;
+  width:max-content !important;
+  min-width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  text-align:left;
+  overflow:visible !important;
+}
+body.owner-profile-page .op-test-tree .op-tree-canvas {
+  display:block;
+  width:max-content;
+  min-width:100%;
+  max-width:none;
+  min-height:100%;
+  overflow:visible;
+  padding:0 12px 20px;
+}
+body.owner-profile-page .op-test-tree .op-tree-root {
+  width:max-content !important;
+  min-width:0 !important;
+  max-width:none !important;
+  margin:0 auto !important;
+}
+body.owner-profile-page .op-test-tree .op-tree-children {
+  width:max-content !important;
+  min-width:0 !important;
+  max-width:none !important;
+}
+body.owner-profile-page .op-test-tree .op-tree-side,
+body.owner-profile-page .op-test-tree .op-tree-node,
+body.owner-profile-page .op-test-tree .op-tree-branch {
+  max-width:none !important;
+}
