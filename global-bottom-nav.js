@@ -62,8 +62,45 @@
     return "dashboard";
   }
 
+  function pinSiteHeader() {
+    if (!document.body || document.body.classList.contains("fi-fixed-header-enabled")) return;
+
+    const candidates = Array.from(document.querySelectorAll(".top-bar, .topbar"));
+    const header = candidates.find((element) => {
+      if (element.closest(".sidebar, .sidebar-menu, .fi-global-bottom-nav")) return false;
+      const style = window.getComputedStyle(element);
+      const rect = element.getBoundingClientRect();
+      return style.display !== "none" && style.visibility !== "hidden" && rect.height > 0;
+    });
+    if (!header) return;
+
+    header.classList.add("fi-global-fixed-header");
+    document.documentElement.classList.add("fi-fixed-header-document");
+    document.body.classList.add("fi-fixed-header-enabled");
+
+    const updateHeaderSpace = () => {
+      const height = Math.ceil(header.getBoundingClientRect().height || header.offsetHeight || 0);
+      if (height > 0) {
+        document.documentElement.style.setProperty("--fi-fixed-header-height", height + "px");
+      }
+    };
+
+    updateHeaderSpace();
+    if ("ResizeObserver" in window) {
+      const observer = new ResizeObserver(updateHeaderSpace);
+      observer.observe(header);
+    }
+    window.addEventListener("resize", updateHeaderSpace, { passive: true });
+    window.addEventListener("orientationchange", () => window.requestAnimationFrame(updateHeaderSpace), { passive: true });
+    document.addEventListener("fi-language-updated", () => window.requestAnimationFrame(updateHeaderSpace));
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(updateHeaderSpace).catch(() => {});
+    }
+  }
+
   function mount() {
     if (!document.body || document.getElementById("fiGlobalBottomNav")) return;
+    pinSiteHeader();
     const nav = document.createElement("nav");
     nav.id = "fiGlobalBottomNav";
     nav.className = "fi-global-bottom-nav";
@@ -131,7 +168,7 @@
 
   const css = document.createElement("link");
   css.rel = "stylesheet";
-  css.href = new URL("global-bottom-nav.css?v=20261124-mobile-keyboard-fix1", root).href;
+  css.href = new URL("global-bottom-nav.css?v=20261126-fixed-global-header-v1", root).href;
   document.head.appendChild(css);
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount, { once: true });
   else mount();
