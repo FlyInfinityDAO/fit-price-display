@@ -187,21 +187,35 @@
     card.className='op-tree-node'+(zero?' zero':'');
     const key=address.toLowerCase();
     const counts=state.statsCache.get(key);
-    if(!zero&&!counts&&!state.statsPending.has(key))loadStats(address).catch(()=>{});
+    if(!zero&&!counts&&!state.statsPending.has(key)&&!state.statsErrors.has(key))loadStats(address).catch(()=>{});
+
+    const info=document.createElement('div');
+    info.className='op-tree-node-card'+(zero?' zero':'');
     const head=document.createElement('div');head.className='op-tree-node-head';
     const toggle=document.createElement('button');toggle.type='button';toggle.className='op-tree-toggle';
-    toggle.textContent=zero?'·':(state.expanded.has(address.toLowerCase())?'−':'+');
+    toggle.textContent=zero?'·':(state.expanded.has(key)?'−':'+');
     toggle.disabled=zero||depth>=14||count.value>=260;
     toggle.setAttribute('aria-label','Expand branch');
     const addr=document.createElement('div');addr.className='op-tree-address';addr.textContent=shortAddress(address);addr.title=address;addr.setAttribute('aria-label',address);
     const cp=document.createElement('button');cp.type='button';cp.className='op-tree-copy';cp.textContent='⧉';cp.title='Copy address';cp.addEventListener('click',()=>copy(address));
-    head.append(toggle,addr,cp);card.appendChild(head);
+    head.append(toggle,addr,cp);info.appendChild(head);
+
     const label=document.createElement('div');label.className='op-tree-label';
-    label.textContent=zero?'Empty side · zero address returned by contract':(side==='left'?'Left direct':'Right direct');card.appendChild(label);
-    if(!zero)appendTreeStats(card,counts);
-    if(!zero&&state.expanded.has(address.toLowerCase())&&!counts){const wait=document.createElement('div');wait.className='op-tree-counts-loading';wait.textContent=state.pending.has(address.toLowerCase())?'Loading branch counts…':'Branch counts not available';card.appendChild(wait);}
+    label.textContent=zero?'Empty side · zero address returned by contract':(side==='left'?'Left direct':'Right direct');info.appendChild(label);
+    if(!zero)appendTreeStats(info,counts);
+    if(!zero&&!counts&&(state.expanded.has(key)||state.statsPending.has(key)||state.statsErrors.has(key))){
+      const wait=document.createElement('div');wait.className='op-tree-counts-loading';
+      if(state.statsErrors.has(key)){
+        wait.textContent=state.statsErrors.get(key)+' ';
+        const retryStats=document.createElement('button');retryStats.type='button';retryStats.className='op-tree-stats-retry';retryStats.textContent='Retry';
+        retryStats.addEventListener('click',()=>{state.statsErrors.delete(key);loadStats(address).catch(()=>{});});
+        wait.appendChild(retryStats);
+      }else wait.textContent='Loading branch counts…';
+      info.appendChild(wait);
+    }
+    card.appendChild(info);
+
     if(!zero) {
-      const key=address.toLowerCase();
       toggle.addEventListener('click',async()=>{
         if(state.expanded.has(key)){state.expanded.delete(key);renderTree();return;}
         state.expanded.add(key);renderTree();
@@ -246,10 +260,12 @@
     const canvas=document.createElement('div');canvas.className='op-tree-canvas';
     const holder=document.createElement('div');holder.className='op-tree-root';
     const rootCard=document.createElement('div');rootCard.className='op-tree-node op-tree-root-card';
+    const rootInfo=document.createElement('div');rootInfo.className='op-tree-node-card op-tree-root-visual';
     const rootLabel=document.createElement('div');rootLabel.className='op-tree-root-label';
     rootLabel.textContent=shortAddress(TARGET);rootLabel.title=TARGET;rootLabel.setAttribute('aria-label',TARGET);
     const rootCopy=document.createElement('button');rootCopy.className='op-icon-btn';rootCopy.type='button';rootCopy.textContent='⧉';rootCopy.addEventListener('click',()=>copy(TARGET));rootLabel.appendChild(rootCopy);
-    rootCard.appendChild(rootLabel);appendTreeStats(rootCard,state.statsCache.get(TARGET.toLowerCase()));
+    rootInfo.appendChild(rootLabel);appendTreeStats(rootInfo,state.statsCache.get(TARGET.toLowerCase()));
+    rootCard.appendChild(rootInfo);
     const count={value:0};
     holder.append(rootCard,createChildren(state.rootPair,new Set([TARGET.toLowerCase()]),1,count));
     canvas.appendChild(holder);
