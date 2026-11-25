@@ -620,8 +620,10 @@
       if (epoch === state.treeEpoch) state.treeStatsErrors.set(key, error.message || tr('readFailed'));
       throw error;
     }).finally(() => {
-      state.treeStatsLoading.delete(key);
-      if (epoch === state.treeEpoch) renderTree();
+      if (epoch === state.treeEpoch) {
+        state.treeStatsLoading.delete(key);
+        renderTree();
+      }
     });
     state.treeStatsLoading.set(key, promise);
     return promise;
