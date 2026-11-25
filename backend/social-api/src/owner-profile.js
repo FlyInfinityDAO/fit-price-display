@@ -434,7 +434,7 @@ async function recoverPassword(request, env) {
   if (proof.error) return json({ error: proof.error }, proof.status);
 
   const wallet = await env.DB.prepare(
-    'SELECT profile_id FROM owner_profile_wallets WHERE wallet_address=? AND is_primary=1'
+    'SELECT profile_id FROM owner_profile_wallets WHERE wallet_address=?'
   ).bind(proof.address).first();
   if (!wallet) return json({ error: 'This wallet is not linked to an Owner Profile' }, 403);
 
