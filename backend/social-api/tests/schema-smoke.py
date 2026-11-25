@@ -115,43 +115,75 @@ with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
     except sqlite3.IntegrityError:
         pass
 
-    # Simulate replacing the off-chain wallet row after a network wallet change:
-    # the immutable owner ID remains attached to the same profile.
-    new_wallet = "0x" + "9" * 40
-    connection.execute("DELETE FROM owner_profile_wallets WHERE profile_id=?", ("owner-profile-a",))
+    # A profile can link several independently verified Network Owner wallets.
+    third_wallet = "0x" + "7" * 40
     connection.execute(
-        "UPDATE owner_profiles SET primary_wallet_address=? WHERE profile_id=? AND network_owner_id=?",
-        (new_wallet, "owner-profile-a", 7421),
+        "INSERT INTO owner_profile_wallets(wallet_address,profile_id,is_primary,added_at) VALUES(?,?,0,?)",
+        (third_wallet, "owner-profile-a", 3),
     )
-    connection.execute(
-        "INSERT INTO owner_profile_wallets(wallet_address,profile_id,is_primary,added_at) VALUES(?,?,1,?)",
-        (new_wallet, "owner-profile-a", 4),
-    )
-    moved = connection.execute(
-        "SELECT p.primary_wallet_address,p.network_owner_id,w.wallet_address,w.is_primary "
-        "FROM owner_profiles p JOIN owner_profile_wallets w ON w.profile_id=p.profile_id "
-        "WHERE p.profile_id='owner-profile-a'"
-    ).fetchone()
-    assert moved == (new_wallet, 7421, new_wallet, 1), (
-        "Wallet change must keep the same profile and immutable Network Owner ID"
-    )
+    linked_count = connection.execute(
+        "SELECT COUNT(*) FROM owner_profile_wallets WHERE profile_id='owner-profile-a'"
+    ).fetchone()[0]
+    assert linked_count == 3, "Additional verified wallets must be linkable to one profile"
+
+    try:
+        connection.execute(
+            "INSERT INTO owner_profile_wallets(wallet_address,profile_id,is_primary,added_at) VALUES(?,?,0,?)",
+            (secondary_wallet, "owner-profile-a", 4),
+        )
+        raise AssertionError("A wallet cannot be linked twice")
+    except sqlite3.IntegrityError:
+        pass
+
     try:
         connection.execute(
             "INSERT INTO owner_profiles(profile_id,username,password_hash,password_salt,password_iterations,primary_wallet_address,created_at,updated_at) "
             "VALUES(?,?,?,?,?,?,?,?)",
-            ("owner-profile-b", "OWNERALPHA", "hash-b", "salt-b", 100000, "0x" + "7" * 40, 1, 1),
+            ("owner-profile-b", "OWNERALPHA", "hash-b", "salt-b", 100000, "0x" + "8" * 40, 1, 1),
         )
         raise AssertionError("Owner Profile usernames must be unique regardless of case")
     except sqlite3.IntegrityError:
         pass
-    try:
-        connection.execute(
-            "INSERT INTO owner_profile_wallets(wallet_address,profile_id,is_primary,added_at) VALUES(?,?,0,?)",
-            (secondary_wallet, "owner-profile-a", 3),
-        )
-        raise AssertionError("A wallet cannot be duplicated in an Owner Profile")
-    except sqlite3.IntegrityError:
-        pass
+
+    # Removing the primary wallet promotes the next remaining verified wallet.
+    connection.execute(
+        "DELETE FROM owner_profile_wallets WHERE wallet_address=? AND profile_id=?",
+        (primary_wallet, "owner-profile-a"),
+    )
+    connection.execute(
+        "UPDATE owner_profile_wallets SET is_primary=0 WHERE profile_id=?",
+        ("owner-profile-a",),
+    )
+    connection.execute(
+        "UPDATE owner_profile_wallets SET is_primary=1 WHERE wallet_address=? AND profile_id=?",
+        (secondary_wallet, "owner-profile-a"),
+    )
+    connection.execute(
+        "UPDATE owner_profiles SET primary_wallet_address=?,network_owner_id=NULL WHERE profile_id=?",
+        (secondary_wallet, "owner-profile-a"),
+    )
+    promoted = connection.execute(
+        "SELECT p.primary_wallet_address,w.wallet_address,w.is_primary "
+        "FROM owner_profiles p JOIN owner_profile_wallets w "
+        "ON w.profile_id=p.profile_id AND w.is_primary=1 "
+        "WHERE p.profile_id='owner-profile-a'"
+    ).fetchone()
+    assert promoted == (secondary_wallet, secondary_wallet, 1), (
+        "Removing the primary wallet must promote a remaining linked wallet"
+    )
+
+    # Removing another secondary wallet leaves the profile's new primary untouched.
+    connection.execute(
+        "DELETE FROM owner_profile_wallets WHERE wallet_address=? AND profile_id=?",
+        (third_wallet, "owner-profile-a"),
+    )
+    remaining = connection.execute(
+        "SELECT COUNT(*) FROM owner_profile_wallets WHERE profile_id='owner-profile-a'"
+    ).fetchone()[0]
+    assert remaining == 1, "Wallet removal must preserve the other linked wallet"
+    assert connection.execute(
+        "SELECT primary_wallet_address FROM owner_profiles WHERE profile_id='owner-profile-a'"
+    ).fetchone()[0] == secondary_wallet, "Wallet removal changed the wrong primary address"
 
     seeded = connection.execute(
         "SELECT COUNT(*) FROM social_challenges WHERE status='active'"
