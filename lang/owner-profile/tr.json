@@ -103,6 +103,17 @@
     "sessionExpired": "Oturumunuzun süresi doldu. Lütfen tekrar giriş yapın.",
     "loggedOut": "Oturum kapatıldı.",
     "passwordRecovered": "Şifre güncellendi. Önceki oturumlar kapatıldı.",
-    "walletOnlyNote": "Her Sahip Profili tek bir doğrulanmış cüzdana bağlıdır."
+    "walletOnlyNote": "Her Sahip Profili tek bir doğrulanmış cüzdana bağlıdır.",
+    "changeWalletTitle": "Ağ cüzdanınızı mı değiştirdiniz?",
+    "changeWalletIntro": "Zincir üzerinde _Change_Wallet işlemini tamamladıktan sonra yeni cüzdanı bağlayın ve aynı Sahip Profilini korumak için ücretsiz doğrulama mesajını imzalayın.",
+    "changeWalletBrowser": "Yeni cüzdanı cüzdan tarayıcısında doğrula",
+    "changeWalletReown": "Yeni cüzdanı doğrula",
+    "changeWalletSignatureNote": "Burada yalnızca ücretsiz bir cüzdan mesajı imzalanır. Ağdaki cüzdan değişikliği önceden BNB Smart Chain üzerinde tamamlanmış olmalıdır.",
+    "walletChangeNeedsOnchain": "Bu profil için kayıtlı bir Ağ Sahibi Kimliği yok. Eski cüzdan hâlâ aktifse, cüzdanı değiştirmeden önce kimliği kaydetmek için yeniden giriş yapın. Ağ cüzdanı bu özellik etkinleştirilmeden önce değiştirildiyse otomatik eşleştirme yapılamaz.",
+    "changeWalletIdentityMismatch": "Yeni cüzdan bu profile kayıtlı Ağ Sahibi Kimliğiyle eşleşmiyor. Önce ağ üzerinde _Change_Wallet işlemini tamamlayıp tekrar deneyin.",
+    "changeWalletSame": "Bağlanan cüzdan zaten bu profile kayıtlı.",
+    "changeWalletExists": "Bu yeni cüzdan başka bir Sahip Profiliyle zaten ilişkilendirilmiş.",
+    "changeWalletLookupFailed": "Ağ Sahibi dizini şu anda doğrulanamadı. Lütfen tekrar deneyin.",
+    "changeWalletSuccess": "Yeni cüzdan doğrulandı. Mevcut Sahip Profiliniz başarıyla güncellendi."
   }
 }
