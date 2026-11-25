@@ -657,16 +657,20 @@
     counter.count += 1;
     const card = document.createElement('div');
     const zero = address.toLowerCase() === ZERO.toLowerCase();
-    card.className = 'op-tree-node' + (zero ? ' zero' : '');
+    card.className = 'op-tree-node';
+
+    const key = address.toLowerCase();
+    const info = document.createElement('div');
+    info.className = 'op-tree-node-card' + (zero ? ' zero' : '');
 
     const head = document.createElement('div');
     head.className = 'op-tree-node-head';
     const toggle = document.createElement('button');
     toggle.type = 'button';
     toggle.className = 'op-tree-toggle';
-    toggle.textContent = zero ? '·' : (state.treeExpanded.has(address.toLowerCase()) ? '−' : '+');
+    toggle.textContent = zero ? '·' : (state.treeExpanded.has(key) ? '−' : '+');
     toggle.disabled = zero || depth >= 40 || counter.count >= 500;
-    toggle.setAttribute('aria-label', state.treeExpanded.has(address.toLowerCase()) ? tr('collapseBranch') : tr('expandBranch'));
+    toggle.setAttribute('aria-label', state.treeExpanded.has(key) ? tr('collapseBranch') : tr('expandBranch'));
     const value = document.createElement('div');
     value.className = 'op-tree-address';
     value.textContent = shortAddress(address);
@@ -680,41 +684,41 @@
     copy.innerHTML = '<i class="fa-regular fa-copy" aria-hidden="true"></i>';
     copy.addEventListener('click', () => copyAddress(address));
     head.append(toggle, value, copy);
-    card.appendChild(head);
+    info.appendChild(head);
 
     const label = document.createElement('div');
     label.className = 'op-tree-label';
     label.textContent = zero ? tr('emptyAddress') : (side === 'left' ? tr('leftBranch') : tr('rightBranch'));
-    card.appendChild(label);
-    const key = address.toLowerCase();
+    info.appendChild(label);
+
     const counts = state.treeStatsCache.get(key);
     if (!zero && !counts && !state.treeStatsLoading.has(key) && !state.treeStatsErrors.has(key)) {
       readTreeStats(address).catch(() => {});
     }
-    if (!zero) appendTreeStats(card, counts);
-    if (!zero && !counts) {
+    if (!zero) appendTreeStats(info, counts);
+    if (!zero && !counts && (state.treeExpanded.has(key) || state.treeStatsLoading.has(key) || state.treeStatsErrors.has(key))) {
       const waiting = document.createElement('div');
       waiting.className = 'op-tree-counts-loading';
       if (state.treeStatsErrors.has(key)) {
         waiting.textContent = state.treeStatsErrors.get(key) + ' ';
-        const retry = document.createElement('button');
-        retry.type = 'button';
-        retry.className = 'op-tree-stats-retry';
-        retry.textContent = tr('retry');
-        retry.addEventListener('click', () => {
+        const retryStats = document.createElement('button');
+        retryStats.type = 'button';
+        retryStats.className = 'op-tree-stats-retry';
+        retryStats.textContent = tr('retry');
+        retryStats.addEventListener('click', () => {
           state.treeStatsErrors.delete(key);
           readTreeStats(address).catch(() => {});
         });
-        waiting.appendChild(retry);
+        waiting.appendChild(retryStats);
       } else {
         waiting.textContent = tr('loading');
       }
-      card.appendChild(waiting);
+      info.appendChild(waiting);
     }
+    card.appendChild(info);
 
     if (!zero) {
       toggle.addEventListener('click', async () => {
-        const key = address.toLowerCase();
         if (state.treeExpanded.has(key)) {
           state.treeExpanded.delete(key);
           renderTree();
@@ -730,8 +734,7 @@
         }
       });
 
-      if (state.treeExpanded.has(address.toLowerCase())) {
-        const key = address.toLowerCase();
+      if (state.treeExpanded.has(key)) {
         const branch = document.createElement('div');
         branch.className = 'op-tree-branch';
         if (ancestors.has(key)) {
@@ -813,6 +816,8 @@
     rootNode.className = 'op-tree-root';
     const rootCard = document.createElement('div');
     rootCard.className = 'op-tree-node op-tree-root-card';
+    const rootInfo = document.createElement('div');
+    rootInfo.className = 'op-tree-node-card op-tree-root-visual';
     const label = document.createElement('div');
     label.className = 'op-tree-root-label';
     label.textContent = shortAddress(state.selectedWallet);
@@ -825,8 +830,9 @@
     copy.innerHTML = '<i class="fa-regular fa-copy" aria-hidden="true"></i>';
     copy.addEventListener('click', () => copyAddress(state.selectedWallet));
     label.appendChild(copy);
-    rootCard.appendChild(label);
-    appendTreeStats(rootCard, state.treeStatsCache.get(state.selectedWallet.toLowerCase()));
+    rootInfo.appendChild(label);
+    appendTreeStats(rootInfo, state.treeStatsCache.get(state.selectedWallet.toLowerCase()));
+    rootCard.appendChild(rootInfo);
     const counter = { count: 0 };
     const pair = state.treeCache.get(state.selectedWallet.toLowerCase());
     const emptyOrChildren = makeChildren(pair, new Set([state.selectedWallet.toLowerCase()]), 1, counter);
