@@ -32,9 +32,13 @@ async function readJson(request) {
   catch { throw new Error('Request body must be valid JSON'); }
 }
 
-function bearer(request) {
-  const match = String(request.headers.get('Authorization') || '').match(/^Bearer\s+(.+)$/i);
+export function extractOwnerProfileBearerToken(authorization) {
+  const match = String(authorization || '').match(/^Bearer\s+(.+)$/i);
   return match ? match[1].trim() : '';
+}
+
+function bearer(request) {
+  return extractOwnerProfileBearerToken(request.headers.get('Authorization'));
 }
 
 async function rateLimit(db, key, limit, windowSeconds) {
