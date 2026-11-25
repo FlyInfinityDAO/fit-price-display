@@ -636,3 +636,284 @@ body.owner-profile-page .op-tree-branch .op-tree-address {
     height:24px;
   }
 }
+
+/* 2D Genealogy canvas — each expanded owner opens its LEFT/RIGHT pair
+   horizontally. Recursive subtree width is intrinsic, and only this viewport
+   scrolls on both axes; the page itself remains locked to device width. */
+html, body.owner-profile-page {
+  width:100%;
+  max-width:100%;
+  overflow-x:hidden;
+}
+body.owner-profile-page .op-tree-panel,
+body.owner-profile-page #opTreeViewport {
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+body.owner-profile-page #opTreeViewport.op-tree-viewport {
+  display:block !important;
+  position:relative;
+  width:100% !important;
+  max-width:100% !important;
+  min-width:0 !important;
+  min-height:280px;
+  max-height:70vh;
+  max-height:min(70vh,760px);
+  overflow:auto !important;
+  overflow-x:auto !important;
+  overflow-y:auto !important;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-x pan-y;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(0,200,150,.5) rgba(255,255,255,.05);
+  scrollbar-gutter:stable;
+  contain:layout paint;
+  isolation:isolate;
+}
+body.owner-profile-page #opTreeViewport::-webkit-scrollbar {
+  width:9px;
+  height:9px;
+}
+body.owner-profile-page #opTreeViewport::-webkit-scrollbar-thumb {
+  border-radius:10px;
+  background:rgba(0,200,150,.48);
+}
+body.owner-profile-page #opTreeViewport::-webkit-scrollbar-track {
+  background:rgba(255,255,255,.04);
+}
+body.owner-profile-page #opTreeRoot {
+  display:block !important;
+  width:max-content !important;
+  min-width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  text-align:left;
+  overflow:visible !important;
+}
+body.owner-profile-page .op-tree-canvas {
+  display:block;
+  width:max-content;
+  min-width:100%;
+  max-width:none;
+  min-height:100%;
+  overflow:visible;
+  padding:0 12px 20px;
+}
+body.owner-profile-page .op-tree-root {
+  display:flex !important;
+  flex-direction:column;
+  align-items:center;
+  width:max-content !important;
+  min-width:0 !important;
+  max-width:none !important;
+  margin:0 auto !important;
+}
+body.owner-profile-page .op-tree-root-label {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  width:var(--op-tree-node-width,230px) !important;
+  min-width:var(--op-tree-node-width,230px);
+  max-width:none !important;
+  margin:0 auto 18px;
+  overflow:visible;
+  white-space:nowrap;
+}
+body.owner-profile-page .op-tree-children {
+  position:relative;
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(var(--op-tree-node-width,230px),max-content)) !important;
+  grid-auto-flow:row;
+  align-items:start;
+  justify-content:center;
+  column-gap:var(--op-tree-gap,26px);
+  row-gap:12px;
+  width:max-content !important;
+  min-width:0 !important;
+  max-width:none !important;
+  overflow:visible !important;
+}
+body.owner-profile-page .op-tree-side {
+  position:relative;
+  display:flex !important;
+  flex:0 0 auto !important;
+  flex-direction:column;
+  align-items:stretch;
+  gap:8px;
+  width:max-content !important;
+  min-width:var(--op-tree-node-width,230px) !important;
+  max-width:none !important;
+  overflow:visible !important;
+}
+body.owner-profile-page .op-tree-node {
+  position:relative;
+  display:block;
+  width:max-content !important;
+  min-width:var(--op-tree-node-width,230px) !important;
+  max-width:none !important;
+  padding:10px;
+  overflow:visible !important;
+  isolation:isolate;
+}
+body.owner-profile-page .op-tree-node-head {
+  display:grid !important;
+  grid-template-columns:26px minmax(120px,1fr) 30px !important;
+  align-items:center;
+  gap:7px;
+  width:var(--op-tree-node-width,230px);
+  min-width:var(--op-tree-node-width,230px);
+  max-width:none;
+  margin:0 auto;
+}
+body.owner-profile-page .op-tree-address {
+  display:block;
+  min-width:0;
+  max-width:100%;
+  direction:ltr;
+  text-align:left;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  overflow-wrap:normal;
+  word-break:normal;
+  font-size:11px;
+}
+body.owner-profile-page .op-tree-toggle {
+  width:26px;
+  height:28px;
+  flex:none;
+}
+body.owner-profile-page .op-tree-copy {
+  width:30px;
+  height:30px;
+  flex:none;
+}
+body.owner-profile-page .op-tree-label {
+  width:var(--op-tree-node-width,230px);
+  min-width:var(--op-tree-node-width,230px);
+  margin:7px auto 0;
+  text-align:center;
+  overflow-wrap:anywhere;
+}
+body.owner-profile-page .op-tree-branch {
+  position:relative;
+  display:block !important;
+  width:max-content !important;
+  min-width:100%;
+  max-width:none !important;
+  margin:18px 0 0;
+  padding:18px 0 0;
+  overflow:visible !important;
+  border-top:0;
+}
+body.owner-profile-page .op-tree-branch::before {
+  content:"";
+  position:absolute;
+  top:0;
+  left:50%;
+  width:1px;
+  height:14px;
+  background:linear-gradient(to bottom,rgba(212,175,55,.65),rgba(0,200,150,.5));
+}
+body.owner-profile-page .op-tree-branch > .op-tree-children {
+  grid-template-columns:repeat(2,minmax(var(--op-tree-node-width,230px),max-content)) !important;
+  column-gap:var(--op-tree-gap,26px);
+  row-gap:12px;
+  width:max-content !important;
+  max-width:none !important;
+  padding-top:8px;
+}
+body.owner-profile-page .op-tree-branch > .op-tree-children::before {
+  content:"";
+  position:absolute;
+  top:0;
+  left:calc(var(--op-tree-node-width,230px) / 2);
+  right:calc(var(--op-tree-node-width,230px) / 2);
+  height:1px;
+  background:rgba(0,200,150,.34);
+}
+body.owner-profile-page .op-tree-branch .op-tree-side {
+  width:max-content !important;
+  min-width:var(--op-tree-node-width,230px) !important;
+  max-width:none !important;
+  padding-top:10px;
+}
+body.owner-profile-page .op-tree-branch .op-tree-side::before {
+  content:"";
+  position:absolute;
+  top:0;
+  left:50%;
+  width:1px;
+  height:10px;
+  background:rgba(0,200,150,.42);
+}
+body.owner-profile-page .op-tree-branch .op-tree-node {
+  width:max-content !important;
+  min-width:var(--op-tree-node-width,230px) !important;
+  max-width:none !important;
+  padding:10px;
+  overflow:visible !important;
+}
+body.owner-profile-page .op-tree-branch .op-tree-node-head {
+  width:var(--op-tree-node-width,230px);
+  min-width:var(--op-tree-node-width,230px);
+  grid-template-columns:24px minmax(110px,1fr) 28px !important;
+}
+body.owner-profile-page .op-tree-branch .op-tree-label {
+  width:var(--op-tree-node-width,230px);
+  min-width:var(--op-tree-node-width,230px);
+}
+@media(max-width:600px) {
+  body.owner-profile-page #opTreeViewport.op-tree-viewport {
+    min-height:260px;
+    max-height:64vh;
+    padding:7px;
+    touch-action:pan-x pan-y;
+  }
+  body.owner-profile-page .op-tree-canvas {
+    padding:0 8px 18px;
+  }
+  body.owner-profile-page .op-tree-root-label {
+    margin-bottom:14px;
+  }
+  body.owner-profile-page .op-tree-children {
+    column-gap:var(--op-tree-gap,14px);
+  }
+  body.owner-profile-page .op-tree-node {
+    padding:8px;
+  }
+  body.owner-profile-page .op-tree-node-head {
+    grid-template-columns:23px minmax(100px,1fr) 27px !important;
+    gap:5px;
+  }
+  body.owner-profile-page .op-tree-toggle {
+    width:23px;
+    height:25px;
+  }
+  body.owner-profile-page .op-tree-copy {
+    width:27px;
+    height:27px;
+  }
+}
+@media(max-width:350px) {
+  body.owner-profile-page .op-tree-panel {
+    --op-tree-node-width:178px;
+    --op-tree-gap:12px;
+  }
+  body.owner-profile-page .op-tree-node-head {
+    grid-template-columns:21px minmax(92px,1fr) 25px !important;
+    gap:4px;
+  }
+  body.owner-profile-page .op-tree-toggle {
+    width:21px;
+    height:23px;
+  }
+  body.owner-profile-page .op-tree-copy {
+    width:25px;
+    height:25px;
+  }
+}
