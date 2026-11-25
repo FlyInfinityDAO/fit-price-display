@@ -693,6 +693,8 @@
       root.textContent = tr('treeWaiting');
       return;
     }
+    const canvas = document.createElement('div');
+    canvas.className = 'op-tree-canvas';
     const rootNode = document.createElement('div');
     rootNode.className = 'op-tree-root';
     const label = document.createElement('div');
@@ -711,7 +713,8 @@
     const pair = state.treeCache.get(state.selectedWallet.toLowerCase());
     const emptyOrChildren = makeChildren(pair, new Set([state.selectedWallet.toLowerCase()]), 1, counter);
     rootNode.append(label, emptyOrChildren);
-    root.appendChild(rootNode);
+    canvas.appendChild(rootNode);
+    root.appendChild(canvas);
   }
 
   function resetWalletData() {
