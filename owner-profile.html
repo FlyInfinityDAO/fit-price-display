@@ -146,6 +146,14 @@
               <button class="op-btn" id="opAddWalletReown" type="button"><i class="fa-solid fa-wallet" aria-hidden="true"></i><span data-i18n="ownerProfile.addWallet">Connect and add wallet</span></button>
             </div>
             <p class="op-form-foot" data-i18n="ownerProfile.removeWalletNote">To remove a wallet, sign a free message with an active wallet already linked to this profile. At least one wallet must remain.</p>
+            <div class="op-remove-wallet-confirm op-hidden" id="opRemoveWalletPrompt">
+              <p id="opRemoveWalletPromptText"></p>
+              <div class="op-profile-actions">
+                <button class="op-btn gold" id="opRemoveWalletBrowser" type="button"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i><span data-i18n="ownerProfile.removeWalletBrowser">Confirm in wallet browser</span></button>
+                <button class="op-btn" id="opRemoveWalletReown" type="button"><i class="fa-solid fa-wallet" aria-hidden="true"></i><span data-i18n="ownerProfile.removeWalletReown">Confirm with wallet selector</span></button>
+                <button class="op-btn subtle" id="opRemoveWalletCancel" type="button"><span data-i18n="ownerProfile.cancel">Cancel</span></button>
+              </div>
+            </div>
             <p class="op-status" id="opWalletActionStatus" role="status" aria-live="polite"></p>
           </div>
           <p class="op-status" id="opProfileStatus" role="status" aria-live="polite"></p>
