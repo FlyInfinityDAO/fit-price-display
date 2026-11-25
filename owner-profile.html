@@ -136,6 +136,18 @@
           </div>
           <div class="op-wallet-list" id="opWalletList"></div>
           <p class="op-form-foot op-wallet-only-note" data-i18n="ownerProfile.walletOnlyNote">Each Owner Profile belongs to one verified wallet.</p>
+          <div class="op-wallet-change-box">
+            <div class="op-wallet-change-copy">
+              <h4 data-i18n="ownerProfile.changeWalletTitle">Changed your network wallet?</h4>
+              <p data-i18n="ownerProfile.changeWalletIntro">After completing the on-chain _Change_Wallet operation, connect the new wallet and sign a free verification message to keep this same Owner Profile.</p>
+            </div>
+            <div class="op-profile-actions">
+              <button class="op-btn gold" id="opChangeWalletBrowser" type="button"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i><span data-i18n="ownerProfile.changeWalletBrowser">Verify new wallet in wallet browser</span></button>
+              <button class="op-btn" id="opChangeWalletReown" type="button"><i class="fa-solid fa-wallet" aria-hidden="true"></i><span data-i18n="ownerProfile.changeWalletReown">Verify new wallet</span></button>
+            </div>
+            <p class="op-form-foot" data-i18n="ownerProfile.changeWalletSignatureNote">Only a free wallet message is signed here. The network change itself must already be completed on BNB Smart Chain.</p>
+            <p class="op-status" id="opChangeWalletStatus" role="status" aria-live="polite"></p>
+          </div>
           <p class="op-status" id="opProfileStatus" role="status" aria-live="polite"></p>
         </section>
 
