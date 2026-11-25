@@ -23,7 +23,7 @@
 <body class="owner-profile-page" data-ambient="blockchain">
   <div class="op-container">
     <header class="top-bar">
-      <a class="op-brand" href="index.html">
+      <a class="op-brand logo" href="index.html">
         <img src="logo.png" alt="Fly Infinity">
         <span data-i18n="header.title">Fly Infinity DAO</span>
       </a>
@@ -57,11 +57,11 @@
 
       <section class="op-card op-auth" id="opAuthPanel">
         <div class="op-tabs" role="tablist" aria-label="Owner Profile access">
-          <button class="op-tab active" id="opTabRegister" type="button" role="tab" aria-selected="true" data-i18n="ownerProfile.createAccount">Create profile</button>
-          <button class="op-tab" id="opTabLogin" type="button" role="tab" aria-selected="false" data-i18n="ownerProfile.signIn">Sign in</button>
+          <button class="op-tab" id="opTabRegister" type="button" role="tab" aria-selected="false" data-i18n="ownerProfile.createAccount">Create profile</button>
+          <button class="op-tab active" id="opTabLogin" type="button" role="tab" aria-selected="true" data-i18n="ownerProfile.signIn">Sign in</button>
         </div>
 
-        <div class="op-form" id="opRegisterForm">
+        <div class="op-form op-hidden" id="opRegisterForm">
           <div class="op-field">
             <label for="opRegisterUsername" data-i18n="ownerProfile.username">Username</label>
             <input id="opRegisterUsername" type="text" minlength="3" maxlength="24" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="username" dir="ltr">
@@ -81,7 +81,7 @@
           </div>
         </div>
 
-        <div class="op-form op-hidden" id="opLoginForm">
+        <div class="op-form" id="opLoginForm">
           <div class="op-field">
             <label for="opLoginUsername" data-i18n="ownerProfile.username">Username</label>
             <input id="opLoginUsername" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" dir="ltr">
@@ -107,7 +107,7 @@
             <label for="opRecoveryConfirm" data-i18n="ownerProfile.confirmPassword">Confirm password</label>
             <input id="opRecoveryConfirm" type="password" minlength="8" maxlength="128" autocomplete="new-password">
           </div>
-          <p class="op-form-foot" data-i18n="ownerProfile.recoveryNote">Sign a free message with any verified wallet already linked to this Owner Profile.</p>
+          <p class="op-form-foot" data-i18n="ownerProfile.recoveryNote">Sign a free message with the verified wallet registered to this Owner Profile.</p>
           <div class="op-profile-actions">
             <button class="op-btn gold" id="opRecoveryBrowser" type="button" data-i18n="ownerProfile.connectBrowser">Connect with wallet browser</button>
             <button class="op-btn" id="opRecoveryReown" type="button" data-i18n="ownerProfile.connectReown">Connect wallet</button>
@@ -131,14 +131,11 @@
 
         <section class="op-card op-wallet-panel">
           <div class="op-section-head">
-            <h3 data-i18n="ownerProfile.registeredWallets">Registered wallets</h3>
-            <span class="op-kicker" data-i18n="ownerProfile.verifiedOnly">VERIFIED OWNERS ONLY</span>
+            <h3 data-i18n="ownerProfile.registeredWallets">Registered wallet</h3>
+            <span class="op-kicker" data-i18n="ownerProfile.verifiedOnly">ONE WALLET PER PROFILE</span>
           </div>
           <div class="op-wallet-list" id="opWalletList"></div>
-          <div class="op-profile-actions" id="opAddWalletControls" style="margin-top:14px">
-            <button class="op-btn gold" id="opAddWalletBrowser" type="button"><i class="fa-solid fa-plus" aria-hidden="true"></i><span data-i18n="ownerProfile.addWalletBrowser">Add wallet via browser</span></button>
-            <button class="op-btn" id="opAddWalletReown" type="button"><i class="fa-solid fa-wallet" aria-hidden="true"></i><span data-i18n="ownerProfile.addWallet">Add another wallet</span></button>
-          </div>
+          <p class="op-form-foot op-wallet-only-note" data-i18n="ownerProfile.walletOnlyNote">Each Owner Profile belongs to one verified wallet.</p>
           <p class="op-status" id="opProfileStatus" role="status" aria-live="polite"></p>
         </section>
 
@@ -160,7 +157,7 @@
                 <div class="op-metric"><span class="op-metric-label" data-i18n="ownerProfile.fitValue">Current dollar value</span><strong class="op-metric-value green" id="opValue">—</strong></div>
               </div>
               <div class="op-profit">
-                <h4 data-i18n="ownerProfile.profitTitle">Estimated FIT price growth on current balance</h4>
+                <h4 data-i18n="ownerProfile.profitTitle">Estimated FIT growth on current balance</h4>
                 <div class="op-profit-grid">
                   <div class="op-profit-item"><span data-i18n="ownerProfile.day1">1 day</span><strong id="opProfitday1">—</strong></div>
                   <div class="op-profit-item"><span data-i18n="ownerProfile.day7">7 days</span><strong id="opProfitday7">—</strong></div>
@@ -170,7 +167,7 @@
                   <div class="op-profit-item"><span data-i18n="ownerProfile.year1">1 year</span><strong id="opProfityear1">—</strong></div>
                 </div>
               </div>
-              <p class="op-note" data-i18n="ownerProfile.profitNote">Profit/loss is estimated using the wallet's current FIT balance multiplied by the price difference. Historical wallet balances are not available from this calculation.</p>
+              <p class="op-note" data-i18n="ownerProfile.profitNote">Estimated growth is based on the current FIT balance and the difference between the current and historical FIT price. Historical wallet balances are not used.</p>
             </article>
 
             <article class="op-card op-data-panel network">
