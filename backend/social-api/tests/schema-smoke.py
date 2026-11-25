@@ -7,6 +7,7 @@ MIGRATION = ROOT / "social-api" / "migrations" / "0001_init.sql"
 ACCOUNT_MIGRATION = ROOT / "social-api" / "migrations" / "0002_accounts_passwords_reposts.sql"
 NOTIFICATION_MIGRATION = ROOT / "social-api" / "migrations" / "0003_social_notifications.sql"
 OWNER_PROFILE_MIGRATION = ROOT / "social-api" / "migrations" / "0004_owner_profiles.sql"
+OWNER_NETWORK_ID_MIGRATION = ROOT / "social-api" / "migrations" / "0005_owner_profile_network_identity.sql"
 
 with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
     connection = sqlite3.connect(file.name)
@@ -15,6 +16,7 @@ with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
     connection.executescript(ACCOUNT_MIGRATION.read_text(encoding="utf-8"))
     connection.executescript(NOTIFICATION_MIGRATION.read_text(encoding="utf-8"))
     connection.executescript(OWNER_PROFILE_MIGRATION.read_text(encoding="utf-8"))
+    connection.executescript(OWNER_NETWORK_ID_MIGRATION.read_text(encoding="utf-8"))
 
     tables = {
         row[0]
@@ -63,6 +65,19 @@ with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
         f"Missing Owner Profile tables: {expected_owner_tables - owner_tables}"
     )
 
+    owner_profile_columns = {
+        row[1] for row in connection.execute("PRAGMA table_info(owner_profiles)")
+    }
+    assert "network_owner_id" in owner_profile_columns, (
+        "Owner Profiles must store the immutable Network Owner ID for wallet changes"
+    )
+    owner_indexes = {
+        row[1] for row in connection.execute("PRAGMA index_list(owner_profiles)")
+    }
+    assert "idx_owner_profiles_network_owner_id" in owner_indexes, (
+        "Network Owner ID must be unique across Owner Profiles"
+    )
+
     # Only verified wallet/account metadata is stored: never genealogy nodes or descendants.
     genealogy_tables = {
         name for name in owner_tables
@@ -84,6 +99,41 @@ with tempfile.NamedTemporaryFile(suffix=".sqlite") as file:
     connection.execute(
         "INSERT INTO owner_profile_wallets(wallet_address,profile_id,is_primary,added_at) VALUES(?,?,0,?)",
         (secondary_wallet, "owner-profile-a", 2),
+    )
+    connection.execute(
+        "UPDATE owner_profiles SET network_owner_id=? WHERE profile_id=?",
+        (7421, "owner-profile-a"),
+    )
+    try:
+        connection.execute(
+            "INSERT INTO owner_profiles(profile_id,username,password_hash,password_salt,password_iterations,primary_wallet_address,network_owner_id,created_at,updated_at) "
+            "VALUES(?,?,?,?,?,?,?,?,?)",
+            ("owner-profile-ownerid-duplicate", "owneriddup", "hash-c", "salt-c", 100000,
+             "0x" + "8" * 40, 7421, 1, 1),
+        )
+        raise AssertionError("One Network Owner ID cannot belong to multiple Owner Profiles")
+    except sqlite3.IntegrityError:
+        pass
+
+    # Simulate replacing the off-chain wallet row after a network wallet change:
+    # the immutable owner ID remains attached to the same profile.
+    new_wallet = "0x" + "9" * 40
+    connection.execute("DELETE FROM owner_profile_wallets WHERE profile_id=?", ("owner-profile-a",))
+    connection.execute(
+        "UPDATE owner_profiles SET primary_wallet_address=? WHERE profile_id=? AND network_owner_id=?",
+        (new_wallet, "owner-profile-a", 7421),
+    )
+    connection.execute(
+        "INSERT INTO owner_profile_wallets(wallet_address,profile_id,is_primary,added_at) VALUES(?,?,1,?)",
+        (new_wallet, "owner-profile-a", 4),
+    )
+    moved = connection.execute(
+        "SELECT p.primary_wallet_address,p.network_owner_id,w.wallet_address,w.is_primary "
+        "FROM owner_profiles p JOIN owner_profile_wallets w ON w.profile_id=p.profile_id "
+        "WHERE p.profile_id='owner-profile-a'"
+    ).fetchone()
+    assert moved == (new_wallet, 7421, new_wallet, 1), (
+        "Wallet change must keep the same profile and immutable Network Owner ID"
     )
     try:
         connection.execute(
