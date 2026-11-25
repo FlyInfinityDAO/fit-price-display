@@ -204,13 +204,15 @@
   function renderTree() {
     const root=$('testTreeRoot');root.replaceChildren();
     if(!state.rootPair){root.textContent='Waiting for successful Owner_Directs call.';return;}
+    const canvas=document.createElement('div');canvas.className='op-tree-canvas';
     const holder=document.createElement('div');holder.className='op-tree-root';
     const rootLabel=document.createElement('div');rootLabel.className='op-tree-root-label';
     rootLabel.textContent=shortAddress(TARGET);rootLabel.title=TARGET;rootLabel.setAttribute('aria-label',TARGET);
     const rootCopy=document.createElement('button');rootCopy.className='op-icon-btn';rootCopy.type='button';rootCopy.textContent='⧉';rootCopy.addEventListener('click',()=>copy(TARGET));rootLabel.appendChild(rootCopy);
     const count={value:0};
     holder.append(rootLabel,createChildren(state.rootPair,new Set([TARGET.toLowerCase()]),1,count));
-    root.appendChild(holder);
+    canvas.appendChild(holder);
+    root.appendChild(canvas);
   }
   async function loadDirects(address) {
     const key=address.toLowerCase();
