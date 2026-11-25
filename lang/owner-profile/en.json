@@ -80,6 +80,7 @@
     "usernameRules": "Username must be 3–24 English letters, numbers or underscores.",
     "passwordRules": "Password must contain 8–128 characters.",
     "created": "Owner Profile created successfully.",
+    "profileSessionRequired": "Your Owner Profile session is missing. Please sign in again, then retry adding the wallet.",
     "genericError": "Something went wrong. Please try again.",
     "primaryWallet": "Primary wallet",
     "copyAddress": "Copy address",
