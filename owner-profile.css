@@ -1047,3 +1047,17 @@ body.owner-profile-page .op-tree-node.op-tree-tier-100000 {
   background:linear-gradient(145deg,rgba(123,71,191,.52),rgba(43,18,80,.58));
   box-shadow:0 0 18px rgba(151,91,220,.24),inset 0 1px 0 rgba(225,203,255,.16);
 }
+
+body.owner-profile-page .op-tree-stats-retry {
+  border:0;
+  padding:2px 5px;
+  margin-inline-start:5px;
+  border-radius:6px;
+  color:#f0d57c;
+  background:rgba(212,175,55,.13);
+  font:inherit;
+  cursor:pointer;
+}
+body.owner-profile-page .op-tree-stats-retry:hover {
+  background:rgba(212,175,55,.24);
+}
