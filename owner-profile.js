@@ -94,6 +94,8 @@
     snapshot: null,
     treeCache: new Map(),
     treeStatsCache: new Map(),
+    treeStatsLoading: new Map(),
+    treeStatsErrors: new Map(),
     treeExpanded: new Set(),
     treeLoading: new Map(),
     treeErrors: new Map(),
@@ -590,10 +592,39 @@
     state.treeEpoch += 1;
     state.treeCache.clear();
     state.treeStatsCache.clear();
+    state.treeStatsLoading.clear();
+    state.treeStatsErrors.clear();
     state.treeExpanded.clear();
     state.treeLoading.clear();
     state.treeErrors.clear();
     state.treeCache.delete('');
+  }
+
+  async function readTreeStats(address) {
+    const key = address.toLowerCase();
+    if (state.treeStatsCache.has(key)) return state.treeStatsCache.get(key);
+    if (state.treeStatsLoading.has(key)) return state.treeStatsLoading.get(key);
+    if (state.treeStatsErrors.has(key)) throw new Error(state.treeStatsErrors.get(key));
+    const epoch = state.treeEpoch;
+    const promise = withReadProvider(async reader => {
+      const network = new ethers.Contract(ethers.utils.getAddress(NETWORK.toLowerCase()), NETWORK_ABI, reader);
+      const totals = await network.Owner_Left_Right_All(address);
+      return [Number(totals[0]), Number(totals[1])];
+    }).then(counts => {
+      if (epoch === state.treeEpoch) {
+        state.treeStatsCache.set(key, counts);
+        state.treeStatsErrors.delete(key);
+      }
+      return counts;
+    }).catch(error => {
+      if (epoch === state.treeEpoch) state.treeStatsErrors.set(key, error.message || tr('readFailed'));
+      throw error;
+    }).finally(() => {
+      state.treeStatsLoading.delete(key);
+      if (epoch === state.treeEpoch) renderTree();
+    });
+    state.treeStatsLoading.set(key, promise);
+    return promise;
   }
 
   async function readDirects(address) {
@@ -603,17 +634,11 @@
     const epoch = state.treeEpoch;
     const promise = withReadProvider(async reader => {
       const network = new ethers.Contract(ethers.utils.getAddress(NETWORK.toLowerCase()), NETWORK_ABI, reader);
-      const [directs, totals] = await Promise.all([
-        network.Owner_Directs(address),
-        network.Owner_Left_Right_All(address)
-      ]);
-      return { pair: [directs[0], directs[1]], counts: [Number(totals[0]), Number(totals[1])] };
-    }).then(result => {
-      if (epoch === state.treeEpoch) {
-        state.treeCache.set(key, result.pair);
-        state.treeStatsCache.set(key, result.counts);
-      }
-      return result.pair;
+      const directs = await network.Owner_Directs(address);
+      return [directs[0], directs[1]];
+    }).then(pair => {
+      if (epoch === state.treeEpoch) state.treeCache.set(key, pair);
+      return pair;
     }).catch(error => {
       if (epoch === state.treeEpoch) state.treeErrors.set(key, error.message || tr('readFailed'));
       throw error;
@@ -659,12 +684,29 @@
     label.className = 'op-tree-label';
     label.textContent = zero ? tr('emptyAddress') : (side === 'left' ? tr('leftBranch') : tr('rightBranch'));
     card.appendChild(label);
-    const counts = state.treeStatsCache.get(address.toLowerCase());
+    const key = address.toLowerCase();
+    const counts = state.treeStatsCache.get(key);
+    if (!zero && !counts && !state.treeStatsLoading.has(key) && !state.treeStatsErrors.has(key)) {
+      readTreeStats(address).catch(() => {});
+    }
     if (!zero) appendTreeStats(card, counts);
-    if (!zero && state.treeExpanded.has(address.toLowerCase()) && !counts) {
+    if (!zero && !counts) {
       const waiting = document.createElement('div');
       waiting.className = 'op-tree-counts-loading';
-      waiting.textContent = state.treeLoading.has(address.toLowerCase()) ? tr('loading') : tr('readFailed');
+      if (state.treeStatsErrors.has(key)) {
+        waiting.textContent = state.treeStatsErrors.get(key) + ' ';
+        const retry = document.createElement('button');
+        retry.type = 'button';
+        retry.className = 'op-tree-stats-retry';
+        retry.textContent = tr('retry');
+        retry.addEventListener('click', () => {
+          state.treeStatsErrors.delete(key);
+          readTreeStats(address).catch(() => {});
+        });
+        waiting.appendChild(retry);
+      } else {
+        waiting.textContent = tr('loading');
+      }
       card.appendChild(waiting);
     }
 
