@@ -418,11 +418,22 @@
     setBusy(['opAddWalletBrowser', 'opAddWalletReown'], true);
     setWalletActionStatus(tr('connectWallet'));
     try {
+      // Preserve the signed-in profile session before opening/switching wallet providers.
+      const profileToken = state.token || sessionStorage.getItem(TOKEN_KEY) || '';
+      if (!profileToken) throw new Error(tr('profileSessionRequired'));
+      const current = await api('/api/owner-profile/me', undefined, profileToken, 'GET');
+      state.token = profileToken;
+      sessionStorage.setItem(TOKEN_KEY, profileToken);
+      state.profile = current.profile;
+
       const proof = await obtainWalletProof(mode, $('opWalletActionStatus'));
+      // Wallet selection may change provider state; use the captured profile token explicitly.
+      state.token = profileToken;
+      sessionStorage.setItem(TOKEN_KEY, profileToken);
       setWalletActionStatus(tr('addingWallet'));
       const payload = await api('/api/owner-profile/wallets', {
         proofToken: proof.proofToken
-      }, state.token, 'POST');
+      }, profileToken, 'POST');
       state.profile = payload.profile;
       state.selectedWallet = proof.address;
       state.pendingRemoveWallet = '';
@@ -432,6 +443,10 @@
       await selectWallet(proof.address);
       setWalletActionStatus(tr('walletAdded'), 'success');
     } catch (error) {
+      if (/session|sign in|invalid/i.test(error.message || '')) {
+        const token = state.token || sessionStorage.getItem(TOKEN_KEY) || '';
+        if (!token) clearSession();
+      }
       setWalletActionStatus(error.message || tr('genericError'), 'error');
     } finally {
       setBusy(['opAddWalletBrowser', 'opAddWalletReown'], false);
