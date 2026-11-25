@@ -33,7 +33,7 @@ async function readJson(request) {
 }
 
 function bearer(request) {
-  const match = String(request.headers.get('Authorization') || '').match(/^Bearer\\s+(.+)$/i);
+  const match = String(request.headers.get('Authorization') || '').match(/^Bearer\s+(.+)$/i);
   return match ? match[1].trim() : '';
 }
 
