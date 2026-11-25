@@ -103,6 +103,17 @@
     "sessionExpired": "Your session expired. Please sign in again.",
     "loggedOut": "You have signed out.",
     "passwordRecovered": "Password updated. Previous sessions were signed out.",
-    "walletOnlyNote": "Each Owner Profile belongs to one verified wallet."
+    "walletOnlyNote": "Each Owner Profile belongs to one verified wallet.",
+    "changeWalletTitle": "Changed your network wallet?",
+    "changeWalletIntro": "After completing the on-chain _Change_Wallet operation, connect the new wallet and sign a free verification message to keep this same Owner Profile.",
+    "changeWalletBrowser": "Verify new wallet in wallet browser",
+    "changeWalletReown": "Verify new wallet",
+    "changeWalletSignatureNote": "Only a free wallet message is signed here. The network change itself must already be completed on BNB Smart Chain.",
+    "walletChangeNeedsOnchain": "This profile has no saved Network Owner ID. If the original wallet is still active, sign in again to register it before changing wallets. If the network wallet was changed before this feature was enabled, automatic matching is not available.",
+    "changeWalletIdentityMismatch": "The new wallet does not match this profile's saved Network Owner ID. Complete _Change_Wallet on the network first, then try again.",
+    "changeWalletSame": "The connected wallet is already registered to this profile.",
+    "changeWalletExists": "This new wallet is already associated with another Owner Profile.",
+    "changeWalletLookupFailed": "The Network Owner index could not be verified right now. Please try again.",
+    "changeWalletSuccess": "New wallet verified. Your existing Owner Profile has been updated successfully."
   }
 }
