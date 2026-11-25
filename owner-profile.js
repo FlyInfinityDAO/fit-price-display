@@ -842,11 +842,16 @@
       clearTree();
       $('opTreeRoot').textContent = tr('loading');
       try {
-        const pair = await withReadProvider(async reader => {
+        const result = await withReadProvider(async reader => {
           const network = new ethers.Contract(ethers.utils.getAddress(NETWORK.toLowerCase()), NETWORK_ABI, reader);
-          return network.Owner_Directs(state.selectedWallet);
+          const [pair, totals] = await Promise.all([
+            network.Owner_Directs(state.selectedWallet),
+            network.Owner_Left_Right_All(state.selectedWallet)
+          ]);
+          return { pair: [pair[0], pair[1]], counts: [Number(totals[0]), Number(totals[1])] };
         });
-        state.treeCache.set(state.selectedWallet.toLowerCase(), [pair[0], pair[1]]);
+        state.treeCache.set(state.selectedWallet.toLowerCase(), result.pair);
+        state.treeStatsCache.set(state.selectedWallet.toLowerCase(), result.counts);
         renderTree();
       } catch (error) {
         $('opTreeRoot').textContent = error.message || tr('readFailed');
