@@ -116,7 +116,7 @@
       anchor.className = "fi-bottom-nav-item fi-bottom-nav-" + item.id + (item.id === active ? " is-active" : "");
       anchor.href = href(item.path);
       if (item.id === active) anchor.setAttribute("aria-current", "page");
-      anchor.innerHTML = item.icon + '<span class="fi-bottom-nav-label"></span>';
+      anchor.innerHTML = '<span class="fi-bottom-nav-icon-wrap">' + item.icon + '</span><span class="fi-bottom-nav-label"></span>';
       nav.appendChild(anchor);
       anchors[item.id] = anchor;
     });
@@ -173,7 +173,7 @@
 
   const css = document.createElement("link");
   css.rel = "stylesheet";
-  css.href = new URL("global-bottom-nav.css?v=20261126-curved-dock-v2", root).href;
+  css.href = new URL("global-bottom-nav.css?v=20261126-pill-circular-v3", root).href;
   document.head.appendChild(css);
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount, { once: true });
   else mount();
