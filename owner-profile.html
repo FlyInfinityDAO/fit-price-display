@@ -131,22 +131,22 @@
 
         <section class="op-card op-wallet-panel">
           <div class="op-section-head">
-            <h3 data-i18n="ownerProfile.registeredWallets">Registered wallet</h3>
-            <span class="op-kicker" data-i18n="ownerProfile.verifiedOnly">ONE WALLET PER PROFILE</span>
+            <h3 data-i18n="ownerProfile.registeredWallets">Registered wallets</h3>
+            <span class="op-kicker" data-i18n="ownerProfile.verifiedOnly">VERIFIED WALLETS ONLY</span>
           </div>
           <div class="op-wallet-list" id="opWalletList"></div>
           <p class="op-form-foot op-wallet-only-note" data-i18n="ownerProfile.walletOnlyNote">Each Owner Profile belongs to one verified wallet.</p>
-          <div class="op-wallet-change-box">
-            <div class="op-wallet-change-copy">
-              <h4 data-i18n="ownerProfile.changeWalletTitle">Changed your network wallet?</h4>
-              <p data-i18n="ownerProfile.changeWalletIntro">After completing the on-chain _Change_Wallet operation, connect the new wallet and sign a free verification message to keep this same Owner Profile.</p>
+          <div class="op-wallet-manage">
+            <div class="op-wallet-manage-head">
+              <h4 data-i18n="ownerProfile.addWalletTitle">Add another wallet</h4>
+              <p data-i18n="ownerProfile.walletSignatureNote">Each wallet is verified with a free signed message. No blockchain transaction or gas is required.</p>
             </div>
             <div class="op-profile-actions">
-              <button class="op-btn gold" id="opChangeWalletBrowser" type="button"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i><span data-i18n="ownerProfile.changeWalletBrowser">Verify new wallet in wallet browser</span></button>
-              <button class="op-btn" id="opChangeWalletReown" type="button"><i class="fa-solid fa-wallet" aria-hidden="true"></i><span data-i18n="ownerProfile.changeWalletReown">Verify new wallet</span></button>
+              <button class="op-btn gold" id="opAddWalletBrowser" type="button"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i><span data-i18n="ownerProfile.addWalletBrowser">Add wallet in wallet browser</span></button>
+              <button class="op-btn" id="opAddWalletReown" type="button"><i class="fa-solid fa-wallet" aria-hidden="true"></i><span data-i18n="ownerProfile.addWallet">Connect and add wallet</span></button>
             </div>
-            <p class="op-form-foot" data-i18n="ownerProfile.changeWalletSignatureNote">Only a free wallet message is signed here. The network change itself must already be completed on BNB Smart Chain.</p>
-            <p class="op-status" id="opChangeWalletStatus" role="status" aria-live="polite"></p>
+            <p class="op-form-foot" data-i18n="ownerProfile.removeWalletNote">To remove a wallet, sign a free message with an active wallet already linked to this profile. At least one wallet must remain.</p>
+            <p class="op-status" id="opWalletActionStatus" role="status" aria-live="polite"></p>
           </div>
           <p class="op-status" id="opProfileStatus" role="status" aria-live="polite"></p>
         </section>
