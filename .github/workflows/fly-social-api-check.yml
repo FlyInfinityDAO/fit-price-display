@@ -83,9 +83,24 @@ jobs:
           if (!/owner-profile.html/.test(readFileSync('../site-navigation.js', 'utf8'))) throw new Error('Owner Profile navigation link is missing');
           if (!/0xc8199B9A3408631a0defBfb7381b736f582Ce642/i.test(testHtml)) throw new Error('Fixed test wallet is missing from the test page');
           if (!testHtml.includes('<meta name="viewport"')) throw new Error('Read-only test page viewport meta is missing');
-          if (!readFileSync('../owner-profile.css', 'utf8').includes('overflow-x:auto')) throw new Error('Genealogy viewport must support independent horizontal scrolling');
+          const ownerCss = readFileSync('../owner-profile.css', 'utf8');
+          const ownerBackend = readFileSync('social-api/src/owner-profile.js', 'utf8');
+          if (!ownerCss.includes('overflow-x:auto')) throw new Error('Genealogy viewport must support independent horizontal scrolling');
+          if (!ownerCss.includes('.owner-profile-page .lang-btn') || !ownerCss.includes('.owner-profile-page .lang-dropdown')) throw new Error('Shared language selector styles are missing from Owner Profile');
+          if (!html.includes('id="opTabLogin" type="button" role="tab" aria-selected="true"') || !html.includes('<div class="op-form op-hidden" id="opRegisterForm">')) throw new Error('Owner Profile must default to sign-in');
+          if (html.includes('opAddWallet') || html.includes('Add another wallet') || html.includes('Add wallet via browser')) throw new Error('Owner Profile must not expose secondary wallet controls');
+          if (js.includes('/api/owner-profile/wallets') || js.includes('function addWallet(') || js.includes('function removeWallet(')) throw new Error('Owner Profile frontend must not add or remove linked wallets');
+          if (!js.includes('Math.max(0, balance * (currentPrice - price))')) throw new Error('FIT estimated growth must not display losses');
+          if (!ownerBackend.includes('profile_id=? AND is_primary=1 LIMIT 1') || !ownerBackend.includes('Additional wallet linking is disabled')) throw new Error('Social API must enforce a single primary wallet per Owner Profile');
+          if (!ownerBackend.includes('wallet_address=? AND is_primary=1')) throw new Error('Password recovery must verify the profile primary wallet only');
+          for (const file of readdirSync('../lang/owner-profile').filter(name => name.endsWith('.json'))) {
+            const dictionary = JSON.parse(readFileSync('../lang/owner-profile/' + file, 'utf8')).ownerProfile;
+            for (const key of ['walletOnlyNote','registeredWallets','verifiedOnly','profitTitle','profitNote','networkNote']) {
+              if (!dictionary[key]) throw new Error(file + ' is missing Owner Profile translation: ' + key);
+            }
+          }
           if (testJs.includes('/api/owner-profile/auth/challenge') || testJs.includes('/api/owner-profile/register') || testJs.includes('/api/owner-profile/login')) throw new Error('Read-only test page must not call account authentication endpoints');
-          console.log('Owner Profile frontend, read-only test bench, DOM IDs, navigation and language JSON validated.');
+          console.log('Owner Profile single-wallet flow, sign-in default, shared language UI, FIT growth labels, read-only test bench and genealogy viewport validated.');
           NODE
       - name: Check Social page inline JavaScript syntax
         run: |
