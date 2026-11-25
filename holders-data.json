@@ -1,12 +1,12 @@
 {
-  "lastUpdated": "2026-11-25T05:52:52.449Z",
-  "sourceUpdatedAt": "2026-11-24T19:57:18.000Z",
+  "lastUpdated": "2026-11-25T16:21:17.166Z",
+  "sourceUpdatedAt": "2026-11-25T06:45:38.000Z",
   "totalHolders": 1620,
   "source": "Binplorer public freekey API",
   "contractAddress": "0xBebe4ea7aA4037CeF5D0bc25a10f9dcA16120Dfa",
   "chainId": 56,
-  "indexedThroughBlock": 135602069,
-  "totalSupplyRaw": "8260789077147517369995",
-  "transfersCount": 3487,
-  "transactionsCount": 3059
+  "indexedThroughBlock": 135685813,
+  "totalSupplyRaw": "8200487960358029226667",
+  "transfersCount": 3492,
+  "transactionsCount": 3064
 }
