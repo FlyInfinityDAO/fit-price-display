@@ -125,6 +125,7 @@
       const language = getLanguage(preferredLanguage);
       const labels = translations[language] || translations.en;
       nav.setAttribute("aria-label", labels.nav);
+      nav.dataset.language = language;
       items.forEach((item) => {
         const anchor = anchors[item.id];
         const label = anchor.querySelector(".fi-bottom-nav-label");
@@ -172,7 +173,7 @@
 
   const css = document.createElement("link");
   css.rel = "stylesheet";
-  css.href = new URL("global-bottom-nav.css?v=20261126-curved-seven-button-v1", root).href;
+  css.href = new URL("global-bottom-nav.css?v=20261126-curved-dock-v2", root).href;
   document.head.appendChild(css);
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount, { once: true });
   else mount();
