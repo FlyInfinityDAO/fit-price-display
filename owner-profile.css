@@ -1678,3 +1678,126 @@ body.owner-profile-page .op-tree-branch > .op-tree-children {
     transition:none!important;
   }
 }
+
+/* Multi-wallet profile management — independent from the genealogy canvas */
+.owner-profile-page .op-wallet-manage {
+  margin-top:16px;
+  padding:15px;
+  border:1px solid rgba(0,200,150,.22);
+  border-radius:16px;
+  background:linear-gradient(130deg,rgba(0,200,150,.055),rgba(212,175,55,.045));
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
+}
+.owner-profile-page .op-wallet-manage-head h4 {
+  color:#e8dfb7;
+  font-size:14px;
+  font-weight:850;
+  margin:0 0 6px;
+}
+.owner-profile-page .op-wallet-manage-head p {
+  color:#9fb4ad;
+  font-size:11px;
+  line-height:1.75;
+  margin:0 0 12px;
+}
+.owner-profile-page .op-wallet-manage .op-profile-actions {
+  margin-top:10px;
+}
+.owner-profile-page .op-wallet-manage .op-profile-actions .op-btn {
+  min-height:42px;
+}
+.owner-profile-page .op-wallet-item {
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:10px;
+}
+.owner-profile-page .op-wallet-item.active {
+  border-color:rgba(212,175,55,.48);
+  background:linear-gradient(110deg,rgba(212,175,55,.09),rgba(0,200,150,.07));
+}
+.owner-profile-page .op-wallet-select {
+  display:block;
+  width:100%;
+  min-width:0;
+  padding:0;
+  text-align:start;
+  border:0;
+  background:transparent;
+  color:#edf8f3;
+  cursor:pointer;
+}
+.owner-profile-page .op-wallet-select:focus-visible {
+  outline:2px solid rgba(0,200,150,.65);
+  outline-offset:4px;
+  border-radius:7px;
+}
+.owner-profile-page .op-wallet-select strong {
+  display:block;
+  direction:ltr;
+  text-align:left;
+  font-size:12px;
+  line-height:1.45;
+  overflow-wrap:anywhere;
+}
+.owner-profile-page .op-wallet-select small {
+  display:block;
+  margin-top:5px;
+  color:var(--op-muted);
+  font-size:10px;
+}
+.owner-profile-page .op-wallet-item.active .op-wallet-select small {
+  color:#e6d28e;
+}
+.owner-profile-page .op-wallet-tools {
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.owner-profile-page .op-wallet-tools .op-icon-btn {
+  width:33px;
+  height:33px;
+}
+.owner-profile-page .op-wallet-tools .op-icon-btn.danger {
+  color:#ffb9ad;
+  border-color:rgba(255,120,100,.28);
+  background:rgba(255,100,80,.055);
+}
+.owner-profile-page .op-wallet-tools .op-icon-btn.danger:hover {
+  color:#fff0ed;
+  border-color:rgba(255,120,100,.55);
+  background:rgba(255,100,80,.14);
+}
+.owner-profile-page .op-remove-wallet-confirm {
+  margin-top:13px;
+  padding:12px;
+  border:1px solid rgba(255,140,115,.23);
+  border-radius:13px;
+  background:rgba(90,35,28,.13);
+}
+.owner-profile-page .op-remove-wallet-confirm p {
+  color:#e5d7d1;
+  font-size:11px;
+  line-height:1.75;
+  overflow-wrap:anywhere;
+}
+.owner-profile-page .op-remove-wallet-confirm .op-profile-actions {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:9px;
+}
+.owner-profile-page .op-remove-wallet-confirm .op-btn {
+  flex:1 1 150px;
+  min-width:0;
+  min-height:38px;
+  font-size:11px;
+}
+.owner-profile-page .op-wallet-manage .op-status {
+  margin-top:9px;
+}
+@media(max-width:600px) {
+  .owner-profile-page .op-wallet-manage {padding:12px}
+  .owner-profile-page .op-wallet-item {padding:10px;gap:7px}
+  .owner-profile-page .op-wallet-tools .op-icon-btn {width:30px;height:30px}
+  .owner-profile-page .op-remove-wallet-confirm .op-btn {flex:1 1 100%}
+}
