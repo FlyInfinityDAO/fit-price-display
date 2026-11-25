@@ -88,19 +88,23 @@ jobs:
           if (!ownerCss.includes('overflow-x:auto')) throw new Error('Genealogy viewport must support independent horizontal scrolling');
           if (!ownerCss.includes('.owner-profile-page .lang-btn') || !ownerCss.includes('.owner-profile-page .lang-dropdown')) throw new Error('Shared language selector styles are missing from Owner Profile');
           if (!html.includes('id="opTabLogin" type="button" role="tab" aria-selected="true"') || !html.includes('<div class="op-form op-hidden" id="opRegisterForm">')) throw new Error('Owner Profile must default to sign-in');
-          if (html.includes('opAddWallet') || html.includes('Add another wallet') || html.includes('Add wallet via browser')) throw new Error('Owner Profile must not expose secondary wallet controls');
-          if (js.includes('/api/owner-profile/wallets') || js.includes('function addWallet(') || js.includes('function removeWallet(')) throw new Error('Owner Profile frontend must not add or remove linked wallets');
+          if (!html.includes('id="opAddWalletBrowser"') || !html.includes('id="opAddWalletReown"') || !html.includes('id="opRemoveWalletPrompt"')) throw new Error('Owner Profile add/remove wallet controls are missing');
+          if (html.includes('opChangeWalletBrowser') || html.includes('Changed your network wallet?')) throw new Error('The advanced network-wallet replacement UI must remain removed');
+          if (!js.includes("'/api/owner-profile/wallets'") || !js.includes('async function addWallet(') || !js.includes('async function removeWallet(')) throw new Error('Owner Profile frontend wallet add/remove functions are missing');
+          if (!js.includes("obtainWalletProof(mode") || !js.includes('proofToken: proof.proofToken')) throw new Error('Wallet add/remove must require a free signed-message proof');
           if (!js.includes('Math.max(0, balance * (currentPrice - price))')) throw new Error('FIT estimated growth must not display losses');
-          if (!ownerBackend.includes('profile_id=? AND is_primary=1 LIMIT 1') || !ownerBackend.includes('Additional wallet linking is disabled')) throw new Error('Social API must enforce a single primary wallet per Owner Profile');
-          if (!ownerBackend.includes('wallet_address=? AND is_primary=1')) throw new Error('Password recovery must verify the profile primary wallet only');
+          if (!ownerBackend.includes('ORDER BY is_primary DESC,added_at ASC')) throw new Error('Owner Profile API must return all linked wallets');
+          if (!ownerBackend.includes('MAX_LINKED_WALLETS') || !ownerBackend.includes('At least one verified wallet must remain linked')) throw new Error('Owner Profile wallet add/remove limits are missing');
+          if (!ownerBackend.includes('active wallet already linked to this Owner Profile')) throw new Error('Wallet removal must be authorized by a linked wallet signature');
+          if (!ownerBackend.includes("WHERE wallet_address=?'")) throw new Error('Password recovery must accept any linked wallet');
           for (const file of readdirSync('../lang/owner-profile').filter(name => name.endsWith('.json'))) {
             const dictionary = JSON.parse(readFileSync('../lang/owner-profile/' + file, 'utf8')).ownerProfile;
-            for (const key of ['walletOnlyNote','registeredWallets','verifiedOnly','profitTitle','profitNote','networkNote']) {
+            for (const key of ['registeredWallets','verifiedOnly','addWalletTitle','addWalletBrowser','removeWallet','removeWalletPrompt','walletSignatureNote','removeWalletSignLinked']) {
               if (!dictionary[key]) throw new Error(file + ' is missing Owner Profile translation: ' + key);
             }
           }
           if (testJs.includes('/api/owner-profile/auth/challenge') || testJs.includes('/api/owner-profile/register') || testJs.includes('/api/owner-profile/login')) throw new Error('Read-only test page must not call account authentication endpoints');
-          console.log('Owner Profile single-wallet flow, sign-in default, shared language UI, FIT growth labels, read-only test bench and genealogy viewport validated.');
+          console.log('Owner Profile multi-wallet signature flow, sign-in default, shared language UI, FIT growth labels, read-only test bench and genealogy viewport validated.');
           NODE
       - name: Check Social page inline JavaScript syntax
         run: |
