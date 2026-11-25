@@ -80,6 +80,7 @@
     "usernameRules": "Kullanıcı adı 3–24 İngilizce harf, sayı veya alt çizgi içermelidir.",
     "passwordRules": "Şifre 8–128 karakter olmalıdır.",
     "created": "Sahip Profili başarıyla oluşturuldu.",
+    "profileSessionRequired": "Sahip Profil oturumu bulunamadı. Lütfen tekrar giriş yapıp cüzdan eklemeyi yeniden deneyin.",
     "genericError": "Bir hata oluştu. Lütfen tekrar deneyin.",
     "primaryWallet": "Birincil cüzdan",
     "copyAddress": "Adresi kopyala",
