@@ -103,6 +103,17 @@
     "sessionExpired": "Tu sesión ha caducado. Inicia sesión de nuevo.",
     "loggedOut": "Has cerrado la sesión.",
     "passwordRecovered": "La contraseña se ha actualizado y se han cerrado las sesiones anteriores.",
-    "walletOnlyNote": "Cada perfil de propietario está vinculado a una sola cartera verificada."
+    "walletOnlyNote": "Cada perfil de propietario está vinculado a una sola cartera verificada.",
+    "changeWalletTitle": "¿Has cambiado tu cartera en la red?",
+    "changeWalletIntro": "Después de completar la operación _Change_Wallet en la cadena, conecta la nueva cartera y firma un mensaje gratuito de verificación para conservar este mismo perfil de propietario.",
+    "changeWalletBrowser": "Verificar la nueva cartera en el navegador de cartera",
+    "changeWalletReown": "Verificar nueva cartera",
+    "changeWalletSignatureNote": "Aquí solo se firma un mensaje gratuito de la cartera. El cambio en la red debe haberse completado previamente en BNB Smart Chain.",
+    "walletChangeNeedsOnchain": "Este perfil no tiene un ID de propietario de red guardado. Si la cartera original sigue activa, inicia sesión de nuevo para registrar el ID antes de cambiarla. Si el cambio de cartera en la red se realizó antes de activar esta función, no es posible emparejarla automáticamente.",
+    "changeWalletIdentityMismatch": "La nueva cartera no coincide con el ID de propietario guardado en este perfil. Completa primero _Change_Wallet en la red y vuelve a intentarlo.",
+    "changeWalletSame": "La cartera conectada ya está registrada en este perfil.",
+    "changeWalletExists": "Esta nueva cartera ya está asociada a otro perfil de propietario.",
+    "changeWalletLookupFailed": "No se pudo verificar el índice del propietario de la red en este momento. Inténtalo de nuevo.",
+    "changeWalletSuccess": "Nueva cartera verificada. Tu perfil de propietario actual se ha actualizado correctamente."
   }
 }
