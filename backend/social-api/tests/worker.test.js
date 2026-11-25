@@ -114,8 +114,8 @@ test('Owner Profile routes are wired and reject unauthenticated profile access',
   }
 });
 
-test('Owner Profile wallet-change route requires an authenticated profile session', async () => {
-  const response = await worker.fetch(new Request('https://social.example/api/owner-profile/wallet-change', {
+test('Owner Profile add-wallet route requires an authenticated profile session', async () => {
+  const response = await worker.fetch(new Request('https://social.example/api/owner-profile/wallets', {
     method: 'POST',
     headers: {
       Origin: 'https://flyinfinitydao.github.io',
