@@ -114,6 +114,18 @@ test('Owner Profile routes are wired and reject unauthenticated profile access',
   }
 });
 
+test('Owner Profile wallet-change route requires an authenticated profile session', async () => {
+  const response = await worker.fetch(new Request('https://social.example/api/owner-profile/wallet-change', {
+    method: 'POST',
+    headers: {
+      Origin: 'https://flyinfinitydao.github.io',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ proofToken: 'untrusted-proof-token' })
+  }), { APP_ORIGIN: 'https://flyinfinitydao.github.io' });
+  assert.equal(response.status, 401);
+});
+
 test('Owner Profile wallet challenge validates addresses before database access', async () => {
   const response = await worker.fetch(new Request('https://social.example/api/owner-profile/auth/challenge', {
     method: 'POST',
