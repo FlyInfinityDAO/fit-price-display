@@ -1421,3 +1421,260 @@ body.owner-profile-page .op-tree-branch > .op-tree-children {
 @media(prefers-reduced-motion:reduce) {
   .owner-profile-page .lang-btn,.owner-profile-page .lang-item,.owner-profile-page .op-tab {transition:none!important}
 }
+
+/* Shared Fly Infinity header, language selector and non-genealogy glass controls */
+.owner-profile-page .top-bar {
+  min-height:68px;
+  padding:12px 22px;
+  border:1px solid rgba(0,200,150,.28);
+  border-radius:28px;
+  background:linear-gradient(115deg,rgba(8,27,22,.76),rgba(8,17,15,.58));
+  -webkit-backdrop-filter:blur(22px) saturate(160%);
+  backdrop-filter:blur(22px) saturate(160%);
+  box-shadow:0 12px 32px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.09);
+}
+.owner-profile-page .top-bar .logo {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+  color:var(--op-gold);
+  font-size:18px;
+  font-weight:800;
+  text-decoration:none;
+}
+.owner-profile-page .top-bar .logo img {
+  width:32px;
+  height:32px;
+  flex:0 0 auto;
+  border:2px solid var(--op-gold);
+  border-radius:50%;
+}
+.owner-profile-page .top-bar .logo span {
+  color:var(--op-gold);
+  font-size:18px;
+  font-weight:800;
+}
+.owner-profile-page .top-bar-right {
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:12px;
+  flex:0 0 auto;
+}
+.owner-profile-page .hamburger {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:44px;
+  height:44px;
+  flex:0 0 44px;
+  padding:0;
+  border:1px solid rgba(0,200,150,.55);
+  border-radius:50%;
+  color:#00c896;
+  background:rgba(0,200,150,.045);
+  font-size:19px;
+  transition:background .2s ease,color .2s ease,transform .2s ease,box-shadow .2s ease;
+}
+.owner-profile-page .hamburger:hover {
+  color:#07110e;
+  background:#00c896;
+  box-shadow:0 0 18px rgba(0,200,150,.20);
+  transform:rotate(90deg);
+}
+.owner-profile-page .lang-btn {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:36px;
+  height:36px;
+  flex:0 0 36px;
+  padding:0;
+  border:1px solid rgba(0,200,150,.34);
+  border-radius:50%;
+  color:#d4af37;
+  background:rgba(255,255,255,.035);
+  font-size:17px;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.owner-profile-page .lang-btn:hover,
+.owner-profile-page .lang-btn:focus-visible {
+  border-color:#00c896;
+  background:rgba(0,200,150,.12);
+  box-shadow:0 0 15px rgba(0,200,150,.15);
+  transform:scale(1.05);
+  outline:none;
+}
+.owner-profile-page .lang-dropdown {
+  position:fixed;
+  top:76px;
+  right:20px;
+  z-index:2005;
+  min-width:174px;
+  max-height:min(70vh,520px);
+  overflow-y:auto;
+  padding:8px;
+  border:1px solid rgba(0,200,150,.34);
+  border-radius:17px;
+  background:rgba(5,17,15,.94);
+  -webkit-backdrop-filter:blur(24px) saturate(160%);
+  backdrop-filter:blur(24px) saturate(160%);
+  box-shadow:0 20px 44px rgba(0,0,0,.52),inset 0 1px 0 rgba(255,255,255,.07);
+  opacity:0;
+  visibility:hidden;
+  transform:translateY(-8px);
+  transition:opacity .18s ease,transform .18s ease,visibility .18s ease;
+}
+.owner-profile-page .lang-dropdown.open {
+  opacity:1;
+  visibility:visible;
+  transform:translateY(0);
+}
+.owner-profile-page .lang-item {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border:1px solid transparent;
+  border-radius:11px;
+  color:#d4e4dc;
+  font-size:13px;
+  text-decoration:none;
+  transition:background .16s ease,color .16s ease,border-color .16s ease;
+}
+.owner-profile-page .lang-item:hover {
+  color:#f4e4a6;
+  background:rgba(0,200,150,.09);
+}
+.owner-profile-page .lang-item.active {
+  color:#f4df93;
+  border-color:rgba(212,175,55,.27);
+  background:rgba(212,175,55,.10);
+}
+.owner-profile-page .lang-item .flag {
+  font-size:18px;
+}
+.owner-profile-page[dir="rtl"] .lang-dropdown {
+  right:auto;
+  left:20px;
+}
+
+/* Match the transparent glass styling used across the main Fly Infinity pages. */
+.owner-profile-page .op-auth,
+.owner-profile-page .op-profile-head,
+.owner-profile-page .op-wallet-panel,
+.owner-profile-page .op-data-panel {
+  border-color:rgba(0,200,150,.27);
+  background:linear-gradient(135deg,rgba(8,24,20,.74),rgba(8,17,15,.58));
+  -webkit-backdrop-filter:blur(22px) saturate(150%);
+  backdrop-filter:blur(22px) saturate(150%);
+  box-shadow:0 14px 36px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.075);
+}
+.owner-profile-page .op-auth {
+  border-color:rgba(0,200,150,.34);
+  background:linear-gradient(135deg,rgba(7,28,23,.76),rgba(12,18,15,.62));
+}
+.owner-profile-page .op-tab {
+  min-height:44px;
+  border-radius:12px;
+  transition:background .18s ease,color .18s ease,border-color .18s ease;
+}
+.owner-profile-page .op-tab.active {
+  color:#f2d879;
+  border-color:rgba(212,175,55,.42);
+  background:linear-gradient(130deg,rgba(212,175,55,.17),rgba(0,200,150,.08));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
+}
+.owner-profile-page .op-auth .op-btn,
+.owner-profile-page .op-profile-head .op-btn,
+.owner-profile-page .op-wallet-panel .op-btn {
+  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
+}
+.owner-profile-page .op-auth .op-btn.gold {
+  background:linear-gradient(130deg,rgba(212,175,55,.24),rgba(212,175,55,.08));
+  border-color:rgba(212,175,55,.58);
+  color:#f4e6b1;
+}
+.owner-profile-page .op-wallet-panel {
+  background:linear-gradient(125deg,rgba(8,29,24,.72),rgba(9,17,15,.60));
+}
+.owner-profile-page .op-wallet-list {
+  grid-template-columns:minmax(0,1fr);
+  max-width:720px;
+}
+.owner-profile-page .op-wallet-item {
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  border-color:rgba(212,175,55,.28);
+  background:linear-gradient(110deg,rgba(212,175,55,.075),rgba(0,200,150,.055));
+}
+.owner-profile-page .op-wallet-select {
+  display:block;
+  min-width:0;
+  cursor:default;
+}
+.owner-profile-page .op-wallet-select strong {
+  font-size:13px;
+  line-height:1.45;
+}
+.owner-profile-page .op-wallet-select small {
+  font-size:11px;
+  line-height:1.5;
+}
+.owner-profile-page .op-wallet-only-note {
+  margin-top:12px;
+}
+.owner-profile-page .footer {
+  border-top-color:rgba(0,200,150,.24);
+}
+@media(max-width:768px) {
+  .owner-profile-page .top-bar {
+    min-height:58px;
+    padding:9px 12px;
+    border-radius:20px;
+    gap:8px;
+  }
+  .owner-profile-page .top-bar .logo img {
+    width:29px;
+    height:29px;
+  }
+  .owner-profile-page .top-bar .logo span {
+    font-size:15px;
+  }
+  .owner-profile-page .top-bar-right {
+    gap:8px;
+  }
+  .owner-profile-page .hamburger {
+    width:38px;
+    height:38px;
+    flex-basis:38px;
+    font-size:16px;
+  }
+  .owner-profile-page .lang-btn {
+    width:32px;
+    height:32px;
+    flex-basis:32px;
+    font-size:15px;
+  }
+  .owner-profile-page .lang-dropdown {
+    top:68px;
+    right:10px;
+    left:auto;
+    min-width:154px;
+  }
+  .owner-profile-page[dir="rtl"] .lang-dropdown {
+    right:auto;
+    left:10px;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  .owner-profile-page .lang-btn,
+  .owner-profile-page .lang-item,
+  .owner-profile-page .op-tab {
+    transition:none!important;
+  }
+}
