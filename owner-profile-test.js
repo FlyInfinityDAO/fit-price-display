@@ -66,6 +66,7 @@
     directCache: new Map(),
     statsCache: new Map(),
     statsPending: new Map(),
+    statsErrors: new Map(),
     expanded: new Set(),
     pending: new Map(),
     errors: new Map(),
@@ -278,12 +279,14 @@
     const epoch=state.epoch;
     const promise=state.network.Owner_Left_Right_All(address).then(totals=>{
       const counts=[Number(totals[0]),Number(totals[1])];
-      if(epoch===state.epoch)state.statsCache.set(key,counts);
+      if(epoch===state.epoch){state.statsCache.set(key,counts);state.statsErrors.delete(key);}
       log('Owner_Left_Right_All loaded',{address,leftCount:counts[0],rightCount:counts[1]});
       return counts;
+    }).catch(error=>{
+      if(epoch===state.epoch)state.statsErrors.set(key,error.message||String(error));
+      throw error;
     }).finally(()=>{
-      state.statsPending.delete(key);
-      if(epoch===state.epoch)renderTree();
+      if(epoch===state.epoch){state.statsPending.delete(key);renderTree();}
     });
     state.statsPending.set(key,promise);
     return promise;
@@ -317,7 +320,7 @@
     $('testLog').textContent='Starting read-only diagnostics…';
     $('rawResults').textContent='Waiting for contract calls…';
     ['vPurchased','vLimit','vRemaining','vBalance','vPrice','vValue','vOwner','vLeft','vRight','vToken'].forEach(id=>setMetric(id,'—'));
-    state.rootPair=null;state.directCache.clear();state.statsCache.clear();state.statsPending.clear();state.expanded.clear();state.pending.clear();state.errors.clear();state.epoch++;
+    state.rootPair=null;state.directCache.clear();state.statsCache.clear();state.statsPending.clear();state.statsErrors.clear();state.expanded.clear();state.pending.clear();state.errors.clear();state.epoch++;
     renderTree();
 
     try {
