@@ -816,3 +816,24 @@ body.owner-profile-page .op-test-tree .op-tree-node,
 body.owner-profile-page .op-test-tree .op-tree-branch {
   max-width:none !important;
 }
+
+/* Per-wallet live branch counts, tier colors and a taller genealogy canvas */
+body.owner-profile-page .op-test-tree .op-tree-viewport{min-height:360px!important;max-height:min(76vh,840px)!important}
+@media(max-width:600px){body.owner-profile-page .op-test-tree .op-tree-viewport{min-height:320px!important;max-height:72vh!important}}
+body.owner-profile-page .op-test-tree .op-tree-root-card{padding:12px;min-width:var(--op-tree-node-width,220px);border-width:2px;margin-bottom:8px}
+body.owner-profile-page .op-test-tree .op-tree-root-card .op-tree-root-label{margin:0 auto 8px;padding:5px 2px;border:0;background:transparent}
+body.owner-profile-page .op-test-tree .op-tree-counts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;width:100%;margin-top:9px}
+body.owner-profile-page .op-test-tree .op-tree-count-cell{display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0;padding:6px 8px;border:1px solid rgba(255,255,255,.14);border-radius:8px;background:rgba(0,0,0,.18);color:inherit}
+body.owner-profile-page .op-test-tree .op-tree-count-cell span{font-size:9px;font-weight:800;opacity:.82}
+body.owner-profile-page .op-test-tree .op-tree-count-cell strong{font-size:12px;font-weight:900;font-variant-numeric:tabular-nums}
+body.owner-profile-page .op-test-tree .op-tree-tier-meta{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:7px;color:inherit;font-size:9px;opacity:.9}
+body.owner-profile-page .op-test-tree .op-tree-crowns{color:#f5c542;font-size:14px;line-height:1;letter-spacing:-2px;text-shadow:0 1px 5px rgba(255,194,47,.48);white-space:nowrap}
+body.owner-profile-page .op-test-tree .op-tree-counts-loading{margin-top:8px;color:#b8c8c0;font-size:10px;text-align:center}
+body.owner-profile-page .op-test-tree .op-tree-node.op-tree-tier-0{color:#f3ead5;border-color:#e8ddc5;background:linear-gradient(145deg,rgba(244,235,213,.22),rgba(76,72,60,.22));box-shadow:0 0 14px rgba(244,235,213,.10),inset 0 1px 0 rgba(255,255,255,.22)}
+body.owner-profile-page .op-test-tree .op-tree-node.op-tree-tier-1{color:#f3df9a;border-color:#d4af37;background:linear-gradient(145deg,rgba(212,175,55,.24),rgba(82,64,15,.25));box-shadow:0 0 15px rgba(212,175,55,.13)}
+body.owner-profile-page .op-test-tree .op-tree-node.op-tree-tier-3{color:#ffd0a0;border-color:#ed8a32;background:linear-gradient(145deg,rgba(237,138,50,.24),rgba(91,46,12,.25));box-shadow:0 0 15px rgba(237,138,50,.13)}
+body.owner-profile-page .op-test-tree .op-tree-node.op-tree-tier-10{color:#ffd0ce;border-color:#d94b55;background:linear-gradient(145deg,rgba(217,75,85,.25),rgba(77,18,27,.27));box-shadow:0 0 15px rgba(217,75,85,.14)}
+body.owner-profile-page .op-test-tree .op-tree-node.op-tree-tier-30{color:#c9e5d1;border-color:#286447;background:linear-gradient(145deg,rgba(30,91,58,.42),rgba(8,37,26,.45));box-shadow:0 0 16px rgba(34,112,69,.18),inset 0 1px 0 rgba(176,224,189,.12)}
+body.owner-profile-page .op-test-tree .op-tree-node.op-tree-tier-100{color:#c6dcff;border-color:#1764c0;background:linear-gradient(145deg,rgba(16,80,164,.38),rgba(7,25,66,.46));box-shadow:0 0 16px rgba(23,100,192,.18)}
+body.owner-profile-page .op-test-tree .op-tree-node.op-tree-tier-300{color:#ead7ff;border-color:#8752c7;background:linear-gradient(145deg,rgba(103,55,157,.4),rgba(38,17,65,.48));box-shadow:0 0 16px rgba(135,82,199,.2)}
+body.owner-profile-page .op-test-tree .op-tree-node.op-tree-tier-1000,body.owner-profile-page .op-test-tree .op-tree-node.op-tree-tier-3000,body.owner-profile-page .op-test-tree .op-tree-node.op-tree-tier-10000,body.owner-profile-page .op-test-tree .op-tree-node.op-tree-tier-30000,body.owner-profile-page .op-test-tree .op-tree-node.op-tree-tier-100000{color:#f0e3ff;border-color:#a477e8;background:linear-gradient(145deg,rgba(123,71,191,.52),rgba(43,18,80,.58));box-shadow:0 0 18px rgba(151,91,220,.24),inset 0 1px 0 rgba(225,203,255,.16)}
