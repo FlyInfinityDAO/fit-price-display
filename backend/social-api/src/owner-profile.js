@@ -64,55 +64,6 @@ async function isNetworkOwner(address, env) {
   }
 }
 
-// Reads the immutable owner ID and verifies the contract's ID -> current-wallet index.
-// _Change_Wallet replaces the wallet at this index, preserving the same owner ID.
-async function getNetworkOwnerIdentity(address, env) {
-  const provider = new ethers.JsonRpcProvider(
-    env.BSC_RPC_URL || 'https://bsc-dataseed.binance.org/',
-    CHAIN_ID,
-    { staticNetwork: true }
-  );
-  try {
-    const network = new ethers.Contract(
-      env.NETWORK_ADDRESS || '0x7f1cB4fce7cB3b6C612c4A7Dd123D3865640dC1B',
-      [
-        'function Owner_Exists(address owner) view returns (bool)',
-        'function Owner_Info_Global(address owner) view returns (uint64 id,uint32 AL,uint32 AR,uint32 LT,uint32 RT,uint8 XI,bool YY,address UP,address PO,address QO)',
-        'function All_Owner_Address(uint32 start,uint32 end) view returns (address[])'
-      ],
-      provider
-    );
-    const wallet = ethers.getAddress(address);
-    if (!await network.Owner_Exists(wallet)) return null;
-    const node = await network.Owner_Info_Global(wallet);
-    const ownerId = BigInt(node.id ?? node[0]);
-    if (ownerId <= 0n || ownerId > 0xffffffffn) return null;
-    const indexed = await network.All_Owner_Address(ownerId - 1n, ownerId - 1n);
-    if (!indexed?.[0] || ethers.getAddress(indexed[0]) !== wallet) return null;
-    return { ownerId: Number(ownerId), address: wallet };
-  } finally {
-    try { provider.destroy(); } catch {}
-  }
-}
-
-async function backfillNetworkOwnerId(db, profile, env) {
-  if (profile.network_owner_id !== null && profile.network_owner_id !== undefined) {
-    return String(profile.network_owner_id);
-  }
-  try {
-    const identity = await getNetworkOwnerIdentity(profile.primary_wallet_address, env);
-    if (!identity) return null;
-    await db.prepare(
-      'UPDATE owner_profiles SET network_owner_id=?,updated_at=? WHERE profile_id=? AND network_owner_id IS NULL'
-    ).bind(identity.ownerId, now(), profile.profile_id).run();
-    return String(identity.ownerId);
-  } catch (error) {
-    console.warn('Owner Profile network identity backfill unavailable:',
-      String(error?.message || error).slice(0, 180));
-    return null;
-  }
-}
-
 function parsePassword(value) {
   const password = String(value || '');
   if (password.length < 8 || password.length > 128) {
@@ -253,7 +204,7 @@ async function getProfileSession(request, env) {
 
 async function getProfileSummary(db, profileId) {
   const profile = await db.prepare(
-    'SELECT username,primary_wallet_address,network_owner_id,created_at FROM owner_profiles WHERE profile_id=?'
+    'SELECT username,primary_wallet_address,created_at FROM owner_profiles WHERE profile_id=?'
   ).bind(profileId).first();
   if (!profile) return null;
   const rows = await db.prepare(
@@ -263,8 +214,6 @@ async function getProfileSummary(db, profileId) {
   return {
     username: profile.username,
     primaryWallet: ethers.getAddress(profile.primary_wallet_address),
-    networkOwnerId: profile.network_owner_id === null || profile.network_owner_id === undefined
-      ? null : String(profile.network_owner_id),
     createdAt: Number(profile.created_at),
     wallets: (rows.results || []).map(row => ({
       address: ethers.getAddress(row.wallet_address),
@@ -292,14 +241,6 @@ async function createProfile(request, env) {
   const proof = await consumeWalletProof(env.DB, env, body.proofToken);
   if (proof.error) return json({ error: proof.error }, proof.status);
 
-  let identity;
-  try { identity = await getNetworkOwnerIdentity(proof.address, env); }
-  catch (error) {
-    console.error('Owner Profile identity lookup failed:', String(error?.message || error).slice(0, 180));
-    return json({ error: 'Could not verify the Network Owner ID on BNB Smart Chain. Please try again.' }, 503);
-  }
-  if (!identity) return json({ error: 'This wallet is not the current indexed wallet of a registered Network Owner.' }, 403);
-
   const existingWallet = await env.DB.prepare(
     'SELECT profile_id FROM owner_profile_wallets WHERE wallet_address=?'
   ).bind(proof.address).first();
@@ -312,9 +253,9 @@ async function createProfile(request, env) {
   try {
     await env.DB.batch([
       env.DB.prepare(
-        'INSERT INTO owner_profiles(profile_id,username,password_hash,password_salt,password_iterations,primary_wallet_address,network_owner_id,created_at,updated_at) ' +
-        'VALUES(?,?,?,?,?,?,?,?,?)'
-      ).bind(profileId, username, passwordHash, salt, PASSWORD_ITERATIONS, proof.address, identity.ownerId, timestamp, timestamp),
+        'INSERT INTO owner_profiles(profile_id,username,password_hash,password_salt,password_iterations,primary_wallet_address,created_at,updated_at) ' +
+        'VALUES(?,?,?,?,?,?,?,?)'
+      ).bind(profileId, username, passwordHash, salt, PASSWORD_ITERATIONS, proof.address, timestamp, timestamp),
       env.DB.prepare(
         'INSERT INTO owner_profile_wallets(wallet_address,profile_id,is_primary,added_at) VALUES(?,?,1,?)'
       ).bind(proof.address, profileId, timestamp)
@@ -331,7 +272,6 @@ async function createProfile(request, env) {
   return json({ token: session.token, expiresAt: session.expiresAt, expiresIn: session.expiresIn,
     profile: await getProfileSummary(env.DB, profileId) }, 201);
 }
-
 async function login(request, env) {
   const body = await readJson(request);
   let username, password;
@@ -350,7 +290,7 @@ async function login(request, env) {
   }
 
   const profile = await env.DB.prepare(
-    'SELECT profile_id,username,password_hash,password_salt,password_iterations,primary_wallet_address,network_owner_id ' +
+    'SELECT profile_id,username,password_hash,password_salt,password_iterations ' +
     'FROM owner_profiles WHERE username=? COLLATE NOCASE'
   ).bind(username).first();
   if (!profile || !profile.password_hash || !profile.password_salt) {
@@ -363,7 +303,6 @@ async function login(request, env) {
     return json({ error: 'Username or password is incorrect' }, 401);
   }
 
-  await backfillNetworkOwnerId(env.DB, profile, env);
   const session = await createProfileSession(env.DB, profile.profile_id);
   return json({ token: session.token, expiresAt: session.expiresAt, expiresIn: session.expiresIn,
     profile: await getProfileSummary(env.DB, profile.profile_id) });
@@ -372,18 +311,12 @@ async function login(request, env) {
 async function me(request, env) {
   const session = await getProfileSession(request, env);
   if (session.error) return json({ error: session.error }, session.status);
-  const rawProfile = await env.DB.prepare(
-    'SELECT profile_id,primary_wallet_address,network_owner_id FROM owner_profiles WHERE profile_id=?'
-  ).bind(session.profileId).first();
   const profile = await getProfileSummary(env.DB, session.profileId);
-  if (!profile || !rawProfile) return json({ error: 'Owner Profile was not found' }, 404);
-  if (!profile.networkOwnerId) {
-    profile.networkOwnerId = await backfillNetworkOwnerId(env.DB, rawProfile, env);
-  }
+  if (!profile) return json({ error: 'Owner Profile was not found' }, 404);
   return json({ profile, expiresAt: session.expiresAt });
 }
 
-async function changeNetworkWallet(request, env) {
+async function addWallet(request, env) {
   const session = await getProfileSession(request, env);
   if (session.error) return json({ error: session.error }, session.status);
 
@@ -391,70 +324,105 @@ async function changeNetworkWallet(request, env) {
   const proof = await consumeWalletProof(env.DB, env, body.proofToken);
   if (proof.error) return json({ error: proof.error }, proof.status);
 
-  const profile = await env.DB.prepare(
-    'SELECT profile_id,primary_wallet_address,network_owner_id FROM owner_profiles WHERE profile_id=?'
-  ).bind(session.profileId).first();
-  if (!profile) return json({ error: 'Owner Profile was not found' }, 404);
-  if (!profile.network_owner_id) {
+  const existing = await env.DB.prepare(
+    'SELECT profile_id FROM owner_profile_wallets WHERE wallet_address=?'
+  ).bind(proof.address).first();
+  if (existing) {
     return json({
-      error: 'This profile does not have a saved Network Owner ID yet. Sign in again while the original wallet is still active to register it before changing wallets.'
+      error: existing.profile_id === session.profileId
+        ? 'This wallet is already linked to your Owner Profile.'
+        : 'This wallet is already linked to another Owner Profile.'
     }, 409);
   }
 
-  const oldAddress = ethers.getAddress(profile.primary_wallet_address);
-  const newAddress = ethers.getAddress(proof.address);
-  if (oldAddress === newAddress) {
-    return json({ error: 'The connected wallet is already registered to this profile.' }, 409);
-  }
-
-  let identity;
-  try { identity = await getNetworkOwnerIdentity(newAddress, env); }
-  catch (error) {
-    console.error('Owner Profile wallet-change identity lookup failed:',
-      String(error?.message || error).slice(0, 180));
-    return json({ error: 'Could not verify the new wallet against the Network Owner index. Please try again.' }, 503);
-  }
-  if (!identity || String(identity.ownerId) !== String(profile.network_owner_id)) {
-    return json({
-      error: 'The new wallet does not match this profile’s original Network Owner ID. Complete _Change_Wallet on the network first, then try again.'
-    }, 403);
+  const count = await env.DB.prepare(
+    'SELECT COUNT(*) AS total FROM owner_profile_wallets WHERE profile_id=?'
+  ).bind(session.profileId).first();
+  if (Number(count?.total || 0) >= MAX_LINKED_WALLETS) {
+    return json({ error: 'This Owner Profile has reached the maximum number of linked wallets.' }, 409);
   }
 
   try {
-    await env.DB.batch([
-      env.DB.prepare(
-        'UPDATE owner_profiles SET primary_wallet_address=?,network_owner_id=?,updated_at=? ' +
-        'WHERE profile_id=? AND primary_wallet_address=? AND network_owner_id=?'
-      ).bind(newAddress, identity.ownerId, now(), session.profileId, oldAddress, Number(profile.network_owner_id)),
-      env.DB.prepare(
-        'DELETE FROM owner_profile_wallets WHERE profile_id=?'
-      ).bind(session.profileId),
-      env.DB.prepare(
-        'INSERT INTO owner_profile_wallets(wallet_address,profile_id,is_primary,added_at) VALUES(?,?,1,?)'
-      ).bind(newAddress, session.profileId, now())
-    ]);
+    await env.DB.prepare(
+      'INSERT INTO owner_profile_wallets(wallet_address,profile_id,is_primary,added_at) VALUES(?,?,0,?)'
+    ).bind(proof.address, session.profileId, now()).run();
   } catch (error) {
     const message = String(error?.message || error).toLowerCase();
     if (message.includes('unique') || message.includes('constraint')) {
-      return json({ error: 'This new wallet is already associated with another Owner Profile.' }, 409);
+      return json({ error: 'This wallet is already linked to an Owner Profile.' }, 409);
     }
     throw error;
   }
 
-  const updated = await getProfileSummary(env.DB, session.profileId);
-  return json({ profile: updated, walletChanged: true });
-}
-
-async function addWallet(request, env) {
-  const session = await getProfileSession(request, env);
-  if (session.error) return json({ error: session.error }, session.status);
-  return json({ error: 'Each Owner Profile is linked to one verified primary wallet. Additional wallet linking is disabled.' }, 409);
+  return json({
+    walletAdded: ethers.getAddress(proof.address),
+    profile: await getProfileSummary(env.DB, session.profileId)
+  }, 201);
 }
 
 async function removeWallet(request, env, addressParam) {
   const session = await getProfileSession(request, env);
   if (session.error) return json({ error: session.error }, session.status);
-  return json({ error: 'An Owner Profile is bound to its original verified wallet. Wallet removal is disabled.' }, 409);
+
+  let target;
+  try { target = normalizeAddress(decodeURIComponent(addressParam)); }
+  catch (error) { return json({ error: error.message }, 400); }
+
+  const body = await readJson(request);
+  const proof = await consumeWalletProof(env.DB, env, body.proofToken);
+  if (proof.error) return json({ error: proof.error }, proof.status);
+
+  const authorizer = await env.DB.prepare(
+    'SELECT wallet_address FROM owner_profile_wallets WHERE wallet_address=? AND profile_id=?'
+  ).bind(proof.address, session.profileId).first();
+  if (!authorizer) {
+    return json({ error: 'Sign the free verification message with an active wallet already linked to this Owner Profile.' }, 403);
+  }
+
+  const targetRow = await env.DB.prepare(
+    'SELECT wallet_address,is_primary FROM owner_profile_wallets WHERE wallet_address=? AND profile_id=?'
+  ).bind(target, session.profileId).first();
+  if (!targetRow) return json({ error: 'This wallet is not linked to your Owner Profile.' }, 404);
+
+  const count = await env.DB.prepare(
+    'SELECT COUNT(*) AS total FROM owner_profile_wallets WHERE profile_id=?'
+  ).bind(session.profileId).first();
+  if (Number(count?.total || 0) <= 1) {
+    return json({ error: 'At least one verified wallet must remain linked to the Owner Profile.' }, 409);
+  }
+
+  if (Number(targetRow.is_primary) === 1) {
+    const replacement = await env.DB.prepare(
+      'SELECT wallet_address FROM owner_profile_wallets WHERE profile_id=? AND wallet_address<>? ' +
+      'ORDER BY added_at ASC LIMIT 1'
+    ).bind(session.profileId, target).first();
+    if (!replacement) {
+      return json({ error: 'Another wallet is required before removing the primary wallet.' }, 409);
+    }
+    await env.DB.batch([
+      env.DB.prepare(
+        'DELETE FROM owner_profile_wallets WHERE wallet_address=? AND profile_id=?'
+      ).bind(target, session.profileId),
+      env.DB.prepare(
+        'UPDATE owner_profile_wallets SET is_primary=0 WHERE profile_id=?'
+      ).bind(session.profileId),
+      env.DB.prepare(
+        'UPDATE owner_profile_wallets SET is_primary=1 WHERE wallet_address=? AND profile_id=?'
+      ).bind(replacement.wallet_address, session.profileId),
+      env.DB.prepare(
+        'UPDATE owner_profiles SET primary_wallet_address=?,network_owner_id=NULL,updated_at=? WHERE profile_id=?'
+      ).bind(replacement.wallet_address, now(), session.profileId)
+    ]);
+  } else {
+    await env.DB.prepare(
+      'DELETE FROM owner_profile_wallets WHERE wallet_address=? AND profile_id=?'
+    ).bind(target, session.profileId).run();
+  }
+
+  return json({
+    walletRemoved: ethers.getAddress(target),
+    profile: await getProfileSummary(env.DB, session.profileId)
+  });
 }
 
 async function recoverPassword(request, env) {
@@ -501,7 +469,6 @@ export async function routeOwnerProfile(request, env) {
   if (path === '/api/owner-profile/register' && method === 'POST') return createProfile(request, env);
   if (path === '/api/owner-profile/login' && method === 'POST') return login(request, env);
   if (path === '/api/owner-profile/me' && method === 'GET') return me(request, env);
-  if (path === '/api/owner-profile/wallet-change' && method === 'POST') return changeNetworkWallet(request, env);
   if (path === '/api/owner-profile/wallets' && method === 'POST') return addWallet(request, env);
   const walletPrefix = '/api/owner-profile/wallets/';
   const walletAddress = path.startsWith(walletPrefix) ? path.slice(walletPrefix.length) : '';
