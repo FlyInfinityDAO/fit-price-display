@@ -2086,3 +2086,48 @@ body.owner-profile-page .sidebar-menu a.active i {
     transition: none !important;
   }
 }
+
+
+/* Owner Profile drawer footer — mirror the shared dashboard brand signature. */
+body.owner-profile-page .sidebar-footer {
+  flex: 0 0 auto !important;
+  margin-top: auto !important;
+  padding: 18px 10px 4px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  line-height: 1.5 !important;
+  border-top: 1px solid rgba(0,200,150,.20) !important;
+  text-align: center !important;
+  font-size: 10px !important;
+  color: #666 !important;
+}
+body.owner-profile-page .sidebar-footer .sidebar-footer-brand {
+  display: block !important;
+  color: #D4AF37 !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: .08em !important;
+}
+body.owner-profile-page .sidebar-footer .sidebar-footer-tagline {
+  display: block !important;
+  color: #aebdb8 !important;
+  font-size: 10px !important;
+  font-weight: 400 !important;
+  letter-spacing: .015em !important;
+  line-height: 1.5 !important;
+  text-align: center !important;
+}
+@media (max-width: 768px) {
+  body.owner-profile-page .sidebar-footer {
+    padding: 16px 8px 4px !important;
+  }
+  body.owner-profile-page .sidebar-footer .sidebar-footer-brand {
+    font-size: 11px !important;
+  }
+  body.owner-profile-page .sidebar-footer .sidebar-footer-tagline {
+    font-size: 9px !important;
+  }
+}
