@@ -1904,3 +1904,185 @@ body.owner-profile-page .op-tree-branch > .op-tree-children {
     font-size: 11px;
   }
 }
+
+
+/* Owner Profile drawer — match the shared Fly Infinity navigation drawer. */
+body.owner-profile-page .sidebar {
+  position: fixed !important;
+  top: 0 !important;
+  right: -400px !important;
+  left: auto !important;
+  width: 380px !important;
+  max-width: 85vw !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  padding: 30px 25px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  border-left: 1px solid rgba(0, 235, 178, .78) !important;
+  border-right: 0 !important;
+  box-shadow: -12px 0 38px rgba(0,0,0,.34), -2px 0 24px rgba(0,220,165,.24), inset 1px 0 0 rgba(255,255,255,.09) !important;
+  transition: right .4s cubic-bezier(.22, 1, .36, 1) !important;
+}
+body.owner-profile-page .sidebar.active { right: 0 !important; }
+
+body.owner-profile-page .sidebar-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0,0,0,.7) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  backdrop-filter: blur(5px) !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transition: opacity .4s ease, visibility .4s ease !important;
+}
+body.owner-profile-page .sidebar-overlay.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+body.owner-profile-page .sidebar-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding-bottom: 20px !important;
+  margin-bottom: 25px !important;
+  border-bottom: 1px solid rgba(212,175,55,.23) !important;
+}
+body.owner-profile-page .sidebar-header .op-brand img {
+  width: 28px !important;
+  height: 28px !important;
+  flex: 0 0 28px !important;
+  border: 2px solid #D4AF37 !important;
+}
+body.owner-profile-page .sidebar-header .op-brand span {
+  color: #D4AF37 !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+}
+body.owner-profile-page .sidebar-header .op-icon-btn {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 40px !important;
+  width: 40px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  border: 1px solid rgba(212,175,55,.52) !important;
+  border-radius: 13px !important;
+  color: #f2d77e !important;
+  background: linear-gradient(145deg, rgba(0,200,150,.13), rgba(212,175,55,.10)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 5px 18px rgba(0,0,0,.22), 0 0 16px rgba(0,200,150,.08) !important;
+  font-size: 17px !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  transition: transform .28s ease, color .28s ease, border-color .28s ease, background .28s ease, box-shadow .28s ease !important;
+}
+body.owner-profile-page .sidebar-header .op-icon-btn i {
+  color: inherit !important;
+  font-size: 17px !important;
+}
+body.owner-profile-page .sidebar-header .op-icon-btn:hover {
+  color: #07110e !important;
+  border-color: rgba(0,220,158,.9) !important;
+  background: linear-gradient(135deg,#00c896,#d4af37) !important;
+  box-shadow: 0 0 22px rgba(0,200,150,.25), 0 0 28px rgba(212,175,55,.16) !important;
+  transform: rotate(90deg) scale(1.04) !important;
+}
+body.owner-profile-page .sidebar-header .op-icon-btn:focus-visible {
+  outline: 2px solid #d4af37 !important;
+  outline-offset: 3px !important;
+}
+
+body.owner-profile-page .sidebar-menu {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  padding-top: 0 !important;
+  margin: 0 !important;
+}
+body.owner-profile-page .sidebar-menu a {
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important;
+  min-height: 48px !important;
+  padding: 14px 20px !important;
+  border: 1px solid rgba(0,220,165,.20) !important;
+  border-radius: 16px !important;
+  color: #c0d0e8 !important;
+  background: rgba(255,255,255,.035) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  backdrop-filter: blur(12px) !important;
+  text-decoration: none !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  transition: background .25s ease, border-color .25s ease, box-shadow .25s ease, color .25s ease, transform .25s ease !important;
+}
+body.owner-profile-page .sidebar-menu a i {
+  width: 24px !important;
+  min-width: 24px !important;
+  font-size: 18px !important;
+  color: #00C896 !important;
+}
+body.owner-profile-page .sidebar-menu a:hover {
+  background: linear-gradient(100deg, rgba(0,200,150,.13), rgba(212,175,55,.075)) !important;
+  border-color: rgba(0,200,150,.22) !important;
+  box-shadow: inset 0 0 18px rgba(0,200,150,.045), 0 4px 18px rgba(0,0,0,.12) !important;
+  color: #f2f7f5 !important;
+  transform: translateX(-5px) !important;
+}
+body.owner-profile-page .sidebar-menu a.active {
+  background: linear-gradient(100deg, rgba(0,200,150,.17), rgba(212,175,55,.10)) !important;
+  border-color: rgba(212,175,55,.36) !important;
+  color: #D4AF37 !important;
+  box-shadow: 0 0 14px rgba(0,220,165,.16), inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+body.owner-profile-page .sidebar-menu a:hover i,
+body.owner-profile-page .sidebar-menu a.active i {
+  color: #d4af37 !important;
+  filter: drop-shadow(0 0 7px rgba(212,175,55,.38)) !important;
+  transform: translateX(2px) !important;
+}
+
+@media (max-width: 768px) {
+  body.owner-profile-page .sidebar {
+    right: -85vw !important;
+    width: 85vw !important;
+    max-width: 85vw !important;
+    padding: 24px 18px !important;
+  }
+  body.owner-profile-page .sidebar.active { right: 0 !important; }
+  body.owner-profile-page .sidebar-menu a {
+    min-height: 46px !important;
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+  }
+}
+@media (max-width: 420px) {
+  body.owner-profile-page .sidebar {
+    padding: 20px 14px !important;
+  }
+  body.owner-profile-page .sidebar-menu a {
+    gap: 12px !important;
+    padding: 11px 14px !important;
+    font-size: 13px !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.owner-profile-page .sidebar,
+  body.owner-profile-page .sidebar-overlay,
+  body.owner-profile-page .sidebar-menu a,
+  body.owner-profile-page .sidebar-menu a i,
+  body.owner-profile-page .sidebar-header .op-icon-btn {
+    transition: none !important;
+  }
+}
