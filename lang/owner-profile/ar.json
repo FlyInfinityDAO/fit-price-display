@@ -121,5 +121,8 @@
     "walletAdded": "تمت إضافة المحفظة إلى ملف المالك.",
     "walletRemoved": "تمت إزالة المحفظة من ملف المالك.",
     "removeWalletSignLinked": "لتأكيد الإزالة، وقّع باستخدام محفظة نشطة مرتبطة بالفعل بملف المالك هذا."
+  },
+  "footer": {
+    "tagline": "Fly Infinity — <span class=\"gold\">لا مركزي. شفاف. يرتفع للأبد.</span>"
   }
 }
