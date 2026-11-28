@@ -121,5 +121,8 @@
     "walletAdded": "La cartera se ha añadido al perfil de propietario.",
     "walletRemoved": "La cartera se ha eliminado del perfil de propietario.",
     "removeWalletSignLinked": "Para autorizar la eliminación, firma con una cartera activa que ya esté vinculada a este perfil."
+  },
+  "footer": {
+    "tagline": "Fly Infinity — <span class=\"gold\">Descentralizado. Transparente. Siempre Subiendo.</span>"
   }
 }
