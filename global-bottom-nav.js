@@ -102,8 +102,17 @@
     }
   }
 
+  function promotePrimaryNavigation() {
+    // Drawers are fixed UI layers. Move them out of page wrappers that may
+    // create low stacking contexts (for example, .container or .op-container).
+    document.querySelectorAll(".sidebar-overlay, .sidebar").forEach((layer) => {
+      if (layer.parentElement !== document.body) document.body.appendChild(layer);
+    });
+  }
+
   function mount() {
     if (!document.body || document.getElementById("fiGlobalBottomNav")) return;
+    promotePrimaryNavigation();
     pinSiteHeader();
     const nav = document.createElement("nav");
     nav.id = "fiGlobalBottomNav";
@@ -173,7 +182,7 @@
 
   const css = document.createElement("link");
   css.rel = "stylesheet";
-  css.href = new URL("global-bottom-nav.css?v=20261126-glass-fixed-green-gold-v5", root).href;
+  css.href = new URL("global-bottom-nav.css?v=20261128-menu-layering-v1", root).href;
   document.head.appendChild(css);
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount, { once: true });
   else mount();
