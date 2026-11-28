@@ -121,5 +121,8 @@
     "walletAdded": "Cüzdan Sahip Profilinize eklendi.",
     "walletRemoved": "Cüzdan Sahip Profilinizden kaldırıldı.",
     "removeWalletSignLinked": "Kaldırma işlemini yetkilendirmek için bu Sahip Profiline zaten bağlı olan aktif bir cüzdanla imzalayın."
+  },
+  "footer": {
+    "tagline": "Fly Infinity — <span class=\"gold\">Merkeziyetsiz. Şeffaf. Sonsuza Yükselen.</span>"
   }
 }
