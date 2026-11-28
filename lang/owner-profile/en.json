@@ -121,5 +121,8 @@
     "walletAdded": "Wallet added to your Owner Profile.",
     "walletRemoved": "Wallet removed from your Owner Profile.",
     "removeWalletSignLinked": "To authorize removal, sign with an active wallet already linked to this Owner Profile."
+  },
+  "footer": {
+    "tagline": "Fly Infinity — <span class=\"gold\">Decentralized. Transparent. Forever Rising.</span>"
   }
 }
