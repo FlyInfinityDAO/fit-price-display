@@ -121,5 +121,8 @@
     "walletAdded": "钱包已添加到您的所有者档案。",
     "walletRemoved": "钱包已从您的所有者档案中移除。",
     "removeWalletSignLinked": "要授权移除，请使用已关联到此所有者档案的有效钱包签名。"
+  },
+  "footer": {
+    "tagline": "Fly Infinity — <span class=\"gold\">去中心化。透明。永远上涨。</span>"
   }
 }
